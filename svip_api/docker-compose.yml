@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: "postgres:9.6.10"
+    restart: always
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+  civic:
+    # image: "civic:latest"
+    build: .
+    # restart: always
+    volumes:
+      - .:/app
+    ports:
+     - "3000:3000"
+     - "3001:3001"
+    links:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
