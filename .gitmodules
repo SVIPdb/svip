@@ -1,0 +1,9 @@
+[submodule "g2p-aggregator"]
+	path = g2p-aggregator
+	url = ./g2p-aggregator
+[submodule "svip_server"]
+	path = svip_server
+	url = ./svip_server/
+[submodule "outputs"]
+	path = outputs
+	url = ./outputs
