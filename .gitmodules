@@ -1,9 +1,9 @@
 [submodule "g2p-aggregator"]
 	path = g2p-aggregator
-	url = ./g2p-aggregator
+	url = git@gitlab.ethz.ch:svip/g2p-aggregator.git
 [submodule "svip_server"]
 	path = svip_server
-	url = ./svip_server/
+	url = git@gitlab.ethz.ch:svip/svip_api.git
 [submodule "outputs"]
 	path = outputs
 	url = ./outputs
