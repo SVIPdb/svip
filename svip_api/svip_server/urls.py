@@ -45,6 +45,12 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'genes', views.GeneViewSet)
+router.register(r'variants', views.VariantViewSet)
+router.register(r'association', views.AssociationViewSet)
+router.register(r'phenotype', views.PhenotypeViewSet)
+router.register(r'evidence', views.EvidenceViewSet)
+router.register(r'environmental_context', views.EnvironmentalContextViewSet)
 
 
 urlpatterns = [

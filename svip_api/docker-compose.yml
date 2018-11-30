@@ -1,23 +1,27 @@
 version: '3'
 services:
   db:
-    image: "postgres:9.6.10"
+    image: "postgres:latest"
     restart: always
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
-  civic:
-    # image: "civic:latest"
+      - POSTGRES_DB
+  svip_api:
+    # image: "svip_api:latest"
     build: .
     # restart: always
     volumes:
       - .:/app
     ports:
-     - "3000:3000"
-     - "3001:3001"
-    links:
+     - "8085:8085"
+    depends_on:
       - db
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - DJANGO_SU_NAME
+      - DJANGO_SU_EMAIL
+      - DJANGO_SU_PASSWORD
