@@ -43,8 +43,8 @@ schema_view = get_schema_view(
 
 # django-rest-framework router paths
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+# router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 router.register(r'genes', views.GeneViewSet)
 router.register(r'variants', views.VariantViewSet)
 router.register(r'association', views.AssociationViewSet)
