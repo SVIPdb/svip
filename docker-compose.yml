@@ -19,10 +19,10 @@ services:
 
   svip_api:
     # image: "svip_api:latest"
-    build: ../svip_server
+    build: ../svip_api
     # restart: always
     volumes:
-      - ../svip_server:/app
+      - ../svip_api:/app
     ports:
      - "8085:8085"
     depends_on:
