@@ -19,10 +19,10 @@ services:
 
   svip_api:
     # image: "svip_api:latest"
-    build: ../svip_api
+    build: ./svip_api
     # restart: always
     volumes:
-      - svip_api:/app
+      - ./svip_api:/app
     ports:
      - "8085:8085"
     depends_on:
@@ -62,7 +62,7 @@ services:
   #     - elasticsearch
 
   harvester:
-    build: g2p-aggregator/harvester
+    build: ./g2p-aggregator/harvester
     working_dir: /app
     environment:
       - BIOONTOLOGY_API_KEY=7951121e-3c26-4db1-9f82-476d928dfbc2
@@ -71,9 +71,9 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
     volumes:
-      - 'g2p-aggregator/harvester:/app'
-      - 'g2p-aggregator/data:/data'
-      - 'outputs:/output'
+      - './g2p-aggregator/harvester:/app'
+      - './g2p-aggregator/data:/data'
+      - './outputs:/output'
     depends_on:
       - db
       - svip_api
