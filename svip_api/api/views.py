@@ -25,8 +25,8 @@ class VariantViewSet(viewsets.ModelViewSet):
     """
     Genetic variants that are associated to particular genes.
 
-    This can include coding variants as well as more generic
-    "features", e.g. fusions between genes and amplifications.
+    These can include modifications within genes as well as more generic
+    "features", e.g. fusions between genes and gene amplifications.
     """
     queryset = Variant.objects.all().order_by('name')
     serializer_class = VariantSerializer
