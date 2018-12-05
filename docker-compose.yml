@@ -36,6 +36,23 @@ services:
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
 
+  harvester:
+    build: ./g2p-aggregator/harvester
+    working_dir: /app
+    environment:
+      - BIOONTOLOGY_API_KEY=7951121e-3c26-4db1-9f82-476d928dfbc2
+      - POSTGRES_HOST=db
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - './g2p-aggregator/harvester:/app'
+      - './g2p-aggregator/data:/data'
+      - './outputs:/output'
+    depends_on:
+      - db
+      - svip_api
+
   # elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
   #   container_name: elasticsearch
@@ -60,20 +77,3 @@ services:
   #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
   #   depends_on:
   #     - elasticsearch
-
-  harvester:
-    build: ./g2p-aggregator/harvester
-    working_dir: /app
-    environment:
-      - BIOONTOLOGY_API_KEY=7951121e-3c26-4db1-9f82-476d928dfbc2
-      - POSTGRES_HOST=db
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-    volumes:
-      - './g2p-aggregator/harvester:/app'
-      - './g2p-aggregator/data:/data'
-      - './outputs:/output'
-    depends_on:
-      - db
-      - svip_api
