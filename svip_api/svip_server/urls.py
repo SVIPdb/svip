@@ -47,10 +47,10 @@ router = routers.DefaultRouter()
 # router.register(r'groups', views.GroupViewSet)
 router.register(r'genes', views.GeneViewSet)
 router.register(r'variants', views.VariantViewSet)
-router.register(r'association', views.AssociationViewSet)
-router.register(r'phenotype', views.PhenotypeViewSet)
-router.register(r'evidence', views.EvidenceViewSet)
-router.register(r'environmental_context', views.EnvironmentalContextViewSet)
+router.register(r'associations', views.AssociationViewSet)
+router.register(r'phenotypes', views.PhenotypeViewSet)
+router.register(r'evidence_items', views.EvidenceViewSet)
+router.register(r'environmental_contexts', views.EnvironmentalContextViewSet)
 
 
 urlpatterns = [
