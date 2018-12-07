@@ -1,18 +1,21 @@
+import django_filters
 from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from api.models import Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext
 from api.serializers import UserSerializer, GroupSerializer, GeneSerializer, \
     VariantSerializer, AssociationSerializer, \
-    PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer
+    PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer
 
 
 # svip data endpoints
 
-class GeneViewSet(viewsets.ModelViewSet):
+class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Genes that we've discovered from harvesting.
     """
@@ -21,7 +24,7 @@ class GeneViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class VariantViewSet(viewsets.ModelViewSet):
+class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Genetic variants that are associated to particular genes.
 
@@ -29,11 +32,40 @@ class VariantViewSet(viewsets.ModelViewSet):
     "features", e.g. fusions between genes and gene amplifications.
     """
     queryset = Variant.objects.all().order_by('name')
-    serializer_class = VariantSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return FullVariantSerializer
+        return VariantSerializer
 
-class AssociationViewSet(viewsets.ModelViewSet):
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.SearchFilter,)
+    filter_fields = (
+        'gene',
+        'name',
+        'description',
+        'so_name'
+    )
+    search_fields = ('name', 'description', 'so_name', 'gene__symbol')
+
+    @action(detail=False)
+    def autocomplete(self, request):
+        """
+        Gets a list of variants for which the query term, 'q', occurs in its description.
+        :param request:
+        :return: a list of variant objects, consisting of just the id and description (called 'label') for brevity
+        """
+        resp = []
+        search_term = request.GET.get('q', None)
+
+        if search_term is not None:
+            q = Variant.objects.filter(description__icontains=search_term)
+            resp = list({'id': x.id, 'label': x.description} for x in q)
+
+        return Response(resp)
+
+
+class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Association between a variant (and consequently a gene), and
     some kind of conclusion about that variant. The conclusion
@@ -58,7 +90,7 @@ class AssociationViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PhenotypeViewSet(viewsets.ModelViewSet):
+class PhenotypeViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A visible effect of the variant, e.g. a disease state.
     """
@@ -67,7 +99,7 @@ class PhenotypeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class EvidenceViewSet(viewsets.ModelViewSet):
+class EvidenceViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Supporting information for the conclusion forwarded by the
     association. This might include literature references, treatment
@@ -78,7 +110,7 @@ class EvidenceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class EnvironmentalContextViewSet(viewsets.ModelViewSet):
+class EnvironmentalContextViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint for viewing genes
     """
