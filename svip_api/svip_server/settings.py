@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # third-party
     'corsheaders',
     'rest_framework',
+    'django_filters',
     'drf_yasg',
 
     # # Django Elasticsearch integration
@@ -140,13 +141,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
 # CORS config (https://github.com/ottoyiu/django-cors-headers/)
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8000'
-)
+CORS_ORIGIN_ALLOW_ALL = True  # for now, we won't whitelist any hosts
+# CORS_ORIGIN_WHITELIST = (
+#     'localhost:8000',
+#     'localhost:8080',
+# )
 
 # Elasticsearch configuration
 # ELASTICSEARCH_DSL = {
