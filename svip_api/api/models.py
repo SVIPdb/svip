@@ -112,6 +112,6 @@ class EnvironmentalContext(models.Model):
 
     source = models.CharField(max_length=120, null=True)
     term = models.CharField(max_length=120)
-    envcontext_id = models.CharField(max_length=120)  # just called 'id' in the original object
+    envcontext_id = models.CharField(max_length=120, null=True)  # just called 'id' in the original object
     usan_stem = models.CharField(max_length=120, null=True)
     description = models.TextField()
