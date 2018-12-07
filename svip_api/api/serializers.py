@@ -30,41 +30,6 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class VariantSerializer(serializers.HyperlinkedModelSerializer):
-    # 'sources' is redefined here b/c in the database we use a JSONB object with null values to mimic a set,
-    # but whoever's using this api doesn't need to be aware of that
-    sources = serializers.SerializerMethodField()
-
-    @staticmethod
-    def get_sources(obj):
-        return obj.sources.keys()
-
-    class Meta:
-        model = Variant
-        fields = (
-            'url',
-            'gene',
-            'name',
-            'description',
-            'biomarker_type',
-            'so_hierarchy',
-            'soid',
-            'so_name',
-            'sources',
-            'association_set'
-        )
-
-
-class FullVariantSerializer(VariantSerializer):
-    def __init__(self, *args, **kwargs):
-        super(FullVariantSerializer, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Variant
-        depth = 1
-        fields = VariantSerializer.Meta.fields
-
-
 class PhenotypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Phenotype
@@ -108,3 +73,40 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
             'evidence_set',
             'environmentalcontext_set',
         )
+
+
+class VariantSerializer(serializers.HyperlinkedModelSerializer):
+    # 'sources' is redefined here b/c in the database we use a JSONB object with null values to mimic a set,
+    # but whoever's using this api doesn't need to be aware of that
+    sources = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_sources(obj):
+        return obj.sources.keys()
+
+    class Meta:
+        model = Variant
+        fields = (
+            'url',
+            'gene',
+            'name',
+            'description',
+            'biomarker_type',
+            'so_hierarchy',
+            'soid',
+            'so_name',
+            'sources',
+            'association_set'
+        )
+
+
+class FullVariantSerializer(VariantSerializer):
+    association_set = AssociationSerializer(many=True)
+
+    def __init__(self, *args, **kwargs):
+        super(FullVariantSerializer, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Variant
+        depth = 1
+        fields = VariantSerializer.Meta.fields
