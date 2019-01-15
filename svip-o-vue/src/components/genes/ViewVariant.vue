@@ -21,43 +21,35 @@
 -->
 
 <div class = 'container-fluid'>
-	<div class = 'container'>
-		<div class = 'card'>
-			<div class = 'card-body'>
-				<h5 class = "card-title">{{gene.hugoSymbol}}: {{alteration.name}}</h5>
-				<h6 v-if='gene.oncogene'>Oncogene</h6>
-				<p class = 'card-text'>{{gene.name}}</p>
-				<dl class = 'row'>
-					<dt class = 'col-2 text-right'>Synonyms</dt>
-					<dd class = 'col-10'>{{synonyms}}</dd>
-				</dl>
-				<hr>
-				<dl class = 'row'>
-					<dt class = 'col-2 text-right'>Level of Evidence</dt>
-					<dd class = 'col-10'>{{alteration.levelOfEvidence}}</dd>
-					<dt class = 'col-2 text-right'>Consequence</dt>
-					<dd class = 'col-10'>{{alteration.consequence.description}} <span v-if="alteration.consequence.isGenerallyTruncating">This alteration is generally truncating the protein</span></dd>
-					<dt class = 'col-2 text-right'>Cancer Type</dt>
-					<dd class = 'col-10'>{{alteration.cancerType}}</dd>
-					<dt class = 'col-2 text-right'>Description</dt>
-					<dd class = 'col-10'>{{alteration.description}}</dd>
-					<dt class = 'col-2 text-right'>Type of Evidence</dt>
-					<dd class = 'col-10'>{{alteration.evidenceType}}</dd>
-					<dt class = 'col-2 text-right'>Known Effect</dt>
-					<dd class = 'col-10'>{{alteration.knownEffect}}</dd>
-					<dt class = 'col-2 text-right'>Drugs</dt>
-					<dd class = 'col-10'>{{alteration.drugs.join(", ")}}</dd>
-				</dl>
-			</div>
+	<div class = 'card'>
+		<div class = 'card-body'>
+			<table class = 'table'>
+				<tr>
+					<th>Gene Name</th>
+					<th>Variant</th>
+					<th>Variant HGVS.c</th>
+					<th>Variant HGVS.p</th>
+					<th>dbSNP</th>
+					<th>Molecular consequence</th>
+					<th>Position</th>
+					<th>Ref. Genome</th>
+				</tr>
+				<tr>
+					<td><b><router-link :to='"/gene/"+gene_id'>{{variant.gene.symbol}}</router-link></b></td>
+					<td><b>{{variant.name}}</b></td>
+					<td class = 'unavailable'>unavailable</td>
+					<td class = 'unavailable'>unavailable</td>
+					<td class = 'unavailable'>unavailable</td>
+					<td>{{variant.so_name}}</td>
+					<td class = 'unavailable'>unavailable</td>
+					<td class = 'unavailable'>unavailable</td>
+
+				</tr>
+			</table>
 		</div>
 	</div>
 	
-	<div class = 'container-fluid' v-if='alteration.articles.length'>
-		<h4>References</h4>
-	<b-table :fields = 'fields' :items = 'alteration.articles'>
-	</b-table>
-	
-	</div>
+	<variant-main-databases></variant-main-databases>
 	
 </div>
 </template>
@@ -68,77 +60,41 @@ import Vue from 'vue'
 import {HTTP} from '@/router/http'
 // import geneVariants from '@/components/Variants'
 import { mapGetters } from 'vuex'
+import variantMainDatabases from '@/components/genes/variantMainDatabases'
 import store from '@/store'
 export default {
 	data () {
 		return {
-			gene: {},
 			fields: ['pmid','authors','title','pubDate','journal','elocationId'],
 		}
 	},
+	components: {variantMainDatabases},
 	computed: {
 		...mapGetters({
-			rawAlterations: 'alterations'
+			variant: 'variant',
+			gene: 'gene'
 		}),
 		synonyms () {
 			if (this.gene.geneAliases === undefined) return '';
 			return this.gene.geneAliases.join(", ");
 		},
-		levelAlterations () {
-			return this.alterations.filter(a => {return a.levelOfEvidence});
-		},
-		alteration () {
-			let alteration = _.filter(this.rawAlterations, a => {return a.id == this.$route.params.variant_id;});
-			if (!alteration.length) return {
-				name: '',
-				levelOfEvidence: '',
-				consequence: {
-					description: '',
-					isGenerallyTruncating: ''
-				},
-				cancerType: '',
-				description: '',
-				articles: [],
-				evidenceType: '',
-				knownEffect: '',
-				drugs: []
-				
-			};
-			let alt = alteration[0];
-			console.log(alt);
-			let drugs = [];
-			_.forEach(alt.treatments,t => {
-				_.forEach(t.drugs,d => {
-					drugs.push(d.drugName)
-				})
-			})
-			return {
-				name: alt.alterations[0].name,
-				levelOfEvidence: alt.levelOfEvidence,
-				consequence: {
-					description: alt.alterations[0].description,
-					isGenerallyTruncating: alt.alterations[0].isGenerallyTruncating
-				},
-				cancerType: alt.cancerType,
-				description: alt.description,
-				articles: alt.articles,
-				evidenceType: alt.evidenceType,
-				knownEffect: alt.knownEffect,
-				drugs: drugs
-			};
+		gene_id () {
+			let test = this.variant.gene.url.match(/genes\/(\d+)/);
+			if (test) return test[1];
+			return '';
 		}
 	},
 	// components: {geneVariants: geneVariants},
 	methods: {
-		setgene (gene) {
-			this.gene = Object.assign({}, this.gene, gene);
-		}
 	},
 	beforeRouteEnter (to, from, next) {
 		if (to.params.gene_id != 'new'){
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
-				next(vm => vm.setgene(gene));
+				store.commit('SELECT_GENE',gene);
+				store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
+					next();
+				})
 			});			
 		}
 	},
@@ -146,17 +102,14 @@ export default {
 		if (to.params.gene_id != 'new'){
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
-				this.setgene(gene);
-				next();
-			});
+				store.commit('SELECT_GENE',gene);
+				store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
+					next();
+				})
+			});			
 		}
   },
 	created (){
-		var vm = this;
-		store.dispatch('getGenes').then(g => {
-			store.dispatch('getAlterations',{gene_id: this.$route.params.gene_id})
-		});
-		store.dispatch('getVariants');
 
 	}
 
@@ -168,5 +121,8 @@ export default {
 .container, .container-fluid{
 	margin-top: 20px;
 }
-
+.unavailable {
+	font-style: italic;
+	color: #ccc;
+}
 </style>

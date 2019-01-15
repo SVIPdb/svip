@@ -19,13 +19,13 @@
 				
 			<div class = 'section stats row justify-content-md-center'>
 				<div class = 'col'>
-					<h3>{{genes.length}} Genes</h3>
+					<h3>{{nbGenes}} Genes</h3>
 				</div>
 				<div class = 'col'>
-					<h3>{{variants.length}} Alterations</h3>
+					<h3>{{nbVariants}} Variants</h3>
 				</div>
 				<div class = 'col'>
-					<h3>5 Tumor types</h3>
+					<h3>{{nbUniquePhenotypes}} Phenotypes</h3>
 				</div>
 			</div>
 				
@@ -38,6 +38,7 @@
 
 import { mapGetters } from 'vuex'
 import store from '@/store'
+import {serverURL} from '@/app_config'
 export default {
 	name: 'home',
 	data () {
@@ -48,20 +49,34 @@ export default {
 	watch: {
 		gene: function(n,o){
 			if (n.value){
-				this.$router.push("gene/"+n.value)
+				let geneIdx = _.findIndex(this.genes,g => {return g.entrez_id == n.value});
+				let id = '';
+				if (geneIdx > -1){
+					let url = this.genes[geneIdx].url;
+					id = url.replace(serverURL+"genes",'');
+					id = id.replace(/\D/,"");
+				}
+				if (id) this.$router.push("gene/"+id)
 			}
 		}	
 	},
 	computed: {
   	  ...mapGetters({
   	  	  genes: 'genes',
-		  variants: 'variants'
+		  variants: 'variants',
+		  phenotypes: 'phenotypes',
+		  nbVariants: 'nbVariants',
+		  nbPhenotypes: 'nbPhenotypes',
+		  nbGenes: 'nbGenes'
   	    }),
 		project () {
 			return this.user.projects.filter(p => p.project_id == this.user.project_id)[0];
 		},
 		options () {
-			return this.genes.map(g => {return {label: g.hugoSymbol, value: g.entrezGeneId}});
+			return this.genes.map(g => {return {label: g.symbol, value: g.entrez_id}});
+		},
+		nbUniquePhenotypes () {
+			return _.uniqBy(this.phenotypes,d => {return d.pheno_id}).length;
 		}
 	},
 	methods: {
@@ -73,6 +88,7 @@ export default {
 		var vm = this;
 		store.dispatch('getGenes');
 		store.dispatch('getVariants');
+		store.dispatch('getPhenotypes');
 
 	}
 	

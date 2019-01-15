@@ -1,7 +1,7 @@
 /* eslint-disable */
 <template>
 	<!-- footer -->
-	<b-navbar type="light" variant="light" toggleable="md" :sticky='true'>
+	<footer class="footer">
 	<div class = 'container-fluid'>
 		<div class = 'row' style = 'width: 100%'>
 			<div class = 'col-4 text-center'><img src="../assets/SIB_logo_20ans.png" alt="SIB Logo 20ans" class = 'footer_logo'></div>
@@ -9,7 +9,7 @@
 			<div class = 'col-4 text-center'><img src="../assets/logo-hes-so-noir-433.png" alt="HES-SO"  class = 'footer_logo'></div>
 		</div>
 	</div>
-	</b-navbar>	
+    </footer>
 </template>
 
 <script>
@@ -33,6 +33,14 @@ year () {
 img.footer_logo{
 	max-height: 100px;
 	width: auto;
+}
+
+
+footer{
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+    background-color: #f5f5f5;
 }
 </style>
 /* eslint-disable */

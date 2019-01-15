@@ -24,12 +24,12 @@
 	<div class = 'container'>
 		<div class = 'card'>
 			<div class = 'card-body'>
-				<h5 class = "card-title">{{gene.hugoSymbol}}: {{geneVariants.length}} alterations</h5>
+				<h5 class = "card-title">{{gene.symbol}}: {{nbGeneVariants}} phenotypes</h5>
 				<h6 v-if='gene.oncogene'>Oncogene</h6>
-				<p class = 'card-text'>{{gene.name}}</p>
+				<!-- <p class = 'card-text'>{{gene.name}}</p> -->
 				<dl class = 'row'>
-					<dt class = 'col-2 text-right'>Synonyms</dt>
-					<dd class = 'col-10'>{{synonyms}}</dd>
+					<dt class = 'col-2 text-right'>Entrez ID</dt>
+					<dd class = 'col-10'>{{gene.entrez_id}}</dd>
 				</dl>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 		</div>
 		
 		<div class = 'container'>
-			<b-table :fields = 'fields' :items = 'levelAlterations' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
+			<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
 				<template slot='levelOfEvidence' slot-scope='data'>{{data.item.levelOfEvidence.replace("LEVEL_","")}}</template>
 				<template slot="nbArticles" slot-scope="row">
 					<b-button variant='link' @click.stop="row.toggleDetails">{{row.detailsShowing ? "Hide" : "Show" }} {{row.item.nbArticles}}</b-button>
@@ -63,13 +63,13 @@
 				          Show Details
 				        </b-button>
 				 </template>
-				      <template slot="row-details" slot-scope="row">
-				        <b-card>
-				          <ul>
-				            <li v-for="(value, key) in row.item.articles" :key="key">{{ value}}</li>
-				          </ul>
-				        </b-card>
-				      </template>
+				 <template slot="row-details" slot-scope="row">
+				   <b-card>
+				     <ul>
+				       <li v-for="(value, key) in row.item.articles" :key="key">{{ value}}</li>
+				     </ul>
+				   </b-card>
+				 </template>
 			</b-table>
 		</div>
 	</div>
@@ -81,20 +81,29 @@
 
 import Vue from 'vue'
 import {HTTP} from '@/router/http'
+import {serverURL} from '@/app_config'
 // import geneVariants from '@/components/Variants'
 import { mapGetters } from 'vuex'
 import store from '@/store'
 export default {
 	data () {
 		return {
-			gene: {},
+			gene: {
+				entrez_id: null,
+				symbol: '',
+				variants: []
+			},
 			confirmDeletion: false,
 			itemsByPages: 10,
 			itemsValue: [5,10,50,100],
 			fields: [
 				{
 					key: 'name',
-					label: 'Alteration',
+					label: 'Phenotype',
+					sortable: true
+				},{
+					key: 'type',
+					label: "SO Name",
 					sortable: true
 				},{
 					key: 'cancerTypes',
@@ -127,78 +136,32 @@ export default {
 	computed: {
 		...mapGetters({
 			variants: 'variants',
-			rawAlterations: 'alterations'
+			rawPhenotypes: 'phenotypes',
+			geneVariants: 'geneVariants',
+			nbGeneVariants: 'nbGeneVariants'
 		}),
 		synonyms () {
 			if (this.gene.geneAliases === undefined) return '';
 			return this.gene.geneAliases.join(", ");
 		},
-		geneVariants () {
-			return this.variants.filter(v => { if (v.entrezGeneId == this.$route.params.gene_id) return v;});
-		},
-		levelAlterations () {
-			return this.alterations.filter(a => {return a.levelOfEvidence});
-		},
-		alterations () {
-			let vm = this;
-			let alterations = [];
-			_.forEach(vm.rawAlterations, d => {
-					let id = d.id;
-					let cancerType = d.cancerType;
-					let drugs = [];
-					let levelOfEvidence = d.levelOfEvidence;
-					let articles = [];
-					if (d.articles !== undefined) articles = d.articles.map(a => {return a.pmid+": "+a.title});
-
-					if (d.treatments !== undefined){
-						_.forEach(d.treatments,t => {
-							if (t.drugs !== undefined){
-								_.forEach(t.drugs, r => {
-									if (r.drugName && drugs.indexOf(r.drugName) == -1) drugs.push(r.drugName)
-								})
-							}
-						})
-					}
-					
-					_.forEach(d.alterations, a => {	
-
-						if (alterations[id] === undefined){
-							let consequence = (a.consequence !== undefined && a.consequence.term !== undefined) ? a.consequence.term : '';
-							alterations[id] = {
-								id: id,
-								cancerTypes: [d.cancerType],
-								alterationType: a.alterationType,
-								consequence: consequence,
-								alteration: a.alteration,
-								name: a.name,
-								drugs: [drugs],
-								levelOfEvidence: levelOfEvidence,
-								articles: articles
-							}
-						}
-						else {
-							if (alterations[id].cancerTypes.indexOf(d.cancerType) == -1 && d.cancerType) alterations[id].cancerTypes.push(d.cancerType);
-							_.forEach(drugs, r => {
-								if (alterations[id].drugs.indexOf(r) == -1) alterations[id].drugs.push(r);
-							})
-							_.forEach(articles, a => {
-								if (alterations[id].articles.indexOf(a) == -1) alterations[id].articles.push(a);
-							})
-
-						}					
-				})
-			})
-			alterations = _.map(_.filter(_.values(alterations),a => {return a !== undefined}),d => {return {
-				id: d.id,
-				name: d.name,
-				cancerTypes: d.cancerTypes.join(", "),
-				drugs: d.drugs.join(", "),
-				levelOfEvidence: d.levelOfEvidence,
-				articles: d.articles,
-				nbArticles: d.articles.length
-				
-			}})
-			return alterations;
+		phenotypes () {
+			let variants = [];
+			_.forEach(this.geneVariants,g => {
+				let id = g.url.replace(serverURL+"variants/","");
+				let variant = {
+					id: id,
+					name: g.name,
+					type: g.so_name,
+					sources: g.sources.join("; "),
+					cancerTypes: '',
+					Drugs: '',
+					levelOfEvidence: '',
+					nbArticles: '',
+					articles: []
+				};
+				variants.push(variant);
+			});
+			return variants;
 		}
 	},
 	// components: {geneVariants: geneVariants},
@@ -214,7 +177,10 @@ export default {
 		if (to.params.gene_id != 'new'){
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
-				next(vm => vm.setgene(gene));
+				store.commit('SELECT_GENE',gene);
+				store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+					next(vm => vm.setgene(gene));
+				})
 			});			
 		}
 	},
@@ -222,16 +188,19 @@ export default {
 		if (to.params.gene_id != 'new'){
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
-				this.setgene(gene);
-				next();
-			});
+				
+				store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+					next(vm => vm.setgene(gene));
+				})
+			});			
 		}
   },
 	created (){
 		var vm = this;
 		store.dispatch('getGenes');
 		store.dispatch('getVariants');
-		store.dispatch('getAlterations',{gene_id: this.$route.params.gene_id});
+		store.dispatch('getPhenotypes');
+		store.dispatch('getAssociations');
 
 	}
 

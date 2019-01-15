@@ -1,4 +1,4 @@
-export const serverURL = "http://oncokb.org/api/v1/";
+export const serverURL = "https://svip-dev.nexus.ethz.ch/api/v1/";
 
 export const siteTitle = 'SVIP-O';
 

@@ -31,6 +31,7 @@ export default {
 
 <style>
 
+
 .pointer{
 	cursor:pointer;
 }
