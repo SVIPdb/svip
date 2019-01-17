@@ -15,11 +15,11 @@
 
 		  <b-collapse is-nav id="nav_collapse">
 
-		    <b-navbar-nav>
+		    <!-- <b-navbar-nav>
 		      <b-nav-item><router-link to="/home">Home</router-link></b-nav-item>
 		      <b-nav-item><router-link to="/genes">Genes</router-link></b-nav-item>
 
-		    </b-navbar-nav>
+		    </b-navbar-nav> -->
 
 		    <!-- Right aligned nav items -->
 		    <b-navbar-nav class="ml-auto">
