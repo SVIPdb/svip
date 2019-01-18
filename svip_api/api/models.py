@@ -14,6 +14,7 @@ EVIDENCE_TYPES = [
 
 
 class Source(models.Model):
+    # FIXME: this is currently unpopulated; decide if we want to replace 'sources' in Gene/Variant with a ref to this
     name = models.CharField(max_length=100, null=False, unique=True, db_index=True)
 
 
@@ -21,6 +22,8 @@ class Gene(models.Model):
     entrez_id = models.BigIntegerField(unique=True, db_index=True)
     ensembl_gene_id = models.CharField(max_length=20, db_index=True)
     symbol = models.CharField(max_length=10, unique=True, db_index=True)
+    uniprot_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
+    location = models.TextField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
     sources = JSONField(default=dict)
@@ -43,6 +46,21 @@ class Variant(models.Model):
     soid = models.CharField(max_length=15, null=True, verbose_name="Sequence Ontology ID", default="")
     so_name = models.CharField(max_length=30, null=True)
 
+    reference_name = models.CharField(max_length=30, null=True)  # e.g., GRCh37
+    refseq = models.CharField(max_length=60, null=True)
+    isoform = models.CharField(max_length=120, null=True)
+
+    # position and change data
+    chromosome = models.CharField(max_length=10, null=True)
+    start_pos = models.IntegerField(null=True)
+    end_pos = models.IntegerField(null=True)
+    ref = models.TextField(null=True)
+    alt = models.TextField(null=True)
+
+    hgvs_g = models.TextField(null=True)
+    hgvs_c = models.TextField(null=True)
+    hgvs_p = models.TextField(null=True)
+
     sources = JSONField(default=dict)
 
     def __str__(self):
@@ -54,7 +72,15 @@ class Variant(models.Model):
         ]
 
 
-# represents the connection between a variant and a
+# ***WIP***
+# class ImpactPrediction(models.Model):
+#     variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
+#
+#     source = models.CharField(max_length=30)
+#     score = models.FloatField(null=True)
+
+# represents the connection between a variant and evidence items (augmented by env. context, possibly producing
+# phenotypes)
 
 class Association(models.Model):
     """
