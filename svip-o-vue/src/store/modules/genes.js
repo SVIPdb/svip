@@ -1,3 +1,4 @@
+import svipVariants from '@/assets/svip_variants.json';
 import {HTTP} from '@/router/http';
 
 // initial state
@@ -12,7 +13,9 @@ const state = {
 	associations: [],
 	nbGeneVariants: 0,
 	geneVariants: [],
-	variant: null
+	variant: null,
+	svipVariants: svipVariants,
+	svipVariant: null
 }
 
 // getters
@@ -27,7 +30,9 @@ const getters = {
 	nbPhenotypes: state => state.phenotypes.length,
 	geneVariants: state => state.geneVariants,
 	nbGeneVariants: state => state.nbGeneVariants,
-	variant: state => state.variant
+	variant: state => state.variant,
+	svipVariants: state => state.svipVariants,
+	svipVariant: state => state.svipVariant
 }
 
 // actions
@@ -162,6 +167,10 @@ const actions = {
 			commit('SET_VARIANT',variant);
 			return variant;
 		})
+	},
+	selectSvipVariant( {commit,dispatch}, params){
+		let svip_variant = _.filter(state.svipVariants,v => {return v.variant_id == params.variant_id})[0];
+		commit("SELECT_SVIP_VARIANT",svip_variant)
 	}
 	
 	
@@ -238,6 +247,9 @@ const mutations = {
 	},
 	SET_VARIANT (state,variant){
 		state.variant = variant;
+	},
+	SELECT_SVIP_VARIANT (state,variant){
+		state.svipVariant = variant;
 	}
 	
 }

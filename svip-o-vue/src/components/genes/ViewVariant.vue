@@ -37,19 +37,20 @@
 				<tr>
 					<td><b><router-link :to='"/gene/"+gene_id'>{{variant.gene.symbol}}</router-link></b></td>
 					<td><b>{{variant.name}}</b></td>
-					<td class = 'unavailable'>unavailable</td>
-					<td class = 'unavailable'>unavailable</td>
-					<td class = 'unavailable'>unavailable</td>
-					<td>{{variant.so_name}}</td>
-					<td class = 'unavailable'>unavailable</td>
-					<td class = 'unavailable'>unavailable</td>
+					<td>{{svipVariant.HGVScoding}}</td>
+					<td>{{svipVariant.HGVSprotein}}</td>
+					<td><a :href = "'https://www.ncbi.nlm.nih.gov/snp/'+svipVariant.dbSNP" target = '_blank'>{{svipVariant.dbSNP}} <icon name='external-link'></icon></a></td>
+					<td>{{svipVariant.molecular_consequence}}</td>
+					<td>{{svipVariant.position}}</td>
+					<td>GRCh37</td>
 
 				</tr>
 			</table>
 		</div>
 	</div>
 	
-	<variant-main-databases></variant-main-databases>
+	<variant-svip></variant-svip>
+	<variant-public-databases></variant-public-databases>
 	
 </div>
 </template>
@@ -60,19 +61,23 @@ import Vue from 'vue'
 import {HTTP} from '@/router/http'
 // import geneVariants from '@/components/Variants'
 import { mapGetters } from 'vuex'
-import variantMainDatabases from '@/components/genes/variantMainDatabases'
+import variantPublicDatabases from '@/components/genes/variantPublicDatabases'
+import variantSvip from '@/components/genes/variantSvip'
 import store from '@/store'
+import {serverURL} from '@/app_config'
 export default {
 	data () {
 		return {
 			fields: ['pmid','authors','title','pubDate','journal','elocationId'],
 		}
 	},
-	components: {variantMainDatabases},
+	components: {variantPublicDatabases,variantSvip},
 	computed: {
 		...mapGetters({
 			variant: 'variant',
-			gene: 'gene'
+			gene: 'gene',
+			svipVariants: 'svipVariants',
+			svipVariant: 'svipVariant'
 		}),
 		synonyms () {
 			if (this.gene.geneAliases === undefined) return '';
@@ -92,6 +97,7 @@ export default {
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
 				store.commit('SELECT_GENE',gene);
+				store.dispatch("selectSvipVariant",{variant_id: to.params.variant_id});
 				store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
 					next();
 				})
@@ -103,6 +109,7 @@ export default {
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
 				store.commit('SELECT_GENE',gene);
+				store.dispatch("selectSvipVariant",{variant_id: to.params.variant_id});
 				store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
 					next();
 				})

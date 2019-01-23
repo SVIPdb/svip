@@ -22,7 +22,7 @@
 
 	<div class = 'card mt-3'>
 		<div class = 'card-header'>
-			<div class = 'card-title'>Main database information</div>
+			<div class = 'card-title'>Publicly available information</div>
 		</div>
 		<div class = 'card-body'>
 			<b-table :fields = 'fields' :items = 'data' :sort-by.sync="sortBy" :sort-desc='false'>
@@ -71,21 +71,21 @@
 						</div>
 						<div class="col-8">
 							 <b-card >
-							 <h6 class = 'card-subtitle mb-2 text-muted'>Drugs <span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
+							 <h6 class = 'card-subtitle mb-2 text-muted'>Evidences <span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
 							 <table class = 'table table-sm'>
 							 	<tr>
 									<th>Disease</th>
-									<th>Drug</th>
 									<th>Evidence Type</th>
 									<th>Clinical significance</th>
-									<th>Tier level</th>
+									<th>{{(row.item.source=='CIViC')?"Score level":"Tier level"}}</th>
+									<th>Drug</th>
 								</tr>
 								<tr v-for='c in filterClinical(row.item.clinical,row.item.filter)' >
 									<td>{{c.disease}}</td>
-									<td>{{c.drug}}</td>
 									<td>{{c.type}}</td>
 									<td>{{c.significance}}</td>
 									<td>{{c.tier}}</td>
+									<td>{{c.drug}}</td>
 								</tr>
 							 </table>
 							 </b-card>
@@ -106,7 +106,7 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import scorePlot from '@/components/plots/scorePlot'
 export default {
-	name: 'main-databases-info',
+	name: 'public-databases-info',
 	components: {scorePlot},	
 	data () {
 		return {
@@ -176,7 +176,7 @@ export default {
 					drug: a.drug_labels,
 					significance: a.response_type,
 					type: _.map(a.evidence_set,e => {return e.type}).join("; "),
-					tier: '-'
+					tier: a.evidence_level+a.evidence_label
 				});
 				data[source].scores.push(+a.evidence_level);
 				data[source].source_id += source_id;

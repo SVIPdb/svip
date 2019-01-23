@@ -24,9 +24,9 @@
 				<div class = 'col'>
 					<h3>{{nbVariants}} Variants</h3>
 				</div>
-				<div class = 'col'>
+				<!-- <div class = 'col'>
 					<h3>{{nbUniquePhenotypes}} Phenotypes</h3>
-				</div>
+				</div> -->
 			</div>
 				
 		</div>

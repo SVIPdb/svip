@@ -1,5 +1,5 @@
 <template>
-<svg class="bar-chart">
+<svg class="bar-chart" 	@mouseover='mouseover' @mouseout='mouseout'>
 	<rect
     class="bar"
     v-for="(d,i) in layout"
@@ -8,8 +8,6 @@
     :width="d.width"
     :height="d.height"
     :fill="d.c"
-	@mouseover='mouseover(d)'
-	@mouseout='mouseout(d)'
   >
 </rect>
 </svg>
@@ -21,6 +19,7 @@ import Vue from 'vue'
 import * as d3 from "d3";
 
 export default{
+	name: 'age_distribution',
 	data () {
 		return {
 			width: 100,
@@ -35,19 +34,23 @@ export default{
       return this.y = d3.scaleLinear();
     },
 	methods: {
-		mouseover (d) {
+		mouseover () {
 			let div = d3.select('#tooltip');
+		
 			if (div.empty()){
 				 div = d3.select("body").append("div")	
 			    .attr("id","tooltip")				
 			    .style("opacity", 0);
+			
 			}
 			div.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            div	.html("<b>score "+d.k+":</b> "+d.v)	
-                .style("left", (event.clientX) + "px")		
-                .style("top", (event.clientY - 28) + "px");				
+	            .duration(200)		
+	            .style("opacity", .9)
+				.style('height','auto');		
+	        div.html(this.tooltip)	
+	            .style("left", (event.clientX) + "px")		
+	            .style("top", (event.clientY - 28) + "px");
+
 		},
 		mouseout () {
 			let div = d3.select('#tooltip');
@@ -55,11 +58,13 @@ export default{
 				 div = d3.select("body").append("div")	
 			    .attr("id","tooltip")				
 			    .style("opacity", 0);
+			
 			}
 			div.transition()		
-                .duration(200)		
-                .style("opacity", 0);		
-			
+	            .duration(200)		
+	            .style("opacity", 0)
+				.style('height','28px');		
+		
 		}
 	},
     mounted: function() {
@@ -67,20 +72,13 @@ export default{
     },
     computed: {
 		aggregatedData () {
-			let temp = _.reduce(this.data, function(result, value, key) {
-				(result[value] || (result[value] = [])).push(key);
-				return result;
-			}, {});
-			let data = {
-				1: {k:1, v:0,c: '#AAFFA9'},
-				2: {k:2, v:0, c: 'rgb(166,252,182)'},
-				3: {k:3, v:0, c: 'rgb(137,252,189)'},
-				4: {k:4, v:0, c: '#11FFBD'},
-			};
-			_.forEach(temp,(v,i) => {
-				if (data[i] !== undefined) data[i].v = v.length
-			})
-			return Object.values(data);
+			let data = [
+				{k:"<40", v:this.data["<40"],c: '#0575E6'},
+				{k:"41-60", v:this.data["41-60"], c: 'rgb(38,92,194)'},
+				{k:"61-80", v:this.data["61-80"], c: 'rgb(25,62,158)'},
+				{k:">80", v:this.data[">80"], c: '#021b79'}
+			];
+			return data;
 		},
       layout: function() {
         this.x.domain([0, this.aggregatedData.length]).range([0, this.width]);
@@ -102,7 +100,15 @@ export default{
             };
           };
         })(this));
-      }
+      },
+	  tooltip () {
+		  let html = "<dl class = 'row' style='margin: 0'>";
+		  _.forEach(this.aggregatedData,d => {
+			  html += "<dt class='col-6'  style='text-align: right; padding-right: 2px;'>"+d.k+":</dt><dd class='col-6' style='text-align: left; padding-left: 2px;'>"+d.v+"</dd>";
+		  })
+		  html += "</dl>";
+		  return html;
+	  }
     }
 }
 

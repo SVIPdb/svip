@@ -24,7 +24,7 @@
 	<div class = 'container'>
 		<div class = 'card'>
 			<div class = 'card-body'>
-				<h5 class = "card-title">{{gene.symbol}}: {{nbGeneVariants}} phenotypes</h5>
+				<h5 class = "card-title">{{gene.symbol}}: {{phenotypes.length}} SVIP variants</h5>
 				<h6 v-if='gene.oncogene'>Oncogene</h6>
 				<!-- <p class = 'card-text'>{{gene.name}}</p> -->
 				<dl class = 'row'>
@@ -51,24 +51,13 @@
 		
 		</div>
 		
-		<div class = 'container'>
+		<div class = 'container-fluid'>
 			<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
-				<template slot='levelOfEvidence' slot-scope='data'>{{data.item.levelOfEvidence.replace("LEVEL_","")}}</template>
-				<template slot="nbArticles" slot-scope="row">
-					<b-button variant='link' @click.stop="row.toggleDetails">{{row.detailsShowing ? "Hide" : "Show" }} {{row.item.nbArticles}}</b-button>
-				</template>
 				<template slot="action" slot-scope="data">
 				        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-				        <b-button size="sm" @click.stop="showVariant(data.item.id)">
+				        <b-button size="sm" @click.stop="showVariant(data.item.variant_id)">
 				          Show Details
 				        </b-button>
-				 </template>
-				 <template slot="row-details" slot-scope="row">
-				   <b-card>
-				     <ul>
-				       <li v-for="(value, key) in row.item.articles" :key="key">{{ value}}</li>
-				     </ul>
-				   </b-card>
 				 </template>
 			</b-table>
 		</div>
@@ -98,29 +87,39 @@ export default {
 			itemsValue: [5,10,50,100],
 			fields: [
 				{
-					key: 'name',
-					label: 'Phenotype',
+					key: 'variant_name',
+					label: 'Name',
 					sortable: true
 				},{
-					key: 'type',
-					label: "SO Name",
+					key: 'HGVScoding',
+					label: "HGVS coding",
 					sortable: true
 				},{
-					key: 'cancerTypes',
-					label: "Cancer Type",
+					key: 'HGVSprotein',
+					label: "HGVS protein",
 					sortable: true
 				},{
-					key: 'drugs',
-					label: 'Drugs',
+					key: 'position',
+					label: 'Position',
 					sortable: true
 				},{
-					key: 'levelOfEvidence',
-					label: "Level",
+					key: 'molecular_consequence',
+					label: "Molecular consequence",
 					sortable: true
 				},
 				{
-					key: 'nbArticles',
-					label: "References",
+					key: 'tier_level',
+					label: "Tier Level",
+					sortable: true
+				} ,
+				{
+					key: 'SVIP_status',
+					label: "Status",
+					sortable: true
+				} ,
+				{
+					key: 'SVIP_confidence_score',
+					label: "Score",
 					sortable: true
 				} ,
 				{
@@ -129,7 +128,7 @@ export default {
 					sortable: false
 				}
 			],
-			sortBy: 'nbArticles',
+			sortBy: 'SVIP_confidence_score',
 			tableFilter: ''
 		}
 	},
@@ -138,29 +137,30 @@ export default {
 			variants: 'variants',
 			rawPhenotypes: 'phenotypes',
 			geneVariants: 'geneVariants',
-			nbGeneVariants: 'nbGeneVariants'
+			svipVariants: 'svipVariants'
 		}),
 		synonyms () {
 			if (this.gene.geneAliases === undefined) return '';
 			return this.gene.geneAliases.join(", ");
 		},
 		phenotypes () {
-			let variants = [];
-			_.forEach(this.geneVariants,g => {
-				let id = g.url.replace(serverURL+"variants/","");
-				let variant = {
-					id: id,
-					name: g.name,
-					type: g.so_name,
-					sources: g.sources.join("; "),
-					cancerTypes: '',
-					Drugs: '',
-					levelOfEvidence: '',
-					nbArticles: '',
-					articles: []
-				};
-				variants.push(variant);
-			});
+			let vm = this;
+			let variants = _.filter(this.svipVariants,v => {return v.gene_name == vm.gene.symbol;});
+			// _.forEach(this.svipVariants,g => {
+			// 	console.log(g);
+			// 	let variant = {
+			// 		id: g.variant_id,
+			// 		name: g.name,
+			// 		type: g.so_name,
+			// 		sources: g.sources.join("; "),
+			// 		cancerTypes: '',
+			// 		Drugs: '',
+			// 		levelOfEvidence: '',
+			// 		nbArticles: '',
+			// 		articles: []
+			// 	};
+			// 	variants.push(variant);
+			// });
 			return variants;
 		}
 	},
@@ -178,9 +178,10 @@ export default {
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
 				store.commit('SELECT_GENE',gene);
-				store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-					next(vm => vm.setgene(gene));
-				})
+				next(vm => vm.setgene(gene));
+				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+				// 	next(vm => vm.setgene(gene));
+				// })
 			});			
 		}
 	},
@@ -188,10 +189,11 @@ export default {
 		if (to.params.gene_id != 'new'){
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
-				
-				store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-					next(vm => vm.setgene(gene));
-				})
+				store.commit('SELECT_GENE',gene);
+				next(vm => vm.setgene(gene));
+				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+				// 	next(vm => vm.setgene(gene));
+				// })
 			});			
 		}
   },
