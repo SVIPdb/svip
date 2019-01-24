@@ -41,8 +41,15 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,)
 )
 
+
+class OptionalSlashRouter(routers.DefaultRouter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.trailing_slash = '/?'
+
+
 # django-rest-framework router paths
-router = routers.DefaultRouter()
+router = OptionalSlashRouter()
 # router.register(r'users', views.UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
 router.register(r'genes', views.GeneViewSet)
@@ -51,6 +58,8 @@ router.register(r'associations', views.AssociationViewSet)
 router.register(r'phenotypes', views.PhenotypeViewSet)
 router.register(r'evidence_items', views.EvidenceViewSet)
 router.register(r'environmental_contexts', views.EnvironmentalContextViewSet)
+
+router.register(r'query', views.QueryView, basename="query")
 
 
 urlpatterns = [

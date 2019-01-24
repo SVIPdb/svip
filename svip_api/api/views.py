@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.models import Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext
 from api.serializers import UserSerializer, GroupSerializer, GeneSerializer, \
@@ -117,3 +118,26 @@ class EnvironmentalContextViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = EnvironmentalContext.objects.all().order_by('id')
     serializer_class = EnvironmentalContextSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+# non-model-backed functional endpoints
+
+class QueryView(viewsets.ViewSet):
+    def list(self, request, format=None):
+        """
+        Gets a list of genes and variants for which the query term, 'q', occurs in its description.
+        :param request:
+        :return: a list of variant objects, consisting of just the id and description (called 'label') for brevity
+        """
+        resp = []
+        search_term = request.GET.get('q', None)
+
+        if search_term is not None:
+            gq = Gene.objects.filter(symbol__icontains=search_term)
+            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
+            vq = Variant.objects.filter(description__icontains=search_term)
+            v_resp = list({'id': x.id, 'type': 'v', 'label': x.description} for x in vq)
+
+            resp = g_resp + v_resp
+
+        return Response(resp)
