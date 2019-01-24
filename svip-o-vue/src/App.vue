@@ -11,7 +11,6 @@
 	</div>
 </template>
 
-
 <script>
 
 import navHeader from '@/components/navheader'
@@ -20,17 +19,15 @@ import navFooter from '@/components/navfooter'
 export default {
   components: { navHeader, navFooter },
   name: 'App',
-	computed:{
-		year () {
-			return new Date().getFullYear();
-		}
-	}
+  computed: {
+    year () {
+      return new Date().getFullYear()
+    }
+  }
 }
 </script>
 
-
 <style>
-
 
 .pointer{
 	cursor:pointer;
@@ -61,14 +58,11 @@ export default {
 	box-shadow:0 0 0 0.15rem #F8E6E0 !important;
 }
 
-
-
 .has-error small{
 	float:left;
 	margin-top:5px;
 	font-style:italic;
 	font-size:11px;
 }
-
 
 </style>

@@ -47,7 +47,7 @@
 				   		{{ row.detailsShowing ? 'Hide' : 'Show'}} Details
 					</b-button>
 				 </template>
-				
+
 			 	<template slot="row-details" slot-scope="row">
 				  	<div class = 'row'>
 						<div class="col-4">
@@ -64,7 +64,7 @@
 										<tr v-for='(nb,d) in row.item.diseases' @click='row.item.filter=d' :class='(row.item.filter==d)?"pointer table-active":"pointer"'>
 											<td>{{d}}</td>
 											<td>{{nb}}</td>
-										</tr>									
+										</tr>
 									</tbody>
 								</table>
 							 </b-card>
@@ -93,10 +93,10 @@
 					</div>
 			 	  </b-card>
 			 	</template>
-				
+
 			</b-table>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>
@@ -106,92 +106,91 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import scorePlot from '@/components/plots/scorePlot'
 export default {
-	name: 'public-databases-info',
-	components: {scorePlot},	
-	data () {
-		return {
-			databases: {'civic': 'CIViC','cosmic': 'COSMIC','clinvar': 'ClinVar','oncokb': "oncoKB"},
-			sortBy: 'source',
-			fields: [
-				{
-					key: "source",
-					label: 'Source',
-					sortable: true
-				}, {
-					key: 'diseases',
-					label: "Diseases",
-					sortable: true
-				}, {
-					key: 'database_evidences',
-					label: "Database Evidences",
-					sortable: false
-				}, {
-					key: 'clinical',
-					label: "Clinical significance / inerpretation",
-					sortable: false
-				}, {
-					key: 'scores',
-					label: "Confidence scores / review status",
-					sortable: false
-				}, {
-					key: 'actions',
-					label: '',
-					sortable: false
-				}
-			]
-		}
-	},
-	methods: {
-		summaryClinical (data){
-			return _.uniq(_.map(data,d => {return d.significance}))
-		},
-		filterClinical (data,filter){
-			if (!filter) return data;
-			return _.filter(data,d => {return d.disease == filter;});
-			
-		}
-	},
-	computed: {
-		...mapGetters({
-			variant: 'variant'
-		}),
-		data () {
-			let data = {};
-			_.forEach(this.variant.sources,s => {
-				data[s] = {source: this.databases[s], source_id: '',diseases: [], database_evidences: [],clinical: [],scores: [],url: ''}
-			});
-			_.forEach(this.variant.association_set, a => {
-				let source = a.source;
-				let source_id = '';
-				if (source == 'civic'){
-					let test = a.source_link.match(/\/variants\/(\d+)/);
-					if (test){
-						source_id = test[1];
-					}
-				}
-				data[source].diseases = data[source].diseases.concat(_.map(a.phenotype_set,a => {return a.term}));
-				data[source].database_evidences = data[source].database_evidences.concat(_.map(a.evidence_set,e => {return e.description}));
-				data[source].clinical.push({
-					disease: _.map(a.phenotype_set,a => {return a.term}).join("; "),
-					drug: a.drug_labels,
-					significance: a.response_type,
-					type: _.map(a.evidence_set,e => {return e.type}).join("; "),
-					tier: a.evidence_level+a.evidence_label
-				});
-				data[source].scores.push(+a.evidence_level);
-				data[source].source_id += source_id;
-				data[source].url = a.source_url;
-			})
-			_.forEach(this.variant.sources,s => {
-				data[s].diseases = _.countBy(data[s].diseases)
-				data[s].diseases = _.fromPairs(_.sortBy(_.toPairs(data[s].diseases), 1).reverse())
-				data[s].clinical = _.orderBy(data[s].clinical,c => {return c.disease});
-				data[s]._showDetails = false;
-				data[s].filter = '';
-			});
-			return Object.values(data);
-		}
-	}
+  name: 'public-databases-info',
+  components: {scorePlot},
+  data () {
+    return {
+      databases: {'civic': 'CIViC', 'cosmic': 'COSMIC', 'clinvar': 'ClinVar', 'oncokb': 'oncoKB'},
+      sortBy: 'source',
+      fields: [
+        {
+          key: 'source',
+          label: 'Source',
+          sortable: true
+        }, {
+          key: 'diseases',
+          label: 'Diseases',
+          sortable: true
+        }, {
+          key: 'database_evidences',
+          label: 'Database Evidences',
+          sortable: false
+        }, {
+          key: 'clinical',
+          label: 'Clinical significance / inerpretation',
+          sortable: false
+        }, {
+          key: 'scores',
+          label: 'Confidence scores / review status',
+          sortable: false
+        }, {
+          key: 'actions',
+          label: '',
+          sortable: false
+        }
+      ]
+    }
+  },
+  methods: {
+    summaryClinical (data) {
+      return _.uniq(_.map(data, d => { return d.significance }))
+    },
+    filterClinical (data, filter) {
+      if (!filter) return data
+      return _.filter(data, d => { return d.disease == filter })
+    }
+  },
+  computed: {
+    ...mapGetters({
+      variant: 'variant'
+    }),
+    data () {
+      let data = {}
+      _.forEach(this.variant.sources, s => {
+        data[s] = {source: this.databases[s], source_id: '', diseases: [], database_evidences: [], clinical: [], scores: [], url: ''}
+      })
+      _.forEach(this.variant.association_set, a => {
+        let source = a.source
+        let source_id = ''
+        if (source == 'civic') {
+          let test = a.source_link.match(/\/variants\/(\d+)/)
+          if (test) {
+            source_id = test[1]
+          }
+        }
+        data[source].diseases = data[source].diseases.concat(_.map(a.phenotype_set, a => { return a.term }))
+        data[source].database_evidences = data[source].database_evidences.concat(_.map(a.evidence_set, e => { return e.description }))
+        data[source].clinical.push({
+          disease: _.map(a.phenotype_set, a => { return a.term }).join('; '),
+          drug: a.drug_labels,
+          significance: a.response_type,
+          type: _.map(a.evidence_set, e => { return e.type }).join('; '),
+          tier: a.evidence_level + a.evidence_label
+        })
+        data[source].scores.push(+a.evidence_level)
+        data[source].source_id += source_id
+        data[source].url = a.source_url
+      })
+      _.forEach(this.variant.sources, s => {
+        data[s].diseases = _.countBy(data[s].diseases)
+        data[s].diseases = _.fromPairs(_.sortBy(_.toPairs(data[s].diseases), 1).reverse())
+        data[s].clinical = _.orderBy(data[s].clinical, c => { return c.disease })
+        data[s]._showDetails = false
+        data[s].filter = ''
+      })
+      return Object.values(data)
+    }
+  }
 }
 </script>
 

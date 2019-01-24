@@ -25,7 +25,7 @@
 			<div class = 'card-title'>SVIP information <span class = 'text-danger float-right'>WARNING: fake data - only as a demo</span></div>
 		</div>
 		<div class = 'card-body'>
-			<b-table :fields = 'fields' :items = 'data' :sort-by.sync="sortBy" :sort-desc='false'>				
+			<b-table :fields = 'fields' :items = 'data' :sort-by.sync="sortBy" :sort-desc='false'>
 			<template slot="actions" slot-scope="row">
 			   <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 			   <b-button size="sm" @click.stop="row.toggleDetails">
@@ -56,7 +56,7 @@
 			</template>
 			</b-table>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>
@@ -67,64 +67,63 @@ import store from '@/store'
 import ageDistribution from '@/components/plots/ageDistribution'
 import genderBalance from '@/components/plots/genderBalance'
 export default {
-	name: 'public-databases-info',
-	components: {ageDistribution,genderBalance},	
-	data () {
-		return {
-			sortBy: 'name',
-			fields: [
-				{
-					key: "name",
-					label: 'Disease',
-					sortable: true
-				}, {
-					key: 'nb_patients',
-					label: "Nb of patients",
-					sortable: true,
-					class: 'text-center'
-				}, {
-					key: 'age',
-					label: "Age distribution",
-					sortable: false,
-					class: 'text-center'
-				}, {
-					key: 'gender',
-					label: "Gender balance",
-					sortable: false,
-					class: 'text-center'
-				}, {
-					key: 'pathogenicity',
-					label: "Pathogenicity",
-					sortable: false
-				}, {
-					key: 'clinical_significance',
-					label: "Clinical significance",
-					sortable: false
-				}, {
-					key: 'score',
-					label: 'SVIP confidence',
-					sortable: true,
-					class: 'text-center'
-				}, {
-					key: 'actions',
-					label: '',
-					sortable: false
-				}
-			]
-		}
-	},
-	methods: {
-	},
-	computed: {
-		...mapGetters({
-			variant: 'variant',
-			svipVariant: 'svipVariant'
-		}),
-		data () {
-			return this.svipVariant.diseases;
-			
-		}
-	}
+  name: 'public-databases-info',
+  components: {ageDistribution, genderBalance},
+  data () {
+    return {
+      sortBy: 'name',
+      fields: [
+        {
+          key: 'name',
+          label: 'Disease',
+          sortable: true
+        }, {
+          key: 'nb_patients',
+          label: 'Nb of patients',
+          sortable: true,
+          class: 'text-center'
+        }, {
+          key: 'age',
+          label: 'Age distribution',
+          sortable: false,
+          class: 'text-center'
+        }, {
+          key: 'gender',
+          label: 'Gender balance',
+          sortable: false,
+          class: 'text-center'
+        }, {
+          key: 'pathogenicity',
+          label: 'Pathogenicity',
+          sortable: false
+        }, {
+          key: 'clinical_significance',
+          label: 'Clinical significance',
+          sortable: false
+        }, {
+          key: 'score',
+          label: 'SVIP confidence',
+          sortable: true,
+          class: 'text-center'
+        }, {
+          key: 'actions',
+          label: '',
+          sortable: false
+        }
+      ]
+    }
+  },
+  methods: {
+  },
+  computed: {
+    ...mapGetters({
+      variant: 'variant',
+      svipVariant: 'svipVariant'
+    }),
+    data () {
+      return this.svipVariant.diseases
+    }
+  }
 }
 </script>
 

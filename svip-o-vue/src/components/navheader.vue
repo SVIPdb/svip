@@ -9,7 +9,7 @@
 		  <!-- <img src="../assets/svip_logo_small.png" style="margin-right:5px"> -->
 		  <img src="../assets/sphn_logo_small.png" style="margin-right:5px">
 		  <img src="../assets/sib_logo_small.png" style="margin-right:5px">
-		  
+
 		  <router-link to="/">SVIP-O</router-link>
 	  	  </b-navbar-brand>
 
@@ -30,8 +30,6 @@
 		      <b-nav-item v-access = '"active"'><a class = 'pointer' @click='logout()'><icon name = 'sign-out'></icon></a></b-nav-item>
 		    </b-navbar-nav>
 
-
-
 		    </b-navbar-nav>
 
 		  </b-collapse>
@@ -41,7 +39,7 @@
 
 <script>
 
-import {Bus} from '@/bus';
+import {Bus} from '@/bus'
 import { mapGetters } from 'vuex'
 import store from '@/store'
 import Vue from 'vue'
@@ -56,7 +54,7 @@ export default {
   methods: {
 	  logout () {
 	  	store.dispatch('logout').then(data => {
-		`${Vue.prototype.$keycloak.logoutFn()}`
+        `${Vue.prototype.$keycloak.logoutFn()}`
 	  	})
 	  }
   }

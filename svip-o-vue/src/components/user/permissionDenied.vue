@@ -16,17 +16,17 @@
 
 <script>
 export default {
-	name: 'permissionDenied',
-	data () {
-		return {
-		}
-	},
-	methods:{
-		changeLocation (path) {
-			var vm = this;
-			vm.$router.push("/"+path);
-		}
-	}
+  name: 'permissionDenied',
+  data () {
+    return {
+    }
+  },
+  methods: {
+    changeLocation (path) {
+      var vm = this
+      vm.$router.push('/' + path)
+    }
+  }
 }
 
 </script>

@@ -24,6 +24,27 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+
+    'camelcase': 'off',
+    'eqeqeq': 'off',
+    'no-mixed-spaces-and-tabs': 'off',
+    'no-new': 'off',
+    'no-tabs': 'off',
+    'no-undef': 'off',
+    'no-unused-vars': 'off',
+    'no-useless-escape': 'off',
+    'one-var': 'off',
+    'prefer-promise-reject-errors': 'off',
+    'standard/object-curly-even-spacing': 'off',
+
+    'func-call-spacing': 'off',
+    'no-unexpected-multiline': 'off',
+    'no-return-assign': 'off',
+    'no-unused-expressions': 'off',
+    'vue/no-parsing-error': 'off',
+    'vue/no-unused-components': 'off',
+    'vue/no-unused-vars': 'off',
+    'vue/require-v-for-key': 'off',
   }
 }

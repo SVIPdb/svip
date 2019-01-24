@@ -6,20 +6,19 @@
 					<icon v-if="sorter.cas==ccas && sorter.order=='desc'" class="ml-1 pt-1" name='sort-down'></icon></span>
 			</template>
 
-			<script>
-	
-			export default {
+<script>
+
+export default {
 			  name: 'SortIcon',
-				props: ['sorter','ccas']
+  props: ['sorter', 'ccas']
 			  // data () {
 			  //   return {
 			  //     msg: 'Welcome to Your Vue.js App - Home page'
 			  //   }
 			  // }
-			}
+}
 
-
-			</script>
+</script>
 
 			<!-- Add "scoped" attribute to limit CSS to this component only -->
 			<style scoped>

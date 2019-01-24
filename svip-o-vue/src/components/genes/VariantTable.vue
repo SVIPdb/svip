@@ -13,8 +13,6 @@
 		</template>
 	</b-table>
 
-
-
     <!-- Delete modal -->
     <b-modal id="modalInfo" @hide="resetModalInfo" title = "Please confirm the deletion">
 		<p>file: <b>{{modalInfo.filename}}</b></p>
@@ -29,60 +27,60 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import {HTTP} from '@/router/http'
-import {serverURL} from '@/app_config';
+import {serverURL} from '@/app_config'
 
 export default{
-	data () {
-		return {
-			sortBy: 'timestamp',
-			sortDesc: true,
-			perPage: 50,
-			currentPage: 1,
-			totalRows: 0,
-			selectedVariants: [],
-			filter: '',
-			fields: [
-				{
-					key: 'selection',
-					label: ' ',
-					sortable: false
-				},
-				{
-					key: 'name',
-					sortable: true
-				},
-				{
-					key: 'timestamp',
-					label: 'Date',
-					sortable: true
-				},
-				{
-					key: 'user_name',
-					sortable: true
-				}
-			],
-			modalInfo: {
-				filename: '',
-				file_id: null
-			},
-			wait: false,
-			serverURL: serverURL
-		}
-	},
-	computed: {
+  data () {
+    return {
+      sortBy: 'timestamp',
+      sortDesc: true,
+      perPage: 50,
+      currentPage: 1,
+      totalRows: 0,
+      selectedVariants: [],
+      filter: '',
+      fields: [
+        {
+          key: 'selection',
+          label: ' ',
+          sortable: false
+        },
+        {
+          key: 'name',
+          sortable: true
+        },
+        {
+          key: 'timestamp',
+          label: 'Date',
+          sortable: true
+        },
+        {
+          key: 'user_name',
+          sortable: true
+        }
+      ],
+      modalInfo: {
+        filename: '',
+        file_id: null
+      },
+      wait: false,
+      serverURL: serverURL
+    }
+  },
+  computed: {
   	  ...mapGetters({
   	  	  user: 'currentUser'
   	    }),
-		nbSelectedVariants: function(){
-			return this.selectedVariants.length;
-		}
-	},
-	props: ['gene'],
-	methods: {
+    nbSelectedVariants: function () {
+      return this.selectedVariants.length
+    }
+  },
+  props: ['gene'],
+  methods: {
 
-	},
-	mounted () {
-	}
+  },
+  mounted () {
+  }
 }
 
 </script>

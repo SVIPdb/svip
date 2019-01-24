@@ -33,7 +33,7 @@
 				</dl>
 			</div>
 		</div>
-		
+
 		<div class = 'container'>
 			<div class = 'row'>
 				<div class = 'col-6'>
@@ -47,10 +47,9 @@
         			</b-form-group>
 				</div>
 			</div>
-		
-		
+
 		</div>
-		
+
 		<div class = 'container-fluid'>
 			<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
 				<template slot="action" slot-scope="data">
@@ -75,137 +74,135 @@ import {serverURL} from '@/app_config'
 import { mapGetters } from 'vuex'
 import store from '@/store'
 export default {
-	data () {
-		return {
-			gene: {
-				entrez_id: null,
-				symbol: '',
-				variants: []
-			},
-			confirmDeletion: false,
-			itemsByPages: 10,
-			itemsValue: [5,10,50,100],
-			fields: [
-				{
-					key: 'variant_name',
-					label: 'Name',
-					sortable: true
-				},{
-					key: 'HGVScoding',
-					label: "HGVS coding",
-					sortable: true
-				},{
-					key: 'HGVSprotein',
-					label: "HGVS protein",
-					sortable: true
-				},{
-					key: 'position',
-					label: 'Position',
-					sortable: true
-				},{
-					key: 'molecular_consequence',
-					label: "Molecular consequence",
-					sortable: true
-				},
-				{
-					key: 'tier_level',
-					label: "Tier Level",
-					sortable: true
-				} ,
-				{
-					key: 'SVIP_status',
-					label: "Status",
-					sortable: true
-				} ,
-				{
-					key: 'SVIP_confidence_score',
-					label: "Score",
-					sortable: true
-				} ,
-				{
-					key: 'action',
-					label: '',
-					sortable: false
-				}
-			],
-			sortBy: 'SVIP_confidence_score',
-			tableFilter: ''
-		}
-	},
-	computed: {
-		...mapGetters({
-			variants: 'variants',
-			rawPhenotypes: 'phenotypes',
-			geneVariants: 'geneVariants',
-			svipVariants: 'svipVariants'
-		}),
-		synonyms () {
-			if (this.gene.geneAliases === undefined) return '';
-			return this.gene.geneAliases.join(", ");
-		},
-		phenotypes () {
-			let vm = this;
-			let variants = _.filter(this.svipVariants,v => {return v.gene_name == vm.gene.symbol;});
-			// _.forEach(this.svipVariants,g => {
-			// 	console.log(g);
-			// 	let variant = {
-			// 		id: g.variant_id,
-			// 		name: g.name,
-			// 		type: g.so_name,
-			// 		sources: g.sources.join("; "),
-			// 		cancerTypes: '',
-			// 		Drugs: '',
-			// 		levelOfEvidence: '',
-			// 		nbArticles: '',
-			// 		articles: []
-			// 	};
-			// 	variants.push(variant);
-			// });
-			return variants;
-		}
-	},
-	// components: {geneVariants: geneVariants},
-	methods: {
-		setgene (gene) {
-			this.gene = Object.assign({}, this.gene, gene);
-		},
-		showVariant (id){
-			this.$router.push('/gene/'+this.$route.params.gene_id+"/variant/"+id)
-		}
-	},
-	beforeRouteEnter (to, from, next) {
-		if (to.params.gene_id != 'new'){
-			HTTP.get('genes/'+to.params.gene_id).then(res => {
-				var gene = res.data;
-				store.commit('SELECT_GENE',gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
-			});			
-		}
-	},
-	beforeRouteUpdate (to, from, next) {
-		if (to.params.gene_id != 'new'){
-			HTTP.get('genes/'+to.params.gene_id).then(res => {
-				var gene = res.data;
-				store.commit('SELECT_GENE',gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
-			});			
-		}
+  data () {
+    return {
+      gene: {
+        entrez_id: null,
+        symbol: '',
+        variants: []
+      },
+      confirmDeletion: false,
+      itemsByPages: 10,
+      itemsValue: [5, 10, 50, 100],
+      fields: [
+        {
+          key: 'variant_name',
+          label: 'Name',
+          sortable: true
+        }, {
+          key: 'HGVScoding',
+          label: 'HGVS coding',
+          sortable: true
+        }, {
+          key: 'HGVSprotein',
+          label: 'HGVS protein',
+          sortable: true
+        }, {
+          key: 'position',
+          label: 'Position',
+          sortable: true
+        }, {
+          key: 'molecular_consequence',
+          label: 'Molecular consequence',
+          sortable: true
+        },
+        {
+          key: 'tier_level',
+          label: 'Tier Level',
+          sortable: true
+        },
+        {
+          key: 'SVIP_status',
+          label: 'Status',
+          sortable: true
+        },
+        {
+          key: 'SVIP_confidence_score',
+          label: 'Score',
+          sortable: true
+        },
+        {
+          key: 'action',
+          label: '',
+          sortable: false
+        }
+      ],
+      sortBy: 'SVIP_confidence_score',
+      tableFilter: ''
+    }
   },
-	created (){
-		var vm = this;
-		store.dispatch('getGenes');
-		store.dispatch('getVariants');
-		store.dispatch('getPhenotypes');
-		store.dispatch('getAssociations');
-
-	}
-
+  computed: {
+    ...mapGetters({
+      variants: 'variants',
+      rawPhenotypes: 'phenotypes',
+      geneVariants: 'geneVariants',
+      svipVariants: 'svipVariants'
+    }),
+    synonyms () {
+      if (this.gene.geneAliases === undefined) return ''
+      return this.gene.geneAliases.join(', ')
+    },
+    phenotypes () {
+      let vm = this
+      let variants = _.filter(this.svipVariants, v => { return v.gene_name == vm.gene.symbol })
+      // _.forEach(this.svipVariants,g => {
+      // 	console.log(g);
+      // 	let variant = {
+      // 		id: g.variant_id,
+      // 		name: g.name,
+      // 		type: g.so_name,
+      // 		sources: g.sources.join("; "),
+      // 		cancerTypes: '',
+      // 		Drugs: '',
+      // 		levelOfEvidence: '',
+      // 		nbArticles: '',
+      // 		articles: []
+      // 	};
+      // 	variants.push(variant);
+      // });
+      return variants
+    }
+  },
+  // components: {geneVariants: geneVariants},
+  methods: {
+    setgene (gene) {
+      this.gene = Object.assign({}, this.gene, gene)
+    },
+    showVariant (id) {
+      this.$router.push('/gene/' + this.$route.params.gene_id + '/variant/' + id)
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    if (to.params.gene_id != 'new') {
+      HTTP.get('genes/' + to.params.gene_id).then(res => {
+        var gene = res.data
+        store.commit('SELECT_GENE', gene)
+        next(vm => vm.setgene(gene))
+        // store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+        // 	next(vm => vm.setgene(gene));
+        // })
+      })
+    }
+  },
+  beforeRouteUpdate (to, from, next) {
+    if (to.params.gene_id != 'new') {
+      HTTP.get('genes/' + to.params.gene_id).then(res => {
+        var gene = res.data
+        store.commit('SELECT_GENE', gene)
+        next(vm => vm.setgene(gene))
+        // store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+        // 	next(vm => vm.setgene(gene));
+        // })
+      })
+    }
+  },
+  created () {
+    var vm = this
+    store.dispatch('getGenes')
+    store.dispatch('getVariants')
+    store.dispatch('getPhenotypes')
+    store.dispatch('getAssociations')
+  }
 
 }
 </script>

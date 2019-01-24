@@ -16,7 +16,7 @@
 					</form>
 				</div>
 			</div>
-				
+
 			<div class = 'section stats row justify-content-md-center'>
 				<div class = 'col'>
 					<h3>{{nbGenes}} Genes</h3>
@@ -28,7 +28,7 @@
 					<h3>{{nbUniquePhenotypes}} Phenotypes</h3>
 				</div> -->
 			</div>
-				
+
 		</div>
 	</div>
 </div>
@@ -40,27 +40,27 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import {serverURL} from '@/app_config'
 export default {
-	name: 'home',
-	data () {
-		return {
-			gene: {}
-		}
-	},
-	watch: {
-		gene: function(n,o){
-			if (n.value){
-				let geneIdx = _.findIndex(this.genes,g => {return g.entrez_id == n.value});
-				let id = '';
-				if (geneIdx > -1){
-					let url = this.genes[geneIdx].url;
-					id = url.replace(serverURL+"genes",'');
-					id = id.replace(/\D/,"");
-				}
-				if (id) this.$router.push("gene/"+id)
-			}
-		}	
-	},
-	computed: {
+  name: 'home',
+  data () {
+    return {
+      gene: {}
+    }
+  },
+  watch: {
+    gene: function (n, o) {
+      if (n.value) {
+        let geneIdx = _.findIndex(this.genes, g => { return g.entrez_id == n.value })
+        let id = ''
+        if (geneIdx > -1) {
+          let url = this.genes[geneIdx].url
+          id = url.replace(serverURL + 'genes', '')
+          id = id.replace(/\D/, '')
+        }
+        if (id) this.$router.push('gene/' + id)
+      }
+    }
+  },
+  computed: {
   	  ...mapGetters({
   	  	  genes: 'genes',
 		  variants: 'variants',
@@ -69,31 +69,29 @@ export default {
 		  nbPhenotypes: 'nbPhenotypes',
 		  nbGenes: 'nbGenes'
   	    }),
-		project () {
-			return this.user.projects.filter(p => p.project_id == this.user.project_id)[0];
-		},
-		options () {
-			return this.genes.map(g => {return {label: g.symbol, value: g.entrez_id}});
-		},
-		nbUniquePhenotypes () {
-			return _.uniqBy(this.phenotypes,d => {return d.pheno_id}).length;
-		}
-	},
-	methods: {
-		test (val) {
-			console.log(val);
-		}
-	},
-	created (){
-		var vm = this;
-		store.dispatch('getGenes');
-		store.dispatch('getVariants');
-		store.dispatch('getPhenotypes');
+    project () {
+      return this.user.projects.filter(p => p.project_id == this.user.project_id)[0]
+    },
+    options () {
+      return this.genes.map(g => { return {label: g.symbol, value: g.entrez_id} })
+    },
+    nbUniquePhenotypes () {
+      return _.uniqBy(this.phenotypes, d => { return d.pheno_id }).length
+    }
+  },
+  methods: {
+    test (val) {
+      console.log(val)
+    }
+  },
+  created () {
+    var vm = this
+    store.dispatch('getGenes')
+    store.dispatch('getVariants')
+    store.dispatch('getPhenotypes')
+  }
 
-	}
-	
 }
-
 
 </script>
 

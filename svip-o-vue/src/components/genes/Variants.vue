@@ -13,36 +13,35 @@
 
 <script>
 
-import Vue from 'vue';
+import Vue from 'vue'
 import {serverURL} from '@/app_config'
 import { mapGetters } from 'vuex'
 import variantTable from '@/components/genes/VariantTable'
 
 export default {
-	data () {
-		return {
+  data () {
+    return {
 	      }
-	},
-	computed: {
+  },
+  computed: {
   	  ...mapGetters({
   	  	  user: 'currentUser'
   	    })
-	},
-	components: {
-		filesTable
-	},
-	filters: {
-	},
-	props: ['gene'],
-	created () {
-		var gene_id = this.$route.params.gene_id;
-	},
-    methods: {
-    }
+  },
+  components: {
+    filesTable
+  },
+  filters: {
+  },
+  props: ['gene'],
+  created () {
+    var gene_id = this.$route.params.gene_id
+  },
+  methods: {
+  }
 }
 
 </script>
-
 
 <style>
 

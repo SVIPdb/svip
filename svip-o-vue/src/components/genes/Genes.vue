@@ -28,37 +28,35 @@
 
 <script>
 
-
 import {HTTP} from '@/router/http'
 import { mapGetters } from 'vuex'
 
-
 export default{
-	data () {
-		return {
-			genes: []
-		}
-	},
-	computed: {
+  data () {
+    return {
+      genes: []
+    }
+  },
+  computed: {
   	  ...mapGetters({
   	  	  user: 'currentUser'
   	    })
-	},
-	methods: {
+  },
+  methods: {
 		 newgene () {
-			this.$router.push('/gene/new/edit');
-		},
+      this.$router.push('/gene/new/edit')
+    },
 
-		goTo (id) {
-			this.$router.push("/gene/"+id);
-		}
+    goTo (id) {
+      this.$router.push('/gene/' + id)
+    }
 
-	},
-	mounted () {
-		HTTP.get('/gene').then(res => {
-			this.genes = res.data;
-		});
-	}
+  },
+  mounted () {
+    HTTP.get('/gene').then(res => {
+      this.genes = res.data
+    })
+  }
 }
 
 </script>

@@ -19,7 +19,6 @@
 *****************************************************************/
 -->
 
-
 <template>
 <div class = 'container'>
 	<h3>Genes</h3>
@@ -66,69 +65,63 @@
 
 <script>
 
-import Vue from 'vue';
+import Vue from 'vue'
 import {HTTP} from '@/router/http'
 import { mapGetters } from 'vuex'
-import VeeValidate from 'vee-validate';
+import VeeValidate from 'vee-validate'
 
-Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
-
+Vue.use(VeeValidate, {fieldsBagName: 'formFields'})
 
 export default {
-	data () {
-		return {
-			permissions: [],
-			gene:  {
-				gene_id: -1,
-				name: '',
-				description: '',
-				user_id: '',
-				user_name: ''
-			}
-		}
-	},
-	methods: {
-		submitExperiment () {
-			var vm = this;
-			if (vm.gene.gene_id == -1){
-				HTTP.post('gene',vm.gene).then(res => {
-					var gene = res.data;
-					vm.$snotify.success('gene created successfuly','SUCCESS');
-					vm.$router.push("/gene/"+gene.gene_id);
-				});
-			}
-			else {
-				HTTP.put('gene',vm.gene).then(res => {
-					var gene = res.data;
-					vm.$snotify.success('gene updated successfuly','SUCCESS');
-					vm.$router.push("/gene/"+gene.gene_id);
-				});
-
-			}
-
-		}
-	},
-	computed: {
+  data () {
+    return {
+      permissions: [],
+      gene: {
+        gene_id: -1,
+        name: '',
+        description: '',
+        user_id: '',
+        user_name: ''
+      }
+    }
+  },
+  methods: {
+    submitExperiment () {
+      var vm = this
+      if (vm.gene.gene_id == -1) {
+        HTTP.post('gene', vm.gene).then(res => {
+          var gene = res.data
+          vm.$snotify.success('gene created successfuly', 'SUCCESS')
+          vm.$router.push('/gene/' + gene.gene_id)
+        })
+      } else {
+        HTTP.put('gene', vm.gene).then(res => {
+          var gene = res.data
+          vm.$snotify.success('gene updated successfuly', 'SUCCESS')
+          vm.$router.push('/gene/' + gene.gene_id)
+        })
+      }
+    }
+  },
+  computed: {
   	  ...mapGetters({
   	  	  user: 'currentUser'
   	    })
 
-	},
+  },
 
-	created () {
-		if (this.$route.params.gene_id != 'new'){
-			this.gene.gene_id = this.$route.params.gene_id;
-			HTTP.get('gene/'+this.gene.gene_id).then(res => {
-				var gene = res.data;
-				this.gene = Object.assign({}, this.gene, gene);
-			});
-		}
-		else {
-			this.gene.user_id = this.user.user_id;
-			this.gene.user_name = this.user.username;
-		}
-	}
+  created () {
+    if (this.$route.params.gene_id != 'new') {
+      this.gene.gene_id = this.$route.params.gene_id
+      HTTP.get('gene/' + this.gene.gene_id).then(res => {
+        var gene = res.data
+        this.gene = Object.assign({}, this.gene, gene)
+      })
+    } else {
+      this.gene.user_id = this.user.user_id
+      this.gene.user_name = this.user.username
+    }
+  }
 }
-
 
 </script>

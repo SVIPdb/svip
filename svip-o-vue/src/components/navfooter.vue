@@ -17,24 +17,22 @@
 import Vue from 'vue'
 
 export default {
-name: 'navHeader',
-computed:{
-year () {
-	return new Date().getFullYear();
-}
-}
-	
+  name: 'navHeader',
+  computed: {
+    year () {
+      return new Date().getFullYear()
+    }
+  }
+
 }
 
 </script>
-
 
 <style>
 img.footer_logo{
 	max-height: 100px;
 	width: auto;
 }
-
 
 footer{
 	position: absolute;
