@@ -25,6 +25,7 @@ services:
       - ./svip_api:/app
     ports:
      - "8085:8085"
+     - "8889:8889"
     depends_on:
       - db
     environment:
@@ -36,6 +37,11 @@ services:
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
 
+  local_uta:
+    image: biocommons/uta:uta_20171026
+    ports:
+      - "15032:5432"
+
   harvester:
     build: ./g2p-aggregator/harvester
     working_dir: /app
@@ -45,6 +51,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+      - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
     volumes:
       - './g2p-aggregator/harvester:/app'
       - './g2p-aggregator/data:/data'
@@ -52,6 +59,7 @@ services:
     depends_on:
       - db
       - svip_api
+      - local_uta
 
   # elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
