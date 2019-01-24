@@ -86,18 +86,19 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Variant
-        fields = (
-            'url',
-            'gene',
-            'name',
-            'description',
-            'biomarker_type',
-            'so_hierarchy',
-            'soid',
-            'so_name',
-            'sources',
-            'association_set'
-        )
+        # fields = (
+        #     'url',
+        #     'gene',
+        #     'name',
+        #     'description',
+        #     'biomarker_type',
+        #     'so_hierarchy',
+        #     'soid',
+        #     'so_name',
+        #     'sources',
+        #     'association_set'
+        # )
+        fields = '__all__'
 
 
 class FullVariantSerializer(VariantSerializer):
