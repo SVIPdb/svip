@@ -48,14 +48,14 @@ const actions = {
       HTTP.get('genes/?page=' + page).then(res => {
         let genes = res.data.results
         commit('SET_NBGENES', res.data.count)
-        if ((params === undefined || params.reset === undefined) && state.genes.length == res.data.count) return
-        if (geneCache && geneCache.length == res.data.count) {
+        if ((params === undefined || params.reset === undefined) && state.genes.length === res.data.count) return
+        if (geneCache && geneCache.length === res.data.count) {
           commit('SET_GENES', {genes: geneCache, add: false})
           return
         }
         commit('SET_GENES', {genes: genes, add: add})
         if (res.data.next && res.data.next.indexOf('?page=') > -1) {
-          var test = res.data.next.match(/\?page=(\d+)/)
+          const test = res.data.next.match(/\?page=(\d+)/);
           if (test) {
             page = test[1]
             dispatch('getGenes', {page: page})
@@ -74,15 +74,15 @@ const actions = {
     HTTP.get('variants/?page=' + page).then(res => {
       let variants = res.data.results
       commit('SET_NBVARIANTS', res.data.count)
-      if ((params === undefined || params.reset === undefined) && state.variants.length == res.data.count) return
-      if (variantCache && variantCache.length == res.data.count) {
+      if ((params === undefined || params.reset === undefined) && state.variants.length === res.data.count) return
+      if (variantCache && variantCache.length === res.data.count) {
         commit('SET_VARIANTS', {genes: variantCache, add: false})
         return
       }
 
       commit('SET_VARIANTS', {variants: variants, add: add})
       if (res.data.next && res.data.next.indexOf('?page=') > -1) {
-        var test = res.data.next.match(/\?page=(\d+)/)
+        const test = res.data.next.match(/\?page=(\d+)/);
         if (test) {
           page = test[1]
           dispatch('getVariants', {page: page})
@@ -99,14 +99,14 @@ const actions = {
     HTTP.get('phenotypes/?page=' + page).then(res => {
       let phenotypes = res.data.results
       commit('SET_NBPHENOTYPES', res.data.count)
-      if ((params === undefined || params.reset === undefined) && state.phenotypes.length == res.data.count) return
-      if (phenotypeCache && phenotypeCache.length == res.data.count) {
+      if ((params === undefined || params.reset === undefined) && state.phenotypes.length === res.data.count) return
+      if (phenotypeCache && phenotypeCache.length === res.data.count) {
         commit('SET_PHENOTYPES', {phenotypes: phenotypeCache, add: false})
         return
       }
       commit('SET_PHENOTYPES', {phenotypes: phenotypes, add: add})
       if (res.data.next && res.data.next.indexOf('?page=') > -1) {
-        var test = res.data.next.match(/\?page=(\d+)/)
+        const test = res.data.next.match(/\?page=(\d+)/);
         if (test) {
           page = test[1]
           dispatch('getPhenotypes', {page: page})
@@ -122,15 +122,15 @@ const actions = {
     let add = (page > 1)
     HTTP.get('associations/?page=' + page).then(res => {
       let associations = res.data.results
-      if ((params === undefined || params.reset === undefined) && state.associations.length == res.data.count) return
-      if (associationCache && associationCache.length == res.data.count) {
+      if ((params === undefined || params.reset === undefined) && state.associations.length === res.data.count) return
+      if (associationCache && associationCache.length === res.data.count) {
         commit('SET_ASSOCIATIONS', {associations: associationCache, add: false})
         return
       }
 
       commit('SET_ASSOCIATIONS', {associations: associations, add: add})
       if (res.data.next && res.data.next.indexOf('?page=') > -1) {
-        var test = res.data.next.match(/\?page=(\d+)/)
+        const test = res.data.next.match(/\?page=(\d+)/);
         if (test) {
           page = test[1]
           dispatch('getAssociations', {page: page})
@@ -145,10 +145,10 @@ const actions = {
     HTTP.get('variants/?search=' + params.gene + '&page=' + page).then(res => {
       let geneVariants = res.data.results
       commit('SET_NB_GENE_VARIANTS', res.data.count)
-      if ((params === undefined || params.reset === undefined) && state.geneVariants.length == res.data.count) return
+      if ((params === undefined || params.reset === undefined) && state.geneVariants.length === res.data.count) return
       commit('SET_GENE_VARIANTS', {geneVariants: geneVariants, add: add})
       if (res.data.next && res.data.next.indexOf('?page=') > -1) {
-        var test = res.data.next.match(/\?page=(\d+)/)
+        const test = res.data.next.match(/\?page=(\d+)/);
         if (test) {
           page = test[1]
           dispatch('listGeneVariants', {gene: params.gene, page: page})
@@ -164,7 +164,7 @@ const actions = {
     })
   },
   selectSvipVariant ({commit, dispatch}, params) {
-    let svip_variant = _.filter(state.svipVariants, v => { return v.variant_id == params.variant_id })[0]
+    let svip_variant = _.filter(state.svipVariants, v => { return v.variant_id === params.variant_id })[0]
     commit('SELECT_SVIP_VARIANT', svip_variant)
   }
 

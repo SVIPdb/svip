@@ -53,7 +53,7 @@
 				<div class = 'row'>
 					<div class = 'col-sm-10 col-sm-offset-2 text-center'>
 						<button type = 'submit' class = 'btn btn-success' :disabled='!gene.name||errors.any()'>Submit</button>
-						<a :href="(gene.gene_id == -1)?'/gene':'/gene/'+gene.gene_id" class="btn btn-link">Cancel</a>
+						<a :href="(gene.gene_id === -1)?'/gene':'/gene/'+gene.gene_id" class="btn btn-link">Cancel</a>
 					</div>
 
 				</div>
@@ -87,16 +87,16 @@ export default {
   },
   methods: {
     submitExperiment () {
-      var vm = this
-      if (vm.gene.gene_id == -1) {
+      const vm = this;
+      if (vm.gene.gene_id === -1) {
         HTTP.post('gene', vm.gene).then(res => {
-          var gene = res.data
+          const gene = res.data;
           vm.$snotify.success('gene created successfuly', 'SUCCESS')
           vm.$router.push('/gene/' + gene.gene_id)
         })
       } else {
         HTTP.put('gene', vm.gene).then(res => {
-          var gene = res.data
+          const gene = res.data;
           vm.$snotify.success('gene updated successfuly', 'SUCCESS')
           vm.$router.push('/gene/' + gene.gene_id)
         })
@@ -111,10 +111,10 @@ export default {
   },
 
   created () {
-    if (this.$route.params.gene_id != 'new') {
+    if (this.$route.params.gene_id !== 'new') {
       this.gene.gene_id = this.$route.params.gene_id
       HTTP.get('gene/' + this.gene.gene_id).then(res => {
-        var gene = res.data
+        const gene = res.data;
         this.gene = Object.assign({}, this.gene, gene)
       })
     } else {

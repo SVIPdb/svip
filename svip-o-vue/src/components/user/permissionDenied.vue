@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     changeLocation (path) {
-      var vm = this
+      const vm = this;
       vm.$router.push('/' + path)
     }
   }

@@ -35,7 +35,7 @@ export default {
   },
   props: ['gene'],
   created () {
-    var gene_id = this.$route.params.gene_id
+    const gene_id = this.$route.params.gene_id;
   },
   methods: {
   }

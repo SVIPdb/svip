@@ -61,7 +61,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for='(nb,d) in row.item.diseases' @click='row.item.filter=d' :class='(row.item.filter==d)?"pointer table-active":"pointer"'>
+										<tr v-for='(nb,d) in row.item.diseases' @click='row.item.filter=d' :class='(row.item.filter===d)?"pointer table-active":"pointer"'>
 											<td>{{d}}</td>
 											<td>{{nb}}</td>
 										</tr>
@@ -77,7 +77,7 @@
 									<th>Disease</th>
 									<th>Evidence Type</th>
 									<th>Clinical significance</th>
-									<th>{{(row.item.source=='CIViC')?"Score level":"Tier level"}}</th>
+									<th>{{(row.item.source==='CIViC')?"Score level":"Tier level"}}</th>
 									<th>Drug</th>
 								</tr>
 								<tr v-for='c in filterClinical(row.item.clinical,row.item.filter)' >
@@ -147,7 +147,7 @@ export default {
     },
     filterClinical (data, filter) {
       if (!filter) return data
-      return _.filter(data, d => { return d.disease == filter })
+      return _.filter(data, d => { return d.disease === filter })
     }
   },
   computed: {
@@ -162,7 +162,7 @@ export default {
       _.forEach(this.variant.association_set, a => {
         let source = a.source
         let source_id = ''
-        if (source == 'civic') {
+        if (source === 'civic') {
           let test = a.source_link.match(/\/variants\/(\d+)/)
           if (test) {
             source_id = test[1]

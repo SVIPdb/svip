@@ -49,7 +49,7 @@ export default {
   watch: {
     gene: function (n, o) {
       if (n.value) {
-        let geneIdx = _.findIndex(this.genes, g => { return g.entrez_id == n.value })
+        let geneIdx = _.findIndex(this.genes, g => { return g.entrez_id === n.value })
         let id = ''
         if (geneIdx > -1) {
           let url = this.genes[geneIdx].url
@@ -70,7 +70,7 @@ export default {
 		  nbGenes: 'nbGenes'
   	    }),
     project () {
-      return this.user.projects.filter(p => p.project_id == this.user.project_id)[0]
+      return this.user.projects.filter(p => p.project_id === this.user.project_id)[0]
     },
     options () {
       return this.genes.map(g => { return {label: g.symbol, value: g.entrez_id} })
@@ -85,7 +85,7 @@ export default {
     }
   },
   created () {
-    var vm = this
+    const vm = this;
     store.dispatch('getGenes')
     store.dispatch('getVariants')
     store.dispatch('getPhenotypes')

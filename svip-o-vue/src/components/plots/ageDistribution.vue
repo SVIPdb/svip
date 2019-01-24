@@ -68,7 +68,7 @@ export default{
   },
   computed: {
     aggregatedData () {
-      let data = [
+      const data = [
         {k: '<40', v: this.data['<40'], c: '#0575E6'},
         {k: '41-60', v: this.data['41-60'], c: 'rgb(38,92,194)'},
         {k: '61-80', v: this.data['61-80'], c: 'rgb(25,62,158)'},

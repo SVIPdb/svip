@@ -4,10 +4,10 @@ export default {
   keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
 
   encode (input) {
-    var output = ''
-    var chr1, chr2, chr3 = ''
-    var enc1, enc2, enc3, enc4 = ''
-    var i = 0
+    let output = '';
+    let chr1, chr2, chr3 = '';
+    let enc1, enc2, enc3, enc4 = '';
+    let i = 0;
 
     do {
       chr1 = input.charCodeAt(i++)
@@ -38,13 +38,13 @@ export default {
   },
 
   decode (input) {
-    var output = ''
-    var chr1, chr2, chr3 = ''
-    var enc1, enc2, enc3, enc4 = ''
-    var i = 0
+    let output = '';
+    let chr1, chr2, chr3 = '';
+    let enc1, enc2, enc3, enc4 = '';
+    let i = 0;
 
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-    var base64test = /[^A-Za-z0-9\+\/\=]/g
+    const base64test = /[^A-Za-z0-9\+\/\=]/g;
     if (base64test.exec(input)) {
       console.error('There were invalid base64 characters in the input text.\n' +
 				"Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
@@ -64,10 +64,10 @@ export default {
 
       output = output + String.fromCharCode(chr1)
 
-      if (enc3 != 64) {
+      if (enc3 !== 64) {
         output = output + String.fromCharCode(chr2)
       }
-      if (enc4 != 64) {
+      if (enc4 !== 64) {
         output = output + String.fromCharCode(chr3)
       }
 

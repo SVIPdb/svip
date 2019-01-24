@@ -56,7 +56,6 @@
 </template>
 
 <script>
-
 import Vue from 'vue'
 import {HTTP} from '@/router/http'
 // import geneVariants from '@/components/Variants'
@@ -65,6 +64,7 @@ import variantPublicDatabases from '@/components/genes/variantPublicDatabases'
 import variantSvip from '@/components/genes/variantSvip'
 import store from '@/store'
 import {serverURL} from '@/app_config'
+
 export default {
   data () {
     return {
@@ -93,9 +93,9 @@ export default {
   methods: {
   },
   beforeRouteEnter (to, from, next) {
-    if (to.params.gene_id != 'new') {
+    if (to.params.gene_id !== 'new') {
       HTTP.get('genes/' + to.params.gene_id).then(res => {
-        var gene = res.data
+        const gene = res.data;
         store.commit('SELECT_GENE', gene)
         store.dispatch('selectSvipVariant', {variant_id: to.params.variant_id})
         store.dispatch('getGeneVariant', {gene: gene.symbol, variant: to.params.variant_id}).then(res => {
@@ -105,9 +105,9 @@ export default {
     }
   },
   beforeRouteUpdate (to, from, next) {
-    if (to.params.gene_id != 'new') {
+    if (to.params.gene_id !== 'new') {
       HTTP.get('genes/' + to.params.gene_id).then(res => {
-        var gene = res.data
+        const gene = res.data;
         store.commit('SELECT_GENE', gene)
         store.dispatch('selectSvipVariant', {variant_id: to.params.variant_id})
         store.dispatch('getGeneVariant', {gene: gene.symbol, variant: to.params.variant_id}).then(res => {

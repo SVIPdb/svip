@@ -20,14 +20,14 @@ import * as d3 from 'd3'
 
 export default {
   mounted: function () {
-    var svg = d3.select(this.$el)
-    var width = +svg.attr('width')
-    var height = +svg.attr('height')
+    const svg = d3.select(this.$el);
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
 
-    var margin = { top: 0, left: 0, bottom: 0, right: 0 }
+    const margin = {top: 0, left: 0, bottom: 0, right: 0};
 
-    var chartWidth = width - (margin.left + margin.right)
-    var chartHeight = height - (margin.top + margin.bottom)
+    const chartWidth = width - (margin.left + margin.right);
+    const chartHeight = height - (margin.top + margin.bottom);
 
     this.chartLayer = svg
       .append('g')
@@ -79,27 +79,29 @@ export default {
   },
   methods: {
     drawChart: function (data) {
-      var arcs = d3.pie()
+      const arcs = d3.pie()
         .sort(null)
-        .value(function (d) { return d.value })
-        (data)
+        .value(function (d) {
+          return d.value
+        })
+        (data);
 
-      var block = this.pieG.selectAll('.arc')
-        .data(arcs)
+      const block = this.pieG.selectAll('.arc')
+        .data(arcs);
 
       block.select('path').attr('d', this.arc)
 
-      var newBlock = block
+      const newBlock = block
         .enter()
         .append('g')
-        .classed('arc', true)
+        .classed('arc', true);
 
       newBlock.append('path')
         .attr('d', this.arc)
         .attr('id', function (d, i) { return 'arc-' + i })
         .attr('stroke', 'gray')
         .attr('fill', d => {
-          return (d.data.label == 'male') ? '#0F7FFE' : '#CC66FE'
+          return (d.data.label === 'male') ? '#0F7FFE' : '#CC66FE'
         })
         .attr('title', d => d.label + ': ' + d.value)
     },

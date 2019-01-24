@@ -144,7 +144,7 @@ export default {
     },
     phenotypes () {
       let vm = this
-      let variants = _.filter(this.svipVariants, v => { return v.gene_name == vm.gene.symbol })
+      let variants = _.filter(this.svipVariants, v => { return v.gene_name === vm.gene.symbol })
       // _.forEach(this.svipVariants,g => {
       // 	console.log(g);
       // 	let variant = {
@@ -173,9 +173,9 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    if (to.params.gene_id != 'new') {
+    if (to.params.gene_id !== 'new') {
       HTTP.get('genes/' + to.params.gene_id).then(res => {
-        var gene = res.data
+        const gene = res.data;
         store.commit('SELECT_GENE', gene)
         next(vm => vm.setgene(gene))
         // store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
@@ -185,9 +185,9 @@ export default {
     }
   },
   beforeRouteUpdate (to, from, next) {
-    if (to.params.gene_id != 'new') {
+    if (to.params.gene_id !== 'new') {
       HTTP.get('genes/' + to.params.gene_id).then(res => {
-        var gene = res.data
+        const gene = res.data;
         store.commit('SELECT_GENE', gene)
         next(vm => vm.setgene(gene))
         // store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
@@ -197,7 +197,7 @@ export default {
     }
   },
   created () {
-    var vm = this
+    const vm = this;
     store.dispatch('getGenes')
     store.dispatch('getVariants')
     store.dispatch('getPhenotypes')
