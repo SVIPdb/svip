@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            sql="create index on api_variant (lower(name)) api_variant_name_lc",
+            sql="create index api_variant_name_lc on api_variant (lower(name))",
             reverse_sql="drop index api_variant_name_lc"
         )
     ]
