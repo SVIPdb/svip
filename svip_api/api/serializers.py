@@ -25,6 +25,14 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 # -----------------------------------------------------------------------------
 
 class GeneSerializer(serializers.HyperlinkedModelSerializer):
+    # 'sources' is redefined here b/c in the database we use a JSONB object with null values to mimic a set,
+    # but whoever's using this api doesn't need to be aware of that
+    sources = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_sources(obj):
+        return obj.sources.keys()
+
     class Meta:
         model = Gene
         fields = '__all__'
@@ -58,8 +66,8 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
         fields = (
             'url',
-            'gene',
-            'variant',
+            # 'gene',
+            # 'variant',
             'source_url',
             'source',
             'description',
@@ -98,7 +106,20 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         #     'sources',
         #     'association_set'
         # )
-        fields = '__all__'
+
+        fields = [field.name for field in model._meta.fields]
+        fields.append('gene_symbol')
+        fields.append('association_set')
+
+        # fields = '__all__'
+
+    # def get_field_names(self, declared_fields, info):
+    #     expanded_fields = super(VariantSerializer, self).get_field_names(declared_fields, info)
+    #
+    #     if getattr(self.Meta, 'extra_fields', None):
+    #         return expanded_fields + self.Meta.extra_fields
+    #     else:
+    #         return expanded_fields
 
 
 class FullVariantSerializer(VariantSerializer):
