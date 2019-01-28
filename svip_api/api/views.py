@@ -132,12 +132,25 @@ class QueryView(viewsets.ViewSet):
         resp = []
         search_term = request.GET.get('q', None)
 
-        if search_term is not None:
+        if search_term is not None and search_term != '':
             gq = Gene.objects.filter(symbol__icontains=search_term)
             g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             vq = Variant.objects.filter(description__icontains=search_term)
-            v_resp = list({'id': x.id, 'type': 'v', 'label': x.description} for x in vq)
+            v_resp = list({'id': x.id, 'g_id': x.gene.id, 'type': 'v', 'label': x.description} for x in vq)
 
             resp = g_resp + v_resp
+        else:
+            # send back the full list of genes
+            gq = Gene.objects.all()
+            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
+            resp = g_resp
 
         return Response(resp)
+
+    @action(detail=False)
+    def stats(self, request):
+        return Response({
+            'genes': Gene.objects.count(),
+            'variants': Variant.objects.count(),
+            'phenotypes': Phenotype.objects.count()
+        })
