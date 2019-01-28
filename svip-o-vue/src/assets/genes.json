@@ -1,0 +1,30 @@
+[
+	{
+		"url": "https://svip-dev.nexus.ethz.ch/api/v1/genes/1",
+		"entrez_id": 673,
+		"ensembl_gene_id": "ENSG00000157764",
+		"symbol": "BRAF",
+		"uniprot_ids": [
+			"P15056"
+		],
+		"location": "7q34",
+		"sources": {
+			"civic": null,
+			"oncokb": null
+		}
+	},
+	{
+		"url": "https://svip-dev.nexus.ethz.ch/api/v1/genes/2",
+		"entrez_id": 1956,
+		"ensembl_gene_id": "ENSG00000146648",
+		"symbol": "EGFR",
+		"uniprot_ids": [
+			"P00533"
+		],
+		"location": "7p11.2",
+		"sources": {
+			"civic": null,
+			"oncokb": null
+		}
+	}
+]

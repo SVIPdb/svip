@@ -52,7 +52,7 @@
 				  	<div class = 'row'>
 						<div class="col-4">
 							 <b-card>
-							 <h6 class = 'card-subtitle mb-2 text-muted'>Diseases <i class = 'float-right' v-if='!row.item.filter'>click on a disease to filter the drugs table </i><span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
+							 <h6 class = 'card-subtitle mb-2 text-muted'>Diseases <i class = 'float-right' v-if='!row.item.filter'>click on a disease to filter the evidences table </i><span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
 							 	<table class = 'table table-sm table-hover'>
 									<thead>
 										<tr>
@@ -77,14 +77,14 @@
 									<th>Disease</th>
 									<th>Evidence Type</th>
 									<th>Clinical significance</th>
-									<th>{{(row.item.source=='CIViC')?"Score level":"Tier level"}}</th>
+									<th class = 'text-center'>{{(row.item.source=='CIViC')?"Score level":"Tier level"}}</th>
 									<th>Drug</th>
 								</tr>
 								<tr v-for='c in filterClinical(row.item.clinical,row.item.filter)' >
 									<td>{{c.disease}}</td>
 									<td>{{c.type}}</td>
 									<td>{{c.significance}}</td>
-									<td>{{c.tier}}</td>
+									<td class = 'text-center'>{{c.tier}}</td>
 									<td>{{c.drug}}</td>
 								</tr>
 							 </table>
@@ -127,12 +127,13 @@ export default {
 					sortable: false
 				}, {
 					key: 'clinical',
-					label: "Clinical significance / inerpretation",
+					label: "Clinical significance / interpretation",
 					sortable: false
 				}, {
 					key: 'scores',
 					label: "Confidence scores / review status",
-					sortable: false
+					sortable: false,
+					class: 'text-center'
 				}, {
 					key: 'actions',
 					label: '',
@@ -176,7 +177,7 @@ export default {
 					drug: a.drug_labels,
 					significance: a.response_type,
 					type: _.map(a.evidence_set,e => {return e.type}).join("; "),
-					tier: a.evidence_level+a.evidence_label
+					tier: a.evidence_label || a.evidence_level
 				});
 				data[source].scores.push(+a.evidence_level);
 				data[source].source_id += source_id;

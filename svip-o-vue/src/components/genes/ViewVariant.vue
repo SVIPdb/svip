@@ -37,11 +37,11 @@
 				<tr>
 					<td><b><router-link :to='"/gene/"+gene_id'>{{variant.gene.symbol}}</router-link></b></td>
 					<td><b>{{variant.name}}</b></td>
-					<td>{{svipVariant.HGVScoding}}</td>
-					<td>{{svipVariant.HGVSprotein}}</td>
+					<td v-html="formatColon(svipVariant.HGVScoding)"></td>
+					<td v-html="formatColon(svipVariant.HGVSprotein)"></td>
 					<td><a :href = "'https://www.ncbi.nlm.nih.gov/snp/'+svipVariant.dbSNP" target = '_blank'>{{svipVariant.dbSNP}} <icon name='external-link'></icon></a></td>
 					<td>{{svipVariant.molecular_consequence}}</td>
-					<td>{{svipVariant.position}}</td>
+					<td v-html="formatColon(svipVariant.position)"></td>
 					<td>GRCh37</td>
 
 				</tr>
@@ -65,6 +65,12 @@ import variantPublicDatabases from '@/components/genes/variantPublicDatabases'
 import variantSvip from '@/components/genes/variantSvip'
 import store from '@/store'
 import {serverURL} from '@/app_config'
+// JSON cache: 
+import geneVariants from '@/assets/gene_variants.json'
+import genes from '@/assets/genes.json'
+
+// end JSON cache
+
 export default {
 	data () {
 		return {
@@ -91,9 +97,33 @@ export default {
 	},
 	// components: {geneVariants: geneVariants},
 	methods: {
+		formatColon (text){
+			let parts = text.split(":");
+			if (parts.length > 1){
+				let prefix = parts.shift();
+				return "<span class='text-muted'>"+prefix+":</span>"+parts.join(":");
+			}
+			return text;
+		}
+		
 	},
 	beforeRouteEnter (to, from, next) {
 		if (to.params.gene_id != 'new'){
+			
+			// JSON cache: 
+			
+			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
+			store.commit('SELECT_GENE',gene);
+			store.dispatch("selectSvipVariant",{variant_id: to.params.variant_id});
+			store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
+				next();
+			})
+			return;
+		
+			// end JSON cache
+			
+			
+			
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
 				store.commit('SELECT_GENE',gene);
@@ -106,6 +136,19 @@ export default {
 	},
 	beforeRouteUpdate (to, from, next) {
 		if (to.params.gene_id != 'new'){
+			// JSON cache: 
+			
+			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
+			store.commit('SELECT_GENE',gene);
+			store.dispatch("selectSvipVariant",{variant_id: to.params.variant_id});
+			store.dispatch('getGeneVariant',{gene: gene.symbol,variant: to.params.variant_id}).then(res => {
+				next();
+			})
+			return;
+		
+			// end JSON cache
+			
+
 			HTTP.get('genes/'+to.params.gene_id).then(res => {
 				var gene = res.data;
 				store.commit('SELECT_GENE',gene);

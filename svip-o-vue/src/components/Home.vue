@@ -73,7 +73,8 @@ export default {
 			return this.user.projects.filter(p => p.project_id == this.user.project_id)[0];
 		},
 		options () {
-			return this.genes.map(g => {return {label: g.symbol, value: g.entrez_id}});
+			let genes = this.genes.map(g => {return {label: g.symbol, value: g.entrez_id}});
+			return genes;
 		},
 		nbUniquePhenotypes () {
 			return _.uniqBy(this.phenotypes,d => {return d.pheno_id}).length;

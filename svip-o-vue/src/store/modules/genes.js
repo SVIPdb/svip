@@ -1,15 +1,24 @@
+// JSON cache: 
 import svipVariants from '@/assets/svip_variants.json';
+import genes from '@/assets/genes.json';
+import variants from '@/assets/variants.json';
+import phenotypes from '@/assets/phenotypes.json';
+import associations from '@/assets/associations.json';
+import geneVariants from '@/assets/gene_variants.json';
+
+// end JSON cache
+
 import {HTTP} from '@/router/http';
 
 // initial state
 const state = {
 	current: null,
-	genes: [],
-	nbGenes: 0,
-	variants: [],
-	nbVariants: 0,
-	phenotypes: [],
-	nbPhenotypes: 0,
+	genes: genes,
+	nbGenes: genes.length,
+	variants: variants,
+	nbVariants: variants.length,
+	phenotypes: phenotypes,
+	nbPhenotypes: phenotypes.length,
 	associations: [],
 	nbGeneVariants: 0,
 	geneVariants: [],
@@ -39,8 +48,13 @@ const getters = {
 const actions = {
 
 	getGenes ({ commit } ,params ) {		
-		let geneCache = window.localStorage.getItem('genes');
-		if (geneCache) geneCache = JSON.parse(geneCache);
+		
+		// JSON cache: 
+		
+		return;
+		
+		// end JSON cache
+		
 		let page = 1;
 		if (params !== undefined && params.page) page = +params.page;
 		let add = (page > 1);
@@ -48,11 +62,6 @@ const actions = {
 			HTTP.get('genes/?page='+page).then(res => {
 				let genes = res.data.results
 				commit('SET_NBGENES',res.data.count);
-				if ((params === undefined || params.reset === undefined) && state.genes.length == res.data.count) return;
-				if (geneCache && geneCache.length == res.data.count){
-					commit('SET_GENES',{genes: geneCache, add:false});
-					return;
-				}
 				commit('SET_GENES',{genes: genes, add: add});
 				if (res.data.next && res.data.next.indexOf('?page=') > -1){
 					var test = res.data.next.match(/\?page=(\d+)/);
@@ -65,8 +74,19 @@ const actions = {
 		}
 	},
 	getVariants ({ commit, dispatch } ,params ) {			
+
+		// JSON cache: 
+		
+		return;
+		
+		// end JSON cache
+
+
 		let variantCache = window.localStorage.getItem('variants');
-		if (variantCache) variantCache = JSON.parse(variantCache);
+		if (variantCache){
+			variantCache = JSON.parse(variantCache);	
+			
+		} 
 
 		let page = 1;
 		if (params !== undefined && params.page) page = +params.page;
@@ -93,8 +113,18 @@ const actions = {
 		});
 	},
 	getPhenotypes ( {commit, dispatch}, params){
+		
+		// JSON cache: 
+		
+		return;
+		
+		// end JSON cache
+		
+		
 		let phenotypeCache = window.localStorage.getItem('phenotypes');
-		if (phenotypeCache) phenotypeCache = JSON.parse(phenotypeCache);
+		if (phenotypeCache){
+			phenotypeCache = JSON.parse(phenotypeCache);	
+		} 
 		let page = 1;
 		if (params !== undefined && params.page) page = +params.page;
 		let add = (page > 1);
@@ -117,8 +147,18 @@ const actions = {
 		});
 	},
 	getAssociations ( {commit, dispatch}, params){
+		
+		// JSON cache: 
+		
+		return;
+		
+		// end JSON cache
+		
+		
 		let associationCache = window.localStorage.getItem('associations');
-		if (associationCache) associationCache = JSON.parse(associationCache);
+		if (associationCache){
+			associationCache = JSON.parse(associationCache);	
+		} 
 		let page = 1;
 		if (params !== undefined && params.page) page = +params.page;
 		let add = (page > 1);
@@ -162,6 +202,13 @@ const actions = {
 		})
 	},
 	getGeneVariant ( {commit, dispatch }, params){
+		
+		let variant = geneVariants[params.variant];
+		if (variant){
+			commit('SET_VARIANT',variant);
+			return variant;	
+		} 
+		
 		return HTTP.get('variants/'+params.variant).then(res => {
 			let variant = res.data;
 			commit('SET_VARIANT',variant);

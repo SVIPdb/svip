@@ -29,7 +29,11 @@
 				<!-- <p class = 'card-text'>{{gene.name}}</p> -->
 				<dl class = 'row'>
 					<dt class = 'col-2 text-right'>Entrez ID</dt>
-					<dd class = 'col-10'>{{gene.entrez_id}}</dd>
+					<dd class = 'col-10'><a :href='"https://www.ncbi.nlm.nih.gov/gene/?term="+gene.entrez_id+"%5Buid%5D"' target = '_blank'>{{gene.entrez_id}}</a></dd>
+					<dt class = 'col-2 text-right'>Ensembl Gene ID</dt>
+					<dd class = 'col-10'><a :href='"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g="+gene.ensembl_gene_id' target = '_blank'>{{gene.ensembl_gene_id}}</a></dd>
+					<dt class = 'col-2 text-right'>UniProtKB ID</dt>
+					<dd class = 'col-10'><a v-for='uniprot in gene.uniprot_ids' :href='"https://www.uniprot.org/uniprot/"+uniprot' target = '_blank' class = 'mr-3'>{{uniprot}}</a></dd>					
 				</dl>
 			</div>
 		</div>
@@ -53,6 +57,9 @@
 		
 		<div class = 'container-fluid'>
 			<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
+			    <span slot="HGVScoding" slot-scope="data" v-html='formatColon(data.value)'></span>
+			    <span slot="HGVSprotein" slot-scope="data" v-html='formatColon(data.value)'></span>
+			    <span slot="position" slot-scope="data" v-html='formatColon(data.value)'></span>
 				<template slot="action" slot-scope="data">
 				        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 				        <b-button size="sm" @click.stop="showVariant(data.item.variant_id)">
@@ -71,7 +78,15 @@
 import Vue from 'vue'
 import {HTTP} from '@/router/http'
 import {serverURL} from '@/app_config'
-// import geneVariants from '@/components/Variants'
+
+// JSON cache: 
+
+import genes from '@/assets/genes.json'
+
+// end JSON cache
+
+
+
 import { mapGetters } from 'vuex'
 import store from '@/store'
 export default {
@@ -107,21 +122,6 @@ export default {
 					label: "Molecular consequence",
 					sortable: true
 				},
-				{
-					key: 'tier_level',
-					label: "Tier Level",
-					sortable: true
-				} ,
-				{
-					key: 'SVIP_status',
-					label: "Status",
-					sortable: true
-				} ,
-				{
-					key: 'SVIP_confidence_score',
-					label: "Score",
-					sortable: true
-				} ,
 				{
 					key: 'action',
 					label: '',
@@ -171,30 +171,57 @@ export default {
 		},
 		showVariant (id){
 			this.$router.push('/gene/'+this.$route.params.gene_id+"/variant/"+id)
+		},
+		formatColon (text){
+			let parts = text.split(":");
+			if (parts.length > 1){
+				let prefix = parts.shift();
+				return "<span class='text-muted'>"+prefix+":</span>"+parts.join(":");
+			}
+			return text;
 		}
 	},
 	beforeRouteEnter (to, from, next) {
 		if (to.params.gene_id != 'new'){
-			HTTP.get('genes/'+to.params.gene_id).then(res => {
-				var gene = res.data;
-				store.commit('SELECT_GENE',gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
-			});			
+
+			// JSON cache: 
+			
+			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
+			store.commit('SELECT_GENE',gene);
+			next(vm => vm.setgene(gene));
+			
+			// end cache
+		
+			// HTTP.get('genes/'+to.params.gene_id).then(res => {
+			// 	var gene = res.data;
+			// 	store.commit('SELECT_GENE',gene);
+			// 	next(vm => vm.setgene(gene));
+			// 	// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+			// 	// 	next(vm => vm.setgene(gene));
+			// 	// })
+			// });
 		}
 	},
 	beforeRouteUpdate (to, from, next) {
 		if (to.params.gene_id != 'new'){
-			HTTP.get('genes/'+to.params.gene_id).then(res => {
-				var gene = res.data;
-				store.commit('SELECT_GENE',gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
-			});			
+
+			// JSON cache: 
+			
+			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
+			store.commit('SELECT_GENE',gene);
+			next(vm => vm.setgene(gene));
+			
+			// end cache
+
+
+			// HTTP.get('genes/'+to.params.gene_id).then(res => {
+			// 	var gene = res.data;
+			// 	store.commit('SELECT_GENE',gene);
+			// 	next(vm => vm.setgene(gene));
+			// 	// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+			// 	// 	next(vm => vm.setgene(gene));
+			// 	// })
+			// });
 		}
   },
 	created (){
