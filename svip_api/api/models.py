@@ -20,13 +20,16 @@ class Source(models.Model):
 
 class Gene(models.Model):
     entrez_id = models.BigIntegerField(unique=True, db_index=True)
-    ensembl_gene_id = models.CharField(max_length=20, db_index=True)
-    symbol = models.CharField(max_length=10, unique=True, db_index=True)
+    ensembl_gene_id = models.TextField(db_index=True)
+    symbol = models.TextField(unique=True, db_index=True)
     uniprot_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     location = models.TextField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
     sources = JSONField(default=dict)
+
+    aliases = ArrayField(base_field=models.TextField(), default=list, null=True)
+    prev_symbols = ArrayField(base_field=models.TextField(), default=list, null=True)
 
     # sources = ArrayField(
     #     base_field=models.ForeignKey(to=Source, to_field='name', on_delete=models.CASCADE), default=list)
@@ -38,17 +41,17 @@ class Gene(models.Model):
 class Variant(models.Model):
     gene = models.ForeignKey(to=Gene, on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=120, null=False, db_index=True, verbose_name="Variant Name")
+    name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
     description = models.TextField(null=True, db_index=True)
 
-    biomarker_type = models.CharField(max_length=30, null=True)
+    biomarker_type = models.TextField(null=True)
     so_hierarchy = ArrayField(base_field=models.CharField(max_length=15), null=True, verbose_name="Hierarchy of SO IDs")
-    soid = models.CharField(max_length=15, null=True, verbose_name="Sequence Ontology ID", default="")
-    so_name = models.CharField(max_length=30, null=True)
+    soid = models.TextField(null=True, verbose_name="Sequence Ontology ID", default="")
+    so_name = models.TextField(null=True)
 
-    reference_name = models.CharField(max_length=30, null=True)  # e.g., GRCh37
-    refseq = models.CharField(max_length=60, null=True)
-    isoform = models.CharField(max_length=120, null=True)
+    reference_name = models.TextField(null=True)  # e.g., GRCh37
+    refseq = models.TextField(null=True)
+    isoform = models.TextField(null=True)
 
     # position and change data
     chromosome = models.CharField(max_length=10, null=True)
@@ -69,6 +72,9 @@ class Variant(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.gene.symbol, self.name)
+
+    def gene_symbol(self):
+        return self.gene.symbol
 
     class Meta:
         indexes = [
@@ -94,20 +100,20 @@ class Association(models.Model):
     variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
 
     source_url = models.TextField(null=True)
-    source = models.CharField(max_length=30)
+    source = models.TextField()
 
     # temporary field to log exactly what we're getting from the server
     payload = JSONField(default=dict)
 
     description = models.TextField(null=True)
-    drug_labels = models.CharField(max_length=120, null=True)
+    drug_labels = models.TextField(null=True)
 
     variant_name = models.TextField(null=True)  # here for debugging, remove if it's always the name as Variant__name
     source_link = models.TextField(null=True)
 
-    evidence_label = models.CharField(max_length=20, null=True)
-    response_type = models.CharField(max_length=20, null=True)
-    evidence_level = models.CharField(max_length=20, null=True)
+    evidence_label = models.TextField(null=True)
+    response_type = models.TextField(null=True)
+    evidence_level = models.TextField(null=True)
 
 
 # all of the following are optional children of Association
@@ -115,33 +121,33 @@ class Association(models.Model):
 class Phenotype(models.Model):
     association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
 
-    source = models.CharField(max_length=120, null=True)
-    term = models.CharField(max_length=120, null=True)
-    pheno_id = models.CharField(max_length=120, null=True)  # just called 'id' in the original object
-    family = models.CharField(max_length=120, null=True)
+    source = models.TextField(null=True)
+    term = models.TextField(null=True)
+    pheno_id = models.TextField(null=True)  # just called 'id' in the original object
+    family = models.TextField(null=True)
     description = models.TextField(null=True)
 
 
 class Evidence(models.Model):
     association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
 
-    type = models.CharField(max_length=20, choices=EVIDENCE_TYPES)
+    type = models.TextField(choices=EVIDENCE_TYPES)
     description = models.TextField(null=True)
 
     # originally under association.evidence[].info.publications[]
     publications = ArrayField(base_field=models.TextField(), null=True, verbose_name="Publication URLs")
 
     # originally under association.evidence[].evidenceType.sourceName
-    evidenceType_sourceName = models.CharField(max_length=120, null=True)
+    evidenceType_sourceName = models.TextField(null=True)
     # originally under association.evidence[].evidenceType.id
-    evidenceType_id = models.CharField(max_length=120, null=True)
+    evidenceType_id = models.TextField(null=True)
 
 
 class EnvironmentalContext(models.Model):
     association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
 
-    source = models.CharField(max_length=120, null=True)
-    term = models.CharField(max_length=120)
-    envcontext_id = models.CharField(max_length=120, null=True)  # just called 'id' in the original object
-    usan_stem = models.CharField(max_length=120, null=True)
+    source = models.TextField(null=True)
+    term = models.TextField(null=True)
+    envcontext_id = models.TextField(null=True)  # just called 'id' in the original object
+    usan_stem = models.TextField(null=True)
     description = models.TextField()
