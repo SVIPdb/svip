@@ -67,6 +67,7 @@ class Variant(models.Model):
     # external references
     dbsnp_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
+    mv_info = JSONField(null=True)  # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
 
     sources = JSONField(default=dict)
 
