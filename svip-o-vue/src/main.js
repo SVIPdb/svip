@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import '@/css/bootstrap.css'
 import '@/css/main.css'
-import Snotify, { SnotifyPosition } from 'vue-snotify'
+import Snotify, {SnotifyPosition} from 'vue-snotify'
 import 'vue-snotify/styles/material.css'
 import Access from '@/directives/access'
 import 'vue-awesome/icons'
@@ -24,9 +24,9 @@ import {HTTP} from '@/router/http'
 Vue.config.productionTip = false
 
 const options = {
-  toast: {
-    position: SnotifyPosition.rightTop
-  }
+    toast: {
+        position: SnotifyPosition.rightTop
+    }
 }
 
 Vue.use(Snotify, options)
@@ -39,9 +39,9 @@ Vue.component('v-select', vSelect)
 // globally (in your main .js file)
 
 new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+    el: '#app',
+    router,
+    store,
+    components: {App},
+    template: '<App/>'
 })

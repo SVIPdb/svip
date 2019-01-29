@@ -14,54 +14,58 @@ Vue.use(Router)
 // Vue.use(ClientTable);
 
 const router = new Router({
-  mode: 'history',
-  routes: [
-	 {
-		 path: '/genes',
-		 name: 'genes',
-		 component: Genes
-	 },
-	 {
-		 path: '/gene/:gene_id',
-		 name: 'gene',
-		 component: Gene
-	 },
-	 {
-		 path: '/gene/:gene_id/variant/:variant_id',
-		 name: 'variant',
-		 component: Variant
-	 },
+    mode: 'history',
+    routes: [
+        {
+            path: '/genes',
+            name: 'genes',
+            component: Genes
+        },
+        {
+            path: '/gene/:gene_id',
+            name: 'gene',
+            component: Gene
+        },
+        {
+            path: '/gene/:gene_id/variant/:variant_id',
+            name: 'variant',
+            component: Variant
+        },
 
-    {
-      path: '*',
-      name: 'home',
-      component: Home
-    }
-  ]
+        {
+            path: '*',
+            name: 'home',
+            component: Home
+        }
+    ]
 })
 
-function requireAuth (to, from, next) {
-  store.dispatch('getCredentials').then(test => {
-    if (!test) {
-      next({
-        path: '/',
-        query: {redirect: to.fullPath}
-      })
-    } else {
-      if (to.matched.some(record => record.meta.permissions.length > 0)) {
-        store.dispatch('checkPermissions', {permissions: to.meta.permissions, condition: to.meta.condition}).then(res => {
-          if (res) {
-            next()
-          } else {
+function requireAuth(to, from, next) {
+    store.dispatch('getCredentials').then(test => {
+        if (!test) {
             next({
-              path: '/permissionDenied'
+                path: '/',
+                query: {redirect: to.fullPath}
             })
-          }
-        })
-      } else {
-        next()
-      }
-    }
-  })
+        } else {
+            if (to.matched.some(record => record.meta.permissions.length > 0)) {
+                store.dispatch('checkPermissions', {
+                    permissions: to.meta.permissions,
+                    condition: to.meta.condition
+                }).then(res => {
+                    if (res) {
+                        next()
+                    } else {
+                        next({
+                            path: '/permissionDenied'
+                        })
+                    }
+                })
+            } else {
+                next()
+            }
+        }
+    })
 }
+
 export default router
