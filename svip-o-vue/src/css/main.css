@@ -1,7 +1,23 @@
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
+
 body {
-  margin-bottom: 60px; /* Margin bottom by footer height */
+    margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+footer {
+    padding: 20px;
+}
+
+/* some tweaks to boostrap-vue's inexplicable whitespace choices */
+.card-title {
+    margin-bottom: 0;
+}
+
+.v-select.searchable .dropdown-toggle::after {
+    content: ' ';
+    margin: 5px;
+    border: none;
 }
