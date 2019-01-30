@@ -67,7 +67,7 @@
         <variant-svip v-if="svipVariant"></variant-svip>
         <variant-public-databases></variant-public-databases>
 
-        <!--<VariantExternalInfo :hg19-id="hg19_id" />-->
+        <VariantExternalInfo :mvInfo="variant.mv_info"/>
     </div>
 </template>
 
