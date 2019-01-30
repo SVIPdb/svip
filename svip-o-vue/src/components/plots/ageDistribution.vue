@@ -17,7 +17,7 @@
 
         <b-tooltip :target="() => $refs.thechart" placement="top">
             <div v-for="(d) in this.aggregatedData" style="text-align: left;">
-                <svg width="10" height="10"><rect width="10" height="10" :fill="d.c"></rect></svg>
+                <svg width="10" height="10" class="legend-swatch"><rect width="10" height="10" :fill="d.c"></rect></svg>
                 <span><b>{{d.k}}:</b> {{d.v}}</span>
             </div>
         </b-tooltip>

@@ -17,7 +17,7 @@
 
         <b-tooltip :target="() => $refs.thechart" placement="top">
             <div v-for="(d) in this.formattedData" style="text-align: left;">
-                <svg width="10" height="10"><rect width="10" height="10" :fill="d.color"></rect></svg>
+                <svg width="10" height="10" class="legend-swatch"><rect width="10" height="10" :fill="d.color"></rect></svg>
                 <span><b>{{d.name}}:</b> {{d.count}}</span>
             </div>
         </b-tooltip>
@@ -29,6 +29,7 @@
 import Vue from 'vue'
 import * as d3 from 'd3'
 import {titleCase} from "@/utils";
+import * as _ from "lodash";
 
 const colorMap = d3.scaleOrdinal(d3.schemeSet3)
     .domain(
@@ -65,7 +66,7 @@ export default {
     methods: {},
     computed: {
         formattedData: function() {
-            return this.data.map((d, i) => {
+            return _.sortBy(this.data, (x) => -x.count).map((d, i) => {
                 let name;
 
                 if (d.name === 'NA') {
@@ -84,12 +85,12 @@ export default {
             })
         },
         layout: function () {
-            const total = d3.sum(this.data, (d) => d.count);
+            const total = d3.sum(this.formattedData, (d) => d.count);
             this.x.domain([ 0, 1.0 ]).range([0, this.width]);
 
             return this.formattedData.map((d, i) => {
                 const prop = (x) => x / total;
-                const xpos = i > 0 ? d3.sum(this.data.slice(0, i), (p) => this.x(prop(p.count))) : 0;
+                const xpos = i > 0 ? d3.sum(this.formattedData.slice(0, i), (p) => this.x(prop(p.count))) : 0;
 
                 return {
                     v: d.count,
@@ -111,9 +112,6 @@ export default {
 .sig-bar-chart {
     width: 300px;
     height: 28px;
-}
-.sig-legend {
-    font-size: 12px;
 }
 
 #sigtooltip {
