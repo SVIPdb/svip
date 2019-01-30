@@ -56,13 +56,15 @@
                     <div class='row'>
                         <div class="col-4">
                             <b-card>
-                                <h6 class='card-subtitle mb-2 text-muted'>Diseases <i class='float-right'
-                                                                                      v-if='!row.item.filter'>click on a
-                                    disease to filter the drugs table </i><span class='float-right badge badge-primary'
-                                                                                v-if='row.item.filter'
-                                                                                style='font-size: 13px'>{{row.item.filter}} <button
-                                    type="button" class="close small ml-3" aria-label="Close" style='font-size: 14px'
-                                    @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span>
+                                <h6 class='card-subtitle mb-2 text-muted'>
+                                    Diseases
+                                    <i class='float-right' v-if='!row.item.filter'>click on a disease to filter the drugs table </i>
+                                    <span class='float-right badge badge-primary' v-if='row.item.filter' style='font-size: 13px'>
+                                        {{row.item.filter}}
+                                        <button type="button" class="close small ml-3" aria-label="Close" style='font-size: 14px' @click='row.item.filter=""'>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </span>
                                 </h6>
                                 <table class='table table-sm table-hover'>
                                     <thead>
@@ -98,6 +100,7 @@
                                         <th>Clinical Significance</th>
                                         <th>{{(row.item.source==='CIViC')?"Score level":"Tier level"}}</th>
                                         <th>Drug</th>
+                                        <th>PMID(s)</th>
                                     </tr>
                                     <tr v-for='c in filterClinical(row.item.clinical,row.item.filter)'>
                                         <td>{{c.disease}}</td>
@@ -105,6 +108,11 @@
                                         <td>{{c.significance}}</td>
                                         <td>{{c.tier}}</td>
                                         <td>{{normalizeItemList(c.drug)}}</td>
+                                        <td>
+                                            <template v-for="(p, i) in c.publications">
+                                                <a :href="p.url">{{p.pmid}}</a><span v-if="i < c.publications.length-1">, </span>
+                                            </template>
+                                        </td>
                                     </tr>
                                 </table>
                             </b-card>
@@ -228,8 +236,18 @@ export default {
                     type: _.map(a.evidence_set, e => {
                         return e.type
                     }).join('; '),
-                    tier: a.evidence_level + a.evidence_label
+                    tier: a.evidence_level + a.evidence_label,
+                    publications: (
+                        a.evidence_set.reduce((acc, ev_set) =>
+                            acc.concat(
+                                ev_set.publications.map(p => ({
+                                    url: p,
+                                    pmid: _.last(p.split("/"))
+                                })))
+                        , [])
+                    )
                 })
+
                 data[source].scores.push(+a.evidence_level)
                 data[source].source_id += source_id
                 data[source].url = a.source_url
