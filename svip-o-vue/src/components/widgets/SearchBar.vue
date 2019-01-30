@@ -56,6 +56,11 @@ export default {
             } else if (val.type === 'v') {
                 this.$router.push('gene/' + val.g_id + '/variant/' + val.id);
             }
+        },
+        showOnlySVIP: function() {
+            if (this.query === '') {
+                this.getGenesOnly();
+            }
         }
     },
     computed: {
@@ -82,15 +87,19 @@ export default {
         },
         getGenesOnly: function() {
             HTTP.get('query', {params: {q: ''}}).then(res => {
-                this.options = res.data
+                this.options = (this.showOnlySVIP)
+                    ? res.data.filter(entry =>
+                        (entry.type === 'g' && svipVariants.find((sv) => sv.gene_name === entry.label) !== undefined)
+                    )
+                    : res.data;
             });
         },
         search: _.debounce((loading, search, vm) => {
             return HTTP.get('query', {params: {q: search}}).then(res => {
                 if (vm.showOnlySVIP) {
-                    console.log("filtering to SVIP-only")
+                    // FIXME: verify that we've filtered the gene list to only those genes for which we have SVIP info
                     vm.options = res.data.filter(entry =>
-                        entry.type === 'g' ||
+                        (entry.type === 'g' && svipVariants.find((sv) => sv.gene_name === entry.label) !== undefined) ||
                         (entry.type === 'v' && vm.hasSvipData(entry))
                     );
                 } else {
