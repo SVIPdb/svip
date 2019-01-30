@@ -44,6 +44,8 @@
                 <template slot='gender' slot-scope='data'>
                     <gender-balance :data='data.item.gender_balance'></gender-balance>
                 </template>
+
+                <!--
                 <template slot='pathogenicity' slot-scope='data'>
                     {{data.item.pathogenicity}}
                     <svg height='16' width='16' style='margin-left: 20px' v-b-tooltip.hover
@@ -52,6 +54,8 @@
                               :class="'pathogenicity '+data.item.pathogenicity_level"></rect>
                     </svg>
                 </template>
+                -->
+
                 <template slot='score' slot-scope='data'>
                     <icon :name="(data.item.score < 1)?'star-o':'star'" style='margin-right: 5px'></icon>
                     <icon :name="(data.item.score < 2)?'star-o':'star'" style='margin-right: 5px'></icon>
@@ -105,15 +109,21 @@ export default {
                     label: 'Gender Balance',
                     sortable: false,
                     class: 'text-center'
-                }, {
+                }, /* {
                     key: 'pathogenicity',
                     label: 'Pathogenicity',
                     sortable: false
-                }, {
+                }, */ {
                     key: 'clinical_significance',
                     label: 'Clinical Significance',
                     sortable: false
-                }, {
+                },
+                {
+                    key: 'status',
+                    label: 'Status',
+                    sortable: false
+                },
+                {
                     key: 'score',
                     label: 'SVIP Confidence',
                     sortable: true,

@@ -39,16 +39,25 @@
                             <router-link :to='"/gene/"+gene_id'>{{variant.gene.symbol}}</router-link>
                         </b></td>
                         <td><b>{{variant.name}}</b></td>
-                        <td :class="{unavailable: !hgvs_c_pos}">{{hgvs_c_pos || "unavailable"}}</td>
-                        <td :class="{unavailable: !hgvs_p_pos}">{{hgvs_p_pos || "unavailable"}}</td>
+                        <td :class="{unavailable: !hgvs_c_pos}">
+                            <span v-if="hgvs_c_pos"><span class="text-muted">{{hgvs_c_pos.transcript}}:</span>{{hgvs_c_pos.change}}</span>
+                            <span v-else>unavailable</span>
+                        </td>
+                        <td :class="{unavailable: !hgvs_p_pos}">
+                            <span v-if="hgvs_p_pos"><span class="text-muted">{{hgvs_p_pos.transcript}}:</span>{{hgvs_p_pos.change}}</span>
+                            <span v-else>unavailable</span>
+                        </td>
                         <td :class="{unavailable: !variant.dbsnp_ids}">
                             <a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href="'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target='_blank'>
-                                {{rsid}} <icon name='external-link'></icon>
+                                rs{{rsid}} <icon name='external-link'></icon>
                             </a>
                             <span v-if="!variant.dbsnp_ids">unavailable</span>
                         </td>
                         <td>{{variant.so_name}}</td>
-                        <td :class="{unavailable: !var_position}">{{var_position || "unavailable"}}</td>
+                        <td :class="{unavailable: !var_position}">
+                            <span v-if="var_position"><span class="text-muted">{{variant.reference_name}}:</span>{{var_position}}</span>
+                            <span v-else>unavailable</span>
+                        </td>
                         <td>{{variant.reference_name}}</td>
                     </tr>
                 </table>
@@ -99,10 +108,10 @@ export default {
             return ''
         },
         hgvs_c_pos() {
-            return change_from_hgvs(this.variant.hgvs_c);
+            return change_from_hgvs(this.variant.hgvs_c, true);
         },
         hgvs_p_pos() {
-            return change_from_hgvs(this.variant.hgvs_p);
+            return change_from_hgvs(this.variant.hgvs_p, true);
         },
         var_position() {
             return var_to_position(this.variant);

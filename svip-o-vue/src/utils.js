@@ -1,6 +1,11 @@
-export function change_from_hgvs(x) {
+export function change_from_hgvs(x, include_transcript = false) {
     if (!x || !x.includes(':'))
         return x;
+
+    if (include_transcript) {
+        const parts = x.split(':');
+        return {transcript: parts[0], change: parts[1]};
+    }
 
     return x.split(':')[1];
 }

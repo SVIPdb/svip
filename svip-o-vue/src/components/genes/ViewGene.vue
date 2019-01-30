@@ -26,8 +26,17 @@
                 <div class='card-body'>
                     <h5 class="card-title"><b>{{gene.symbol}}:</b> {{phenotypes.length}} variants</h5>
                     <h6 v-if='gene.oncogene'>Oncogene</h6>
-                    <!-- <p class = 'card-text'>{{gene.name}}</p> -->
-                    <div><b>Entrez ID:</b> {{gene.entrez_id}}</div>
+
+                    <dl class="row" style="margin-top: 0.75em;">
+                        <dt class="col-2 text-right">Entrez ID</dt>
+                        <dd class="col-10"><a :href="`https://www.ncbi.nlm.nih.gov/gene/?term=${gene.entrez_id}%5Buid%5D`" target="_blank">{{gene.entrez_id}}</a></dd>
+
+                        <dt class="col-2 text-right">Ensembl Gene ID</dt>
+                        <dd class="col-10"><a :href="`http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${gene.ensembl_gene_id}`" target="_blank">{{gene.ensembl_gene_id}}</a></dd>
+
+                        <dt class="col-2 text-right">UniProtKB ID</dt>
+                        <dd class="col-10"><a v-if="gene.uniprot_ids" :href="`https://www.uniprot.org/uniprot/${gene.uniprot_ids[0]}`" target="_blank" class="mr-3">{{gene.uniprot_ids[0]}}</a></dd>
+                    </dl>
                 </div>
             </div>
 
@@ -56,6 +65,18 @@
             <div class='container-fluid'>
                 <b-table :fields='fields' :items='phenotypes' :sort-by.sync="sortBy" :sort-desc='true'
                          :filter='tableFilter'>
+                    <template slot="hgvs_c" slot-scope="data" v-if="data.value">
+                        <span class="text-muted">{{data.value.transcript}}:</span>{{data.value.change}}
+                    </template>
+
+                    <template slot="hgvs_p" slot-scope="data" v-if="data.value">
+                        <span class="text-muted">{{data.value.transcript}}:</span>{{data.value.change}}
+                    </template>
+
+                    <template slot="hgvs_g" slot-scope="data" v-if="data.value">
+                        <span class="text-muted">{{data.item.reference_name}}:</span>{{data.value}}
+                    </template>
+
                     <template slot="action" slot-scope="data">
                         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
                         <b-button size="sm" @click.stop="showVariant(data.item.id)">
@@ -99,12 +120,12 @@ export default {
                 }, {
                     key: 'hgvs_c',
                     label: 'HGVS coding',
-                    formatter: (x) => change_from_hgvs(x),
+                    formatter: (x) => change_from_hgvs(x, true),
                     sortable: true
                 }, {
                     key: 'hgvs_p',
                     label: 'HGVS protein',
-                    formatter: (x) => change_from_hgvs(x),
+                    formatter: (x) => change_from_hgvs(x, true),
                     sortable: true
                 }, {
                     key: 'hgvs_g',
@@ -116,6 +137,7 @@ export default {
                     label: 'Molecular Consequence',
                     sortable: true
                 },
+                /*
                 {
                     key: 'mock.tier_level',
                     label: 'Tier Level',
@@ -131,6 +153,7 @@ export default {
                     label: 'Score',
                     sortable: true
                 },
+                */
                 {
                     key: 'action',
                     label: '',
