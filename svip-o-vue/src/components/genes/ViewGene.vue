@@ -28,13 +28,13 @@
                     <h6 v-if='gene.oncogene'>Oncogene</h6>
 
                     <dl class="row" style="margin-top: 0.75em;">
-                        <dt class="col-2 text-right">Entrez ID</dt>
+                        <dt class="col-2 text-right" style="white-space: nowrap;">Entrez ID</dt>
                         <dd class="col-10"><a :href="`https://www.ncbi.nlm.nih.gov/gene/?term=${gene.entrez_id}%5Buid%5D`" target="_blank">{{gene.entrez_id}}</a></dd>
 
-                        <dt class="col-2 text-right">Ensembl Gene ID</dt>
+                        <dt class="col-2 text-right" style="white-space: nowrap;">Ensembl Gene ID</dt>
                         <dd class="col-10"><a :href="`http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${gene.ensembl_gene_id}`" target="_blank">{{gene.ensembl_gene_id}}</a></dd>
 
-                        <dt class="col-2 text-right">UniProtKB ID</dt>
+                        <dt class="col-2 text-right" style="white-space: nowrap;">UniProtKB ID</dt>
                         <dd class="col-10"><a v-if="gene.uniprot_ids" :href="`https://www.uniprot.org/uniprot/${gene.uniprot_ids[0]}`" target="_blank" class="mr-3">{{gene.uniprot_ids[0]}}</a></dd>
                     </dl>
                 </div>
