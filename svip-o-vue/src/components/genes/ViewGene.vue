@@ -133,7 +133,7 @@ export default {
                     formatter: (x, k, variant) => var_to_position(variant),
                     sortable: true
                 }, {
-                    key: 'so_name',
+                    key: 'molecular_consequence',
                     label: 'Molecular Consequence',
                     sortable: true
                 },

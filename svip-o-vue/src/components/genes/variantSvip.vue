@@ -119,7 +119,7 @@ export default {
                     sortable: false
                 },
                 {
-                    key: 'status',
+                    key: 'SVIP_status',
                     label: 'Status',
                     sortable: false
                 },
