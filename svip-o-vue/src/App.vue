@@ -12,9 +12,27 @@
 </template>
 
 <script>
-
+import Vue from 'vue'
 import navHeader from '@/components/navheader'
 import navFooter from '@/components/navfooter'
+
+/* used in ViewVariant, and potentially also in ViewGene */
+Vue.component('optional', {
+    props: ['val'],
+    template: `
+    <td :class="{unavailable: !val}">
+        <span v-if="val"><slot></slot></span>
+        <span v-else>unavailable</span>
+    </td>`
+});
+
+Vue.component('coordinates', {
+    props: ['val'],
+    template: `
+    <optional :val="val">
+        <span class="text-muted">{{val.transcript}}:</span>{{val.change}}
+    </optional>`
+});
 
 export default {
     components: {navHeader, navFooter},

@@ -39,25 +39,20 @@
                             <router-link :to='"/gene/"+gene_id'>{{variant.gene.symbol}}</router-link>
                         </b></td>
                         <td><b>{{variant.name}}</b></td>
-                        <td :class="{unavailable: !hgvs_c_pos}">
-                            <span v-if="hgvs_c_pos"><span class="text-muted">{{hgvs_c_pos.transcript}}:</span>{{hgvs_c_pos.change}}</span>
-                            <span v-else>unavailable</span>
-                        </td>
-                        <td :class="{unavailable: !hgvs_p_pos}">
-                            <span v-if="hgvs_p_pos"><span class="text-muted">{{hgvs_p_pos.transcript}}:</span>{{hgvs_p_pos.change}}</span>
-                            <span v-else>unavailable</span>
-                        </td>
-                        <td :class="{unavailable: !variant.dbsnp_ids}">
+
+                        <coordinates :val="hgvs_c_pos" />
+                        <coordinates :val="hgvs_p_pos" />
+
+                        <optional :val="variant.dbsnp_ids">
                             <a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href="'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target='_blank'>
                                 rs{{rsid}} <icon name='external-link'></icon>
                             </a>
-                            <span v-if="!variant.dbsnp_ids">unavailable</span>
-                        </td>
+                        </optional>
+
                         <td>{{variant.so_name}}</td>
-                        <td :class="{unavailable: !var_position}">
-                            <span v-if="var_position"><span class="text-muted">{{variant.reference_name}}:</span>{{var_position}}</span>
-                            <span v-else>unavailable</span>
-                        </td>
+
+                        <optional :val="var_position"><span class="text-muted">{{variant.reference_name}}:</span>{{var_position}}</optional>
+
                         <td>{{variant.reference_name}}</td>
                     </tr>
                 </table>
