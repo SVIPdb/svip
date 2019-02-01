@@ -1,12 +1,11 @@
 <template>
     <form>
-        <v-select label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
+        <v-select label="label" :options="options" placeholder="Search for gene / variant" @change="queryChanged" @search="onSearch" v-model="selected" v-on:change="queryChanged">
             <template slot="option" slot-scope="option">
                 <div class="d-center">
                     <div class="bits" v-if="query">
                         <span v-for="(bit, idx) in highlighted(query, option.label)"
-                              :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}
-                        </span>
+                              :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
                     </div>
                     <div v-else>{{option.label}}</div>
 
@@ -85,6 +84,10 @@ export default {
             this.query = search;
             this.search(loading, search, this);
         },
+        queryChanged(val) {
+            debugger;
+            console.log(val)
+        },
         getGenesOnly: function() {
             HTTP.get('query', {params: {q: ''}}).then(res => {
                 this.options = (this.showOnlySVIP)
@@ -140,9 +143,10 @@ export default {
 <style scoped>
 .d-center { margin: 0; padding: 0; display: flex; justify-content: space-between; }
 .d-center .segment { margin: 0; }
-.bits * { margin: 0; }
+.bits * { margin: 0; color: #555; }
 .bits .matched {
     font-weight: bolder;
+    color: black;
 }
 .result-type {
     font-style: italic;
