@@ -100,7 +100,7 @@
                                         <th>Clinical Significance</th>
                                         <th>{{(row.item.source==='CIViC')?"Score level":"Tier level"}}</th>
                                         <th>Drug</th>
-                                        <th>PMID(s)</th>
+                                        <th>References</th>
                                     </tr>
                                     <tr v-for='c in filterClinical(row.item.clinical,row.item.filter)'>
                                         <td>{{c.disease}}</td>
@@ -240,10 +240,13 @@ export default {
                     publications: (
                         a.evidence_set.reduce((acc, ev_set) =>
                             acc.concat(
-                                ev_set.publications.map(p => ({
-                                    url: p,
-                                    pmid: _.last(p.split("/"))
-                                })))
+                                ev_set.publications.map(p => {
+                                    const pmid = _.last(p.split("/"));
+                                    return {
+                                        url: p,
+                                        pmid: (/^[0-9]+$/.test(pmid)) ? pmid : "(external)"
+                                    };
+                                }))
                         , [])
                     )
                 })
