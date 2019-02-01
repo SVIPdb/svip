@@ -30,7 +30,7 @@ Vue.component('coordinates', {
     props: ['val'],
     template: `
     <optional :val="val">
-        <span class="text-muted">{{val.transcript}}:</span>{{val.change}}
+        <span v-if="val"><span class="text-muted">{{val.transcript}}:</span>{{val.change}}</span>
     </optional>`
 });
 

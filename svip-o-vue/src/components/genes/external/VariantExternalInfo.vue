@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <Pathogenicity :cadd="mvInfo.cadd" v-if="mvInfo.cadd" />
+        <Pathogenicity :cadd="mvInfo.cadd" v-if="mvInfo && mvInfo.cadd" />
         <PopulationStats :mvInfo="mvInfo" v-if="mvInfo" />
     </div>
 </template>
