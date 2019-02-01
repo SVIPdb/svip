@@ -110,7 +110,7 @@
                                         <td>{{normalizeItemList(c.drug)}}</td>
                                         <td>
                                             <template v-for="(p, i) in c.publications">
-                                                <a :href="p.url">{{p.pmid}}</a><span v-if="i < c.publications.length-1">, </span>
+                                                <a :href="p.url" target="_blank">{{p.pmid}}</a><span v-if="i < c.publications.length-1">, </span>
                                             </template>
                                         </td>
                                     </tr>
