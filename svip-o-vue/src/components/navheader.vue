@@ -8,7 +8,6 @@
 		<!-- <img src="../assets/svip_logo_small.png" style="margin-right:5px"> -->
 		<img src="../assets/sphn_logo_small.png" style="margin-right:5px" />
 		<img src="../assets/sib_logo_small.png" style="margin-right:5px" />
-		  
 		<router-link to="/">SVIP-O</router-link>
 	</b-navbar-brand>
 
@@ -22,8 +21,6 @@
 				<b-nav-item v-access = '"active"'>Welcome {{user.fullname}}</b-nav-item>
 				<b-nav-item v-access = '"active"'><a class = 'pointer' @click='logout()'><icon name = 'sign-out'></icon></a></b-nav-item>
 			</b-navbar-nav>
-
-
 
 		</b-navbar-nav>
 

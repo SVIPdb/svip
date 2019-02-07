@@ -15,7 +15,6 @@ import VeeValidate from 'vee-validate'
 import vSelect from 'vue-select'
 
 import store from './store'
-import { HTTP } from '@/router/http'
 
 Vue.config.productionTip = false
 

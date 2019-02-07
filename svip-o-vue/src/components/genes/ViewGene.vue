@@ -33,7 +33,7 @@
 						<dt class = 'col-2 text-right'>Ensembl Gene ID</dt>
 						<dd class = 'col-10'><a :href='"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g="+gene.ensembl_gene_id' target = '_blank'>{{gene.ensembl_gene_id}}</a></dd>
 						<dt class = 'col-2 text-right'>UniProtKB ID</dt>
-						<dd class = 'col-10'><a v-for='uniprot in gene.uniprot_ids' :href='"https://www.uniprot.org/uniprot/"+uniprot' target = '_blank' class = 'mr-3'>{{uniprot}}</a></dd>
+						<dd class = 'col-10'><a v-for='(uniprot,idx) in gene.uniprot_ids' :key="idx" :href='"https://www.uniprot.org/uniprot/"+uniprot' target = '_blank' class = 'mr-3'>{{uniprot}}</a></dd>
 					</dl>
 				</div>
 			</div>

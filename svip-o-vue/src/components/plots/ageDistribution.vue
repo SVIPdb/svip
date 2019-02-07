@@ -3,6 +3,7 @@
 		<rect
 		class="bar"
 		v-for="(d,i) in layout"
+		:key="i"
 		:x="d.x"
 		:y="d.y"
 		:width="d.width"

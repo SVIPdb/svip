@@ -4,9 +4,9 @@
 		<nav-header></nav-header>
 
 		<!-- content -->
-	  <router-view style="margin: 90px auto 200px auto"/>
+		<router-view style="margin: 90px auto 200px auto"/>
 
-	  <nav-footer></nav-footer>
+		<nav-footer></nav-footer>
 	</div>
 </template>
 
@@ -16,13 +16,13 @@ import navHeader from '@/components/navheader'
 import navFooter from '@/components/navfooter'
 
 export default {
-  components: { navHeader, navFooter },
-  name: 'App',
-  computed: {
-    year () {
-      return new Date().getFullYear()
-    }
-  }
+	components: { navHeader, navFooter },
+	name: 'App',
+	computed: {
+		year () {
+			return new Date().getFullYear()
+		}
+	}
 }
 </script>
 
@@ -58,7 +58,6 @@ export default {
 	border:1px solid #dc3545;
 	box-shadow:0 0 0 0.15rem #F8E6E0 !important;
 }
-
 
 
 .has-error small{

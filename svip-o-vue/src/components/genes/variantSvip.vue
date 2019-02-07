@@ -1,25 +1,4 @@
 <template>
-<!--
-/************************ LICENCE ***************************
-*     This file is part of <ViKM Vital-IT Knowledge Management web application>
-*     Copyright (C) <2016> SIB Swiss Institute of Bioinformatics
-*
-*     This program is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU Affero General Public License as
-*     published by the Free Software Foundation, either version 3 of the
-*     License, or (at your option) any later version.
-*
-*     This program is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU Affero General Public License for more details.
-*
-*     You should have received a copy of the GNU Affero General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>
-*
-*****************************************************************/
--->
-
 	<div class = 'card mt-3'>
 		<div class = 'card-header'>
 			<div class = 'card-title'>SVIP information <span class = 'text-danger float-right'>WARNING: fake data - only as a demo</span></div>
@@ -27,36 +6,35 @@
 		<div class = 'card-body'>
 			<b-table :fields = 'fields' :items = 'data' :sort-by.sync="sortBy" :sort-desc='false'>				
 			<template slot="actions" slot-scope="row">
-			   <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-			   <b-button size="sm" @click.stop="row.toggleDetails">
-			   		{{ row.detailsShowing ? 'Hide' : 'Show'}} Details
-				</b-button>
-			 </template>
-			 <template slot='name' slot-scope='row'>
-			 	<span :class="(row.detailsShowing)?'bold':''">{{row.item.name}}</span>
-			 </template>
-			<template slot='age' slot-scope='data'>
-				<age-distribution :data='data.item.age_distribution'></age-distribution>
-			</template>
-			<template slot='gender' slot-scope='data'>
-				<gender-balance :data='data.item.gender_balance'></gender-balance>
-			</template>
-			<!-- <template slot='pathogenicity' slot-scope='data'>
-				{{data.item.pathogenicity}} <svg height='16' width='16' style = 'margin-left: 20px' v-b-tooltip.hover :title="data.item.pathogenicity_level+' approved'"><rect x="0" y="0" width="16" height="16" :class="'pathogenicity '+data.item.pathogenicity_level" ></rect></svg>
+				<b-button size="sm" @click.stop="row.toggleDetails">
+				{{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+			</b-button>
+		</template>
+		<template slot='name' slot-scope='row'>
+			<span :class="(row.detailsShowing)?'bold':''">{{row.item.name}}</span>
+		</template>
+		<template slot='age' slot-scope='data'>
+			<age-distribution :data='data.item.age_distribution'></age-distribution>
+		</template>
+		<template slot='gender' slot-scope='data'>
+			<gender-balance :data='data.item.gender_balance'></gender-balance>
+		</template>
+		<!-- <template slot='pathogenicity' slot-scope='data'>
+			{{data.item.pathogenicity}} <svg height='16' width='16' style = 'margin-left: 20px' v-b-tooltip.hover :title="data.item.pathogenicity_level+' approved'"><rect x="0" y="0" width="16" height="16" :class="'pathogenicity '+data.item.pathogenicity_level" ></rect></svg>
 			</template> -->
 			<template slot='score' slot-scope='data'>
 				<icon :name = "(data.item.score < 1)?'star-o':'star'" style='margin-right: 5px'></icon><icon :name = "(data.item.score < 2)?'star-o':'star'" style='margin-right: 5px'></icon><icon  :name = "(data.item.score < 3)?'star-o':'star'" style='margin-right: 5px'></icon><icon  :name = "(data.item.score < 4)?'star-o':'star'" style='margin-right: 5px'></icon>
 			</template>
-		 	<template slot="row-details" slot-scope="row">
+			<template slot="row-details" slot-scope="row">
 				<div class="card">
-				  <div class="card-body" style = 'padding: 0'>
-					<b-table :items='row.item.evidences' :small="true" ></b-table>
-				  </div>
+					<div class="card-body" style = 'padding: 0'>
+						<b-table :items='row.item.evidences' :small="true" ></b-table>
+					</div>
 				</div>
 			</template>
-			</b-table>
-		</div>
-	</div>	
+		</b-table>
+	</div>
+</div>	
 </template>
 
 <script>

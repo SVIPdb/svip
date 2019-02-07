@@ -9,10 +9,9 @@
 		<template slot='selection' slot-scope="data">
 			<input type = 'checkbox' v-model='data.item.is_selected' @click='selectVariant(data.item)'>
 		</template>
-		<template slot="actions" slot-scope="data">
+		<template slot="actions">
 		</template>
 	</b-table>
-
 
 
     <!-- Delete modal -->

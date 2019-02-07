@@ -5,9 +5,9 @@ export const siteTitle = 'SVIP-O'
 export const loginType = 'google'
 
 export const getHeader = function () {
-  const headers = {
-    'Accept': 'application/json'
-    // 'Authorization':'Bearer' + tokenData.access_token
-  }
-  return headers
+	const headers = {
+		'Accept': 'application/json'
+		// 'Authorization':'Bearer' + tokenData.access_token
+	}
+	return headers
 }

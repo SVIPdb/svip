@@ -4,7 +4,6 @@ import Home from '@/components/Home'
 import Genes from '@/components/genes/Genes'
 import Gene from '@/components/genes/ViewGene'
 import Variant from '@/components/genes/ViewVariant'
-import store from '@/store'
 
 // import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 

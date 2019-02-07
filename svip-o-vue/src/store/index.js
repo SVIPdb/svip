@@ -7,8 +7,8 @@ Vue.use(Vuex)
 
 
 export default new Vuex.Store({
-  modules: {
-    users,
-    genes
-  }
+	modules: {
+		users,
+		genes
+	}
 })

@@ -1,29 +1,19 @@
-// JSON cache: 
-import svipVariants from '@/assets/svip_variants.json';
-import genes from '@/assets/genes.json';
-import variants from '@/assets/variants.json';
-import phenotypes from '@/assets/phenotypes.json';
-import associations from '@/assets/associations.json';
-import geneVariants from '@/assets/gene_variants.json';
-
-// end JSON cache
-
 import {HTTP} from '@/router/http';
 
 // initial state
 const state = {
 	current: null,
-	genes: genes,
-	nbGenes: genes.length,
-	variants: variants,
-	nbVariants: variants.length,
-	phenotypes: phenotypes,
-	nbPhenotypes: phenotypes.length,
+	genes: [],
+	nbGenes: 0,
+	variants: [],
+	nbVariants: 0,
+	phenotypes: [],
+	nbPhenotypes: 0,
 	associations: [],
 	nbGeneVariants: 0,
 	geneVariants: [],
 	variant: null,
-	svipVariants: svipVariants,
+	svipVariants: [],
 	svipVariant: null
 }
 
@@ -47,14 +37,8 @@ const getters = {
 // actions
 const actions = {
 
-	getGenes ({ commit } ,params ) {		
-		
-		// JSON cache: 
-		
-		return;
-		
-		// end JSON cache
-		
+	getGenes ({ commit, dispatch } ,params ) {		
+				
 		let page = 1;
 		if (params !== undefined && params.page) page = +params.page;
 		let add = (page > 1);
@@ -74,12 +58,6 @@ const actions = {
 		}
 	},
 	getVariants ({ commit, dispatch } ,params ) {			
-
-		// JSON cache: 
-		
-		return;
-		
-		// end JSON cache
 
 
 		let variantCache = window.localStorage.getItem('variants');
@@ -113,13 +91,7 @@ const actions = {
 		});
 	},
 	getPhenotypes ( {commit, dispatch}, params){
-		
-		// JSON cache: 
-		
-		return;
-		
-		// end JSON cache
-		
+				
 		
 		let phenotypeCache = window.localStorage.getItem('phenotypes');
 		if (phenotypeCache){
@@ -147,14 +119,7 @@ const actions = {
 		});
 	},
 	getAssociations ( {commit, dispatch}, params){
-		
-		// JSON cache: 
-		
-		return;
-		
-		// end JSON cache
-		
-		
+				
 		let associationCache = window.localStorage.getItem('associations');
 		if (associationCache){
 			associationCache = JSON.parse(associationCache);	
@@ -201,9 +166,9 @@ const actions = {
 
 		})
 	},
-	getGeneVariant ( {commit, dispatch }, params){
+	getGeneVariant ( {commit }, params){
 		
-		let variant = geneVariants[params.variant];
+		let variant = state.geneVariants[params.variant];
 		if (variant){
 			commit('SET_VARIANT',variant);
 			return variant;	
@@ -215,12 +180,10 @@ const actions = {
 			return variant;
 		})
 	},
-	selectSvipVariant( {commit,dispatch}, params){
+	selectSvipVariant( {commit}, params){
 		let svip_variant = _.filter(state.svipVariants,v => {return v.variant_id == params.variant_id})[0];
 		commit("SELECT_SVIP_VARIANT",svip_variant)
 	}
-	
-	
 
 
 }

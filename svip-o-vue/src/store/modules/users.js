@@ -1,5 +1,4 @@
 import {HTTP} from '@/router/http';
-import Base64 from '@/mixins/base64';
 // initial state
 const state = {
 	all: [],
@@ -23,21 +22,21 @@ const getters = {
 // actions
 const actions = {
 	login ({ commit }, userData) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			
-				var loggedUser = {
-					username: userData.login,
-					jwt: userData.jwt,
-					fullname: userData.fullname,
-					firstname: userData.firstname,
-					lastname: userData.lastname,
-					email: userData.email,
-					permissions: userData.permissions
-				};
-				HTTP.defaults.headers.common['authorization'] = 'Bearer '+userData.jwt;
-				localStorage.setItem('currentUser',JSON.stringify(loggedUser));
-				commit('LOGIN',loggedUser);
-				resolve(userData);
+			var loggedUser = {
+				username: userData.login,
+				jwt: userData.jwt,
+				fullname: userData.fullname,
+				firstname: userData.firstname,
+				lastname: userData.lastname,
+				email: userData.email,
+				permissions: userData.permissions
+			};
+			HTTP.defaults.headers.common['authorization'] = 'Bearer '+userData.jwt;
+			localStorage.setItem('currentUser',JSON.stringify(loggedUser));
+			commit('LOGIN',loggedUser);
+			resolve(userData);
 		})
 	},
 
@@ -60,7 +59,7 @@ const actions = {
 			}
 		}
 	},
-	checkPermissions({ commit },params){
+	checkPermissions(ctx,params){
 		let permissionsToCheck = params.permissions
 		let condition = params.condition
 		if (condition != 'all') condition = 'any';
