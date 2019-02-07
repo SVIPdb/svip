@@ -61,9 +61,7 @@
 
 <script>
 
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
-import store from '@/store'
 import ageDistribution from '@/components/plots/ageDistribution'
 import genderBalance from '@/components/plots/genderBalance'
 export default {
@@ -93,17 +91,17 @@ export default {
 					sortable: false,
 					class: 'text-center'
 				},
-				 {
+				{
 					key: 'clinical_significance',
 					label: "Clinical significance",
 					sortable: false
 				},
-				 {
+				{
 					key: 'SVIP_status',
 					label: "Status",
 					sortable: false
 				},
-				 {
+				{
 					key: 'score',
 					label: 'SVIP confidence',
 					sortable: true,
@@ -131,7 +129,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container, .container-fluid{
 	margin-top: 20px;
 }

@@ -1,4 +1,3 @@
-/* eslint-disable */
 <template>
 	<div id="app">
 		<vue-snotify></vue-snotify>
@@ -13,18 +12,17 @@
 
 
 <script>
-
 import navHeader from '@/components/navheader'
 import navFooter from '@/components/navfooter'
 
 export default {
   components: { navHeader, navFooter },
   name: 'App',
-	computed:{
-		year () {
-			return new Date().getFullYear();
-		}
-	}
+  computed: {
+    year () {
+      return new Date().getFullYear()
+    }
+  }
 }
 </script>
 

@@ -26,9 +26,7 @@
 
 <script>
 
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
-import {HTTP} from '@/router/http'
 import {serverURL} from '@/app_config';
 
 export default{
@@ -70,9 +68,9 @@ export default{
 		}
 	},
 	computed: {
-  	  ...mapGetters({
-  	  	  user: 'currentUser'
-  	    }),
+		...mapGetters({
+			user: 'currentUser'
+		}),
 		nbSelectedVariants: function(){
 			return this.selectedVariants.length;
 		}

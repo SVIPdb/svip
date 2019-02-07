@@ -12,33 +12,29 @@
 </template>
 
 <script>
-
-import Vue from 'vue';
-import {serverURL} from '@/app_config'
 import { mapGetters } from 'vuex'
-import variantTable from '@/components/genes/VariantTable'
 
 export default {
 	data () {
 		return {
-	      }
+		}
 	},
 	computed: {
-  	  ...mapGetters({
-  	  	  user: 'currentUser'
-  	    })
+		...mapGetters({
+			user: 'currentUser'
+		})
 	},
 	components: {
-		filesTable
+		// filesTable
 	},
 	filters: {
 	},
 	props: ['gene'],
 	created () {
-		var gene_id = this.$route.params.gene_id;
+
 	},
-    methods: {
-    }
+	methods: {
+	}
 }
 
 </script>

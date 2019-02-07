@@ -20,73 +20,62 @@
 *****************************************************************/
 -->
 
-<div class = 'container-fluid'>
-	<div class = 'container'>
-		<div class = 'card'>
-			<div class = 'card-body'>
-				<h5 class = "card-title">{{gene.symbol}}: {{phenotypes.length}} SVIP variants</h5>
-				<h6 v-if='gene.oncogene'>Oncogene</h6>
-				<!-- <p class = 'card-text'>{{gene.name}}</p> -->
-				<dl class = 'row'>
-					<dt class = 'col-2 text-right'>Entrez ID</dt>
-					<dd class = 'col-10'><a :href='"https://www.ncbi.nlm.nih.gov/gene/?term="+gene.entrez_id+"%5Buid%5D"' target = '_blank'>{{gene.entrez_id}}</a></dd>
-					<dt class = 'col-2 text-right'>Ensembl Gene ID</dt>
-					<dd class = 'col-10'><a :href='"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g="+gene.ensembl_gene_id' target = '_blank'>{{gene.ensembl_gene_id}}</a></dd>
-					<dt class = 'col-2 text-right'>UniProtKB ID</dt>
-					<dd class = 'col-10'><a v-for='uniprot in gene.uniprot_ids' :href='"https://www.uniprot.org/uniprot/"+uniprot' target = '_blank' class = 'mr-3'>{{uniprot}}</a></dd>					
-				</dl>
-			</div>
-		</div>
-		
+	<div class = 'container-fluid'>
 		<div class = 'container'>
-			<div class = 'row'>
-				<div class = 'col-6'>
-        			<b-form-group horizontal label="Filter" class="mb-0">
-        			  <b-input-group>
-        			    <b-form-input v-model="tableFilter" placeholder="Type to Search" />
-        			    <b-input-group-append>
-        			      <b-btn :disabled="!tableFilter" @click="tableFilter = ''">Clear</b-btn>
-        			    </b-input-group-append>
-        			  </b-input-group>
-        			</b-form-group>
+			<div class = 'card'>
+				<div class = 'card-body'>
+					<h5 class = "card-title">{{gene.symbol}}: {{phenotypes.length}} SVIP variants</h5>
+					<h6 v-if='gene.oncogene'>Oncogene</h6>
+					<!-- <p class = 'card-text'>{{gene.name}}</p> -->
+					<dl class = 'row'>
+						<dt class = 'col-2 text-right'>Entrez ID</dt>
+						<dd class = 'col-10'><a :href='"https://www.ncbi.nlm.nih.gov/gene/?term="+gene.entrez_id+"%5Buid%5D"' target = '_blank'>{{gene.entrez_id}}</a></dd>
+						<dt class = 'col-2 text-right'>Ensembl Gene ID</dt>
+						<dd class = 'col-10'><a :href='"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g="+gene.ensembl_gene_id' target = '_blank'>{{gene.ensembl_gene_id}}</a></dd>
+						<dt class = 'col-2 text-right'>UniProtKB ID</dt>
+						<dd class = 'col-10'><a v-for='uniprot in gene.uniprot_ids' :href='"https://www.uniprot.org/uniprot/"+uniprot' target = '_blank' class = 'mr-3'>{{uniprot}}</a></dd>
+					</dl>
 				</div>
 			</div>
-		
-		
-		</div>
-		
-		<div class = 'container-fluid'>
-			<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
-			    <span slot="HGVScoding" slot-scope="data" v-html='formatColon(data.value)'></span>
-			    <span slot="HGVSprotein" slot-scope="data" v-html='formatColon(data.value)'></span>
-			    <span slot="position" slot-scope="data" v-html='formatColon(data.value)'></span>
-				<template slot="action" slot-scope="data">
-				        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-				        <b-button size="sm" @click.stop="showVariant(data.item.variant_id)">
-				          Show Details
-				        </b-button>
-				 </template>
-			</b-table>
+
+			<div class = 'container'>
+				<div class = 'row'>
+					<div class = 'col-6'>
+						<b-form-group horizontal label="Filter" class="mb-0">
+						<b-input-group>
+						<b-form-input v-model="tableFilter" placeholder="Type to Search" />
+						<b-input-group-append>
+						<b-btn :disabled="!tableFilter" @click="tableFilter = ''">Clear</b-btn>
+					</b-input-group-append>
+				</b-input-group>
+			</b-form-group>
 		</div>
 	</div>
+
+
+</div>
+
+<div class = 'container-fluid'>
+	<b-table :fields = 'fields' :items = 'phenotypes' :sort-by.sync="sortBy" :sort-desc='true' :filter='tableFilter'>
+	<span slot="HGVScoding" slot-scope="data" v-html='formatColon(data.value)'></span>
+	<span slot="HGVSprotein" slot-scope="data" v-html='formatColon(data.value)'></span>
+	<span slot="position" slot-scope="data" v-html='formatColon(data.value)'></span>
+	<template slot="action" slot-scope="data">
+		<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+		<b-button size="sm" @click.stop="showVariant(data.item.variant_id)">
+		Show Details
+	</b-button>
+</template>
+</b-table>
+</div>
+</div>
 
 </div>
 </template>
 
 <script>
 
-import Vue from 'vue'
 import {HTTP} from '@/router/http'
-import {serverURL} from '@/app_config'
-
-// JSON cache: 
-
-import genes from '@/assets/genes.json'
-
-// end JSON cache
-
-
-
 import { mapGetters } from 'vuex'
 import store from '@/store'
 export default {
@@ -183,49 +172,30 @@ export default {
 	},
 	beforeRouteEnter (to, from, next) {
 		if (to.params.gene_id != 'new'){
-
-			// JSON cache: 
-			
-			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
-			store.commit('SELECT_GENE',gene);
-			next(vm => vm.setgene(gene));
-			
-			// end cache
-		
-			// HTTP.get('genes/'+to.params.gene_id).then(res => {
-			// 	var gene = res.data;
-			// 	store.commit('SELECT_GENE',gene);
-			// 	next(vm => vm.setgene(gene));
-			// 	// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-			// 	// 	next(vm => vm.setgene(gene));
-			// 	// })
-			// });
+			HTTP.get('genes/'+to.params.gene_id).then(res => {
+				var gene = res.data;
+				store.commit('SELECT_GENE',gene);
+				next(vm => vm.setgene(gene));
+				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+				// 	next(vm => vm.setgene(gene));
+				// })
+			});
 		}
 	},
 	beforeRouteUpdate (to, from, next) {
 		if (to.params.gene_id != 'new'){
 
-			// JSON cache: 
-			
-			var gene = _.filter(genes,g =>  { return to.params.gene_id == g.url.replace("https://svip-dev.nexus.ethz.ch/api/v1/genes/","")})[0];
-			store.commit('SELECT_GENE',gene);
-			next(vm => vm.setgene(gene));
-			
-			// end cache
-
-
-			// HTTP.get('genes/'+to.params.gene_id).then(res => {
-			// 	var gene = res.data;
-			// 	store.commit('SELECT_GENE',gene);
-			// 	next(vm => vm.setgene(gene));
-			// 	// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-			// 	// 	next(vm => vm.setgene(gene));
-			// 	// })
-			// });
+			HTTP.get('genes/'+to.params.gene_id).then(res => {
+				var gene = res.data;
+				store.commit('SELECT_GENE',gene);
+				next(vm => vm.setgene(gene));
+				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
+				// 	next(vm => vm.setgene(gene));
+				// })
+			});
 		}
-  },
+	},
 	created (){
-		var vm = this;
 		store.dispatch('getGenes');
 		store.dispatch('getVariants');
 		store.dispatch('getPhenotypes');

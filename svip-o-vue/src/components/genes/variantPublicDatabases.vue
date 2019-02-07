@@ -101,9 +101,7 @@
 
 <script>
 
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
-import store from '@/store'
 import scorePlot from '@/components/plots/scorePlot'
 export default {
 	name: 'public-databases-info',

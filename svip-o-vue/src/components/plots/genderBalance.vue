@@ -10,137 +10,134 @@ Links:
 -->
 
 <template>
-  <svg width="50" height="30" @mouseover='mouseover' @mouseout='mouseout'></svg>
+	<svg width="50" height="30" @mouseover='mouseover' @mouseout='mouseout'></svg>
 </template>
 
 <script>
-
-import Vue from 'vue'
 import * as d3 from "d3";
 
 export default {
-  mounted: function() {
-    var svg = d3.select(this.$el);
-    var width = +svg.attr('width');
-    var height = +svg.attr('height');
+	mounted: function() {
+		var svg = d3.select(this.$el);
+		var width = +svg.attr('width');
+		var height = +svg.attr('height');
 
-    var margin = { top:0, left:0, bottom:0, right:0 };
+		var margin = { top:0, left:0, bottom:0, right:0 };
 
-    var chartWidth = width - (margin.left + margin.right);
-    var chartHeight = height - (margin.top + margin.bottom);
+		var chartWidth = width - (margin.left + margin.right);
+		var chartHeight = height - (margin.top + margin.bottom);
 
-    this.chartLayer = svg
-      .append('g')
-      .attr(
-        "transform",
-        `translate(${margin.left}, ${margin.top})`
-      );
+		this.chartLayer = svg
+			.append('g')
+			.attr(
+				"transform",
+				`translate(${margin.left}, ${margin.top})`
+			);
 
-    this.arc = d3.arc()
-      .outerRadius(chartHeight / 2)
-      .innerRadius(chartHeight / 4)
-      // .padAngle(0.03)
-      // .cornerRadius(0)
+		this.arc = d3.arc()
+			.outerRadius(chartHeight / 2)
+			.innerRadius(chartHeight / 4)
+		// .padAngle(0.03)
+		// .cornerRadius(0)
 
-    this.pieG = this.chartLayer
-      .append("g")
-      .attr(
-        "transform",
-        `translate(${chartWidth / 2}, ${chartHeight / 2})`
-      )
+		this.pieG = this.chartLayer
+			.append("g")
+			.attr(
+				"transform",
+				`translate(${chartWidth / 2}, ${chartHeight / 2})`
+			)
 
-    this.drawChart(this.formattedData);
-
-  },
-  props: ['data'],
-  computed: {
-	  formattedData () {
-		  let data = [];
-		  _.forEach(this.data,(v,k) => {
-		  	data.push({
-		  		'label': k,
-				'value': v
-		  	})
-		  })
-		  return data;
-	  },
-	  tooltip () {
-		  let html = "<dl class = 'row' style='margin: 0'>";
-		  _.forEach(this.data,(v,k) => {
-			  html += "<dt class='col-6'  style='text-align: right; padding-right: 2px;'>"+k+":</dt><dd class='col-6' style='text-align: left; padding-left: 2px;'>"+v+"</dd>";
-		  })
-		  html += "</dl>";
-		  return html;
-	  }
-  },
-  watch: {
-    data: function(newData) {
-      this.drawChart(this.formattedData);
-    }
-  },
-  methods: {
-    drawChart: function(data) {
-      var arcs = d3.pie()
-          .sort(null)
-          .value(function(d) { return d.value; })
-          (data)
-
-      var block = this.pieG.selectAll(".arc")
-        .data(arcs)
-
-      block.select('path').attr('d', this.arc)
-
-      var newBlock = block
-        .enter()
-        .append("g")
-        .classed("arc", true)
-
-      newBlock.append("path")
-        .attr("d", this.arc)
-        .attr("id", function(d, i) { return "arc-" + i })
-        .attr("stroke", "gray")
-        .attr("fill", d => {
-			return (d.data.label=='male') ? "#0F7FFE" : "#CC66FE";
-        })
-		.attr('title',d => d.label+": "+d.value)
-
-    },
-	mouseover () {
-		let div = d3.select('#tooltip');
-		
-		if (div.empty()){
-			 div = d3.select("body").append("div")	
-		    .attr("id","tooltip")
-			.style('backround-color','black')
-			.style('color','white')				
-		    .style("opacity", 0);
-			
-		}
-		div.transition()		
-            .duration(200)		
-            .style("opacity", 1)
-			.style('height','auto');		
-        div.html(this.tooltip)	
-            .style("left", (event.clientX) + "px")		
-            .style("top", (event.clientY - 28) + "px");
+		this.drawChart(this.formattedData);
 
 	},
-	mouseout () {
-		let div = d3.select('#tooltip');
-		if (div.empty()){
-			 div = d3.select("body").append("div")	
-		    .attr("id","tooltip")				
-		    .style("opacity", 0);
-			
+	props: ['data'],
+	computed: {
+		formattedData () {
+			let data = [];
+			_.forEach(this.data,(v,k) => {
+				data.push({
+					'label': k,
+					'value': v
+				})
+			})
+			return data;
+		},
+		tooltip () {
+			let html = "<dl class = 'row' style='margin: 0'>";
+			_.forEach(this.data,(v,k) => {
+				html += "<dt class='col-6'  style='text-align: right; padding-right: 2px;'>"+k+":</dt><dd class='col-6' style='text-align: left; padding-left: 2px;'>"+v+"</dd>";
+			})
+			html += "</dl>";
+			return html;
 		}
-		div.transition()		
-            .duration(200)		
-            .style("opacity", 0)
-			.style('height','28px');		
+	},
+	watch: {
+		data: function() {
+			this.drawChart(this.formattedData);
+		}
+	},
+	methods: {
+		drawChart: function(data) {
+			var arcs = d3.pie()
+				.sort(null)
+				.value(function(d) { return d.value; })(data)
+
+			var block = this.pieG.selectAll(".arc")
+				.data(arcs)
+
+			block.select('path').attr('d', this.arc)
+
+			var newBlock = block
+				.enter()
+				.append("g")
+				.classed("arc", true)
+
+			newBlock.append("path")
+				.attr("d", this.arc)
+				.attr("id", function(d, i) { return "arc-" + i })
+				.attr("stroke", "gray")
+				.attr("fill", d => {
+					return (d.data.label=='male') ? "#0F7FFE" : "#CC66FE";
+				})
+				.attr('title',d => d.label+": "+d.value)
+
+		},
+		mouseover () {
+			let div = d3.select('#tooltip');
 		
-	}
+			if (div.empty()){
+				div = d3.select("body").append("div")	
+					.attr("id","tooltip")
+					.style('backround-color','black')
+					.style('color','white')				
+					.style("opacity", 0);
+			
+			}
+			div.transition()		
+				.duration(200)		
+				.style("opacity", 1)
+				.style('height','auto');		
+			div.html(this.tooltip)	
+				.style("left", (event.clientX) + "px")		
+				.style("top", (event.clientY - 28) + "px");
+
+		},
+		mouseout () {
+			let div = d3.select('#tooltip');
+			if (div.empty()){
+				div = d3.select("body").append("div")	
+					.attr("id","tooltip")				
+					.style("opacity", 0);
+			
+			}
+			div.transition()		
+				.duration(200)		
+				.style("opacity", 0)
+				.style('height','28px');		
+		
+		}
 	
-  }
+	}
 }
 </script>
 <style>

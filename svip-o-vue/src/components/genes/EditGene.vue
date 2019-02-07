@@ -109,10 +109,9 @@ export default {
 		}
 	},
 	computed: {
-  	  ...mapGetters({
-  	  	  user: 'currentUser'
-  	    })
-
+		...mapGetters({
+			user: 'currentUser'
+		})
 	},
 
 	created () {
