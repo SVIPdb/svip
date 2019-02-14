@@ -17,7 +17,7 @@
 					<b-nav-item v-access="'admin'"><router-link to="/admin">Admin</router-link></b-nav-item>
 					<b-nav-item v-access="'active'">Welcome {{ user.fullname }}</b-nav-item>
 					<b-nav-item v-access="'active'">
-						<a class="pointer" @click="logout()"><icon name="sign-out"></icon></a>
+						<a class="pointer" @click="logout()"><icon name="sign-out-alt"></icon></a>
 					</b-nav-item>
 				</b-navbar-nav>
 			</b-navbar-nav>
