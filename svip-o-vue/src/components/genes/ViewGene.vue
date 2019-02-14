@@ -92,7 +92,6 @@
 
 <script>
 
-import Vue from 'vue'
 import {HTTP} from '@/router/http'
 import {serverURL} from '@/app_config'
 // import geneVariants from '@/components/Variants'

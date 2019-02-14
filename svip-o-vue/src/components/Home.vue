@@ -1,42 +1,35 @@
-/* eslint-disable */
 <template>
-    <div class='container'>
-        <div class="highlight-clean">
-            <div class="container">
-                <div class="intro section text-center">
-                    <!-- <h2 class="text-center">SVIP-O</h2>
-                              <p class="text-center">Swiss Variant Interpretation Platform for Oncology </p> -->
-                    <img src="../assets/svip_logo.png" width="368" height="137" alt="Svip Logo">
-                </div>
-                <div class='section row justify-content-md-center'>
-                    <div class='col-6'>
-                        <!-- <form ><input type="search" placeholder="Search for gene / variant" class="form-control" /></form> -->
-                        <!--
-                        <form>
-                            <v-select :options="options" value='' placeholder="Search for gene / variant"
-                                      v-model="gene"></v-select>
-                        </form>
-                        -->
+	<div class = 'container'>
+		<div class="highlight-clean">
+			<div class="container">
+				<div class="intro section text-center">
+					<img src="../assets/svip_logo.png" width="368" height="137" alt="Svip Logo" />
+				</div>
+				<div class = 'section row justify-content-md-center'>
+					<div class = 'col-6'>
+						<!-- <form ><input type="search" placeholder="Search for gene / variant" class="form-control" /></form> -->
+            <!--
+						<form>
+							<v-select :options="options" value='' placeholder="Search for gene / variant" v-model="gene"></v-select>
+						</form>
+            -->
+             
+            <SearchBar />
+					</div>
+				</div>
 
-                        <SearchBar></SearchBar>
-                    </div>
-                </div>
+				<div class = 'section stats row justify-content-md-center'>
+					<div class = 'col'>
+						<h3>{{nbGenes}} Genes</h3>
+					</div>
+					<div class = 'col'>
+						<h3>{{nbVariants}} Variants</h3>
+					</div>
+				</div>
 
-                <div class='section stats row justify-content-md-center'>
-                    <div class='col'>
-                        <h3>{{nbGenes}} Genes</h3>
-                    </div>
-                    <div class='col'>
-                        <h3>{{nbVariants}} Variants</h3>
-                    </div>
-                    <!-- <div class = 'col'>
-                                <h3>{{nbUniquePhenotypes}} Phenotypes</h3>
-                            </div> -->
-                </div>
-
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -133,4 +126,3 @@ export default {
     margin-right: 0.5rem;
 }
 </style>
-/* eslint-disable */
