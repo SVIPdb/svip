@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import navHeader from "@/components/navheader";
 import navFooter from "@/components/navfooter";
 
