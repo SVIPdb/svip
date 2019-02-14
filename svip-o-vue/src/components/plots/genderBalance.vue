@@ -18,9 +18,7 @@ Links:
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.color"></rect>
 				</svg>
-				<span
-				><b>{{ d.label }}:</b> {{ d.value }}</span
-				>
+				<span><b>{{ d.label }}:</b> {{ d.value }}</span>
 			</div>
 		</b-tooltip>
 	</div>

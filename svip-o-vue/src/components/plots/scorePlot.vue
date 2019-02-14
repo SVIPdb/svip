@@ -2,26 +2,8 @@
 	<div>
 		<svg ref="thechart" class="bar-chart">
 			<g v-for="(d, i) in layout">
-				<rect
-					class="bar"
-					:key="d.k"
-					:x="d.x"
-					:y="d.y"
-					:width="d.width"
-					:height="d.height"
-					:fill="d.c"
-				></rect>
-
-				<rect
-					v-if="d.v === 0"
-					class="zero-value"
-					:x="d.x + 3"
-					:y="3"
-					:width="d.width - 6"
-					height="18"
-					rx="2"
-					ry="2"
-				></rect>
+				<rect class="bar" :key="d.k" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
+				<rect v-if="d.v === 0" class="zero-value" :x="d.x + 3" :y="3" :width="d.width - 6" height="18" rx="2" ry="2"></rect>
 			</g>
 
 			<line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>

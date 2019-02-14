@@ -18,12 +18,7 @@
 					<th st-sort="date">Last update</th>
 				</thead>
 				<tbody>
-					<tr
-						v-for="gene in genes"
-						:key="gene.gene_id"
-						@click="goTo(gene.gene_id)"
-						class="pointer"
-					>
+					<tr v-for="gene in genes" :key="gene.gene_id" @click="goTo(gene.gene_id)" class="pointer">
 						<td>{{ gene.name }}</td>
 						<td>
 							<b>{{ gene.nb_variants }}</b>

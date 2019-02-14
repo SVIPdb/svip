@@ -1,26 +1,10 @@
 <template>
 	<form>
-		<v-select
-			label="label"
-			:options="options"
-			placeholder="Search for gene / variant"
-			@change="queryChanged"
-			@search="onSearch"
-			v-model="selected"
-			v-on:change="queryChanged"
-		>
+		<v-select label="label" :options="options" placeholder="Search for gene / variant" @change="queryChanged" @search="onSearch" v-model="selected" v-on:change="queryChanged">
 			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
-                        <span
-													v-for="(bit, idx) in highlighted(
-                                query,
-                                option.label
-                            )"
-													:key="idx"
-													:class="{ segment: true, matched: bit.match }"
-												>{{ bit.text }}</span
-												>
+						<span v-for="(bit, idx) in highlighted( query, option.label )" :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
 					</div>
 					<div v-else>{{ option.label }}</div>
 
@@ -32,10 +16,7 @@
 		</v-select>
 
 		<div style="padding: 10px;">
-			<b-checkbox v-model="showOnlySVIP"
-			>show only SVIP variants
-			</b-checkbox
-			>
+			<b-checkbox v-model="showOnlySVIP">show only SVIP variants</b-checkbox>
 		</div>
 	</form>
 </template>

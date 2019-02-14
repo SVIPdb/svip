@@ -25,12 +25,7 @@
 			<div class="card-title">Publicly Available Information</div>
 		</div>
 		<div class="card-body">
-			<b-table
-				:fields="fields"
-				:items="data"
-				:sort-by.sync="sortBy"
-				:sort-desc="false"
-			>
+			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
 					<a :href="row.item.url" target="_blank">{{
 						row.item.source
@@ -49,9 +44,7 @@
 				</template>
 				<template slot="clinical" slot-scope="data">
 					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
-					<significance-bar-plot
-						:data="summaryClinical(data.item.clinical)"
-					></significance-bar-plot>
+					<significance-bar-plot :data="summaryClinical(data.item.clinical)"></significance-bar-plot>
 				</template>
 				<template slot="scores" slot-scope="data">
 					<score-plot :data="data.item.scores"></score-plot>
@@ -71,30 +64,13 @@
 							<b-card>
 								<h6 class="card-subtitle mb-2 text-muted">
 									Diseases
-									<i
-										class="float-right"
-										v-if="!row.item.filter"
-									>click on a disease to filter the drugs
-										table
-									</i>
-									<span
-										class="float-right badge badge-primary"
-										v-if="row.item.filter"
-										style="font-size: 13px"
-									>
-                                        {{ row.item.filter }}
-                                        <button
-																					type="button"
-																					class="close small ml-3"
-																					aria-label="Close"
-																					style="font-size: 14px"
-																					@click="row.item.filter = ''"
-																				>
-                                            <span aria-hidden="true"
-																						>&times;</span
-																						>
-                                        </button>
-                                    </span>
+									<i class="float-right" v-if="!row.item.filter">click on a disease to filter the drugs table</i>
+									<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
+										{{ row.item.filter }}
+										<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
+												<span aria-hidden="true">&times;</span>
+										</button>
+									</span>
 								</h6>
 								<table class="table table-sm table-hover">
 									<thead>
@@ -104,15 +80,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr
-											v-for="(nb, d) in row.item.diseases"
-											@click="row.item.filter = d"
-											:class="
-                                                row.item.filter === d
-                                                    ? 'pointer table-active'
-                                                    : 'pointer'
-                                            "
-										>
+										<tr v-for="(nb, d) in row.item.diseases" @click="row.item.filter = d" :class="row.item.filter === d ? 'pointer table-active' : 'pointer'">
 											<td>{{ d }}</td>
 											<td>{{ nb }}</td>
 										</tr>
@@ -125,23 +93,11 @@
 							<b-card>
 								<h6 class="card-subtitle mb-2 text-muted">
 									Evidences
-									<span
-										class="float-right badge badge-primary"
-										v-if="row.item.filter"
-										style="font-size: 13px"
-									>{{ row.item.filter }}
-                                        <button
-																					type="button"
-																					class="close small ml-3"
-																					aria-label="Close"
-																					style="font-size: 14px"
-																					@click="row.item.filter = ''"
-																				>
-                                            <span aria-hidden="true"
-																						>&times;</span
-																						>
-                                        </button></span
-									>
+									<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
+										{{ row.item.filter }}
+											<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
+													<span aria-hidden="true">&times;</span>
+											</button></span>
 								</h6>
 								<table class="table table-sm">
 									<tr>
@@ -158,34 +114,15 @@
 										<th>Drug</th>
 										<th>References</th>
 									</tr>
-									<tr
-										v-for="c in filterClinical(
-                                            row.item.clinical,
-                                            row.item.filter
-                                        )"
-									>
+									<tr v-for="c in filterClinical( row.item.clinical, row.item.filter )">
 										<td>{{ c.disease }}</td>
 										<td>{{ c.type }}</td>
 										<td>{{ c.significance }}</td>
 										<td>{{ c.tier }}</td>
 										<td>{{ normalizeItemList(c.drug) }}</td>
 										<td>
-											<template
-												v-for="(p, i) in c.publications"
-											>
-												<a
-													:href="p.url"
-													target="_blank"
-												>{{ p.pmid }}</a
-												><span
-												v-if="
-                                                        i <
-                                                            c.publications
-                                                                .length -
-                                                                1
-                                                    "
-											>,
-                                                </span>
+											<template v-for="(p, i) in c.publications">
+												<a :href="p.url" target="_blank">{{ p.pmid }}</a><span v-if=" i < c.publications .length - 1">, </span>
 											</template>
 										</td>
 									</tr>

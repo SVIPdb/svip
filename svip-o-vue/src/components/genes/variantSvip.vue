@@ -24,18 +24,11 @@
 		<div class="card-header">
 			<div class="card-title">
 				SVIP Information
-				<span class="text-danger float-right"
-				>WARNING: fake data - only as a demo</span
-				>
+				<span class="text-danger float-right">WARNING: fake data - only as a demo</span>
 			</div>
 		</div>
 		<div class="card-body">
-			<b-table
-				:fields="fields"
-				:items="data"
-				:sort-by.sync="sortBy"
-				:sort-desc="false"
-			>
+			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="actions" slot-scope="row">
 					<div style="text-align: right;">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
@@ -50,14 +43,10 @@
                     }}</span>
 				</template>
 				<template slot="age" slot-scope="data">
-					<age-distribution
-						:data="data.item.age_distribution"
-					></age-distribution>
+					<age-distribution :data="data.item.age_distribution"></age-distribution>
 				</template>
 				<template slot="gender" slot-scope="data">
-					<gender-balance
-						:data="data.item.gender_balance"
-					></gender-balance>
+					<gender-balance :data="data.item.gender_balance"></gender-balance>
 				</template>
 
 				<!--
@@ -72,30 +61,15 @@
         -->
 
 				<template slot="score" slot-scope="data">
-					<icon
-						:name="data.item.score < 1 ? 'star-o' : 'star'"
-						style="margin-right: 5px"
-					></icon>
-					<icon
-						:name="data.item.score < 2 ? 'star-o' : 'star'"
-						style="margin-right: 5px"
-					></icon>
-					<icon
-						:name="data.item.score < 3 ? 'star-o' : 'star'"
-						style="margin-right: 5px"
-					></icon>
-					<icon
-						:name="data.item.score < 4 ? 'star-o' : 'star'"
-						style="margin-right: 5px"
-					></icon>
+					<icon :name="data.item.score < 1 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 2 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 3 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 4 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
 				</template>
 				<template slot="row-details" slot-scope="row">
 					<div class="card">
 						<div class="card-body" style="padding: 0">
-							<b-table
-								:items="row.item.evidences"
-								:small="true"
-							></b-table>
+							<b-table :items="row.item.evidences" :small="true"></b-table>
 						</div>
 					</div>
 				</template>

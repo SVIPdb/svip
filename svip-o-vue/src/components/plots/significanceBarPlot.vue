@@ -2,15 +2,7 @@
 	<div>
 		<svg ref="thechart" class="sig-bar-chart">
 			<g v-for="d in layout">
-				<rect
-					class="bar"
-					:key="d.k"
-					:x="d.x"
-					:y="d.y"
-					:width="d.width"
-					:height="d.height"
-					:fill="d.c"
-				></rect>
+				<rect class="bar" :key="d.k" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 			</g>
 		</svg>
 
@@ -19,9 +11,7 @@
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.color"></rect>
 				</svg>
-				<span
-				><b>{{ d.name }}:</b> {{ d.count }}</span
-				>
+				<span><b>{{ d.name }}:</b> {{ d.count }}</span>
 			</div>
 		</b-tooltip>
 	</div>

@@ -33,42 +33,17 @@
 				<div class="card-body">
 					<fieldset>
 						<legend>Name and description</legend>
-						<div
-							class="form-group row"
-							:class="{ 'has-error': errors.has('name') }"
-						>
-							<label
-								for="name"
-								class="col-sm-3 control-label text-right"
-							>Name</label
-							>
+						<div class="form-group row" :class="{ 'has-error': errors.has('name') }">
+							<label for="name" class="col-sm-3 control-label text-right">Name</label>
 							<div class="col-sm-9 text-left">
-								<input
-									type="text"
-									class="form-control"
-									id="name"
-									name="name"
-									v-model="gene.name"
-									placeholder="Experiment name"
-									v-validate="'required'"
-								/><span>{{ errors.first("name") }}</span>
+								<input type="text" class="form-control" id="name" name="name" v-model="gene.name" placeholder="Experiment name" v-validate="'required'"/>
+								<span>{{ errors.first("name") }}</span>
 							</div>
 						</div>
 						<div class="form-group row">
-							<label
-								for="description"
-								class="col-sm-3 control-label text-right"
-							>Description</label
-							>
+							<label for="description" class="col-sm-3 control-label text-right">Description</label>
 							<div class="col-sm-9">
-                                <textarea
-																	id="description"
-																	name="description"
-																	v-model="gene.description"
-																	class="form-control"
-																	rows="5"
-																	placeholder="Experiment description"
-																></textarea>
+								<textarea id="description" name="description" v-model="gene.description" class="form-control" rows="5" placeholder="Experiment description"></textarea>
 							</div>
 						</div>
 					</fieldset>
@@ -76,22 +51,10 @@
 				<div class="card-footer">
 					<div class="row">
 						<div class="col-sm-10 col-sm-offset-2 text-center">
-							<button
-								type="submit"
-								class="btn btn-success"
-								:disabled="!gene.name || errors.any()"
-							>
+							<button type="submit" class="btn btn-success" :disabled="!gene.name || errors.any()">
 								Submit
 							</button>
-							<a
-								:href="
-                                    gene.gene_id === -1
-                                        ? '/gene'
-                                        : '/gene/' + gene.gene_id
-                                "
-								class="btn btn-link"
-							>Cancel</a
-							>
+							<a :href=" gene.gene_id === -1 ? '/gene' : '/gene/' + gene.gene_id" class="btn btn-link">Cancel</a>
 						</div>
 					</div>
 				</div>

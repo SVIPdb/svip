@@ -1,15 +1,7 @@
 <template>
 	<div>
 		<svg ref="thechart" class="age-bar-chart">
-			<rect
-				class="bar"
-				v-for="(d, i) in layout"
-				:x="d.x"
-				:y="d.y"
-				:width="d.width"
-				:height="d.height"
-				:fill="d.c"
-			></rect>
+			<rect class="bar" v-for="(d, i) in layout" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 
 			<line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
 		</svg>
@@ -19,9 +11,7 @@
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.c"></rect>
 				</svg>
-				<span
-				><b>{{ d.k }}:</b> {{ d.v }}</span
-				>
+				<span><b>{{ d.k }}:</b> {{ d.v }}</span>
 			</div>
 		</b-tooltip>
 	</div>

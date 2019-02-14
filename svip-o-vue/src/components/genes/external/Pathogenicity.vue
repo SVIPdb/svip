@@ -6,12 +6,7 @@
 			</div>
 
 			<div class="card-body">
-				<b-table
-					:fields="fields"
-					:items="items"
-					:sort-by.sync="sortBy"
-					:sort-desc="false"
-				>
+				<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 					<template slot="actions" slot-scope="row">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 						<b-button size="sm" @click.stop="row.toggleDetails">

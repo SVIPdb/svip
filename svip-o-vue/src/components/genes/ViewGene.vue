@@ -31,60 +31,25 @@
 					<h6 v-if="gene.oncogene">Oncogene</h6>
 
 					<dl class="row" style="margin-top: 0.75em;">
-						<dt
-							class="col-2 text-right"
-							style="white-space: nowrap;"
-						>
+						<dt class="col-2 text-right" style="white-space: nowrap;">
 							Entrez ID
 						</dt>
 						<dd class="col-10">
-							<a
-								:href="
-                                    `https://www.ncbi.nlm.nih.gov/gene/?term=${
-                                        gene.entrez_id
-                                    }%5Buid%5D`
-                                "
-								target="_blank"
-							>{{ gene.entrez_id }}</a
-							>
+							<a :href=" `https://www.ncbi.nlm.nih.gov/gene/?term=${ gene.entrez_id }%5Buid%5D`" target="_blank">{{ gene.entrez_id }}</a>
 						</dd>
 
-						<dt
-							class="col-2 text-right"
-							style="white-space: nowrap;"
-						>
+						<dt class="col-2 text-right" style="white-space: nowrap;">
 							Ensembl Gene ID
 						</dt>
 						<dd class="col-10">
-							<a
-								:href="
-                                    `http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${
-                                        gene.ensembl_gene_id
-                                    }`
-                                "
-								target="_blank"
-							>{{ gene.ensembl_gene_id }}</a
-							>
+							<a :href=" `http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${ gene.ensembl_gene_id }`" target="_blank">{{ gene.ensembl_gene_id }}</a>
 						</dd>
 
-						<dt
-							class="col-2 text-right"
-							style="white-space: nowrap;"
-						>
+						<dt class="col-2 text-right" style="white-space: nowrap;">
 							UniProtKB ID
 						</dt>
 						<dd class="col-10">
-							<a
-								v-if="gene.uniprot_ids"
-								:href="
-                                    `https://www.uniprot.org/uniprot/${
-                                        gene.uniprot_ids[0]
-                                    }`
-                                "
-								target="_blank"
-								class="mr-3"
-							>{{ gene.uniprot_ids[0] }}</a
-							>
+							<a v-if="gene.uniprot_ids" :href=" `https://www.uniprot.org/uniprot/${ gene.uniprot_ids[0] }`" target="_blank" class="mr-3">{{ gene.uniprot_ids[0] }}</a>
 						</dd>
 					</dl>
 				</div>
@@ -100,12 +65,7 @@
 									placeholder="Type to Search"
 								/>
 								<b-input-group-append>
-									<b-btn
-										:disabled="!tableFilter"
-										@click="tableFilter = ''"
-									>Clear
-									</b-btn
-									>
+									<b-btn :disabled="!tableFilter" @click="tableFilter = ''">Clear</b-btn>
 								</b-input-group-append>
 							</b-input-group>
 						</b-form-group>
@@ -113,49 +73,29 @@
 
 					<div class="col-6 text-right">
 						<form>
-							<b-checkbox v-model="showOnlySVIP"
-							>show only SVIP variants
-							</b-checkbox
-							>
+							<b-checkbox v-model="showOnlySVIP">show only SVIP variants</b-checkbox>
 						</form>
 					</div>
 				</div>
 			</div>
 
 			<div class="container-fluid">
-				<b-table
-					:fields="fields"
-					:items="phenotypes"
-					:sort-by.sync="sortBy"
-					:sort-desc="true"
-					:filter="tableFilter"
-				>
+				<b-table :fields="fields" :items="phenotypes" :sort-by.sync="sortBy" :sort-desc="true" :filter="tableFilter">
 					<template slot="hgvs_c" slot-scope="data" v-if="data.value">
-                        <span class="text-muted"
-												>{{ data.value.transcript }}:</span
-												>{{ data.value.change }}
+						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
 					</template>
 
 					<template slot="hgvs_p" slot-scope="data" v-if="data.value">
-                        <span class="text-muted"
-												>{{ data.value.transcript }}:</span
-												>{{ data.value.change }}
+						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
 					</template>
 
 					<template slot="hgvs_g" slot-scope="data" v-if="data.value">
-                        <span class="text-muted"
-												>{{ data.item.reference_name }}:</span
-												>{{ data.value }}
+						<span class="text-muted">{{ data.item.reference_name }}:</span>{{ data.value }}
 					</template>
 
 					<template slot="action" slot-scope="data">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-						<b-button
-							size="sm"
-							@click.stop="showVariant(data.item.id)"
-						>
-							Show Details
-						</b-button>
+						<b-button size="sm" @click.stop="showVariant(data.item.id)">Show Details</b-button>
 					</template>
 				</b-table>
 			</div>

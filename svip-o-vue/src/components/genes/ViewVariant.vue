@@ -51,14 +51,7 @@
 						<coordinates :val="hgvs_p_pos"/>
 
 						<optional :val="variant.dbsnp_ids">
-							<a
-								v-for="rsid in variant.dbsnp_ids"
-								:key="rsid"
-								:href="
-                                    'https://www.ncbi.nlm.nih.gov/snp/' + rsid
-                                "
-								target="_blank"
-							>
+							<a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target="_blank">
 								rs{{ rsid }}
 								<icon name="external-link"></icon>
 							</a>
@@ -66,12 +59,9 @@
 
 						<td>{{ variant.so_name }}</td>
 
-						<optional :val="var_position"
-						><span class="text-muted"
-						>{{ variant.reference_name }}:</span
-						>{{ var_position }}
-						</optional
-						>
+						<optional :val="var_position">
+							<span class="text-muted">{{ variant.reference_name }}:</span>{{ var_position }}
+						</optional>
 
 						<td>{{ variant.reference_name }}</td>
 					</tr>

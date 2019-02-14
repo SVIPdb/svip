@@ -4,34 +4,15 @@
 			<p class="text-center"><i>some filters can go here...</i></p>
 		</b-row>
 
-		<b-table
-			striped
-			hover
-			:items="gene.files"
-			:fields="fields"
-			:sort-by.sync="sortBy"
-			:sort-desc.sync="sortDesc"
-			:per-page="perPage"
-			:current-page="currentPage"
-			:filter="filter"
-			@filtered="onFiltered"
-		>
+		<b-table striped hover :items="gene.files" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :per-page="perPage" :current-page="currentPage" :filter="filter" @filtered="onFiltered">
 			<template slot="selection" slot-scope="data">
-				<input
-					type="checkbox"
-					v-model="data.item.is_selected"
-					@click="selectVariant(data.item)"
-				/>
+				<input type="checkbox" v-model="data.item.is_selected" @click="selectVariant(data.item)"/>
 			</template>
 			<template slot="actions"></template>
 		</b-table>
 
 		<!-- Delete modal -->
-		<b-modal
-			id="modalInfo"
-			@hide="resetModalInfo"
-			title="Please confirm the deletion"
-		>
+		<b-modal id="modalInfo" @hide="resetModalInfo" title="Please confirm the deletion">
 			<p>
 				file: <b>{{ modalInfo.filename }}</b>
 			</p>
