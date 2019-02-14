@@ -31,10 +31,10 @@
                 </template>
                 <template slot='diseases' slot-scope='data'>
                     {{Object.keys(data.item.diseases).length}}
-                    disease{{(Object.keys(data.item.diseases).length>1)?"s":""}}
+                    disease{{(Object.keys(data.item.diseases).length !== 1)?"s":""}}
                 </template>
                 <template slot='database_evidences' slot-scope='data'>
-                    {{data.item.database_evidences.length}} evidence{{(data.item.database_evidences.length>1)?"s":""}}
+                    {{data.item.database_evidences.length}} evidence{{(data.item.database_evidences.length !== 1)?"s":""}}
                 </template>
                 <template slot='clinical' slot-scope='data'>
                     <!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
@@ -60,11 +60,11 @@
                                     Diseases
                                     <i class='float-right' v-if='!row.item.filter'>click on a disease to filter the drugs table </i>
                                     <span class='float-right badge badge-primary' v-if='row.item.filter' style='font-size: 13px'>
-                                        {{row.item.filter}}
-                                        <button type="button" class="close small ml-3" aria-label="Close" style='font-size: 14px' @click='row.item.filter=""'>
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </span>
+                                       {{row.item.filter}}
+                                       <button type="button" class="close small ml-3" aria-label="Close" style='font-size: 14px' @click='row.item.filter=""'>
+                                           <span aria-hidden="true">&times;</span>
+                                       </button>
+                                   </span>
                                 </h6>
                                 <table class='table table-sm table-hover'>
                                     <thead>
@@ -83,6 +83,7 @@
                                 </table>
                             </b-card>
                         </div>
+
                         <div class="col-8">
                             <b-card>
                                 <h6 class='card-subtitle mb-2 text-muted'>Evidences <span
