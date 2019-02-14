@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<svg ref="thechart" class="bar-chart">
-			<g v-for="(d, i) in layout">
+			<g v-for="(d, i) in layout" :key="i">
 				<rect class="bar" :key="d.k" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 				<rect v-if="d.v === 0" class="zero-value" :x="d.x + 3" :y="3" :width="d.width - 6" height="18" rx="2" ry="2"></rect>
 			</g>
@@ -10,7 +10,7 @@
 		</svg>
 
 		<b-tooltip :target="() => $refs.thechart" placement="left">
-			<div v-for="(d, i) in layout" style="text-align: left;">
+			<div v-for="d in layout" :key="d.k" style="text-align: left;">
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.c"></rect>
 				</svg>

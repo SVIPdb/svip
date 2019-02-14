@@ -80,7 +80,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for="(nb, d) in row.item.diseases" @click="row.item.filter = d" :class="row.item.filter === d ? 'pointer table-active' : 'pointer'">
+										<tr v-for="(nb, d) in row.item.diseases" :key="d" @click="row.item.filter = d" :class="row.item.filter === d ? 'pointer table-active' : 'pointer'">
 											<td>{{ d }}</td>
 											<td>{{ nb }}</td>
 										</tr>
@@ -114,7 +114,7 @@
 										<th>Drug</th>
 										<th>References</th>
 									</tr>
-									<tr v-for="c in filterClinical( row.item.clinical, row.item.filter )">
+									<tr v-for="(c, idx) in filterClinical( row.item.clinical, row.item.filter )" :key="idx">
 										<td>{{ c.disease }}</td>
 										<td>{{ c.type }}</td>
 										<td>{{ c.significance }}</td>
@@ -122,7 +122,7 @@
 										<td>{{ normalizeItemList(c.drug) }}</td>
 										<td>
 											<template v-for="(p, i) in c.publications">
-												<a :href="p.url" target="_blank">{{ p.pmid }}</a><span v-if=" i < c.publications .length - 1">, </span>
+												<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.pmid }}</a><span :key="`${i}_comma`" v-if=" i < c.publications .length - 1">, </span>
 											</template>
 										</td>
 									</tr>
@@ -248,9 +248,7 @@ export default {
 						return titleCase(a.term);
 					})
 				);
-				data[source].database_evidences = data[
-					source
-					].database_evidences.concat(
+				data[source].database_evidences = data[source].database_evidences.concat(
 					_.map(a.evidence_set, e => {
 						return e.description;
 					})

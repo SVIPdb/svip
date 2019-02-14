@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<svg ref="thechart" class="age-bar-chart">
-			<rect class="bar" v-for="(d, i) in layout" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
+			<rect class="bar" v-for="(d, i) in layout" :key="i" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 
 			<line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
 		</svg>
 
 		<b-tooltip :target="() => $refs.thechart" placement="top">
-			<div v-for="d in this.aggregatedData" style="text-align: left;">
+			<div v-for="d in this.aggregatedData" :key="d.k" style="text-align: left;">
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.c"></rect>
 				</svg>

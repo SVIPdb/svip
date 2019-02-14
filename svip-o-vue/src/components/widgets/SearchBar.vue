@@ -135,27 +135,13 @@ export default {
 			return bits.reduce(
 				(acc, next) =>
 					parts.length > 0
-						? acc.concat(
-						{
-							text: next.replace(" ", "\u00A0"),
-							match: false
-						},
-						{text: parts.pop(), match: true}
-						)
-						: acc.concat({
-							text: next.replace(" ", "\u00A0"),
-							match: false
-						}),
-				[]
+						? acc.concat({text: next.replace(" ", "\u00A0"), match: false}, {text: parts.pop(), match: true})
+						: acc.concat({text: next.replace(" ", "\u00A0"), match: false}), []
 			);
 		},
 		hasSvipData: function (entry) {
 			return (
-				svipVariants.find(
-					sv =>
-						`${sv.gene_name} ${sv.variant_name}`.toLowerCase() ===
-						entry.label.toLowerCase()
-				) !== undefined
+				svipVariants.find(sv => `${sv.gene_name} ${sv.variant_name}`.toLowerCase() === entry.label.toLowerCase()) !== undefined
 			);
 		}
 	}
