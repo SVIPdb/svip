@@ -37,10 +37,7 @@
 					<tr>
 						<td>
 							<b>
-								<router-link :to="'/gene/' + gene_id">{{
-									variant.gene.symbol
-									}}
-								</router-link>
+								<router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link>
 							</b>
 						</td>
 						<td>
@@ -77,14 +74,12 @@
 </template>
 
 <script>
-import Vue from "vue";
 import {HTTP} from "@/router/http";
 // import geneVariants from '@/components/Variants'
 import {mapGetters} from "vuex";
 import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
 import variantSvip from "@/components/genes/variantSvip";
 import store from "@/store";
-import {serverURL} from "@/app_config";
 
 import {change_from_hgvs, var_to_position} from "@/utils";
 import VariantExternalInfo from "@/components/genes/external/VariantExternalInfo";
@@ -146,7 +141,6 @@ export default {
 						variant: to.params.variant_id
 					})
 					.then(res => {
-						const variant = res;
 						store.dispatch("selectSvipVariant", {variant: res});
 						next();
 					});
@@ -165,7 +159,6 @@ export default {
 						variant: to.params.variant_id
 					})
 					.then(res => {
-						const variant = res;
 						store.dispatch("selectSvipVariant", {variant: res});
 						next();
 					});

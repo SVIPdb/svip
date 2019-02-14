@@ -51,7 +51,7 @@ export default {
 		};
 	},
 	watch: {
-		gene: function (n, o) {
+		gene: function (n) {
 			if (n.value) {
 				let geneIdx = _.findIndex(this.genes, g => {
 					return g.entrez_id === n.value;
@@ -93,6 +93,7 @@ export default {
 	},
 	methods: {
 		test(val) {
+			// eslint-disable-next-line no-console
 			console.log(val);
 		}
 	},

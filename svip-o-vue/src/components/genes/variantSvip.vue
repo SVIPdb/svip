@@ -79,9 +79,7 @@
 </template>
 
 <script>
-import Vue from "vue";
 import {mapGetters} from "vuex";
-import store from "@/store";
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderBalance from "@/components/plots/genderBalance";
 import {titleCase} from "../../utils";

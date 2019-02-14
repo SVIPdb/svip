@@ -83,10 +83,6 @@ export default {
 			this.query = search;
 			this.search(loading, search, this);
 		},
-		queryChanged(val) {
-			debugger;
-			console.log(val);
-		},
 		getGenesOnly: function () {
 			HTTP.get("query", {params: {q: ""}}).then(res => {
 				this.options = this.showOnlySVIP

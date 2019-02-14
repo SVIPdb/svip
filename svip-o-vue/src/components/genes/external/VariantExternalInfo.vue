@@ -7,7 +7,6 @@
 
 <script>
 import Pathogenicity from "./Pathogenicity";
-import axios from "axios";
 import PopulationStats from "./PopulationStats";
 
 export default {

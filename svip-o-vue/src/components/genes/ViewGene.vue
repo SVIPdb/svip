@@ -105,7 +105,6 @@
 
 <script>
 import {HTTP} from "@/router/http";
-import {serverURL} from "@/app_config";
 // import geneVariants from '@/components/Variants'
 import {mapGetters} from "vuex";
 import store from "@/store";
@@ -283,7 +282,6 @@ export default {
 		}
 	},
 	created() {
-		const vm = this;
 		store.dispatch("getGenes");
 		store.dispatch("getVariants");
 		store.dispatch("getPhenotypes");

@@ -27,20 +27,13 @@
 		<div class="card-body">
 			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
-					<a :href="row.item.url" target="_blank">{{
-						row.item.source
-						}}</a>
+					<a :href="row.item.url" target="_blank">{{ row.item.source }}</a>
 				</template>
 				<template slot="diseases" slot-scope="data">
-					{{ Object.keys(data.item.diseases).length }}
-					disease{{
-					Object.keys(data.item.diseases).length !== 1 ? "s" : ""
-					}}
+					{{ Object.keys(data.item.diseases).length }} disease{{ Object.keys(data.item.diseases).length !== 1 ? "s" : "" }}
 				</template>
 				<template slot="database_evidences" slot-scope="data">
-					{{ data.item.database_evidences.length }} evidence{{
-					data.item.database_evidences.length !== 1 ? "s" : ""
-					}}
+					{{ data.item.database_evidences.length }} evidence{{ data.item.database_evidences.length !== 1 ? "s" : "" }}
 				</template>
 				<template slot="clinical" slot-scope="data">
 					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
@@ -104,13 +97,7 @@
 										<th>Disease</th>
 										<th>Evidence Type</th>
 										<th>Clinical Significance</th>
-										<th>
-											{{
-											row.item.source === "CIViC"
-											? "Score level"
-											: "Tier level"
-											}}
-										</th>
+										<th>{{ row.item.source === "CIViC" ? "Score level" : "Tier level" }}</th>
 										<th>Drug</th>
 										<th>References</th>
 									</tr>
@@ -137,9 +124,7 @@
 </template>
 
 <script>
-import Vue from "vue";
 import {mapGetters} from "vuex";
-import store from "@/store";
 import scorePlot from "@/components/plots/scorePlot";
 import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import {titleCase} from "@/utils";
@@ -244,36 +229,23 @@ export default {
 					}
 				}
 				data[source].diseases = data[source].diseases.concat(
-					_.map(a.phenotype_set, a => {
-						return titleCase(a.term);
-					})
+					_.map(a.phenotype_set, a => {return titleCase(a.term);})
 				);
 				data[source].database_evidences = data[source].database_evidences.concat(
-					_.map(a.evidence_set, e => {
-						return e.description;
-					})
+					_.map(a.evidence_set, e => {return e.description;})
 				);
 				data[source].clinical.push({
-					disease: _.map(a.phenotype_set, a => {
-						return titleCase(a.term);
-					}).join("; "),
+					disease: _.map(a.phenotype_set, a => {return titleCase(a.term);}).join("; "),
 					drug: this.normalizeItemList(a.drug_labels),
 					significance: a.response_type,
-					type: _.map(a.evidence_set, e => {
-						return e.type;
-					}).join("; "),
+					type: _.map(a.evidence_set, e => {return e.type;}).join("; "),
 					tier: a.evidence_level + a.evidence_label,
 					publications: a.evidence_set.reduce(
 						(acc, ev_set) =>
 							acc.concat(
 								ev_set.publications.map(p => {
 									const pmid = _.last(p.split("/"));
-									return {
-										url: p,
-										pmid: /^[0-9]+$/.test(pmid)
-											? pmid
-											: "(external)"
-									};
+									return {url: p, pmid: /^[0-9]+$/.test(pmid) ? pmid : "(external)"};
 								})
 							),
 						[]

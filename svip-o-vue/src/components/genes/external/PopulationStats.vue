@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import {titleCase} from "../../../utils";
-
+/*
+// NOTE: will be used if we report ethnicity-specific stats
 const exac_pops = {
 	afr: "African/African American",
 	amr: "Latino",
@@ -34,6 +34,7 @@ const exac_pops = {
 	sas: "South Asian",
 	oth: "Other"
 };
+*/
 
 const sources = [
 	{

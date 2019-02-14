@@ -25,7 +25,6 @@ Links:
 </template>
 
 <script>
-import Vue from "vue";
 import * as d3 from "d3";
 
 export default {
@@ -87,7 +86,7 @@ export default {
 		}
 	},
 	watch: {
-		data: function (newData) {
+		data: function() {
 			this.drawChart(this.formattedData);
 		}
 	},
