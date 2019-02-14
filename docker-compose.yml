@@ -39,6 +39,7 @@ services:
 
   local_uta:
     image: biocommons/uta:uta_20171026
+    restart: always
     ports:
       - "15032:5432"
 
