@@ -1,9 +1,13 @@
 import django_filters
+from django import forms
+from django.db import models
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions, filters
+from django_filters import rest_framework as df_filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,6 +29,14 @@ class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class VariantFilter(df_filters.FilterSet):
+    gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
+    name = df_filters.CharFilter(field_name='name')
+    description = df_filters.CharFilter(field_name='description')
+    so_name = df_filters.AllValuesFilter(field_name='so_name', label='Sequence Ontology Name')
+    sources = df_filters.BaseInFilter(field_name='sources', lookup_expr='contains')
+
+
 class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Genetic variants that are associated to particular genes.
@@ -32,8 +44,14 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     These can include modifications within genes as well as more generic
     "features", e.g. fusions between genes and gene amplifications.
     """
-    queryset = Variant.objects.all().order_by('name')
+    # queryset = Variant.objects.all().order_by('name')
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        if 'gene_pk' in self.kwargs:
+            return Variant.objects.filter(gene_id=self.kwargs['gene_pk']).order_by('name')
+        else:
+            return Variant.objects.all().order_by('name')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -41,12 +59,8 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         return VariantSerializer
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.SearchFilter,)
-    filter_fields = (
-        'gene',
-        'name',
-        'description',
-        'so_name'
-    )
+    filterset_class = VariantFilter
+    # filter_fields = ('gene', 'name', 'description', 'so_name')
     search_fields = ('name', 'description', 'so_name', 'gene__symbol')
 
     @action(detail=False)
@@ -86,9 +100,18 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
     More information on these labels can be found
     on CIViC's website, <a href="https://civicdb.org/help/evidence/evidence-types">https://civicdb.org/help/evidence/evidence-types</a>.
     """
-    queryset = Association.objects.all().order_by('id')
     serializer_class = AssociationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        if 'variant_pk' in self.kwargs:
+            return Association.objects.filter(variant_id=self.kwargs['variant_pk']).order_by('id')
+        else:
+            return Association.objects.all().order_by('id')
+
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+    filter_fields = ('gene', 'source', 'drug_interaction_type')
+    search_fields = ('variant_name', 'description')
 
 
 class PhenotypeViewSet(viewsets.ReadOnlyModelViewSet):

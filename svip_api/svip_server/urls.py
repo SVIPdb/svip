@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
+from rest_framework_nested import routers as nested_routers
 
 from api import views
 
@@ -53,13 +54,20 @@ router = OptionalSlashRouter()
 # router.register(r'users', views.UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
 router.register(r'genes', views.GeneViewSet)
-router.register(r'variants', views.VariantViewSet)
-router.register(r'associations', views.AssociationViewSet)
+router.register(r'variants', views.VariantViewSet, basename='variant')
+router.register(r'associations', views.AssociationViewSet, basename='association')
 router.register(r'phenotypes', views.PhenotypeViewSet)
 router.register(r'evidence_items', views.EvidenceViewSet)
 router.register(r'environmental_contexts', views.EnvironmentalContextViewSet)
 
 router.register(r'query', views.QueryView, basename="query")
+
+# add in the nested routers as well
+genes_router = nested_routers.NestedSimpleRouter(router, r'genes', lookup='gene')
+genes_router.register(r'variants', views.VariantViewSet, base_name='gene-variants')
+
+variants_router = nested_routers.NestedSimpleRouter(router, r'variants', lookup='variant')
+variants_router.register(r'associations', views.AssociationViewSet, base_name='associations')
 
 
 urlpatterns = [
@@ -72,6 +80,8 @@ urlpatterns = [
 
     # drf routes
     re_path(r'^api/v1/', include(router.urls)),
+    re_path(r'^api/v1/', include(genes_router.urls)),
+    re_path(r'^api/v1/', include(variants_router.urls)),
     re_path(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # drf-yasg routes
