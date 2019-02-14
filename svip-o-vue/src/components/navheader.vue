@@ -1,53 +1,61 @@
 <template>
-<!-- Navbar -->
-<b-navbar toggleable="md" type="light" variant="primary" fixed='top'>
+	<!-- Navbar -->
+	<b-navbar toggleable="md" type="light" variant="primary" fixed="top">
+		<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-	<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+		<b-navbar-brand href="#">
+			<!-- <img src="../assets/svip_logo_small.png" style="margin-right:5px"> -->
+			<img src="../assets/sphn_logo_small.png" style="margin-right:5px"/>
+			<img src="../assets/sib_logo_small.png" style="margin-right:5px"/>
+			<router-link to="/">SVIP-O</router-link>
+		</b-navbar-brand>
 
-	<b-navbar-brand href="#">
-		<!-- <img src="../assets/svip_logo_small.png" style="margin-right:5px"> -->
-		<img src="../assets/sphn_logo_small.png" style="margin-right:5px" />
-		<img src="../assets/sib_logo_small.png" style="margin-right:5px" />
-		<router-link to="/">SVIP-O</router-link>
-	</b-navbar-brand>
-
-	<b-collapse is-nav id="nav_collapse">
-
-		<!-- Right aligned nav items -->
-		<b-navbar-nav class="ml-auto">
-
-			<b-navbar-nav right>
-				<b-nav-item v-access = '"admin"'><router-link to="/admin">Admin</router-link></b-nav-item>
-				<b-nav-item v-access = '"active"'>Welcome {{user.fullname}}</b-nav-item>
-				<b-nav-item v-access = '"active"'><a class = 'pointer' @click='logout()'><icon name = 'sign-out'></icon></a></b-nav-item>
+		<b-collapse is-nav id="nav_collapse">
+			<!-- Right aligned nav items -->
+			<b-navbar-nav class="ml-auto">
+				<b-navbar-nav right>
+					<b-nav-item v-access="'admin'"
+					>
+						<router-link to="/admin"
+						>Admin
+						</router-link
+						>
+					</b-nav-item
+					>
+					<b-nav-item v-access="'active'"
+					>Welcome {{ user.fullname }}
+					</b-nav-item
+					>
+					<b-nav-item v-access="'active'"
+					><a class="pointer" @click="logout()"
+					>
+						<icon name="sign-out"></icon>
+					</a
+					></b-nav-item>
+				</b-navbar-nav>
 			</b-navbar-nav>
-
-		</b-navbar-nav>
-
-	</b-collapse>
-</b-navbar>
-
+		</b-collapse>
+	</b-navbar>
 </template>
 
 <script>
-
-import { mapGetters } from 'vuex'
-import store from '@/store'
-import Vue from 'vue'
+import {mapGetters} from "vuex";
+import store from "@/store";
+import Vue from "vue";
 
 export default {
-	name: 'navHeader',
+	name: "navHeader",
 	computed: {
 		...mapGetters({
-			user: 'currentUser'
+			user: "currentUser"
 		})
 	},
 	methods: {
-		logout () {
-			store.dispatch('logout').then( () => {
-				Vue.prototype.$keycloak.logoutFn()
-			})
+		logout() {
+			store.dispatch("logout").then(() => {
+				Vue.prototype.$keycloak.logoutFn();
+			});
 		}
 	}
-}
+};
 </script>

@@ -3,14 +3,14 @@
 // export const serverURL = 'http://localhost:8085/api/v1/'
 export const serverURL = process.env.API_URL;
 
-export const siteTitle = 'SVIP-O'
+export const siteTitle = "SVIP-O";
 
-export const loginType = 'google'
+export const loginType = "google";
 
 export const getHeader = function () {
 	const headers = {
-		'Accept': 'application/json'
+		Accept: "application/json"
 		// 'Authorization':'Bearer' + tokenData.access_token
-	}
-	return headers
-}
+	};
+	return headers;
+};

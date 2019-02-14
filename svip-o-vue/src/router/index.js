@@ -1,41 +1,41 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from '@/components/Home'
-import Genes from '@/components/genes/Genes'
-import Gene from '@/components/genes/ViewGene'
-import Variant from '@/components/genes/ViewVariant'
+import Vue from "vue";
+import Router from "vue-router";
+import Home from "@/components/Home";
+import Genes from "@/components/genes/Genes";
+import Gene from "@/components/genes/ViewGene";
+import Variant from "@/components/genes/ViewVariant";
 
 // import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 
-Vue.use(Router)
+Vue.use(Router);
 // Vue.use(ClientTable);
 
 const router = new Router({
-	mode: 'history',
+	mode: "history",
 	routes: [
 		{
-			path: '/genes',
-			name: 'genes',
+			path: "/genes",
+			name: "genes",
 			component: Genes
 		},
 		{
-			path: '/gene/:gene_id',
-			name: 'gene',
+			path: "/gene/:gene_id",
+			name: "gene",
 			component: Gene
 		},
 		{
-			path: '/gene/:gene_id/variant/:variant_id',
-			name: 'variant',
+			path: "/gene/:gene_id/variant/:variant_id",
+			name: "variant",
 			component: Variant
 		},
 
 		{
-			path: '*',
-			name: 'home',
+			path: "*",
+			name: "home",
 			component: Home
 		}
 	]
-})
+});
 
 // function requireAuth (to, from, next) {
 //   store.dispatch('getCredentials').then(test => {
@@ -61,4 +61,4 @@ const router = new Router({
 //     }
 //   })
 // }
-export default router
+export default router;

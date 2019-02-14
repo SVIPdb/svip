@@ -1,8 +1,8 @@
 <template>
-    <div class="row">
-        <Pathogenicity :cadd="mvInfo.cadd" v-if="mvInfo && mvInfo.cadd" />
-        <PopulationStats :mvInfo="mvInfo" v-if="mvInfo" />
-    </div>
+	<div class="row">
+		<Pathogenicity :cadd="mvInfo.cadd" v-if="mvInfo && mvInfo.cadd"/>
+		<PopulationStats :mvInfo="mvInfo" v-if="mvInfo"/>
+	</div>
 </template>
 
 <script>
@@ -11,12 +11,10 @@ import axios from "axios";
 import PopulationStats from "./PopulationStats";
 
 export default {
-    name: "VariantExternalInfo",
-    components: {Pathogenicity, PopulationStats},
-    props: ['mvInfo']
-}
+	name: "VariantExternalInfo",
+	components: {Pathogenicity, PopulationStats},
+	props: ["mvInfo"]
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
