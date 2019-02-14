@@ -26,7 +26,7 @@ class Gene(models.Model):
     location = models.TextField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
-    sources = JSONField(default=dict)
+    sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
 
     aliases = ArrayField(base_field=models.TextField(), default=list, null=True)
     prev_symbols = ArrayField(base_field=models.TextField(), default=list, null=True)
@@ -69,7 +69,7 @@ class Variant(models.Model):
     myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
     mv_info = JSONField(null=True)  # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
 
-    sources = JSONField(default=dict)
+    sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
 
     def __str__(self):
         return "%s %s" % (self.gene.symbol, self.name)
@@ -108,6 +108,7 @@ class Association(models.Model):
 
     description = models.TextField(null=True)
     drug_labels = models.TextField(null=True)
+    drug_interaction_type = models.TextField(null=True)
 
     variant_name = models.TextField(null=True)  # here for debugging, remove if it's always the name as Variant__name
     source_link = models.TextField(null=True)
