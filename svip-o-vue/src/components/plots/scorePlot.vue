@@ -26,6 +26,7 @@
 
         <b-tooltip :target="() => $refs.thechart" placement="left">
             <div v-for="(d,i) in layout" style="text-align: left;">
+                <svg width="10" height="10" class="legend-swatch"><rect width="10" height="10" :fill="d.c"></rect></svg>
                 <b>score {{d.k}}:</b> {{d.v}}
             </div>
         </b-tooltip>
