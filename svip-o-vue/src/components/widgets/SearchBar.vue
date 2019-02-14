@@ -1,6 +1,6 @@
 <template>
 	<form>
-		<v-select label="label" :options="options" placeholder="Search for gene / variant" @change="queryChanged" @search="onSearch" v-model="selected" v-on:change="queryChanged">
+		<v-select label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
 			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
