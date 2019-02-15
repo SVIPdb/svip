@@ -2,7 +2,7 @@
 	<div>
 		<svg ref="thechart" class="bar-chart">
 			<g v-for="(d, i) in layout" :key="i">
-				<rect class="bar" :key="d.k" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
+				<rect class="bar" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 				<rect v-if="d.v === 0" class="zero-value" :x="d.x + 3" :y="3" :width="d.width - 6" height="18" rx="2" ry="2"></rect>
 			</g>
 
@@ -66,13 +66,15 @@ export default {
 				.domain([0, this.aggregatedData.length])
 				.range([0, this.width]);
 			this.y
-				.domain([
-					0,
-					d3.max(this.aggregatedData, function (d) {
-						return d.v;
-					})
-				])
+				.domain([0, d3.max(this.aggregatedData, (d) => d.v)])
 				.range([0, this.height]);
+
+			// if either of the scales have 0-length domains, the value will always be the mean of the range
+			// we need to bump the domain up a bit if its bounds are equal to provide resolution
+			if (this.y.domain()[0] === this.y.domain()[1]) {
+				this.y.domain([0,1]);
+			}
+
 			return this.aggregatedData.map(
 				(function (_this) {
 					return function (d, i) {
@@ -82,10 +84,7 @@ export default {
 							x: _this.x(i),
 							y: _this.y.range()[1] - _this.y(d.v),
 							c: d.c,
-							width: Math.max(
-								1,
-								_this.x(1) - _this.x(0) - _this.padding
-							),
+							width: Math.max(1, _this.x(1) - _this.x(0) - _this.padding),
 							height: _this.y(d.v)
 						};
 					};
