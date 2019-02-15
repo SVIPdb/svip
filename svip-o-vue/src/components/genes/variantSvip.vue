@@ -61,10 +61,10 @@
         -->
 
 				<template slot="score" slot-scope="data">
-					<icon :name="data.item.score < 1 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 2 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 3 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 4 ? 'star-o' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 1 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 2 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 3 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 4 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
 				</template>
 				<template slot="row-details" slot-scope="row">
 					<div class="card">

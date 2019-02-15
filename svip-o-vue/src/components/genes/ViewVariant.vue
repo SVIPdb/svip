@@ -50,7 +50,7 @@
 						<optional :val="variant.dbsnp_ids">
 							<a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target="_blank">
 								rs{{ rsid }}
-								<icon name="external-link"></icon>
+								<icon name="external-link-alt"></icon>
 							</a>
 						</optional>
 
