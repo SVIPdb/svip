@@ -3,13 +3,9 @@
 		<div class="highlight-clean">
 			<div class="container">
 				<div class="intro section text-center">
-					<img
-						src="../assets/svip_logo.png"
-						width="368"
-						height="137"
-						alt="Svip Logo"
-					/>
+					<img src="../assets/SIVP_Logo_Text_cmyk_Large.png" width="483" height="137" alt="Svip Logo"/>
 				</div>
+
 				<div class="section row justify-content-md-center">
 					<div class="col-6">
 						<!-- <form ><input type="search" placeholder="Search for gene / variant" class="form-control" /></form> -->
@@ -25,11 +21,20 @@
 
 				<div class="section stats row justify-content-md-center">
 					<div class="col">
-						<h3>{{ nbGenes }} Genes</h3>
+						<h3>{{ nbGenes }} Gene{{ nbGenes !== 1 ? 's' : ''}}</h3>
 					</div>
 					<div class="col">
-						<h3>{{ nbVariants }} Variants</h3>
+						<h3>{{ nbVariants }} Variant{{ nbVariants !== 1 ? 's' : ''}}</h3>
 					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12 justify-content-center" style="text-align: center; font-style: italic; color: #999; margin-top: 60px;">
+					<a href="https://www.sphn.ch/en/projects/infrastructure-development-projects.html" target="_blank">
+						<img src="../assets/sphn_logo_middle.png" width="170" alt="SPHN: Swiss Personalized Health Network" />
+					</a>
+					<div style="padding-top: 2em;">an SPHN Infrastructure Development project</div>
 				</div>
 			</div>
 		</div>
