@@ -11,6 +11,15 @@ footer {
 	padding: 20px;
 }
 
+footer .version-info {
+	color: #aaa; font-style: italic;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+footer .version-info a {
+	color: #66d697; font-weight: bolder;
+}
 /* some tweaks to boostrap-vue's inexplicable whitespace choices */
 .card-title {
 	margin-bottom: 0;
