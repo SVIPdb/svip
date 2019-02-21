@@ -1,13 +1,12 @@
 <template>
 	<!-- Navbar -->
-	<b-navbar toggleable="md" type="light" variant="primary" fixed="top">
+	<b-navbar toggleable="md" type="light" variant="primary" fixed="top" class="svip-navbar">
 		<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
 		<b-navbar-brand href="#">
-			<!-- <img src="../assets/svip_logo_small.png" style="margin-right:5px"> -->
-			<img src="../assets/sphn_logo_small.png" style="margin-right:5px"/>
-			<img src="../assets/sib_logo_small.png" style="margin-right:5px"/>
-			<router-link to="/">SVIP-O</router-link>
+			<router-link to="/">
+				<img src="../assets/SVIP_Logo_white_narrow.png" width="162" height="52" alt="SVIP-O" />
+			</router-link>
 		</b-navbar-brand>
 
 		<b-collapse is-nav id="nav_collapse">

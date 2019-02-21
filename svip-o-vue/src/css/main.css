@@ -20,6 +20,10 @@ footer .version-info {
 footer .version-info a {
 	color: #66d697; font-weight: bolder;
 }
+
+	/* navbar tweaking to reduce dead space */
+.svip-navbar { padding: 8px 20px; }
+
 /* some tweaks to boostrap-vue's inexplicable whitespace choices */
 .card-title {
 	margin-bottom: 0;
