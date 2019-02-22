@@ -32,7 +32,7 @@ footer .version-info .feedback {
 }
 
 /* activates when the footer wraps */
-@media (max-width: 960px) {
+@media (max-width: 991px) {
 	/* adds extra padding to body so its content is not obscured by the footer in narrow mode,
 	 since the footer gets taller as a result of its contents wrapping */
 	body {
