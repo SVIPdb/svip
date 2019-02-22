@@ -273,14 +273,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container,
 .container-fluid {
 	margin-top: 20px;
-}
-
-.unavailable {
-	font-style: italic;
-	color: #ccc;
 }
 </style>

@@ -157,15 +157,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container,
 .container-fluid {
 	margin-top: 20px;
-}
-
-.unavailable {
-	font-style: italic;
-	color: #ccc;
 }
 
 svg.pathogenicity_level {
@@ -178,9 +173,5 @@ rect.pathogenicity.expert {
 
 rect.pathogenicity.automatic {
 	fill: #80fe07;
-}
-
-.bold {
-	font-weight: bold;
 }
 </style>

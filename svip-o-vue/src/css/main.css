@@ -35,6 +35,10 @@ footer .version-info a {
 	border: none;
 }
 
+/* label styles */
+.unavailable { font-style: italic; color: #ccc; }
+.bold { font-weight: bold; }
+
 /* plot-specific styles */
 .sig-legend {
 	font-size: 12px;
