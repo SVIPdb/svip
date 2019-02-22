@@ -3,18 +3,11 @@
 		<div class="highlight-clean">
 			<div class="container">
 				<div class="intro section text-center">
-					<img src="../assets/SIVP_Logo_Text_cmyk_Large.png" width="483" height="137" alt="Svip Logo"/>
+					<img src="../assets/SVIP_Logo_Text_cmyk_Large.png" class="img-fluid" width="483" height="137" alt="SVIP Logo"/>
 				</div>
 
 				<div class="section row justify-content-md-center">
-					<div class="col-6">
-						<!-- <form ><input type="search" placeholder="Search for gene / variant" class="form-control" /></form> -->
-						<!--
-            <form>
-                <v-select :options="options" value='' placeholder="Search for gene / variant" v-model="gene"></v-select>
-            </form>
--->
-
+					<div class="col-xs-12 col-md-8 col-lg-6">
 						<SearchBar/>
 					</div>
 				</div>
