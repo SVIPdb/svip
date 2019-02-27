@@ -80,7 +80,10 @@
 			</div>
 
 			<div class="container-fluid">
-				<b-table :fields="fields" :items="phenotypes" :sort-by.sync="sortBy" :sort-desc="true" :filter="tableFilter">
+				<b-table
+					:fields="fields" :items="phenotypes" :sort-by.sync="sortBy" :sort-desc="true" :filter="tableFilter"
+					:no-provider-paging="true" :current-page="currentPage" :per-page="perPage"
+				>
 					<template slot="hgvs_c" slot-scope="data" v-if="data.value">
 						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
 					</template>
@@ -98,6 +101,8 @@
 						<b-button size="sm" @click.stop="showVariant(data.item.id)">Show Details</b-button>
 					</template>
 				</b-table>
+
+				<b-pagination v-if="phenotypes.length > perPage" v-model="currentPage" :total-rows="phenotypes.length" :per-page="perPage" />
 			</div>
 		</div>
 	</div>
@@ -119,6 +124,8 @@ export default {
 				symbol: "",
 				variants: []
 			},
+			currentPage: 0,
+			perPage: 100,
 			confirmDeletion: false,
 			itemsByPages: 10,
 			itemsValue: [5, 10, 50, 100],
