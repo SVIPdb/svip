@@ -1,0 +1,482 @@
+[
+	{
+		"gene_name": "EGFR",
+		"variant_name": "S768I",
+		"HGVScoding": "NM_005228.4:c.2303G>T",
+		"HGVSprotein": "NP_005219.2:p.Ser768Ile",
+		"position": "GrCh37:chr7:55249005",
+		"molecular_consequence": "NON_SYNONYMOUS, NONCODING_CHANGE",
+		"tier_level": "1B",
+		"dbSNP": "rs121913465",
+		"SVIP_status": "Curated",
+		"SVIP_confidence_score": 4,
+		"variant_id": 145,
+		"diseases": [
+			{
+				"name": "non-small cell lung carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "prognostic",
+						"clinical_significance": "poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Erlotinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			},
+			{
+				"name": "lung adenocarcinoma",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Afatinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	},
+	{
+		"gene_name": "EGFR",
+		"variant_name": "T790M",
+		"HGVScoding": "NM_005228.4:c.2369C>T",
+		"HGVSprotein": "NP_005219.2:p.Thr790Met",
+		"position": "GrCh37:chr7:55249071",
+		"molecular_consequence": "NON_SYNONYMOUS, NONCODING_CHANGE, REGULATORY",
+		"tier_level": "1B",
+		"dbSNP": "rs121434569",
+		"SVIP_status": "Loaded",
+		"SVIP_confidence_score": 3,
+		"variant_id": 130,
+		"diseases": [
+			{
+				"name": "non-small cell lung carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "prognostic",
+						"clinical_significance": "poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Erlotinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			},
+			{
+				"name": "lung adenocarcinoma",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Afatinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	},
+	{
+		"gene_name": "EGFR",
+		"variant_name": "L858R",
+		"HGVScoding": "NM_005228.4:c.2573T>G",
+		"HGVSprotein": "NP_005219.2:p.Leu858Arg",
+		"position": "GrCh37:chr7:55259515",
+		"molecular_consequence": "NON_SYNONYMOUS",
+		"tier_level": "1A",
+		"dbSNP": "rs121434568",
+		"SVIP_status": "Reviewed",
+		"SVIP_confidence_score": 3,
+		"variant_id": 142,
+		"diseases": [
+			{
+				"name": "non-small cell lung carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "prognostic",
+						"clinical_significance": "poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Erlotinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			},
+			{
+				"name": "lung adenocarcinoma",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Afatinib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	},
+	{
+		"gene_name": "BRAF",
+		"variant_name": "G596R",
+		"HGVScoding": "NM_004333.4:c.1786G>C",
+		"HGVSprotein": "NP_004324.2:p.Gly596Arg",
+		"position": "GrCh37:chr7:140453149",
+		"molecular_consequence": "NON_SYNONYMOUS",
+		"tier_level": 3,
+		"dbSNP": "rs121913361",
+		"SVIP_status": "Loaded",
+		"SVIP_confidence_score": 2,
+		"variant_id": 56,
+		"diseases": [
+			{
+				"name": "Papillary thyroid carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "Prognostic",
+						"clinical_significance": "Poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier II"
+					}
+				]
+			},
+			{
+				"name": "colorectal cancer",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Cetuximab",
+						"evidence_type": "predictive",
+						"clinical_significance": "resistant",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	},
+	{
+		"gene_name": "BRAF",
+		"variant_name": "V600E",
+		"HGVScoding": "NM_004333.4:c.1799T>A",
+		"HGVSprotein": "NP_004324.2:p.Val600Glu",
+		"position": "GrCh37:chr7:140453136",
+		"molecular_consequence": "NON_SYNONYMOUS",
+		"tier_level": "1A",
+		"dbSNP": "rs113488022",
+		"SVIP_status": "Reviewed",
+		"SVIP_confidence_score": 4,
+		"variant_id": 1,
+		"diseases": [
+			{
+				"name": "Papillary thyroid carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "Prognostic",
+						"clinical_significance": "Poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier II"
+					}
+				]
+			},
+			{
+				"name": "colorectal cancer",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Cetuximab",
+						"evidence_type": "predictive",
+						"clinical_significance": "resistant",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	},
+	{
+		"gene_name": "BRAF",
+		"variant_name": "K601E",
+		"HGVScoding": "NM_004333.4:c.1801A>G",
+		"HGVSprotein": "NP_004324.2:p.Lys601Glu",
+		"position": "GrCh37:chr7:140453134",
+		"molecular_consequence": "NON_SYNONYMOUS",
+		"tier_level": 2,
+		"dbSNP": "rs121913364",
+		"SVIP_status": "Curated",
+		"SVIP_confidence_score": 3,
+		"variant_id": 65,
+		"diseases": [
+			{
+				"name": "Papillary thyroid carcinoma",
+				"nb_patients": "88/144",
+				"age_distribution": {
+					"<40": 5,
+					"41-60": 30,
+					"61-80": 50,
+					">80": 3
+				},
+				"gender_balance": {
+					"male": 60,
+					"female": 40
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "automatic",
+				"SVIP_status": "Curated",
+				"clinical_significance": "predictive",
+				"significance_label": "B",
+				"score": 3,
+				"evidences": [
+					{
+						"drug": "",
+						"evidence_type": "Prognostic",
+						"clinical_significance": "Poor outcome",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier II"
+					}
+				]
+			},
+			{
+				"name": "colorectal cancer",
+				"nb_patients": "56/144",
+				"age_distribution": {
+					"<40": 10,
+					"41-60": 23,
+					"61-80": 18,
+					">80": 5
+				},
+				"gender_balance": {
+					"male": 65,
+					"female": 35
+				},
+				"pathogenicity": "pathogenic",
+				"pathogenicity_level": "expert",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "predictive / prognostic",
+				"significance_label": "A",
+				"score": 4,
+				"evidences": [
+					{
+						"drug": "Cetuximab",
+						"evidence_type": "predictive",
+						"clinical_significance": "resistant",
+						"tier_level": "Tier II"
+					},
+					{
+						"drug": "Vemurafenib",
+						"evidence_type": "predictive",
+						"clinical_significance": "sensitive",
+						"tier_level": "Tier I"
+					}
+				]
+			}
+		]
+	}
+]

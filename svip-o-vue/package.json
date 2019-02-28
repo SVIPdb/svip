@@ -1,6 +1,7 @@
 {
   "name": "svip-o-frontend",
   "version": "0.1.0",
+	"release_name": "Alpha Asterisk",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

@@ -1,7 +1,78 @@
 html {
-  position: relative;
-  min-height: 100%;
+	position: relative;
+	min-height: 100%;
 }
+
+/* navbar tweaking to reduce dead space */
+.svip-navbar { padding: 8px 20px; }
+
 body {
-  margin-bottom: 60px; /* Margin bottom by footer height */
+	margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+/* styles for the footer, including version info and attribution logos */
+footer {
+	padding: 20px;
+}
+
+footer .version-info {
+	font-size: smaller;
+	color: #aaa;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border-right: solid 1px #ccc;
+}
+footer .version-info a {
+	color: #66d697;
+}
+footer .version-info .feedback {
+	margin-top: 0.5em;
+}
+
+/* activates when the footer wraps */
+@media (max-width: 991px) {
+	/* adds extra padding to body so its content is not obscured by the footer in narrow mode,
+	 since the footer gets taller as a result of its contents wrapping */
+	body {
+		margin-bottom: 440px;
+	}
+
+	footer .attributions img {
+		/* adds a little vertical space between the logos when they wrap */
+		margin-bottom: 10px;
+	}
+
+	footer .version-info {
+		/* swaps version-info right border for bottom border when the row wraps */
+		border-right: none;
+		border-bottom: solid 1px #ccc;
+		padding-bottom: 15px;
+	}
+}
+
+/* some tweaks to boostrap-vue's inexplicable whitespace choices */
+.card-title {
+	margin-bottom: 0;
+}
+
+.v-select.searchable .dropdown-toggle::after {
+	content: " ";
+	margin: 5px;
+	border: none;
+}
+
+/* label styles */
+.unavailable { font-style: italic; color: #ccc; }
+.bold { font-weight: bold; }
+
+/* plot-specific styles */
+.sig-legend {
+	font-size: 12px;
+}
+
+.legend-swatch {
+	vertical-align: baseline;
+	margin-right: 2px;
 }

@@ -1,183 +1,281 @@
 <template>
-	<div class = 'card mt-3'>
-		<div class = 'card-header'>
-			<div class = 'card-title'>Publicly available information</div>
+	<!--
+  /************************ LICENCE ***************************
+  *     This file is part of <ViKM Vital-IT Knowledge Management web application>
+  *     Copyright (C) <2016> SIB Swiss Institute of Bioinformatics
+  *
+  *     This program is free software: you can redistribute it and/or modify
+  *     it under the terms of the GNU Affero General Public License as
+  *     published by the Free Software Foundation, either version 3 of the
+  *     License, or (at your option) any later version.
+  *
+  *     This program is distributed in the hope that it will be useful,
+  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *     GNU Affero General Public License for more details.
+  *
+  *     You should have received a copy of the GNU Affero General Public License
+  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
+  *
+  *****************************************************************/
+  -->
+
+	<div class="card mt-3">
+		<div class="card-header">
+			<div class="card-title">Publicly Available Information</div>
 		</div>
-		<div class = 'card-body'>
-			<b-table :fields = 'fields' :items = 'data' :sort-by.sync="sortBy" :sort-desc='false'>
-			<template slot='source' slot-scope='row'>
-				<a :href='row.item.url' target = '_blank'>{{row.item.source}}</a>
-			</template>
-			<template slot='diseases' slot-scope='data'>
-				{{Object.keys(data.item.diseases).length}} disease{{(Object.keys(data.item.diseases).length>1)?"s":""}}
-			</template>
-			<template slot='database_evidences' slot-scope='data'>
-				{{data.item.database_evidences.length}} evidence{{(data.item.database_evidences.length>1)?"s":""}}
-			</template>
-			<template slot='clinical' slot-scope='data'>
-				<span v-for='(c,idx) in summaryClinical(data.item.clinical)' :key="idx" class = 'mr-2'>{{c}}</span>
-			</template>
-			<template slot='scores' slot-scope='data'>
-				<score-plot :data='data.item.scores'></score-plot>
-			</template>
-			<template slot="actions" slot-scope="row">
-				<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-				<b-button size="sm" @click.stop="row.toggleDetails">
-				{{ row.detailsShowing ? 'Hide' : 'Show'}} Details
-			</b-button>
-		</template>
-				
-		<template slot="row-details" slot-scope="row">
-			<div class = 'row'>
-				<div class="col-4">
-					<b-card>
-					<h6 class = 'card-subtitle mb-2 text-muted'>Diseases <i class = 'float-right' v-if='!row.item.filter'>click on a disease to filter the evidences table </i><span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
-					<table class = 'table table-sm table-hover'>
-						<thead>
-							<tr>
-								<th>disease</th>
-								<th># occcurences</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for='(nb,d) in row.item.diseases' :key="d" @click='row.item.filter=d' :class='(row.item.filter==d)?"pointer table-active":"pointer"'>
-								<td>{{d}}</td>
-								<td>{{nb}}</td>
-							</tr>									
-						</tbody>
-					</table>
-				</b-card>
-			</div>
-			<div class="col-8">
-				<b-card >
-				<h6 class = 'card-subtitle mb-2 text-muted'>Evidences <span class = 'float-right badge badge-primary' v-if='row.item.filter' style = 'font-size: 13px'>{{row.item.filter}} <button type="button" class="close small ml-3" aria-label="Close" style = 'font-size: 14px' @click='row.item.filter=""'><span aria-hidden="true">&times;</span></button></span></h6>
-				<table class = 'table table-sm'>
-					<tr>
-						<th>Disease</th>
-						<th>Evidence Type</th>
-						<th>Clinical significance</th>
-						<th class = 'text-center'>{{(row.item.source=='CIViC')?"Score level":"Tier level"}}</th>
-						<th>Drug</th>
-					</tr>
-					<tr v-for='(c,idx) in filterClinical(row.item.clinical,row.item.filter)' :key="idx">
-						<td>{{c.disease}}</td>
-						<td>{{c.type}}</td>
-						<td>{{c.significance}}</td>
-						<td class = 'text-center'>{{c.tier}}</td>
-						<td>{{c.drug}}</td>
-					</tr>
-				</table>
-			</b-card>
+		<div class="card-body">
+			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
+				<template slot="source" slot-scope="row">
+					<a :href="row.item.url" target="_blank">{{ row.item.source }}</a>
+				</template>
+				<template slot="diseases" slot-scope="data">
+					{{ Object.keys(data.item.diseases).length }} disease{{ Object.keys(data.item.diseases).length !== 1 ? "s" : "" }}
+				</template>
+				<template slot="database_evidences" slot-scope="data">
+					{{ data.item.database_evidences.length }} evidence{{ data.item.database_evidences.length !== 1 ? "s" : "" }}
+				</template>
+				<template slot="clinical" slot-scope="data">
+					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
+					<significance-bar-plot :data="summaryClinical(data.item.clinical)"></significance-bar-plot>
+				</template>
+				<template slot="scores" slot-scope="data">
+					<score-plot :data="data.item.scores"></score-plot>
+				</template>
+				<template slot="actions" slot-scope="row">
+					<div style="text-align: right;">
+						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+						<b-button size="sm" @click.stop="row.toggleDetails">
+							{{ row.detailsShowing ? "Hide" : "Show" }} Details
+						</b-button>
+					</div>
+				</template>
+
+				<template slot="row-details" slot-scope="row">
+					<div class="row">
+						<div class="col-4">
+							<b-card>
+								<h6 class="card-subtitle mb-2 text-muted">
+									Diseases
+									<i class="float-right" v-if="!row.item.filter">click on a disease to filter the drugs table</i>
+									<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
+										{{ row.item.filter }}
+										<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
+												<span aria-hidden="true">&times;</span>
+										</button>
+									</span>
+								</h6>
+								<table class="table table-sm table-hover">
+									<thead>
+										<tr>
+											<th>Disease</th>
+											<th># of Occcurences</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(nb, d) in row.item.diseases" :key="d" @click="row.item.filter = d" :class="row.item.filter === d ? 'pointer table-active' : 'pointer'">
+											<td>{{ d }}</td>
+											<td>{{ nb }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</b-card>
+						</div>
+
+						<div class="col-8">
+							<b-card>
+								<h6 class="card-subtitle mb-2 text-muted">
+									Evidences
+									<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
+										{{ row.item.filter }}
+											<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
+													<span aria-hidden="true">&times;</span>
+											</button></span>
+								</h6>
+								<table class="table table-sm">
+									<tr>
+										<th>Disease</th>
+										<th>Evidence Type</th>
+										<th>Clinical Significance</th>
+										<th>{{ row.item.source === "CIViC" ? "Score level" : "Tier level" }}</th>
+										<th>Drug</th>
+										<th>References</th>
+									</tr>
+									<tr v-for="(c, idx) in filterClinical( row.item.clinical, row.item.filter )" :key="idx">
+										<td>{{ c.disease }}</td>
+										<td>{{ c.type }}</td>
+										<td>{{ c.significance }}</td>
+										<td>{{ c.tier }}</td>
+										<td>{{ normalizeItemList(c.drug) }}</td>
+										<td>
+											<template v-for="(p, i) in c.publications">
+												<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.pmid }}</a><span :key="`${i}_comma`" v-if=" i < c.publications .length - 1">, </span>
+											</template>
+										</td>
+									</tr>
+								</table>
+							</b-card>
+						</div>
+					</div>
+				</template>
+			</b-table>
 		</div>
 	</div>
 </template>
-				
-</b-table>
-</div>
-</div>	
-</template>
 
 <script>
+import {mapGetters} from "vuex";
+import scorePlot from "@/components/plots/scorePlot";
+import significanceBarPlot from "@/components/plots/significanceBarPlot";
+import {titleCase} from "@/utils";
 
-import { mapGetters } from 'vuex'
-import scorePlot from '@/components/plots/scorePlot'
 export default {
-	name: 'public-databases-info',
-	components: {scorePlot},	
-	data () {
+	name: "public-databases-info",
+	components: {scorePlot, significanceBarPlot},
+	data() {
 		return {
-			databases: {'civic': 'CIViC','cosmic': 'COSMIC','clinvar': 'ClinVar','oncokb': "oncoKB"},
-			sortBy: 'source',
+			databases: {
+				civic: "CIViC",
+				cosmic: "COSMIC",
+				clinvar: "ClinVar",
+				oncokb: "OncoKB"
+			},
+			sortBy: "source",
 			fields: [
 				{
 					key: "source",
-					label: 'Source',
+					label: "Source",
 					sortable: true
-				}, {
-					key: 'diseases',
+				},
+				{
+					key: "diseases",
 					label: "Diseases",
 					sortable: true
-				}, {
-					key: 'database_evidences',
+				},
+				{
+					key: "database_evidences",
 					label: "Database Evidences",
 					sortable: false
-				}, {
-					key: 'clinical',
-					label: "Clinical significance / interpretation",
+				},
+				{
+					key: "clinical",
+					label: "Clinical Significance / Interpretation",
 					sortable: false
-				}, {
-					key: 'scores',
-					label: "Confidence scores / review status",
-					sortable: false,
-					class: 'text-center'
-				}, {
-					key: 'actions',
-					label: '',
+				},
+				{
+					key: "scores",
+					label: "Confidence Scores / Review Status",
+					sortable: false
+				},
+				{
+					key: "actions",
+					label: "",
 					sortable: false
 				}
 			]
-		}
+		};
 	},
 	methods: {
-		summaryClinical (data){
-			return _.uniq(_.map(data,d => {return d.significance}))
+		summaryClinical(data) {
+			/*
+      return _.uniq(_.map(data, d => {
+          return d.significance
+      }))
+      */
+			return _(data)
+				.groupBy("significance")
+				.map((items, name) => ({name, count: items.length}))
+				.value();
 		},
-		filterClinical (data,filter){
+		filterClinical(data, filter) {
 			if (!filter) return data;
-			return _.filter(data,d => {return d.disease == filter;});
-			
+			return _.filter(data, d => {
+				return d.disease === filter;
+			});
+		},
+		normalizeItemList(items) {
+			if (!items) return items;
+
+			return items
+				.split(",")
+				.map(x => x.trim())
+				.join(", ");
 		}
 	},
 	computed: {
 		...mapGetters({
-			variant: 'variant'
+			variant: "variant"
 		}),
-		data () {
+		data() {
 			let data = {};
-			_.forEach(this.variant.sources,s => {
-				data[s] = {source: this.databases[s], source_id: '',diseases: [], database_evidences: [],clinical: [],scores: [],url: ''}
+			_.forEach(this.variant.sources, s => {
+				data[s] = {
+					source: this.databases[s],
+					source_id: "",
+					diseases: [],
+					database_evidences: [],
+					clinical: [],
+					scores: [],
+					url: ""
+				};
 			});
 			_.forEach(this.variant.association_set, a => {
 				let source = a.source;
-				let source_id = '';
-				if (source == 'civic'){
+				let source_id = "";
+				if (source === "civic") {
 					let test = a.source_link.match(/\/variants\/(\d+)/);
-					if (test){
+					if (test) {
 						source_id = test[1];
 					}
 				}
-				data[source].diseases = data[source].diseases.concat(_.map(a.phenotype_set,a => {return a.term}));
-				data[source].database_evidences = data[source].database_evidences.concat(_.map(a.evidence_set,e => {return e.description}));
+				data[source].diseases = data[source].diseases.concat(
+					_.map(a.phenotype_set, a => {return titleCase(a.term);})
+				);
+				data[source].database_evidences = data[source].database_evidences.concat(
+					_.map(a.evidence_set, e => {return e.description;})
+				);
 				data[source].clinical.push({
-					disease: _.map(a.phenotype_set,a => {return a.term}).join("; "),
-					drug: a.drug_labels,
+					disease: _.map(a.phenotype_set, a => {return titleCase(a.term);}).join("; "),
+					drug: this.normalizeItemList(a.drug_labels),
 					significance: a.response_type,
-					type: _.map(a.evidence_set,e => {return e.type}).join("; "),
-					tier: a.evidence_label || a.evidence_level
+					type: _.map(a.evidence_set, e => {return e.type;}).join("; "),
+					tier: a.evidence_level + a.evidence_label,
+					publications: a.evidence_set.reduce(
+						(acc, ev_set) =>
+							acc.concat(
+								ev_set.publications.map(p => {
+									const pmid = _.last(p.split("/"));
+									return {url: p, pmid: /^[0-9]+$/.test(pmid) ? pmid : "(external)"};
+								})
+							),
+						[]
+					)
 				});
+
 				data[source].scores.push(+a.evidence_level);
 				data[source].source_id += source_id;
 				data[source].url = a.source_url;
-			})
-			_.forEach(this.variant.sources,s => {
-				data[s].diseases = _.countBy(data[s].diseases)
-				data[s].diseases = _.fromPairs(_.sortBy(_.toPairs(data[s].diseases), 1).reverse())
-				data[s].clinical = _.orderBy(data[s].clinical,c => {return c.disease});
+			});
+			_.forEach(this.variant.sources, s => {
+				data[s].diseases = _.countBy(data[s].diseases);
+				data[s].diseases = _.fromPairs(
+					_.sortBy(_.toPairs(data[s].diseases), 1).reverse()
+				);
+				data[s].clinical = _.orderBy(data[s].clinical, c => {
+					return c.disease;
+				});
 				data[s]._showDetails = false;
-				data[s].filter = '';
+				data[s].filter = "";
 			});
 			return Object.values(data);
 		}
 	}
-}
+};
 </script>
 
-<style>
-.container, .container-fluid{
+<style scoped>
+.container,
+.container-fluid {
 	margin-top: 20px;
-}
-.unavailable {
-	font-style: italic;
-	color: #ccc;
 }
 </style>

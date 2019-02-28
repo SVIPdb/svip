@@ -1,45 +1,37 @@
 <template>
-	<div class="card card-default" >
-		<div class="card-header" >
-			<div class="card-title" >
+	<div class="card card-default">
+		<div class="card-header">
+			<div class="card-title">
 				List of variants....
 			</div>
 		</div>
-		<div class = 'card-body'>
-			<p class = 'text-center'><i>something interesting here...</i></p>
+		<div class="card-body">
+			<p class="text-center"><i>something interesting here...</i></p>
 		</div>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from "vuex";
 
 export default {
-	data () {
-		return {
-		}
+	data() {
+		return {};
 	},
 	computed: {
 		...mapGetters({
-			user: 'currentUser'
+			user: "currentUser"
 		})
 	},
 	components: {
 		// filesTable
 	},
-	filters: {
+	filters: {},
+	props: ["gene"],
+	created() {
 	},
-	props: ['gene'],
-	created () {
-
-	},
-	methods: {
-	}
-}
-
+	methods: {}
+};
 </script>
 
-
-<style>
-
-</style>
+<style></style>
