@@ -17,7 +17,7 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
 
-  svip_api:
+  api:
     # image: "svip_api:latest"
     build: ./svip_api
     # restart: always
@@ -25,7 +25,7 @@ services:
       - ./svip_api:/app
     ports:
      - "8085:8085"
-     - "8889:8889"
+     - "8889:8889"  # jupyterlab port
     depends_on:
       - db
     environment:
@@ -59,7 +59,7 @@ services:
       - './outputs:/output'
     depends_on:
       - db
-      - svip_api
+      - api
       - local_uta
 
   # elasticsearch:
