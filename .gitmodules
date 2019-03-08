@@ -6,4 +6,4 @@
 	url = git@gitlab.ethz.ch:svip/svip_api.git
 [submodule "outputs"]
 	path = outputs
-	url = ./outputs
+	url = git@gitlab.ethz.ch:faisala/svip_outputs.git 
