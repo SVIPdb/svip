@@ -22,10 +22,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # drf-yasg schema metadata
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework import permissions, routers
-from rest_framework_nested import routers as nested_routers
+from rest_framework import permissions
 
-from api import views
+import api.urls as api_router
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -43,33 +43,6 @@ schema_view = get_schema_view(
 )
 
 
-class OptionalSlashRouter(routers.DefaultRouter):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.trailing_slash = '/?'
-
-
-# django-rest-framework router paths
-router = OptionalSlashRouter()
-# router.register(r'users', views.UserViewSet)
-# router.register(r'groups', views.GroupViewSet)
-router.register(r'genes', views.GeneViewSet)
-router.register(r'variants', views.VariantViewSet, basename='variant')
-router.register(r'associations', views.AssociationViewSet, basename='association')
-router.register(r'phenotypes', views.PhenotypeViewSet)
-router.register(r'evidence_items', views.EvidenceViewSet)
-router.register(r'environmental_contexts', views.EnvironmentalContextViewSet)
-
-router.register(r'query', views.QueryView, basename="query")
-
-# add in the nested routers as well
-genes_router = nested_routers.NestedSimpleRouter(router, r'genes', lookup='gene')
-genes_router.register(r'variants', views.VariantViewSet, base_name='gene-variants')
-
-variants_router = nested_routers.NestedSimpleRouter(router, r'variants', lookup='variant')
-variants_router.register(r'associations', views.AssociationViewSet, base_name='associations')
-
-
 urlpatterns = [
     path('api/admin/', admin.site.urls),
 
@@ -79,9 +52,13 @@ urlpatterns = [
     re_path(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
 
     # drf routes
-    re_path(r'^api/v1/', include(router.urls)),
-    re_path(r'^api/v1/', include(genes_router.urls)),
-    re_path(r'^api/v1/', include(variants_router.urls)),
+    re_path(r'^api/v1/', include(api_router.router.urls)),
+    re_path(r'^api/v1/', include(api_router.genes_router.urls)),
+    re_path(r'^api/v1/', include(api_router.variants_router.urls)),
+    re_path(r'^api/v1/', include(api_router.variants_in_sources_router.urls)),
+
+    # re_path(r'^api/v1/', include(api.urls)),
+
     re_path(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # drf-yasg routes

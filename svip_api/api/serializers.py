@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from api.models import Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext
+from api.models import Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource
 
 
 # -----------------------------------------------------------------------------
@@ -24,10 +24,33 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 # --- genomics-related serializers
 # -----------------------------------------------------------------------------
 
+class SourceSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Source
+        fields = '__all__'
+
+
 class GeneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Gene
         fields = '__all__'
+
+
+class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
+    variant = serializers.HyperlinkedRelatedField('variant-detail', read_only=True)
+    source = SourceSerializer()
+    # associations = serializers.HyperlinkedRelatedField('assocation-detail', read_only=True, many=True)
+
+    class Meta:
+        model = VariantInSource
+        fields = (
+            'variant',
+            'source',
+            'variant_url',
+            'extras',
+            'association_set',
+            'url'
+        )
 
 
 class PhenotypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -95,12 +118,14 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('url')
         fields.append('gene')
         fields.append('gene_symbol')
-        fields.append('association_set')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
+
+        # FIXME: add sources collection here, from VariantInSource
 
 
 class FullVariantSerializer(VariantSerializer):
-    association_set = AssociationSerializer(many=True)
+    # sources_set = VariantInSourceSerializer(many=True)
+    variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
 
     def __init__(self, *args, **kwargs):
         super(FullVariantSerializer, self).__init__(*args, **kwargs)
@@ -110,3 +135,4 @@ class FullVariantSerializer(VariantSerializer):
         depth = 1
         fields = VariantSerializer.Meta.fields.copy()
         fields.append('mv_info')
+        fields.append('variantinsource_set')

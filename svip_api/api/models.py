@@ -14,8 +14,12 @@ EVIDENCE_TYPES = [
 
 
 class Source(models.Model):
-    # FIXME: this is currently unpopulated; decide if we want to replace 'sources' in Gene/Variant with a ref to this
-    name = models.CharField(max_length=100, null=False, unique=True, db_index=True)
+    # FIXME: some parts of the system still use text strings to identify sources, but they should use this table
+    name = models.TextField(null=False, unique=True, db_index=True)
+    display_name = models.TextField(null=False)
+
+    def __str__(self):
+        return "%s (%s, id: %s)" % (self.display_name, self.name, self.id)
 
 
 class Gene(models.Model):
@@ -69,6 +73,7 @@ class Variant(models.Model):
     myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
     mv_info = JSONField(null=True)  # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
 
+    # we should be able to compute this from
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
 
     def __str__(self):
@@ -83,24 +88,40 @@ class Variant(models.Model):
         ]
 
 
-# ***WIP***
-# class ImpactPrediction(models.Model):
-#     variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
-#
-#     source = models.CharField(max_length=30)
-#     score = models.FloatField(null=True)
+class VariantInSource(models.Model):
+    """
+    Represents the entry that a specific source (say, CIViC) has for a variant. This includes source-specific variant-
+    level information, such as the link to the variant in that source.
+    """
 
-# represents the connection between a variant and evidence items (augmented by env. context, possibly producing
-# phenotypes)
+    variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE, db_index=True)
+    source = models.ForeignKey(to=Source, on_delete=models.CASCADE, db_index=True)
+
+    variant_url = models.TextField(null=True, verbose_name="Variant's URL for this source")
+    # this holds source-specific values like COSMIC's variant-level FATHMM predictions/scores
+    extras = JSONField(null=True, verbose_name="Source-specific extra data")
+
+    class Meta:
+        unique_together = (("variant", "source"),)
+
+    # TODO: add link to variant in that source (i.e, move it from Association to here)
+
+    # TODO: add aggregations that the front-end is currently computing on its own, specifically:
+    #  diseases: [],
+    #  database_evidences: [],
+    #  clinical: [],
+    #  scores: []
+
 
 class Association(models.Model):
     """
-    Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts
+    Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts for a specific
+    source. There is one Association per pairing of variant, (sets of) phenotypes, and (sets of) contexts.
     """
-    gene = models.ForeignKey(to=Gene, on_delete=models.CASCADE)
-    variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
+    variant_in_source = models.ForeignKey(to=VariantInSource, on_delete=models.CASCADE, null=False)
 
-    source_url = models.TextField(null=True)
+    # FIXME: move this to VariantInSource
+    source_url = models.TextField(null=True, verbose_name="URL of the variant's entry in the source")
     source = models.TextField()
 
     # temporary field to log exactly what we're getting from the server
@@ -111,11 +132,18 @@ class Association(models.Model):
     drug_interaction_type = models.TextField(null=True)
 
     variant_name = models.TextField(null=True)  # here for debugging, remove if it's always the name as Variant__name
-    source_link = models.TextField(null=True)
+    source_link = models.TextField(null=True, verbose_name="URL of the association's entry in the source")
 
-    evidence_label = models.TextField(null=True)
-    response_type = models.TextField(null=True)
-    evidence_level = models.TextField(null=True)
+    # TODO: current evidence label, level, etc. to be replaced
+    evidence_type = models.TextField(null=True, choices=EVIDENCE_TYPES)  # FIXME: needs to be populated from Evidence
+    evidence_direction = models.TextField(null=True)
+    clinical_significance = models.TextField(null=True) # -> clinical_significance
+    evidence_level = models.TextField(null=True)  # -> evidence_level (used by clinvar, oncokb)
+
+    # evidence_type (ex: Predictive) (currently in Evidence)
+    # evidence_direction (ex: Supports)
+    # clinical_significance (ex: Resistance, Sensitivity/Response for 'Predictive'; Pathogenic for 'Predisposing') (currently response_type)
+    # evidence_level (ex: D, C -- used by civic, oncokb) (currently evidence_label)
 
 
 # all of the following are optional children of Association
@@ -132,9 +160,6 @@ class Phenotype(models.Model):
 
 class Evidence(models.Model):
     association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
-
-    type = models.TextField(choices=EVIDENCE_TYPES)
-    description = models.TextField(null=True)
 
     # originally under association.evidence[].info.publications[]
     publications = ArrayField(base_field=models.TextField(), null=True, verbose_name="Publication URLs")

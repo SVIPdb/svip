@@ -12,13 +12,25 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext
-from api.serializers import UserSerializer, GroupSerializer, GeneSerializer, \
-    VariantSerializer, AssociationSerializer, \
-    PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer
+from api.models import Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource
+from api.serializers import (
+    SourceSerializer, GeneSerializer,
+    VariantSerializer, AssociationSerializer,
+    PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer,
+    VariantInSourceSerializer
+)
 
 
 # svip data endpoints
+
+class SourceViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Genes that we've discovered from harvesting.
+    """
+    queryset = Source.objects.all().order_by('name')
+    serializer_class = SourceSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
 
 class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -80,6 +92,22 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(resp)
 
 
+class VariantInSourceViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    The entry for a specific variant in a specific source, e.g. EGFR L858R in CIViC.
+    """
+    serializer_class = VariantInSourceSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        if 'variant_pk' in self.kwargs:
+            q = VariantInSource.objects.filter(variant_id=self.kwargs['variant_pk'])
+        else:
+            q = VariantInSource.objects.all()
+        return q
+
+
+
 class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Association between a variant (and consequently a gene), and
@@ -105,13 +133,17 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'variant_pk' in self.kwargs:
-            return Association.objects.filter(variant_id=self.kwargs['variant_pk']).order_by('id')
+            q = Association.objects.filter(variant_id=self.kwargs['variant_pk'])
+        elif 'variant_in_source_pk' in self.kwargs:
+            q = Association.objects.filter(variant_in_source_id=self.kwargs['variant_in_source_pk'])
         else:
-            return Association.objects.all().order_by('id')
+            q = Association.objects.all()
+
+        return q.order_by('id')
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
-    filter_fields = ('gene', 'source', 'drug_interaction_type')
-    search_fields = ('variant_name', 'description')
+    filter_fields = ('variant_in_source__variant__gene', 'variant_in_source__source', 'drug_interaction_type')
+    search_fields = ('variant_in_source__variant__variant_name', 'variant_in_source__variant__description')
 
 
 class PhenotypeViewSet(viewsets.ReadOnlyModelViewSet):
