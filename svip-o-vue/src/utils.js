@@ -22,6 +22,15 @@ export function var_to_position(variant, with_change = false) {
 	return `chr${variant.chromosome}:${variant.hgvs_g.replace(r, "$1")}`;
 }
 
+export function normalizeItemList(items) {
+	if (!items) return items;
+
+	return items
+		.split(",")
+		.map(x => x.trim())
+		.join(", ");
+}
+
 export function titleCase(str, glue = ["of", "for", "and"]) {
 	return str.replace(/(\w)(\w*)/g, function (_, i, r) {
 		const j = i.toUpperCase() + (r != null ? r : "");
