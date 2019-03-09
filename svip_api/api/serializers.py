@@ -89,9 +89,12 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
             'drug_labels',
             'variant_name',
             'source_link',
-            'evidence_label',
-            'response_type',
+
+            'evidence_type',
+            'evidence_direction',
+            'clinical_significance',
             'evidence_level',
+
             'phenotype_set',
             'evidence_set',
             'environmentalcontext_set',

@@ -142,7 +142,8 @@ class Association(models.Model):
 
     # evidence_type (ex: Predictive) (currently in Evidence)
     # evidence_direction (ex: Supports)
-    # clinical_significance (ex: Resistance, Sensitivity/Response for 'Predictive'; Pathogenic for 'Predisposing') (currently response_type)
+    # clinical_significance (ex: Resistance, Sensitivity/Response for 'Predictive'; Pathogenic for 'Predisposing')
+    #  (currently response_type)
     # evidence_level (ex: D, C -- used by civic, oncokb) (currently evidence_label)
 
 
