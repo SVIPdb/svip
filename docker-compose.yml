@@ -10,6 +10,7 @@ services:
     restart: always
     volumes:
          - "svip_pgdata:/var/lib/postgresql/data" # for now we're storing pg data to a volume
+         - ./svip_db_backups:/backups
     ports:
       - "30432:5432" # FIXME: dev access port, remove later
     environment:
