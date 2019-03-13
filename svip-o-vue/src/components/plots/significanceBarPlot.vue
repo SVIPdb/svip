@@ -11,7 +11,7 @@
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.color"></rect>
 				</svg>
-				<span><b>{{ d.name }}:</b> {{ d.count }}</span>
+				<span><b>{{ d.name }}:</b> {{ d.count.toLocaleString() }}</span>
 			</div>
 		</b-tooltip>
 	</div>
@@ -121,5 +121,9 @@ export default {
 	border: 0;
 	border-radius: 8px;
 	pointer-events: none;
+}
+
+.tooltip-inner {
+	max-width: 100% !important;
 }
 </style>

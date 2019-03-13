@@ -28,24 +28,24 @@
 		<div class="card-body">
 			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
-					<a :href="row.item.url" target="_blank">{{ row.item.source_name }}</a>
+					<a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
 				</template>
 
 				<template slot="diseases" slot-scope="data">
 					{{ Object.keys(data.item.diseases).length }} disease{{ Object.keys(data.item.diseases).length !== 1 ? "s" : "" }}
 				</template>
 
-				<template slot="database_evidences" slot-scope="data">
-						<component v-if="rowHasPart(data, 'database_evidences')" :is="data.item.row_parts.database_evidences" :row="data" />
+				<template slot="publication_count" slot-scope="data">
+						<component v-if="rowHasPart(data, 'publication_count')" :is="data.item.row_parts.publication_count" :row="data" />
 						<span v-else>
-						{{ data.item.database_evidences.length }} evidence{{ data.item.database_evidences.length !== 1 ? "s" : "" }}
+						{{ data.value.toLocaleString() }} evidence{{ data.value !== 1 ? "s" : "" }}
 						</span>
 				</template>
 
 				<template slot="clinical" slot-scope="data">
 					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
 					<component v-if="rowHasPart(data, 'clinical')" :is="data.item.row_parts.clinical" :row="data" />
-					<significance-bar-plot :data="summaryClinical(data.item.clinical)"></significance-bar-plot>
+					<significance-bar-plot :data="data.item.clinical_significances"></significance-bar-plot>
 				</template>
 
 				<template slot="scores" slot-scope="data">
@@ -73,6 +73,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import {HTTP} from "@/router/http";
 import scorePlot from "@/components/plots/scorePlot";
 import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import {titleCase} from "@/utils";
@@ -111,9 +112,9 @@ export default {
 					sortable: true
 				},
 				{
-					key: "database_evidences",
+					key: "publication_count",
 					label: "Database Evidences",
-					sortable: false
+					sortable: true
 				},
 				{
 					key: "clinical",
@@ -141,7 +142,7 @@ export default {
       }))
       */
 			return _(data)
-				.groupBy("significance")
+				.groupBy("clinical_significance")
 				.map((items, name) => ({name, count: items.length}))
 				.value();
 		},
@@ -153,13 +154,51 @@ export default {
 		},
 		rowHasPart(row, part) {
 			return row.item.row_parts && row.item.row_parts[part];
+		normalizeItemList(items) {
+			if (!items) return items;
+
+			return items
+				.split(",")
+				.map(x => x.trim())
+				.join(", ");
+		},
+		getAssociations(association_url) {
+			return HTTP.get(association_url).then(res => {
+				console.log("Queried ", association_url, " got: ", res);
+
+				return res.data.results && res.data.results.map(a => ({
+					disease: _.map(a.phenotype_set, a => {return titleCase(a.term);}).join("; "),
+					drug: this.normalizeItemList(a.drug_labels),
+					significance: a.response_type,
+					type: _.map(a.evidence_set, e => {return e.type;}).join("; "),
+					tier: a.evidence_level + a.evidence_label,
+					publications: a.evidence_set.reduce(
+						(acc, ev_set) =>
+							acc.concat(
+								ev_set.publications.map(p => {
+									const pmid = _.last(p.split("/"));
+									return {url: p, pmid: /^[0-9]+$/.test(pmid) ? pmid : "(external)"};
+								})
+							),
+						[]
+					)
+				}))
+			})
 		}
 	},
+	props: {variant: {type: Object, required: true}},
+	created() {
+		/*
+		this.variant.variantinsource_set.forEach(vis => {
+			this.getAssociations(vis.associations_url).then((associations) => {
+				this.associations[vis.source.name] = associations;
+			})
+		});
+		*/
+	},
 	computed: {
-		...mapGetters({
-			variant: "variant"
-		}),
 		data() {
+			/*
 			let data = {};
 
 			_.forEach(this.variant.sources, s => {
@@ -180,10 +219,12 @@ export default {
 					_.map(a.phenotype_set, a => {return titleCase(a.term);})
 				);
 
+				// builds the set of clinical_significance
 				data[source].database_evidences = data[source].database_evidences.concat(
 					_.map(a.evidence_set, e => {return e.description;})
 				);
 
+				// builds the list of evidence items associated with this entry
 				data[source].clinical.push({
 					disease: _.map(a.phenotype_set, a => {return titleCase(a.term);}).join("; "),
 					drug: normalizeItemList(a.drug_labels),
@@ -214,14 +255,26 @@ export default {
 				data[s].diseases = _.fromPairs(
 					_.sortBy(_.toPairs(data[s].diseases), 1).reverse()
 				);
+
 				data[s].clinical = _.orderBy(data[s].clinical, c => {
 					return c.disease;
 				});
+
 				data[s]._showDetails = false;
 				data[s].filter = "";
 			});
 
 			return Object.values(data);
+			*/
+
+			return this.variant.variantinsource_set.map(vis => {
+				console.log(vis);
+
+				return {
+					...vis,
+					clinical: this.getAssociations(vis.associations_url)
+				}
+			});
 		}
 	}
 };

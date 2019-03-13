@@ -99,6 +99,7 @@
 					<template slot="action" slot-scope="data">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 						<b-button size="sm" @click.stop="showVariant(data.item.id)">Show Details</b-button>
+						<!--<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>-->
 					</template>
 				</b-table>
 
@@ -119,11 +120,6 @@ import {change_from_hgvs, var_to_position} from "../../utils";
 export default {
 	data() {
 		return {
-			gene: {
-				entrez_id: null,
-				symbol: "",
-				variants: []
-			},
 			currentPage: 0,
 			perPage: 100,
 			confirmDeletion: false,
@@ -187,8 +183,8 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			gene: "currentGene",
 			variants: "variants",
-			rawPhenotypes: "phenotypes",
 			geneVariants: "geneVariants",
 			svipVariants: "svipVariants"
 		}),
@@ -201,21 +197,18 @@ export default {
 			}
 		},
 		synonyms() {
-			if (this.gene.geneAliases === undefined) return "";
-			return this.gene.geneAliases.join(", ");
+			return this.gene.aliases ? this.gene.aliases.join(", ") : "";
 		},
 		phenotypes() {
-			let vm = this;
-
 			// use the server's variants, but filter down to only the variants in the mock data
 			// return the variants from the server merged with the mock data for that variant under the 'mock' key
 			const variants = this.variants.filter(v => {
 				return (
-					v.gene_symbol === vm.gene.symbol &&
+					v.gene_symbol === this.gene.symbol &&
 					(!this.showOnlySVIP ||
 						this.svipVariants.some(
 							x =>
-								x.gene_name === vm.gene.symbol &&
+								x.gene_name === this.gene.symbol &&
 								x.variant_name === v.name
 						))
 				);
@@ -225,74 +218,28 @@ export default {
 				return Object.assign(v, {
 					mock: this.svipVariants.find(
 						x =>
-							x.gene_name === vm.gene.symbol &&
+							x.gene_name === this.gene.symbol &&
 							x.variant_name === v.name
 					)
 				});
 			});
-
-			// _.forEach(this.svipVariants,g => {
-			// 	console.log(g);
-			// 	let variant = {
-			// 		id: g.variant_id,
-			// 		name: g.name,
-			// 		type: g.so_name,
-			// 		sources: g.sources.join("; "),
-			// 		cancerTypes: '',
-			// 		Drugs: '',
-			// 		levelOfEvidence: '',
-			// 		nbArticles: '',
-			// 		articles: []
-			// 	};
-			// 	variants.push(variant);
-			// });
 		}
 	},
-	// components: {geneVariants: geneVariants},
 	methods: {
-		setgene(gene) {
-			this.gene = Object.assign({}, this.gene, gene);
-		},
 		showVariant(id) {
 			this.$router.push(
 				"/gene/" + this.$route.params.gene_id + "/variant/" + id
 			);
-		},
-		toggleShowOnlySVIP() {
-			store.dispatch("toggleShowSVIP", {
-				showOnlySVIP: !this.showOnlySVIP
-			});
 		}
 	},
+
 	beforeRouteEnter(to, from, next) {
 		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
+			// ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
+			store.dispatch('getGeneVariants', { gene_id: to.params.gene_id }).then(() => {
+				next();
 			});
 		}
-	},
-	beforeRouteUpdate(to, from, next) {
-		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
-				next(vm => vm.setgene(gene));
-				// store.dispatch('listGeneVariants',{gene: gene.symbol}).then(res => {
-				// 	next(vm => vm.setgene(gene));
-				// })
-			});
-		}
-	},
-	created() {
-		store.dispatch("getGenes");
-		store.dispatch("getVariants");
-		store.dispatch("getPhenotypes");
-		store.dispatch("getAssociations");
 	}
 };
 </script>

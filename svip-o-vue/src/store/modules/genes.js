@@ -16,7 +16,7 @@ const state = {
 	variant: null,
 	svipVariants: svipVariants,
 	svipVariant: null,
-	showOnlySVIP: false
+	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true'
 };
 
 // getters
@@ -24,7 +24,7 @@ const getters = {
 	genes: state => state.genes,
 	gene: state => state.gene,
 	nbGenes: state => state.nbGenes,
-	currentGene: state => state.current,
+	currentGene: state => state.currentGene,
 	variants: state => state.variants,
 	nbVariants: state => state.nbVariants,
 	phenotypes: state => state.phenotypes,
@@ -39,7 +39,7 @@ const getters = {
 // actions
 const actions = {
 	getSiteStats({commit}, params) {
-		HTTP.get("query/stats").then(res => {
+		return HTTP.get("query/stats").then(res => {
 			const stats = res.data;
 
 			commit("SET_NBGENES", stats.genes);
@@ -48,178 +48,31 @@ const actions = {
 		});
 	},
 
-	getGenes({commit, dispatch}, params) {
-		let geneCache = window.localStorage.getItem("genes");
-		if (geneCache) geneCache = JSON.parse(geneCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		if (!state.genes.length) {
-			HTTP.get("genes/?page=" + page).then(res => {
-				let genes = res.data.results;
-				if (
-					(params === undefined || params.reset === undefined) &&
-					state.genes.length === res.data.count
-				)
-					return;
-				if (geneCache && geneCache.length === res.data.count) {
-					commit("SET_GENES", {genes: geneCache, add: false});
-					return;
-				}
-				commit("SET_GENES", {genes: genes, add: add});
-				if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-					const test = res.data.next.match(/\?page=(\d+)/);
-					if (test) {
-						page = test[1];
-						dispatch("getGenes", {page: page});
-					}
-				}
-			});
-		}
-	},
-
-	getVariants({commit, dispatch}, params) {
-		let variantCache = window.localStorage.getItem("variants");
-		if (variantCache) variantCache = JSON.parse(variantCache);
-
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("variants/?page=" + page).then(res => {
-			let variants = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.variants.length === res.data.count
-			)
-				return;
-			if (variantCache && variantCache.length === res.data.count) {
-				commit("SET_VARIANTS", {variants: variantCache, add: false});
-				return;
-			}
-
-			commit("SET_VARIANTS", {variants: variants, add: add});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getVariants", {page: page});
-				}
-			}
+	async getGeneVariants({commit, dispatch}, params) {
+		await HTTP.get(`genes/${params.gene_id}`).then(res => {
+			commit("SELECT_GENE", res.data);
 		});
-	},
-
-	getPhenotypes({commit, dispatch}, params) {
-		let phenotypeCache = window.localStorage.getItem("phenotypes");
-		if (phenotypeCache) phenotypeCache = JSON.parse(phenotypeCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("phenotypes/?page=" + page).then(res => {
-			let phenotypes = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.phenotypes.length === res.data.count
-			)
-				return;
-			if (phenotypeCache && phenotypeCache.length === res.data.count) {
-				commit("SET_PHENOTYPES", {
-					phenotypes: phenotypeCache,
-					add: false
-				});
-				return;
-			}
-			commit("SET_PHENOTYPES", {phenotypes: phenotypes, add: add});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getPhenotypes", {page: page});
-				}
-			}
+		await HTTP.get(`genes/${params.gene_id}/variants?page_size=9999`).then(res => {
+			// FIXME: properly support paging at a later date
+			commit("SET_VARIANTS", { variants: res.data.results });
 		});
-	},
-
-	getAssociations({commit, dispatch}, params) {
-		let associationCache = window.localStorage.getItem("associations");
-		if (associationCache) associationCache = JSON.parse(associationCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("associations/?page=" + page).then(res => {
-			let associations = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.associations.length === res.data.count
-			)
-				return;
-			if (
-				associationCache &&
-				associationCache.length === res.data.count
-			) {
-				commit("SET_ASSOCIATIONS", {
-					associations: associationCache,
-					add: false
-				});
-				return;
-			}
-
-			commit("SET_ASSOCIATIONS", {
-				associations: associations,
-				add: add
-			});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getAssociations", {page: page});
-				}
-			}
-		});
-	},
-
-	listGeneVariants({commit, dispatch}, params) {
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("variants/?search=" + params.gene + "&page=" + page).then(
-			res => {
-				let geneVariants = res.data.results;
-				commit("SET_NB_GENE_VARIANTS", res.data.count);
-				if (
-					(params === undefined || params.reset === undefined) &&
-					state.geneVariants.length === res.data.count
-				)
-					return;
-				commit("SET_GENE_VARIANTS", {
-					geneVariants: geneVariants,
-					add: add
-				});
-				if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-					const test = res.data.next.match(/\?page=(\d+)/);
-					if (test) {
-						page = test[1];
-						dispatch("listGeneVariants", {
-							gene: params.gene,
-							page: page
-						});
-					}
-				}
-			}
-		);
 	},
 
 	getGeneVariant({commit, dispatch}, params) {
-		return HTTP.get("variants/" + params.variant).then(res => {
+		return HTTP.get("variants/" + params.variant_id).then(res => {
+			let gene = res.data.gene;
 			let variant = res.data;
+			commit("SELECT_GENE", gene);
+
 			commit("SET_VARIANT", variant);
-			return variant;
+
+			// look up the corresponding SVIP variant data, too, if available
+			dispatch('selectSvipDataForVariant');
 		});
 	},
 
 	selectVariant({commit, dispatch}, params) {
-		let variant = _.filter(state.variants, v => {
-			return v.id === params.variant_id;
-		})[0];
+		let variant = state.variants.find(v => v.id === params.variant_id);
 
 		// find the corresponding mock data for this variant, too, so we can display mock-specific stuff
 		const svip_v = state.svipVariants.find(
@@ -232,12 +85,10 @@ const actions = {
 		commit("SELECT_SVIP_VARIANT", svip_v);
 	},
 
-	selectSvipVariant({commit, dispatch}, params) {
-		const variant = params.variant_id
-			? _.filter(state.variants, v => v.id === (params.variant_id | 0))[0]
-			: params.variant;
+	selectSvipDataForVariant({commit, dispatch}) {
+		let variant = state.variant;
 
-		// find the corresponding mock data for this variant
+		// find the corresponding mock data for this variant, too, so we can display mock-specific stuff
 		const svip_v = state.svipVariants.find(
 			x =>
 				x.gene_name === variant.gene_symbol &&
@@ -260,7 +111,6 @@ const mutations = {
 		} else {
 			state.genes = params.genes;
 		}
-		window.localStorage.setItem("genes", JSON.stringify(state.genes));
 	},
 	SET_NBGENES(state, nbGenes) {
 		state.nbGenes = nbGenes;
@@ -268,7 +118,7 @@ const mutations = {
 	SELECT_GENE(state, gene) {
 		state.nbGeneVariants = 0;
 		state.geneVariants = [];
-		state.current = gene;
+		state.currentGene = gene;
 	},
 	SET_VARIANTS(state, params) {
 		if (params.add) {
@@ -276,9 +126,6 @@ const mutations = {
 		} else if (params.variants !== undefined) {
 			state.variants = params.variants;
 		}
-		let json_variants = JSON.stringify(state.variants);
-		if (json_variants !== undefined)
-			window.localStorage.setItem("variants", json_variants);
 	},
 	SET_NBVARIANTS(state, nbVariants) {
 		state.nbVariants = nbVariants;
@@ -308,9 +155,6 @@ const mutations = {
 			JSON.stringify(state.associations)
 		);
 	},
-	SET_NBASSOCIATIONS(state, nbAssociations) {
-		state.nbAssociations = nbAssociations;
-	},
 	SET_GENE_VARIANTS(state, params) {
 		if (params.add) {
 			state.geneVariants = state.geneVariants.concat(params.geneVariants);
@@ -330,6 +174,7 @@ const mutations = {
 
 	SET_SHOW_ONLY_SVIP(state, v) {
 		state.showOnlySVIP = v;
+		localStorage.setItem('showOnlySVIP', v ? 'true' : 'false');
 	}
 };
 

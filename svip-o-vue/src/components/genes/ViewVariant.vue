@@ -67,7 +67,7 @@
 		</div>
 
 		<variant-svip v-if="svipVariant"></variant-svip>
-		<variant-public-databases></variant-public-databases>
+		<variant-public-databases :variant="variant"></variant-public-databases>
 
 		<VariantExternalInfo :mvInfo="variant.mv_info"/>
 	</div>
@@ -130,42 +130,14 @@ export default {
 	// components: {geneVariants: geneVariants},
 	methods: {},
 	beforeRouteEnter(to, from, next) {
-		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
+		const { gene_id, variant_id } =  to.params;
 
-				store
-					.dispatch("getGeneVariant", {
-						gene: gene.symbol,
-						variant: to.params.variant_id
-					})
-					.then(res => {
-						store.dispatch("selectSvipVariant", {variant: res});
-						next();
-					});
-			});
-		}
-	},
-	beforeRouteUpdate(to, from, next) {
-		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
+		console.log("in variant");
 
-				store
-					.dispatch("getGeneVariant", {
-						gene: gene.symbol,
-						variant: to.params.variant_id
-					})
-					.then(res => {
-						store.dispatch("selectSvipVariant", {variant: res});
-						next();
-					});
-			});
-		}
-	},
-	created() {
+		// ask the store to populate detailed information about this variant
+		store.dispatch('getGeneVariant', { variant_id: variant_id }).then(() => {
+			next();
+		})
 	}
 };
 </script>
