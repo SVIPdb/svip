@@ -84,6 +84,13 @@ class Variant(models.Model):
     def gene_symbol(self):
         return self.gene.symbol
 
+    def in_svip(self):
+        return self.svipvariant_set.count() > 0
+
+    def svip_data(self):
+        s = self.svipvariant_set.first()
+        return s.data if s else None
+
     class Meta:
         indexes = [
             models.Index(fields=['gene', 'name'])
@@ -220,3 +227,19 @@ class EnvironmentalContext(models.Model):
     envcontext_id = models.TextField(null=True)  # just called 'id' in the original object
     usan_stem = models.TextField(null=True)
     description = models.TextField()
+
+
+# SVIP-specific data
+
+class SVIPVariant(models.Model):
+    """
+    Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
+    it's possible that the SVIP info's structure, operations, and access restrictions will diverge significantly
+    from the public data.
+
+    Also, the SVIP-specific data model is still very much a work-in-progress, so I figure it doesn't make sense
+    to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
+    mock SVIP variants file into 'data' for each variant.
+    """
+    variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
+    data = JSONField()

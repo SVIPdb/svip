@@ -2,6 +2,7 @@ import django_filters
 from django import forms
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.db.models import Count
 from django.shortcuts import render
 
 # Create your views here.
@@ -43,10 +44,19 @@ class GeneViewSet(viewsets.ReadOnlyModelViewSet):
 
 class VariantFilter(df_filters.FilterSet):
     gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
+    gene_symbol = df_filters.CharFilter(field_name='gene__symbol', label='Gene Symbol')
     name = df_filters.CharFilter(field_name='name')
     description = df_filters.CharFilter(field_name='description')
     so_name = df_filters.AllValuesFilter(field_name='so_name', label='Sequence Ontology Name')
     sources = df_filters.BaseInFilter(field_name='sources', lookup_expr='contains')
+    in_svip = df_filters.BooleanFilter(label='Is SVIP Variant?', method='filter_has_svipdata')
+
+    # noinspection PyMethodMayBeStatic
+    def filter_has_svipdata(self, queryset, name, value):
+        if value:
+            return queryset.filter(svipvariant__isnull=False)
+        # otherwise, return all the variants, svip data or not
+        return queryset
 
 
 class VariantViewSet(viewsets.ReadOnlyModelViewSet):
@@ -70,10 +80,11 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
             return FullVariantSerializer
         return VariantSerializer
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,filters.SearchFilter,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filterset_class = VariantFilter
     # filter_fields = ('gene', 'name', 'description', 'so_name')
-    search_fields = ('name', 'description', 'so_name', 'gene__symbol')
+    search_fields = ('name', 'description', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'gene__symbol')
+    ordering_fields = ('name', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name')
 
     @action(detail=False)
     def autocomplete(self, request):
@@ -105,7 +116,6 @@ class VariantInSourceViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             q = VariantInSource.objects.all()
         return q
-
 
 
 class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
@@ -141,8 +151,21 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
 
         return q.order_by('id')
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
-    filter_fields = ('variant_in_source__variant__gene', 'variant_in_source__source', 'drug_interaction_type')
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'variant_in_source__variant__gene', 'variant_in_source__source',
+        'phenotype__term',
+        'environmentalcontext__description',
+        'drug_interaction_type'
+    )
+    ordering_fields = (
+        'evidence_type',
+        'evidence_direction',
+        'clinical_significance',
+        'evidence_level',
+        'drug_labels',
+    )
+
     search_fields = ('variant_in_source__variant__variant_name', 'variant_in_source__variant__description')
 
 
@@ -186,17 +209,27 @@ class QueryView(viewsets.ViewSet):
         """
         resp = []
         search_term = request.GET.get('q', None)
+        in_svip = (request.GET.get('in_svip', False) == 'true')
 
         if search_term is not None and search_term != '':
             gq = Gene.objects.filter(symbol__icontains=search_term)
-            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             vq = Variant.objects.filter(description__icontains=search_term)
+
+            if in_svip:
+                gq = gq.annotate(svip_vars=Count('variant__svipvariant')).filter(svip_vars__gt=0)
+                vq = vq.filter(svipvariant__isnull=False)
+
+            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             v_resp = list({'id': x.id, 'g_id': x.gene.id, 'type': 'v', 'label': x.description} for x in vq)
 
             resp = g_resp + v_resp
         else:
             # send back the full list of genes
             gq = Gene.objects.all()
+
+            if in_svip:
+                gq = gq.annotate(svip_vars=Count('variant__svipvariant')).filter(svip_vars__gt=0)
+
             g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             resp = g_resp
 

@@ -37,7 +37,7 @@ variants_router = nested_routers.NestedSimpleRouter(router, r'variants', lookup=
 variants_router.register(r'sources', views.VariantInSourceViewSet, base_name='sources')
 
 variants_in_sources_router = nested_routers.NestedSimpleRouter(router, r'variants_in_sources', lookup='variant_in_source')
-variants_in_sources_router.register(r'associations', views.AssociationViewSet, base_name='associations')
+variants_in_sources_router.register(r'associations', views.AssociationViewSet, base_name='variant_in_source-associations')
 
 # FIXME: the below declaration is currently unused
 # app_name = 'api'
