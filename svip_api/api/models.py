@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
-
+from django.db.models import Count, F, Value, Func
+from django.db.models.functions import Coalesce
 
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
 # the format below is (actual value, human readable name) tupes
+
 EVIDENCE_TYPES = [
     ('predictive', 'Predictive'),
     ('prognostic', 'Prognostic'),
@@ -108,9 +110,54 @@ class VariantInSource(models.Model):
 
     # TODO: add aggregations that the front-end is currently computing on its own, specifically:
     #  diseases: [],
-    #  database_evidences: [],
-    #  clinical: [],
+    #  database_evidences: [], (this is actually just used to count the number of evidence items)
+    #    (review val h.'s request to count the number of evidence item PMIDs, not sure it makes sense)
+    #  clinical: [], (this is actually the association object, but it does a lot of client-side stuff, so we won't replicate it here)
     #  scores: []
+
+    def association_count(self):
+        return self.association_set.count()
+
+    def publication_count(self, is_distinct=False):
+        q = (
+            self.association_set
+                .annotate(q=Func(F('evidence__publications'), function='unnest'))
+                .values_list('q', flat=True)
+        )
+        return q.count() if not is_distinct else q.distinct().count()
+
+    def diseases(self):
+        return (
+            self.association_set
+                .values(disease=F('phenotype__term'))
+                .annotate(count=Count('phenotype__term'))
+                .distinct().order_by('-count')
+        )
+
+    def contexts(self):
+        return (
+            self.association_set
+                .values(context=F('environmentalcontext__description'))
+                .exclude(context__isnull=True)
+                .annotate(count=Count('environmentalcontext__description'))
+                .distinct().order_by('-count')
+        )
+
+    def clinical_significances(self):
+        return (
+            self.association_set
+                .values(name=Coalesce('clinical_significance', Value('N/A')))
+                .annotate(count=Count(Coalesce('clinical_significance', Value('N/A'))))
+                .distinct().order_by('-count')
+        )
+
+    def scores(self):
+        return dict(
+            self.association_set
+                .values(score=Coalesce('evidence_level', Value('n/a')))
+                .annotate(count=Count(Coalesce('evidence_level', Value('n/a'))))
+                .distinct().values_list('score', 'count')
+        )
 
 
 class Association(models.Model):
