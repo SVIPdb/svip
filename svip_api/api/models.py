@@ -134,17 +134,11 @@ class Association(models.Model):
     variant_name = models.TextField(null=True)  # here for debugging, remove if it's always the name as Variant__name
     source_link = models.TextField(null=True, verbose_name="URL of the association's entry in the source")
 
-    # TODO: current evidence label, level, etc. to be replaced
-    evidence_type = models.TextField(null=True, choices=EVIDENCE_TYPES)  # FIXME: needs to be populated from Evidence
+    # these are modeled after CIViC, with the other sources' ratings shoehorned into these fields
+    evidence_type = models.TextField(null=True, choices=EVIDENCE_TYPES)
     evidence_direction = models.TextField(null=True)
-    clinical_significance = models.TextField(null=True) # -> clinical_significance
-    evidence_level = models.TextField(null=True)  # -> evidence_level (used by clinvar, oncokb)
-
-    # evidence_type (ex: Predictive) (currently in Evidence)
-    # evidence_direction (ex: Supports)
-    # clinical_significance (ex: Resistance, Sensitivity/Response for 'Predictive'; Pathogenic for 'Predisposing')
-    #  (currently response_type)
-    # evidence_level (ex: D, C -- used by civic, oncokb) (currently evidence_label)
+    clinical_significance = models.TextField(null=True)
+    evidence_level = models.TextField(null=True)
 
 
 # all of the following are optional children of Association
