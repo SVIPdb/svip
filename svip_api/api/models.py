@@ -53,7 +53,7 @@ class Variant(models.Model):
     biomarker_type = models.TextField(null=True)
     so_hierarchy = ArrayField(base_field=models.CharField(max_length=15), null=True, verbose_name="Hierarchy of SO IDs")
     soid = models.TextField(null=True, verbose_name="Sequence Ontology ID", default="")
-    so_name = models.TextField(null=True)
+    so_name = models.TextField(null=True, db_index=True)
 
     reference_name = models.TextField(null=True)  # e.g., GRCh37
     refseq = models.TextField(null=True)
@@ -66,9 +66,9 @@ class Variant(models.Model):
     ref = models.TextField(null=True)
     alt = models.TextField(null=True)
 
-    hgvs_g = models.TextField(null=True)
-    hgvs_c = models.TextField(null=True)
-    hgvs_p = models.TextField(null=True)
+    hgvs_g = models.TextField(null=True, db_index=True)
+    hgvs_c = models.TextField(null=True, db_index=True)
+    hgvs_p = models.TextField(null=True, db_index=True)
 
     # external references
     dbsnp_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
