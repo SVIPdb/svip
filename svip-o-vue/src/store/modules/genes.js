@@ -17,7 +17,7 @@ const state = {
 	nbGeneVariants: 0,
 	geneVariants: [],
 	variant: null,
-	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true'
+	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true',
 	pubmedInfo: JSON.parse(localStorage.getItem('pubmedInfo')) || {}
 };
 
@@ -74,7 +74,8 @@ const actions = {
 
 	toggleShowSVIP({commit, dispatch}, params) {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
-	}
+	},
+
 	getPubmedInfo({commit, dispatch}, {pmid}) {
 		return new Promise((resolve, reject) => {
 			if (state.pubmedInfo.hasOwnProperty(pmid)) {
