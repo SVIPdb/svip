@@ -28,4 +28,4 @@ else:
 python manage.py populate_mock_svipdata
 
 # and finally run the server
-python manage.py runserver 0.0.0.0:8085
+gunicorn svip_server.wsgi -b 0.0.0.0:8085
