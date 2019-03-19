@@ -32,11 +32,9 @@ def create_svipvariants(apps, schema_editor):
                 )
 
 
-
 def drop_svipvariants(apps, schema_editor):
     SVIPVariant = apps.get_model('api', 'SVIPVariant')
     SVIPVariant.objects.all().delete()
-
 
 
 class Migration(migrations.Migration):
