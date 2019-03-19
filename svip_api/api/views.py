@@ -115,7 +115,7 @@ class VariantInSourceViewSet(viewsets.ReadOnlyModelViewSet):
             q = VariantInSource.objects.filter(variant_id=self.kwargs['variant_pk'])
         else:
             q = VariantInSource.objects.all()
-        return q
+        return q.order_by('source__display_name')
 
 
 class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
