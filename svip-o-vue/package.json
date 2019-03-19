@@ -1,7 +1,7 @@
 {
   "name": "svip-o-frontend",
   "version": "0.1.0",
-	"release_name": "Alpha Asterisk",
+  "release_name": "Alpha Asterisk",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -13,6 +13,8 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "d3": "^5.8.2",
+    "lodash": "^4.17.11",
+    "url-polyfill": "^1.1.5",
     "vee-validate": "^2.1.7",
     "vue": "^2.5.22",
     "vue-awesome": "^3.3.1",
