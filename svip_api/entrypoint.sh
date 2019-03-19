@@ -24,6 +24,9 @@ else:
         password='$DJANGO_SU_PASSWORD')
     print('Super user created...')"
 
+# ensure static assets folder exists
+python manage.py collectstatic --no-input
+
 # ensure that the mock svip variants are present
 python manage.py populate_mock_svipdata
 
