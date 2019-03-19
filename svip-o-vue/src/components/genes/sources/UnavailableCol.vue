@@ -1,10 +1,10 @@
 <template functional>
-	<span>{{ props.row.item.scores }}</span>
+	<span class="unavailable">unavailable</span>
 </template>
 
 <script>
 export default {
-	name: "CosmicScoresCol",
+	name: "UnavailableCol",
 	props: {
 		row: { type: Object, required: true }
 	}

@@ -83,8 +83,11 @@ import genderBalance from "@/components/plots/genderBalance";
 import {titleCase} from "../../utils";
 
 export default {
-	name: "public-databases-info",
+	name: "VariantSVIP",
 	components: {ageDistribution, genderBalance},
+	props: {
+		variant: {type: Object, required: true}
+	},
 	data() {
 		return {
 			sortBy: "name",
@@ -145,12 +148,8 @@ export default {
 		titleCase
 	},
 	computed: {
-		...mapGetters({
-			variant: "variant",
-			svipVariant: "svipVariant"
-		}),
 		data() {
-			return this.svipVariant.diseases;
+			return this.variant.svip_data.diseases;
 		}
 	}
 };
