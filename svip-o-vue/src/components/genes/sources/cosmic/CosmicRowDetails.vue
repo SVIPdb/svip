@@ -95,7 +95,7 @@
 					<template slot="contexts" slot-scope="c">{{ desnakify(c.value) }}</template>
 					<template slot="publications" slot-scope="c">
 						<template v-for="(p, i) in c.value">
-							<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.pmid }}</a><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+							<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.title }}</a><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
 						</template>
 					</template>
 				</b-table>
