@@ -76,3 +76,6 @@ celerybeat-schedule
 /.idea
 /.env
 /.venv
+
+# produced by django's collectstatic command
+/static
