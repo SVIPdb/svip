@@ -52,10 +52,6 @@ export function makeAssociationProvider(metaUpdate=null) {
 				));
 			})).filter(x => x.pmid).map(x => x.pmid);
 
-			store.dispatch('getBatchPubmedInfo', { pmid_set }).then(result => {
-				console.log("Done! got results: ", result)
-			});
-
 			// rewrite associations into the structure that GenericRowDetails expects
 			return res.data.results.map(a => ({
 				disease: a.phenotype_set.map(x => titleCase(x.term)).join("; "),
