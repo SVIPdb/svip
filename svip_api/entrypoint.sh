@@ -24,4 +24,8 @@ else:
         password='$DJANGO_SU_PASSWORD')
     print('Super user created...')"
 
+# ensure that the mock svip variants are present
+python manage.py populate_mock_svipdata
+
+# and finally run the server
 python manage.py runserver 0.0.0.0:8085
