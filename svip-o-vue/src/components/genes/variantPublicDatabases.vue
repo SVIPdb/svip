@@ -53,7 +53,7 @@
 
 				<template slot="scores" slot-scope="data">
 						<component v-if="rowHasPart(data, 'scores')" :is="data.item.row_parts.scores" :row="data" />
-						<score-plot v-else :data="data.item.scores"></score-plot>
+						<score-plot v-else :scores="data.item.scores" :source-name="data.item.source.name"></score-plot>
 				</template>
 
 				<template slot="actions" slot-scope="row">
