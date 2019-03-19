@@ -109,12 +109,14 @@
 <script>
 import {normalizeItemList, titleCase, desnakify} from "@/utils";
 import {makeAssociationProvider} from "../../item_providers/association_provider";
+import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 export default {
 	name: "CosmicRowDetails",
 	props: {
 		row: {type: Object, required: true}
 	},
+	components: {PubmedPopover},
 	data() {
 		return {
 			currentFilter: {

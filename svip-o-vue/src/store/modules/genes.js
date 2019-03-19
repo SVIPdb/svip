@@ -18,6 +18,7 @@ const state = {
 	geneVariants: [],
 	variant: null,
 	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true'
+	pubmedInfo: JSON.parse(localStorage.getItem('pubmedInfo')) || {}
 };
 
 // getters
@@ -74,6 +75,57 @@ const actions = {
 	toggleShowSVIP({commit, dispatch}, params) {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
 	}
+	getPubmedInfo({commit, dispatch}, {pmid}) {
+		return new Promise((resolve, reject) => {
+			if (state.pubmedInfo.hasOwnProperty(pmid)) {
+				// return the existing thing
+				resolve(state.pubmedInfo[pmid])
+			}
+			else {
+				// fire off a request and populate the store, eventually resolving with the thing we got
+				// maybe add on extra params, &tool=my_tool&email=my_email@example.com
+				const targetURL = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${pmid}&retmode=json&tool=svipdb`;
+				return fetch(targetURL)
+					.then(res => res.json())
+					.then(res => {
+						console.log("request: " + targetURL + ", response: ", res);
+						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] })
+						return res.result;
+					})
+			}
+		})
+	},
+
+	getBatchPubmedInfo({commit, dispatch}, {pmid_set}) {
+		return new Promise((resolve, reject) => {
+			console.log("Getting batch PMIDs: ", pmid_set);
+
+			// just get the things we don't have
+			const remaining = pmid_set.filter(pmid => !state.pubmedInfo.hasOwnProperty(pmid));
+
+			if (remaining.length > 0) {
+				// fire off a request and populate the store, eventually resolving with the thing we got
+				// maybe add on extra params, &tool=my_tool&email=my_email@example.com
+				const targetURL = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${remaining.join(',')}&retmode=json&tool=svipdb`;
+				return fetch(targetURL)
+					.then(res => res.json())
+					.then(res => {
+						console.log("request: " + targetURL + ", response: ", res);
+
+						let retrieved = 0;
+						Object.entries(res.result).forEach(([pmid, data]) => {
+							commit('SET_PUBMED_INFO', { pmid, data });
+							retrieved += 1;
+						})
+						return retrieved;
+					})
+			}
+			else {
+				// we can resolve immediately if there's nothing for us to do
+				resolve(-1);
+			}
+		})
+	},
 };
 
 // mutations
@@ -111,6 +163,11 @@ const mutations = {
 	SET_SHOW_ONLY_SVIP(state, v) {
 		state.showOnlySVIP = v;
 		localStorage.setItem('showOnlySVIP', v ? 'true' : 'false');
+	},
+
+	SET_PUBMED_INFO(state, { pmid, data }) {
+		state.pubmedInfo[pmid] = data;
+		localStorage.setItem('pubmedInfo', JSON.stringify(state.pubmedInfo));
 	}
 };
 
