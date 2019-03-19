@@ -1,18 +1,18 @@
 <template>
 	<div class="row">
-		<div class="col-4">
+		<div class="col-xl-3 col-4">
 			<b-card>
 				<h6 class="card-subtitle mb-2 text-muted">
 					Diseases
-					<i class="float-right" v-if="!row.item.filter">click on a disease to filter the drugs table</i>
-					<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
-										{{ row.item.filter }}
-										<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
-												<span aria-hidden="true">&times;</span>
-										</button>
-									</span>
+					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the drugs table</i>
+					<span class="float-right badge badge-primary" v-if="currentFilter.phenotype__term" style="font-size: 13px">
+						{{ titleCase(currentFilter.phenotype__term) }}
+						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
+								<span aria-hidden="true">&times;</span>
+						</button>
+					</span>
 				</h6>
-				<table class="table table-sm table-hover">
+				<table class="table table-sm table-hover filtering-table">
 					<thead>
 						<tr>
 							<th>Disease</th>
@@ -20,71 +20,120 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(nb, d) in row.item.diseases" :key="d" @click="row.item.filter = d" :class="row.item.filter === d ? 'pointer table-active' : 'pointer'">
-							<td>{{ d }}</td>
-							<td>{{ nb }}</td>
+						<tr v-for="d in row.item.diseases" :key="d.disease" @click="currentFilter.phenotype__term = d.disease" :class="currentFilter.phenotype__term === d.disease ? 'pointer table-active' : 'pointer'">
+							<td>{{ titleCase(d.disease) }}</td>
+							<td>{{ d.count.toLocaleString() }}</td>
 						</tr>
 					</tbody>
 				</table>
 			</b-card>
 		</div>
 
-		<div class="col-8">
+		<!-- FIXME: add filtering on categorical columns w/a dropdown -->
+
+		<div class="col-xl-9 col-8">
 			<b-card>
 				<h6 class="card-subtitle mb-2 text-muted">
-					Evidences
-					<span class="float-right badge badge-primary" v-if="row.item.filter" style="font-size: 13px">
-										{{ row.item.filter }}
-											<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="row.item.filter = ''">
-													<span aria-hidden="true">&times;</span>
-											</button></span>
+					Evidences: {{ totalRows.toLocaleString() }}
+					<span class="float-right badge badge-primary" v-if="currentFilter.phenotype__term" style="font-size: 13px">
+						{{ titleCase(currentFilter.phenotype__term) }}
+						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
+								<span aria-hidden="true">&times;</span>
+						</button>
+					</span>
 				</h6>
-				<table class="table table-sm">
-					<tr>
-						<th>Disease</th>
-						<th>Evidence Type</th>
-						<th>Clinical Significance</th>
-						<th>{{ row.item.source === "CIViC" ? "Score level" : "Tier level" }}</th>
-						<th>Drug</th>
-						<th>References</th>
-					</tr>
-					<tr v-for="(c, idx) in filterClinical( row.item.clinical, row.item.filter )" :key="idx">
-						<td>
-							<a v-if="c.evidence_url" :href="c.evidence_url" target="_blank">{{ c.disease }}</a>
-							<span v-else>{{ c.disease }}</span>
-						</td>
-						<td>{{ c.type }}</td>
-						<td>{{ c.significance }}</td>
-						<td>{{ c.tier }}</td>
-						<td>{{ normalizeItemList(c.drug) }}</td>
-						<td>
-							<template v-for="(p, i) in c.publications">
-								<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.pmid }}</a><span :key="`${i}_comma`" v-if=" i < c.publications .length - 1">, </span>
-							</template>
-						</td>
-					</tr>
-				</table>
+
+				<b-table
+					:fields="fields" class="table-sm filter-table" :api-url="row.item.associations_url" :items="makeAssociationProvider(this.metaUpdated)"
+					:per-page="perPage" :current-page="currentPage" :filter="packedFilter"
+				>
+					<template slot="disease" slot-scope="c">
+						<a v-if="c.item.evidence_url" :href="c.item.evidence_url" target="_blank">{{ c.value }}</a>
+						<span v-else>{{ c.value }}</span>
+					</template>
+					<template slot="drug" slot-scope="c">{{ normalizeItemList(c.value) }}</template>
+					<template slot="publications" slot-scope="c">
+						<template v-for="(p, i) in c.value">
+							<a :href="p.url" target="_blank" :key="`${i}_link`">{{ p.pmid }}</a><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+						</template>
+					</template>
+				</b-table>
+
+				<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
 			</b-card>
 		</div>
 	</div>
 </template>
 
 <script>
-import {normalizeItemList} from "@/utils";
+import {normalizeItemList, titleCase} from "@/utils";
+import {makeAssociationProvider} from '@/components/genes/item_providers/association_provider';
+import store from "@/store";
 
 export default {
 	name: "GenericRowDetails",
 	props: {
 		row: {type: Object, required: true}
 	},
+	data() {
+		return {
+			currentFilter: {
+				phenotype__term: ''
+			},
+			currentPage: 1,
+			perPage: 100,
+			totalRows: this.row.item.association_count,
+			fields: [
+				{
+					key: "disease",
+					label: "Disease",
+					sortable: false
+				},
+				{
+					key: "evidence_type",
+					label: "Evidence Type",
+					sortable: true
+				},
+				{
+					key: "evidence_direction",
+					label: "Direction",
+					sortable: true
+				},
+				{
+					key: "clinical_significance",
+					label: "Clinical Significance",
+					sortable: true
+				},
+				{
+					key: "evidence_level",
+					label: "Tier",
+					sortable: true
+				},
+				{
+					key: "drug_labels",
+					label: "Drug",
+					sortable: true
+				},
+				{
+					key: "publications",
+					label: "References",
+					sortable: false
+				},
+			]
+		}
+	},
+	computed: {
+		packedFilter() {
+			return JSON.stringify(this.currentFilter);
+		}
+	},
 	methods: {
-		filterClinical(data, filter) {
-			if (!filter) return data;
-			return _.filter(data, d => {
-				return d.disease === filter;
-			});
+		metaUpdated({ count }) {
+			this.totalRows = count;
 		},
-		normalizeItemList
+		makeAssociationProvider,
+		normalizeItemList,
+		titleCase
 	}
 }
 </script>

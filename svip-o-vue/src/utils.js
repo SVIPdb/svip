@@ -37,3 +37,8 @@ export function titleCase(str, glue = ["of", "for", "and"]) {
 		return glue.indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
 	});
 }
+
+export function desnakify(x) {
+	if (!x) { return x; }
+	return titleCase(x.split("_").join(" "));
+}

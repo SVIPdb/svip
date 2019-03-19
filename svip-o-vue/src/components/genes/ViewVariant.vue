@@ -54,7 +54,7 @@
 							</a>
 						</optional>
 
-						<td>{{ variant.so_name }}</td>
+						<td>{{ desnakify(variant.so_name) }}</td>
 
 						<optional :val="var_position">
 							<span class="text-muted">{{ variant.reference_name }}:</span>{{ var_position }}
@@ -66,7 +66,7 @@
 			</div>
 		</div>
 
-		<variant-svip v-if="svipVariant"></variant-svip>
+		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
 		<VariantExternalInfo :mvInfo="variant.mv_info"/>
@@ -81,29 +81,16 @@ import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
 import variantSvip from "@/components/genes/variantSvip";
 import store from "@/store";
 
-import {change_from_hgvs, var_to_position} from "@/utils";
+import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
 import VariantExternalInfo from "@/components/genes/external/VariantExternalInfo";
 
 export default {
-	data() {
-		return {
-			fields: [
-				"pmid",
-				"authors",
-				"title",
-				"pubDate",
-				"journal",
-				"elocationId"
-			]
-		};
-	},
+	name: "ViewVariant",
 	components: {VariantExternalInfo, variantPublicDatabases, variantSvip},
 	computed: {
 		...mapGetters({
 			variant: "variant",
-			gene: "gene",
-			svipVariants: "svipVariants",
-			svipVariant: "svipVariant"
+			gene: "gene"
 		}),
 		synonyms() {
 			if (this.gene.geneAliases === undefined) return "";
@@ -128,11 +115,11 @@ export default {
 		}
 	},
 	// components: {geneVariants: geneVariants},
-	methods: {},
+	methods: {
+		desnakify
+	},
 	beforeRouteEnter(to, from, next) {
 		const { gene_id, variant_id } =  to.params;
-
-		console.log("in variant");
 
 		// ask the store to populate detailed information about this variant
 		store.dispatch('getGeneVariant', { variant_id: variant_id }).then(() => {

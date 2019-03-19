@@ -26,7 +26,7 @@
 				<div class="card-body">
 					<h5 class="card-title">
 						<b>{{ gene.symbol }}:</b>
-						{{ phenotypes.length }} variants
+						{{ totalRows }} variants
 					</h5>
 					<h6 v-if="gene.oncogene">Oncogene</h6>
 
@@ -61,11 +61,11 @@
 						<b-form-group horizontal label="Filter" class="mb-0">
 							<b-input-group>
 								<b-form-input
-									v-model="tableFilter"
+									v-model="currentFilter.search"
 									placeholder="Type to Search"
 								/>
 								<b-input-group-append>
-									<b-btn :disabled="!tableFilter" @click="tableFilter = ''">Clear</b-btn>
+									<b-btn :disabled="!currentFilter.search" @click="currentFilter.search = ''">Clear</b-btn>
 								</b-input-group-append>
 							</b-input-group>
 						</b-form-group>
@@ -81,8 +81,8 @@
 
 			<div class="container-fluid">
 				<b-table
-					:fields="fields" :items="phenotypes" :sort-by.sync="sortBy" :sort-desc="true" :filter="tableFilter"
-					:no-provider-paging="true" :current-page="currentPage" :per-page="perPage"
+					:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
+					:current-page="currentPage" :per-page="perPage"
 				>
 					<template slot="hgvs_c" slot-scope="data" v-if="data.value">
 						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
@@ -97,34 +97,34 @@
 					</template>
 
 					<template slot="action" slot-scope="data">
-						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-						<b-button size="sm" @click.stop="showVariant(data.item.id)">Show Details</b-button>
-						<!--<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>-->
+						<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>
 					</template>
 				</b-table>
 
-				<b-pagination v-if="phenotypes.length > perPage" v-model="currentPage" :total-rows="phenotypes.length" :per-page="perPage" />
+				<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
-// import geneVariants from '@/components/Variants'
 import {mapGetters} from "vuex";
 import store from "@/store";
-
-import {change_from_hgvs, var_to_position} from "../../utils";
+import {makeVariantProvider} from '@/components/genes/item_providers/variant_provider';
+import {change_from_hgvs, var_to_position, desnakify} from "@/utils";
 
 export default {
 	data() {
 		return {
-			currentPage: 0,
+			currentFilter: {
+				search: '',
+				in_svip: store.state.genes.showOnlySVIP,
+				gene: this.$route.params.gene_id
+			},
+			currentPage: 1,
 			perPage: 100,
+			totalRows: 0,
 			confirmDeletion: false,
-			itemsByPages: 10,
-			itemsValue: [5, 10, 50, 100],
 			fields: [
 				{
 					key: "name",
@@ -152,21 +152,22 @@ export default {
 				{
 					key: "so_name",
 					label: "Molecular Consequence",
-					sortable: true
+					sortable: true,
+					formatter: x => desnakify(x)
 				},
 				/*
         {
-            key: 'mock.tier_level',
+            key: 'svip_data.tier_level',
             label: 'Tier Level',
             sortable: true
         },
         {
-            key: 'mock.SVIP_status',
+            key: 'svip_data.SVIP_status',
             label: 'Status',
             sortable: true
         },
         {
-            key: 'mock.SVIP_confidence_score',
+            key: 'svip_data.SVIP_confidence_score',
             label: 'Score',
             sortable: true
         },
@@ -175,71 +176,50 @@ export default {
 					key: "action",
 					label: "",
 					sortable: false
-				}
+				},
+
 			],
-			sortBy: "mock.SVIP_confidence_score",
-			tableFilter: ""
+			sortBy: null
 		};
 	},
 	computed: {
 		...mapGetters({
 			gene: "currentGene",
 			variants: "variants",
-			geneVariants: "geneVariants",
-			svipVariants: "svipVariants"
+			geneVariants: "geneVariants"
 		}),
 		showOnlySVIP: {
 			get() {
 				return store.state.genes.showOnlySVIP;
 			},
 			set(value) {
+				this.currentFilter.in_svip = value;
 				store.dispatch("toggleShowSVIP", {showOnlySVIP: value});
 			}
 		},
 		synonyms() {
 			return this.gene.aliases ? this.gene.aliases.join(", ") : "";
 		},
-		phenotypes() {
-			// use the server's variants, but filter down to only the variants in the mock data
-			// return the variants from the server merged with the mock data for that variant under the 'mock' key
-			const variants = this.variants.filter(v => {
-				return (
-					v.gene_symbol === this.gene.symbol &&
-					(!this.showOnlySVIP ||
-						this.svipVariants.some(
-							x =>
-								x.gene_name === this.gene.symbol &&
-								x.variant_name === v.name
-						))
-				);
-			});
-
-			return variants.map(v => {
-				return Object.assign(v, {
-					mock: this.svipVariants.find(
-						x =>
-							x.gene_name === this.gene.symbol &&
-							x.variant_name === v.name
-					)
-				});
-			});
+		packedFilter() {
+			return JSON.stringify(this.currentFilter);
 		}
 	},
 	methods: {
-		showVariant(id) {
-			this.$router.push(
-				"/gene/" + this.$route.params.gene_id + "/variant/" + id
-			);
-		}
+		metaUpdated({ count }) {
+			this.totalRows = count;
+		},
+		makeVariantProvider
 	},
-
 	beforeRouteEnter(to, from, next) {
 		if (to.params.gene_id !== "new") {
 			// ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
-			store.dispatch('getGeneVariants', { gene_id: to.params.gene_id }).then(() => {
+			store.dispatch('getGene', { gene_id: to.params.gene_id }).then(() => {
 				next();
 			});
 		}
+	},
+	created() {
+		this.currentFilter.gene = this.$route.params.gene_id;
 	}
 };
 </script>
