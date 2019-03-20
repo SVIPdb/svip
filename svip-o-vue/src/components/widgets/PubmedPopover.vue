@@ -18,7 +18,6 @@ export default {
 
 			if (!itemData) {
 				if (!isNaN(pmid)) {
-					// console.log("Attempting fetch of " + pmid)
 					store.dispatch('getPubmedInfo', {pmid});
 					return `<i>No PubMed data found or loaded for this citation, try again in a little bit.</i>`;
 				}

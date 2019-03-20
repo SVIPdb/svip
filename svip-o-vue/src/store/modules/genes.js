@@ -100,7 +100,6 @@ const actions = {
 				return fetch(targetURL)
 					.then(res => res.json())
 					.then(res => {
-						console.log("request: " + targetURL + ", response: ", res);
 						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] })
 						return res.result;
 					})
@@ -110,8 +109,6 @@ const actions = {
 
 	getBatchPubmedInfo({commit, dispatch}, {pmid_set}) {
 		return new Promise((resolve, reject) => {
-			console.log("Getting batch PMIDs: ", pmid_set);
-
 			// just get the things we don't have
 			const remaining = pmid_set.filter(pmid => !state.pubmedInfo.hasOwnProperty(pmid));
 
@@ -122,13 +119,11 @@ const actions = {
 				return fetch(targetURL)
 					.then(res => res.json())
 					.then(res => {
-						console.log("request: " + targetURL + ", response: ", res);
-
 						let retrieved = 0;
 						Object.entries(res.result).forEach(([pmid, data]) => {
 							commit('SET_PUBMED_INFO', { pmid, data });
 							retrieved += 1;
-						})
+						});
 						return retrieved;
 					})
 			}
