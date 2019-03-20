@@ -9,7 +9,7 @@ import store from "@/store";
 const parser = new DOMParser();
 
 export default {
-  name: "PubmedPopover",
+	name: "PubmedPopover",
 	props: {pubmeta: {type: Object, required: true}},
 	methods: {
 		pubmedPopover(elem) {
