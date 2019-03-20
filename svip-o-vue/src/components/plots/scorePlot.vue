@@ -26,7 +26,6 @@
 
 <script>
 import * as d3 from "d3";
-import * as _ from 'lodash';
 
 const source_levels = {
 	// from https://civicdb.org/help/evidence/evidence-levels

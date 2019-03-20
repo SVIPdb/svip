@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
 // import geneVariants from '@/components/Variants'
 import {mapGetters} from "vuex";
 import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
@@ -119,7 +118,7 @@ export default {
 		desnakify
 	},
 	beforeRouteEnter(to, from, next) {
-		const { gene_id, variant_id } =  to.params;
+		const { variant_id } =  to.params;
 
 		// ask the store to populate detailed information about this variant
 		store.dispatch('getGeneVariant', { variant_id: variant_id }).then(() => {

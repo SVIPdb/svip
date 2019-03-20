@@ -1,4 +1,6 @@
 import {HTTP} from "@/router/http";
+import * as _ from 'lodash';
+
 // initial state
 const state = {
 	all: [],

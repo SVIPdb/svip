@@ -68,7 +68,6 @@
 <script>
 import {normalizeItemList, titleCase} from "@/utils";
 import {makeAssociationProvider} from '@/components/genes/item_providers/association_provider';
-import store from "@/store";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 export default {

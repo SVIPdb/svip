@@ -23,7 +23,6 @@
 
 <script>
 import _ from "lodash";
-import {mapGetters} from "vuex";
 import {HTTP} from "@/router/http";
 
 import store from "@/store";

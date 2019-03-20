@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderBalance from "@/components/plots/genderBalance";
 import {titleCase} from "../../utils";

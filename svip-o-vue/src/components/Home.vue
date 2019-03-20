@@ -37,7 +37,6 @@
 <script>
 import {mapGetters} from "vuex";
 import store from "@/store";
-import {serverURL} from "@/app_config";
 import SearchBar from "./widgets/SearchBar";
 
 export default {

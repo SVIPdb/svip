@@ -79,12 +79,9 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {HTTP} from "@/router/http";
 import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
 import significanceBarPlot from "@/components/plots/significanceBarPlot";
-import {titleCase} from "@/utils";
 import GenericSourceDetailsRow from "./sources/GenericRowDetails";
 import {normalizeItemList} from "../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
