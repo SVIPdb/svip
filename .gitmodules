@@ -7,3 +7,6 @@
 [submodule "outputs"]
 	path = outputs
 	url = git@gitlab.ethz.ch:faisala/svip_outputs.git 
+[submodule "svip-o-vue"]
+	path = svip-o-vue
+	url = https://gitlab.isb-sib.ch/svip/svip-o-vue.git
