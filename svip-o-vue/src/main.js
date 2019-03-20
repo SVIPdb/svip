@@ -3,6 +3,7 @@ import App from "./App";
 import router from "./router";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 import "@/css/bootstrap.css";
 import "@/css/main.css";
 import Snotify, {SnotifyPosition} from "vue-snotify";
