@@ -70,6 +70,10 @@
 					<GenericSourceDetailsRow v-else :row="row" />
 				</template>
 			</b-table>
+
+			<div v-if="sourcesNotFound.length > 0" class="var-not-found">
+			No data available for this variant in {{ sourcesNotFound.map(x => x.display_name).join(", ") }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -77,6 +81,7 @@
 <script>
 import {mapGetters} from "vuex";
 import {HTTP} from "@/router/http";
+import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
 import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import {titleCase} from "@/utils";
@@ -150,6 +155,11 @@ export default {
 					details_part: overrides.hasOwnProperty(vis.source.name) ? overrides[vis.source.name].details_part : null
 				}
 			});
+		},
+		sourcesNotFound() {
+			// we're sure sources exists because we populated it from the store
+			return store.state.genes.sources
+				.filter(x => x.num_variants > 0 && !this.variant.variantinsource_set.find(y => x.name === y.source.name));
 		}
 	},
 	methods: {
@@ -157,6 +167,9 @@ export default {
 			return row.item.row_parts && row.item.row_parts[part];
 		},
 		normalizeItemList
+	},
+	created() {
+		store.dispatch('getSources');
 	}
 };
 </script>
@@ -165,5 +178,14 @@ export default {
 .container,
 .container-fluid {
 	margin-top: 20px;
+}
+
+.var-not-found {
+	background: #f5f5f5;
+	-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
+	padding: 10px;
+	padding-left: 15px;
+	font-style: italic;
+	color: #999;
 }
 </style>

@@ -11,6 +11,7 @@ const state = {
 	nbGenes: 0,
 	variants: [],
 	nbVariants: 0,
+	sources: [],
 	phenotypes: [],
 	nbPhenotypes: 0,
 	associations: [],
@@ -49,6 +50,16 @@ const actions = {
 				nbVariants: stats.variants,
 				nbPhenotypes: stats.phenotypes
 			});
+		});
+	},
+
+	getSources({commit}) {
+		if (state.sources && state.sources.length > 0) {
+			return new Promise((resolve) => { resolve(state.sources) });
+		}
+
+		return HTTP.get('sources').then(res => {
+			commit('SET_SOURCES', res.data.results);
 		});
 	},
 
@@ -143,6 +154,9 @@ const mutations = {
 		} else {
 			state.genes = params.genes;
 		}
+	},
+	SET_SOURCES(state, sources) {
+		state.sources = sources;
 	},
 	SET_VARIANTS(state, params) {
 		if (params.add) {
