@@ -44,7 +44,7 @@ const source_levels = {
 		{level: '2B', c: '#7597b5'},
 		{level: '3A', c: '#6e3a77'},
 		{level: '3B', c: '#9e7da5'},
-		{level: '4',  c: '#2e2e2c'},
+		{level: '4',  c: '#444441'},
 		{level: 'R1', c: '#be382a'},
 		{level: 'R2', c: '#d78579'}
 	]
