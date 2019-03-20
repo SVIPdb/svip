@@ -57,7 +57,7 @@
 						<td>{{ desnakify(variant.so_name) }}</td>
 
 						<optional :val="var_position">
-							<span class="text-muted">{{ variant.reference_name }}:</span>{{ var_position }}
+							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
 						</optional>
 
 						<td>{{ variant.reference_name }}</td>
