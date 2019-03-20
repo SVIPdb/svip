@@ -38,7 +38,7 @@
 					</span>
 				</template>
 
-				<template slot="publication_count" slot-scope="data">
+				<template slot="association_count" slot-scope="data">
 						<component v-if="rowHasPart(data, 'publication_count')" :is="data.item.row_parts.publication_count" :row="data" />
 						<span v-else>
 						{{ data.value.toLocaleString() }} evidence{{ data.value !== 1 ? "s" : "" }}
@@ -122,7 +122,7 @@ export default {
 					sortable: true
 				},
 				{
-					key: "publication_count",
+					key: "association_count",
 					label: "Database Evidences",
 					sortable: true
 				},
