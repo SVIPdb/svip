@@ -91,6 +91,7 @@ import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
 import CosmicSignificanceCol from "@/components/genes/sources/cosmic/CosmicSignificanceCol";
 import CosmicPubCountCol from "@/components/genes/sources/cosmic/CosmicPubCountCol";
 import UnavailableCol from "@/components/genes/sources/UnavailableCol";
+import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 
 const overrides = {
 	cosmic: {
@@ -100,6 +101,9 @@ const overrides = {
 			scores: UnavailableCol
 		},
 		details_part: CosmicRowDetails
+	},
+	oncokb: {
+		details_part: OncoKBRowDetails
 	}
 };
 
