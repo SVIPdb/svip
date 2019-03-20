@@ -68,37 +68,20 @@ export default {
 	methods: {},
 	mounted: function () {
 	},
-	computed: {
-		aggregatedData() {
+	watch: {
+		sourceName: function(val) {
 			// for some reason, data() isn't updated if we change the sort order, so 'width' ends up being out-of-date with
 			// the row to which we're bound; we manually set it here to compensate.
-			this.width =  25 * source_levels[this.sourceName].length;
-
+			this.width =  25 * source_levels[val].length;
+		}
+	},
+	computed: {
+		aggregatedData() {
 			// first, construct an object with all levels for the source, merging in the actual scores where available
+			// return it in the {k, v, c} format that the viz code expects
 			return source_levels[this.sourceName].map((x) => ({
 				k: x.level, v: this.scores[x.level] || 0, c: x.c
 			}));
-
-			/*
-			let temp = _.reduce(
-				this.data,
-				function (result, value, key) {
-					(result[value] || (result[value] = [])).push(key);
-					return result;
-				},
-				{}
-			);
-			let data = {
-				1: {k: 1, v: 0, c: "#AAFFA9"},
-				2: {k: 2, v: 0, c: "rgb(166,252,182)"},
-				3: {k: 3, v: 0, c: "rgb(137,252,189)"},
-				4: {k: 4, v: 0, c: "#11FFBD"}
-			};
-			_.forEach(temp, (v, i) => {
-				if (data[i] !== undefined) data[i].v = v.length;
-			});
-			return Object.values(data);
-			*/
 		},
 		layout: function () {
 			this.x
