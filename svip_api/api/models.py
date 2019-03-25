@@ -20,6 +20,9 @@ class Source(models.Model):
     name = models.TextField(null=False, unique=True, db_index=True)
     display_name = models.TextField(null=False)
 
+    def num_variants(self):
+        return VariantInSource.objects.filter(source=self).count()
+
     def __str__(self):
         return "%s (%s, id: %s)" % (self.display_name, self.name, self.id)
 

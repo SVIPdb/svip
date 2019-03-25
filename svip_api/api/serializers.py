@@ -29,7 +29,12 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class SourceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Source
-        fields = '__all__'
+        fields = (
+            'url',
+            'name',
+            'display_name',
+            'num_variants',
+        )
 
 
 class GeneSerializer(serializers.HyperlinkedModelSerializer):
