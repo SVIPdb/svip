@@ -6,15 +6,14 @@
 		"HGVSprotein": "NP_004324.2:p.Val600Glu",
 		"position": "GrCh37:chr7:140453136",
 		"molecular_consequence": "NON_SYNONYMOUS",
-		"tier_level": "1A",
 		"dbSNP": "rs113488022",
 		"SVIP_status": "Reviewed",
 		"SVIP_confidence_score": 4,
-		"variant_id": 1,
 		"diseases": [
 			{
 				"name": "Skin Melanoma",
-				"nb_patients": "12/46",
+				"nb_patients": 12,
+				"tier_level": "Tier I",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 3,
@@ -28,13 +27,13 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "expert",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive / prognostic",
+				"clinical_significance": "Predictive (Tier I)",
 				"significance_label": "A",
 				"score": 3,
 				"evidences": [
 					{
-						"evidence_type": "predictive",
-						"clinical_significance": "sensitive",
+						"evidence_type": "Predictive",
+						"clinical_significance": "Sensitive",
 						"drug": "Vemurafenib",
 						"tier_level": "Tier I",
 						"reference": "PMID:21639808"
@@ -43,7 +42,8 @@
 			},
 			{
 				"name": "Papillary thyroid carcinoma",
-				"nb_patients": "34/46",
+				"nb_patients": 34,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 12,
 					"41-60": 9,
@@ -54,10 +54,10 @@
 					"male": 30,
 					"female": 4
 				},
-				"pathogenicity": "pathogenic",
+				"pathogenicity": "Pathogenic",
 				"pathogenicity_level": "automatic",
 				"SVIP_status": "Reviewed",
-				"clinical_significance": "predictive",
+				"clinical_significance": "Predictive (Tier II) / Prognostic (Tier II)",
 				"significance_label": "B",
 				"score": 4,
 				"evidences": [
@@ -97,11 +97,11 @@
 		"dbSNP": "rs121913361",
 		"SVIP_status": "Loaded",
 		"SVIP_confidence_score": 2,
-		"variant_id": 56,
 		"diseases": [
 			{
 				"name": "colorectal cancer",
-				"nb_patients": "25/25",
+				"nb_patients": 25,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 1,
 					"41-60": 3,
@@ -115,7 +115,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "expert",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive",
+				"clinical_significance": "Predictive (Tier II)",
 				"significance_label": "A",
 				"score": 2,
 				"evidences": [
@@ -141,11 +141,11 @@
 		"dbSNP": "rs121913364",
 		"SVIP_status": "Curated",
 		"SVIP_confidence_score": 3,
-		"variant_id": 65,
 		"diseases": [
 			{
 				"name": "Skin melanoma",
-				"nb_patients": "88/144",
+				"nb_patients": 12,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 3,
@@ -159,7 +159,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "automatic",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive",
+				"clinical_significance": "Predictive (Tier II)",
 				"significance_label": "B",
 				"score": 2,
 				"evidences": [
@@ -181,15 +181,14 @@
 		"HGVSprotein": "NP_005219.2:p.Leu858Arg",
 		"position": "GrCh37:chr7:55259515",
 		"molecular_consequence": "NON_SYNONYMOUS",
-		"tier_level": "1A",
 		"dbSNP": "rs121434568",
 		"SVIP_status": "Reviewed",
 		"SVIP_confidence_score": 3,
-		"variant_id": 142,
 		"diseases": [
 			{
 				"name": "Non-small cell lung carcinoma",
-				"nb_patients": "88/144",
+				"nb_patients": 88,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 4,
 					"41-60": 31,
@@ -202,8 +201,8 @@
 				},
 				"pathogenicity": "",
 				"pathogenicity_level": "automatic",
-				"SVIP_status": "Curated",
-				"clinical_significance": "predictive",
+				"SVIP_status": "Reviewed",
+				"clinical_significance": "Predictive (Tier I) / Prognostic (Tier II)",
 				"significance_label": "B",
 				"score": 3,
 				"evidences": [
@@ -225,7 +224,8 @@
 			},
 			{
 				"name": "lung adenocarcinoma",
-				"nb_patients": "56/144",
+				"nb_patients": 56,
+				"tier_level": "Tier I",
 				"age_distribution": {
 					"<40": 10,
 					"41-60": 23,
@@ -233,21 +233,29 @@
 					">80": 5
 				},
 				"gender_balance": {
-					"male": 65,
-					"female": 35
+					"male": 30,
+					"female": 26
 				},
-				"pathogenicity": "pathogenic",
+				"pathogenicity": "Pathogenic",
 				"pathogenicity_level": "expert",
 				"SVIP_status": "Reviewed",
-				"clinical_significance": "predictive / prognostic",
+				"clinical_significance": "Predictive (Tier I)",
 				"significance_label": "A",
 				"score": 4,
 				"evidences": [
 					{
 						"drug": "Afatinib",
-						"evidence_type": "predictive",
-						"clinical_significance": "sensitive",
-						"tier_level": "Tier I"
+						"evidence_type": "Predictive",
+						"clinical_significance": "Sensitive",
+						"tier_level": "Tier I",
+						"reference": "PMID:29141884"
+					},
+					{
+						"drug": "",
+						"evidence_type": "In vitro assay",
+						"clinical_significance": "Pathogenic",
+						"tier_level": "",
+						"reference": "PMID:29141884"
 					}
 				]
 			}
@@ -260,15 +268,14 @@
 		"HGVSprotein": "NP_005219.2:p.Ser768Ile",
 		"position": "GrCh37:chr7:55249005",
 		"molecular_consequence": "NON_SYNONYMOUS, NONCODING_CHANGE",
-		"tier_level": "1B",
 		"dbSNP": "rs121913465",
 		"SVIP_status": "Curated",
 		"SVIP_confidence_score": 4,
-		"variant_id": 145,
 		"diseases": [
 			{
 				"name": "non-small cell lung carcinoma",
-				"nb_patients": "12/144",
+				"nb_patients": 12,
+				"tier_level": "Tier I",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 2,
@@ -282,7 +289,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "automatic",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive",
+				"clinical_significance": "Predictive (Tier I)",
 				"significance_label": "B",
 				"score": 2,
 				"evidences": [
@@ -297,7 +304,8 @@
 			},
 			{
 				"name": "lung adenocarcinoma",
-				"nb_patients": "15/144",
+				"nb_patients": 15,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 3,
@@ -311,7 +319,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "expert",
 				"SVIP_status": "Reviewed",
-				"clinical_significance": "predictive / prognostic",
+				"clinical_significance": "Predictive (Tier II)",
 				"significance_label": "A",
 				"score": 4,
 				"evidences": [
@@ -333,15 +341,14 @@
 		"HGVSprotein": "NP_005219.2:p.Thr790Met",
 		"position": "GrCh37:chr7:55249071",
 		"molecular_consequence": "NON_SYNONYMOUS, NONCODING_CHANGE, REGULATORY",
-		"tier_level": "1B",
 		"dbSNP": "rs121434569",
 		"SVIP_status": "Loaded",
 		"SVIP_confidence_score": 3,
-		"variant_id": 130,
 		"diseases": [
 			{
 				"name": "non-small cell lung carcinoma",
-				"nb_patients": "2/144",
+				"nb_patients": 2,
+				"tier_level": "Tier I",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 1,
@@ -355,7 +362,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "automatic",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive",
+				"clinical_significance": "Predictive (Tier I)",
 				"significance_label": "B",
 				"score": 3,
 				"evidences": [
@@ -370,7 +377,8 @@
 			},
 			{
 				"name": "lung adenocarcinoma",
-				"nb_patients": "56/144",
+				"nb_patients": 1,
+				"tier_level": "Tier II",
 				"age_distribution": {
 					"<40": 0,
 					"41-60": 1,
@@ -384,7 +392,7 @@
 				"pathogenicity": "",
 				"pathogenicity_level": "expert",
 				"SVIP_status": "Curated",
-				"clinical_significance": "predictive / prognostic",
+				"clinical_significance": "Predictive (Tier II)",
 				"significance_label": "A",
 				"score": 3,
 				"evidences": [
