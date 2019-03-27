@@ -100,7 +100,7 @@ const actions = {
 				return fetch(targetURL)
 					.then(res => res.json())
 					.then(res => {
-						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] })
+						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] });
 						return res.result;
 					})
 			}
@@ -119,17 +119,13 @@ const actions = {
 				return fetch(targetURL)
 					.then(res => res.json())
 					.then(res => {
-						let retrieved = 0;
-						Object.entries(res.result).forEach(([pmid, data]) => {
-							commit('SET_PUBMED_INFO', { pmid, data });
-							retrieved += 1;
-						});
-						return retrieved;
+						// res.result is an object of {pmid: data, ...} entries
+						commit('SET_BATCH_PUBMED_INFO', res.result);
 					})
 			}
 			else {
 				// we can resolve immediately if there's nothing for us to do
-				resolve(-1);
+				resolve(0);
 			}
 		})
 	},
@@ -177,6 +173,11 @@ const mutations = {
 
 	SET_PUBMED_INFO(state, { pmid, data }) {
 		state.pubmedInfo[pmid] = data;
+		localStorage.setItem('pubmedInfo', JSON.stringify(state.pubmedInfo));
+	},
+
+	SET_BATCH_PUBMED_INFO(state, pmid_set) {
+		state.pubmedInfo = Object.assign({}, state.pubmedInfo, pmid_set);
 		localStorage.setItem('pubmedInfo', JSON.stringify(state.pubmedInfo));
 	}
 };
