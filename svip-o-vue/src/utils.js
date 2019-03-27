@@ -32,6 +32,7 @@ export function normalizeItemList(items) {
 }
 
 export function titleCase(str, glue = ["of", "for", "and"]) {
+	if (!str) { return str; }
 	return str.replace(/(\w)(\w*)/g, function (_, i, r) {
 		const j = i.toUpperCase() + (r != null ? r : "");
 		return glue.indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
