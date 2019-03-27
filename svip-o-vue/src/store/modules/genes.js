@@ -41,7 +41,7 @@ const getters = {
 
 // actions
 const actions = {
-	getSiteStats({commit}, params) {
+	getSiteStats({commit}) {
 		return HTTP.get("query/stats").then(res => {
 			const stats = res.data;
 
@@ -63,13 +63,13 @@ const actions = {
 		});
 	},
 
-	getGene({commit, dispatch}, params) {
+	getGene({commit}, params) {
 		return HTTP.get(`genes/${params.gene_id}`).then(res => {
 			commit("SELECT_GENE", res.data);
 		});
 	},
 
-	getGeneVariant({commit, dispatch}, params) {
+	getGeneVariant({commit}, params) {
 		return HTTP.get("variants/" + params.variant_id).then(res => {
 			let gene = res.data.gene;
 			let variant = res.data;
@@ -78,16 +78,16 @@ const actions = {
 		});
 	},
 
-	selectVariant({commit, dispatch}, params) {
+	selectVariant({commit}, params) {
 		let variant = state.variants.find(v => v.id === params.variant_id);
 		commit("SET_VARIANT", variant);
 	},
 
-	toggleShowSVIP({commit, dispatch}, params) {
+	toggleShowSVIP({commit}, params) {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
 	},
 
-	getPubmedInfo({commit, dispatch}, {pmid}) {
+	getPubmedInfo({commit}, {pmid}) {
 		return new Promise((resolve, reject) => {
 			if (state.pubmedInfo.hasOwnProperty(pmid)) {
 				// return the existing thing
@@ -103,11 +103,12 @@ const actions = {
 						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] });
 						return res.result;
 					})
+					.catch(err => reject(err))
 			}
 		})
 	},
 
-	getBatchPubmedInfo({commit, dispatch}, {pmid_set}) {
+	getBatchPubmedInfo({commit}, {pmid_set}) {
 		return new Promise((resolve, reject) => {
 			// just get the things we don't have
 			const remaining = pmid_set.filter(pmid => !state.pubmedInfo.hasOwnProperty(pmid));
@@ -121,7 +122,9 @@ const actions = {
 					.then(res => {
 						// res.result is an object of {pmid: data, ...} entries
 						commit('SET_BATCH_PUBMED_INFO', res.result);
+						return res.result;
 					})
+					.catch(err => reject(err))
 			}
 			else {
 				// we can resolve immediately if there's nothing for us to do
