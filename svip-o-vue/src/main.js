@@ -19,17 +19,11 @@ import store from "./store";
 
 Vue.config.productionTip = false;
 
-const options = {
-	toast: {
-		position: SnotifyPosition.rightTop
-	}
-};
-
-Vue.use(Snotify, options);
+Vue.use(Snotify, { toast: { position: SnotifyPosition.rightTop } });
 Vue.use(BootstrapVue);
 Vue.use(VeeValidate, {fieldsBagName: "formFields"});
 Vue.use(lodash);
-// Vue.use(Vuex)
+// Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
 Vue.component("v-select", vSelect);
