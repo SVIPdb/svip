@@ -82,7 +82,7 @@ export default {
 				phenotype__term: ''
 			},
 			currentPage: 1,
-			perPage: 100,
+			perPage: 20,
 			totalRows: this.row.item.association_count,
 			fields: [
 				{

@@ -122,7 +122,7 @@ export default {
 				gene: this.$route.params.gene_id
 			},
 			currentPage: 1,
-			perPage: 100,
+			perPage: 20,
 			totalRows: 0,
 			confirmDeletion: false,
 			fields: [
