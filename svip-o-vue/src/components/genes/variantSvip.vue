@@ -67,7 +67,7 @@
 		<template slot="row-details" slot-scope="row">
 			<div class="card">
 				<div class="card-body" style="padding: 0">
-					<b-table :items="row.item.evidences" :small="true"></b-table>
+					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true"></b-table>
 				</div>
 			</div>
 		</template>
@@ -121,7 +121,12 @@ export default {
 				},
 				{
 					key: "clinical_significance",
-					label: "Clinical Significance",
+					label: "Evidence Type",
+					sortable: false
+				},
+				{
+					key: "tier_level",
+					label: "Tier Level",
 					sortable: false
 				},
 				{
@@ -140,6 +145,13 @@ export default {
 					label: "",
 					sortable: false
 				}
+			],
+			evidenceFields: [
+				{ key: "evidence_type", label: "Evidence Type", sortable: true },
+				{ key: "clinical_significance", label: "Clinical Significance", sortable: true },
+				{ key: "drug", label: "Drug", sortable: true },
+				{ key: "tier_level", label: "Tier Level", sortable: true },
+				{ key: "reference", label: "Links", sortable: false },
 			]
 		};
 	},
