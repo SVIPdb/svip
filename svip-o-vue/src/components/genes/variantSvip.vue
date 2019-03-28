@@ -50,12 +50,13 @@
 			</template>
 
 			<template slot='pathogenicity' slot-scope='data'>
-				{{data.item.pathogenicity}}
-				<svg height='16' width='16' style='margin-left: 20px' v-b-tooltip.hover
-				:title="data.item.pathogenicity_level+' approval'">
-				<rect x="0" y="0" width="16" height="16"
-				:class="'pathogenicity '+data.item.pathogenicity_level"></rect>
-			</svg>
+				<div style="white-space: nowrap;">
+					<svg height='14' width='14' style='margin-right: 4px;' v-b-tooltip.hover :title="data.item.pathogenicity_level+' approval'">
+						<rect v-if="data.item.pathogenicity" x="0" y="0" width="14" height="14" rx="2" ry="2"
+									:class="'pathogenicity '+data.item.pathogenicity_level"></rect>
+					</svg>
+					<div style="vertical-align: middle; display: inline-block;">{{data.item.pathogenicity}}</div>
+				</div>
 		</template>
 
 		<template slot="score" slot-scope="data">
@@ -182,7 +183,7 @@ svg.pathogenicity_level {
 }
 
 rect.pathogenicity.expert {
-	fill: #107f40;
+	fill: #118644;
 }
 
 rect.pathogenicity.automatic {
