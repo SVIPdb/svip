@@ -50,12 +50,13 @@
 			</template>
 
 			<template slot='pathogenicity' slot-scope='data'>
-				{{data.item.pathogenicity}}
-				<svg height='16' width='16' style='margin-left: 20px' v-b-tooltip.hover
-				:title="data.item.pathogenicity_level+' approval'">
-				<rect x="0" y="0" width="16" height="16"
-				:class="'pathogenicity '+data.item.pathogenicity_level"></rect>
-			</svg>
+				<div style="white-space: nowrap;">
+					<svg height='14' width='14' style='margin-right: 4px;' v-b-tooltip.hover :title="data.item.pathogenicity_level+' approval'">
+						<rect v-if="data.item.pathogenicity" x="0" y="0" width="14" height="14" rx="2" ry="2"
+									:class="'pathogenicity '+data.item.pathogenicity_level"></rect>
+					</svg>
+					<div style="vertical-align: middle; display: inline-block;">{{data.item.pathogenicity}}</div>
+				</div>
 		</template>
 
 		<template slot="score" slot-scope="data">
@@ -67,7 +68,11 @@
 		<template slot="row-details" slot-scope="row">
 			<div class="card">
 				<div class="card-body" style="padding: 0">
-					<b-table :items="row.item.evidences" :small="true"></b-table>
+					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
+						<template slot="reference" slot-scope="data">
+							<PubmedPopover :pubmeta="{ pmid: data.value }" />
+						</template>
+					</b-table>
 				</div>
 			</div>
 		</template>
@@ -77,14 +82,17 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderBalance from "@/components/plots/genderBalance";
 import {titleCase} from "../../utils";
+import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 export default {
-	name: "public-databases-info",
-	components: {ageDistribution, genderBalance},
+	name: "VariantSVIP",
+	components: {ageDistribution, genderBalance, PubmedPopover},
+	props: {
+		variant: {type: Object, required: true}
+	},
 	data() {
 		return {
 			sortBy: "name",
@@ -119,7 +127,12 @@ export default {
 				},
 				{
 					key: "clinical_significance",
-					label: "Clinical Significance",
+					label: "Evidence Type",
+					sortable: false
+				},
+				{
+					key: "tier_level",
+					label: "Tier Level",
 					sortable: false
 				},
 				{
@@ -138,6 +151,13 @@ export default {
 					label: "",
 					sortable: false
 				}
+			],
+			evidenceFields: [
+				{ key: "evidence_type", label: "Evidence Type", sortable: true },
+				{ key: "clinical_significance", label: "Clinical Significance", sortable: true },
+				{ key: "drug", label: "Drug", sortable: true },
+				{ key: "tier_level", label: "Tier Level", sortable: true },
+				{ key: "reference", label: "Links", sortable: false },
 			]
 		};
 	},
@@ -145,12 +165,8 @@ export default {
 		titleCase
 	},
 	computed: {
-		...mapGetters({
-			variant: "variant",
-			svipVariant: "svipVariant"
-		}),
 		data() {
-			return this.svipVariant.diseases;
+			return this.variant.svip_data.diseases;
 		}
 	}
 };
@@ -167,7 +183,7 @@ svg.pathogenicity_level {
 }
 
 rect.pathogenicity.expert {
-	fill: #107f40;
+	fill: #118644;
 }
 
 rect.pathogenicity.automatic {

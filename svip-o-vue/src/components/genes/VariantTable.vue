@@ -71,7 +71,12 @@ export default {
 		}
 	},
 	props: ["gene"],
-	methods: {},
+	methods: {
+		selectVariant() {
+			// FIXME: what should we do here?
+			console.warn("selectVariant() currently undefined");
+		}
+	},
 	mounted() {
 	}
 };

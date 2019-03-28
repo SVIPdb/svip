@@ -23,11 +23,8 @@
 
 <script>
 import _ from "lodash";
-import {mapGetters} from "vuex";
 import {HTTP} from "@/router/http";
 
-// mock data for the demo
-import svipVariants from "@/assets/svip_variants.json";
 import store from "@/store";
 
 const textmapper = {
@@ -62,14 +59,13 @@ export default {
 		}
 	},
 	computed: {
-		...mapGetters({
-			svipVariants: "svipVariants"
-		}),
 		showOnlySVIP: {
 			get() {
 				return store.state.genes.showOnlySVIP;
 			},
 			set(value) {
+				// FIXME: perhaps let's reset the contents of the search box when we toggle this
+				this.getGenesOnly();
 				store.dispatch("toggleShowSVIP", {showOnlySVIP: value});
 			}
 		}
@@ -84,34 +80,13 @@ export default {
 			this.search(loading, search, this);
 		},
 		getGenesOnly: function () {
-			HTTP.get("query", {params: {q: ""}}).then(res => {
-				this.options = this.showOnlySVIP
-					? res.data.filter(
-						entry =>
-							entry.type === "g" &&
-							svipVariants.find(
-								sv => sv.gene_name === entry.label
-							) !== undefined
-					)
-					: res.data;
+			HTTP.get("query", {params: {q: "", in_svip: this.showOnlySVIP}}).then(res => {
+				this.options = res.data;
 			});
 		},
 		search: _.debounce((loading, search, vm) => {
-			return HTTP.get("query", {params: {q: search}}).then(res => {
-				if (vm.showOnlySVIP) {
-					// FIXME: verify that we've filtered the gene list to only those genes for which we have SVIP info
-					vm.options = res.data.filter(
-						entry =>
-							(entry.type === "g" &&
-								svipVariants.find(
-									sv => sv.gene_name === entry.label
-								) !== undefined) ||
-							(entry.type === "v" && vm.hasSvipData(entry))
-					);
-				} else {
-					vm.options = res.data;
-				}
-
+			return HTTP.get("query", {params: {q: search, in_svip: vm.showOnlySVIP}}).then(res => {
+				vm.options = res.data;
 				loading(false);
 			});
 		}, 350),
@@ -133,11 +108,6 @@ export default {
 					parts.length > 0
 						? acc.concat({text: next.replace(" ", "\u00A0"), match: false}, {text: parts.pop(), match: true})
 						: acc.concat({text: next.replace(" ", "\u00A0"), match: false}), []
-			);
-		},
-		hasSvipData: function (entry) {
-			return (
-				svipVariants.find(sv => `${sv.gene_name} ${sv.variant_name}`.toLowerCase() === entry.label.toLowerCase()) !== undefined
 			);
 		}
 	}

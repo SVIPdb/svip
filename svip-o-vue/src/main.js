@@ -3,6 +3,7 @@ import App from "./App";
 import router from "./router";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 import "@/css/bootstrap.css";
 import "@/css/main.css";
 import Snotify, {SnotifyPosition} from "vue-snotify";
@@ -18,17 +19,11 @@ import store from "./store";
 
 Vue.config.productionTip = false;
 
-const options = {
-	toast: {
-		position: SnotifyPosition.rightTop
-	}
-};
-
-Vue.use(Snotify, options);
+Vue.use(Snotify, { toast: { position: SnotifyPosition.rightTop } });
 Vue.use(BootstrapVue);
 Vue.use(VeeValidate, {fieldsBagName: "formFields"});
 Vue.use(lodash);
-// Vue.use(Vuex)
+// Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
 Vue.component("v-select", vSelect);

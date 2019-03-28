@@ -22,9 +22,24 @@ export function var_to_position(variant, with_change = false) {
 	return `chr${variant.chromosome}:${variant.hgvs_g.replace(r, "$1")}`;
 }
 
+export function normalizeItemList(items) {
+	if (!items) return items;
+
+	return items
+		.split(",")
+		.map(x => x.trim())
+		.join(", ");
+}
+
 export function titleCase(str, glue = ["of", "for", "and"]) {
+	if (!str) { return str; }
 	return str.replace(/(\w)(\w*)/g, function (_, i, r) {
 		const j = i.toUpperCase() + (r != null ? r : "");
 		return glue.indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
 	});
+}
+
+export function desnakify(x) {
+	if (!x) { return x; }
+	return titleCase(x.split("_").join(" "));
 }

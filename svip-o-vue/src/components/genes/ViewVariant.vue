@@ -54,10 +54,10 @@
 							</a>
 						</optional>
 
-						<td>{{ variant.so_name }}</td>
+						<td>{{ desnakify(variant.so_name) }}</td>
 
 						<optional :val="var_position">
-							<span class="text-muted">{{ variant.reference_name }}:</span>{{ var_position }}
+							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
 						</optional>
 
 						<td>{{ variant.reference_name }}</td>
@@ -66,44 +66,30 @@
 			</div>
 		</div>
 
-		<variant-svip v-if="svipVariant"></variant-svip>
-		<variant-public-databases></variant-public-databases>
+		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
+		<variant-public-databases :variant="variant"></variant-public-databases>
 
 		<VariantExternalInfo :mvInfo="variant.mv_info"/>
 	</div>
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
 // import geneVariants from '@/components/Variants'
 import {mapGetters} from "vuex";
 import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
 import variantSvip from "@/components/genes/variantSvip";
 import store from "@/store";
 
-import {change_from_hgvs, var_to_position} from "@/utils";
+import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
 import VariantExternalInfo from "@/components/genes/external/VariantExternalInfo";
 
 export default {
-	data() {
-		return {
-			fields: [
-				"pmid",
-				"authors",
-				"title",
-				"pubDate",
-				"journal",
-				"elocationId"
-			]
-		};
-	},
+	name: "ViewVariant",
 	components: {VariantExternalInfo, variantPublicDatabases, variantSvip},
 	computed: {
 		...mapGetters({
 			variant: "variant",
-			gene: "gene",
-			svipVariants: "svipVariants",
-			svipVariant: "svipVariant"
+			gene: "gene"
 		}),
 		synonyms() {
 			if (this.gene.geneAliases === undefined) return "";
@@ -128,44 +114,16 @@ export default {
 		}
 	},
 	// components: {geneVariants: geneVariants},
-	methods: {},
+	methods: {
+		desnakify
+	},
 	beforeRouteEnter(to, from, next) {
-		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
+		const { variant_id } =  to.params;
 
-				store
-					.dispatch("getGeneVariant", {
-						gene: gene.symbol,
-						variant: to.params.variant_id
-					})
-					.then(res => {
-						store.dispatch("selectSvipVariant", {variant: res});
-						next();
-					});
-			});
-		}
-	},
-	beforeRouteUpdate(to, from, next) {
-		if (to.params.gene_id !== "new") {
-			HTTP.get("genes/" + to.params.gene_id).then(res => {
-				const gene = res.data;
-				store.commit("SELECT_GENE", gene);
-
-				store
-					.dispatch("getGeneVariant", {
-						gene: gene.symbol,
-						variant: to.params.variant_id
-					})
-					.then(res => {
-						store.dispatch("selectSvipVariant", {variant: res});
-						next();
-					});
-			});
-		}
-	},
-	created() {
+		// ask the store to populate detailed information about this variant
+		store.dispatch('getGeneVariant', { variant_id: variant_id }).then(() => {
+			next();
+		})
 	}
 };
 </script>

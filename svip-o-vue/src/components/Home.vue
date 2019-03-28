@@ -37,7 +37,6 @@
 <script>
 import {mapGetters} from "vuex";
 import store from "@/store";
-import {serverURL} from "@/app_config";
 import SearchBar from "./widgets/SearchBar";
 
 export default {
@@ -48,57 +47,16 @@ export default {
 			gene: {}
 		};
 	},
-	watch: {
-		gene: function (n) {
-			if (n.value) {
-				let geneIdx = _.findIndex(this.genes, g => {
-					return g.entrez_id === n.value;
-				});
-				let id = "";
-				if (geneIdx > -1) {
-					let url = this.genes[geneIdx].url;
-					id = url.replace(serverURL + "genes", "");
-					id = id.replace(/\D/, "");
-				}
-				if (id) this.$router.push("gene/" + id);
-			}
-		}
-	},
 	computed: {
 		...mapGetters({
 			genes: "genes",
-			variants: "variants",
-			phenotypes: "phenotypes",
+			nbGenes: "nbGenes",
 			nbVariants: "nbVariants",
-			nbPhenotypes: "nbPhenotypes",
-			nbGenes: "nbGenes"
-		}),
-		project() {
-			return this.user.projects.filter(
-				p => p.project_id === this.user.project_id
-			)[0];
-		},
-		options() {
-			return this.genes.map(g => {
-				return {label: g.symbol, value: g.entrez_id};
-			});
-		},
-		nbUniquePhenotypes() {
-			return _.uniqBy(this.phenotypes, d => {
-				return d.pheno_id;
-			}).length;
-		}
-	},
-	methods: {
-		test(val) {
-			// eslint-disable-next-line no-console
-			console.log(val);
-		}
+			nbPhenotypes: "nbPhenotypes"
+		})
 	},
 	created() {
 		store.dispatch("getSiteStats");
-		store.dispatch("getGenes");
-		store.dispatch("getVariants");
 	}
 };
 </script>

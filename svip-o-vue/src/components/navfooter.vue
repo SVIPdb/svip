@@ -24,7 +24,7 @@
 							</div>
 							<div class="col-lg-4 col-sm-12 text-center">
 								<a href="https://www.sib.swiss/" target="_blank">
-									<img src="../assets/SIB_logo_20ans.png" alt="SIB Logo 20ans" class="footer_logo"/>
+									<img src="../assets/sib_logo_large_titled.png" alt="SIB" class="footer_logo"/>
 								</a>
 							</div>
 							<div class="col-lg-4 col-sm-12 text-center">

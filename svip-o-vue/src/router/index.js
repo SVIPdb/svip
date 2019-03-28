@@ -2,8 +2,8 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "@/components/Home";
 import Genes from "@/components/genes/Genes";
-import Gene from "@/components/genes/ViewGene";
-import Variant from "@/components/genes/ViewVariant";
+import ViewGene from "@/components/genes/ViewGene";
+import ViewVariant from "@/components/genes/ViewVariant";
 
 // import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 
@@ -21,12 +21,12 @@ const router = new Router({
 		{
 			path: "/gene/:gene_id",
 			name: "gene",
-			component: Gene
+			component: ViewGene
 		},
 		{
 			path: "/gene/:gene_id/variant/:variant_id",
 			name: "variant",
-			component: Variant
+			component: ViewVariant
 		},
 
 		{

@@ -1,22 +1,25 @@
-import svipVariants from "@/assets/svip_variants.json";
 import {HTTP} from "@/router/http";
 
 // initial state
 const state = {
 	current: null,
+
+	currentGene: null,
+	currentVariant: null,
+
 	genes: [],
 	nbGenes: 0,
 	variants: [],
 	nbVariants: 0,
+	sources: [],
 	phenotypes: [],
 	nbPhenotypes: 0,
 	associations: [],
 	nbGeneVariants: 0,
 	geneVariants: [],
 	variant: null,
-	svipVariants: svipVariants,
-	svipVariant: null,
-	showOnlySVIP: false
+	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true',
+	pubmedInfo: JSON.parse(localStorage.getItem('pubmedInfo')) || {}
 };
 
 // getters
@@ -24,7 +27,7 @@ const getters = {
 	genes: state => state.genes,
 	gene: state => state.gene,
 	nbGenes: state => state.nbGenes,
-	currentGene: state => state.current,
+	currentGene: state => state.currentGene,
 	variants: state => state.variants,
 	nbVariants: state => state.nbVariants,
 	phenotypes: state => state.phenotypes,
@@ -38,237 +41,119 @@ const getters = {
 
 // actions
 const actions = {
-	getSiteStats({commit}, params) {
-		HTTP.get("query/stats").then(res => {
+	getSiteStats({commit}) {
+		return HTTP.get("query/stats").then(res => {
 			const stats = res.data;
 
-			commit("SET_NBGENES", stats.genes);
-			commit("SET_NBVARIANTS", stats.variants);
-			commit("SET_NBPHENOTYPES", stats.phenotypes);
+			commit('SET_SITE_STATS', {
+				nbGenes: stats.genes,
+				nbVariants: stats.variants,
+				nbPhenotypes: stats.phenotypes
+			});
 		});
 	},
 
-	getGenes({commit, dispatch}, params) {
-		let geneCache = window.localStorage.getItem("genes");
-		if (geneCache) geneCache = JSON.parse(geneCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		if (!state.genes.length) {
-			HTTP.get("genes/?page=" + page).then(res => {
-				let genes = res.data.results;
-				if (
-					(params === undefined || params.reset === undefined) &&
-					state.genes.length === res.data.count
-				)
-					return;
-				if (geneCache && geneCache.length === res.data.count) {
-					commit("SET_GENES", {genes: geneCache, add: false});
-					return;
-				}
-				commit("SET_GENES", {genes: genes, add: add});
-				if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-					const test = res.data.next.match(/\?page=(\d+)/);
-					if (test) {
-						page = test[1];
-						dispatch("getGenes", {page: page});
-					}
-				}
-			});
+	getSources({commit}) {
+		if (state.sources && state.sources.length > 0) {
+			return new Promise((resolve) => { resolve(state.sources) });
 		}
-	},
 
-	getVariants({commit, dispatch}, params) {
-		let variantCache = window.localStorage.getItem("variants");
-		if (variantCache) variantCache = JSON.parse(variantCache);
-
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("variants/?page=" + page).then(res => {
-			let variants = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.variants.length === res.data.count
-			)
-				return;
-			if (variantCache && variantCache.length === res.data.count) {
-				commit("SET_VARIANTS", {variants: variantCache, add: false});
-				return;
-			}
-
-			commit("SET_VARIANTS", {variants: variants, add: add});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getVariants", {page: page});
-				}
-			}
+		return HTTP.get('sources').then(res => {
+			commit('SET_SOURCES', res.data.results);
 		});
 	},
 
-	getPhenotypes({commit, dispatch}, params) {
-		let phenotypeCache = window.localStorage.getItem("phenotypes");
-		if (phenotypeCache) phenotypeCache = JSON.parse(phenotypeCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("phenotypes/?page=" + page).then(res => {
-			let phenotypes = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.phenotypes.length === res.data.count
-			)
-				return;
-			if (phenotypeCache && phenotypeCache.length === res.data.count) {
-				commit("SET_PHENOTYPES", {
-					phenotypes: phenotypeCache,
-					add: false
-				});
-				return;
-			}
-			commit("SET_PHENOTYPES", {phenotypes: phenotypes, add: add});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getPhenotypes", {page: page});
-				}
-			}
+	getGene({commit}, params) {
+		return HTTP.get(`genes/${params.gene_id}`).then(res => {
+			commit("SELECT_GENE", res.data);
 		});
 	},
 
-	getAssociations({commit, dispatch}, params) {
-		let associationCache = window.localStorage.getItem("associations");
-		if (associationCache) associationCache = JSON.parse(associationCache);
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("associations/?page=" + page).then(res => {
-			let associations = res.data.results;
-			if (
-				(params === undefined || params.reset === undefined) &&
-				state.associations.length === res.data.count
-			)
-				return;
-			if (
-				associationCache &&
-				associationCache.length === res.data.count
-			) {
-				commit("SET_ASSOCIATIONS", {
-					associations: associationCache,
-					add: false
-				});
-				return;
-			}
-
-			commit("SET_ASSOCIATIONS", {
-				associations: associations,
-				add: add
-			});
-			if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-				const test = res.data.next.match(/\?page=(\d+)/);
-				if (test) {
-					page = test[1];
-					dispatch("getAssociations", {page: page});
-				}
-			}
-		});
-	},
-
-	listGeneVariants({commit, dispatch}, params) {
-		let page = 1;
-		if (params !== undefined && params.page) page = +params.page;
-		let add = page > 1;
-		HTTP.get("variants/?search=" + params.gene + "&page=" + page).then(
-			res => {
-				let geneVariants = res.data.results;
-				commit("SET_NB_GENE_VARIANTS", res.data.count);
-				if (
-					(params === undefined || params.reset === undefined) &&
-					state.geneVariants.length === res.data.count
-				)
-					return;
-				commit("SET_GENE_VARIANTS", {
-					geneVariants: geneVariants,
-					add: add
-				});
-				if (res.data.next && res.data.next.indexOf("?page=") > -1) {
-					const test = res.data.next.match(/\?page=(\d+)/);
-					if (test) {
-						page = test[1];
-						dispatch("listGeneVariants", {
-							gene: params.gene,
-							page: page
-						});
-					}
-				}
-			}
-		);
-	},
-
-	getGeneVariant({commit, dispatch}, params) {
-		return HTTP.get("variants/" + params.variant).then(res => {
+	getGeneVariant({commit}, params) {
+		return HTTP.get("variants/" + params.variant_id).then(res => {
+			let gene = res.data.gene;
 			let variant = res.data;
+			commit("SELECT_GENE", gene);
 			commit("SET_VARIANT", variant);
-			return variant;
 		});
 	},
 
-	selectVariant({commit, dispatch}, params) {
-		let variant = _.filter(state.variants, v => {
-			return v.id === params.variant_id;
-		})[0];
-
-		// find the corresponding mock data for this variant, too, so we can display mock-specific stuff
-		const svip_v = state.svipVariants.find(
-			x =>
-				x.gene_name === variant.gene_symbol &&
-				x.variant_name === variant.name
-		);
-
+	selectVariant({commit}, params) {
+		let variant = state.variants.find(v => v.id === params.variant_id);
 		commit("SET_VARIANT", variant);
-		commit("SELECT_SVIP_VARIANT", svip_v);
 	},
 
-	selectSvipVariant({commit, dispatch}, params) {
-		const variant = params.variant_id
-			? _.filter(state.variants, v => v.id === (params.variant_id | 0))[0]
-			: params.variant;
-
-		// find the corresponding mock data for this variant
-		const svip_v = state.svipVariants.find(
-			x =>
-				x.gene_name === variant.gene_symbol &&
-				x.variant_name === variant.name
-		);
-
-		commit("SELECT_SVIP_VARIANT", svip_v);
-	},
-
-	toggleShowSVIP({commit, dispatch}, params) {
+	toggleShowSVIP({commit}, params) {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
-	}
+	},
+
+	// FIXME: there's a lot of duplication between this method and getBatchPubmedInfo(); perhaps we can merge them into
+	//  just one method that can accept either a scalar or array, or at least factor out their common code.
+	//  oooor maybe we just get rid of the single-query version, since you can just pass an array with one element.
+	getPubmedInfo({commit}, {pmid}) {
+		return new Promise((resolve, reject) => {
+			if (state.pubmedInfo.hasOwnProperty(pmid)) {
+				// return the existing thing
+				resolve(state.pubmedInfo[pmid])
+			}
+			else {
+				// fire off a request and populate the store, eventually resolving with the thing we got
+				// maybe add on extra params, &tool=my_tool&email=my_email@example.com
+				const targetURL = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${pmid}&retmode=json&tool=svipdb`;
+				return fetch(targetURL)
+					.then(res => res.json())
+					.then(res => {
+						commit('SET_PUBMED_INFO', { pmid, data: res.result[pmid] });
+						return res.result;
+					})
+					.catch(err => reject(err))
+			}
+		})
+	},
+
+	getBatchPubmedInfo({commit}, {pmid_set}) {
+		return new Promise((resolve, reject) => {
+			// just get the things we don't have
+			const remaining = pmid_set.filter(pmid => !state.pubmedInfo.hasOwnProperty(pmid));
+
+			if (remaining.length > 0) {
+				// fire off a request and populate the store, eventually resolving with the thing we got
+				// maybe add on extra params, &tool=my_tool&email=my_email@example.com
+				const targetURL = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${remaining.join(',')}&retmode=json&tool=svipdb`;
+				return fetch(targetURL)
+					.then(res => res.json())
+					.then(res => {
+						// res.result is an object of {pmid: data, ...} entries
+						commit('SET_BATCH_PUBMED_INFO', res.result);
+						return res.result;
+					})
+					.catch(err => reject(err))
+			}
+			else {
+				// we can resolve immediately if there's nothing for us to do
+				resolve(0);
+			}
+		})
+	},
 };
 
 // mutations
 const mutations = {
+	SET_SITE_STATS(state, { nbGenes, nbVariants, nbPhenotypes }) {
+		state.nbGenes = nbGenes;
+		state.nbVariants = nbVariants;
+		state.nbPhenotypes = nbPhenotypes;
+	},
+
 	SET_GENES(state, params) {
 		if (params.add) {
 			state.genes = state.genes.concat(params.genes);
 		} else {
 			state.genes = params.genes;
 		}
-		window.localStorage.setItem("genes", JSON.stringify(state.genes));
 	},
-	SET_NBGENES(state, nbGenes) {
-		state.nbGenes = nbGenes;
-	},
-	SELECT_GENE(state, gene) {
-		state.nbGeneVariants = 0;
-		state.geneVariants = [];
-		state.current = gene;
+	SET_SOURCES(state, sources) {
+		state.sources = sources;
 	},
 	SET_VARIANTS(state, params) {
 		if (params.add) {
@@ -276,60 +161,30 @@ const mutations = {
 		} else if (params.variants !== undefined) {
 			state.variants = params.variants;
 		}
-		let json_variants = JSON.stringify(state.variants);
-		if (json_variants !== undefined)
-			window.localStorage.setItem("variants", json_variants);
 	},
-	SET_NBVARIANTS(state, nbVariants) {
-		state.nbVariants = nbVariants;
-	},
-	SET_PHENOTYPES(state, params) {
-		if (params.add) {
-			state.phenotypes = state.phenotypes.concat(params.phenotypes);
-		} else {
-			state.phenotypes = params.phenotypes;
-		}
-		window.localStorage.setItem(
-			"phenotypes",
-			JSON.stringify(state.phenotypes)
-		);
-	},
-	SET_NBPHENOTYPES(state, nbPhenotypes) {
-		state.nbPhenotypes = nbPhenotypes;
-	},
-	SET_ASSOCIATIONS(state, params) {
-		if (params.add) {
-			state.associations = state.associations.concat(params.associations);
-		} else {
-			state.associations = params.associations;
-		}
-		window.localStorage.setItem(
-			"associations",
-			JSON.stringify(state.associations)
-		);
-	},
-	SET_NBASSOCIATIONS(state, nbAssociations) {
-		state.nbAssociations = nbAssociations;
-	},
-	SET_GENE_VARIANTS(state, params) {
-		if (params.add) {
-			state.geneVariants = state.geneVariants.concat(params.geneVariants);
-		} else {
-			state.geneVariants = params.geneVariants;
-		}
-	},
-	SET_NB_GENE_VARIANTS(state, nbGeneVariants) {
-		state.nbGeneVariants = nbGeneVariants;
+
+	SELECT_GENE(state, gene) {
+		state.nbGeneVariants = 0;
+		state.geneVariants = [];
+		state.currentGene = gene;
 	},
 	SET_VARIANT(state, variant) {
 		state.variant = variant;
 	},
-	SELECT_SVIP_VARIANT(state, variant) {
-		state.svipVariant = variant;
-	},
 
 	SET_SHOW_ONLY_SVIP(state, v) {
 		state.showOnlySVIP = v;
+		localStorage.setItem('showOnlySVIP', v ? 'true' : 'false');
+	},
+
+	SET_PUBMED_INFO(state, { pmid, data }) {
+		state.pubmedInfo[pmid] = data;
+		localStorage.setItem('pubmedInfo', JSON.stringify(state.pubmedInfo));
+	},
+
+	SET_BATCH_PUBMED_INFO(state, pmid_set) {
+		state.pubmedInfo = Object.assign({}, state.pubmedInfo, pmid_set);
+		localStorage.setItem('pubmedInfo', JSON.stringify(state.pubmedInfo));
 	}
 };
 
