@@ -67,7 +67,11 @@
 		<template slot="row-details" slot-scope="row">
 			<div class="card">
 				<div class="card-body" style="padding: 0">
-					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true"></b-table>
+					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
+						<template slot="reference" slot-scope="data">
+							<PubmedPopover :pubmeta="{ pmid: data.value }" />
+						</template>
+					</b-table>
 				</div>
 			</div>
 		</template>
@@ -80,10 +84,11 @@
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderBalance from "@/components/plots/genderBalance";
 import {titleCase} from "../../utils";
+import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 export default {
 	name: "VariantSVIP",
-	components: {ageDistribution, genderBalance},
+	components: {ageDistribution, genderBalance, PubmedPopover},
 	props: {
 		variant: {type: Object, required: true}
 	},

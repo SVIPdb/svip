@@ -87,6 +87,9 @@ const actions = {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
 	},
 
+	// FIXME: there's a lot of duplication between this method and getBatchPubmedInfo(); perhaps we can merge them into
+	//  just one method that can accept either a scalar or array, or at least factor out their common code.
+	//  oooor maybe we just get rid of the single-query version, since you can just pass an array with one element.
 	getPubmedInfo({commit}, {pmid}) {
 		return new Promise((resolve, reject) => {
 			if (state.pubmedInfo.hasOwnProperty(pmid)) {
