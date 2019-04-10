@@ -3,6 +3,7 @@ version: '3.1'
 volumes:
   svip_pgdata:
   svip_esdata:
+  seqrepo:
 
 services:
   db:
@@ -57,10 +58,12 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
       - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
+      - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/2018-08-21
     volumes:
       - './g2p-aggregator/harvester:/app'
       - './g2p-aggregator/data:/data'
       - './outputs:/output'
+      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     depends_on:
       - db
       - api
