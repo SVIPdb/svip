@@ -59,8 +59,8 @@ class Variant(models.Model):
     so_name = models.TextField(null=True, db_index=True)
 
     reference_name = models.TextField(null=True)  # e.g., GRCh37
-    refseq = models.TextField(null=True)
-    isoform = models.TextField(null=True)
+    refseq = models.TextField(null=True)  # an NCBI refseq id
+    isoform = models.TextField(null=True)  # not clear, but typically an ensembl transcript accession ID
 
     # position and change data
     chromosome = models.CharField(max_length=10, null=True)
@@ -96,7 +96,8 @@ class Variant(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['gene', 'name'])
+            models.Index(fields=['gene', 'name']),
+            models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
 
 
