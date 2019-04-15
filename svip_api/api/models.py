@@ -85,6 +85,9 @@ class Variant(models.Model):
     # we should be able to compute this from api_source
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
 
+    # stores errors, exceptions encountered while crawling
+    crawl_status = JSONField(null=True)
+
     def __str__(self):
         return "%s %s" % (self.gene.symbol, self.name)
 
@@ -201,6 +204,9 @@ class Association(models.Model):
     evidence_direction = models.TextField(null=True)
     clinical_significance = models.TextField(null=True)
     evidence_level = models.TextField(null=True)
+
+    # stores errors, exceptions encountered while crawling
+    crawl_status = JSONField(null=True)
 
 
 # all of the following are optional children of Association
