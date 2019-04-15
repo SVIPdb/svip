@@ -3,6 +3,10 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db.models import Count, F, Value, Func
 from django.db.models.functions import Coalesce
 
+# makes deletes of related objects cascade on the sql server
+from django_db_cascade.fields import ForeignKey
+from django_db_cascade.deletions import DB_CASCADE
+
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
 # the format below is (actual value, human readable name) tupes
@@ -41,14 +45,14 @@ class Gene(models.Model):
     prev_symbols = ArrayField(base_field=models.TextField(), default=list, null=True)
 
     # sources = ArrayField(
-    #     base_field=models.ForeignKey(to=Source, to_field='name', on_delete=models.CASCADE), default=list)
+    #     base_field=ForeignKey(to=Source, to_field='name', on_delete=DB_CASCADE), default=list)
 
     def __str__(self):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
 
 class Variant(models.Model):
-    gene = models.ForeignKey(to=Gene, on_delete=models.CASCADE)
+    gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
     description = models.TextField(null=True, db_index=True)
@@ -78,7 +82,7 @@ class Variant(models.Model):
     myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
     mv_info = JSONField(null=True)  # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
 
-    # we should be able to compute this from
+    # we should be able to compute this from api_source
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
 
     def __str__(self):
@@ -107,8 +111,8 @@ class VariantInSource(models.Model):
     level information, such as the link to the variant in that source.
     """
 
-    variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE, db_index=True)
-    source = models.ForeignKey(to=Source, on_delete=models.CASCADE, db_index=True)
+    variant = ForeignKey(to=Variant, on_delete=DB_CASCADE, db_index=True)
+    source = ForeignKey(to=Source, on_delete=DB_CASCADE, db_index=True)
 
     variant_url = models.TextField(null=True, verbose_name="Variant's URL for this source")
     # this holds source-specific values like COSMIC's variant-level FATHMM predictions/scores
@@ -176,7 +180,7 @@ class Association(models.Model):
     Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts for a specific
     source. There is one Association per pairing of variant, (sets of) phenotypes, and (sets of) contexts.
     """
-    variant_in_source = models.ForeignKey(to=VariantInSource, on_delete=models.CASCADE, null=False)
+    variant_in_source = ForeignKey(to=VariantInSource, on_delete=DB_CASCADE, null=False)
 
     # FIXME: move this to VariantInSource
     source_url = models.TextField(null=True, verbose_name="URL of the variant's entry in the source")
@@ -202,7 +206,7 @@ class Association(models.Model):
 # all of the following are optional children of Association
 
 class Phenotype(models.Model):
-    association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
+    association = ForeignKey(to=Association, on_delete=DB_CASCADE)
 
     source = models.TextField(null=True)
     term = models.TextField(null=True)
@@ -212,7 +216,7 @@ class Phenotype(models.Model):
 
 
 class Evidence(models.Model):
-    association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
+    association = ForeignKey(to=Association, on_delete=DB_CASCADE)
 
     # originally under association.evidence[].info.publications[]
     publications = ArrayField(base_field=models.TextField(), null=True, verbose_name="Publication URLs")
@@ -224,7 +228,7 @@ class Evidence(models.Model):
 
 
 class EnvironmentalContext(models.Model):
-    association = models.ForeignKey(to=Association, on_delete=models.CASCADE)
+    association = ForeignKey(to=Association, on_delete=DB_CASCADE)
 
     source = models.TextField(null=True)
     term = models.TextField(null=True)
@@ -245,5 +249,5 @@ class SVIPVariant(models.Model):
     to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
-    variant = models.ForeignKey(to=Variant, on_delete=models.CASCADE)
+    variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
     data = JSONField()
