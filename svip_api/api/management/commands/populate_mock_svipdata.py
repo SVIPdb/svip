@@ -24,7 +24,8 @@ def create_svipvariants(model_variant, model_svip_variant):
             try:
                 target_variant = model_variant.objects.get(
                     gene__symbol=s['gene_name'],
-                    name=s['variant_name']
+                    name=s['variant_name'],
+                    hgvs_c__endswith=s['HGVScoding'][s['HGVScoding'].index(':')+1:]
                 )
                 candidate = model_svip_variant(
                     variant=target_variant,
