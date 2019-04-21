@@ -31,4 +31,9 @@ python manage.py collectstatic --no-input
 python manage.py populate_mock_svipdata
 
 # and finally run the server
-gunicorn svip_server.wsgi -b 0.0.0.0:8085
+if [[ -n "${USE_DEV_SERVER}" ]]; then
+    # this dev server is less efficient than gunicorn, but it auto-reloads on source changes
+    python manage.py runserver 0.0.0.0:8085
+else
+    gunicorn svip_server.wsgi -b 0.0.0.0:8085
+fi
