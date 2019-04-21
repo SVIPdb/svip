@@ -296,7 +296,7 @@
 					{
 						"evidence_type": "Predictive",
 						"clinical_significance": "Sensitive",
-						"drug": "Gefitinb",
+						"drug": "Gefitinib",
 						"tier_level": "Tier I",
 						"reference": "PMID:15998907"
 					}
