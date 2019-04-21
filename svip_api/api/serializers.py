@@ -94,6 +94,7 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
             'association_count',
             'publication_count',
             'clinical_significances',
+            'evidence_types',
             'diseases',
             'contexts',
             'scores',

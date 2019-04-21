@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db.models import Count, F, Value, Func
 from django.db.models.functions import Coalesce
@@ -10,6 +10,7 @@ from django_db_cascade.deletions import DB_CASCADE
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
 # the format below is (actual value, human readable name) tupes
+from api.utils import dictfetchall
 
 EVIDENCE_TYPES = [
     ('predictive', 'Predictive'),
@@ -168,6 +169,37 @@ class VariantInSource(models.Model):
                 .annotate(count=Count(Coalesce('clinical_significance', Value('N/A'))))
                 .distinct().order_by('-count')
         )
+
+    def evidence_types(self):
+        # return (
+        #     self.association_set
+        #         .values(name=F('evidence_type'))
+        #         .annotate(count=Count('evidence_type'))
+        #         .distinct().order_by('-count')
+        # )
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            select
+                aa.evidence_type as name, count(*) as count,
+                case when evidence_type='Predisposing' or evidence_type='Functional' then
+                array(
+                    select row_to_json(r.*) from (
+                        select as_in.clinical_significance as name, count(*) as count
+                        from api_association as_in
+                        where as_in.id=any(array_agg(aa.id))
+                        group by as_in.clinical_significance
+                    ) r
+                 )
+                END as subsigs
+            from api_variantinsource vis
+            inner join api_variant av on vis.variant_id = av.id
+            inner join api_association aa on vis.id = aa.variant_in_source_id
+            where vis.id=%s
+            group by aa.evidence_type;
+            """, [self.id])
+
+            return dictfetchall(cursor)
 
     def scores(self):
         return dict(
