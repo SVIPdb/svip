@@ -129,12 +129,7 @@ export default {
 				},
 				{
 					key: "clinical_significance",
-					label: "Evidence Type",
-					sortable: false
-				},
-				{
-					key: "tier_level",
-					label: "Tier Level",
+					label: "Clinical Significance",
 					sortable: false
 				},
 				{
@@ -159,7 +154,7 @@ export default {
 				{ key: "clinical_significance", label: "Clinical Significance", sortable: true },
 				{ key: "drug", label: "Drug", sortable: true },
 				{ key: "tier_level", label: "Tier Level", sortable: true },
-				{ key: "reference", label: "Links", sortable: false },
+				{ key: "reference", label: "References", sortable: false },
 			]
 		};
 	},
