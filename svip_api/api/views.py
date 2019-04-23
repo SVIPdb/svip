@@ -164,9 +164,21 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
         'clinical_significance',
         'evidence_level',
         'drug_labels',
+        'phenotype__term',
+        'environmentalcontext__description'
     )
 
-    search_fields = ('variant_in_source__variant__variant_name', 'variant_in_source__variant__description')
+    search_fields = (
+        'variant_in_source__variant__name',
+        'variant_in_source__variant__description',
+        'evidence_type',
+        'evidence_direction',
+        'clinical_significance',
+        'evidence_level',
+        'drug_labels',
+        'phenotype__term',
+        'environmentalcontext__description'
+    )
 
 
 class PhenotypeViewSet(viewsets.ReadOnlyModelViewSet):
