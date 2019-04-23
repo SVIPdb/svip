@@ -94,7 +94,7 @@ import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 const overrides = {
 	cosmic: {
 		row_parts: {
-			clinical: CosmicSignificanceCol,
+			clinical: UnavailableCol,
 			publication_count: CosmicPubCountCol,
 			scores: UnavailableCol
 		},
