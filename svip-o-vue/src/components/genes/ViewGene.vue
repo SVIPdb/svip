@@ -83,6 +83,10 @@
 					:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
 					:current-page="currentPage" :per-page="perPage"
 				>
+					<template slot="in_svip" slot-scope="data">
+						<img src="../../assets/svip_small_icon.png" style="width: 22px" v-if="data.item.in_svip" alt="In SVIP" />
+					</template>
+
 					<template slot="hgvs_c" slot-scope="data" v-if="data.value">
 						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
 					</template>
@@ -125,6 +129,11 @@ export default {
 			totalRows: 0,
 			confirmDeletion: false,
 			fields: [
+				{
+					key: "in_svip",
+					label: "",
+					sortable: false
+				},
 				{
 					key: "name",
 					label: "Name",
