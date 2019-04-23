@@ -95,9 +95,16 @@
 						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
 					</template>
 
+					<!--
 					<template slot="hgvs_g" slot-scope="data" v-if="data.value">
 						<span class="text-muted">{{ data.item.reference_name }}:</span>{{ data.value }}
 					</template>
+					-->
+
+					<template slot="hgvs_g" slot-scope="data" v-if="data.value">
+						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
+					</template>
+
 
 					<template slot="action" slot-scope="data">
 						<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>
@@ -151,10 +158,25 @@ export default {
 					formatter: x => change_from_hgvs(x, true),
 					sortable: true
 				},
+				/*
 				{
 					key: "hgvs_g",
 					label: "Position",
 					formatter: (x, k, variant) => var_to_position(variant),
+					sortable: true
+				},
+				*/
+				{
+					key: "hgvs_g",
+					label: "HGVS genomic",
+					formatter: x => change_from_hgvs(x, true),
+					sortable: true
+				},
+				/*
+				{
+					key: "sources",
+					label: "Sources",
+					formatter: x => x.join(", "),
 					sortable: true
 				},
 				{
@@ -163,6 +185,7 @@ export default {
 					sortable: true,
 					formatter: x => desnakify(x)
 				},
+				*/
 				/*
         {
             key: 'svip_data.tier_level',

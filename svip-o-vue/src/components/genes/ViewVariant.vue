@@ -29,8 +29,9 @@
 						<th>Variant</th>
 						<th>Variant HGVS.c</th>
 						<th>Variant HGVS.p</th>
+						<th>Variant HGVS.g</th>
 						<th>dbSNP</th>
-						<th>Molecular consequence</th>
+						<!-- <th>Molecular consequence</th> -->
 						<th>Position</th>
 						<th>Allele Frequency</th>
 					</tr>
@@ -46,6 +47,7 @@
 
 						<coordinates :val="hgvs_c_pos"/>
 						<coordinates :val="hgvs_p_pos"/>
+						<coordinates :val="hgvs_g_pos"/>
 
 						<optional :val="variant.dbsnp_ids">
 							<a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target="_blank">
@@ -54,7 +56,7 @@
 							</a>
 						</optional>
 
-						<td>{{ desnakify(variant.so_name) }}</td>
+						<!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
 						<optional :val="var_position">
 							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
@@ -109,6 +111,9 @@ export default {
 		},
 		hgvs_p_pos() {
 			return change_from_hgvs(this.variant.hgvs_p, true);
+		},
+		hgvs_g_pos() {
+			return change_from_hgvs(this.variant.hgvs_g, true);
 		},
 		var_position() {
 			return var_to_position(this.variant);
