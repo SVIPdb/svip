@@ -23,11 +23,18 @@
 </template>
 
 <script>
-import {titleCase} from "../../../utils";
+import {desnakify, titleCase} from "@/utils";
+import round from 'lodash/round';
+
+function deref_path(target, path) {
+	return path.split('.').reduce((acc, x) => acc ? acc[x] : null, target);
+}
 
 const sources = [
-	{name: "SIFT", key: "sift"},
-	{name: "Polyphen", key: "polyphen"}
+	{name: "SIFT", path: "cadd.sift", score: 'val', impact: 'cat'},
+	{name: "Polyphen", path: "cadd.polyphen", score: 'val', impact: 'cat'},
+	// {name: "FATHMM", path: "dbnsfp.fathmm", score: 'score', impact: 'pred'},
+	{name: "FATHMM", path: "extras", score: 'fathmm_score', impact: 'fathmm_prediction'},
 ];
 
 export default {
@@ -35,15 +42,20 @@ export default {
 	data() {
 		return {
 			sortBy: "",
-			items: sources
-				.filter(source => this.cadd[source.key])
-				.map(source => ({
-					source: source.name,
-					score: this.cadd[source.key].val,
-					impact: titleCase(
-						this.cadd[source.key].cat.split("_").join(" ")
+			items: (
+				sources
+					.filter(source => deref_path(this, source.path))
+					.map(
+						source => {
+							const extracted = deref_path(this, source.path);
+							return {
+								source: source.name,
+								score: round(parseFloat(extracted[source.score]), 3),
+								impact: desnakify(extracted[source.impact], true)
+							};
+						}
 					)
-				})),
+			),
 			fields: [
 				{
 					key: "source",
@@ -63,7 +75,7 @@ export default {
 			]
 		};
 	},
-	props: ["cadd"]
+	props: ["cadd", "dbnsfp", "extras"]
 };
 </script>
 

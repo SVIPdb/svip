@@ -70,6 +70,7 @@
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
 		<VariantExternalInfo :mvInfo="variant.mv_info"/>
+		<VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
 	</div>
 </template>
 
@@ -111,6 +112,11 @@ export default {
 		},
 		hg19_id() {
 			return var_to_position(this.variant, true);
+		},
+		all_extras() {
+			return this.variant.variantinsource_set.reduce((acc, x) => {
+				return Object.assign({}, acc, x['extras']);
+			}, {});
 		}
 	},
 	// components: {geneVariants: geneVariants},
