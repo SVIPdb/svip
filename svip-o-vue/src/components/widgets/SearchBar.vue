@@ -65,9 +65,10 @@ export default {
 				return store.state.genes.showOnlySVIP;
 			},
 			set(value) {
-				// FIXME: perhaps let's reset the contents of the search box when we toggle this
-				this.getGenesOnly();
-				store.dispatch("toggleShowSVIP", {showOnlySVIP: value});
+				store.dispatch("toggleShowSVIP", {showOnlySVIP: value}).then(() => {
+					// FIXME: perhaps let's reset the contents of the search box when we toggle this
+					this.getGenesOnly();
+				});
 			}
 		}
 	},
