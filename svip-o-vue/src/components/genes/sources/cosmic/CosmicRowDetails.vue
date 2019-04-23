@@ -11,7 +11,7 @@
 					Diseases
 					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the table</i>
 					<span class="float-right badge badge-primary filter-phenotype__term" v-else>
-						{{ currentFilter.phenotype__term }}
+						{{ titleCase(currentFilter.phenotype__term) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
 								<span aria-hidden="true">&times;</span>
 						</button>
@@ -44,7 +44,7 @@
 					Tissue Types
 					<i class="float-right" v-if="!currentFilter.environmentalcontext__description">click on a tissue type to filter the table</i>
 					<span class="float-right badge badge-primary filter-environmentalcontext__description" v-else>
-						{{ currentFilter.environmentalcontext__description }}
+						{{ titleCase(currentFilter.environmentalcontext__description) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.environmentalcontext__description = ''">
 								<span aria-hidden="true">&times;</span>
 						</button>
@@ -74,15 +74,7 @@
 		-->
 		<div class="col-9 col-sm-8">
 			<b-card>
-				<h6 class="card-subtitle mb-2 text-muted">
-					Samples: {{ totalRows.toLocaleString() }}
-					<span :class="`float-right badge badge-primary filter-${k}`" :key="k" v-for="[k,v] in Object.entries(currentFilter).filter(x => x[1])">
-					{{ v }}
-						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter[k] = ''">
-								<span aria-hidden="true">&times;</span>
-						</button>
-					</span>
-				</h6>
+				<RowDetailsHeader name="Samples" :total-rows="totalRows" v-model="currentFilter" />
 
 				<b-table
 					:fields="fields" class="table-sm" :api-url="row.item.associations_url" :items="makeAssociationProvider(this.metaUpdated)"
@@ -110,13 +102,14 @@
 import {normalizeItemList, titleCase, desnakify} from "@/utils";
 import {makeAssociationProvider} from "../../item_providers/association_provider";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
+import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
 
 export default {
 	name: "CosmicRowDetails",
 	props: {
 		row: {type: Object, required: true}
 	},
-	components: {PubmedPopover},
+	components: {RowDetailsHeader, PubmedPopover},
 	data() {
 		return {
 			currentFilter: {

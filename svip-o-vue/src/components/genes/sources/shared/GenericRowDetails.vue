@@ -33,15 +33,7 @@
 
 		<div class="col-xl-9 col-8">
 			<b-card>
-				<h6 class="card-subtitle mb-2 text-muted">
-					Evidences: {{ totalRows.toLocaleString() }}
-					<span class="float-right badge badge-primary" v-if="currentFilter.phenotype__term" style="font-size: 13px">
-						{{ titleCase(currentFilter.phenotype__term) }}
-						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
-								<span aria-hidden="true">&times;</span>
-						</button>
-					</span>
-				</h6>
+				<RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter" />
 
 				<b-table
 					:fields="fields" class="table-sm filter-table" :api-url="row.item.associations_url" :items="makeAssociationProvider(this.metaUpdated)"
@@ -69,10 +61,11 @@
 import {normalizeItemList, titleCase} from "@/utils";
 import {makeAssociationProvider} from '@/components/genes/item_providers/association_provider';
 import PubmedPopover from "@/components/widgets/PubmedPopover";
+import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
 
 export default {
 	name: "GenericRowDetails",
-	components: {PubmedPopover},
+	components: {RowDetailsHeader, PubmedPopover},
 	props: {
 		row: {type: Object, required: true}
 	},

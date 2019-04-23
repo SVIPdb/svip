@@ -83,12 +83,12 @@ import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
 // import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import evidenceTypesDisplay from '@/components/plots/evidenceTypesDisplay';
-import GenericSourceDetailsRow from "./sources/GenericRowDetails";
+import GenericSourceDetailsRow from "./sources/shared/GenericRowDetails";
 import {normalizeItemList} from "../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
 import CosmicSignificanceCol from "@/components/genes/sources/cosmic/CosmicSignificanceCol";
 import CosmicPubCountCol from "@/components/genes/sources/cosmic/CosmicPubCountCol";
-import UnavailableCol from "@/components/genes/sources/UnavailableCol";
+import UnavailableCol from "@/components/genes/sources/shared/UnavailableCol";
 import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 
 const overrides = {
