@@ -44,7 +44,7 @@ const sources = [
 		key: "exac",
 		freq_path: x => x.af,
 		count_path: x => x.ac.ac,
-		total_path: x => x.an.an
+		total_path: x => x.an.an_adj
 	},
 	{
 		name: "gnomAD",
