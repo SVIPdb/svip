@@ -31,15 +31,16 @@ export function normalizeItemList(items) {
 		.join(", ");
 }
 
-export function titleCase(str, glue = ["of", "for", "and"]) {
+export function titleCase(str, lowerCaseAll=false, glue = ["of", "for", "and"]) {
 	if (!str) { return str; }
 	return str.replace(/(\w)(\w*)/g, function (_, i, r) {
-		const j = i.toUpperCase() + (r != null ? r : "");
+		const frag = (r != null ? r : "");
+		const j = i.toUpperCase() + (lowerCaseAll ? frag.toLocaleLowerCase() : frag);
 		return glue.indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
 	});
 }
 
-export function desnakify(x) {
+export function desnakify(x, lowerCaseAll=false) {
 	if (!x) { return x; }
-	return titleCase(x.split("_").join(" "));
+	return titleCase(x.split("_").join(" "), lowerCaseAll);
 }
