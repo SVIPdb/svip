@@ -47,7 +47,7 @@ const source_levels = {
 		{level: 'R1', c: '#be382a'},
 		{level: 'R2', c: '#d78579'}
 	]
-}
+};
 
 export default {
 	data() {
@@ -76,10 +76,14 @@ export default {
 	},
 	computed: {
 		aggregatedData() {
+			const colorScale = d3.scaleLinear()
+				.domain([0, source_levels[this.sourceName].length])
+				.range(["#007AFF", '#cfcfcf']);
+
 			// first, construct an object with all levels for the source, merging in the actual scores where available
 			// return it in the {k, v, c} format that the viz code expects
-			return source_levels[this.sourceName].map((x) => ({
-				k: x.level, v: this.scores[x.level] || 0, c: x.c
+			return source_levels[this.sourceName].map((x, idx) => ({
+				k: x.level, v: this.scores[x.level] || 0, c: colorScale(idx)
 			}));
 		},
 		layout: function () {
@@ -120,6 +124,7 @@ export default {
 .inline-label {
 	display: inline-block;
 	text-align: right;
+	font-weight: bold;
 	min-width: 3ex;
 }
 
