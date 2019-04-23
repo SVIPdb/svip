@@ -18,15 +18,21 @@ Links:
 				<svg width="10" height="10" class="legend-swatch">
 					<rect width="10" height="10" :fill="d.color"></rect>
 				</svg>
-				<span><b>{{ d.label }}:</b> {{ d.value }}</span>
+				<span><b class="gender-label">{{ d.label }}:</b> {{ d.value }} ({{ round(d.value/totalPatients * 100.0) }}%)</span>
 			</div>
 		</b-tooltip>
 	</div>
 </template>
 
 <script>
+import round from 'lodash/round';
 import * as d3 from "d3";
 import * as _ from 'lodash';
+
+const genderColors = {
+	'male': '#0F7FFE',
+	'female': '#CC66FE'
+};
 
 export default {
 	mounted: function () {
@@ -62,28 +68,12 @@ export default {
 	props: ["data"],
 	computed: {
 		formattedData() {
-			let data = [];
-			_.forEach(this.data, (v, k) => {
-				data.push({
-					label: k,
-					value: v,
-					color: k === "male" ? "#0F7FFE" : "#CC66FE"
-				});
-			});
-			return data;
+			return Object
+				.entries(this.data)
+				.map(([k, v]) => ({ label: k, value: v, color: genderColors[k] }));
 		},
-		tooltip() {
-			let html = "<dl class = 'row' style='margin: 0'>";
-			_.forEach(this.data, (v, k) => {
-				html +=
-					"<dt class='col-6'  style='text-align: right; padding-right: 2px;'>" +
-					k +
-					":</dt><dd class='col-6' style='text-align: left; padding-left: 2px;'>" +
-					v +
-					"</dd>";
-			});
-			html += "</dl>";
-			return html;
+		totalPatients() {
+			return this.data.male + this.data.female;
 		}
 	},
 	watch: {
@@ -92,6 +82,7 @@ export default {
 		}
 	},
 	methods: {
+		round,
 		drawChart: function (data) {
 			const arcs = d3
 				.pie()
@@ -124,18 +115,11 @@ export default {
 	}
 };
 </script>
-<style>
-#tooltip {
-	position: absolute;
-	text-align: center;
-	width: 120px;
-	height: 28px;
-	padding: 2px;
-	font: 12px sans-serif;
-	color: #fff;
-	background-color: #000;
-	border: 0px;
-	border-radius: 8px;
-	pointer-events: none;
+
+<style scoped>
+.gender-label {
+	display: inline-block;
+	text-align: right;
+	min-width: 7ex;
 }
 </style>
