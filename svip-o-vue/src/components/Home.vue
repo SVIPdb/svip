@@ -14,10 +14,10 @@
 
 				<div class="section stats row justify-content-md-center">
 					<div class="col">
-						<h3>{{ nbGenes }} Gene{{ nbGenes !== 1 ? 's' : ''}}</h3>
+						<h3>{{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : ''}}</h3>
 					</div>
 					<div class="col">
-						<h3>{{ nbVariants }} Variant{{ nbVariants !== 1 ? 's' : ''}}</h3>
+						<h3>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</h3>
 					</div>
 				</div>
 			</div>
