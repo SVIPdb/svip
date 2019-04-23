@@ -121,7 +121,8 @@ export default {
 		return {
 			currentFilter: {
 				phenotype__term: '',
-				environmentalcontext__description: ''
+				environmentalcontext__description: '',
+				search: ''
 			},
 			currentPage: 1,
 			perPage: 20,
@@ -130,12 +131,12 @@ export default {
 				{
 					key: "disease",
 					label: "Disease",
-					sortable: false
+					sortable: true
 				},
 				{
 					key: "contexts",
 					label: "Tissue",
-					sortable: false
+					sortable: true
 				},
 				{
 					key: "publications",

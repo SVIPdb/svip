@@ -19,7 +19,7 @@ export function makeVariantProvider(metaUpdate=null) {
 			page: ctx.currentPage,
 			ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
 			...(filter_params && filter_params)
-		}
+		};
 
 		return HTTP.get(ctx.apiUrl, {params}).then(res => {
 			// invoke the metadata updated callback, if available

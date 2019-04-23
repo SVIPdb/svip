@@ -17,6 +17,11 @@ function parsePublicationURL(p) {
 	return {url: p, title: isPMID ? pmid : "(external)", pmid: isPMID && pmid };
 }
 
+const sortRemappings = {
+	'disease': 'phenotype__term',
+	'contexts': 'environmentalcontext__description',
+};
+
 export function makeAssociationProvider(metaUpdate=null) {
 	// produces an item provider function for bootstrap-vue tables.
 
@@ -30,6 +35,11 @@ export function makeAssociationProvider(metaUpdate=null) {
 		specifies the sorting, paging, and filtering options to be sent to the database to produce the list of items.
 		 */
 		const filter_params = JSON.parse(ctx.filter);
+
+		// map virtual columns to their in-database equivalents
+		if (sortRemappings.hasOwnProperty(ctx.sortBy)) {
+			ctx.sortBy = sortRemappings[ctx.sortBy];
+		}
 
 		const params = {
 			page_size: ctx.perPage,

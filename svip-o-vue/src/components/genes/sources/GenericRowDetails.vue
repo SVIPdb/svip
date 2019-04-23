@@ -79,7 +79,8 @@ export default {
 	data() {
 		return {
 			currentFilter: {
-				phenotype__term: ''
+				phenotype__term: '',
+				search: ''
 			},
 			currentPage: 1,
 			perPage: 20,
@@ -88,7 +89,7 @@ export default {
 				{
 					key: "disease",
 					label: "Disease",
-					sortable: false
+					sortable: true
 				},
 				{
 					key: "evidence_type",
@@ -107,7 +108,7 @@ export default {
 				},
 				{
 					key: "evidence_level",
-					label: "Tier",
+					label: "Evidence Level",
 					sortable: true
 				},
 				{
