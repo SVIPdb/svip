@@ -4,7 +4,7 @@
 			<b-card>
 				<h6 class="card-subtitle mb-2 text-muted">
 					Diseases
-					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the drugs table</i>
+					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the evidences table</i>
 					<span class="float-right badge badge-primary" v-if="currentFilter.phenotype__term" style="font-size: 13px">
 						{{ titleCase(currentFilter.phenotype__term) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
