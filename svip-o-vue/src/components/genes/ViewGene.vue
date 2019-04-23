@@ -72,9 +72,8 @@
 					</div>
 
 					<div class="col-6 text-right">
-						<form>
-							<b-checkbox v-model="showOnlySVIP">show only SVIP variants</b-checkbox>
-						</form>
+						<b-checkbox v-model="showOnlySVIP"><span id="show-svip-vars">show only SVIP variants</span></b-checkbox>
+						<b-tooltip target="show-svip-vars" placement="top">show only variants for which SVIP-specific data exists</b-tooltip>
 					</div>
 				</div>
 			</div>

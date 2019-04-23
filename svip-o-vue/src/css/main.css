@@ -63,6 +63,11 @@ footer .version-info .feedback {
 	border: none;
 }
 
+#show-svip-vars {
+	border-bottom: dotted 1px #555;
+	padding-bottom: 2px;
+}
+
 /* label styles */
 .unavailable { font-style: italic; color: #ccc; }
 .bold { font-weight: bold; }
