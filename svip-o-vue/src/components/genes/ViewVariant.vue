@@ -32,7 +32,7 @@
 						<th>dbSNP</th>
 						<th>Molecular consequence</th>
 						<th>Position</th>
-						<th>Ref. Genome</th>
+						<th>Allele Frequency</th>
 					</tr>
 					<tr>
 						<td>
@@ -60,7 +60,10 @@
 							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
 						</optional>
 
-						<td>{{ variant.reference_name }}</td>
+						<td>
+							<span v-if="allele_frequency">{{ allele_frequency }}</span>
+							<span v-else class="unavailable">unavailable</span>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -69,13 +72,13 @@
 		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
-		<VariantExternalInfo :mvInfo="variant.mv_info"/>
 		<VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
 	</div>
 </template>
 
 <script>
 // import geneVariants from '@/components/Variants'
+import round from 'lodash/round';
 import {mapGetters} from "vuex";
 import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
 import variantSvip from "@/components/genes/variantSvip";
@@ -117,6 +120,9 @@ export default {
 			return this.variant.variantinsource_set.reduce((acc, x) => {
 				return Object.assign({}, acc, x['extras']);
 			}, {});
+		},
+		allele_frequency() {
+			return this.variant.mv_info && this.variant.mv_info.gnomad_genome && `${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
 		}
 	},
 	// components: {geneVariants: geneVariants},
