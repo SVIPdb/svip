@@ -135,7 +135,7 @@ export default {
 				},
 				{
 					key: "scores",
-					label: "Confidence Scores / Review Status",
+					label: "Evidence Levels",
 					sortable: false
 				},
 				{
