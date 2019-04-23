@@ -42,6 +42,27 @@ services:
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
 
+  debug_api:
+    # image: "svip_api:latest"
+    build: ./svip_api
+    # restart: always
+    volumes:
+      - ./svip_api:/app
+    ports:
+     - "8085:8085"
+     - "8889:8889"  # jupyterlab port
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB=svip_api_debug
+      - DJANGO_SU_NAME
+      - DJANGO_SU_EMAIL
+      - DJANGO_SU_PASSWORD
+      - USE_DEV_SERVER=true
+
   local_uta:
     image: biocommons/uta:uta_20171026
     restart: always
@@ -66,7 +87,7 @@ services:
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     depends_on:
       - db
-      - api
+      # - api
       - local_uta
 
   # elasticsearch:
