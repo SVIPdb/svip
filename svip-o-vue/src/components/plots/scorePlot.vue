@@ -30,24 +30,36 @@ import * as d3 from "d3";
 const source_levels = {
 	// from https://civicdb.org/help/evidence/evidence-levels
 	'civic': [
-		{level: 'A', c: '#5cb05e'},
+		{level: 'A', c: '#5cb05e', range_key: '#007AFF'},
 		{level: 'B', c: '#50aee3'},
 		{level: 'C', c: '#646eaf'},
 		{level: 'D', c: '#e89544'},
-		{level: 'E', c: '#d1555c'}
+		{level: 'E', c: '#d1555c', range_key: '#cfcfcf'}
 	],
 	// from https://oncokb.org/levels
 	'oncokb': [
-		{level: '1',  c: '#5cb05e'}, // used to be #48873c, but livened it up a bit w/CIViC's level 'A'
+		{level: '1',  c: '#5cb05e', range_key: '#007AFF'}, // used to be #48873c, but livened it up a bit w/CIViC's level 'A'
 		{level: '2A', c: '#30578c'},
 		{level: '2B', c: '#7597b5'},
 		{level: '3A', c: '#6e3a77'},
 		{level: '3B', c: '#9e7da5'},
-		{level: '4',  c: '#444441'},
-		{level: 'R1', c: '#be382a'},
-		{level: 'R2', c: '#d78579'}
+		{level: '4',  c: '#444441', range_key: '#cfcfcf'},
+		{level: 'R1', c: '#be382a', range_key: '#df8c7f'},
+		{level: 'R2', c: '#d78579', range_key: '#88281e'}
 	]
 };
+
+// constructs a linear color scale using any level with a 'range_key' value as an anchor in the interpolation
+const color_scales = Object.entries(source_levels).reduce((acc, [name, levels]) => {
+	const key_levels = levels
+		.map((x, idx) => ({...x, idx}))
+		.filter(x => x.hasOwnProperty('range_key'));
+
+	acc[name] = d3.scaleLinear()
+		.domain(key_levels.map((x) => x.idx))
+		.range(key_levels.map((x) => x.range_key));
+	return acc;
+}, {});
 
 export default {
 	data() {
@@ -76,9 +88,7 @@ export default {
 	},
 	computed: {
 		aggregatedData() {
-			const colorScale = d3.scaleLinear()
-				.domain([0, source_levels[this.sourceName].length])
-				.range(["#007AFF", '#cfcfcf']);
+			const colorScale = color_scales[this.sourceName];
 
 			// first, construct an object with all levels for the source, merging in the actual scores where available
 			// return it in the {k, v, c} format that the viz code expects
