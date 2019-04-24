@@ -8,6 +8,10 @@
 					</div>
 					<div v-else>{{ option.label }}</div>
 
+					<div class="sources-set">
+						<SourceIcon v-for="x in option.sources" :key="x" :name="x" :noTip="true" />
+					</div>
+
 					<div class="result-type">
 						{{ textmapper[option.type] }}
 					</div>
@@ -27,6 +31,7 @@ import _ from "lodash";
 import {HTTP} from "@/router/http";
 
 import store from "@/store";
+import SourceIcon from "@/components/widgets/SourceIcon";
 
 const textmapper = {
 	g: "gene",
@@ -35,6 +40,7 @@ const textmapper = {
 
 export default {
 	name: "SearchBar",
+	components: {SourceIcon},
 	data() {
 		return {
 			query: "",
@@ -128,6 +134,10 @@ export default {
 	margin: 0;
 }
 
+.bits {
+	flex: 1 1;
+}
+
 .bits * {
 	margin: 0;
 	color: #555;
@@ -136,6 +146,11 @@ export default {
 .bits .matched {
 	font-weight: bolder;
 	color: black;
+}
+
+.sources-set {
+	margin-right: 3px;
+	width: 5em;
 }
 
 .result-type {

@@ -28,6 +28,7 @@
 		<div class="card-body">
 			<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
+					<SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true" />
 					<a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
 				</template>
 
@@ -90,6 +91,7 @@ import CosmicSignificanceCol from "@/components/genes/sources/cosmic/CosmicSigni
 import CosmicPubCountCol from "@/components/genes/sources/cosmic/CosmicPubCountCol";
 import UnavailableCol from "@/components/genes/sources/shared/UnavailableCol";
 import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
+import SourceIcon from "@/components/widgets/SourceIcon";
 
 const overrides = {
 	cosmic: {
@@ -107,7 +109,7 @@ const overrides = {
 
 export default {
 	name: "VariantPublicDatabases",
-	components: {GenericSourceDetailsRow, scorePlot, evidenceTypesDisplay},
+	components: {SourceIcon, GenericSourceDetailsRow, scorePlot, evidenceTypesDisplay},
 	props: {variant: {type: Object, required: true}},
 	data() {
 		return {

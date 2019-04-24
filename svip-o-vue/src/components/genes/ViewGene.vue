@@ -76,7 +76,7 @@
 				:current-page="currentPage" :per-page="perPage"
 			>
 				<template slot="in_svip" slot-scope="data">
-					<img src="../../assets/svip_small_icon.png" style="width: 22px" v-if="data.item.in_svip" alt="In SVIP" />
+					<SourceIcon v-if="data.item.in_svip" name="svip" :size="22" :margin-right="0" />
 				</template>
 
 				<template slot="hgvs_c" slot-scope="data">
@@ -97,6 +97,11 @@
 					<inline-coordinates :val="data.value" />
 				</template>
 
+				<template slot="sources" slot-scope="data">
+					<div style="white-space: nowrap;">
+						<SourceIcon v-for="x in data.value" :key="x" :name="x" />
+					</div>
+				</template>
 
 				<template slot="action" slot-scope="data">
 					<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>
@@ -114,8 +119,10 @@ import {mapGetters} from "vuex";
 import store from "@/store";
 import {makeVariantProvider} from '@/components/genes/item_providers/variant_provider';
 import {change_from_hgvs, var_to_position, desnakify} from "@/utils";
+import SourceIcon from "@/components/widgets/SourceIcon";
 
 export default {
+	components: {SourceIcon},
 	data() {
 		return {
 			currentFilter: {
@@ -165,13 +172,12 @@ export default {
 					formatter: x => change_from_hgvs(x, true),
 					sortable: true
 				},
-				/*
 				{
 					key: "sources",
 					label: "Sources",
-					formatter: x => x.join(", "),
 					sortable: true
 				},
+				/*
 				{
 					key: "so_name",
 					label: "Molecular Consequence",
