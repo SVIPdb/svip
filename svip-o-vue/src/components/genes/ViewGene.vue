@@ -20,101 +20,93 @@
   *****************************************************************/
   -->
 
-	<div class="container-fluid">
-		<div class="container">
-			<div class="card">
-				<div class="card-body">
-					<h5 class="card-title">
-						<b>{{ gene.symbol }}:</b>
-						{{ totalRows }} variants
-					</h5>
-					<h6 v-if="gene.oncogene">Oncogene</h6>
+	<div class="container">
+		<div class="card gene-summary">
+			<div class="card-body">
+				<h5 class="card-title">
+					<b>{{ gene.symbol }}:</b> {{ totalRows }} variants
+				</h5>
 
-					<dl class="row" style="margin-top: 0.75em;">
-						<dt class="col-2 text-right" style="white-space: nowrap;">
-							Entrez ID
-						</dt>
-						<dd class="col-10">
+				<h6 v-if="gene.oncogene">Oncogene</h6>
+
+				<table class="gene-info-items">
+					<tr>
+						<td class="text-right row-label">Entrez ID</td>
+						<td>
 							<a :href=" `https://www.ncbi.nlm.nih.gov/gene/?term=${ gene.entrez_id }%5Buid%5D`" target="_blank">{{ gene.entrez_id }}</a>
-						</dd>
-
-						<dt class="col-2 text-right" style="white-space: nowrap;">
-							Ensembl Gene ID
-						</dt>
-						<dd class="col-10">
+						</td>
+					</tr>
+					<tr>
+						<td class="text-right row-label">Ensembl Gene ID</td>
+						<td>
 							<a :href=" `http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${ gene.ensembl_gene_id }`" target="_blank">{{ gene.ensembl_gene_id }}</a>
-						</dd>
-
-						<dt class="col-2 text-right" style="white-space: nowrap;">
-							UniProtKB ID
-						</dt>
-						<dd class="col-10">
+						</td>
+					</tr>
+					<tr>
+						<td class="text-right row-label">UniProtKB ID</td>
+						<td>
 							<a v-if="gene.uniprot_ids" :href=" `https://www.uniprot.org/uniprot/${ gene.uniprot_ids[0] }`" target="_blank" class="mr-3">{{ gene.uniprot_ids[0] }}</a>
-						</dd>
-					</dl>
-				</div>
-			</div>
-
-			<div class="container">
-				<div class="row">
-					<div class="col-6">
-						<b-form-group horizontal label="Filter" class="mb-0">
-							<b-input-group>
-								<b-form-input
-									v-model="currentFilter.search"
-									placeholder="Type to Search"
-								/>
-								<b-input-group-append>
-									<b-btn :disabled="!currentFilter.search" @click="currentFilter.search = ''">Clear</b-btn>
-								</b-input-group-append>
-							</b-input-group>
-						</b-form-group>
-					</div>
-
-					<div class="col-6 text-right">
-						<b-checkbox v-model="showOnlySVIP"><span id="show-svip-vars">show only SVIP variants</span></b-checkbox>
-						<b-tooltip target="show-svip-vars" placement="top">show only variants for which SVIP-specific data exists</b-tooltip>
-					</div>
-				</div>
-			</div>
-
-			<div class="container-fluid">
-				<b-table
-					:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
-					:current-page="currentPage" :per-page="perPage"
-				>
-					<template slot="in_svip" slot-scope="data">
-						<img src="../../assets/svip_small_icon.png" style="width: 22px" v-if="data.item.in_svip" alt="In SVIP" />
-					</template>
-
-					<template slot="hgvs_c" slot-scope="data" v-if="data.value">
-						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
-					</template>
-
-					<template slot="hgvs_p" slot-scope="data" v-if="data.value">
-						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
-					</template>
-
-					<!--
-					<template slot="hgvs_g" slot-scope="data" v-if="data.value">
-						<span class="text-muted">{{ data.item.reference_name }}:</span>{{ data.value }}
-					</template>
-					-->
-
-					<template slot="hgvs_g" slot-scope="data" v-if="data.value">
-						<span class="text-muted">{{ data.value.transcript }}:</span>{{ data.value.change }}
-					</template>
-
-
-					<template slot="action" slot-scope="data">
-						<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>
-					</template>
-				</b-table>
-
-				<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
+
+		<div class="row align-items-baseline">
+			<div class="col">
+				<b-form-group label-cols="2" label="Filter">
+					<b-input-group>
+						<b-form-input v-model="currentFilter.search" placeholder="Type to Search"/>
+						<b-input-group-append>
+							<b-btn :disabled="!currentFilter.search" @click="currentFilter.search = ''">Clear</b-btn>
+						</b-input-group-append>
+					</b-input-group>
+				</b-form-group>
+			</div>
+
+			<div class="col text-right">
+				<b-checkbox v-model="showOnlySVIP"><span id="show-svip-vars">show only SVIP variants</span></b-checkbox>
+				<b-tooltip target="show-svip-vars" placement="top">show only variants for which SVIP-specific data exists</b-tooltip>
+			</div>
+		</div>
+
+		<div>
+			<b-table
+				:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
+				:current-page="currentPage" :per-page="perPage"
+			>
+				<template slot="in_svip" slot-scope="data">
+					<img src="../../assets/svip_small_icon.png" style="width: 22px" v-if="data.item.in_svip" alt="In SVIP" />
+				</template>
+
+				<template slot="hgvs_c" slot-scope="data" v-if="data.value">
+					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				</template>
+
+				<template slot="hgvs_p" slot-scope="data" v-if="data.value">
+					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				</template>
+
+				<!--
+				<template slot="hgvs_g" slot-scope="data" v-if="data.value">
+					<span class="text-muted">{{ data.item.reference_name }}:</span>{{ data.value }}
+				</template>
+				-->
+
+				<template slot="hgvs_g" slot-scope="data" v-if="data.value">
+					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				</template>
+
+
+				<template slot="action" slot-scope="data">
+					<b-button size="sm" :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}">Show Details</b-button>
+				</template>
+			</b-table>
+
+			<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
+		</div>
 	</div>
+
 </template>
 
 <script>
@@ -139,7 +131,8 @@ export default {
 				{
 					key: "in_svip",
 					label: "",
-					sortable: false
+					sortable: false,
+					thStyle: 'width: 22px;'
 				},
 				{
 					key: "name",
@@ -256,8 +249,17 @@ export default {
 </script>
 
 <style scoped>
-.container,
-.container-fluid {
-	margin-top: 20px;
+.gene-summary {
+	margin-bottom: 16px;
+}
+
+.gene-info-items {
+	margin: 5px;
+}
+.gene-info-items td {
+	padding: 3px;
+}
+.gene-info-items td.row-label {
+	font-weight: bold;
 }
 </style>
