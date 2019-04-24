@@ -2,7 +2,7 @@ import django_filters
 from django import forms
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render
 
 # Create your views here.
@@ -225,14 +225,18 @@ class QueryView(viewsets.ViewSet):
 
         if search_term is not None and search_term != '':
             gq = Gene.objects.filter(symbol__icontains=search_term)
-            vq = Variant.objects.filter(description__icontains=search_term)
+            vq = Variant.objects.filter(Q(description__icontains=search_term)|Q(hgvs_c__icontains=search_term))
 
             if in_svip:
                 gq = gq.annotate(svip_vars=Count('variant__svipvariant')).filter(svip_vars__gt=0)
                 vq = vq.filter(svipvariant__isnull=False)
 
             g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
-            v_resp = list({'id': x.id, 'g_id': x.gene.id, 'type': 'v', 'label': x.description} for x in vq)
+            v_resp = list({
+                'id': x.id, 'g_id': x.gene.id, 'type': 'v',
+                'label': "%s (%s)" % (x.description, x.hgvs_c.split(':')[1]) if x.hgvs_c else x.description,
+                'sources': sorted(x.sources)
+            } for x in vq)
 
             resp = g_resp + v_resp
         else:
