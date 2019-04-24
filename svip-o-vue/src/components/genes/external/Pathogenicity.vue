@@ -44,7 +44,10 @@ export default {
 			sortBy: "",
 			items: (
 				sources
-					.filter(source => deref_path(this, source.path))
+					.filter(source => {
+						const q = deref_path(this, source.path);
+						return q !== null && !isNaN(q[source.score]);
+					})
 					.map(
 						source => {
 							const extracted = deref_path(this, source.path);
