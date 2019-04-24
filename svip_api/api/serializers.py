@@ -44,6 +44,11 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VariantSerializer(serializers.HyperlinkedModelSerializer):
+    sources = serializers.SerializerMethodField()
+
+    def get_sources(self, obj):
+        return sorted(obj.sources)
+
     class Meta:
         model = Variant
         # fields = (

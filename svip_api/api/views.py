@@ -84,7 +84,7 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = VariantFilter
     # filter_fields = ('gene', 'name', 'description', 'so_name')
     search_fields = ('name', 'description', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'gene__symbol')
-    ordering_fields = ('name', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name')
+    ordering_fields = ('name', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'sources')
 
     @action(detail=False)
     def autocomplete(self, request):
