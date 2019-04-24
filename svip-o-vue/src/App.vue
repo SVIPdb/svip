@@ -11,27 +11,9 @@
 </template>
 
 <script>
-import Vue from "vue";
 import navHeader from "@/components/navheader";
 import navFooter from "@/components/navfooter";
-
-/* used in ViewVariant, and potentially also in ViewGene */
-Vue.component("optional", {
-	props: ["val"],
-	template: `
-    <td :class="{unavailable: !val}">
-        <span v-if="val"><slot></slot></span>
-        <span v-else>unavailable</span>
-    </td>`
-});
-
-Vue.component("coordinates", {
-	props: ["val"],
-	template: `
-    <optional :val="val">
-        <span v-if="val"><span class="text-muted">{{val.transcript}}:</span>&#x200b;{{val.change}}</span>
-    </optional>`
-});
+import '@/components/widgets/markup'; // adds components 'optional', 'coordinates'
 
 export default {
 	components: {navHeader, navFooter},
