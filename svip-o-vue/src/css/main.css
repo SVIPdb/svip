@@ -86,6 +86,14 @@ footer .version-info .feedback {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
+/* make transcript ID prefixes disappear when the screen is too narrow to show them */
+@media (max-width: 992px) {
+	.transcript-id {
+		display: none;
+	}
+}
+
+
 /* styles for filters in evidence tables */
 .badge {
 	font-size: 13px;

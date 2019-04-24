@@ -27,9 +27,9 @@
 					<tr>
 						<th>Gene Name</th>
 						<th>Variant</th>
-						<th>Variant HGVS.c</th>
-						<th>Variant HGVS.p</th>
-						<th>Variant HGVS.g</th>
+						<th>HGVS.c</th>
+						<th>HGVS.p</th>
+						<th>HGVS.g</th>
 						<th>dbSNP</th>
 						<!-- <th>Molecular consequence</th> -->
 						<th>Position</th>
@@ -59,7 +59,7 @@
 						<!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
 						<optional :val="var_position">
-							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
+							<span class="text-muted transcript-id">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
 						</optional>
 
 						<td>
