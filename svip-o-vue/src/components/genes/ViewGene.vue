@@ -70,7 +70,7 @@
 			</div>
 		</div>
 
-		<div>
+		<div class="variant-results">
 			<b-table
 				:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
 				:current-page="currentPage" :per-page="perPage"
@@ -79,12 +79,12 @@
 					<img src="../../assets/svip_small_icon.png" style="width: 22px" v-if="data.item.in_svip" alt="In SVIP" />
 				</template>
 
-				<template slot="hgvs_c" slot-scope="data" v-if="data.value">
-					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				<template slot="hgvs_c" slot-scope="data">
+					<inline-coordinates :val="data.value" />
 				</template>
 
-				<template slot="hgvs_p" slot-scope="data" v-if="data.value">
-					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				<template slot="hgvs_p" slot-scope="data">
+					<inline-coordinates :val="data.value" />
 				</template>
 
 				<!--
@@ -93,8 +93,8 @@
 				</template>
 				-->
 
-				<template slot="hgvs_g" slot-scope="data" v-if="data.value">
-					<span class="text-muted transcript-id">{{ data.value.transcript }}:</span>{{ data.value.change }}
+				<template slot="hgvs_g" slot-scope="data">
+					<inline-coordinates :val="data.value" />
 				</template>
 
 

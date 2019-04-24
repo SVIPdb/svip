@@ -86,13 +86,24 @@ footer .version-info .feedback {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
+/* ellipsize super-long coordinates */
+.variant-results .coordinates {
+	word-wrap: break-word;
+}
+.variant-results .coordinates.truncated {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 30ex;
+	display: inline-block;
+	word-wrap: inherit;
+}
+
 /* make transcript ID prefixes disappear when the screen is too narrow to show them */
-@media (max-width: 992px) {
+@media (max-width: 1200px) {
 	.transcript-id {
 		display: none;
 	}
 }
-
 
 /* styles for filters in evidence tables */
 .badge {
