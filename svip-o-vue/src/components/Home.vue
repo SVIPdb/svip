@@ -3,7 +3,7 @@
 		<div class="highlight-clean">
 			<div class="container">
 				<div class="intro section text-center">
-					<img src="../assets/SVIP_Logo_Text_cmyk_Large.png" class="img-fluid" width="483" height="137" alt="SVIP Logo"/>
+					<img src="../assets/logos/SVIP_Logo_Text_cmyk_Large.png" class="img-fluid" width="483" height="137" alt="SVIP Logo"/>
 				</div>
 
 				<div class="section row justify-content-md-center">
@@ -25,7 +25,7 @@
 			<div class="row">
 				<div class="col-12 justify-content-center" style="text-align: center; font-style: italic; color: #999; margin-top: 60px;">
 					<a href="https://www.sphn.ch/en/projects/infrastructure-development-projects.html" target="_blank">
-						<img src="../assets/sphn_logo_middle.png" width="170" alt="SPHN: Swiss Personalized Health Network" />
+						<img src="../assets/logos/sphn_logo_middle.png" width="170" alt="SPHN: Swiss Personalized Health Network" />
 					</a>
 					<div style="padding-top: 2em;">an SPHN Infrastructure Development project</div>
 				</div>

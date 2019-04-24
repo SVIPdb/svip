@@ -5,7 +5,7 @@
 
 		<b-navbar-brand href="#">
 			<router-link to="/">
-				<img src="../assets/SVIP_Logo_white_narrow.png" width="162" height="52" alt="SVIP-O" />
+				<img src="../assets/logos/SVIP_Logo_white_narrow.png" width="162" height="52" alt="SVIP-O" />
 			</router-link>
 		</b-navbar-brand>
 
