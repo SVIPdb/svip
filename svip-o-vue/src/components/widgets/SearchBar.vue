@@ -1,6 +1,6 @@
 <template>
 	<form>
-		<v-select label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
+		<v-select ref="search_bar" label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
 			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
@@ -81,6 +81,16 @@ export default {
 	created() {
 		this.getGenesOnly();
 	},
+	mounted() {
+		/*
+		// FIXME: figure out how to get this code to autofocus the bar, or if that even makes sense...
+		const input = this.$refs.search_bar.$el.querySelector('input');
+		// this.$refs.search_bar.focus();
+		console.log(this.$refs.search_bar);
+		console.log(input);
+		input.click();
+	 	*/
+	},
 	methods: {
 		onSearch(search, loading) {
 			loading(true);
@@ -135,7 +145,11 @@ export default {
 }
 
 .bits {
+	display: inline-block;
 	flex: 1 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 5px;
 }
 
 .bits * {
