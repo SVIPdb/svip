@@ -14,11 +14,12 @@ export default {
 	data() {
 		if (this.pubmeta.hasOwnProperty('pmid')) {
 			// extract the PMID and convert it to a url, then return a { url, title } object
+			const parsedPMID = parseInt(this.pubmeta.pmid.replace("PMID:", ""));
 
 			return {
-				url: this.pubmeta.pmid.replace("PMID:", "http://www.ncbi.nlm.nih.gov/pubmed/"),
-				title: this.pubmeta.pmid.replace("PMID:", ""),
-				pmid: parseInt(this.pubmeta.pmid.replace("PMID:", ""))
+				url: `http://www.ncbi.nlm.nih.gov/pubmed/${parsedPMID}`,
+				title: parsedPMID,
+				pmid: parsedPMID
 			}
 		}
 
