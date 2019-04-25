@@ -2,7 +2,9 @@
 	<div>
 			<span v-for="(x, idx) in listifyCounts" :key="idx">
 				<span v-if="idx !== 0">{{', '}}</span>
-				{{ x.count }} {{ x.name }} <span class="percent">({{ x.percent }}%)</span>
+				<span class="type-count">{{ x.count }} {{ x.name }}</span>
+				<span v-if="x.subsigs" class="subsigs" v-html="joinSubSigs(x.subsigs)"></span>
+				<span class="percent">({{ x.percent }}%)</span>
 			</span>
 	</div>
 </template>
@@ -21,21 +23,29 @@ export default {
 				...x,
 				percent: round((x.count/total) * 100.0, 1)
 			}));
-
-			/*
-          return this.data.map(x => {
-              const subsigs = x.subsigs ? " (" + x.subsigs.map(z => `${z.count} ${z.name}`).join(", ") + ")" : '';
-                return `<b>${x.count} ${x.name}</b>${subsigs} <span class="percent">(${}%)</span>`
-            }).join(", ")
-         */
+		}
+	},
+	methods: {
+		joinSubSigs(subsigs) {
+			return " (" + subsigs.map(z => `<span class="type-count">${z.count} ${z.name}</span>`).join(", ") + ")"
 		}
 	}
 }
 </script>
 
 <style scoped>
+.type-count {
+	white-space: nowrap;
+}
+
 .percent {
 	color: #777;
 	margin-left: 0.1em;
+}
+
+.subsigs {
+	color: #555;
+	font-style: italic;
+	margin-right: 0.1em;
 }
 </style>
