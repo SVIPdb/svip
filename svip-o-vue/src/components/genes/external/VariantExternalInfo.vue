@@ -1,6 +1,6 @@
 <template>
 	<div class="row">
-		<Pathogenicity :cadd="mvInfo.cadd" v-if="mvInfo && mvInfo.cadd"/>
+		<Pathogenicity :cadd="mvInfo.cadd" :dbnsfp="mvInfo.dbnsfp" :extras="extras" v-if="mvInfo && (mvInfo.cadd || mvInfo.dbnsfp || extras)"/>
 		<PopulationStats :mvInfo="mvInfo" v-if="mvInfo"/>
 	</div>
 </template>
@@ -12,7 +12,7 @@ import PopulationStats from "./PopulationStats";
 export default {
 	name: "VariantExternalInfo",
 	components: {Pathogenicity, PopulationStats},
-	props: ["mvInfo"]
+	props: ["mvInfo", "extras"]
 };
 </script>
 

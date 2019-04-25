@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import round from 'lodash/round';
+
 /*
 // NOTE: will be used if we report ethnicity-specific stats
 const exac_pops = {
@@ -42,7 +44,7 @@ const sources = [
 		key: "exac",
 		freq_path: x => x.af,
 		count_path: x => x.ac.ac,
-		total_path: x => x.an.an
+		total_path: x => x.an.an_adj
 	},
 	{
 		name: "gnomAD",
@@ -81,14 +83,15 @@ export default {
 					key: "count",
 					formatter: (x, i, v) =>
 						x !== null && v !== null
-							? `${x.toLocaleString()}/${v.total.toLocaleString()}`
+							? `${x.toLocaleString()} / ${v.total.toLocaleString()}`
 							: "-",
 					label: "# Observed",
 					sortable: true
 				},
 				{
-					key: "consequence",
-					label: "Consequence",
+					key: "frequency",
+					label: "Percent",
+					formatter: x => x && !isNaN(x) ? `${round(x * 100.0, 4)}%` : '-',
 					sortable: true
 				}
 			]

@@ -20,76 +20,77 @@
 	*****************************************************************/
 -->
 
-<div class="card mt-3">
-	<div class="card-header">
-		<div class="card-title">
-			SVIP Information
-			<span class="text-danger float-right">WARNING: fake data - only as a demo</span>
+	<div class="card mt-3">
+		<div class="card-header">
+			<div class="card-title">
+				SVIP Information
+				<span class="text-danger float-right">WARNING: fake data - only as a demo</span>
+			</div>
+		</div>
+		<div class="card-body">
+			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
+				<template slot="actions" slot-scope="row">
+					<div style="text-align: right;">
+						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+						<b-button size="sm" @click.stop="row.toggleDetails">
+							{{ row.detailsShowing ? "Hide" : "Show" }} Details
+						</b-button>
+					</div>
+				</template>
+
+				<template slot="name" slot-scope="row">
+					<span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
+				</template>
+
+				<template slot="age" slot-scope="data">
+					<age-distribution :data="data.item.age_distribution"></age-distribution>
+				</template>
+
+				<template slot="gender" slot-scope="data">
+					<gender-plot :data="data.item.gender_balance"></gender-plot>
+				</template>
+
+				<template slot='pathogenicity' slot-scope='data'>
+					<div style="vertical-align: middle; display: inline-block;">
+						<span v-if="data.item.pathogenicity">{{ data.item.pathogenicity }}</span>
+						<span v-else class="unavailable">unavailable</span>
+					</div>
+				</template>
+
+				<template slot="score" slot-scope="data">
+					<icon :name="data.item.score < 1 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 2 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 3 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+					<icon :name="data.item.score < 4 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+				</template>
+
+				<template slot="row-details" slot-scope="row">
+					<div class="card">
+						<div class="card-body" style="padding: 0">
+							<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
+								<template slot="reference" slot-scope="data">
+									<PubmedPopover :pubmeta="{ pmid: data.value }" />
+								</template>
+							</b-table>
+						</div>
+					</div>
+				</template>
+			</b-table>
 		</div>
 	</div>
-	<div class="card-body">
-		<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
-			<template slot="actions" slot-scope="row">
-				<div style="text-align: right;">
-					<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-					<b-button size="sm" @click.stop="row.toggleDetails">
-						{{ row.detailsShowing ? "Hide" : "Show" }} Details
-					</b-button>
-				</div>
-			</template>
-			<template slot="name" slot-scope="row">
-				<span :class="row.detailsShowing ? 'bold' : ''">{{
-					titleCase(row.item.name)
-				}}</span>
-			</template>
-			<template slot="age" slot-scope="data">
-				<age-distribution :data="data.item.age_distribution"></age-distribution>
-			</template>
-			<template slot="gender" slot-scope="data">
-				<gender-balance :data="data.item.gender_balance"></gender-balance>
-			</template>
-
-			<template slot='pathogenicity' slot-scope='data'>
-				<div style="white-space: nowrap;">
-					<svg height='14' width='14' style='margin-right: 4px;' v-b-tooltip.hover :title="data.item.pathogenicity_level+' approval'">
-						<rect v-if="data.item.pathogenicity" x="0" y="0" width="14" height="14" rx="2" ry="2"
-									:class="'pathogenicity '+data.item.pathogenicity_level"></rect>
-					</svg>
-					<div style="vertical-align: middle; display: inline-block;">{{data.item.pathogenicity}}</div>
-				</div>
-		</template>
-
-		<template slot="score" slot-scope="data">
-			<icon :name="data.item.score < 1 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-			<icon :name="data.item.score < 2 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-			<icon :name="data.item.score < 3 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-			<icon :name="data.item.score < 4 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-		</template>
-		<template slot="row-details" slot-scope="row">
-			<div class="card">
-				<div class="card-body" style="padding: 0">
-					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
-						<template slot="reference" slot-scope="data">
-							<PubmedPopover :pubmeta="{ pmid: data.value }" />
-						</template>
-					</b-table>
-				</div>
-			</div>
-		</template>
-	</b-table>
-</div>
-</div>
 </template>
 
 <script>
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderBalance from "@/components/plots/genderBalance";
+import genderBarPlot from "@/components/plots/genderBarPlot";
+import genderPlot from "@/components/plots/genderPlot";
 import {titleCase} from "../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 export default {
 	name: "VariantSVIP",
-	components: {ageDistribution, genderBalance, PubmedPopover},
+	components: {ageDistribution, PubmedPopover, genderPlot},
 	props: {
 		variant: {type: Object, required: true}
 	},
@@ -105,6 +106,7 @@ export default {
 				{
 					key: "nb_patients",
 					label: "# of Patients",
+					formatter: x => `${x}/${this.totalPatients}`,
 					sortable: true,
 					class: "text-center"
 				},
@@ -127,12 +129,7 @@ export default {
 				},
 				{
 					key: "clinical_significance",
-					label: "Evidence Type",
-					sortable: false
-				},
-				{
-					key: "tier_level",
-					label: "Tier Level",
+					label: "Clinical Significance",
 					sortable: false
 				},
 				{
@@ -157,7 +154,7 @@ export default {
 				{ key: "clinical_significance", label: "Clinical Significance", sortable: true },
 				{ key: "drug", label: "Drug", sortable: true },
 				{ key: "tier_level", label: "Tier Level", sortable: true },
-				{ key: "reference", label: "Links", sortable: false },
+				{ key: "reference", label: "References", sortable: false },
 			]
 		};
 	},
@@ -167,6 +164,9 @@ export default {
 	computed: {
 		data() {
 			return this.variant.svip_data.diseases;
+		},
+		totalPatients() {
+			return this.variant.svip_data.diseases.reduce((acc, x) => acc + x.nb_patients, 0);
 		}
 	}
 };

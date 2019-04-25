@@ -63,6 +63,11 @@ footer .version-info .feedback {
 	border: none;
 }
 
+#show-svip-vars {
+	border-bottom: dotted 1px #555;
+	padding-bottom: 2px;
+}
+
 /* label styles */
 .unavailable { font-style: italic; color: #ccc; }
 .bold { font-weight: bold; }
@@ -79,4 +84,35 @@ footer .version-info .feedback {
 
 .popover {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+/* ellipsize super-long coordinates */
+.variant-results .coordinates {
+	word-wrap: break-word;
+}
+.variant-results .coordinates.truncated {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 30ex;
+	display: inline-block;
+	word-wrap: inherit;
+}
+
+/* make transcript ID prefixes disappear when the screen is too narrow to show them */
+@media (max-width: 1200px) {
+	.transcript-id {
+		display: none;
+	}
+}
+
+/* styles for filters in evidence tables */
+.badge {
+	font-size: 13px;
+	margin-left: 5px;
+}
+.filter-phenotype__term {
+	background-color: #598059;
+}
+.filter-environmentalcontext__description {
+	background-color: #596680;
 }

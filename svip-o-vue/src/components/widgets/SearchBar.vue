@@ -1,12 +1,16 @@
 <template>
 	<form>
-		<v-select label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
+		<v-select ref="search_bar" label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
 			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
 						<span v-for="(bit, idx) in highlighted( query, option.label )" :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
 					</div>
 					<div v-else>{{ option.label }}</div>
+
+					<div class="sources-set">
+						<SourceIcon v-for="x in option.sources" :key="x" :name="x" :noTip="true" />
+					</div>
 
 					<div class="result-type">
 						{{ textmapper[option.type] }}
@@ -16,7 +20,8 @@
 		</v-select>
 
 		<div style="padding: 10px;">
-			<b-checkbox v-model="showOnlySVIP">show only SVIP variants</b-checkbox>
+			<b-checkbox v-model="showOnlySVIP"><span id="show-svip-vars">show only SVIP variants</span></b-checkbox>
+			<b-tooltip target="show-svip-vars" placement="bottom">show only variants for which SVIP-specific data exists</b-tooltip>
 		</div>
 	</form>
 </template>
@@ -26,6 +31,7 @@ import _ from "lodash";
 import {HTTP} from "@/router/http";
 
 import store from "@/store";
+import SourceIcon from "@/components/widgets/SourceIcon";
 
 const textmapper = {
 	g: "gene",
@@ -34,6 +40,7 @@ const textmapper = {
 
 export default {
 	name: "SearchBar",
+	components: {SourceIcon},
 	data() {
 		return {
 			query: "",
@@ -64,14 +71,25 @@ export default {
 				return store.state.genes.showOnlySVIP;
 			},
 			set(value) {
-				// FIXME: perhaps let's reset the contents of the search box when we toggle this
-				this.getGenesOnly();
-				store.dispatch("toggleShowSVIP", {showOnlySVIP: value});
+				store.dispatch("toggleShowSVIP", {showOnlySVIP: value}).then(() => {
+					// FIXME: perhaps let's reset the contents of the search box when we toggle this
+					this.getGenesOnly();
+				});
 			}
 		}
 	},
 	created() {
 		this.getGenesOnly();
+	},
+	mounted() {
+		/*
+		// FIXME: figure out how to get this code to autofocus the bar, or if that even makes sense...
+		const input = this.$refs.search_bar.$el.querySelector('input');
+		// this.$refs.search_bar.focus();
+		console.log(this.$refs.search_bar);
+		console.log(input);
+		input.click();
+	 	*/
 	},
 	methods: {
 		onSearch(search, loading) {
@@ -126,6 +144,14 @@ export default {
 	margin: 0;
 }
 
+.bits {
+	display: inline-block;
+	flex: 1 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 5px;
+}
+
 .bits * {
 	margin: 0;
 	color: #555;
@@ -134,6 +160,11 @@ export default {
 .bits .matched {
 	font-weight: bolder;
 	color: black;
+}
+
+.sources-set {
+	margin-right: 3px;
+	width: 5em;
 }
 
 .result-type {

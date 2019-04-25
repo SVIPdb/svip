@@ -28,6 +28,7 @@
 		<div class="card-body">
 			<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
+					<SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true" />
 					<a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
 				</template>
 
@@ -48,7 +49,7 @@
 				<template slot="clinical" slot-scope="data">
 					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
 					<component v-if="rowHasPart(data, 'clinical')" :is="data.item.row_parts.clinical" :row="data" />
-					<significance-bar-plot v-else :data="data.item.clinical_significances"></significance-bar-plot>
+					<evidenceTypesDisplay v-else :data="data.item.evidence_types" />
 				</template>
 
 				<template slot="scores" slot-scope="data">
@@ -81,19 +82,21 @@
 <script>
 import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
-import significanceBarPlot from "@/components/plots/significanceBarPlot";
-import GenericSourceDetailsRow from "./sources/GenericRowDetails";
+// import significanceBarPlot from "@/components/plots/significanceBarPlot";
+import evidenceTypesDisplay from '@/components/plots/evidenceTypesDisplay';
+import GenericSourceDetailsRow from "./sources/shared/GenericRowDetails";
 import {normalizeItemList} from "../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
 import CosmicSignificanceCol from "@/components/genes/sources/cosmic/CosmicSignificanceCol";
 import CosmicPubCountCol from "@/components/genes/sources/cosmic/CosmicPubCountCol";
-import UnavailableCol from "@/components/genes/sources/UnavailableCol";
+import UnavailableCol from "@/components/genes/sources/shared/UnavailableCol";
 import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
+import SourceIcon from "@/components/widgets/SourceIcon";
 
 const overrides = {
 	cosmic: {
 		row_parts: {
-			clinical: CosmicSignificanceCol,
+			clinical: UnavailableCol,
 			publication_count: CosmicPubCountCol,
 			scores: UnavailableCol
 		},
@@ -106,7 +109,7 @@ const overrides = {
 
 export default {
 	name: "VariantPublicDatabases",
-	components: {GenericSourceDetailsRow, scorePlot, significanceBarPlot},
+	components: {SourceIcon, GenericSourceDetailsRow, scorePlot, evidenceTypesDisplay},
 	props: {variant: {type: Object, required: true}},
 	data() {
 		return {
@@ -134,7 +137,7 @@ export default {
 				},
 				{
 					key: "scores",
-					label: "Confidence Scores / Review Status",
+					label: "Evidence Levels",
 					sortable: false
 				},
 				{

@@ -27,12 +27,13 @@
 					<tr>
 						<th>Gene Name</th>
 						<th>Variant</th>
-						<th>Variant HGVS.c</th>
-						<th>Variant HGVS.p</th>
+						<th>HGVS.c</th>
+						<th>HGVS.p</th>
+						<th>HGVS.g</th>
 						<th>dbSNP</th>
-						<th>Molecular consequence</th>
+						<!-- <th>Molecular consequence</th> -->
 						<th>Position</th>
-						<th>Ref. Genome</th>
+						<th>Allele Frequency</th>
 					</tr>
 					<tr>
 						<td>
@@ -46,6 +47,7 @@
 
 						<coordinates :val="hgvs_c_pos"/>
 						<coordinates :val="hgvs_p_pos"/>
+						<coordinates :val="hgvs_g_pos"/>
 
 						<optional :val="variant.dbsnp_ids">
 							<a v-for="rsid in variant.dbsnp_ids" :key="rsid" :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid" target="_blank">
@@ -54,13 +56,16 @@
 							</a>
 						</optional>
 
-						<td>{{ desnakify(variant.so_name) }}</td>
+						<!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
 						<optional :val="var_position">
-							<span class="text-muted">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
+							<span class="text-muted transcript-id">{{ variant.reference_name }}:</span>&#x200b;{{ var_position }}
 						</optional>
 
-						<td>{{ variant.reference_name }}</td>
+						<td>
+							<span v-if="allele_frequency">{{ allele_frequency }}</span>
+							<span v-else class="unavailable">unavailable</span>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -69,12 +74,13 @@
 		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
-		<VariantExternalInfo :mvInfo="variant.mv_info"/>
+		<VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
 	</div>
 </template>
 
 <script>
 // import geneVariants from '@/components/Variants'
+import round from 'lodash/round';
 import {mapGetters} from "vuex";
 import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
 import variantSvip from "@/components/genes/variantSvip";
@@ -106,11 +112,22 @@ export default {
 		hgvs_p_pos() {
 			return change_from_hgvs(this.variant.hgvs_p, true);
 		},
+		hgvs_g_pos() {
+			return change_from_hgvs(this.variant.hgvs_g, true);
+		},
 		var_position() {
 			return var_to_position(this.variant);
 		},
 		hg19_id() {
 			return var_to_position(this.variant, true);
+		},
+		all_extras() {
+			return this.variant.variantinsource_set.reduce((acc, x) => {
+				return Object.assign({}, acc, x['extras']);
+			}, {});
+		},
+		allele_frequency() {
+			return this.variant.mv_info && this.variant.mv_info.gnomad_genome && `gnomAD: ${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
 		}
 	},
 	// components: {geneVariants: geneVariants},

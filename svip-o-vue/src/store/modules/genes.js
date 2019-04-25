@@ -18,7 +18,7 @@ const state = {
 	nbGeneVariants: 0,
 	geneVariants: [],
 	variant: null,
-	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true',
+	showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true' || localStorage.getItem('showOnlySVIP') == null,
 	pubmedInfo: JSON.parse(localStorage.getItem('pubmedInfo')) || {}
 };
 
