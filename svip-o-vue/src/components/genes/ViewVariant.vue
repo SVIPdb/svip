@@ -127,7 +127,7 @@ export default {
 			}, {});
 		},
 		allele_frequency() {
-			return this.variant.mv_info && this.variant.mv_info.gnomad_genome && `${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
+			return this.variant.mv_info && this.variant.mv_info.gnomad_genome && `gnomAD: ${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
 		}
 	},
 	// components: {geneVariants: geneVariants},
