@@ -87,12 +87,6 @@
 					<inline-coordinates :val="data.value" />
 				</template>
 
-				<!--
-				<template slot="hgvs_g" slot-scope="data" v-if="data.value">
-					<span class="text-muted">{{ data.item.reference_name }}:</span>{{ data.value }}
-				</template>
-				-->
-
 				<template slot="hgvs_g" slot-scope="data">
 					<inline-coordinates :val="data.value" />
 				</template>
