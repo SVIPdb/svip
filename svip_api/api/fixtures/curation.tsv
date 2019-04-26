@@ -1,0 +1,10 @@
+gene	variant	cds	disease	type_of_evidence	drug	effect	tier_level_criteria	summary	support	references
+EGFR	L858R	c.2573T>G	Lung Adenocarcinoma	Predictive	Afatinib	Sensitive	Well-powered studies with consensus from experts in the field (Tier I -Red color)	Assessment of drug sensitivity for L858R by MANO method.	Strong	PMID:29141884
+EGFR	L858R	c.2573T>G	Lung Adenocarcinoma	In vivo assay	-	Pathogenic	Well-established in vivo functional studies show a deleterious effect (Tier I -Red color)	Mutation drives initiation and progression of lung tumor.	Strong	PMID:16730237
+EGFR	L858R	c.2573T>G	Lung Adenocarcinoma	In vitro assay	-	Pathogenic	Well-established in vitro functional studies show a deleterious effect (Tier I -Red color)	Transforming potential of the mutant is high. Fig. 2	Moderate	PMID:29141884
+EGFR	L858R	c.2573T>G	Non-small cell lung cancer	Predictive	Erlotinib	Sensitive	FDA approved therapies (Tier I -red)	On May 2013, FDA approved Erlotinib as 1st-line treatment of NSCLC carrying L858R.	Strong	PMID:24868098
+EGFR	L858R	c.2573T>G	Non-small cell lung cancer	Prognostic	-	Better Outcome	Not in PG but with convincing published data (Tier II -purple)	Median Survival is longer in patients carrying EGFR L858R than WT EGFR.	Strong	PMID:24662454
+BRAF	V600E	c.1799T>A	Papillary thyroid carcinoma	Prognostic	-	Poor outcome	Not in PG but with convincing published data (Tier II -purple)	-	Moderate	PMID:24396464
+BRAF	V600E	c.1799T>A	Papillary thyroid carcinoma	Predictive	Vemurafenib	Sensitive	Clinical trial-Phase 2 (Tier I -red)	Partial responses were recorded in ten of 26 patients in cohort 1 (best overall response 38·5%, 95% CI 20·2-59·4)	Strong	PMID:27460442
+BRAF	V600E	c.1799T>A	Colorectal Cancer	Predictive	Cetuximab	Resistant	Well-powered studies with consensus from experts in the field (Tier I -Red color)	-	Strong	PMID:25666295
+BRAF	V600E	c.1799T>A	Colorectal Cancer	Predictive	Vemurafenib	Sensitive	Clinical trial-Phase 2 (Tier II -purple)	-	Moderate	PMID:26460303
