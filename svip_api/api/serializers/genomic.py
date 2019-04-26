@@ -3,7 +3,11 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from api.models import Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource
+from api.models import (
+    Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
+    VariantInSVIP
+)
+from api.serializers.svip import VariantInSVIPSerializer
 
 
 # -----------------------------------------------------------------------------
@@ -111,7 +115,9 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
 
 class FullVariantSerializer(VariantSerializer):
     # sources_set = VariantInSourceSerializer(many=True)
-    variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
+    # variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
+
+    svip_data = VariantInSVIPSerializer()
 
     def __init__(self, *args, **kwargs):
         super(FullVariantSerializer, self).__init__(*args, **kwargs)

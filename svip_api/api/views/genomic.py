@@ -18,7 +18,7 @@ from api.serializers import (
     SourceSerializer, GeneSerializer,
     VariantSerializer, AssociationSerializer,
     PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer,
-    VariantInSourceSerializer
+    VariantInSourceSerializer, VariantInSVIPSerializer
 )
 
 
@@ -54,7 +54,7 @@ class VariantFilter(df_filters.FilterSet):
     # noinspection PyMethodMayBeStatic
     def filter_has_svipdata(self, queryset, name, value):
         if value:
-            return queryset.filter(svipvariant__isnull=False)
+            return queryset.filter(variantinsvip__isnull=False)
         # otherwise, return all the variants, svip data or not
         return queryset
 
@@ -177,7 +177,8 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
         'evidence_level',
         'drug_labels',
         'phenotype__term',
-        'environmentalcontext__description'
+        'environmentalcontext__description',
+        'evidence__publications'
     )
 
 
@@ -228,8 +229,8 @@ class QueryView(viewsets.ViewSet):
             vq = Variant.objects.filter(Q(description__icontains=search_term)|Q(hgvs_c__icontains=search_term))
 
             if in_svip:
-                gq = gq.annotate(svip_vars=Count('variant__svipvariant')).filter(svip_vars__gt=0)
-                vq = vq.filter(svipvariant__isnull=False)
+                gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
+                vq = vq.filter(variantinsvip__isnull=False)
 
             g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             v_resp = list({
@@ -244,7 +245,7 @@ class QueryView(viewsets.ViewSet):
             gq = Gene.objects.all()
 
             if in_svip:
-                gq = gq.annotate(svip_vars=Count('variant__svipvariant')).filter(svip_vars__gt=0)
+                gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
 
             g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
             resp = g_resp
