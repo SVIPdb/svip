@@ -47,9 +47,8 @@
 				</template>
 
 				<template slot="clinical" slot-scope="data">
-					<!--<span v-for='c in summaryClinical(data.item.clinical)' class='mr-2'>{{c}}</span>-->
 					<component v-if="rowHasPart(data, 'clinical')" :is="data.item.row_parts.clinical" :row="data" />
-					<evidenceTypesDisplay v-else :data="data.item.evidence_types" />
+					<evidenceTypesBarPlot v-else :data="data.item.evidence_types" />
 				</template>
 
 				<template slot="scores" slot-scope="data">
@@ -83,7 +82,7 @@
 import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
 // import significanceBarPlot from "@/components/plots/significanceBarPlot";
-import evidenceTypesDisplay from '@/components/plots/evidenceTypesDisplay';
+import evidenceTypesBarPlot from '@/components/plots/evidenceTypesBarPlot';
 import GenericSourceDetailsRow from "./sources/shared/GenericRowDetails";
 import {normalizeItemList} from "../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
@@ -109,7 +108,7 @@ const overrides = {
 
 export default {
 	name: "VariantPublicDatabases",
-	components: {SourceIcon, GenericSourceDetailsRow, scorePlot, evidenceTypesDisplay},
+	components: {SourceIcon, GenericSourceDetailsRow, scorePlot, evidenceTypesBarPlot},
 	props: {variant: {type: Object, required: true}},
 	data() {
 		return {
