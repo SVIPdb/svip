@@ -12,7 +12,7 @@ export default {
 	name: "PubmedPopover",
 	props: {pubmeta: {type: Object, required: true}},
 	data() {
-		if (this.pubmeta.hasOwnProperty('pmid')) {
+		if (this.pubmeta.hasOwnProperty('pmid') && this.pubmeta.pmid) {
 			// extract the PMID and convert it to a url, then return a { url, title } object
 			const parsedPMID = parseInt(this.pubmeta.pmid.replace("PMID:", ""));
 
