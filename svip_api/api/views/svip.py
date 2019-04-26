@@ -23,7 +23,8 @@ from api.serializers import (
 
 class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    The entry for a specific variant in a specific source, e.g. EGFR L858R in CIViC.
+    Connects a variant, e.g. EGFR L858R, to its SVIP-specific data. Currently that consists of samples
+    and curation data, but more will come in the future.
     """
     serializer_class = VariantInSVIPSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
