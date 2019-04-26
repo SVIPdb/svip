@@ -115,7 +115,7 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
 
 class FullVariantSerializer(VariantSerializer):
     # sources_set = VariantInSourceSerializer(many=True)
-    # variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
+    variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
 
     svip_data = VariantInSVIPSerializer()
 
