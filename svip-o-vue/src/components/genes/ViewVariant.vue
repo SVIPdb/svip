@@ -127,7 +127,16 @@ export default {
 			}, {});
 		},
 		allele_frequency() {
-			return this.variant.mv_info && this.variant.mv_info.gnomad_genome && `gnomAD: ${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
+			if (this.variant.mv_info) {
+				if (this.variant.mv_info.gnomad_genome) {
+					return `gnomAD: ${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
+				}
+				else if (this.variant.mv_info.exac) {
+					return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+				}
+			}
+
+			return null;
 		}
 	},
 	// components: {geneVariants: geneVariants},
