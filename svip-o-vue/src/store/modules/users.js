@@ -1,106 +1,82 @@
 import {HTTP} from "@/router/http";
-import * as _ from 'lodash';
+import {serverURL} from "@/app_config";
 
 // initial state
 const state = {
-	all: [],
-	current: {
-		username: null,
-		firstname: null,
-		lastname: null,
-		fullname: null,
-		email: null,
-		permissions: [],
-		jwt: null
-	}
+	currentJWT: null
 };
 
 // getters
 const getters = {
-	currentUser: state => state.current
+	jwtData: (state, getters) => state.currentJWT ? JSON.parse(atob(getters.jwt.split('.')[1])) : null,
+	jwtSubject: (state, getters) => getters.jwtData ? getters.jwtData.sub : null,
+	jwtIssuer: (state, getters) => getters.jwtData ? getters.jwtData.iss : null,
+	username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
+	groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
+	currentUser: (state, getters) => {
+		return {
+			username: getters.jwtData.username,
+			groups: getters.jwtData.groups
+		};
+	}
 };
 
 // actions
 const actions = {
-	login({commit}, userData) {
-		return new Promise(resolve => {
-			var loggedUser = {
-				username: userData.login,
-				jwt: userData.jwt,
-				fullname: userData.fullname,
-				firstname: userData.firstname,
-				lastname: userData.lastname,
-				email: userData.email,
-				permissions: userData.permissions
-			};
-			HTTP.defaults.headers.common["authorization"] =
-				"Bearer " + userData.jwt;
-			localStorage.setItem("currentUser", JSON.stringify(loggedUser));
-			commit("LOGIN", loggedUser);
-			resolve(userData);
+	login({commit}, { username, password }) {
+
+		return HTTP.post(`token/`, { username, password }, {
+			baseURL: serverURL.replace("/v1", "")
+		}).then(response => {
+			console.log(response);
+
+			// TODO: extract and decode the JWT from the response, populate structure below
+			commit("LOGIN", response.data);
+
+			localStorage.setItem("user-jwt", state.currentJWT);
+			HTTP.defaults.headers.common["Authorization"] = "Bearer " + state.currentJWT;
 		});
 	},
 
-	getCredentials({commit}) {
-		if (state.current.user_id) {
-			return state.current;
-		} else {
-			let user = localStorage.getItem("currentUser");
-			if (user) {
-				user = JSON.parse(user);
-				if (user.jwt) {
-					HTTP.defaults.headers.common["authorization"] =
-						"Bearer " + user.jwt;
-				}
-				commit("LOGIN", user);
-				return true;
-			} else {
+	checkCredentials({commit}) {
+		if (state.currentJWT) {
+			return true;
+		}
+		else {
+			// attempt to fetch our JWT from localstorage, since it's not in memory
+			const jwt = localStorage.getItem("user-jwt");
+
+			if (!jwt) {
 				return false;
 			}
+
+			commit("LOGIN", jwt);
+			HTTP.defaults.headers.common["Authorization"] = "Bearer " + jwt;
+			return true;
 		}
 	},
-	checkPermissions(ctx, params) {
-		let permissionsToCheck = params.permissions;
-		let condition = params.condition;
-		if (condition != "all") condition = "any";
-		if (!state.current.permissions) return false;
-		if (condition == "any")
-			return state.current.permissions.some(v =>
-				permissionsToCheck.includes(v)
-			);
-		else if (condition == "all")
-			return (
-				_.difference(permissionsToCheck, state.current.permissions)
-					.length === 0
-			);
-		return false;
+
+	checkPermissions({commit}, { permissions, condition='all' }) {
+		return new Promise((resolve) => {
+			// FIXME: think of a meaningful way to verify this in the client
+			resolve(true);
+		});
 	},
+
 	logout({commit}) {
-		localStorage.removeItem("currentUser");
-		HTTP.defaults.auth = {};
+		localStorage.removeItem("user-jwt");
+		delete HTTP.defaults.headers.common["Authorization"];
 		commit("LOGOUT");
 	}
 };
 
 // mutations
 const mutations = {
-	SET_USERS(state, users) {
-		state.all = users;
-	},
-	LOGIN(state, user) {
-		state.current = user;
+	LOGIN(state, jwt) {
+		state.currentJWT = jwt;
 	},
 	LOGOUT(state) {
-		state.current = {
-			user_id: null,
-			username: null,
-			fullname: null,
-			firstname: null,
-			lastname: null,
-			email: null,
-			jwt: null,
-			permissions: null
-		};
+		state.currentJWT = null;
 	}
 };
 
@@ -110,3 +86,4 @@ export default {
 	actions,
 	mutations
 };
+
