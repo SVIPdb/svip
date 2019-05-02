@@ -35,10 +35,10 @@
 						<b-button size="sm" @click.stop="row.toggleDetails">
 							{{ row.detailsShowing ? "Hide" : "Show" }} Details
 						</b-button>
-						<b-button size="sm" style="margin-left:15px;background-color:green;">
+						<b-button v-access="'curators'" size="sm" style="margin-left:15px;background-color:green;">
 							Show Curation
 						</b-button>
-						<b-button size="sm" style="margin-left:15px;background-color:purple;">
+						<b-button v-access="'clinicians'" size="sm" style="margin-left:15px;background-color:purple;">
 							Show Samples
 						</b-button>
 					</div>
