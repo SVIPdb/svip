@@ -28,8 +28,10 @@
 		<div class="card-body">
 			<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
-					<SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true" />
-					<a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
+					<div style="display: flex; align-items: center;">
+						<SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true" />
+						<a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
+					</div>
 				</template>
 
 				<template slot="diseases" slot-scope="data">
