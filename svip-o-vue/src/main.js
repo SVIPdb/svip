@@ -19,7 +19,7 @@ import store from "./store";
 
 Vue.config.productionTip = false;
 
-Vue.use(Snotify, { toast: { position: SnotifyPosition.rightTop } });
+Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop } });
 Vue.use(BootstrapVue);
 Vue.use(VeeValidate, {fieldsBagName: "formFields"});
 Vue.use(lodash);
