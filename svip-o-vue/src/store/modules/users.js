@@ -8,15 +8,20 @@ const state = {
 
 // getters
 const getters = {
+	jwt: (state) => state.currentJWT,
 	jwtData: (state, getters) => state.currentJWT ? JSON.parse(atob(getters.jwt.split('.')[1])) : null,
 	jwtSubject: (state, getters) => getters.jwtData ? getters.jwtData.sub : null,
 	jwtIssuer: (state, getters) => getters.jwtData ? getters.jwtData.iss : null,
 	username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
 	groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
 	currentUser: (state, getters) => {
+		if (!getters.jwtData) {
+			return null;
+		}
+
 		return {
-			username: getters.jwtData.username,
-			groups: getters.jwtData.groups
+			username: getters.username,
+			groups: getters.groups
 		};
 	}
 };
@@ -28,13 +33,15 @@ const actions = {
 		return HTTP.post(`token/`, { username, password }, {
 			baseURL: serverURL.replace("/v1", "")
 		}).then(response => {
-			console.log(response);
+			const { access, refresh } = response.data;
 
 			// TODO: extract and decode the JWT from the response, populate structure below
-			commit("LOGIN", response.data);
+			commit("LOGIN", access);
 
 			localStorage.setItem("user-jwt", state.currentJWT);
 			HTTP.defaults.headers.common["Authorization"] = "Bearer " + state.currentJWT;
+
+			return true;
 		});
 	},
 
