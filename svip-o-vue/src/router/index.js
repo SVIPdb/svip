@@ -5,6 +5,7 @@ import Genes from "@/components/genes/Genes";
 import ViewGene from "@/components/genes/ViewGene";
 import ViewVariant from "@/components/genes/ViewVariant";
 import Login from "@/components/user/Login";
+import UserInfo from "@/components/user/UserInfo";
 
 // import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 
@@ -35,7 +36,11 @@ const router = new Router({
 			name: "login",
 			component: Login
 		},
-
+		{
+			path: "/user-info",
+			name: "user-info",
+			component: UserInfo
+		},
 
 		{
 			path: "*",
