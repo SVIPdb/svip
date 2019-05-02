@@ -179,23 +179,6 @@ export default {
 					formatter: x => desnakify(x)
 				},
 				*/
-				/*
-        {
-            key: 'svip_data.tier_level',
-            label: 'Tier Level',
-            sortable: true
-        },
-        {
-            key: 'svip_data.SVIP_status',
-            label: 'Status',
-            sortable: true
-        },
-        {
-            key: 'svip_data.SVIP_confidence_score',
-            label: 'Score',
-            sortable: true
-        },
-        */
 				{
 					key: "action",
 					label: "",
