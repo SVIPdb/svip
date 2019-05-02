@@ -10,6 +10,13 @@ body {
 	margin-bottom: 60px; /* Margin bottom by footer height */
 }
 
+/* simple page structure for sparse "modal-esque" pages like login and user-info */
+.trunk {
+	width: 400px;
+	padding-top: 25px;
+	margin: 25em auto;
+}
+
 /* styles for the footer, including version info and attribution logos */
 footer {
 	padding: 20px;
