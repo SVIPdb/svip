@@ -26,7 +26,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 
 import api.urls as api_router
-
+from svip_server.tokens import GroupsTokenObtainPairView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -48,7 +48,7 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
 
     # jwt auth paths
-    re_path(r'^api/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    re_path(r'^api/token/$', GroupsTokenObtainPairView.as_view(), name='token_obtain_pair'),
     re_path(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     re_path(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
 
