@@ -1,9 +1,13 @@
 import csv
+import datetime
+import random
 import sys
 import os
 import json
 from django.core.management.base import BaseCommand, CommandError
-from api.models import Variant, VariantInSVIP, Sample, CurationEntry
+from django.db.models import Q, F
+
+from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource
 
 import api
 
@@ -87,15 +91,110 @@ def create_svip_related(source, target_model):
         return succeeded, total
 
 
+def synthesize_samples(num_samples_per_variant=10):
+    """
+    Creates "realistic" patient samples for each variant in SVIP. Uses COSMIC for (disease, tissue) assocations
+    with variants.
+    :param num_samples_per_variant: the number of samples to synthesize for each variant
+    :return: the total number of created samples
+    """
+
+    sample_id = random.randint(5000, 9000)
+    created_samples = 0
+    svip_variants = VariantInSVIP.objects.all()
+
+    # delete all the samples before we begin
+    Sample.objects.all().delete()
+
+    # for each SVIP variant, produce a random amount of randomly-generated sample data
+    for svip_var in svip_variants:
+        # get (disease, tissue) pairs from COSMIC for the current variant
+        disease_tissues = (
+            VariantInSource.objects
+                .filter(
+                    # ~Q(association__phenotype__term__in=('other', 'NS')),
+                    variant=svip_var.variant,
+                    source__name='cosmic'
+                )
+                .values(
+                    disease=F('association__phenotype__term'),
+                    tissue=F('association__environmentalcontext__description')
+                ).distinct()
+        )
+
+        # TODO: decide if the sample data and hospital should be the same for all samples for this variant or not
+
+        # generate a random sampling date for all samples in the same set
+        sample_date = datetime.date(random.randint(2016, 2018), random.randint(1, 12), 1) + \
+                      datetime.timedelta(days=random.randint(0, 30))
+
+        sample_parts = {
+            'year': sample_date.year,
+            'month': sample_date.month,
+            'day': sample_date.day
+        }
+
+        # presumably the samples for the same variant will come from the sample hospital, too?
+        hospital = random.choice(('USZ', 'USB'))
+
+        for _ in range(num_samples_per_variant):
+            disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
+
+            candidate = Sample(**{
+                'svip_variant': svip_var,
+                'disease': disease,
+                'sample_id': str(sample_id),
+                'year_of_birth': str(random.randint(1945, 1988)),  # random between 1945 and 1988
+                'gender': random.choice(('Male', 'Female')),
+                'hospital': hospital,
+                'medical_service': 'Pathology',
+                'provider_annotation': random.choice(('Pathogenic', '-')),
+                'sample_tissue': tissue,
+                'tumor_purity': '%d%%' % random.randint(80, 92),
+                'tnm_stage': 'T0N2M1',
+                'sample_type': 'Primary',
+                'sample_site': 'Biopsy',
+                'specimen_type': 'FFPE',
+                'sequencing_date': '%(year)d%(month)02d%(day)02d' % sample_parts,
+                'panel': 'Hotspot v2',
+                'coverage': '123X',
+                'calling_strategy': random.choice(('Matched', 'Tumor only')),
+                'caller': 'xxx',
+                'aligner': 'xyz',
+                'software': ' abc',
+                'software_version': 'Mutect',
+                'platform': 'Illumina',
+                'contact': 'email'
+            })
+            candidate.save()
+
+            sample_id += random.randint(100, 1000)
+
+            created_samples += 1
+
+    return created_samples, len(svip_variants) * num_samples_per_variant
+
+
 class Command(BaseCommand):
     help = 'Populates database with SVIP mock variants'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--no-sample-synth',
+            action='store_true',
+            help='Use samples.tsv instead of creating samples dynamically',
+        )
 
     def handle(self, *args, **options):
         created_count, total = create_svipvariants(Variant, VariantInSVIP)
         self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock variant entries' % (created_count, total)))
 
-        created_count, total = create_svip_related("samples.tsv", Sample)
-        self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock samples' % (created_count, total)))
+        if not options['no_sample_synth']:
+            created_count, total = synthesize_samples(num_samples_per_variant=30)
+            self.stdout.write(self.style.SUCCESS('Generated %d out of %d SVIP mock samples' % (created_count, total)))
+        else:
+            created_count, total = create_svip_related("samples.tsv", Sample)
+            self.stdout.write(self.style.SUCCESS('Loaded %d out of %d SVIP mock samples from \'samples.tsv\'' % (created_count, total)))
 
         created_count, total = create_svip_related("curation.tsv", CurationEntry)
         self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock curation entries' % (created_count, total)))
