@@ -92,7 +92,8 @@
 			</b-table>
 		</div>
 		<div class="card">
-			<svipShowCuration variants = "118"></svipShowCuration>
+			<!-- TODO be specific for the disease -->
+			<svipShowCuration :curationData="variant.svip_data.curation_entries"></svipShowCuration>
 		</div>
 
 	</div>
@@ -211,7 +212,7 @@ export default {
 				i.showCuration = false;
 				i.showSamples = false;
 			})
-			console.log("items", items)
+			console.log("this.variant.svip_data.curation_entries", this.variant.svip_data.curation_entries)
 
 			return items;
 		},

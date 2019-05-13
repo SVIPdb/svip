@@ -10,8 +10,9 @@
 				<table class="table table-sm table-hover filtering-table">
 					<thead>
 						<tr>
-							<th>{{variants}} TOTO</th>
+							<th>{{curationData}} TOTO</th>
 							<th># of Samples</th>
+              <!-- {{$route}} -->
 						</tr>
 					</thead>
 					<tbody>
@@ -36,7 +37,7 @@ export default {
 	name: "svipShowCuration",
 	props: {
 		// row: {type: Object, required: true}
-    variants: String
+    curationData: Object
 	},
 	// components: {RowDetailsHeader, PubmedPopover},
 	data() {
