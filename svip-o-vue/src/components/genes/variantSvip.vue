@@ -32,18 +32,18 @@
 				<template slot="actions" slot-scope="row">
 					<div style="text-align: right;">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-						<b-button size="sm" @click.stop="row.toggleDetails">
-							{{ row.detailsShowing ? "Hide" : "Show" }} Details
+						<b-button size="sm" @click.stop="showRowDetails(row,'details')">
+							{{ row.item.showRowDetails ? "Hide" : "Show" }} Details
 						</b-button>
-						<b-button v-access="'curators'" size="sm" style="margin-left:15px;background-color:green;">
-							Show Curation
+						<b-button v-access="'curators'" size="sm" style="margin-left:15px;background-color:green;" @click.stop="showRowDetails(row,'curation')">
+							{{ row.item.showCuration ? "Hide" : "Show" }} Curation
 						</b-button>
-						<b-button v-access="'clinicians'" size="sm" style="margin-left:15px;background-color:purple;">
+						<b-button v-access="'clinicians'" size="sm" style="margin-left:15px;background-color:purple;" @click.stop="showRowDetails(row,'samples')">
 							Show Samples
 						</b-button>
+
 					</div>
 				</template>
-
 				<template slot="name" slot-scope="row">
 					<span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
 				</template>
@@ -71,7 +71,8 @@
 				</template>
 
 				<template slot="row-details" slot-scope="row">
-					<div class="card">
+					<p>c'est un test {{row.item.showRowDetails}}</p>
+					<div class="card" v-if="row.item.showRowDetails">
 						<div class="card-body" style="padding: 0">
 							<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
 								<template slot="reference" slot-scope="data">
@@ -80,11 +81,23 @@
 							</b-table>
 						</div>
 					</div>
+					<div class="card" v-if="row.item.showCuration">
+						curation
+					</div>
+					<div class="card" v-if="row.item.showSamples">
+						samples
+					</div>
+
 				</template>
 			</b-table>
 		</div>
+		<div class="card">
+			<svipShowCuration variants = "118"></svipShowCuration>
+		</div>
+
 	</div>
 </template>
+
 
 <script>
 import ageDistribution from "@/components/plots/ageDistribution";
@@ -93,10 +106,11 @@ import genderBarPlot from "@/components/plots/genderBarPlot";
 import genderPlot from "@/components/plots/genderPlot";
 import {titleCase} from "../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
+import svipShowCuration from "@/components/genes/svip/svipShowCuration";
 
 export default {
 	name: "VariantSVIP",
-	components: {ageDistribution, PubmedPopover, genderPlot},
+	components: {ageDistribution, PubmedPopover, genderPlot, svipShowCuration},
 	props: {
 		variant: {type: Object, required: true}
 	},
@@ -165,11 +179,41 @@ export default {
 		};
 	},
 	methods: {
-		titleCase
+		titleCase,
+		// svipShowCuration(row) {
+		// 	console.log("row", row);
+		// 	svipShowCuration;
+		// },
+		showRowDetails (row, type) {
+			// console.log(type);
+			// row.toggleDetails()
+			// return
+			let before = (row.item.showCuration || row.item.showSamples || row.item.showRowDetails);
+			if (type === 'curation') row.item.showCuration = !row.item.showCuration;
+			console.log("row.item.showCuration", row.item.showCuration)
+			if (type === 'samples') row.item.showSamples = !row.item.showSamples;
+			if (type === 'details') row.item.showRowDetails = !row.item.showRowDetails;
+			console.log("row.item.showRowDetails", row.item.showRowDetails)
+			let after = (row.item.showCuration || row.item.showSamples || row.item.showRowDetails);
+			console.log(before,after);
+			if (before !== after){
+				console.log('here');
+				row.toggleDetails()
+			}
+		}
 	},
 	computed: {
 		data() {
-			return this.variant.svip_data.diseases;
+			let items = this.variant.svip_data.diseases;
+			_.forEach(items, i => {
+				// i._showDetails = false;
+				i.showRowDetails = false;
+				i.showCuration = false;
+				i.showSamples = false;
+			})
+			console.log("items", items)
+
+			return items;
 		},
 		totalPatients() {
 			return this.variant.svip_data.diseases.reduce((acc, x) => acc + x.nb_patients, 0);
