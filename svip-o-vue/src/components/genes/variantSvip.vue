@@ -28,20 +28,19 @@
 			</div>
 		</div>
 		<div class="card-body">
-			<b-table :fields="fields" :items="data" :sort-by.sync="sortBy" :sort-desc="false">
+			<b-table :fields="fields" :items="variant.svip_data.diseases" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="actions" slot-scope="row">
 					<div style="text-align: right;">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-						<b-button size="sm" @click.stop="showRowDetails(row,'details')">
-							{{ row.item.showRowDetails ? "Hide" : "Show" }} Details
-						</b-button>
-						<b-button v-access="'curators'" size="sm" style="margin-left:15px;background-color:green;" @click.stop="showRowDetails(row,'curation')">
-							{{ row.item.showCuration ? "Hide" : "Show" }} Curation
-						</b-button>
-						<b-button v-access="'clinicians'" size="sm" style="margin-left:15px;background-color:purple;" @click.stop="showRowDetails(row,'samples')">
-							Show Samples
-						</b-button>
-
+		        <b-button size="sm" @click="toggleRowDetails(row,'details')" class="mr-2" variant="primary" :pressed=" viewItems['details'].indexOf(row.index) > -1">
+		          {{ viewItems['details'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Details
+		        </b-button>
+		        <b-button size="sm" @click="toggleRowDetails(row,'curation')" class="mr-2" variant="success" :pressed=" viewItems['curation'].indexOf(row.index) > -1">
+		          {{ viewItems['curation'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Curation
+		        </b-button>
+		        <b-button size="sm" @click="toggleRowDetails(row,'samples')" class="mr-2" :pressed=" viewItems['samples'].indexOf(row.index) > -1">
+		          {{ viewItems['samples'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Samples
+		        </b-button>
 					</div>
 				</template>
 				<template slot="name" slot-scope="row">
@@ -71,22 +70,22 @@
 				</template>
 
 				<template slot="row-details" slot-scope="row">
-					<p>c'est un test {{row.item.showRowDetails}}</p>
-					<div class="card" v-if="row.item.showRowDetails">
-						<div class="card-body" style="padding: 0">
-							<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
-								<template slot="reference" slot-scope="data">
-									<PubmedPopover :pubmeta="{ pmid: data.value }" />
-								</template>
-							</b-table>
-						</div>
-					</div>
-					<div class="card" v-if="row.item.showCuration">
-						curation
-					</div>
-					<div class="card" v-if="row.item.showSamples">
-						samples
-					</div>
+
+					<b-card v-if="viewItems['details'].indexOf(row.index) > -1">
+						<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
+							<template slot="reference" slot-scope="data">
+								<PubmedPopover :pubmeta="{ pmid: data.value }" />
+							</template>
+						</b-table>
+					</b-card>
+					<b-card v-if="viewItems['curation'].indexOf(row.index) > -1">
+						<p>curation</p>
+					</b-card>
+					<b-card v-if="viewItems['samples'].indexOf(row.index) > -1">
+						<p>samples</p>
+					</b-card>
+
+
 
 				</template>
 			</b-table>
@@ -176,7 +175,12 @@ export default {
 				{ key: "drug", label: "Drug", sortable: true },
 				{ key: "tier_level", label: "Tier Level", sortable: true },
 				{ key: "reference", label: "References", sortable: false },
-			]
+			],
+			viewItems: {
+				curation: [],
+				details: [],
+				samples: []
+			}
 		};
 	},
 	methods: {
@@ -185,23 +189,15 @@ export default {
 		// 	console.log("row", row);
 		// 	svipShowCuration;
 		// },
-		showRowDetails (row, type) {
-			// console.log(type);
-			// row.toggleDetails()
-			// return
-			let before = (row.item.showCuration || row.item.showSamples || row.item.showRowDetails);
-			if (type === 'curation') row.item.showCuration = !row.item.showCuration;
-			console.log("row.item.showCuration", row.item.showCuration)
-			if (type === 'samples') row.item.showSamples = !row.item.showSamples;
-			if (type === 'details') row.item.showRowDetails = !row.item.showRowDetails;
-			console.log("row.item.showRowDetails", row.item.showRowDetails)
-			let after = (row.item.showCuration || row.item.showSamples || row.item.showRowDetails);
-			console.log(before,after);
-			if (before !== after){
-				console.log('here');
-				row.toggleDetails()
-			}
+		toggleRowDetails (row, type){
+			let before = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
+			let idx = this.viewItems[type].indexOf(row.index);
+			if (idx === -1) this.viewItems[type].push(row.index);
+			else this.viewItems[type].splice(idx,1)
+			let after = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
+			if (before != after) 	row.toggleDetails()
 		}
+
 	},
 	computed: {
 		data() {
