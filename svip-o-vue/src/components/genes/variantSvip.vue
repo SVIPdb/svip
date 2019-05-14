@@ -78,9 +78,10 @@
 							</template>
 						</b-table>
 					</b-card>
-					<b-card v-if="viewItems['curation'].indexOf(row.index) > -1">
-						<p>curation</p>
-					</b-card>
+					<div v-if="viewItems['curation'].indexOf(row.index) > -1">
+						<!-- TODO be specific for the disease. Now works but probably not the most elegant solution -->
+						<svipShowCuration :curationData="variant.svip_data.curation_entries" :disease_type="row.item.name"></svipShowCuration>
+					</div>
 					<b-card v-if="viewItems['samples'].indexOf(row.index) > -1">
 						<p>samples</p>
 					</b-card>
@@ -90,10 +91,8 @@
 				</template>
 			</b-table>
 		</div>
-		<div class="card">
-			<!-- TODO be specific for the disease -->
-			<svipShowCuration :curationData="variant.svip_data.curation_entries"></svipShowCuration>
-		</div>
+		<!-- <div class="card">
+		</div> -->
 
 	</div>
 </template>
@@ -196,6 +195,7 @@ export default {
 			else this.viewItems[type].splice(idx,1)
 			let after = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
 			if (before != after) 	row.toggleDetails()
+			console.log("row", row)
 		}
 
 	},
