@@ -1,30 +1,24 @@
 <template>
-	<div class="row">
-		<div class="col-3 col-sm-4">
-			<!--
-      -----------------------------------------------------------------------------------------------------
-      ---
-      -----------------------------------------------------------------------------------------------------
-      -->
-			<b-card>
-				<table class="table table-sm table-hover filtering-table">
-					<thead>
-						<tr>
-							<th>{{curationData}} TOTO</th>
-							<th># of Samples</th>
-              <!-- {{$route}} -->
-						</tr>
-					</thead>
-					<tbody>
-						<!-- <tr v-for="d in row.item.diseases" :key="d.disease" @click="currentFilter.phenotype__term = d.disease" :class="currentFilter.phenotype__term === d.disease ? 'pointer table-active' : 'pointer'">
-							<td>{{ titleCase(d.disease) }}</td>
-							<td>{{ d.count.toLocaleString() }}</td>
-						</tr> -->
-					</tbody>
-				</table>
-			</b-card>
-		</div>
-	</div>
+  <!-- <div class="col-sm-auto"> -->
+  <div class="card mt-3">
+    <div class="card-header">
+      <div class="card-title">Curation details</div>
+    </div>
+    <div class="card-body">
+      <b-table :items="curationDataFiltered">
+        <template slot="actions" slot-scope="row">
+          <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+          <!-- <b-button size="sm" @click.stop="row.toggleDetails">
+          {{ row.detailsShowing ? "Hide" : "Show" }} Details
+        </b-button> -->
+        </template>
+      <!-- <template slot="name" slot-scope="row">
+      {{ row.item.name }}
+    </template> -->
+    </b-table>
+    </div>
+  </div>
+<!-- </div> -->
 </template>
 
 <script>
@@ -34,55 +28,47 @@
 // import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
 
 export default {
-	name: "svipShowCuration",
-	props: {
-		// row: {type: Object, required: true}
-    curationData: Object
-	},
-	// components: {RowDetailsHeader, PubmedPopover},
-	data() {
-		return {
-			// currentFilter: {
-			// 	phenotype__term: '',
-			// 	environmentalcontext__description: '',
-			// 	search: ''
-			// },
-			// currentPage: 1,
-			// perPage: 20,
-			// totalRows: this.row.item.association_count,
-			// fields: [
-			// 	{
-			// 		key: "disease",
-			// 		label: "Disease",
-			// 		sortable: true
-			// 	},
-			// 	{
-			// 		key: "contexts",
-			// 		label: "Tissue",
-			// 		sortable: true
-			// 	},
-			// 	{
-			// 		key: "publications",
-			// 		label: "References",
-			// 		sortable: false
-			// 	},
-			// ]
-		}
-	},
-	computed: {
-		// packedFilter() {
-		// 	return JSON.stringify(this.currentFilter);
-		// }
-	},
-	methods: {
-		// metaUpdated({ count }) {
-		// 	this.totalRows = count;
-		// },
-		// makeAssociationProvider,
-		// normalizeItemList,
-		// titleCase,
-		// desnakify
-	}
+  name: "svipShowCuration",
+  props: {
+    // row: {type: Object, required: true}
+    curationData: Array,
+    disease_type: String
+  },
+  // components: {RowDetailsHeader, PubmedPopover},
+  data() {
+    return {
+
+      // fields: [
+      //   {
+      //     key: "",
+      //     label: "",
+      //     sortable: true
+      //   },
+      //   {
+      //     key: "",
+      //     label: "",
+      //     sortable: true
+      //   },
+      //   {
+      //     key: "",
+      //     label: "",
+      //     sortable: true
+      //   }
+      // ]
+    }
+  },
+  computed: {
+    curationDataFiltered: function () {
+      // return this.disease_type.substring(1, 4)
+      let myDiseaseType = this.disease_type
+      this.curationData = _.filter(this.curationData, function(x){
+        return x.disease == myDiseaseType;
+      })
+      return this.curationData;
+    }
+  },
+  methods: {
+  }
 }
 </script>
 

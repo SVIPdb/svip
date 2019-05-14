@@ -70,7 +70,7 @@
 				</template>
 
 				<template slot="row-details" slot-scope="row">
-					
+
 					<b-card v-if="viewItems['details'].indexOf(row.index) > -1">
 						<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
 							<template slot="reference" slot-scope="data">
@@ -78,22 +78,21 @@
 							</template>
 						</b-table>
 					</b-card>
-					<b-card v-if="viewItems['curation'].indexOf(row.index) > -1">
-						<p>curation</p>
-					</b-card>
+					<div v-if="viewItems['curation'].indexOf(row.index) > -1">
+						<!-- TODO be specific for the disease. Now works but probably not the most elegant solution -->
+						<svipShowCuration :curationData="variant.svip_data.curation_entries" :disease_type="row.item.name"></svipShowCuration>
+					</div>
 					<b-card v-if="viewItems['samples'].indexOf(row.index) > -1">
 						<p>samples</p>
 					</b-card>
-					
-					
-					
+
+
+
 				</template>
 			</b-table>
 		</div>
-		<div class="card">
-			<!-- TODO be specific for the disease -->
-			<svipShowCuration :curationData="variant.svip_data.curation_entries"></svipShowCuration>
-		</div>
+		<!-- <div class="card">
+		</div> -->
 
 	</div>
 </template>
@@ -196,25 +195,11 @@ export default {
 			else this.viewItems[type].splice(idx,1)
 			let after = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
 			if (before != after) 	row.toggleDetails()
+			console.log("row", row)
 		}
 
 	},
 	computed: {
-<<<<<<< HEAD
-		data() {
-			let items = this.variant.svip_data.diseases;
-			_.forEach(items, i => {
-				// i._showDetails = false;
-				i.showRowDetails = false;
-				i.showCuration = false;
-				i.showSamples = false;
-			})
-			console.log("this.variant.svip_data.curation_entries", this.variant.svip_data.curation_entries)
-
-			return items;
-		},
-=======
->>>>>>> 93b8550a298ec8ef6a7d99d6d0b2c6886570396c
 		totalPatients() {
 			return this.variant.svip_data.diseases.reduce((acc, x) => acc + x.nb_patients, 0);
 		}
