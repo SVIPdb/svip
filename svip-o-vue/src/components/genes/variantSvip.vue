@@ -188,18 +188,9 @@ export default {
 
 	},
 	computed: {
-		data() {
-			let items = this.variant.svip_data.diseases;
-			_.forEach(items, i => {
-				// i._showDetails = false;
-				i.showRowDetails = false;
-				i.showCuration = false;
-				i.showSamples = false;
-			})
-			console.log("this.variant.svip_data.curation_entries", this.variant.svip_data.curation_entries)
-
-			return items;
-		},
+		...mapGetters({
+			variant: 'variant'
+		}),
 		totalPatients() {
 			return this.variant.svip_data.diseases.reduce((acc, x) => acc + x.nb_patients, 0);
 		}
