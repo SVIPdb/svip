@@ -83,7 +83,9 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filterset_class = VariantFilter
     # filter_fields = ('gene', 'name', 'description', 'so_name')
-    search_fields = ('name', 'description', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'gene__symbol')
+    search_fields = (
+        'name', 'description', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'gene__symbol', 'sources'
+    )
     ordering_fields = ('name', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'sources')
 
     @action(detail=False)
