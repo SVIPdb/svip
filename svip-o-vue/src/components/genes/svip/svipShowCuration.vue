@@ -27,48 +27,49 @@
 // import PubmedPopover from "@/components/widgets/PubmedPopover";
 // import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
 
-export default {
-  name: "svipShowCuration",
-  props: {
-    // row: {type: Object, required: true}
-    curationData: Array,
-    disease_type: String
-  },
-  // components: {RowDetailsHeader, PubmedPopover},
-  data() {
-    return {
+import { mapGetters } from "vuex"
 
-      // fields: [
-      //   {
-      //     key: "",
-      //     label: "",
-      //     sortable: true
-      //   },
-      //   {
-      //     key: "",
-      //     label: "",
-      //     sortable: true
-      //   },
-      //   {
-      //     key: "",
-      //     label: "",
-      //     sortable: true
-      //   }
-      // ]
-    }
-  },
-  computed: {
-    curationDataFiltered: function () {
-      // return this.disease_type.substring(1, 4)
-      let myDiseaseType = this.disease_type
-      this.curationData = _.filter(this.curationData, function(x){
-        return x.disease == myDiseaseType;
-      })
-      return this.curationData;
-    }
-  },
-  methods: {
-  }
+export default {
+	name: "svipShowCuration",
+	props: {
+		disease_type: String
+	},
+	// components: {RowDetailsHeader, PubmedPopover},
+	data() {
+		return {
+
+			// fields: [
+			//   {
+			//     key: "",
+			//     label: "",
+			//     sortable: true
+			//   },
+			//   {
+			//     key: "",
+			//     label: "",
+			//     sortable: true
+			//   },
+			//   {
+			//     key: "",
+			//     label: "",
+			//     sortable: true
+			//   }
+			// ]
+		}
+	},
+	computed: {
+		...mapGetters({
+			variant: 'variant'
+		}),
+		curationDataFiltered () {
+			let vm = this;
+			return  _.filter(this.variant.svip_data.curation_entries, x => {
+				return x.disease === vm.disease_type;
+			})
+		}
+	},
+	methods: {
+	}
 }
 </script>
 
