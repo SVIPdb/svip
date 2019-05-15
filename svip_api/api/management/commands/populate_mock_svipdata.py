@@ -15,6 +15,94 @@ import api
 APP_DIR = os.path.dirname(api.__file__)
 SVIP_VARS_JSON = os.path.join(APP_DIR, "fixtures", "svip_variants.json")
 
+# consult COSMIC for disease/tissue types relevant to this variant; otherwise, use the SVIP mock data
+USE_COSMIC_DISEASES = False
+
+CALLERS = [
+    'Freebayes',
+    'SOAPsnp',
+    'realSFS',
+    'SAMtools',
+    'GATK',
+    'Beagle',
+    'IMPUTE2',
+    'MaCH',
+    'SNVmix',
+    'VarScan',
+    'DeepVariant',
+    'Somaticsniper',
+    'JointSNVMix',
+    'NGSEP',
+    'VarDict',
+    'Reveel'
+]
+ALIGNERS = [
+    'Arioc',
+    'BarraCUDA',
+    'BBMap',
+    'BFAST',
+    'BigBWA',
+    'BLASTN',
+    'BLAT',
+    'Bowtie',
+    'BWA',
+    'BWA-PSSM',
+    'CASHX',
+    'Cloudburst',
+    'CUDA-EC',
+    'CUSHAW',
+    'CUSHAW2',
+    'CUSHAW2-GPU',
+    'CUSHAW3',
+    'drFAST',
+    'ELAND',
+    'ERNE',
+    'GASSST',
+    'GEM',
+    'Genalice MAP',
+    'Geneious Assembler',
+    'GensearchNGS',
+    'GMAP and GSNAP',
+    'GNUMAP',
+    'HIVE-hexagon',
+    'IMOS',
+    'Isaac',
+    'LAST',
+    'MAQ',
+    'MOM',
+    'MOSAIK',
+    'MPscan',
+    'Novoalign & NovoalignCS',
+    'NextGENe',
+    'NextGenMap',
+    'Omixon Variant Toolkit',
+    'PALMapper',
+    'Partek Flow',
+    'PASS',
+    'PerM',
+    'PRIMEX',
+    'QPalma',
+    'RazerS',
+    'REAL, cREAL',
+    'RMAP',
+    'rNA',
+    'RTG Investigator',
+    'Segemehl',
+    'SeqMap',
+    'Shrec',
+    'SHRiMP',
+    'SLIDER',
+    'SOCS',
+    'SparkBWA',
+    'Stampy',
+    'SToRM',
+    'Taipan',
+    'UGENE',
+    'VelociMapper',
+    'XpressAlign',
+    'ZOOM'
+]
+
 
 def create_svipvariants(model_variant, model_svip_variant):
     """
@@ -108,19 +196,33 @@ def synthesize_samples(num_samples_per_variant=10):
 
     # for each SVIP variant, produce a random amount of randomly-generated sample data
     for svip_var in svip_variants:
+
         # get (disease, tissue) pairs from COSMIC for the current variant
-        disease_tissues = (
-            VariantInSource.objects
-                .filter(
-                    # ~Q(association__phenotype__term__in=('other', 'NS')),
-                    variant=svip_var.variant,
-                    source__name='cosmic'
-                )
-                .values(
-                    disease=F('association__phenotype__term'),
-                    tissue=F('association__environmentalcontext__description')
-                ).distinct()
-        )
+        if USE_COSMIC_DISEASES:
+            disease_tissues = (
+                VariantInSource.objects
+                    .filter(
+                        # ~Q(association__phenotype__term__in=('other', 'NS')),
+                        # variant=svip_var.variant,
+                        source__name='cosmic'
+                    )
+                    .values(
+                        disease=F('association__phenotype__term'),
+                        tissue=F('association__environmentalcontext__description')
+                    ).distinct()
+            )
+        else:
+            tissues = {
+                'Lung Adenocarcinoma': 'Lung',
+                'Non-Small Cell Lung Cancer': 'Lung',
+                'Non-Small Cell Lung Carcinoma': 'Lung',
+                'Papillary Thyroid Carcinoma': 'Thyroid',
+                'Breast Cancer': 'Breast',
+                'Colorectal Cancer': 'Colorectal',
+                'Skin Melanoma': 'Skin'
+            }
+            disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.data['diseases']]
+
 
         # TODO: decide if the sample data and hospital should be the same for all samples for this variant or not
 
@@ -136,6 +238,8 @@ def synthesize_samples(num_samples_per_variant=10):
 
         # presumably the samples for the same variant will come from the sample hospital, too?
         hospital = random.choice(('USZ', 'USB'))
+        caller = random.choice(CALLERS)
+        aligner = random.choice(ALIGNERS)
 
         for _ in range(num_samples_per_variant):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
@@ -144,7 +248,7 @@ def synthesize_samples(num_samples_per_variant=10):
                 'svip_variant': svip_var,
                 'disease': disease,
                 'sample_id': str(sample_id),
-                'year_of_birth': str(random.randint(1945, 1988)),  # random between 1945 and 1988
+                'year_of_birth': str(random.randint(1935, 1988)),
                 'gender': random.choice(('Male', 'Female')),
                 'hospital': hospital,
                 'medical_service': 'Pathology',
@@ -159,17 +263,16 @@ def synthesize_samples(num_samples_per_variant=10):
                 'panel': 'Hotspot v2',
                 'coverage': '123X',
                 'calling_strategy': random.choice(('Matched', 'Tumor only')),
-                'caller': 'xxx',
-                'aligner': 'xyz',
-                'software': ' abc',
-                'software_version': 'Mutect',
+                'caller': caller,
+                'aligner': aligner,
+                'software': '-',
+                'software_version': '-',
                 'platform': 'Illumina',
-                'contact': 'email'
+                'contact': 'mailto:feedback@svip.ch'
             })
             candidate.save()
 
-            sample_id += random.randint(100, 1000)
-
+            sample_id += random.randint(300, 2000)
             created_samples += 1
 
     return created_samples, len(svip_variants) * num_samples_per_variant
