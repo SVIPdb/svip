@@ -4,9 +4,9 @@
     <div class="card-header">
       <div class="card-title">Curation details</div>
     </div>
-    <div class="card-body">
-      <b-table :items="curationDataFiltered">
-        <template slot="actions" slot-scope="row">
+    <!-- <div class="card-body"> -->
+      <b-table :fields="fields" :items="curationDataFiltered">
+        <template slot="actions">
           <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
           <!-- <b-button size="sm" @click.stop="row.toggleDetails">
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
@@ -16,7 +16,7 @@
       {{ row.item.name }}
     </template> -->
     </b-table>
-    </div>
+    <!-- </div> -->
   </div>
 <!-- </div> -->
 </template>
@@ -37,24 +37,48 @@ export default {
 	// components: {RowDetailsHeader, PubmedPopover},
 	data() {
 		return {
-
-			// fields: [
-			//   {
-			//     key: "",
-			//     label: "",
-			//     sortable: true
-			//   },
-			//   {
-			//     key: "",
-			//     label: "",
-			//     sortable: true
-			//   },
-			//   {
-			//     key: "",
-			//     label: "",
-			//     sortable: true
-			//   }
-			// ]
+			fields: [
+			  {
+			    key: "disease",
+			    label: "Disease",
+			    sortable: true
+			  },
+			  {
+			    key: "type_of_evidence",
+			    label: "Type Of Evidence",
+			    sortable: true
+			  },
+        {
+			    key: "drug",
+			    label: "Drug",
+			    sortable: true
+			  },
+        {
+			    key: "effect",
+			    label: "Effect",
+			    sortable: true
+			  },
+        {
+			    key: "tier_level_criteria",
+			    label: "Tier Level Criteria",
+			    sortable: true
+			  },
+        {
+			    key: "summary",
+			    label: "Summary",
+			    sortable: true
+			  },
+        {
+			    key: "support",
+			    label: "Support",
+			    sortable: true
+			  },
+        {
+			    key: "references",
+			    label: "References",
+			    sortable: true
+			  }
+			]
 		}
 	},
 	computed: {
@@ -74,4 +98,7 @@ export default {
 </script>
 
 <style scoped>
+.card-header:first-child {
+    background-color: rgb(0, 128, 0, 0.5);
+}
 </style>

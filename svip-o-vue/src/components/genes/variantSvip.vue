@@ -20,80 +20,78 @@
 	*****************************************************************/
 -->
 
-	<div class="card mt-3">
-		<div class="card-header">
-			<div class="card-title">
-				SVIP Information
-				<span class="text-danger float-right">WARNING: fake data - only as a demo</span>
-			</div>
+<div class="card mt-3">
+	<div class="card-header">
+		<div class="card-title">
+			SVIP Information
+			<span class="text-danger float-right">WARNING: fake data - only as a demo</span>
 		</div>
-		<div class="card-body">
-			<b-table :fields="fields" :items="variant.svip_data.diseases" :sort-by.sync="sortBy" :sort-desc="false">
-				<template slot="actions" slot-scope="row">
-					<div style="text-align: right;">
-						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-		        <b-button size="sm" @click="toggleRowDetails(row,'details')" class="mr-2" variant="primary" :pressed="row.item.show_details">
-		          {{ row.item.show_details ? 'Hide' : 'Show'}} Details
-		        </b-button>
-		        <b-button size="sm" @click="toggleRowDetails(row,'curation')" class="mr-2" variant="success" :pressed="row.item.show_curation">
-		          {{ row.item.show_curation ? 'Hide' : 'Show'}} Curation
-		        </b-button>
-		        <b-button size="sm" @click="toggleRowDetails(row,'samples')" class="mr-2" :pressed="row.item.show_samples">
-		          {{ row.item.show_samples ? 'Hide' : 'Show'}} Samples
-		        </b-button>
-					</div>
-				</template>
-				<template slot="name" slot-scope="row">
-					<span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
-				</template>
-
-				<template slot="age" slot-scope="data">
-					<age-distribution :data="data.item.age_distribution"></age-distribution>
-				</template>
-
-				<template slot="gender" slot-scope="data">
-					<gender-plot :data="data.item.gender_balance"></gender-plot>
-				</template>
-
-				<template slot='pathogenicity' slot-scope='data'>
-					<div style="vertical-align: middle; display: inline-block;">
-						<span v-if="data.item.pathogenicity">{{ data.item.pathogenicity }}</span>
-						<span v-else class="unavailable">unavailable</span>
-					</div>
-				</template>
-
-				<template slot="score" slot-scope="data">
-					<icon :name="data.item.score < 1 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 2 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 3 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-					<icon :name="data.item.score < 4 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
-				</template>
-
-				<template slot="row-details" slot-scope="row">
-
-					<b-card v-if="row.item.show_details">
-						<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
-							<template slot="reference" slot-scope="data">
-								<PubmedPopover :pubmeta="{ pmid: data.value }" />
-							</template>
-						</b-table>
-					</b-card>
-					<div v-if="row.item.show_curation">
-						<!-- TODO be specific for the disease. Now works but probably not the most elegant solution -->
-						<svip-show-curation :disease_type="row.item.name"></svip-show-curation>
-					</div>
-					<b-card v-if="row.item.show_samples">
-						<p>samples</p>
-					</b-card>
-
-
-				</template>
-			</b-table>
-		</div>
-		<!-- <div class="card">
-		</div> -->
-
 	</div>
+	<div class="card-body">
+		<b-table :fields="fields" :items="variant.svip_data.diseases" :sort-by.sync="sortBy" :sort-desc="false">
+			<template slot="actions" slot-scope="row">
+				<div style="text-align: right;">
+					<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+					<b-button size="sm" @click="toggleRowDetails(row,'details')" class="mr-2" variant="primary" :pressed="row.item.show_details">
+						{{ row.item.show_details ? 'Hide' : 'Show'}} Details
+					</b-button>
+					<b-button  v-access="'curators'" size="sm" @click="toggleRowDetails(row,'curation')" class="mr-2" variant="success" :pressed="row.item.show_curation" style="background-color:green;">
+						{{ row.item.show_curation ? 'Hide' : 'Show'}} Curation
+					</b-button>
+					<b-button v-access="'clinicians'" size="sm" @click="toggleRowDetails(row,'samples')" class="mr-2" :pressed="row.item.show_samples" style="background-color:purple;">
+						{{ row.item.show_samples ? 'Hide' : 'Show'}} Samples
+					</b-button>
+				</div>
+			</template>
+			<template slot="name" slot-scope="row">
+				<span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
+			</template>
+
+			<template slot="age" slot-scope="data">
+				<age-distribution :data="data.item.age_distribution"></age-distribution>
+			</template>
+
+			<template slot="gender" slot-scope="data">
+				<gender-plot :data="data.item.gender_balance"></gender-plot>
+			</template>
+
+			<template slot='pathogenicity' slot-scope='data'>
+				<div style="vertical-align: middle; display: inline-block;">
+					<span v-if="data.item.pathogenicity">{{ data.item.pathogenicity }}</span>
+					<span v-else class="unavailable">unavailable</span>
+				</div>
+			</template>
+
+			<template slot="score" slot-scope="data">
+				<icon :name="data.item.score < 1 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+				<icon :name="data.item.score < 2 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+				<icon :name="data.item.score < 3 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+				<icon :name="data.item.score < 4 ? 'regular/star' : 'star'" style="margin-right: 5px"></icon>
+			</template>
+
+			<template slot="row-details" slot-scope="row">
+
+				<div v-if="row.item.show_details">
+					<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
+						<template slot="reference" slot-scope="data">
+							<PubmedPopover :pubmeta="{ pmid: data.value }" />
+						</template>
+					</b-table>
+				</div>
+				<div v-if="row.item.show_curation">
+					<svip-show-curation :disease_type="row.item.name"></svip-show-curation>
+				</div>
+				<div v-if="row.item.show_samples">
+					<svip-show-samples :disease_type="row.item.name"></svip-show-samples>
+				</div>
+
+			</template>
+		</b-table>
+	</div>
+	<!-- <div class="card">
+</div> -->
+
+</div>
 </template>
 
 
@@ -105,11 +103,12 @@ import genderPlot from "@/components/plots/genderPlot";
 import {titleCase} from "../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 import svipShowCuration from "@/components/genes/svip/svipShowCuration";
+import svipShowSamples from "@/components/genes/svip/svipShowSamples";
 import { mapGetters } from 'vuex'
 
 export default {
 	name: "VariantSVIP",
-	components: {ageDistribution, PubmedPopover, genderPlot, svipShowCuration},
+	components: {ageDistribution, PubmedPopover, genderPlot, svipShowCuration, svipShowSamples},
 	data() {
 		return {
 			sortBy: "name",
