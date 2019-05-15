@@ -1,12 +1,19 @@
 <template>
 	<div class="trunk">
+		<h1>Log In to SVIP</h1>
+		<p>Enter your credentials below to log in to your SVIP account.</p>
+
 		<transition name="fade">
-			<div v-if="error_msg" class="errors">
-				<h3>Errors:</h3>
+			<div v-if="error_msg && error_msg.non_field_errors" class="errors">
+				<h3>Error{{ error_msg.non_field_errors.length !== 1 ? 's' : ''}}:</h3>
 				<div v-if="error_msg.non_field_errors && error_msg.non_field_errors.length === 1">{{ error_msg.non_field_errors[0] }}</div>
 				<ul v-else>
 					<li v-for="(err, idx) in error_msg.non_field_errors" :key="idx">{{ err }}</li>
 				</ul>
+			</div>
+			<div v-else-if="error_msg" class="errors">
+				<h3>Server Error:</h3>
+				<div>{{ error_msg }}</div>
 			</div>
 		</transition>
 
@@ -35,8 +42,12 @@ export default {
 		return {
 			username: '',
 			password: '',
-			error_msg: null
+			error_msg: this.default_error_msg && { non_field_errors: [this.default_error_msg] }
 		}
+	},
+	props: {
+		default_error_msg: { type: String },
+		nextRoute: { type: String }
 	},
 	methods: {
 		onSubmit(evt) {
@@ -46,9 +57,22 @@ export default {
 			store.dispatch("login", { username: this.username, password: this.password }).then(() => {
 				// we presume success if we reached this point
 				this.$snotify.success(`Logged in as ${this.username}`);
-				this.$router.push("/");
+
+				if (this.nextRoute) {
+					this.$router.push(this.nextRoute);
+				}
+				else {
+					this.$router.push("/");
+				}
 			}).catch((err) => {
-				this.error_msg = err.response.data;
+				if (!err.response || !err.response.hasOwnProperty('data')) {
+					// if it's a low-level error, e.g. the server's gone, there won't be any payload
+					this.error_msg = err.message;
+				}
+				else {
+					this.error_msg = err.response.data;
+				}
+
 				return true;
 			});
 		}

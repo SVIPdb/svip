@@ -19,17 +19,15 @@ import store from "./store";
 
 Vue.config.productionTip = false;
 
-Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop } });
+Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop, showProgressBar: false } });
 Vue.use(BootstrapVue);
 Vue.use(VeeValidate, {fieldsBagName: "formFields"});
-Vue.use(lodash);
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
 Vue.component("v-select", vSelect);
-// globally (in your main .js file)
 
-new Vue({
+export default new Vue({
 	el: "#app",
 	router,
 	store,

@@ -12,6 +12,9 @@ import UserInfo from "@/components/user/UserInfo";
 Vue.use(Router);
 // Vue.use(ClientTable);
 
+import store from '@/store';
+import {TokenErrors} from "../store/modules/users";
+
 const router = new Router({
 	mode: "history",
 	routes: [
@@ -34,7 +37,8 @@ const router = new Router({
 		{
 			path: "/login",
 			name: "login",
-			component: Login
+			component: Login,
+			props: true
 		},
 		{
 			path: "/user-info",
@@ -50,28 +54,19 @@ const router = new Router({
 	]
 });
 
-// function requireAuth (to, from, next) {
-//   store.dispatch('getCredentials').then(test => {
-//     if (!test) {
-//       next({
-//         path: '/',
-//         query: { redirect: to.fullPath }
-//       })
-//     } else {
-//       if (to.matched.some(record => record.meta.permissions.length > 0)) {
-//         store.dispatch('checkPermissions', { permissions: to.meta.permissions, condition: to.meta.condition }).then(res => {
-//           if (res) {
-//             next()
-//           } else {
-//             next({
-//               path: '/permissionDenied'
-//             })
-//           }
-//         })
-//       } else {
-//         next()
-//       }
-//     }
-//   })
-// }
+router.beforeEach((to, from, next) => {
+	// FIXME: only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
+	// (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
+	store.dispatch("checkCredentials").then((result) => {
+		if (!result.valid && (result.reason === TokenErrors.EXPIRED || result.reason === TokenErrors.REFRESH_EXPIRED) && to.name !== "login") {
+			// if our token's expired, go get a new one from the login page,
+			// remembering where we eventually want to go to as well
+			next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
+		}
+		else {
+			next();
+		}
+	});
+});
+
 export default router;

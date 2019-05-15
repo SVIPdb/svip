@@ -13,7 +13,7 @@
 			<!-- Right aligned nav items -->
 			<b-navbar-nav v-if="user" class="ml-auto">
 				<b-navbar-nav right>
-					<b-nav-text class="login-name">logged in as <router-link to="user-info">{{ user.username }}</router-link> -</b-nav-text>
+					<b-nav-text class="login-name">logged in as <router-link to="/user-info">{{ user.username }}</router-link> -</b-nav-text>
 					<b-nav-item>
 						<a class="pointer" @click="logout()"><icon name="sign-out-alt" /> log out</a>
 					</b-nav-item>
@@ -23,10 +23,9 @@
 			<b-navbar-nav v-else class="ml-auto">
 				<b-navbar-nav right>
 					<b-nav-item v-if="$router.currentRoute !== '/login'">
-						<router-link class="pointer" :to="{name: 'login'}"><icon name="sign-in-alt" /> log in</router-link>
+						<router-link class="pointer" :to="{name: 'login', params: { nextRoute: whereFromHere }}"><icon name="sign-in-alt" /> log in</router-link>
 					</b-nav-item>
 				</b-navbar-nav>
-
 			</b-navbar-nav>
 		</b-collapse>
 	</b-navbar>
@@ -42,11 +41,12 @@ export default {
 	computed: {
 		...mapGetters({
 			user: "currentUser"
-		})
-	},
-	mounted() {
-		// FIXME: this applies the user's cached login info if it exists; maybe it should be somewhere more central?
-		store.dispatch("checkCredentials");
+		}),
+		whereFromHere() {
+			// if we're at the login page, go home after logging in.
+			// if we're anywhere else, return to that page after we're done
+			return this.$route.path !== '/login' ? this.$route.path : '/';
+		}
 	},
 	methods: {
 		logout() {

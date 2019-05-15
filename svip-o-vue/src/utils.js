@@ -44,3 +44,26 @@ export function desnakify(x, lowerCaseAll=false) {
 	if (!x) { return x; }
 	return titleCase(x.split("_").join(" "), lowerCaseAll);
 }
+
+export function millisecondsToStr( milliseconds ) {
+	/***
+	 * Prints 'milliseconds' as a human-readable duration, e.g. 11y 51d 10h 2m 16.00s
+	 * @type {number}
+	 */
+	let temp = milliseconds / 1000;
+	const years = Math.floor( temp / 31536000 ),
+		days = Math.floor( ( temp %= 31536000 ) / 86400 ),
+		hours = Math.floor( ( temp %= 86400 ) / 3600 ),
+		minutes = Math.floor( ( temp %= 3600 ) / 60 ),
+		seconds = temp % 60;
+
+	if ( days || hours || seconds || minutes ) {
+		return ( years ? years + "y " : "" ) +
+			( days ? days + "d " : "" ) +
+			( hours ? hours + "h " : ""  ) +
+			( minutes ? minutes + "m " : "" ) +
+			Number.parseFloat( seconds ).toFixed(0) + "s";
+	}
+
+	return "< 1s";
+}

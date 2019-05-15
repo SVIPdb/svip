@@ -8,10 +8,16 @@
 					<dt>Username</dt>
 					<dd>{{ user.username }}</dd>
 
+					<dt>User ID</dt>
+					<dd>{{ user.user_id }}</dd>
+
 					<dt>Groups</dt>
 					<dd>
 						<span v-for="(group, idx) in user.groups" :key="group"><span v-if="idx !== 0">, </span>{{ group }}</span>
 					</dd>
+
+					<dt>Login Expires In</dt>
+					<dd>{{ remaining(currentTime) }}</dd>
 				</dl>
 			</div>
 		</div>
@@ -26,13 +32,35 @@
 
 <script>
 import {mapGetters} from "vuex";
+import {millisecondsToStr} from "@/utils";
+import store from '@/store';
 
 export default {
 	name: "UserInfo",
+	data() {
+		return {
+			currentTime: Date.now()
+		};
+	},
 	computed: {
 		...mapGetters({
 			user: "currentUser"
 		})
+	},
+	methods: {
+		remaining(curTime) {
+			const diff = (store.getters.jwtExp * 1000) - curTime;
+			return (diff >= 0) ? millisecondsToStr(diff) : "expired!";
+		}
+	},
+	created() {
+		store.dispatch("checkCredentials").then((result) => {
+			console.log("Logged in?: ", result);
+		});
+
+		setInterval(() => {
+			this.currentTime  = Date.now();
+		}, 1000)
 	}
 }
 </script>
