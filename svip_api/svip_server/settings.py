@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from datetime import timedelta
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'ceqqi+r54k4btz4v_3#kl3_%xpbxopm9fag@vq-6q72-v!^lg$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'svip-dev.nexus.ethz.ch']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'svip-dev.nexus.ethz.ch', 'svip-test.nexus.ethz.ch']
 
 # allows django to detect that we're running behind a secure proxy (e.g., nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -142,19 +144,34 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.StandardResultsSetPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'rest_framework_simplejwt.tokens.SlidingToken'
+    ),
+
+    # 'SLIDING_TOKEN_LIFETIME': timedelta(minutes=30),
+    'JWT_AUTH_COOKIE': None # 'jwt-cookie'
+}
+
 # CORS config (https://github.com/ottoyiu/django-cors-headers/)
-CORS_ORIGIN_ALLOW_ALL = True  # for now, we won't whitelist any hosts
-# CORS_ORIGIN_WHITELIST = (
-#     'localhost:8000',
-#     'localhost:8080',
-# )
+# CORS_ORIGIN_ALLOW_ALL = True  # for now, we won't whitelist any hosts
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8000',
+    'localhost:8080',
+    'svip-dev.nexus.ethz.ch',
+    'svip-test.nexus.ethz.ch'
+)
+CORS_ALLOW_CREDENTIALS = True
 
 # Elasticsearch configuration
 # ELASTICSEARCH_DSL = {
