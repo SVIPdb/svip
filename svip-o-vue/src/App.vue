@@ -13,7 +13,7 @@
 <script>
 import navHeader from "@/components/navheader";
 import navFooter from "@/components/navfooter";
-import '@/components/widgets/markup'; // adds components 'optional', 'coordinates'
+import '@/components/widgets/StyledLabels'; // adds components 'optional', 'coordinates'
 
 export default {
 	components: {navHeader, navFooter},
