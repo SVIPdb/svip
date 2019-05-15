@@ -18,7 +18,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, re_path, include
 
 # jwt auth
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView, TokenRefreshView, TokenVerifyView, TokenRefreshSlidingView
+)
 
 # drf-yasg schema metadata
 from drf_yasg.views import get_schema_view
@@ -26,7 +28,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 
 import api.urls as api_router
-from svip_server.tokens import GroupsTokenObtainPairView
+from svip_server.tokens import GroupsTokenObtainPairView, GroupsTokenObtainSlidingView, TokenInfo, TokenInvalidate
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -51,6 +53,9 @@ urlpatterns = [
     re_path(r'^api/token/$', GroupsTokenObtainPairView.as_view(), name='token_obtain_pair'),
     re_path(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     re_path(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    # used for clients to retrieve non-sensitive token info if using httponly cookies
+    re_path(r'^api/token/info/$', TokenInfo.as_view(), name='token_info'),
+    re_path(r'^api/token/invalidate/$', TokenInvalidate.as_view(), name='token_invalidate'),
 
     # drf routes
     re_path(r'^api/v1/', include(api_router.router.urls)),
