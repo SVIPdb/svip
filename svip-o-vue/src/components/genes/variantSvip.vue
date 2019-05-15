@@ -32,14 +32,14 @@
 				<template slot="actions" slot-scope="row">
 					<div style="text-align: right;">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-		        <b-button size="sm" @click="toggleRowDetails(row,'details')" class="mr-2" variant="primary" :pressed=" viewItems['details'].indexOf(row.index) > -1">
-		          {{ viewItems['details'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Details
+		        <b-button size="sm" @click="toggleRowDetails(row,'details')" class="mr-2" variant="primary" :pressed="row.item.show_details">
+		          {{ row.item.show_details ? 'Hide' : 'Show'}} Details
 		        </b-button>
-		        <b-button size="sm" @click="toggleRowDetails(row,'curation')" class="mr-2" variant="success" :pressed=" viewItems['curation'].indexOf(row.index) > -1">
-		          {{ viewItems['curation'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Curation
+		        <b-button size="sm" @click="toggleRowDetails(row,'curation')" class="mr-2" variant="success" :pressed="row.item.show_curation">
+		          {{ row.item.show_curation ? 'Hide' : 'Show'}} Curation
 		        </b-button>
-		        <b-button size="sm" @click="toggleRowDetails(row,'samples')" class="mr-2" :pressed=" viewItems['samples'].indexOf(row.index) > -1">
-		          {{ viewItems['samples'].indexOf(row.index) > -1 ? 'Hide' : 'Show'}} Samples
+		        <b-button size="sm" @click="toggleRowDetails(row,'samples')" class="mr-2" :pressed="row.item.show_samples">
+		          {{ row.item.show_samples ? 'Hide' : 'Show'}} Samples
 		        </b-button>
 					</div>
 				</template>
@@ -71,21 +71,20 @@
 
 				<template slot="row-details" slot-scope="row">
 
-					<b-card v-if="viewItems['details'].indexOf(row.index) > -1">
+					<b-card v-if="row.item.show_details">
 						<b-table :fields="evidenceFields" :items="row.item.evidences" :small="true">
 							<template slot="reference" slot-scope="data">
 								<PubmedPopover :pubmeta="{ pmid: data.value }" />
 							</template>
 						</b-table>
 					</b-card>
-					<div v-if="viewItems['curation'].indexOf(row.index) > -1">
+					<div v-if="row.item.show_curation">
 						<!-- TODO be specific for the disease. Now works but probably not the most elegant solution -->
-						<svipShowCuration :curationData="variant.svip_data.curation_entries" :disease_type="row.item.name"></svipShowCuration>
+						<svip-show-curation :disease_type="row.item.name"></svip-show-curation>
 					</div>
-					<b-card v-if="viewItems['samples'].indexOf(row.index) > -1">
+					<b-card v-if="row.item.show_samples">
 						<p>samples</p>
 					</b-card>
-
 
 
 				</template>
@@ -106,13 +105,11 @@ import genderPlot from "@/components/plots/genderPlot";
 import {titleCase} from "../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 import svipShowCuration from "@/components/genes/svip/svipShowCuration";
+import { mapGetters } from 'vuex'
 
 export default {
 	name: "VariantSVIP",
 	components: {ageDistribution, PubmedPopover, genderPlot, svipShowCuration},
-	props: {
-		variant: {type: Object, required: true}
-	},
 	data() {
 		return {
 			sortBy: "name",
@@ -174,12 +171,7 @@ export default {
 				{ key: "drug", label: "Drug", sortable: true },
 				{ key: "tier_level", label: "Tier Level", sortable: true },
 				{ key: "reference", label: "References", sortable: false },
-			],
-			viewItems: {
-				curation: [],
-				details: [],
-				samples: []
-			}
+			]
 		};
 	},
 	methods: {
@@ -189,13 +181,10 @@ export default {
 		// 	svipShowCuration;
 		// },
 		toggleRowDetails (row, type){
-			let before = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
-			let idx = this.viewItems[type].indexOf(row.index);
-			if (idx === -1) this.viewItems[type].push(row.index);
-			else this.viewItems[type].splice(idx,1)
-			let after = (this.viewItems['curation'].indexOf(row.index) > -1 || this.viewItems['samples'].indexOf(row.index) > -1 || this.viewItems['details'].indexOf(row.index) > -1);
+			let before = (row.item.show_curation || row.item.show_samples || row.item.show_details)
+			row.item['show_'+type] = !row.item['show_'+type]
+			let after = (row.item.show_curation || row.item.show_samples || row.item.show_details)
 			if (before != after) 	row.toggleDetails()
-			console.log("row", row)
 		}
 
 	},
