@@ -26,11 +26,11 @@ class Migration(migrations.Migration):
 
         # then, map the jsonb objects to arrays
         migrations.RunSQL("""
-            alter table svip_api.public.api_gene alter sources type text[]
+            alter table api_gene alter sources type text[]
             using jsonb_keys_to_array(sources);
             """,
         reverse_sql="""
-            alter table svip_api.public.api_gene alter sources type jsonb
+            alter table api_gene alter sources type jsonb
             using jsonb_object(
                 sources,
                 array_fill(null::text, array[array_length(sources, 1)])
@@ -38,11 +38,11 @@ class Migration(migrations.Migration):
             """),
 
         migrations.RunSQL("""
-            alter table svip_api.public.api_variant alter sources type text[]
+            alter table api_variant alter sources type text[]
             using jsonb_keys_to_array(sources);
             """,
         reverse_sql="""
-            alter table svip_api.public.api_variant alter sources type jsonb
+            alter table api_variant alter sources type jsonb
             using jsonb_object(
                 sources,
                 array_fill(null::text, array[array_length(sources, 1)])
