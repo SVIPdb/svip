@@ -169,6 +169,15 @@ const mutations = {
 		state.currentGene = gene;
 	},
 	SET_VARIANT(state, variant) {
+		if (variant.svip_data !== undefined && variant.svip_data.diseases !== undefined){
+			variant.svip_data.diseases = _.map(variant.svip_data.diseases,d => {
+				d.show_curation = false;
+				d.show_details = false;
+				d.show_samples = false;
+				d._showDetails = false;
+				return d;
+			})
+		}
 		state.variant = variant;
 	},
 
