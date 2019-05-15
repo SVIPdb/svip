@@ -23,6 +23,7 @@ router.register(r'sources', views.SourceViewSet)
 router.register(r'variants', views.VariantViewSet, basename='variant')
 router.register(r'variants_in_sources', views.VariantInSourceViewSet, basename='variantinsource')
 router.register(r'variants_in_svip', views.VariantInSVIPViewSet, basename='variantinsvip')
+# router.register(r'svip_samples', views.SampleViewSet, basename='variantinsvip')
 router.register(r'associations', views.AssociationViewSet, basename='association')
 router.register(r'phenotypes', views.PhenotypeViewSet)
 router.register(r'evidence_items', views.EvidenceViewSet)
@@ -39,6 +40,10 @@ variants_router.register(r'sources', views.VariantInSourceViewSet, base_name='so
 
 variants_in_sources_router = nested_routers.NestedSimpleRouter(router, r'variants_in_sources', lookup='variant_in_source')
 variants_in_sources_router.register(r'associations', views.AssociationViewSet, base_name='variant_in_source-associations')
+
+variants_in_svip_router = nested_routers.NestedSimpleRouter(router, r'variants_in_svip', lookup='variant_in_svip')
+variants_in_svip_router.register(r'samples', views.SampleViewSet, base_name='variant_in_svip-samples')
+
 
 # FIXME: the below declaration is currently unused
 # app_name = 'api'

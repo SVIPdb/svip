@@ -12,5 +12,6 @@ from .genomic import (
 )
 
 from .svip import (
-    VariantInSVIPViewSet
+    VariantInSVIPViewSet,
+    SampleViewSet
 )

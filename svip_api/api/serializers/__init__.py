@@ -13,5 +13,7 @@ from .genomic import (
 )
 
 from .svip import (
-    VariantInSVIPSerializer
+    VariantInSVIPSerializer,
+    SampleSerializer,
+    CurationEntrySerializer
 )

@@ -1,8 +1,9 @@
 from enum import Enum
 
-from django.db import models
+from django.contrib.postgres.aggregates import ArrayAgg, JSONBAgg
+from django.db import models, ProgrammingError, connection
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, F, Value, Func
+from django.db.models import Count, F, Value, Func, Subquery, OuterRef
 from django.db.models.base import ModelBase
 from django.db.models.functions import Coalesce
 
@@ -11,6 +12,7 @@ from django_db_cascade.fields import ForeignKey
 from django_db_cascade.deletions import DB_CASCADE
 
 from api.models.genomic import Variant
+from api.utils import dictfetchall
 
 
 class SVIPTableBase(ModelBase):
@@ -52,6 +54,36 @@ class VariantInSVIP(models.Model):
     """
     variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
     data = JSONField()
+
+    def sample_count(self):
+        return self.sample_set.count()
+
+    def sample_diseases_count(self):
+        return (
+            self.sample_set
+                .values(name=F('disease'))
+                .annotate(count=Count('disease'))
+                .distinct().order_by('-count')
+        )
+
+    def tissue_counts(self):
+        # FIXME: figure out how to do this with the ORM someday
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            select
+                Q.sample_tissue as name,
+                sum(Q.cnt)::integer as count,
+                jsonb_agg(json_build_object('name', Q.disease, 'count', Q.cnt)) as diseases
+            from (
+              select sample_tissue, disease, count(*) as cnt
+              FROM "svip_sample"
+              where svip_variant_id=%s
+              group by sample_tissue, disease
+            ) as Q
+            group by Q.sample_tissue
+            """, [self.id])
+
+            return dictfetchall(cursor)
 
 
 class CurationEntry(SVIPModel):
