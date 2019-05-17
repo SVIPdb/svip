@@ -2,11 +2,13 @@ import django_filters
 from rest_framework import viewsets, permissions, filters
 from rest_framework.exceptions import PermissionDenied
 from api.models import (
-    VariantInSVIP, Sample
+    VariantInSVIP, Sample,
+    Disease
 )
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
+from api.serializers.svip import DiseaseSerializer
 
 
 class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
@@ -22,6 +24,22 @@ class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
             q = VariantInSVIP.objects.filter(variant_id=self.kwargs['variant_pk'])
         else:
             q = VariantInSVIP.objects.all()
+        return q
+
+
+class DiseaseViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Connects a variant, e.g. EGFR L858R, to its SVIP-specific data. Currently that consists of samples
+    and curation data, but more will come in the future.
+    """
+    serializer_class = DiseaseSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        if 'svip_variant_pk' in self.kwargs:
+            q = Disease.objects.filter(svip_variant_id=self.kwargs['svip_variant_pk'])
+        else:
+            q = Disease.objects.all()
         return q
 
 

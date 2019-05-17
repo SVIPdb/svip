@@ -7,7 +7,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q, F
 
-from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource
+from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource, Disease
 
 import api
 
@@ -115,6 +115,7 @@ def create_svipvariants(model_variant, model_svip_variant):
         svip_variants = json.load(fp)
 
         model_svip_variant.objects.all().delete()
+        Disease.objects.all().delete()
 
         succeeded, total = (0, len(svip_variants))
 
@@ -130,6 +131,16 @@ def create_svipvariants(model_variant, model_svip_variant):
                     data=s
                 )
                 candidate.save()
+
+                # create disease entries keyed to this candidate, too
+                for disease in s['diseases']:
+                    candidate_disease = Disease(
+                        svip_variant=candidate,
+                        name=disease['name'],
+                        score=random.randint(1, 4)
+                    )
+                    candidate_disease.save()
+
                 succeeded += 1
             except model_variant.DoesNotExist:
                 print(
@@ -143,10 +154,10 @@ def create_svipvariants(model_variant, model_svip_variant):
 def create_svip_related(source, target_model):
     """
     Load samples from api/fixtures/<source> and insert them into target_model. Deletes the contents of
-    target_model before insertion. The target_model should have a field svip_variant, and source should
+    target_model before insertion. The target_model should have a field 'disease', and source should
     contain a header with entries that have the same names as target_models' fields. source must also
     contain the fields 'gene', 'variant', and 'cds', which are used to link the new entry to an existing
-    VariantInSVIP entry.
+    Disease entry (indirectly using VariantInSVIP to match up to the correct variant).
 
     :return: a tuple (succeeded, total) with the number of samples added vs. the total number tried, respectively
     """
@@ -161,19 +172,20 @@ def create_svip_related(source, target_model):
 
             try:
                 candidate = target_model(
-                    svip_variant=VariantInSVIP.objects.get(
-                        variant__gene__symbol=sample['gene'],
-                        variant__name=sample['variant'],
-                        variant__hgvs_c__endswith=sample['cds']
+                    disease=Disease.objects.get(
+                        name__iexact=sample['disease'],
+                        svip_variant__variant__gene__symbol=sample['gene'],
+                        svip_variant__variant__name=sample['variant'],
+                        svip_variant__variant__hgvs_c__endswith=sample['cds']
                     ),
-                    **dict((k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds'))
+                    **dict((k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease'))
                 )
                 candidate.save()
                 succeeded += 1
-            except VariantInSVIP.DoesNotExist:
+            except Disease.DoesNotExist:
                 print(
-                    "Couldn't find corresponding SVIP variant w/gene, name, cds '%s %s %s', skipping..." %
-                    (sample['gene'], sample['variant'], sample['cds'])
+                    "Couldn't find corresponding disease \"%s\" w/gene, name, cds '%s %s %s', skipping..." %
+                    (sample['disease'], sample['gene'], sample['variant'], sample['cds'])
                 )
 
         return succeeded, total
@@ -196,7 +208,6 @@ def synthesize_samples(num_samples_per_variant=10):
 
     # for each SVIP variant, produce a random amount of randomly-generated sample data
     for svip_var in svip_variants:
-
         # get (disease, tissue) pairs from COSMIC for the current variant
         if USE_COSMIC_DISEASES:
             disease_tissues = (
@@ -221,7 +232,7 @@ def synthesize_samples(num_samples_per_variant=10):
                 'Colorectal Cancer': 'Colorectal',
                 'Skin Melanoma': 'Skin'
             }
-            disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.data['diseases']]
+            disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.disease_set.values('name')]
 
 
         # TODO: decide if the sample data and hospital should be the same for all samples for this variant or not
@@ -245,8 +256,7 @@ def synthesize_samples(num_samples_per_variant=10):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
 
             candidate = Sample(**{
-                'svip_variant': svip_var,
-                'disease': disease,
+                'disease': Disease.objects.get(svip_variant=svip_var, name=disease),
                 'sample_id': str(sample_id),
                 'year_of_birth': str(random.randint(1935, 1988)),
                 'gender': random.choice(('Male', 'Female')),

@@ -13,5 +13,6 @@ from .genomic import (
 
 from .svip import (
     VariantInSVIPViewSet,
+    DiseaseViewSet,
     SampleViewSet
 )

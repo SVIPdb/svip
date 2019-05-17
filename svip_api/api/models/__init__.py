@@ -3,5 +3,5 @@ from .genomic import (
     VariantInSource, Association, Phenotype, Evidence, EnvironmentalContext
 )
 from .svip import (
-    VariantInSVIP, CurationEntry, Sample
+    VariantInSVIP, Disease, CurationEntry, Sample
 )

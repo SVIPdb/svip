@@ -5,7 +5,7 @@ from django.db import models, ProgrammingError, connection
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db.models import Count, F, Value, Func, Subquery, OuterRef
 from django.db.models.base import ModelBase
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Concat
 
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
@@ -55,17 +55,6 @@ class VariantInSVIP(models.Model):
     variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
     data = JSONField()
 
-    def sample_count(self):
-        return self.sample_set.count()
-
-    def sample_diseases_count(self):
-        return (
-            self.sample_set
-                .values(name=F('disease'))
-                .annotate(count=Count('disease'))
-                .distinct().order_by('-count')
-        )
-
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
         with connection.cursor() as cursor:
@@ -75,8 +64,10 @@ class VariantInSVIP(models.Model):
                 sum(Q.cnt)::integer as count,
                 jsonb_agg(json_build_object('name', Q.disease, 'count', Q.cnt)) as diseases
             from (
-              select sample_tissue, disease, count(*) as cnt
-              FROM "svip_sample"
+              select sample_tissue, d.name as disease, count(*) as cnt
+              FROM "svip_sample" sv
+              inner join svip_disease d on d.id=sv.disease_id
+              inner join api_variantinsvip av on d.svip_variant_id = av.id
               where svip_variant_id=%s
               group by sample_tissue, disease
             ) as Q
@@ -86,23 +77,51 @@ class VariantInSVIP(models.Model):
             return dictfetchall(cursor)
 
 
-class CurationEntry(SVIPModel):
+class Disease(SVIPModel):
     svip_variant = ForeignKey(to=VariantInSVIP, on_delete=DB_CASCADE)
+    name = models.TextField()
 
-    disease = models.TextField(verbose_name="Disease")
+    status = models.TextField(default="Loaded")
+    score = models.IntegerField(default=0)
+
+    def sample_count(self):
+        return self.sample_set.count()
+
+    def sample_diseases_count(self):
+        return (
+            self.sample_set
+                .values(name=F('disease__name'))
+                .annotate(count=Count('disease__name'))
+                .distinct().order_by('-count')
+        )
+
+    def pathogenic(self):
+        return 'Pathogenic' if self.curationentry_set.filter(effect='Pathogenic').exists() else None
+
+    def clinical_significance(self):
+        return ' / '.join(
+            x['combined'] for x in self.curationentry_set
+                .annotate(combined=Concat('type_of_evidence', Value(' ('), 'tier_level', Value(')')))
+                .values('combined').distinct()
+        )
+
+
+class CurationEntry(SVIPModel):
+    disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
+
     type_of_evidence = models.TextField(verbose_name="Type of evidence")
     drug = models.TextField(verbose_name="Drug")
     effect = models.TextField(verbose_name="Effect")
     tier_level_criteria = models.TextField(verbose_name="Tier level Criteria")
+    tier_level = models.TextField(verbose_name="Tier level")
     summary = models.TextField(verbose_name="Summary")
     support = models.TextField(verbose_name="Support")
     references = models.TextField(verbose_name="References")
 
 
 class Sample(SVIPModel):
-    svip_variant = ForeignKey(to=VariantInSVIP, on_delete=DB_CASCADE)
+    disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
 
-    disease = models.TextField(verbose_name="Disease")
     sample_id = models.TextField(verbose_name="Sample ID")
     year_of_birth = models.TextField(verbose_name="Year of birth")
     gender = models.TextField(verbose_name="Gender")
