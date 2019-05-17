@@ -39,11 +39,6 @@ export default {
 		return {
 			fields: [
 				{
-					key: "disease",
-					label: "Disease",
-					sortable: true
-				},
-				{
 					key: "type_of_evidence",
 					label: "Type Of Evidence",
 					sortable: true
@@ -86,10 +81,8 @@ export default {
 			variant: 'variant'
 		}),
 		curationDataFiltered () {
-			let vm = this;
-			return  _.filter(this.variant.svip_data.curation_entries, x => {
-				return x.disease === vm.disease_type;
-			})
+			// curation entries are now per-disease, and located in 'diseases.<disease_name>.curation_entries'
+			return this.variant.svip_data.diseases.find(x => x.name === this.disease_type).curation_entries;
 		}
 	},
 	methods: {

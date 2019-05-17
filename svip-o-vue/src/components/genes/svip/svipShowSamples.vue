@@ -39,11 +39,6 @@ export default {
 		return {
 			fields: [
 				{
-					key: "disease",
-					label: "Disease",
-					sortable: true
-				},
-				{
 					key: "sample_id",
 					label: "Sample ID",
 					sortable: true
@@ -161,12 +156,8 @@ export default {
 			variant: 'variant'
 		}),
 		samplesDataFiltered () {
-			let vm = this;
-			//// for now the disease don't match so don't filter
-			// return  _.filter(this.variant.svip_data.samples, x => {
-			// 	return x.disease === vm.disease_type;
-			// })
-			return this.variant.svip_data.samples;
+			// samples are now per-disease, and located in 'diseases.<disease_name>.samples'
+			return this.variant.svip_data.diseases.find(x => x.name === this.disease_type).samples;
 		}
 	},
 	methods: {
