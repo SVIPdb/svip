@@ -115,8 +115,10 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         if not self.request.user.has_perm('api.view_sample'):
             raise PermissionDenied(detail="You do not have the necessary permissions to view sample data")
 
-        if 'variant_in_svip_pk' in self.kwargs:
-            q = Sample.objects.filter(svip_variant_id=self.kwargs['variant_in_svip_pk'])
+        print(self.kwargs)
+
+        if 'disease_pk' in self.kwargs and 'variant_in_svip_pk' in self.kwargs:
+            q = Sample.objects.filter(disease_id=self.kwargs['disease_pk'], disease__svip_variant__id=self.kwargs['variant_in_svip_pk'])
         else:
             q = Sample.objects.all()
 

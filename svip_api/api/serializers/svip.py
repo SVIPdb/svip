@@ -7,12 +7,20 @@ from itertools import chain
 from django.db.models import Count
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
+from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry
 from api.models.svip import Disease
 
 
 class SampleSerializer(serializers.ModelSerializer):
+    disease_name = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_disease_name(obj):
+        return obj.disease.name
+
     class Meta:
         model = Sample
         fields = '__all__'
@@ -40,15 +48,48 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class DiseaseSerializer(serializers.ModelSerializer):
+class DiseaseSerializer(NestedHyperlinkedModelSerializer):
+    parent_lookup_kwargs = {
+        'variant_in_svip_pk': 'svip_variant__pk',
+        'pk': 'pk',
+    }
+
     nb_patients = serializers.SerializerMethodField()
     gender_balance = serializers.SerializerMethodField()
     age_distribution = serializers.SerializerMethodField()
 
-    samples = serializers.SerializerMethodField()
+    # samples = serializers.SerializerMethodField()
     curation_entries = serializers.SerializerMethodField()
 
     # samples_url = serializers.SerializerMethodField()
+    # samples_url = NestedHyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,   # Or add a queryset
+    #     view_name='disease-samples-detail',
+    #     parent_lookup_kwargs={'disease_pk': 'disease__pk'}
+    # )
+
+    class SamplesHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
+        def get_url(self, obj, view_name, request, format):
+            """
+            Given an object, return the URL that hyperlinks to the object.
+            May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
+            attributes are not configured to correctly match the URL conf.
+            """
+            # Unsaved objects will not yet have a valid URL.
+            if obj.pk is None:
+                return None
+
+            return self.reverse(view_name,
+                                kwargs={
+                                    'disease_pk': obj.id,
+                                    'variant_in_svip_pk': obj.svip_variant.id,
+                                },
+                                request=request,
+                                format=format,
+                                )
+
+    samples_url = SamplesHyperlinkedIdentityField(view_name='sample-list')
 
     age_brackets = {
         "<40": lambda x: x < 40,
@@ -75,12 +116,6 @@ class DiseaseSerializer(serializers.ModelSerializer):
                 for bracket, bracket_pred in DiseaseSerializer.age_brackets.items()
         )
 
-    # def get_samples_url(self, obj):
-    #     # FIXME: ideally, this should link by reference to the samples nested router, but we're hardcoding it here
-    #     #  because i can't figure out how to do that :\
-    #     our_url = reverse('variantinsvip-detail', args=[obj.id], request=self.context['request'])
-    #     return "%s/samples" % our_url
-
     def get_samples(self, obj):
         user = self.context['request'].user
         if not user.has_perm('api.view_sample'):
@@ -104,9 +139,8 @@ class DiseaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Disease
         fields = (
-            # 'url',
-            # 'id',
-            # 'samples_url',
+            'id',
+            'samples_url',
             'name',
             'sample_diseases_count',
 
@@ -119,6 +153,6 @@ class DiseaseSerializer(serializers.ModelSerializer):
             'gender_balance',
             'age_distribution',
 
-            'samples',
+            # 'samples',
             'curation_entries'
         )

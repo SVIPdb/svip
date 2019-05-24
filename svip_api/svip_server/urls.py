@@ -63,6 +63,7 @@ urlpatterns = [
     re_path(r'^api/v1/', include(api_router.variants_router.urls)),
     re_path(r'^api/v1/', include(api_router.variants_in_sources_router.urls)),
     re_path(r'^api/v1/', include(api_router.variants_in_svip_router.urls)),
+    re_path(r'^api/v1/', include(api_router.diseases_router.urls)),
 
     # re_path(r'^api/v1/', include(api.urls)),
 
