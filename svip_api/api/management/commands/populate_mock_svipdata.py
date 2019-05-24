@@ -137,7 +137,8 @@ def create_svipvariants(model_variant, model_svip_variant):
                     candidate_disease = Disease(
                         svip_variant=candidate,
                         name=disease['name'],
-                        score=random.randint(1, 4)
+                        status=disease['SVIP_status'],
+                        score=int(disease['score'])
                     )
                     candidate_disease.save()
 
