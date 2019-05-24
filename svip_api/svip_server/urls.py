@@ -29,6 +29,7 @@ from rest_framework import permissions
 
 import api.urls as api_router
 from svip_server.tokens import GroupsTokenObtainPairView, GroupsTokenObtainSlidingView, TokenInfo, TokenInvalidate
+from svip_server.views import candy_single_ref
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -73,6 +74,9 @@ urlpatterns = [
     re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^api/v1/swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    # proxied routes from external APIs
+    re_path(r'^api/v1/candy_single_ref', candy_single_ref, name='candy_single_ref'),
 ]
 
 # serve static files from the dev server
