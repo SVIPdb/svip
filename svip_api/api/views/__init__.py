@@ -7,12 +7,15 @@ from .genomic import (
     AssociationViewSet,
     PhenotypeViewSet,
     EvidenceViewSet,
-    EnvironmentalContextViewSet,
-    QueryView,
+    EnvironmentalContextViewSet
 )
 
 from .svip import (
     VariantInSVIPViewSet,
     DiseaseViewSet,
     SampleViewSet
+)
+
+from .query import (
+    QueryView
 )

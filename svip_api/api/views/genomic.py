@@ -1,3 +1,5 @@
+from functools import reduce
+
 import django_filters
 from django import forms
 from django.db import models
@@ -23,6 +25,8 @@ from api.serializers import (
 
 
 # svip data endpoints
+from references.prot_to_hgvs import three_to_one
+
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -211,53 +215,3 @@ class EnvironmentalContextViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = EnvironmentalContext.objects.all().order_by('id')
     serializer_class = EnvironmentalContextSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-
-# non-model-backed functional endpoints
-
-class QueryView(viewsets.ViewSet):
-    def list(self, request, format=None):
-        """
-        Gets a list of genes and variants for which the query term, 'q', occurs in its description.
-        :param request:
-        :return: a list of variant objects, consisting of just the id and description (called 'label') for brevity
-        """
-        resp = []
-        search_term = request.GET.get('q', None)
-        in_svip = (request.GET.get('in_svip', False) == 'true')
-
-        if search_term is not None and search_term != '':
-            gq = Gene.objects.filter(symbol__icontains=search_term)
-            vq = Variant.objects.filter(Q(description__icontains=search_term)|Q(hgvs_c__icontains=search_term))
-
-            if in_svip:
-                gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
-                vq = vq.filter(variantinsvip__isnull=False)
-
-            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
-            v_resp = list({
-                'id': x.id, 'g_id': x.gene.id, 'type': 'v',
-                'label': "%s (%s)" % (x.description, x.hgvs_c.split(':')[1]) if x.hgvs_c else x.description,
-                'sources': sorted(x.sources)
-            } for x in vq)
-
-            resp = g_resp + v_resp
-        else:
-            # send back the full list of genes
-            gq = Gene.objects.all()
-
-            if in_svip:
-                gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
-
-            g_resp = list({'id': x.id, 'type': 'g', 'label': x.symbol} for x in gq)
-            resp = g_resp
-
-        return Response(resp)
-
-    @action(detail=False)
-    def stats(self, request):
-        return Response({
-            'genes': Gene.objects.count(),
-            'variants': Variant.objects.count(),
-            'phenotypes': Phenotype.objects.count()
-        })
