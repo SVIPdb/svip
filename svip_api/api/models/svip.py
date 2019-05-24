@@ -96,11 +96,12 @@ class Disease(SVIPModel):
         )
 
     def pathogenic(self):
-        return 'Pathogenic' if self.curationentry_set.filter(effect='Pathogenic').exists() else None
+        return 'Pathogenic' if self.curationentry_set.filter(effect='Pathogenic').count() > 0 else None
 
     def clinical_significance(self):
         return ' / '.join(
             x['combined'] for x in self.curationentry_set
+                .filter(type_of_evidence__in=('Predictive', 'Prognostic'))
                 .annotate(combined=Concat('type_of_evidence', Value(' ('), 'tier_level', Value(')')))
                 .values('combined').distinct()
         )
@@ -114,7 +115,8 @@ class CurationEntry(SVIPModel):
     effect = models.TextField(verbose_name="Effect")
     tier_level_criteria = models.TextField(verbose_name="Tier level Criteria")
     tier_level = models.TextField(verbose_name="Tier level")
-    summary = models.TextField(verbose_name="Summary")
+    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic")
+    summary = models.TextField(verbose_name="Complementary information")
     support = models.TextField(verbose_name="Support")
     references = models.TextField(verbose_name="References")
 
