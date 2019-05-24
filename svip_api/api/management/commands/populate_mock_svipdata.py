@@ -249,8 +249,8 @@ def synthesize_samples(num_samples_per_variant=10):
 
         # presumably the samples for the same variant will come from the sample hospital, too?
         hospital = random.choice(('USZ', 'USB'))
-        caller = random.choice(CALLERS)
-        aligner = random.choice(ALIGNERS)
+        caller = '-'  # random.choice(CALLERS)
+        aligner = '-'  # random.choice(ALIGNERS)
 
         for _ in range(num_samples_per_variant):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
@@ -269,16 +269,16 @@ def synthesize_samples(num_samples_per_variant=10):
                 'sample_type': 'Primary',
                 'sample_site': 'Biopsy',
                 'specimen_type': 'FFPE',
-                'sequencing_date': '%(year)d%(month)02d%(day)02d' % sample_parts,
+                'sequencing_date': '%(day)02d.%(month)02d.%(year)d' % sample_parts,
                 'panel': 'Hotspot v2',
-                'coverage': '123X',
+                'coverage': random.randint(1500, 1600),
                 'calling_strategy': random.choice(('Matched', 'Tumor only')),
                 'caller': caller,
                 'aligner': aligner,
-                'software': '-',
-                'software_version': '-',
-                'platform': 'Illumina',
-                'contact': 'mailto:feedback@svip.ch'
+                'software': 'Torrent Suite',
+                'software_version': '5.10',
+                'platform': 'Ion Torrent Proton',
+                'contact': 'mailto:Dr_Onco@hospital.ch'
             })
             candidate.save()
 
