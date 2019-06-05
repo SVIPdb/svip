@@ -4,7 +4,7 @@
 
 		<div class="badges">
 			<span :class="`badge badge-primary filter-${k}`" :key="k" v-for="[k,v] in Object.entries(value).filter(x => x[1] && x[0] !== 'search')">
-				{{ titleCase(v) }}
+				{{ desnakify(v) }}
 				<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="value[k] = ''">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -23,13 +23,14 @@
 </template>
 
 <script>
-import {titleCase} from "@/utils";
+import {desnakify, titleCase} from "@/utils";
 
 export default {
 	name: "RowDetailsHeader",
 	props: ['name', 'totalRows', 'value'],
 	methods: {
 		titleCase,
+		desnakify,
 		updateValue: function(value) {
 			this.$emit('input', value);
 		}

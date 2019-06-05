@@ -46,7 +46,10 @@
 					<template slot="drug" slot-scope="c">{{ normalizeItemList(c.value) }}</template>
 					<template slot="publications" slot-scope="c">
 						<template v-for="(p, i) in c.value">
-							<PubmedPopover :pubmeta="p" :key="`${i}_link`" /><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+							<VariomesLitPopover
+								:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="c.item.disease"
+								:key="`${i}_link`"
+							/><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
 						</template>
 					</template>
 				</b-table>
@@ -62,12 +65,14 @@ import {normalizeItemList, titleCase} from "@/utils";
 import {makeAssociationProvider} from '@/components/genes/item_providers/association_provider';
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
+import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {
 	name: "OncoKBRowDetails",
-	components: {PubmedPopover, RowDetailsHeader},
+	components: {RowDetailsHeader, VariomesLitPopover},
 	props: {
-		row: {type: Object, required: true}
+		row: {type: Object, required: true},
+		variant: {type: Object, required: true}
 	},
 	data() {
 		return {

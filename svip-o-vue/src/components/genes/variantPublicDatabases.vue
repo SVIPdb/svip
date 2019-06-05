@@ -25,7 +25,7 @@
 			<div class="card-title">Publicly Available Information</div>
 		</div>
 
-		<div class="card-body">
+		<div class="card-body top-level">
 			<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="source" slot-scope="row">
 					<div style="display: flex; align-items: center;">
@@ -59,7 +59,7 @@
 				</template>
 
 				<template slot="actions" slot-scope="row">
-					<div style="text-align: right;">
+					<div class="details-tray" style="text-align: right;">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 						<b-button size="sm" @click.stop="row.toggleDetails">
 							{{ row.detailsShowing ? "Hide" : "Show" }} Details
@@ -68,8 +68,10 @@
 				</template>
 
 				<template slot="row-details" slot-scope="row">
-					<component v-if="row.item.details_part" :is="row.item.details_part" :row="row" />
-					<GenericSourceDetailsRow v-else :row="row" />
+					<div class="row-details">
+						<component v-if="row.item.details_part" :is="row.item.details_part" :row="row" :variant="variant" />
+						<GenericSourceDetailsRow v-else :row="row" :variant="variant" />
+					</div>
 				</template>
 			</b-table>
 
@@ -180,11 +182,6 @@ export default {
 </script>
 
 <style scoped>
-.container,
-.container-fluid {
-	margin-top: 20px;
-}
-
 .var-not-found {
 	background: #f5f5f5;
 	-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
@@ -192,5 +189,9 @@ export default {
 	padding-left: 15px;
 	font-style: italic;
 	color: #999;
+}
+
+.details-tray button {
+	width: 100px;
 }
 </style>

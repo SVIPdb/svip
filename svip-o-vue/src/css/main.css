@@ -63,6 +63,32 @@ footer .version-info .feedback {
 .card-title {
 	margin-bottom: 0;
 }
+/* remove the upper line from the table header introduces by the bootswatch style we're using */
+.table th {
+	border-top: none;
+}
+/* add a bit of padding on the lefthand side to make it feel less close to the left edge */
+.table th:first-child { padding-left: 14px; }
+.table td:first-child { padding-left: 15px; }
+
+.container-fluid > .card, .card.top-level { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+
+.card-body.top-level {
+	/* allows tables in cards to be flush with their border, which imo looks nicer */
+	/* FIXME: review whether we should have a little bit of padding */
+	padding: 0.2rem;
+}
+.row-details {
+	padding: 0 0.75rem 0.5rem 0.75rem;
+}
+/*
+.b-table-details > td { padding: 0 0 1em; }
+.b-table-details > td .card-body { padding: 3px 10px 5px; }
+*/
+.b-table.table > tbody > tr.b-table-details > td {
+	/* FIXME: why? */
+	padding: 0;
+}
 
 .v-select.searchable .dropdown-toggle::after {
 	content: " ";
@@ -110,6 +136,17 @@ footer .version-info .feedback {
 	.transcript-id {
 		display: none;
 	}
+}
+
+/* styles for tables with toggleable details trays */
+.details-tray {
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: row;
+}
+.details-tray button {
+	width: 100px;
+	margin: 0 5px;
 }
 
 /* styles for filters in evidence tables */

@@ -67,3 +67,7 @@ export function millisecondsToStr( milliseconds ) {
 
 	return "< 1s";
 }
+
+export function trimPrefix(str, prefix) {
+	return (str.startsWith(prefix)) ? str.slice(prefix.length) : str;
+}

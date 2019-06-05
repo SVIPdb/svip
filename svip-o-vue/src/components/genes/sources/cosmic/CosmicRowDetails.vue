@@ -11,7 +11,7 @@
 					Diseases
 					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the table</i>
 					<span class="float-right badge badge-primary filter-phenotype__term" v-else>
-						{{ titleCase(currentFilter.phenotype__term) }}
+						{{ desnakify(currentFilter.phenotype__term) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
 								<span aria-hidden="true">&times;</span>
 						</button>
@@ -27,7 +27,7 @@
 					</thead>
 					<tbody>
 						<tr v-for="d in row.item.diseases" :key="d.disease" @click="currentFilter.phenotype__term = d.disease" :class="currentFilter.phenotype__term === d.disease ? 'pointer table-active' : 'pointer'">
-							<td>{{ titleCase(d.disease) }}</td>
+							<td>{{ desnakify(d.disease) }}</td>
 							<td>{{ d.count.toLocaleString() }}</td>
 						</tr>
 					</tbody>
@@ -44,7 +44,7 @@
 					Tissue Types
 					<i class="float-right" v-if="!currentFilter.environmentalcontext__description">click on a tissue type to filter the table</i>
 					<span class="float-right badge badge-primary filter-environmentalcontext__description" v-else>
-						{{ titleCase(currentFilter.environmentalcontext__description) }}
+						{{ desnakify(currentFilter.environmentalcontext__description) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.environmentalcontext__description = ''">
 								<span aria-hidden="true">&times;</span>
 						</button>
@@ -87,7 +87,10 @@
 					<template slot="contexts" slot-scope="c">{{ desnakify(c.value) }}</template>
 					<template slot="publications" slot-scope="c">
 						<template v-for="(p, i) in c.value">
-							<PubmedPopover :pubmeta="p" :key="`${i}_link`" /><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+							<VariomesLitPopover
+								:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="c.item.disease"
+								:key="`${i}_link`"
+							/><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
 						</template>
 					</template>
 				</b-table>
@@ -103,13 +106,15 @@ import {normalizeItemList, titleCase, desnakify} from "@/utils";
 import {makeAssociationProvider} from "../../item_providers/association_provider";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
+import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {
 	name: "CosmicRowDetails",
 	props: {
-		row: {type: Object, required: true}
+		row: {type: Object, required: true},
+		variant: {type: Object, required: true}
 	},
-	components: {RowDetailsHeader, PubmedPopover},
+	components: {RowDetailsHeader, VariomesLitPopover},
 	data() {
 		return {
 			currentFilter: {

@@ -21,9 +21,9 @@
   -->
 
 	<div class="container-fluid">
-		<div class="card">
-			<div class="card-body">
-				<table class="table">
+		<div class="card variant-card">
+			<div class="card-body top-level">
+				<table class="table variant-header">
 					<tr>
 						<th>Gene Name</th>
 						<th>Variant</th>
@@ -34,12 +34,12 @@
 						<!-- <th>Molecular consequence</th> -->
 						<th>Position</th>
 						<th>Allele Frequency</th>
+						<th></th> <!--- for actions -->
 					</tr>
+
 					<tr>
 						<td>
-							<b>
-								<router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link>
-							</b>
+							<b><router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link></b>
 						</td>
 						<td>
 							<b>{{ variant.name }}</b>
@@ -66,12 +66,30 @@
 							<span v-if="allele_frequency">{{ allele_frequency }}</span>
 							<span v-else class="unavailable">unavailable</span>
 						</td>
+
+						<td>
+								<div class="details-tray" style="text-align: right;">
+									<b-button size="sm" @click.stop="() => { showAliases = !showAliases; }">
+										{{ showAliases ? "Hide" : "Show" }} Aliases
+									</b-button>
+								</div>
+						</td>
 					</tr>
+
+					<transition name="slide-fade">
+						<tr v-if="showAliases" class="details-row">
+							<td colspan="9">
+									<div class="aliases-list">
+										<div v-for="(x) in variant.gene.aliases" :key="x">{{ x }}</div>
+									</div>
+							</td>
+						</tr>
+					</transition>
 				</table>
 			</div>
 		</div>
 
-		<variant-svip v-if="variant.svip_data"></variant-svip>
+		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
 		<VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
@@ -92,6 +110,11 @@ import VariantExternalInfo from "@/components/genes/external/VariantExternalInfo
 export default {
 	name: "ViewVariant",
 	components: {VariantExternalInfo, variantPublicDatabases, variantSvip},
+	data() {
+		return {
+			showAliases: false
+		};
+	},
 	computed: {
 		...mapGetters({
 			variant: "variant",
@@ -155,8 +178,36 @@ export default {
 </script>
 
 <style scoped>
-.container,
-.container-fluid {
-	margin-top: 20px;
+.variant-card .card-body { padding: 0; }
+.variant-header { margin-bottom: 0; }
+
+.variant-header td, .variant-header th {
+	vertical-align: text-bottom;
+	padding: 1rem;
+}
+.aliases-list {
+	font-style: italic;
+}
+
+.details-row {
+	background: #eee;
+	box-shadow: inset;
+}
+
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+	transition: all .5s ease;
+}
+.slide-fade-leave-active {
+	transition: all .3s ease;
+}
+.slide-fade-enter-to, .slide-fade-leave {
+	max-height: 120px;
+}
+.slide-fade-enter, .slide-fade-leave-to
+	/* .slide-fade-leave-active below version 2.1.8 */ {
+	opacity: 0;
+	max-height: 0;
 }
 </style>

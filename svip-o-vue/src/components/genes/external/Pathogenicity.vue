@@ -1,11 +1,11 @@
 <template>
 	<div class="col-sm-auto">
-		<div class="card mt-3">
+		<div class="card mt-3 top-level">
 			<div class="card-header">
 				<div class="card-title">Algorithmic Impact Prediction</div>
 			</div>
 
-			<div class="card-body">
+			<div class="card-body top-level">
 				<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 					<template slot="actions" slot-scope="row">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
@@ -46,7 +46,7 @@ export default {
 				sources
 					.filter(source => {
 						const q = deref_path(this, source.path);
-						return q !== null && !isNaN(q[source.score]);
+						return q && !isNaN(q[source.score]);
 					})
 					.map(
 						source => {

@@ -1,11 +1,11 @@
 <template>
 	<div class="col-sm-auto">
-		<div class="card mt-3">
+		<div class="card mt-3 top-level">
 			<div class="card-header">
 				<div class="card-title">Polymorphisms</div>
 			</div>
 
-			<div class="card-body">
+			<div class="card-body top-level">
 				<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
 					<template slot="actions" slot-scope="row">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
