@@ -29,7 +29,7 @@ from rest_framework import permissions
 
 import api.urls as api_router
 from svip_server.tokens import GroupsTokenObtainPairView, GroupsTokenObtainSlidingView, TokenInfo, TokenInvalidate
-from svip_server.views import candy_single_ref
+from svip_server.views import variomes_single_ref
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -76,7 +76,7 @@ urlpatterns = [
     re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     # proxied routes from external APIs
-    re_path(r'^api/v1/candy_single_ref', candy_single_ref, name='candy_single_ref'),
+    re_path(r'^api/v1/variomes_single_ref', variomes_single_ref, name='variomes_single_ref'),
 ]
 
 # serve static files from the dev server

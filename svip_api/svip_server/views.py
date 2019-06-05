@@ -10,7 +10,7 @@ cached_sess = CacheControl(requests.session(), cache=DjangoCache())
 cached_sess.mount('http://', adapter)
 
 
-def candy_single_ref(request):
+def variomes_single_ref(request):
     # proxy requests to candy
     response = cached_sess.get('http://candy.hesge.ch/Variomes/api/getOnePublication.jsp', params=request.GET)
 
