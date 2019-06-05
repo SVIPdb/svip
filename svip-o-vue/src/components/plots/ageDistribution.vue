@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<svg ref="thechart" class="age-bar-chart">
+		<svg ref="thechart" class="age-bar-chart" viewBox="0 0 100 28" preserveAspectRatio="none">
 			<rect class="bar" v-for="(d, i) in layout" :key="i" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
 
 			<line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
@@ -88,7 +88,8 @@ export default {
 
 <style scoped>
 .age-bar-chart {
-	width: 100px;
+	width: 100%;
+	max-width: 100px;
 	height: 28px;
 }
 
