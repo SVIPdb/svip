@@ -72,7 +72,7 @@
 
 		<div class="variant-results">
 			<b-table
-				:fields="fields" :items="makeVariantProvider(this.metaUpdated)" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
+				:fields="fields" :items="variant_provider" api-url="variants" :sort-by="sortBy" :filter="packedFilter"
 				:current-page="currentPage" :per-page="perPage"
 			>
 				<template slot="in_svip" slot-scope="data">
@@ -209,6 +209,9 @@ export default {
 		},
 		packedFilter() {
 			return JSON.stringify(this.currentFilter);
+		},
+		variant_provider() {
+			return makeVariantProvider(this.metaUpdated);
 		}
 	},
 	methods: {
