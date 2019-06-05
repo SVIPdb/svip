@@ -1,10 +1,13 @@
 <template>
 	<form>
-		<v-select ref="search_bar" label="label" :options="options" placeholder="Search for gene / variant" @search="onSearch" v-model="selected">
+		<v-select ref="search_bar" label="label"
+			:options="options" :filterBy="() => true"
+			placeholder="Search for gene / variant" @search="onSearch" v-model="selected"
+		>
 			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
-						<span v-for="(bit, idx) in highlighted( query, option.label )" :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
+						<span v-for="(bit, idx) in highlighted( transformedQuery, option.label )" :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
 					</div>
 					<div v-else>{{ option.label }}</div>
 
@@ -37,6 +40,36 @@ const textmapper = {
 	g: "gene",
 	v: "variant"
 };
+
+// maps three-letter AA refs to the one-letter ones we use internally
+// this is done on the client side to make it easier to highlight the matching text in the result
+const aa_three_to_one = [
+	[ new RegExp("[Aa]la", "g"), "A" ],
+	[ new RegExp("[Aa]sx", "g"), "B" ],
+	[ new RegExp("[Cc]ys", "g"), "C" ],
+	[ new RegExp("[Aa]sp", "g"), "D" ],
+	[ new RegExp("[Gg]lu", "g"), "E" ],
+	[ new RegExp("[Pp]he", "g"), "F" ],
+	[ new RegExp("[Gg]ly", "g"), "G" ],
+	[ new RegExp("[Hh]is", "g"), "H" ],
+	[ new RegExp("[Ii]le", "g"), "I" ],
+	[ new RegExp("[Ll]ys", "g"), "K" ],
+	[ new RegExp("[Ll]eu", "g"), "L" ],
+	[ new RegExp("[Mm]et", "g"), "M" ],
+	[ new RegExp("[Aa]sn", "g"), "N" ],
+	[ new RegExp("[Pp]ro", "g"), "P" ],
+	[ new RegExp("[Gg]ln", "g"), "Q" ],
+	[ new RegExp("[Aa]rg", "g"), "R" ],
+	[ new RegExp("[Ss]er", "g"), "S" ],
+	[ new RegExp("[Tt]hr", "g"), "T" ],
+	[ new RegExp("[Ss]ec", "g"), "U" ],
+	[ new RegExp("[Vv]al", "g"), "V" ],
+	[ new RegExp("[Tt]rp", "g"), "W" ],
+	[ new RegExp("[Xx]aa", "g"), "Xa" ],
+	[ new RegExp("[Tt]yr", "g"), "Y" ],
+	[ new RegExp("[Gg]lx", "g"), "Z" ],
+	[ new RegExp("\\*", "ig"), "X" ]
+];
 
 export default {
 	name: "SearchBar",
@@ -76,6 +109,14 @@ export default {
 					this.getGenesOnly();
 				});
 			}
+		},
+		transformedQuery() {
+			// convert Val600Glu into V600E so that stuff like highlighting continues to function client-side
+			// (NOTE: on the server side we also transform Val600Glu to V600E, and match either description)
+
+			// FIXME: ideally we should just send the transformed query instead of mirroring the behavior
+			//  on the client and the server
+			return aa_three_to_one.reduce((acc, x) => acc.replace(x[0], x[1]), this.query);
 		}
 	},
 	created() {
