@@ -9,9 +9,10 @@ import "@/css/main.css";
 import Snotify, {SnotifyPosition} from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
-import "vue-awesome/icons";
-import lodash from "lodash";
+
+import "vue-awesome/icons"; // FIXME: import only what we use to reduce the bundle size
 import Icon from "vue-awesome/components/Icon";
+
 import VeeValidate from "vee-validate";
 import vSelect from "vue-select";
 

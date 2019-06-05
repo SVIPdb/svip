@@ -27,7 +27,6 @@ Links:
 <script>
 import round from 'lodash/round';
 import * as d3 from "d3";
-import * as _ from 'lodash';
 
 const genderColors = {
 	'male': '#0F7FFE',
