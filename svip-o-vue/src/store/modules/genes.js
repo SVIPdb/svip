@@ -9,8 +9,10 @@ const state = {
 
 	genes: [],
 	nbGenes: 0,
+	nbGenesSVIP: 0,
 	variants: [],
 	nbVariants: 0,
+	nbVariantsSVIP: 0,
 	sources: [],
 	phenotypes: [],
 	nbPhenotypes: 0,
@@ -27,9 +29,11 @@ const getters = {
 	genes: state => state.genes,
 	gene: state => state.gene,
 	nbGenes: state => state.nbGenes,
+	nbGenesSVIP: state => state.nbGenesSVIP,
 	currentGene: state => state.currentGene,
 	variants: state => state.variants,
 	nbVariants: state => state.nbVariants,
+	nbVariantsSVIP: state => state.nbVariantsSVIP,
 	phenotypes: state => state.phenotypes,
 	nbPhenotypes: state => state.phenotypes.length,
 	geneVariants: state => state.geneVariants,
@@ -47,7 +51,9 @@ const actions = {
 
 			commit('SET_SITE_STATS', {
 				nbGenes: stats.genes,
+				nbGenesSVIP: stats.svip_genes,
 				nbVariants: stats.variants,
+				nbVariantsSVIP: stats.svip_variants,
 				nbPhenotypes: stats.phenotypes
 			});
 		});
@@ -139,9 +145,11 @@ const actions = {
 
 // mutations
 const mutations = {
-	SET_SITE_STATS(state, { nbGenes, nbVariants, nbPhenotypes }) {
+	SET_SITE_STATS(state, { nbGenes, nbGenesSVIP, nbVariants, nbVariantsSVIP, nbPhenotypes }) {
 		state.nbGenes = nbGenes;
+		state.nbGenesSVIP = nbGenesSVIP;
 		state.nbVariants = nbVariants;
+		state.nbVariantsSVIP = nbVariantsSVIP;
 		state.nbPhenotypes = nbPhenotypes;
 	},
 
@@ -158,7 +166,7 @@ const mutations = {
 	SET_VARIANTS(state, params) {
 		if (params.add) {
 			state.variants = state.variants.concat(params.variants);
-		} else if (params.variants !== undefined) {
+		} else if (params.variants) {
 			state.variants = params.variants;
 		}
 	},
@@ -169,7 +177,7 @@ const mutations = {
 		state.currentGene = gene;
 	},
 	SET_VARIANT(state, variant) {
-		if (variant.svip_data !== undefined && variant.svip_data.diseases !== undefined){
+		if (variant.svip_data && variant.svip_data.diseases){
 			variant.svip_data.diseases = _.map(variant.svip_data.diseases,d => {
 				d.show_curation = false;
 				d.show_details = false;

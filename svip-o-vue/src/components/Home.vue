@@ -7,7 +7,7 @@
 				</div>
 
 				<div class="section row justify-content-md-center">
-					<div class="col-xs-12 col-md-8 col-lg-6">
+					<div class="col-xs-12 col-md-8 col-lg-8">
 						<SearchBar/>
 					</div>
 				</div>
@@ -15,9 +15,11 @@
 				<div class="section stats row justify-content-md-center">
 					<div class="col">
 						<h3>{{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : ''}}</h3>
+						<span class="text-muted">{{ nbGenesSVIP }} with SVIP data</span>
 					</div>
 					<div class="col">
 						<h3>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</h3>
+						<span class="text-muted">{{ nbVariantsSVIP }} with SVIP data</span>
 					</div>
 				</div>
 			</div>
@@ -51,7 +53,9 @@ export default {
 		...mapGetters({
 			genes: "genes",
 			nbGenes: "nbGenes",
+			nbGenesSVIP: "nbGenesSVIP",
 			nbVariants: "nbVariants",
+			nbVariantsSVIP: "nbVariantsSVIP",
 			nbPhenotypes: "nbPhenotypes"
 		})
 	},
