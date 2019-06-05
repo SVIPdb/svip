@@ -32,6 +32,16 @@ one_to_three = {
 
 three_to_one = dict((v, k) for k, v in one_to_three.items())
 
+# build a case-insensitive matcher for three-letter AAs as well, with some caveats:
+# 1) only allow the first letter to vary in case with the rest lowercase, since for instance, you can spell LEU and mean
+#    the sequence LeuGluSec.
+# 2) ignore stars since they have special meanings in a regex
+three_to_one_icase = dict(
+    (re.compile("[%s%s]%s" % (re.escape(v[0]), re.escape(v[0].lower()), re.escape(v[1:]))), k)
+    for k, v in one_to_three.items()
+    if v != '*' and k != '*'
+)
+
 # maps internal single-character references to proteins with their HGVS-compliant three-letter abbreviation
 # also normalizes some alteration keywords, e.g. "DELins" should be "delins"
 protein_ops = {

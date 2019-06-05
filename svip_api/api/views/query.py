@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.models import Phenotype, Variant, Gene
-from references.prot_to_hgvs import three_to_one
+from references.prot_to_hgvs import three_to_one_icase
 
 
 class QueryView(viewsets.ViewSet):
@@ -22,9 +22,11 @@ class QueryView(viewsets.ViewSet):
         in_svip = (request.GET.get('in_svip', False) == 'true')
 
         if search_term is not None and search_term != '':
-            # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the database
-            # e.g., 'Val600Glu' becomes 'V600E'
-            collapsed_search = reduce(lambda acc, v: acc.replace(v[0], v[1]), three_to_one.items(), search_term)
+            # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the
+            # database; e.g., 'Val600Glu' becomes 'V600E'
+            print("Original search: %s" % search_term)
+            collapsed_search = reduce(lambda acc, v: v[0].sub(v[1], acc), three_to_one_icase.items(), search_term)
+            print("Collapsed search: %s" % collapsed_search)
 
             gq = Gene.objects.filter(
                 Q(symbol__icontains=search_term) | Q(aliases__icontains=search_term)
