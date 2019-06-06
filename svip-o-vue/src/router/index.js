@@ -13,6 +13,7 @@ Vue.use(Router);
 
 import store from '@/store';
 import {TokenErrors} from "../store/modules/users";
+import PageNotFound from "@/components/PageNotFound";
 
 const router = new Router({
 	mode: "history",
@@ -41,10 +42,12 @@ const router = new Router({
 		},
 
 		{
-			path: "*",
+			path: "/",
 			name: "home",
 			component: Home
-		}
+		},
+
+		{ path: '*', component: PageNotFound }
 	]
 });
 
