@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "@/components/Home";
-import Genes from "@/components/genes/Genes";
 import ViewGene from "@/components/genes/ViewGene";
 import ViewVariant from "@/components/genes/ViewVariant";
 import Login from "@/components/user/Login";
@@ -18,11 +17,6 @@ import {TokenErrors} from "../store/modules/users";
 const router = new Router({
 	mode: "history",
 	routes: [
-		{
-			path: "/genes",
-			name: "genes",
-			component: Genes
-		},
 		{
 			path: "/gene/:gene_id",
 			name: "gene",

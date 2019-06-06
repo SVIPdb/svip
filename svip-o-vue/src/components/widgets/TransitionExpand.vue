@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "TransitionExpand",
+	name: "TransitionExpand",
 	methods: {
 		enter(element) {
 			// noinspection UnnecessaryLocalVariableJS
