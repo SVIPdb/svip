@@ -419,20 +419,6 @@ rect.pathogenicity.automatic {
 .expander-button.is-expanded {
 	opacity: 0.5;
 }
-
-.empty-table-msg {
-	text-align: center; color: #999; padding: 5px; font-size: 18px;
-	font-style: italic;
-}
-
-.sample-subtable {
-	padding: 10px;
-	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
-	background-color: #efefef;
-}
-.sample-subtable table {
-	width: 100%;
-}
 </style>
 
 <style>

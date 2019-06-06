@@ -138,6 +138,12 @@ footer .version-info .feedback {
 	}
 }
 
+/* general table styles */
+.empty-table-msg {
+	text-align: center; color: #999; padding: 5px; font-size: 18px;
+	font-style: italic;
+}
+
 /* styles for tables with toggleable details trays */
 .details-tray {
 	display: flex;
@@ -147,6 +153,16 @@ footer .version-info .feedback {
 .details-tray button {
 	width: 100px;
 	margin: 0 5px;
+}
+
+/* for subtables which occur within an already-nested table (they're inset instead of overlaid) */
+.sample-subtable {
+	padding: 10px;
+	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+	background-color: #efefef;
+}
+.sample-subtable table {
+	width: 100%;
 }
 
 /* styles for filters in evidence tables */
