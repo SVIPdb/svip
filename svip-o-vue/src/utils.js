@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export function change_from_hgvs(x, include_transcript = false) {
 	if (!x || !x.includes(":")) return x;
 
@@ -70,4 +72,17 @@ export function millisecondsToStr( milliseconds ) {
 
 export function trimPrefix(str, prefix) {
 	return (str.startsWith(prefix)) ? str.slice(prefix.length) : str;
+}
+
+// used by some item providers to parse PMIDs out of publication URLs
+export function parsePublicationURL(p) {
+	if (!p.includes('pubmed')) {
+		// parse out hostname and return that as the tooltip thingy
+		const parsed = new URL(p);
+		return {url: p, title: `[${parsed.hostname}]`}
+	}
+
+	const pmid = _.last(p.split("/"));
+	const isPMID = /^[0-9]+$/.test(pmid);
+	return {url: p, title: isPMID ? pmid : "(external)", pmid: isPMID && pmid };
 }

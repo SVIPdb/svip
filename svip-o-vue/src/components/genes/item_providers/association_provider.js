@@ -1,21 +1,9 @@
 import {HTTP} from "@/router/http";
-import {titleCase} from "@/utils";
+import {titleCase, parsePublicationURL} from "@/utils";
 import {normalizeItemList} from "@/utils";
 import store from "@/store";
 
 import * as _ from 'lodash';
-
-function parsePublicationURL(p) {
-	if (!p.includes('pubmed')) {
-		// parse out hostname and return that as the tooltip thingy
-		const parsed = new URL(p);
-		return {url: p, title: `[${parsed.hostname}]`}
-	}
-
-	const pmid = _.last(p.split("/"));
-	const isPMID = /^[0-9]+$/.test(pmid);
-	return {url: p, title: isPMID ? pmid : "(external)", pmid: isPMID && pmid };
-}
 
 const sortRemappings = {
 	'disease': 'phenotype__term',
@@ -56,6 +44,7 @@ export function makeAssociationProvider(metaUpdate=null) {
 				})
 			}
 
+			/*
 			const pmid_set = _.flatten(res.data.results.map(a => {
 				return _.flatten(a.evidence_set.map((ev_set) =>
 					ev_set.publications.map(parsePublicationURL)
@@ -63,8 +52,9 @@ export function makeAssociationProvider(metaUpdate=null) {
 			})).filter(x => x.pmid).map(x => x.pmid);
 
 			store.dispatch('getBatchPubmedInfo', { pmid_set });
+			 */
 
-			// rewrite associations into the structure that GenericRowDetails expects
+			// rewrite associations into the structure that -RowDetails expects
 			return res.data.results.map(a => ({
 				disease: a.phenotype_set.map(x => titleCase(x.term)).join("; "),
 				contexts: a.environmentalcontext_set.map(x => x.description).join("; "),

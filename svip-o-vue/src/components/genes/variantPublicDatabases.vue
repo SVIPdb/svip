@@ -35,26 +35,26 @@
 				</template>
 
 				<template slot="diseases" slot-scope="data">
-					<component v-if="rowHasPart(data, 'diseases')" :is="data.item.row_parts.diseases" :row="data" />
+					<component v-if="rowHasPart(data, 'diseases')" :is="data.item.colum_parts.diseases" :row="data" />
 					<span v-else>
 					{{ Object.keys(data.item.diseases).length }} disease{{ Object.keys(data.item.diseases).length !== 1 ? "s" : "" }}
 					</span>
 				</template>
 
 				<template slot="association_count" slot-scope="data">
-						<component v-if="rowHasPart(data, 'publication_count')" :is="data.item.row_parts.publication_count" :row="data" />
+						<component v-if="rowHasPart(data, 'publication_count')" :is="data.item.colum_parts.publication_count" :row="data" />
 						<span v-else>
 						{{ data.value.toLocaleString() }} evidence{{ data.value !== 1 ? "s" : "" }}
 						</span>
 				</template>
 
 				<template slot="clinical" slot-scope="data">
-					<component v-if="rowHasPart(data, 'clinical')" :is="data.item.row_parts.clinical" :row="data" />
+					<component v-if="rowHasPart(data, 'clinical')" :is="data.item.colum_parts.clinical" :row="data" />
 					<evidenceTypesBarPlot v-else :data="data.item.evidence_types" />
 				</template>
 
 				<template slot="scores" slot-scope="data">
-						<component v-if="rowHasPart(data, 'scores')" :is="data.item.row_parts.scores" :row="data" />
+						<component v-if="rowHasPart(data, 'scores')" :is="data.item.colum_parts.scores" :row="data" />
 						<score-plot v-else :scores="data.item.scores" :source-name="data.item.source.name"></score-plot>
 				</template>
 
@@ -70,7 +70,7 @@
 				<template slot="row-details" slot-scope="row">
 					<div class="row-details">
 						<component v-if="row.item.details_part" :is="row.item.details_part" :row="row" :variant="variant" />
-						<GenericSourceDetailsRow v-else :row="row" :variant="variant" />
+						<div v-else>No row details control provided!</div>
 					</div>
 				</template>
 			</b-table>
@@ -87,18 +87,20 @@ import store from '@/store';
 import scorePlot from "@/components/plots/scorePlot";
 // import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import evidenceTypesBarPlot from '@/components/plots/evidenceTypesBarPlot';
-import GenericSourceDetailsRow from "./sources/shared/GenericRowDetails";
 import {normalizeItemList} from "../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
-import CosmicSignificanceCol from "@/components/genes/sources/cosmic/CosmicSignificanceCol";
 import CosmicPubCountCol from "@/components/genes/sources/cosmic/CosmicPubCountCol";
 import UnavailableCol from "@/components/genes/sources/shared/UnavailableCol";
 import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 import SourceIcon from "@/components/widgets/SourceIcon";
+import CivicRowDetails from "@/components/genes/sources/civic/CivicRowDetails";
 
 const overrides = {
+	civic: {
+		details_part: CivicRowDetails
+	},
 	cosmic: {
-		row_parts: {
+		colum_parts: {
 			clinical: UnavailableCol,
 			publication_count: CosmicPubCountCol,
 			scores: UnavailableCol
@@ -112,7 +114,7 @@ const overrides = {
 
 export default {
 	name: "VariantPublicDatabases",
-	components: {SourceIcon, GenericSourceDetailsRow, scorePlot, evidenceTypesBarPlot},
+	components: {SourceIcon, scorePlot, evidenceTypesBarPlot},
 	props: {variant: {type: Object, required: true}},
 	data() {
 		return {
@@ -158,7 +160,7 @@ export default {
 					...vis,
 					_showDetails: false,
 					filter: "",
-					row_parts: overrides.hasOwnProperty(vis.source.name) ? overrides[vis.source.name].row_parts : null,
+					colum_parts: overrides.hasOwnProperty(vis.source.name) ? overrides[vis.source.name].colum_parts : null,
 					details_part: overrides.hasOwnProperty(vis.source.name) ? overrides[vis.source.name].details_part : null
 				}
 			});
@@ -171,7 +173,7 @@ export default {
 	},
 	methods: {
 		rowHasPart(row, part) {
-			return row.item.row_parts && row.item.row_parts[part];
+			return row.item.colum_parts && row.item.colum_parts[part];
 		},
 		normalizeItemList
 	},

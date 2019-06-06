@@ -36,7 +36,7 @@
 				<RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter" />
 
 				<b-table
-					:fields="fields" class="table-sm filter-table" :api-url="row.item.associations_url" :items="makeAssociationProvider(this.metaUpdated)"
+					:fields="fields" class="table-sm filter-table" :api-url="row.item.collapsed_associations_url" :items="association_provider"
 					:per-page="perPage" :current-page="currentPage" :filter="packedFilter"
 				>
 					<template slot="disease" slot-scope="c">
@@ -52,24 +52,78 @@
 							/><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
 						</template>
 					</template>
+
+					<template slot="actions" slot-scope="row">
+						<div v-if="row.item.collapsed_count > 1" class="details-tray" style="text-align: right;">
+							<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+							<b-button size="sm" small @click.stop="row.item._animatedDetails = !row.item._animatedDetails">
+								{{ row.item._animatedDetails ? "Hide" : "Show" }} {{ row.item.collapsed_count }} Item(s)
+							</b-button>
+						</div>
+					</template>
+
+					<template slot="row-details" slot-scope="row">
+						<transition-expand>
+							<div v-if="row.item._animatedDetails">
+								<div class="sample-subtable tumor-subtable">
+									<b-table class="sample-subtable-table" sort-by="url" :fields="evidenceChildFields" :items="row.item.children">
+										<template slot="url" slot-scope="c">
+											<a :href="c.value">EID {{ c.value.split("/")[11] }}</a>
+										</template>
+
+										<template slot="publications" slot-scope="c">
+											<template v-for="(p, i) in c.value.map(parsePublicationURL)">
+												<VariomesLitPopover
+													:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="c.item.disease"
+													:key="`${i}_link`"
+												/><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+											</template>
+										</template>
+									</b-table>
+								</div>
+							</div>
+						</transition-expand>
+					</template>
 				</b-table>
 
 				<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
 			</b-card>
 		</div>
+
+		<div style="padding: 20px;">
+			<b-button size="sm" small @click.stop="testExpand = !testExpand">
+				{{ testExpand ? "Hide" : "Show" }} Item(s)
+			</b-button>
+
+			<transition-expand>
+				<div v-if="testExpand">
+					Duis ante dui, vehicula at consectetur et, venenatis at ante. Fusce aliquet, justo at efficitur hendrerit,
+					tortor nunc ornare nisi, at egestas dui enim vitae nunc. Proin eget lorem quis ligula fermentum hendrerit vitae
+					ac sapien. Aliquam efficitur mauris quis tortor posuere tristique. Nulla vulputate dui leo, in ullamcorper nibh
+					pharetra tincidunt. Nulla quis magna purus. Vivamus tempus pulvinar porta. Vestibulum nunc sapien, cursus vel
+					sagittis a, bibendum sit amet elit. Aliquam tincidunt luctus est, id tempus urna pellentesque vitae. Morbi
+					tincidunt est lorem, ut luctus leo tempus sed. Aenean eget est porttitor, accumsan erat eget, vestibulum sem.
+					Nullam et tempus ante. Nulla vulputate sollicitudin elit, non euismod tortor scelerisque eu. Quisque ac lobortis
+					enim. Integer commodo augue vestibulum pellentesque imperdiet.
+				</div>
+			</transition-expand>
+		</div>
+
 	</div>
 </template>
 
 <script>
-import {normalizeItemList, titleCase} from "@/utils";
+import {normalizeItemList, parsePublicationURL, titleCase} from "@/utils";
 import {makeAssociationProvider} from '@/components/genes/item_providers/association_provider';
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
+import {makeCollapsedAssociationProvider} from "@/components/genes/item_providers/collapsed_association_provider";
+import TransitionExpand from "@/components/widgets/TransitionExpand";
 
 export default {
-	name: "GenericRowDetails",
-	components: {RowDetailsHeader, VariomesLitPopover},
+	name: "CivicRowDetails",
+	components: {TransitionExpand, RowDetailsHeader, VariomesLitPopover},
 	props: {
 		row: {type: Object, required: true},
 		variant: {type: Object, required: true}
@@ -80,6 +134,7 @@ export default {
 				phenotype__term: '',
 				search: ''
 			},
+			testExpand: false,
 			currentPage: 1,
 			perPage: 20,
 			totalRows: this.row.item.association_count,
@@ -105,8 +160,8 @@ export default {
 					sortable: true
 				},
 				{
-					key: "evidence_level",
-					label: "Evidence Level",
+					key: "evidence_levels",
+					label: "Evidence Level(s)",
 					sortable: true
 				},
 				{
@@ -119,25 +174,44 @@ export default {
 					label: "References",
 					sortable: false
 				},
+				{
+					key: "actions",
+					label: "",
+					sortable: false
+				}
+			],
+			evidenceChildFields: [
+				{ key: "url", label: "Source", sortable: true },
+				{ key: "evidence_level", label: "Evidence Level", sortable: true },
+				{ key: "publications", label: "Reference(s)", sortable: true },
 			]
 		}
 	},
 	computed: {
 		packedFilter() {
 			return JSON.stringify(this.currentFilter);
+		},
+		association_provider() {
+			return makeCollapsedAssociationProvider(this.metaUpdated);
 		}
 	},
 	methods: {
 		metaUpdated({ count }) {
 			this.totalRows = count;
 		},
-		makeAssociationProvider,
 		normalizeItemList,
-		titleCase
+		titleCase,
+		parsePublicationURL
 	}
 }
 </script>
 
 <style scoped>
+.details-tray button {
+	min-width: 120px;
+}
 
+.sample-subtable-table {
+	background: none !important;
+}
 </style>
