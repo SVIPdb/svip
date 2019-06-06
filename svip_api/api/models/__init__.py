@@ -1,6 +1,6 @@
 from .genomic import (
     Source, Gene, Variant,
-    VariantInSource, Association, Phenotype, Evidence, EnvironmentalContext
+    VariantInSource, Association, CollapsedAssociation, Phenotype, Evidence, EnvironmentalContext
 )
 from .svip import (
     VariantInSVIP, Disease, CurationEntry, Sample

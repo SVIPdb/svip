@@ -7,6 +7,7 @@ from api.models import (
     Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
     VariantInSVIP
 )
+from api.models.genomic import CollapsedAssociation
 from api.serializers.svip import VariantInSVIPSerializer
 
 
@@ -92,6 +93,14 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
         our_url = reverse('variantinsource-detail', args=[obj.id], request=self.context['request'])
         return "%s/associations" % our_url
 
+    collapsed_associations_url = serializers.SerializerMethodField()
+
+    def get_collapsed_associations_url(self, obj):
+        # FIXME: ideally, this should link by reference to the associations nested router, but we're hardcoding it here
+        #  because i can't figure out how to do that :\
+        our_url = reverse('variantinsource-detail', args=[obj.id], request=self.context['request'])
+        return "%s/collapsed_associations" % our_url
+
     class Meta:
         model = VariantInSource
         fields = (
@@ -101,6 +110,7 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
             'variant_url',
             'extras',
             'associations_url',
+            'collapsed_associations_url',
             'association_count',
             'publication_count',
             'clinical_significances',
@@ -159,6 +169,12 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
             'evidence_set',
             'environmentalcontext_set'
         )
+
+
+class CollapsedAssociationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CollapsedAssociation
+        fields = '__all__'
 
 
 class PhenotypeSerializer(serializers.HyperlinkedModelSerializer):

@@ -23,6 +23,7 @@ router.register(r'variants_in_svip', views.VariantInSVIPViewSet, basename='varia
 # router.register(r'diseases', views.DiseaseViewSet, basename='disease')
 # router.register(r'svip_samples', views.SampleViewSet, basename='variantinsvip')
 router.register(r'associations', views.AssociationViewSet, basename='association')
+router.register(r'collapsed_associations', views.CollapsedAssociationViewSet, basename='collapsedassociation')
 router.register(r'phenotypes', views.PhenotypeViewSet)
 router.register(r'evidence_items', views.EvidenceViewSet)
 router.register(r'environmental_contexts', views.EnvironmentalContextViewSet)
@@ -38,6 +39,7 @@ variants_router.register(r'sources', views.VariantInSourceViewSet, basename='sou
 
 variants_in_sources_router = nested_routers.NestedSimpleRouter(router, r'variants_in_sources', lookup='variant_in_source')
 variants_in_sources_router.register(r'associations', views.AssociationViewSet, basename='associations')
+variants_in_sources_router.register(r'collapsed_associations', views.CollapsedAssociationViewSet, basename='collapsedassociations')
 
 # # SVIP-specific endpoints
 # variants_in_svip_router = nested_routers.NestedSimpleRouter(router, r'variants_in_svip', lookup='variant_in_svip')

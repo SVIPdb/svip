@@ -242,6 +242,36 @@ class Association(models.Model):
     crawl_status = JSONField(null=True)
 
 
+class CollapsedAssociation(models.Model):
+    """
+    A simplified version of Association that collapses entries that have the same information except the source
+    evidence ID and the list of publications, to circumvent denormalized entries in public databases.
+
+    For example, CIViC has three entries for (BRAF, V600E, Cholangiocarcinoma) that only differ by the publications
+    associated with the submission. They should instead be a single entry with three publications.
+
+    Additionally, this model presents a schema that's closer to what the front-end expects, removing the need to
+    transform and/or aggregate fields in the client (e.g., the contexts field, which is a concatenation of all the
+    EnvironmentalContext.description values for this Association).
+    """
+    variant_in_source = ForeignKey(to=VariantInSource, null=False, on_delete=models.DO_NOTHING)
+
+    disease = models.TextField(blank=True, null=True)
+    evidence_type = models.TextField(blank=True, null=True)
+    evidence_direction = models.TextField(blank=True, null=True)
+    clinical_significance = models.TextField(blank=True, null=True)
+    drug_labels = models.TextField(blank=True, null=True)
+    contexts = models.TextField(blank=True, null=True)
+    evidence_levels = models.TextField(blank=True, null=True)
+    publications = ArrayField(base_field=models.TextField(), blank=True, null=True, verbose_name="Publication URLs")
+    children = JSONField(blank=True, null=True)
+    collapsed_count = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = 'api_collapsed_associations'
+
+
 # all of the following are optional children of Association
 
 class Phenotype(models.Model):

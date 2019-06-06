@@ -5,6 +5,7 @@ from .genomic import (
     VariantViewSet,
     VariantInSourceViewSet,
     AssociationViewSet,
+    CollapsedAssociationViewSet,
     PhenotypeViewSet,
     EvidenceViewSet,
     EnvironmentalContextViewSet

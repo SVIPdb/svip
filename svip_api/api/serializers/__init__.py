@@ -7,6 +7,7 @@ from .genomic import (
     VariantInSourceSerializer,
     FullVariantSerializer,
     AssociationSerializer,
+    CollapsedAssociationSerializer,
     PhenotypeSerializer,
     EvidenceSerializer,
     EnvironmentalContextSerializer,

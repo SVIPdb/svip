@@ -15,12 +15,16 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource
+from api.models import (
+    Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
+    CollapsedAssociation
+)
 from api.serializers import (
     SourceSerializer, GeneSerializer,
     VariantSerializer, AssociationSerializer,
     PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer,
-    VariantInSourceSerializer, VariantInSVIPSerializer
+    VariantInSourceSerializer, VariantInSVIPSerializer,
+    CollapsedAssociationSerializer
 )
 
 
@@ -185,6 +189,54 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
         'phenotype__term',
         'environmentalcontext__description',
         'evidence__publications'
+    )
+
+
+class CollapsedAssociationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A simplified version of Association that collapses entries that have the same information except the source
+    evidence ID and the list of publications, to circumvent denormalized entries in public databases.
+
+    Refer to Association for more details.
+    """
+    serializer_class = CollapsedAssociationSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        if 'variant_in_source_pk' in self.kwargs:
+            q = CollapsedAssociation.objects.filter(variant_in_source_id=self.kwargs['variant_in_source_pk'])
+        else:
+            q = CollapsedAssociation.objects.all()
+
+        return q.order_by('id')
+
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'variant_in_source__variant__gene', 'variant_in_source__source',
+        'disease',
+        'contexts'
+    )
+    ordering_fields = (
+        'evidence_type',
+        'evidence_direction',
+        'clinical_significance',
+        'evidence_levels',
+        'drug_labels',
+        'disease',
+        'contexts'
+    )
+
+    search_fields = (
+        'variant_in_source__variant__name',
+        'variant_in_source__variant__description',
+        'evidence_type',
+        'evidence_direction',
+        'clinical_significance',
+        'evidence_levels',
+        'drug_labels',
+        'disease',
+        'contexts',
+        'publications'
     )
 
 
