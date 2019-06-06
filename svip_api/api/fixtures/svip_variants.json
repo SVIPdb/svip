@@ -58,7 +58,7 @@
     "dbSNP": "rs121434568",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Carcinoma",
+        "name": "Non-Small Cell Lung Cancer",
         "SVIP_status": "Curated",
         "score": 3
       },
@@ -78,7 +78,7 @@
     "dbSNP": "rs121913465",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Carcinoma",
+        "name": "Non-Small Cell Lung Cancer",
         "SVIP_status": "Curated",
         "score": 2
       },
@@ -98,7 +98,7 @@
     "dbSNP": "rs121434569",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Carcinoma",
+        "name": "Non-Small Cell Lung Cancer",
         "SVIP_status": "Curated",
         "score": 3
       },
