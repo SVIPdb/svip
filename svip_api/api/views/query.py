@@ -24,9 +24,7 @@ class QueryView(viewsets.ViewSet):
         if search_term is not None and search_term != '':
             # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the
             # database; e.g., 'Val600Glu' becomes 'V600E'
-            print("Original search: %s" % search_term)
             collapsed_search = reduce(lambda acc, v: v[0].sub(v[1], acc), three_to_one_icase.items(), search_term)
-            print("Collapsed search: %s" % collapsed_search)
 
             gq = Gene.objects.filter(
                 Q(symbol__icontains=search_term) | Q(aliases__icontains=search_term)
