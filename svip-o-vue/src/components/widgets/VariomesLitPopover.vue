@@ -8,8 +8,9 @@
 			data-container="body"
 		>
 			<template>
-				<div v-if="variomes && variomes.publication" class="variomes-popover">
+				<div v-if="variomes && variomes.publication" :class="['variomes-popover', (variomes && variomes.publication && variomes.publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
 					<h6 class="title" v-html="variomes.publication.title_highlight"></h6>
+					<div class="authors">{{ formatAuthors(variomes.publication.authors) }}. {{ variomes.publication.journal }} ({{ variomes.publication.date }})</div>
 					<div class="abstract" v-html="variomes.publication.abstract_highlight"></div>
 
 					<div class="abstract-fader"></div>
@@ -28,9 +29,6 @@ import store from "@/store";
 import { HTTP } from '@/router/http';
 
 // FIXME: eventually link to http://variomes.hesge.ch/Variomes/literature.jsp?id=27145535&gene=NRAS&variant=Q61R
-
-// used to parse pubmed titles, which may contain html, for the hover-over tooltips
-const parser = new DOMParser();
 
 function parsePubMeta(pubmeta) {
 	if (pubmeta.hasOwnProperty('pmid') && pubmeta.pmid) {
@@ -82,6 +80,13 @@ export default {
 			});
 	},
 	methods: {
+		formatAuthors(authors) {
+			if (authors.length > 5) {
+				return authors.slice(0, 3).concat("et al").join(", ");
+			}
+
+			return authors.join(", ");
+		}
 	}
 }
 </script>
@@ -89,9 +94,13 @@ export default {
 <style>
 .variomes-popover .title { font-weight: bold; }
 .variomes-popover .abstract { max-height: 30ex; overflow: hidden; }
+.variomes-popover .authors { font-style: italic; margin-bottom: 0.25em; }
 .variomes-popover .abstract-fader {
 	position: absolute; left: 3px; right: 3px; bottom: 8px; height: 64px; background-color: transparent;
 	background-image: linear-gradient(rgba(0, 0, 0, 0), white);
+}
+.variomes-popover.short-abstract .abstract-fader {
+	display: none;
 }
 
 .variomes-loading { display: flex; align-items: center; justify-content: space-between; }
