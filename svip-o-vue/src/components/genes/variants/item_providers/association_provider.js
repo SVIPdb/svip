@@ -52,7 +52,7 @@ export function makeAssociationProvider(metaUpdate=null) {
 			})).filter(x => x.pmid).map(x => x.pmid);
 
 			store.dispatch('getBatchPubmedInfo', { pmid_set });
-			 */
+			*/
 
 			// rewrite associations into the structure that -RowDetails expects
 			return res.data.results.map(a => ({
