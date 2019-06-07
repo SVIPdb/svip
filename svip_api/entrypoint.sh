@@ -7,6 +7,7 @@ until PGPASSWORD="$POSTGRES_PASSWORD" psql -d  "$POSTGRES_DB" -h "$POSTGRES_HOST
 done
 
 python manage.py migrate
+python manage.py createcachetable
 
 # attempt to create superuser if they don't already exist
 python -c "import os
@@ -35,5 +36,5 @@ if [[ -n "${USE_DEV_SERVER}" ]]; then
     # this dev server is less efficient than gunicorn, but it auto-reloads on source changes
     python manage.py runserver 0.0.0.0:8085
 else
-    gunicorn svip_server.wsgi -b 0.0.0.0:8085
+    gunicorn svip_server.wsgi -b 0.0.0.0:8085 -w 16
 fi

@@ -1,17 +1,20 @@
 import requests
 from django.http import HttpResponse, JsonResponse
 
-from cachecontrol import CacheControl, CacheControlAdapter
+from cachecontrol import CacheControl
 from cachecontrol.heuristics import ExpiresAfter
 from cachecontrol_django import DjangoCache
 
-adapter = CacheControlAdapter(heuristic=ExpiresAfter(days=1))
-cached_sess = CacheControl(requests.session(), cache=DjangoCache())
-cached_sess.mount('http://', adapter)
+
+cached_sess = CacheControl(
+    requests.session(),
+    cache=DjangoCache(),
+    heuristic=ExpiresAfter(days=5)
+)
 
 
 def variomes_single_ref(request):
-    # proxy requests to candy
+    # proxy requests to variomes server
     response = cached_sess.get('http://candy.hesge.ch/Variomes/api/getOnePublication.jsp', params=request.GET)
 
     if response.status_code != 200:
