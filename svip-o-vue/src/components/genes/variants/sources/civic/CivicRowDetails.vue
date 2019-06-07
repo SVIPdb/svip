@@ -74,7 +74,7 @@
 										<template slot="publications" slot-scope="c">
 											<template v-for="(p, i) in c.value.map(parsePublicationURL)">
 												<VariomesLitPopover
-													:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="c.item.disease"
+													:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="row.item.disease"
 													:key="`${i}_link`"
 												/><span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
 											</template>
