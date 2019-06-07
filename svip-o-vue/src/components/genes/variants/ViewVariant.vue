@@ -100,12 +100,12 @@
 // import geneVariants from '@/components/Variants'
 import round from 'lodash/round';
 import {mapGetters} from "vuex";
-import variantPublicDatabases from "@/components/genes/variantPublicDatabases";
-import variantSvip from "@/components/genes/variantSvip";
+import variantPublicDatabases from "@/components/genes/variants/PublicDatabases";
+import variantSvip from "@/components/genes/variants/SVIPInfo";
 import store from "@/store";
 
 import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
-import VariantExternalInfo from "@/components/genes/external/VariantExternalInfo";
+import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 
 export default {
 	name: "ViewVariant",

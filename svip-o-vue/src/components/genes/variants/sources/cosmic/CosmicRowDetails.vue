@@ -105,7 +105,7 @@
 import {normalizeItemList, titleCase, desnakify} from "@/utils";
 import {makeAssociationProvider} from "../../item_providers/association_provider";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
-import RowDetailsHeader from "@/components/genes/sources/shared/RowDetailsHeader";
+import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {

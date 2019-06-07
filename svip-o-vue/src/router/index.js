@@ -2,18 +2,14 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "@/components/Home";
 import ViewGene from "@/components/genes/ViewGene";
-import ViewVariant from "@/components/genes/ViewVariant";
+import ViewVariant from "@/components/genes/variants/ViewVariant";
 import Login from "@/components/user/Login";
 import UserInfo from "@/components/user/UserInfo";
-
-// import {ServerTable, ClientTable, Event} from 'vue-tables-2';
+import store from '@/store';
+import {TokenErrors} from "@/store/modules/users";
+import PageNotFound from "@/components/PageNotFound";
 
 Vue.use(Router);
-// Vue.use(ClientTable);
-
-import store from '@/store';
-import {TokenErrors} from "../store/modules/users";
-import PageNotFound from "@/components/PageNotFound";
 
 const router = new Router({
 	mode: "history",

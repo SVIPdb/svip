@@ -32,16 +32,6 @@
 			<b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="actions" slot-scope="row">
 					<div class="details-tray" style="text-align: right;">
-						<!--
-						<b-button v-access="'curators'" @click.stop="showPanel(row, 0)" size="sm" style="background-color:green;">
-							Show Curation
-						</b-button>
-						<b-button v-access="'clinicians'" @click.stop="showPanel(row, 1)" size="sm" style="background-color:purple;">
-							Show Samples
-						</b-button>
-						-->
-
-						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 						<b-button size="sm" @click.stop="row.toggleDetails">
 							{{ row.detailsShowing ? "Hide" : "Show" }} Details
 						</b-button>
@@ -178,7 +168,7 @@
 <script>
 import Vue from 'vue';
 import store from '@/store';
-import {titleCase} from "../../utils";
+import {titleCase} from "../../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
 
 import ageDistribution from "@/components/plots/ageDistribution";

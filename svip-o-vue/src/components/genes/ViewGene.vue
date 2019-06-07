@@ -111,7 +111,7 @@
 <script>
 import {mapGetters} from "vuex";
 import store from "@/store";
-import {makeVariantProvider} from '@/components/genes/item_providers/variant_provider';
+import {makeVariantProvider} from '@/components/genes/variants/item_providers/variant_provider';
 import {change_from_hgvs, var_to_position, desnakify} from "@/utils";
 import SourceIcon from "@/components/widgets/SourceIcon";
 
