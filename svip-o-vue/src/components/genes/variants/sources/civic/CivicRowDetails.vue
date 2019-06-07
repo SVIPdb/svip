@@ -89,26 +89,6 @@
 				<b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
 			</b-card>
 		</div>
-
-		<div style="padding: 20px;">
-			<b-button size="sm" small @click.stop="testExpand = !testExpand">
-				{{ testExpand ? "Hide" : "Show" }} Item(s)
-			</b-button>
-
-			<transition-expand>
-				<div v-if="testExpand">
-					Duis ante dui, vehicula at consectetur et, venenatis at ante. Fusce aliquet, justo at efficitur hendrerit,
-					tortor nunc ornare nisi, at egestas dui enim vitae nunc. Proin eget lorem quis ligula fermentum hendrerit vitae
-					ac sapien. Aliquam efficitur mauris quis tortor posuere tristique. Nulla vulputate dui leo, in ullamcorper nibh
-					pharetra tincidunt. Nulla quis magna purus. Vivamus tempus pulvinar porta. Vestibulum nunc sapien, cursus vel
-					sagittis a, bibendum sit amet elit. Aliquam tincidunt luctus est, id tempus urna pellentesque vitae. Morbi
-					tincidunt est lorem, ut luctus leo tempus sed. Aenean eget est porttitor, accumsan erat eget, vestibulum sem.
-					Nullam et tempus ante. Nulla vulputate sollicitudin elit, non euismod tortor scelerisque eu. Quisque ac lobortis
-					enim. Integer commodo augue vestibulum pellentesque imperdiet.
-				</div>
-			</transition-expand>
-		</div>
-
 	</div>
 </template>
 
