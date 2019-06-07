@@ -12,6 +12,7 @@ services:
     volumes:
          - "svip_pgdata:/var/lib/postgresql/data" # for now we're storing pg data to a volume
          - ./svip_db_backups:/backups
+         - ./db_config:/docker-entrypoint-initdb.d
     ports:
       - "30432:5432" # FIXME: dev access port, remove later
     environment:
@@ -48,6 +49,7 @@ services:
     # restart: always
     volumes:
       - ./svip_api:/app
+      - /Users/faisala/Checkouts:/checkouts
     ports:
      - "8085:8085"
      - "8889:8889"  # jupyterlab port
