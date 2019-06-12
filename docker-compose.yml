@@ -21,7 +21,7 @@ services:
       - POSTGRES_DB
       - PGUSER=${POSTGRES_USER}
       - PGPASSWORD=${POSTGRES_PASSWORD}
-      - PGHOST=localhost
+      - PGDB=${POSTGRES_DB}
 
   api:
     # image: "svip_api:latest"
