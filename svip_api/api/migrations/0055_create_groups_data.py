@@ -21,7 +21,8 @@ def create_groups(apps, schema_editor):
         g, created = Group.objects.get_or_create(name=groupname)
         if created:
             g.save()
-            g.permissions.set([p for p in Permission.objects.filter(codename__in=v['permissions'])])
+        # ensure the permissions exist, regardless
+        g.permissions.set([p for p in Permission.objects.filter(codename__in=v['permissions'])])
 
 
 def drop_groups(apps, schema_editor):
