@@ -29,6 +29,10 @@
 		</div>
 
 		<div class="card-body top-level">
+			<TissueDistribution :tissue_counts="variant.svip_data.tissue_counts" />
+		</div>
+
+		<div class="card-body top-level">
 			<b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="actions" slot-scope="row">
 					<div class="details-tray" style="text-align: right;">
@@ -177,6 +181,7 @@ import genderPlot from "@/components/plots/genderPlot";
 import {makeSampleProvider} from "./item_providers/sample_provider";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import {trimPrefix} from "@/utils";
+import TissueDistribution from "@/components/genes/variants/svip/TissueDistribution";
 
 Vue.component("pass", {
 	render() {
@@ -186,7 +191,7 @@ Vue.component("pass", {
 
 export default {
 	name: "VariantSVIP",
-	components: {ageDistribution, VariomesLitPopover, genderPlot},
+	components: {TissueDistribution, ageDistribution, VariomesLitPopover, genderPlot},
 	props: {
 		variant: {type: Object, required: true}
 	},
