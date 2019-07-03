@@ -3,7 +3,7 @@
 			<h5 style="margin-bottom: 0.75em;">Tissue Distribution</h5>
 
 			<div ref="thechart" class="disease-holster">
-				<div v-for="(bar, idx) in bars" :key="bar.name" class="disease-row">
+				<div v-for="(bar) in bars" :key="bar.name" class="disease-row">
 					<div class="disease-name">{{ bar.name }}</div>
 					<svg :id="`disease-chart_${bar.name}`" :ref="`disease-chart_${bar.name}`" class="sig-bar-chart" :viewBox="`0 0 300 ${barHeight}`" preserveAspectRatio="none" :style="`height: ${barHeight}`">
 						<g v-for="d in bar.sections" :key="d.k">
@@ -12,7 +12,7 @@
 					</svg>
 
 					<b-tooltip :target="() => getDocument().getElementById(`disease-chart_${bar.name}`)" placement="bottom">
-						<div v-for="(disease, idx) in getDiseasesForTissue(bar.name)" :key="disease.name" style="text-align: left;">
+						<div v-for="(disease) in getDiseasesForTissue(bar.name)" :key="disease.name" style="text-align: left;">
 							<svg width="10" height="10" class="legend-swatch">
 								<rect width="10" height="10" :fill="diseaseColors(disease.name)"></rect>
 							</svg>
