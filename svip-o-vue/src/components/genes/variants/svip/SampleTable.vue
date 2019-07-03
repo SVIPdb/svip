@@ -137,20 +137,7 @@ export default {
 </script>
 
 <style scoped>
-.tab-pane.card-body {
-	padding: 10px 0 0 0;
-}
-
 .paginator-holster {
 	padding-left: 15px;
-}
-
-.expander-button {
-	width: 100px;
-	border: solid 1px #eee;
-	background: #eee;
-}
-.expander-button.is-expanded {
-	opacity: 0.5;
 }
 </style>
