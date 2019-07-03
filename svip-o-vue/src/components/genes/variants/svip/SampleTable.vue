@@ -22,7 +22,7 @@
 				</a>
 			</template>
 
-			<template slot="sequencing_date" slot-scope="entry">
+			<template slot="panel" slot-scope="entry">
 				<a href="javascript:void(0);" @click.stop="() => changeSubpanel(entry, 'sequencing')">
 					{{ entry.value }}
 				</a>
@@ -36,13 +36,13 @@
 				<div v-if="entry.item.curSubtable === 'tumor'" class="sample-subtable tumor-subtable">
 					<table>
 						<tr><th v-for="field in tumor_fields" :key="field.key">{{ field.label }}</th></tr>
-						<tr><td v-for="field in tumor_fields" :key="field.key">{{ entry.item[field.key] }}</td></tr>
+						<tr><td v-for="field in tumor_fields" :key="field.key">{{ entry.item[field.key] || '-' }}</td></tr>
 					</table>
 				</div>
 				<div v-else-if="entry.item.curSubtable === 'sequencing'" class="sample-subtable sequencing-subtable">
 					<table>
 						<tr><th v-for="field in sequencing_fields" :key="field.key">{{ field.label }}</th></tr>
-						<tr><td v-for="field in sequencing_fields" :key="field.key">{{ entry.item[field.key] }}</td></tr>
+						<tr><td v-for="field in sequencing_fields" :key="field.key">{{ entry.item[field.key] || '-' }}</td></tr>
 					</table>
 				</div>
 			</template>
@@ -89,7 +89,7 @@ export default {
 				{ key: "provider_annotation", label: "Provider Annotation", sortable: true },
 
 				{ key: "sample_tissue", label: "Tumor Sample", sortable: true }, /* links to tumor details */
-				{ key: "sequencing_date", label: "Sequencing Date", sortable: true },  /* links to sequencing details */
+				{ key: "panel", label: "Panel", sortable: true },  /* links to sequencing details */
 			],
 
 			tumor_fields: [
@@ -97,7 +97,8 @@ export default {
 				{ key: "tnm_stage", label: "TNM Stage", sortable: true },
 				{ key: "sample_type", label: "Sample Type", sortable: true },
 				{ key: "sample_site", label: "Sample Site", sortable: true },
-				{ key: "specimen_type", label: "Specimen Type", sortable: true }
+				{ key: "specimen_type", label: "Specimen Type", sortable: true },
+				{ key: "allele_frequency", label: "Allele Frequency", sortable: true }
 			],
 
 			sequencing_fields: [
