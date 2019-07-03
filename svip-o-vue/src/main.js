@@ -1,7 +1,6 @@
 import Vue from "vue";
 import App from "./App";
 import router from "./router";
-import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import "@/css/bootstrap.css";
@@ -27,10 +26,12 @@ import vSelect from "vue-select";
 
 import store from "./store";
 
+// imports all the bootstrap parts
+import './components/bootstrap-bits';
+
 Vue.config.productionTip = false;
 
 Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop, showProgressBar: false } });
-Vue.use(BootstrapVue);
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
