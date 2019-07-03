@@ -29,10 +29,6 @@
 		</div>
 
 		<div class="card-body top-level">
-			<TissueDistribution :tissue_counts="variant.svip_data.tissue_counts" />
-		</div>
-
-		<div class="card-body top-level">
 			<b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
 				<template slot="actions" slot-scope="row">
 					<div class="details-tray" style="text-align: right;">
@@ -83,80 +79,11 @@
 							<b-tabs v-model="svip_entry_tabs[row.item.name]" card :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`">
 
 								<b-tab title="Evidence" active>
-									<b-card-text>
-										<b-table :fields="subtables.evidence.fields" :items="row.item.curation_entries" :show-empty="true" :small="true">
-											<template slot="references" slot-scope="data">
-												<VariomesLitPopover
-													:pubmeta="{ pmid: trimPrefix(data.value, 'PMID:') }" :variant="variant.name" :gene="variant.gene.symbol" :disease="row.item.name"
-												/>
-											</template>
-
-											<template slot="empty">
-												<div class="empty-table-msg">- no evidence items -</div>
-											</template>
-										</b-table>
-									</b-card-text>
+									<EvidenceTable :variant="variant" :row="row" />
 								</b-tab>
 
 								<b-tab title="Samples" :disabled="!(groups && groups.includes('clinicians'))">
-									<b-card-text>
-										<b-table
-											v-if="(groups && groups.includes('clinicians'))"
-											:fields="subtables.samples.fields"
-											:items="getSampleProvider(row)"
-											:small="true"
-											:show-empty="true"
-											class="table-sm filter-table"
-											:api-url="row.item.samples_url"
-											:per-page="dMeta(row).perPage"
-											:current-page="dMeta(row).currentPage"
-											:filter="packedFilter(dMeta(row).currentFilter)"
-										>
-											<template slot="contact" slot-scope="entry">
-												<b-button :href="`${entry.value}?subject=Regarding Sample ID ${entry.item.sample_id}`" size="sm" variant="info">Contact</b-button>
-											</template>
-
-											<template slot="sample_tissue" slot-scope="entry">
-												<a href="#" @click.stop="() => changeSubpanel(entry, 'tumor')">
-													{{ entry.value }}
-												</a>
-											</template>
-
-											<template slot="sequencing_date" slot-scope="entry">
-												<a href="#" @click.stop="() => changeSubpanel(entry, 'sequencing')">
-													{{ entry.value }}
-												</a>
-											</template>
-
-											<template slot="empty">
-												<div class="empty-table-msg">- no samples -</div>
-											</template>
-
-											<template slot="row-details" slot-scope="entry">
-												<div v-if="entry.item.curSubtable === 'tumor'" class="sample-subtable tumor-subtable">
-													<table>
-														<tr><th v-for="field in subtables.samples.tumor_fields" :key="field.key">{{ field.label }}</th></tr>
-														<tr><td v-for="field in subtables.samples.tumor_fields" :key="field.key">{{ entry.item[field.key] }}</td></tr>
-													</table>
-												</div>
-												<div v-else-if="entry.item.curSubtable === 'sequencing'" class="sample-subtable sequencing-subtable">
-													<table>
-														<tr><th v-for="field in subtables.samples.sequencing_fields" :key="field.key">{{ field.label }}</th></tr>
-														<tr><td v-for="field in subtables.samples.sequencing_fields" :key="field.key">{{ entry.item[field.key] }}</td></tr>
-													</table>
-												</div>
-											</template>
-										</b-table>
-
-										<div class="paginator-holster">
-											<b-pagination
-												v-if="dMeta(row).totalRows > dMeta(row).perPage"
-												v-model="dMeta(row).currentPage"
-												:total-rows="dMeta(row).totalRows"
-												:per-page="dMeta(row).perPage"
-											/>
-										</div>
-									</b-card-text>
+									<SampleTable :variant="variant" :row="row" :groups="groups" />
 								</b-tab>
 
 							</b-tabs>
@@ -165,6 +92,12 @@
 				</template>
 			</b-table>
 		</div>
+
+		<!--
+		<div class="card-body top-level">
+			<TissueDistribution :tissue_counts="variant.svip_data.tissue_counts" />
+		</div>
+		-->
 	</div>
 </template>
 
@@ -182,6 +115,8 @@ import {makeSampleProvider} from "./item_providers/sample_provider";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import {trimPrefix} from "@/utils";
 import TissueDistribution from "@/components/genes/variants/svip/TissueDistribution";
+import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
+import SampleTable from "@/components/genes/variants/svip/SampleTable";
 
 Vue.component("pass", {
 	render() {
@@ -191,24 +126,11 @@ Vue.component("pass", {
 
 export default {
 	name: "VariantSVIP",
-	components: {TissueDistribution, ageDistribution, VariomesLitPopover, genderPlot},
+	components: {SampleTable, EvidenceTable, TissueDistribution, ageDistribution, VariomesLitPopover, genderPlot},
 	props: {
 		variant: {type: Object, required: true}
 	},
 	data() {
-		// create a per-disease structure to store sample-table paging and filtering settings
-		const sample_meta = this.variant.svip_data.diseases.reduce((acc, entry) => {
-			acc[entry.name] = {
-				name: entry.name,
-				totalRows: entry.nb_patients,
-				sortBy: "disease",
-				currentFilter: {},
-				currentPage: 1,
-				perPage: 10,
-			};
-			return acc;
-		}, {});
-
 		return {
 			// we're storing the selected tab per disease so that we can manipulate the selection with the per-disease buttons
 			// FIXME: (which, incidentally, aren't even being displayed right now...maybe we just remove this?)
@@ -276,100 +198,19 @@ export default {
 					label: "",
 					sortable: false
 				}
-			],
-			subtables: {
-				samples: {
-					fields: [
-						{ key: "disease_name", label: "Disease", sortable: true },
-						{ key: "sample_id", label: "Sample ID", sortable: true },
-						{ key: "year_of_birth", label: "Year of birth", sortable: true },
-						{ key: "gender", label: "Gender", sortable: true },
-						{ key: "hospital", label: "Hospital", sortable: true },
-						{ key: "medical_service", label: "Medical Service", sortable: true },
-						{ key: "contact", label: "Contact", sortable: true },
-						{ key: "provider_annotation", label: "Provider Annotation", sortable: true },
-
-						{ key: "sample_tissue", label: "Tumor Sample", sortable: true }, /* links to tumor details */
-						{ key: "sequencing_date", label: "Sequencing Date", sortable: true },  /* links to sequencing details */
-					],
-
-					tumor_fields: [
-						{ key: "tumor_purity", label: "Tumor Purity", sortable: true },
-						{ key: "tnm_stage", label: "TNM Stage", sortable: true },
-						{ key: "sample_type", label: "Sample Type", sortable: true },
-						{ key: "sample_site", label: "Sample Site", sortable: true },
-						{ key: "specimen_type", label: "Specimen Type", sortable: true }
-					],
-
-					sequencing_fields: [
-						{ key: "sequencing_date", label: "Sequencing Date", sortable: true },
-						{ key: "platform", label: "Platform", sortable: true },
-						{ key: "panel", label: "Panel", sortable: true },
-						{ key: "coverage", label: "Coverage", sortable: true },
-						{ key: "calling_strategy", label: "Calling Strategy", sortable: true },
-						{ key: "caller", label: "Caller", sortable: true },
-						{ key: "aligner", label: "Aligner", sortable: true },
-						{ key: "software", label: "Software", sortable: true },
-						{ key: "software_version", label: "Software Version", sortable: true },
-					],
-					diseases_meta: sample_meta,
-				},
-
-				evidence: {
-					fields: [
-						{ key: "type_of_evidence", label: "Evidence Type", sortable: true },
-						{ key: "effect", label: "Effect", sortable: true },
-						{ key: "drug", label: "Drug", sortable: true },
-						{ key: "tier_level_criteria", label: "Tier Criteria", sortable: true },
-						{ key: "mutation_origin", label: "Mutation Origin", sortable: true },
-						{ key: "summary", label: "Complementary Information", sortable: false },
-						{ key: "support", label: "Support", sortable: true },
-						{ key: "references", label: "References", sortable: false },
-					]
-				}
-			}
+			]
 		};
 	},
 	methods: {
-		samplesFetched(target) {
-			return ({ count }) => {
-				target.totalRows = count;
-			};
-		},
 		packedFilter(filters) {
 			return JSON.stringify(filters);
-		},
-		dMeta(row) {
-			return this.subtables.samples.diseases_meta[titleCase(row.item.name)];
-		},
-		showPanel(row, tabIndex) {
-			console.log(`Switching row ${row.item.name} from tab ${this.svip_entry_tabs[row.item.name]} to tab ${tabIndex}`);
-			// if we're switching to a new tab, always show the details; if it's the same tab, toggle it
-			if (this.svip_entry_tabs[row.item.name] === tabIndex) {
-				row.item._showDetails = !row.item._showDetails;
-			}
-			else {
-				row.item._showDetails = true;
-			}
-			this.svip_entry_tabs[row.item.name] = tabIndex;
 		},
 		setAllExpanded(isExpanded) {
 			this.variant.svip_data.diseases.forEach(x => {
 				x._showDetails = isExpanded;
 			});
 		},
-		titleCase,
-		trimPrefix,
-		getSampleProvider(row) {
-			return makeSampleProvider(this.samplesFetched(this.dMeta(row)), {
-				_showDetails: false,
-				curSubtable: null
-			});
-		},
-		changeSubpanel(entry, subpanel_id) {
-			entry.item._showDetails = (entry.item.curSubtable === subpanel_id) ? !entry.item._showDetails : true;
-			entry.item.curSubtable = subpanel_id;
-		}
+		titleCase
 	},
 	computed: {
 		totalPatients() {
