@@ -10,7 +10,17 @@ import Snotify, {SnotifyPosition} from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
 
-import "vue-awesome/icons"; // FIXME: import only what we use to reduce the bundle size
+// we import only the icons we actually use in the project to dramatically reduce bundle size
+import "vue-awesome/icons/sign-out-alt";
+import "vue-awesome/icons/sign-in-alt";
+import "vue-awesome/icons/sort";
+import "vue-awesome/icons/sort-up";
+import "vue-awesome/icons/sort-down";
+import "vue-awesome/icons/star";
+import "vue-awesome/icons/regular/star";
+import "vue-awesome/icons/spinner";
+import "vue-awesome/icons/external-link-alt";
+
 import Icon from "vue-awesome/components/Icon";
 
 import vSelect from "vue-select";
