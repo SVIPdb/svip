@@ -13,7 +13,6 @@ import Access from "@/directives/access";
 import "vue-awesome/icons"; // FIXME: import only what we use to reduce the bundle size
 import Icon from "vue-awesome/components/Icon";
 
-import VeeValidate from "vee-validate";
 import vSelect from "vue-select";
 
 import store from "./store";
@@ -22,7 +21,6 @@ Vue.config.productionTip = false;
 
 Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop, showProgressBar: false } });
 Vue.use(BootstrapVue);
-Vue.use(VeeValidate, {fieldsBagName: "formFields"});
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
