@@ -28,7 +28,9 @@ from drf_yasg import openapi
 from rest_framework import permissions
 
 import api.urls as api_router
-from svip_server.tokens import GroupsTokenObtainPairView, GroupsTokenObtainSlidingView, TokenInfo, TokenInvalidate
+import api.views.beacon as beacon101
+import api.views.beacon_v110 as beacon110
+from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
 from svip_server.views import variomes_single_ref
 
 schema_view = get_schema_view(
@@ -65,6 +67,15 @@ urlpatterns = [
     re_path(r'^api/v1/', include(api_router.variants_in_sources_router.urls)),
     re_path(r'^api/v1/', include(api_router.variants_in_svip_router.urls)),
     re_path(r'^api/v1/', include(api_router.diseases_router.urls)),
+
+    # beacon v1.0.1 route
+    re_path(r'^api/v1/beacon/$', beacon101.beacon, name='beacon101'),
+    re_path(r'^api/v1/beacon/query/$', beacon101.beacon_query, name='beacon101_query'),
+
+    # beacon v1.1.0 route
+    re_path(r'^api/v1/beacon/v1.1.0/$', beacon110.beacon, name='beacon110'),
+    re_path(r'^api/v1/beacon/v1.1.0/query/$', beacon110.beacon_query, name='beacon110_query'),
+    re_path(r'^api/v1/beacon/v1.1.0/filtering_terms/$', beacon110.filtering_terms, name='beacon110_filtering_terms'),
 
     # re_path(r'^api/v1/', include(api.urls)),
 
