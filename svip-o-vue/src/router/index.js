@@ -6,8 +6,10 @@ import ViewVariant from "@/components/genes/variants/ViewVariant";
 import Login from "@/components/user/Login";
 import UserInfo from "@/components/user/UserInfo";
 import store from '@/store';
-import {TokenErrors} from "@/store/modules/users";
+import { TokenErrors } from "@/store/modules/users";
 import PageNotFound from "@/components/PageNotFound";
+
+import CurationDashboard from "@/components/curation/CurationDashboard";
 
 Vue.use(Router);
 
@@ -36,7 +38,11 @@ const router = new Router({
 			name: "user-info",
 			component: UserInfo
 		},
-
+		{
+			path: "/curation/dashboard",
+			name: "dashboard",
+			component: CurationDashboard
+		},
 		{
 			path: "/",
 			name: "home",
