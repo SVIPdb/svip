@@ -154,6 +154,14 @@ class VariantInSource(models.Model):
                 .distinct().order_by('-count')
         )
 
+    def diseases_collapsed(self):
+        return (
+            self.collapsedassociation_set
+                .values('disease')
+                .annotate(count=Count('disease'))
+                .distinct().order_by('-count')
+        )
+
     def contexts(self):
         return (
             self.association_set

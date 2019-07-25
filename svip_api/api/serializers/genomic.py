@@ -116,6 +116,7 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
             'clinical_significances',
             'evidence_types',
             'diseases',
+            'diseases_collapsed',
             'contexts',
             'scores',
             # 'association_set'
