@@ -20,7 +20,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="d in row.item.diseases" :key="d.disease" @click="currentFilter.phenotype__term = d.disease" :class="currentFilter.phenotype__term === d.disease ? 'pointer table-active' : 'pointer'">
+						<tr v-for="d in row.item.diseases_collapsed" :key="d.disease" @click="currentFilter.disease = d.disease" :class="currentFilter.disease === d.disease ? 'pointer table-active' : 'pointer'">
 							<td>{{ titleCase(d.disease) }}</td>
 							<td>{{ d.count.toLocaleString() }}</td>
 						</tr>
