@@ -4,10 +4,10 @@
 			<b-card>
 				<h6 class="card-subtitle mb-2 text-muted">
 					Diseases
-					<i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the evidences table</i>
-					<span class="float-right badge badge-primary" v-if="currentFilter.phenotype__term" style="font-size: 13px">
-						{{ titleCase(currentFilter.phenotype__term) }}
-						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.phenotype__term = ''">
+					<i class="float-right" v-if="!currentFilter.disease">click on a disease to filter the evidences table</i>
+					<span class="float-right badge badge-primary" v-if="currentFilter.disease" style="font-size: 13px">
+						{{ titleCase(currentFilter.disease) }}
+						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px" @click="currentFilter.disease = ''">
 								<span aria-hidden="true">&times;</span>
 						</button>
 					</span>
@@ -111,7 +111,7 @@ export default {
 	data() {
 		return {
 			currentFilter: {
-				phenotype__term: '',
+				disease: '',
 				search: ''
 			},
 			testExpand: false,
