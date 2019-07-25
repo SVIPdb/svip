@@ -12,7 +12,8 @@ const sources = {
 	svip: { name: 'SVIP', icon: require('@/assets/icons/svip_small_icon.png') },
 	civic: { name: 'CIViC', icon: require('@/assets/icons/civic_icon.png') },
 	oncokb: { name: 'OncoKB', icon: require('@/assets/icons/oncokb-194x194-bw.png') },
-	cosmic: { name: 'COSMIC', icon: require('@/assets/icons/cosmic-196x196-bw.png') }
+	cosmic: { name: 'COSMIC', icon: require('@/assets/icons/cosmic-196x196-bw.png') },
+	clinvar: { name: 'ClinVar', icon: require('@/assets/icons/ncbi_logo_mono.png') }
 };
 
 export default {

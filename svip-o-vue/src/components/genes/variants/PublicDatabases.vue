@@ -109,7 +109,13 @@ const overrides = {
 	},
 	oncokb: {
 		details_part: OncoKBRowDetails
-	}
+	},
+	clinvar: {
+		details_part: OncoKBRowDetails,
+		colum_parts: {
+			scores: UnavailableCol
+		}
+	},
 };
 
 export default {
