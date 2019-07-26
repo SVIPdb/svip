@@ -1,0 +1,42 @@
+[
+	{
+		"key": "flag",
+		"label": "Flag",
+		"sortable": false
+	},
+	{
+		"key": "gene_name",
+		"label": "Gene name",
+		"sortable": true
+	},
+	{
+		"key": "variant",
+		"label": "Variant",
+		"sortable": true
+	},
+	{
+		"key": "hgvs",
+		"label": "HGVS.c",
+		"sortable": false
+	},
+	{
+		"key": "curated",
+		"label": "Curated",
+		"sortable": false
+	},
+	{
+		"key": "deadline",
+		"label": "Deadline (days left)",
+		"sortable": true
+	},
+	{
+		"key": "requester",
+		"label": "Requester",
+		"sortable": true
+	},
+	{
+		"key": "action",
+		"label": "Action",
+		"sortable": false
+	}
+]

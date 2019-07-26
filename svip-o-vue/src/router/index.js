@@ -10,6 +10,8 @@ import { TokenErrors } from "@/store/modules/users";
 import PageNotFound from "@/components/PageNotFound";
 
 import CurationDashboard from "@/components/curation/CurationDashboard";
+import CurationViewVariant from "@/components/curation/ViewVariant";
+//import CurationAnnotateVariant from "@/components/curation/AnnotateVariant";
 
 Vue.use(Router);
 
@@ -40,9 +42,19 @@ const router = new Router({
 		},
 		{
 			path: "/curation/dashboard",
-			name: "dashboard",
+			name: "curation-dashboard",
 			component: CurationDashboard
 		},
+		{
+			path: "/curation/gene/:gene_id/variant/:variant_id",
+			name: "curation-variant",
+			component: CurationViewVariant
+		},
+		// {
+		// 	path: "/curation/annotate/gene/:gene_id/variant/:variant_id",
+		// 	name: "annotate-variant",
+		// 	component: CurationAnnotateVariant
+		// },
 		{
 			path: "/",
 			name: "home",

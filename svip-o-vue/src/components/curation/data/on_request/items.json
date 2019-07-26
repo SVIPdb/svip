@@ -1,0 +1,11 @@
+[
+	{
+		"gene_name": "EGFR",
+		"variant": "T790M",
+		"hgvs": "NM_005228.3:c.2369C>T",
+		"curated": "No",
+		"deadline": "02.05.2019",
+		"requester": "HUG",
+		"days_left": 2
+	}
+]

@@ -1,0 +1,22 @@
+[
+	{
+		"curator": "curator_1",
+		"gene_name": "EGFR",
+		"variant": "L858R",
+		"hgvs": "NM_005228.4:c.2573T>G",
+		"curated": "On going",
+		"deadline": "12.06.2019",
+		"days_left": 14,
+		"priority": "NORMAL"
+	},
+	{
+		"curator": "curator_2",
+		"gene_name": "BRAF",
+		"variant": "G596R",
+		"hgvs": "NM_004333.4:c.1786G>C",
+		"curated": "Complete",
+		"deadline": "30.05.2019",
+		"days_left": 2,
+		"priority": "NORMAL"
+	}
+]
