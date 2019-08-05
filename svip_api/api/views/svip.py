@@ -26,6 +26,18 @@ class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
             q = VariantInSVIP.objects.all()
         return q
 
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+    filter_fields = (
+        'variant__gene',
+        'variant__name'
+    )
+
+    search_fields = (
+        'variant__gene__symbol',
+        'variant__name',
+        'disease__name'
+    )
+
 
 class DiseaseViewSet(viewsets.ReadOnlyModelViewSet):
     """

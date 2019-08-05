@@ -43,6 +43,7 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'url',
             'id',
+            'variant',
             'tissue_counts',
             'diseases'
         )
