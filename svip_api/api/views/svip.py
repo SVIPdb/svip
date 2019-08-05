@@ -29,6 +29,7 @@ class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
     filter_fields = (
         'variant__gene',
+        'variant__gene__symbol',
         'variant__name'
     )
 
