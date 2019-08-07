@@ -126,7 +126,7 @@ Vue.component("pass", {
 
 export default {
 	name: "VariantSVIP",
-	components: {SampleTable, EvidenceTable, TissueDistribution, ageDistribution, VariomesLitPopover, genderPlot},
+	components: {SampleTable, EvidenceTable, TissueDistribution, ageDistribution, genderPlot},
 	props: {
 		variant: {type: Object, required: true}
 	},

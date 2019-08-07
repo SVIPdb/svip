@@ -1,17 +1,17 @@
 <template>
-	<b-card-text>
-		<b-table :fields="fields" :items="row.item.curation_entries" :show-empty="true" :small="true">
-			<template slot="references" slot-scope="data">
-				<VariomesLitPopover
-					:pubmeta="{ pmid: trimPrefix(data.value, 'PMID:') }" :variant="variant.name" :gene="variant.gene.symbol" :disease="row.item.name"
-				/>
-			</template>
+  <b-card-text>
+    <b-table :fields="fields" :items="row.item.curation_entries" :show-empty="true" :small="true">
+      <template slot="references" slot-scope="data">
+        <VariomesLitPopover
+          :pubmeta="{ pmid: trimPrefix(data.value, 'PMID:') }" :variant="variant.name" :gene="variant.gene.symbol" :disease="row.item.name"
+        />
+      </template>
 
-			<template slot="empty">
-				<div class="empty-table-msg">- no evidence items -</div>
-			</template>
-		</b-table>
-	</b-card-text>
+      <template slot="empty">
+        <div class="empty-table-msg">- no evidence items -</div>
+      </template>
+    </b-table>
+  </b-card-text>
 </template>
 
 <script>
@@ -19,14 +19,14 @@ import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import {trimPrefix} from "@/utils";
 
 export default {
-  name: "EvidenceTable",
+	name: "EvidenceTable",
 	components: {VariomesLitPopover},
 	props: {
-  	variant: { required: true, type: Object },
-  	row: { required: true, type: Object }
+		variant: { required: true, type: Object },
+		row: { required: true, type: Object }
 	},
 	data() {
-  	return {
+		return {
 			fields: [
 				{ key: "type_of_evidence", label: "Evidence Type", sortable: true },
 				{ key: "effect", label: "Effect", sortable: true },
@@ -40,7 +40,7 @@ export default {
 		}
 	},
 	methods: {
-  	trimPrefix
+		trimPrefix
 	}
 }
 </script>
