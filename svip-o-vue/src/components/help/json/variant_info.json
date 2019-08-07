@@ -1,0 +1,79 @@
+[
+	{
+		"Field": "Gene name",
+		"Short description": "HUGO gene name",
+		"Example": "EGFR",
+		"Complete description": "Human gene name according to the HUGO nomenclature",
+		"Reference": ["https://www.genenames.org/"]
+	},
+	{
+		"Field": "Aliases",
+		"Short description": "Synonyms",
+		"Example": "HER1, ERBB1…",
+		"Complete description": "Synonyms of the different categories coming from UniProt",
+		"Reference": ["https://www.uniprot.org/"]
+	},
+	{
+		"Field": "Variant",
+		"Short description": "Mutation at the protein level in one-letter code",
+		"Example": "L858R",
+		"Complete description": "Protein mutation named according to HGVS recommendations, indicating the original and the alternate amino-acids by the one-letter code and the position of the variation on the protein sequence.",
+		"Reference": ["http://varnomen.hgvs.org/"]
+	},
+	{
+		"Field": "HGVS.c",
+		"Short description": "HGVS variant description at the cDNA level",
+		"Example": "NM_005228.3:c.2573T>G",
+		"Complete description": "Description of the variant at the cDNA level according to HGVS recommendations indicating the coding DNA reference sequence used.",
+		"Reference": ["http://varnomen.hgvs.org/"]
+	},
+	{
+		"Field": "HGVS.p",
+		"Short description": "HGVS variant description at the protein level",
+		"Example": "NP_005219.2:​p.Leu858Arg",
+		"Complete description": "Description of the variant at the protein level according to HGVS recommendations indicating the protein reference sequence used.",
+		"Reference": ["http://varnomen.hgvs.org/"]
+	},
+	{
+		"Field": "HGVS.g",
+		"Short description": "HGVS variant description at the genomic level",
+		"Example": "NC_000007.13:​g.55259515T>G",
+		"Complete description": "Description of the variant at the linear genomic level according to HGVS recommendations indicating the genomic reference sequence used.",
+		"Reference": ["http://varnomen.hgvs.org/"]
+	},
+	{
+		"Field": "dbSNP",
+		"Short description": "dbSNP identifier",
+		"Example": "rs121434568",
+		"Complete description": "dbSNP locus identifier (rs number)",
+		"Reference": ["https://www.ncbi.nlm.nih.gov/snp/"]
+	},
+	{
+		"Field": "Ref. Genome: position",
+		"Short description": "Reference genome, chromosome and position of the variation on the chromosome",
+		"Example": "GRCh37:​chr7:55259515",
+		"Complete description": "Human genome reference GRCh followed by the chromosome and the position of the variation on the sequence",
+		"Reference": ["https://www.ncbi.nlm.nih.gov/grc/human"]
+	},
+	{
+		"Field": "Molecular consequence",
+		"Short description": "Mutation type",
+		"Example": "Missense",
+		"Complete description": "Consequence of the mutation on the protein using Sequence Ontology terms",
+		"Reference": ["http://www.sequenceontology.org/"]
+	},
+	{
+		"Field": "Mutation origin",
+		"Short description": "Origin of the mutation (germline or somatic)",
+		"Example": "Somatic",
+		"Complete description": "Either inherited mutation (germline variant) or acquired mutation (somatic variant) using Sequence Ontology terms",
+		"Reference": ["http://www.sequenceontology.org/"]
+	},
+	{
+		"Field": "Allele frequency",
+		"Short description": "Frequency of the mutation in the population",
+		"Example": "10%",
+		"Complete description": "Allele frequency (in percentage) obtained from GnomAD or Exac",
+		"Reference": ["https://gnomad.broadinstitute.org/", "http://exac.broadinstitute.org"]
+	}
+]
