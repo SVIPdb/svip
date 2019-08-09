@@ -19,6 +19,7 @@ import "vue-awesome/icons/star";
 import "vue-awesome/icons/regular/star";
 import "vue-awesome/icons/spinner";
 import "vue-awesome/icons/external-link-alt";
+import "vue-awesome/icons/exclamation-triangle";
 
 import Icon from "vue-awesome/components/Icon";
 

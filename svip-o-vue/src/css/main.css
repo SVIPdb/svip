@@ -176,3 +176,8 @@ footer .version-info .feedback {
 .filter-environmentalcontext__description {
 	background-color: #596680;
 }
+
+/* for swiss-po protein viewer */
+#viewport {
+  touch-action: none;
+}
