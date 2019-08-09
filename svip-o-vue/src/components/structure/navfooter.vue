@@ -19,17 +19,17 @@
 						<div class="row align-items-center">
 							<div class="col-lg-4 col-sm-12 text-center">
 								<a href="https://www.ethz.ch" target="_blank">
-									<img src="../assets/logos/eth_logo_small.png" alt="ETH" class="footer_logo"/>
+									<img src="../../assets/logos/eth_logo_small.png" alt="ETH" class="footer_logo"/>
 								</a>
 							</div>
 							<div class="col-lg-4 col-sm-12 text-center">
 								<a href="https://www.sib.swiss/" target="_blank">
-									<img src="../assets/logos/sib_logo_medium_titled.png" alt="SIB" class="footer_logo"/>
+									<img src="../../assets/logos/sib_logo_medium_titled.png" alt="SIB" class="footer_logo"/>
 								</a>
 							</div>
 							<div class="col-lg-4 col-sm-12 text-center">
 								<a href="https://www.hes-so.ch/" target="_blank">
-									<img src="../assets/logos/logo-hes-so-noir-433.png" alt="HES-SO" class="footer_logo"/>
+									<img src="../../assets/logos/logo-hes-so-noir-433.png" alt="HES-SO" class="footer_logo"/>
 								</a>
 							</div>
 						</div>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import {serverURL, appVersion, releaseName} from "../app_config";
+import {serverURL, appVersion, releaseName} from "../../app_config";
 
 export default {
 	name: "navFooter",

@@ -1,13 +1,13 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "@/components/Home";
-import ViewGene from "@/components/genes/ViewGene";
-import ViewVariant from "@/components/genes/variants/ViewVariant";
-import Login from "@/components/user/Login";
-import UserInfo from "@/components/user/UserInfo";
+import Home from "@/views/Home";
+import ViewGene from "@/views/ViewGene";
+import ViewVariant from "@/views/ViewVariant";
+import Login from "@/views/user/Login";
+import UserInfo from "@/views/user/UserInfo";
 import store from '@/store';
 import {TokenErrors} from "@/store/modules/users";
-import PageNotFound from "@/components/PageNotFound";
+import PageNotFound from "@/views/PageNotFound";
 
 Vue.use(Router);
 

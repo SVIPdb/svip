@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import navHeader from "@/components/navheader";
-import navFooter from "@/components/navfooter";
+import navHeader from "@/components/structure/navheader";
+import navFooter from "@/components/structure/navfooter";
 import '@/components/widgets/StyledLabels'; // adds components 'optional', 'coordinates'
 
 export default {

@@ -92,7 +92,7 @@
 		<variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
 		<variant-public-databases :variant="variant"></variant-public-databases>
 
-		<VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
+		<VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras" />
 	</div>
 </template>
 

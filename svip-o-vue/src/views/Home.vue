@@ -39,7 +39,7 @@
 <script>
 import {mapGetters} from "vuex";
 import store from "@/store";
-import SearchBar from "./widgets/SearchBar";
+import SearchBar from "../components/widgets/SearchBar";
 
 export default {
 	name: "home",
