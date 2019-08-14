@@ -7,7 +7,7 @@ click==6.7
 coreapi==2.3.3
 coreschema==0.0.4
 decorator==4.3.2
-Django==2.1.3
+Django==2.2.4
 django-cors-headers==2.4.0
 -e git+https://github.com/jkapelner/django-db-cascade.git@e267ef4771e7bee1626efedcd0ae587a7352c8e1#egg=django_db_cascade_2
 django-filter==2.0.0
@@ -46,6 +46,7 @@ requests==2.20.1
 rfc3987==1.3.8
 ruamel.yaml==0.15.77
 six==1.11.0
+sqlparse==0.3.0
 strict-rfc3339==0.7
 swagger-spec-validator==2.4.1
 traitlets==4.3.2
