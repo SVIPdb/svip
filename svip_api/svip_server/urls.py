@@ -30,8 +30,11 @@ from rest_framework import permissions
 import api.urls as api_router
 import api.views.beacon as beacon101
 import api.views.beacon_v110 as beacon110
+from api.views.swisspo_proxy import swisspo_request, get_pdbs, get_residues, get_pdb_data
+from api.views.variomes_proxy import variomes_single_ref
+
 from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
-from svip_server.views import variomes_single_ref
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -88,6 +91,12 @@ urlpatterns = [
 
     # proxied routes from external APIs
     re_path(r'^api/v1/variomes_single_ref', variomes_single_ref, name='variomes_single_ref'),
+    # re_path(r'^api/v1/swiss_po/(?P<path>.*)$', swisspo_request, name='swisspo_request'),
+
+    # swiss-po specific routes
+    re_path(r'^api/v1/swiss_po/get_pdbs/(?P<protein>.+)$', get_pdbs, name='swisspo_get_pdbs'),
+    re_path(r'^api/v1/swiss_po/get_residues/(?P<pdb_id>[^:]+):(?P<chain>[A-Z])$', get_residues, name='swisspo_get_residues'),
+    re_path(r'^api/v1/swiss_po/get_pdb_data/(?P<pdb_path>.+)$', get_pdb_data, name='swisspo_get_pdb_data'),
 ]
 
 # serve static files from the dev server
