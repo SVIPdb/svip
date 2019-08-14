@@ -5,7 +5,7 @@
         <div class="card-title">
           Swiss Personalized Oncology
           <div class="float-right align-middle">
-            <a href="http://swiss-po.ch" target="_blank"><icon name="external-link-alt" /></a>
+            <a :href="`http://swiss-po.ch/?protein='${ protein }'&variant='p.${change}'`" target="_blank"><icon name="external-link-alt" /></a>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default {
       // "percentages, "dist" is distance too camera in Angstrom
       clipNear: 0,
       clipFar: 100,
-      clipDist: 10,
+      clipDist: 3,
       // percentages, start of fog and where on full effect
       fogNear: 0,
       fogFar: 100,
