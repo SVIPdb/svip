@@ -94,6 +94,7 @@ import UnavailableCol from "@/components/genes/variants/sources/shared/Unavailab
 import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 import SourceIcon from "@/components/widgets/SourceIcon";
 import CivicRowDetails from "@/components/genes/variants/sources/civic/CivicRowDetails";
+import ClinvarRowDetails from "@/components/genes/variants/sources/clinvar/ClinvarRowDetails";
 
 const overrides = {
 	civic: {
@@ -111,7 +112,7 @@ const overrides = {
 		details_part: OncoKBRowDetails
 	},
 	clinvar: {
-		details_part: OncoKBRowDetails,
+		details_part: ClinvarRowDetails,
 		colum_parts: {
 			scores: UnavailableCol
 		}
