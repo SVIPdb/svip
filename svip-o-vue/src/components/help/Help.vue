@@ -3,7 +3,7 @@
 		<div class="row">
 			<div class="col-md-9">
 				<h1>Glossary</h1>
-				<p>Below, each column on the variant details page is described.</p>
+				<p>The following list describes terms found in SVIP.</p>
 			</div>
 		</div>
 
@@ -27,7 +27,7 @@
 									<div v-if="typeof entry['Example'] == 'object' && entry['Example'].img">
 										<img :src="require(`./resources/${entry['Example'].img}`)"  alt="Example"/>
 									</div>
-									<span v-else> {{ entry['Example'] }}</span>
+									<span class="example-text" v-else>{{ entry['Example'] }}</span>
 								</div>
 
 								<div class="references" v-if="entry.Reference && entry.Reference.length === 1">
@@ -108,6 +108,9 @@ export default {
 
 .terms .example {
 	margin-top: 0.5em;
+}
+.terms .example .example-text {
+  font-style: oblique; margin-left: 3px;
 }
 
 .terms .definition .references {

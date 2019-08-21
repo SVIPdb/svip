@@ -12,7 +12,7 @@
 		<b-collapse is-nav id="nav_collapse">
 			<!-- Right aligned nav items -->
 			<b-navbar-nav right>
-				<b-nav-item :to="'help'">Help</b-nav-item>
+				<b-nav-item :to="'/help'">Help</b-nav-item>
 			</b-navbar-nav>
 
 			<b-navbar-nav v-if="user" class="ml-auto">
