@@ -248,4 +248,8 @@ export default {
   padding: 5px;
 }
 .not-found .fa-icon { margin-right: 5px; }
+
+/* show indication that we can manipulate by dragging */
+#viewport { cursor: grab; }
+#viewport:active { cursor: grabbing; }
 </style>
