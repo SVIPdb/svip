@@ -29,6 +29,7 @@ from api.serializers import (
 
 
 # svip data endpoints
+from api.serializers.genomic import OnlySVIPVariantSerializer
 from references.prot_to_hgvs import three_to_one
 
 
@@ -86,6 +87,8 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return FullVariantSerializer
+        elif self.request.GET.get('inline_svip_data') == 'true':
+            return OnlySVIPVariantSerializer
         return VariantSerializer
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)

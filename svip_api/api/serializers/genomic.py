@@ -153,6 +153,20 @@ class FullVariantSerializer(VariantSerializer):
         fields.append('svip_data')
 
 
+class OnlySVIPVariantSerializer(VariantSerializer):
+    # sources_set = VariantInSourceSerializer(many=True)
+    svip_data = VariantInSVIPSerializer()
+
+    def __init__(self, *args, **kwargs):
+        super(OnlySVIPVariantSerializer, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Variant
+        depth = 1
+        fields = VariantSerializer.Meta.fields.copy()
+        fields.append('svip_data')
+
+
 # -----------------------------------------------------------------------------
 # --- variant evidence entries
 # -----------------------------------------------------------------------------
