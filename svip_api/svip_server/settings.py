@@ -171,7 +171,7 @@ SIMPLE_JWT = {
 }
 
 # CORS config (https://github.com/ottoyiu/django-cors-headers/)
-# CORS_ORIGIN_ALLOW_ALL = True  # for now, we won't whitelist any hosts
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'localhost:8000',
     'localhost:8080',
