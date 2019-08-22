@@ -156,6 +156,7 @@ class FullVariantSerializer(VariantSerializer):
 class OnlySVIPVariantSerializer(VariantSerializer):
     # sources_set = VariantInSourceSerializer(many=True)
     svip_data = VariantInSVIPSerializer()
+    gene = GeneSerializer()
 
     def __init__(self, *args, **kwargs):
         super(OnlySVIPVariantSerializer, self).__init__(*args, **kwargs)
@@ -164,6 +165,7 @@ class OnlySVIPVariantSerializer(VariantSerializer):
         model = Variant
         depth = 1
         fields = VariantSerializer.Meta.fields.copy()
+        fields.append('gene')
         fields.append('svip_data')
 
 
