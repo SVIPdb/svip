@@ -45,7 +45,18 @@ class SourceSerializer(serializers.HyperlinkedModelSerializer):
 class GeneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Gene
-        fields = '__all__'
+        fields = (
+            'id',
+            'url',
+            'entrez_id',
+            'ensembl_gene_id',
+            'symbol',
+            'uniprot_ids',
+            'location',
+            'sources',
+            'aliases',
+            'prev_symbols',
+        )
 
 
 class VariantSerializer(serializers.HyperlinkedModelSerializer):
