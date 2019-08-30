@@ -2,6 +2,8 @@
   <b-card class="shadow-sm mb-3" align="left" no-body>
     <b-card-body class="p-0">
       <b-table
+        :thead-class="theadClass"
+        :tbody-class="tbodyClass"
         class="mb-0"
         :items="[variant]"
         :fields="fields"
@@ -66,7 +68,26 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 
 export default {
   name: "VariantInformations",
-  props: ["variant", "fields"],
+  props: {
+    variant: {
+      type: Object,
+      required: true
+    },
+    fields: {
+      type: Array,
+      required: true
+    },
+    theadClass: {
+      type: String,
+      required: false,
+      default: ""
+    },
+    tbodyClass: {
+      type: String,
+      required: false,
+      default: ""
+    }
+  },
   data() {
     return {
       showCurationTool: false

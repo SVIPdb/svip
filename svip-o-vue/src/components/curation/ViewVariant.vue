@@ -22,34 +22,37 @@
 
   <div class="container-fluid">
     <variant-informations :variant="variant" :fields="fields" />
+    <variant-svip v-if="variant.svip_data" :variant="variant" :gene="Number(gene_id)"></variant-svip>
 
-    <variant-svip v-if="variant.svip_data" :variant="variant"></variant-svip>
-
-    <curation-svip v-if="variant.svip_data" :variant="variant"></curation-svip>
     <b-row>
-      <b-col md="9">
+      <b-col>
         <variant-public-databases :variant="variant"></variant-public-databases>
-      </b-col>
-      <b-col md="3">
-        <b-card class="shadow-sm mt-3" align="left" no-body>
-          <b-card-header class="p-1">
-            <div class="p-2">Quick link to cancer databases</div>
-          </b-card-header>
-          <b-card-body class="p-0">
-            <b-table class="mb-0" show-empty :fields="linkFields" :items="linkItems">
-              <template slot="source" slot-scope="row">
-                <a :href="row.item.link" target="_blank">
-                  {{ row.item.source }}
-                  <icon name="external-link-alt"></icon>
-                </a>
-              </template>
-            </b-table>
-          </b-card-body>
-        </b-card>
       </b-col>
     </b-row>
 
     <VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
+    <b-row>
+      <b-col>
+        <b-card class="shadow-sm mt-3" align="left" no-body>
+          <b-card-body class="p-0 text-center">
+            <b-row no-gutters>
+              <b-col v-for="(item,index) in linkItems" :key="index">
+                <b-button
+                  squared
+                  block
+                  variant="outline-secondary"
+                  :href="item.link"
+                  target="_blank"
+                >
+                  {{ item.source }}
+                  <icon name="external-link-alt"></icon>
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -58,8 +61,7 @@
 import round from "lodash/round";
 import { mapGetters } from "vuex";
 import variantPublicDatabases from "@/components/genes/variants/PublicDatabases";
-import variantSvip from "@/components/genes/variants/SVIPInfo";
-import curationSvip from "@/components/curation/SVIPCuration";
+import variantSvip from "@/components/curation/SVIPCuration";
 import variantInformations from "@/components/genes/variants/VariantInformations";
 import store from "@/store";
 
@@ -76,7 +78,6 @@ export default {
     VariantExternalInfo,
     variantPublicDatabases,
     variantSvip,
-    curationSvip,
     "variant-informations": variantInformations
   },
   data() {

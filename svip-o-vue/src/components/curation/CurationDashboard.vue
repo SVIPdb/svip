@@ -25,21 +25,23 @@
     <notification-card
       :items="on_request"
       :fields="fields_on_request"
-      sortBy="deadline"
+      sortBy="days_left"
       title="ON REQUEST"
+      cardHeaderBg="secondary"
+      cardTitleVariant="white"
     />
     <!-- TO BE CURATED - CARD -->
     <notification-card
       :items="to_be_curated"
       :fields="fields_to_be_curated"
-      sortBy="deadline"
+      sortBy="days_left"
       title="TO BE CURATED"
     />
     <!-- UNDER REVISION - CARD -->
     <notification-card
       :items="under_revision"
       :fields="fields_under_revision"
-      sortBy="deadline"
+      sortBy="days_left"
       title="UNDER REVISION"
     />
   </div>

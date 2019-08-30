@@ -1,0 +1,37 @@
+[
+    {
+        "key": "references",
+        "label": "Reference",
+        "sortable": true
+    },
+    {
+        "key": "type_of_evidence",
+        "label": "Type of evidence",
+        "sortable": true
+    },
+    {
+        "key": "drug",
+        "label": "Drug",
+        "sortable": true
+    },
+    {
+        "key": "effect",
+        "label": "Effect",
+        "sortable": true
+    },
+    {
+        "key": "tier_level_criteria",
+        "label": "Tier criteria",
+        "sortable": true
+    },
+    {
+        "key": "curator",
+        "label": "Curator",
+        "sortable": true
+    },
+    {
+        "key": "date",
+        "label": "Date of curation",
+        "sortable": true
+    }
+]

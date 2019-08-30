@@ -11,7 +11,8 @@ import PageNotFound from "@/components/PageNotFound";
 
 import CurationDashboard from "@/components/curation/CurationDashboard";
 import CurationViewVariant from "@/components/curation/ViewVariant";
-//import CurationAnnotateVariant from "@/components/curation/AnnotateVariant";
+import CurationAnnotateVariant from "@/components/curation/AnnotateVariant";
+import CurationAddEvidence from "@/components/curation/AddEvidence";
 
 Vue.use(Router);
 
@@ -50,11 +51,16 @@ const router = new Router({
 			name: "curation-variant",
 			component: CurationViewVariant
 		},
-		// {
-		// 	path: "/curation/annotate/gene/:gene_id/variant/:variant_id",
-		// 	name: "annotate-variant",
-		// 	component: CurationAnnotateVariant
-		// },
+		{
+			path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id",
+			name: "annotate-variant",
+			component: CurationAnnotateVariant
+		},
+		{
+			path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/add",
+			name: "add-evidence",
+			component: CurationAddEvidence
+		},
 		{
 			path: "/",
 			name: "home",

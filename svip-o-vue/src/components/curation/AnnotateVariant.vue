@@ -22,33 +22,98 @@
 
   <div class="container-fluid">
     <variant-informations :variant="variant" :fields="fields" />
-    <b-row>
-      <b-col md="3"></b-col>
-    </b-row>
+    <evidence-card :items="evidences" />
+    <div>
+      <b-card no-body>
+        <b-tabs
+          card
+          justified
+          nav-wrapper-class="bg-primary"
+          nav-class="text-white"
+          active-nav-item-class="font-weight-bolder"
+        >
+          <b-tab title="Enter your reference" active>
+            <b-card-text>
+              <b-container>
+                <b-row no-gutters>
+                  <b-col cols="5">
+                    <b-form-select
+                      required
+                      class="custom-border-left"
+                      v-model="source"
+                      :options="['PMID']"
+                    ></b-form-select>
+                  </b-col>
+                  <b-col cols="5">
+                    <b-form-input v-model="reference" required placeholder="Type reference"></b-form-input>
+                    <!-- <v-select
+                      class="custom-style"
+                      :options="['3213123']"
+                      v-model="reference"
+                      taggable
+                    >
+                      <template #search="{attributes, events}">
+                        <input
+                          class="vs__search"
+                          :required="!reference"
+                          v-bind="attributes"
+                          v-on="events"
+                        />
+                      </template>
+                    </v-select>-->
+                  </b-col>
+                  <b-col cols="2">
+                    <b-button
+                      :disabled="source == null || reference == null"
+                      type="submit"
+                      block
+                      class="custom-border-right"
+                      variant="success"
+                      @click="addEvidence"
+                    >
+                      <icon name="plus"></icon>
+                    </b-button>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-card-text>
+          </b-tab>
+          <b-tab title="Use text mining tool">
+            <b-card-text>Tab Contents 2</b-card-text>
+          </b-tab>
+          <b-tab title="Use prediction tools">
+            <b-card-text>Tab Contents 3</b-card-text>
+          </b-tab>
+        </b-tabs>
+      </b-card>
+    </div>
   </div>
 </template>
-
 <script>
-// import geneVariants from '@/components/Variants'
-import round from "lodash/round";
 import { mapGetters } from "vuex";
-import variantInformations from "@/components/genes/variants/VariantInformations";
-
-import fields from "./ViewVariant/fields.json";
+import variantInformations from "@/components/curation/widgets/VariantInformations";
+import evidenceCard from "@/components/curation/widgets/EvidenceCard";
+import fields from "@/components/curation/data/summary/fields.json";
+import store from "@/store";
+import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 
 export default {
   name: "AnnotateVariant",
   components: {
-    "variant-informations": variantInformations
+    variantInformations,
+    evidenceCard
   },
   data() {
     return {
-      fields
+      fields,
+      source: "PMID",
+      reference: null
     };
   },
   computed: {
     ...mapGetters({
-      variant: "variant"
+      variant: "variant",
+      gene: "gene"
     }),
     synonyms() {
       if (this.gene.geneAliases === undefined) return "";
@@ -92,11 +157,27 @@ export default {
       }
 
       return null;
+    },
+    evidences() {
+      return this.variant.svip_data.diseases.find(
+        element => element.id == this.$route.params.disease_id
+      ).curation_entries;
     }
   },
   // components: {geneVariants: geneVariants},
   methods: {
-    desnakify
+    desnakify,
+    addEvidence() {
+      this.$router.push({
+        name: "add-evidence",
+        params: {
+          gene_id: this.$route.params.gene_id,
+          variant_id: this.$route.params.variant_id,
+          disease_id: this.$route.params.disease_id
+        },
+        query: { source: this.source, reference: this.reference }
+      });
+    }
   },
   beforeRouteEnter(to, from, next) {
     const { variant_id } = to.params;
@@ -109,7 +190,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .variant-card .card-body {
   padding: 0;
 }
@@ -147,5 +228,18 @@ export default {
 	/* .slide-fade-leave-active below version 2.1.8 */ {
   opacity: 0;
   max-height: 0;
+}
+
+.custom-style .dropdown-toggle {
+  border-radius: 0 !important;
+  height: calc(2.15625rem + 2px) !important;
+}
+
+.custom-border-left {
+  border-radius: 0.25rem 0 0 0.25rem !important;
+}
+
+.custom-border-right {
+  border-radius: 0 0.25rem 0.25rem 0 !important;
 }
 </style>

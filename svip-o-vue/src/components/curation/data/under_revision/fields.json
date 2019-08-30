@@ -1,10 +1,5 @@
 [
 	{
-		"key": "flag",
-		"label": "Flag",
-		"sortable": false
-	},
-	{
 		"key": "gene_name",
 		"label": "Gene name",
 		"sortable": true
@@ -35,7 +30,7 @@
 		"sortable": true
 	},
 	{
-		"key": "action",
+		"key": "single_action",
 		"label": "Action",
 		"sortable": false
 	}

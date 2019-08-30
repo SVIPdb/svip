@@ -2,13 +2,29 @@
   <b-card class="shadow-sm mb-3" align="left" no-body>
     <b-card-header
       class="p-1"
-      :header-bg-variant="settings.cardHeaderBg"
-      :header-text-variant="settings.cardTitleVariant"
+      :header-bg-variant="cardHeaderBg"
+      :header-text-variant="cardTitleVariant"
     >
       <div class="d-flex justify-content-between">
         <div class="p-2 font-weight-bold">
           {{title}}
-          <b-badge pill class="bg-white text-dark">{{items.length}}</b-badge>
+          <b-button class="ml-3" size="sm" variant="primary" @click="setCustomFilter(curator)">
+            My curations
+            <b-badge
+              pill
+              class="bg-white text-dark"
+            >{{items.filter(element => element.curator == this.curator && element.curated == 'Ongoing' || !element.curated).length}}</b-badge>
+          </b-button>
+          <b-button class="ml-3" size="sm" variant="primary" @click="setCustomFilter('all')">
+            All curations
+            <b-badge pill class="bg-white text-dark">{{items.length}}</b-badge>
+          </b-button>
+          <b-button-group class="ml-3" size="sm">
+            <b-button variant="danger" @click="setStatusFilter('Not assigned')">Not assigned</b-button>
+            <b-button variant="warning" @click="setStatusFilter('Ongoing')">Ongoing</b-button>
+            <b-button variant="success" @click="setStatusFilter('Complete')">Complete</b-button>
+            <b-button variant="info" @click="setStatusFilter('all')">All</b-button>
+          </b-button-group>
         </div>
         <div>
           <b-input-group size="sm" class="p-1">
@@ -24,7 +40,7 @@
       <b-table
         small
         class="mb-0"
-        :items="items"
+        :items="filteredItems"
         :fields="fields"
         hover
         :filter="filter"
@@ -32,38 +48,38 @@
         :sort-desc="true"
         show-empty
       >
-        <template slot="flag" slot-scope="row">
-          <icon name="flag" :class="setFlagClass(row.item.days_left)"></icon>
-        </template>
         <template slot="gene_name" slot-scope="data">
           <p class="font-weight-bold mb-0">{{data.value}}</p>
         </template>
         <template slot="hgvs" slot-scope="data">
           <p class="text-monospace mb-0">{{data.value}}</p>
         </template>
-        <template
-          slot="deadline"
-          slot-scope="row"
-        >{{row.item.deadline}} ({{row.item.days_left}} days)</template>
+        <template slot="deadline" slot-scope="row">
+          <p :class="setFlagClass(row.item.days_left)+' m-0 p-0'">
+            <span class="font-weight-bold">{{ setLetter(row.item.days_left) }}</span>
+            ({{row.item.days_left}} days)
+          </p>
+        </template>
         <template slot="curated" slot-scope="data">
           <b-badge :variant="setBadgeClass(data.value)">{{data.value}}</b-badge>
         </template>
         <template slot="reviewed" slot-scope="data">
-          <b-img
+          <icon
             v-for="(reviewer, index) in data.value"
             v-bind:key="index"
-            v-b-tooltip.hover
-            :title="reviewer.label"
-            blank
-            :blank-color="reviewer.value ? '#28a745' : '#ff5555'"
-            class="mr-1"
-            width="12"
-            height="12"
-          ></b-img>
+            v-b-popover.hover.top="reviewer.label"
+            :name="reviewer.value ? 'check' : 'times'"
+            :class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"
+          ></icon>
         </template>
-        <template slot="action">
+        <template slot="action" slot-scope="row">
           <icon class="mr-1" name="eye" />
-          <icon class="mr-1" name="edit" />
+          <icon :class="!row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-plus" />
+          <icon :class="row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-minus" />
+          <icon class="mr-1" name="file-import" />
+        </template>
+        <template slot="single_action">
+          <icon class="mr-1" name="eye" />
         </template>
       </b-table>
     </b-card-body>
@@ -105,26 +121,37 @@ export default {
       required: false,
       // The default valie is: `id`
       default: "id"
+    },
+    cardHeaderBg: {
+      type: String,
+      required: false,
+      default: "light"
+    },
+    cardTitleVariant: {
+      type: String,
+      required: false,
+      default: "primary"
     }
   },
   data() {
     return {
+      curator: "Curator1", //FIXME MANUALLY SETTING THE CURATOR
       // Custom settings for the visual
       settings: {
-        cardHeaderBg: "light",
-        cardTitleVariant: "primary",
         buttonBg: "primary"
       },
       // Needed parameters for the table
       filter: null,
+      myFilter: "all",
+      statusFilter: "all",
       // Days left limits
       daysLeft: {
         min: 2,
         max: 14
       },
       curationStatus: {
-        No: "danger",
-        "On going": "info",
+        "Not assigned": "danger",
+        Ongoing: "warning",
         Complete: "success"
       }
     };
@@ -146,11 +173,48 @@ export default {
     },
     /**
      * @vuese
+     * Used to set up the correct flag class depending on the days left
+     * @arg `Number` Days left
+     */
+    setLetter(days_left) {
+      if (days_left <= this.daysLeft.min) {
+        return "H";
+      } else if (days_left <= this.daysLeft.max) {
+        return "M";
+      } else {
+        return "L";
+      }
+    },
+    /**
+     * @vuese
      * Used to set up the correct badge depending on the status
      * @arg `String` Curation status
      */
     setBadgeClass(status) {
       return this.curationStatus[status];
+    },
+    setCustomFilter(filter) {
+      this.myFilter = filter;
+    },
+    setStatusFilter(filter) {
+      this.statusFilter = filter;
+    }
+  },
+  computed: {
+    filteredItems() {
+      let items = this.items;
+      if (this.statusFilter != "all") {
+        items = items.filter(element => element.curated == this.statusFilter);
+      }
+      if (this.myFilter != "all") {
+        return items.filter(
+          element =>
+            (element.curator == this.curator && element.curated == "Ongoing") ||
+            !element.curated
+        );
+      } else {
+        return items;
+      }
     }
   }
 };

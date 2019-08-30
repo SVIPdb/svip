@@ -1,10 +1,5 @@
 [
 	{
-		"key": "flag",
-		"label": "Flag",
-		"sortable": false
-	},
-	{
 		"key": "gene_name",
 		"label": "Gene name",
 		"sortable": true
@@ -20,6 +15,11 @@
 		"sortable": false
 	},
 	{
+		"key": "disease",
+		"label": "Disease",
+		"sortable": true
+	},
+	{
 		"key": "curated",
 		"label": "Curated",
 		"sortable": false
@@ -32,6 +32,11 @@
 	{
 		"key": "requester",
 		"label": "Requester",
+		"sortable": true
+	},
+	{
+		"key": "curator",
+		"label": "Curator",
 		"sortable": true
 	},
 	{

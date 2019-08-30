@@ -1,10 +1,5 @@
 [
 	{
-		"key": "flag",
-		"label": "Flag",
-		"sortable": false
-	},
-	{
 		"key": "gene_name",
 		"label": "Gene name",
 		"sortable": true
@@ -18,6 +13,11 @@
 		"key": "hgvs",
 		"label": "HGVS.c",
 		"sortable": false
+	},
+	{
+		"key": "disease",
+		"label": "Disease",
+		"sortable": true
 	},
 	{
 		"key": "curated",
