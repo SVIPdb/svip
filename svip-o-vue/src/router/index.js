@@ -8,6 +8,7 @@ import UserInfo from "@/views/user/UserInfo";
 import store from '@/store';
 import {TokenErrors} from "@/store/modules/users";
 import PageNotFound from "@/views/PageNotFound";
+import Help from "@/components/help/Help";
 
 Vue.use(Router);
 
@@ -23,6 +24,12 @@ const router = new Router({
 			path: "/gene/:gene_id/variant/:variant_id",
 			name: "variant",
 			component: ViewVariant
+		},
+
+		{
+			path: "/help",
+			name: "help",
+			component: Help
 		},
 
 		{

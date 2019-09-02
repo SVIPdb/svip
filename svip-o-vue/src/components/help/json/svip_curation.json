@@ -1,0 +1,58 @@
+[
+	{
+		"Field": "Evidence type",
+		"Short description": "Evidence type based on the potential clinical actionability of the variant in a given disease.",
+		"Example": "Prognostic",
+		"Complete description": "Evidence type based on the potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines. Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy. Prognostic: variant that predicts the course of a disease.Diagnostic: variant that supports the diagnosis of a disease.  Also See Pathogenicity for more details.",
+		"Reference": null
+	},
+	{
+		"Field": "Effect",
+		"Short description": "List still to be worked out",
+		"Example": "Poor outcome",
+		"Complete description": "Consequence of the variant observed during a clinical or functional investigation.",
+		"Reference": null
+	},
+	{
+		"Field": "Drug",
+		"Short description": "Drug or combination of drugs",
+		"Example": "Verumafenib",
+		"Complete description": "Nomenclature?",
+		"Reference": ["Reference?"]
+	},
+	{
+		"Field": "Tier Criteria",
+		"Short description": "Level of pathogenicity or actionability of a variant as defined by AMP/ASCO/CAPS guidelines",
+		"Example": "Clinical trial (Tier IID)",
+		"Complete description": "Level of pathogenicity or actionability of a variant as defined by AMP/ASCO/CAPS guidelines. Precise => Tier criteria table to provide",
+		"Reference": ["AMP/ASCO/CAPS guidelines"]
+	},
+	{
+		"Field": "Mutation origin",
+		"Short description": "same as before",
+		"Example": "Somatic",
+		"Complete description": "",
+		"Reference": null
+	},
+	{
+		"Field": "Complementary information",
+		"Short description": "Additional information for the interpretation of the variant provided during the curation/review process",
+		"Example": "N.A.",
+		"Complete description": "Additional information for the interpretation of the variant provided during the curation/review process",
+		"Reference": null
+	},
+	{
+		"Field": "Support",
+		"Short description": "Curator/reviewer confidence of the published evidences (strong, moderate, low)",
+		"Example": "Strong",
+		"Complete description": "Curator/reviewer confidence of the published evidences, based on three levels: strong, moderate, low",
+		"Reference": null
+	},
+	{
+		"Field": "References",
+		"Short description": "PMID, DOI or other.",
+		"Example": "PMID: 24662454",
+		"Complete description": "Pubmed ID, DOI or other type of reference used for the interpretation of the variant pathogenicity and actionability.",
+		"Reference": null
+	}
+]

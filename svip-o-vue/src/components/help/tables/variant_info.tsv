@@ -1,0 +1,12 @@
+Variant information field	Short description	Example	Complete description	Reference
+Gene name	HUGO gene name	EGFR	Human gene name according to the HUGO nomenclature	https://www.genenames.org/
+Aliases	Synonyms	HER1, ERBB1…	Synonyms of the different categories coming from UniProt	https://www.uniprot.org/
+Variant	Mutation at the protein level in one-letter code	L858R	Protein mutation named according to HGVS recommendations, indicating the original and the alternate amino-acids by the one-letter code and the position of the variation on the protein sequence.	http://varnomen.hgvs.org/
+HGVS.c	HGVS variant description at the cDNA level	NM_005228.3:c.2573T>G	Description of the variant at the cDNA level according to HGVS recommendations indicating the coding DNA reference sequence used.	http://varnomen.hgvs.org/
+HGVS.p	HGVS variant description at the protein level	NP_005219.2:​p.Leu858Arg	Description of the variant at the protein level according to HGVS recommendations indicating the protein reference sequence used.	http://varnomen.hgvs.org/
+HGVS.g	HGVS variant description at the genomic level	NC_000007.13:​g.55259515T>G	Description of the variant at the linear genomic level according to HGVS recommendations indicating the genomic reference sequence used.	http://varnomen.hgvs.org/
+dbSNP	dbSNP identifier	rs121434568	dbSNP locus identifier (rs number)	https://www.ncbi.nlm.nih.gov/snp/
+Ref. Genome: position	Reference genome, chromosome and position of the variation on the chromosome	GRCh37:​chr7:55259515	Human genome reference GRCh followed by the chromosome and the position of the variation on the sequence	https://www.ncbi.nlm.nih.gov/grc/human
+Molecular consequence	Mutation type	Missense	Consequence of the mutation on the protein using Sequence Ontology terms	http://www.sequenceontology.org/
+Mutation origin	Origin of the mutation (germline or somatic)	Somatic	Either inherited mutation (germline variant) or acquired mutation (somatic variant) using Sequence Ontology terms	http://www.sequenceontology.org/
+Allele frequency	Frequency of the mutation in the population	10%	Allele frequency (in percentage) obtained from GnomAD or Exac	https://gnomad.broadinstitute.org/ http://exac.broadinstitute.org

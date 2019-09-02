@@ -11,6 +11,10 @@
 
 		<b-collapse is-nav id="nav_collapse">
 			<!-- Right aligned nav items -->
+			<b-navbar-nav right>
+				<b-nav-item :to="'/help'">Help</b-nav-item>
+			</b-navbar-nav>
+
 			<b-navbar-nav v-if="user" class="ml-auto">
 				<b-navbar-nav right>
 					<b-nav-text class="login-name">logged in as <router-link to="/user-info">{{ user.username }}</router-link> -</b-nav-text>

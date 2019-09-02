@@ -1,0 +1,26 @@
+SVIP sample details field	Short description	Example	Complete description	Reference
+Disease	Same as before			
+Sample ID	SVIP sample identifier			
+Year of birth	Year of birth of the patient			
+Gender	Gender of the patient			
+Institution	Institution that provided the sample and variant information.			
+Department	Department of the institution.			
+Contact	Contact in the insitution.			
+Provider annotation	Interpretation originally given by the data provider.			
+Tumor sample	Tumor sample type		Tumor sample type: blood, List to be refined and completed.	
+Tumor purity	Percentage of cancer cells in the sample (solid tumors only)	80%	Percentage of cancer cells in the sample (solid tumors only)	
+TNM stage	Classification of the anatomical extent of spread in solid tumor cancer.	T1N1M0	The TNM system classifies the amount and spread of cancer in a patient’s body (solid tumors only). T describes the size of the tumor and any spread of cancer into nearby tissue; N describes spread of cancer to nearby lymph nodes; and M describes metastasis (spread of cancer to other parts of the body	
+Sample type			Type of the analyzed specimen: biopsy, bone marrow, blood, CSF, plasma, serum, PBMC, circulating free DNA... To be refined	
+Specimen site	Morphological site of specimen collection		Morphological site of sample collection: primary tumor, metastasis, NA (for hematology)	
+Tissue of origin	Sample		List to be defined	
+Sample condition	Type of the analyzed specimen	FFPE	Sample condition: fresh, fresh frozen, FFPE… To be refined	
+Tumor AF				
+Sequencing panel	Name and version of the gene panel	HotSpot 2.0	Name and version (if applicable) of the gene panel used for sequencing:	
+Platform	Sequencing platform used	IonTorrent Proton	Name of the sequencing platform: Ion Torrent PGM, Ion Torrent Proton, ion Torrent S5, Illumina MiSeq, Illumina NextSeq, Illumina HiSeq2500, Illumina HiSeq 4000...	
+Sequencing date	Date of sequencing		Date of the sequencing	
+Coverage	Overall coverage		Overall coverage	
+Calling strategy			Not sure what to put here	
+Caller	Calling software name	MuTect	Name of the software used for the calling: MuTect, VarScan2,...	
+Aligner	Aligning software name	Bowtie2	Name of the software used for the alignment: STAR, Bowtie2, Bwa mem...	
+Software	Data analysis software	MiSeq Reporter	Name of the software used for the original data analysis: Ion Reporter, TorrentSuite, MiSeq Reporter, BaseSpace, GenSearch NGS, in house...	
+Software version	Version of the analysis software	2	Version of the software used of the original data analysis.	
