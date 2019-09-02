@@ -95,6 +95,7 @@ import OncoKBRowDetails from "./sources/oncokb/OncoKBRowDetails";
 import SourceIcon from "@/components/widgets/SourceIcon";
 import CivicRowDetails from "@/components/genes/variants/sources/civic/CivicRowDetails";
 import ClinvarRowDetails from "@/components/genes/variants/sources/clinvar/ClinvarRowDetails";
+import SignificanceBarPlot from "@/components/genes/variants/sources/clinvar/SignificanceBarPlot";
 
 const overrides = {
 	civic: {
@@ -114,6 +115,7 @@ const overrides = {
 	clinvar: {
 		details_part: ClinvarRowDetails,
 		colum_parts: {
+      clinical: SignificanceBarPlot,
 			scores: UnavailableCol
 		}
 	},

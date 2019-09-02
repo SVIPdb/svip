@@ -16,7 +16,7 @@
 					<thead>
 						<tr>
 							<th>Disease</th>
-							<th># of Occcurences</th>
+							<th># of Submissions</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -89,26 +89,26 @@ export default {
 					label: "Disease",
 					sortable: true
 				},
-				{
-					key: "evidence_type",
-					label: "Evidence Type",
-					sortable: true
-				},
+				// {
+				// 	key: "evidence_type",
+				// 	label: "Evidence Type",
+				// 	sortable: true
+				// },
 				{
 					key: "clinical_significance",
-					label: "Clinical Significance",
+					label: "Interpretation",
 					sortable: true
 				},
 				{
 					key: "evidence_level",
-					label: "Tier",
+					label: "Assertion Criteria",
 					sortable: true
 				},
-				{
-					key: "publications",
-					label: "References",
-					sortable: false
-				},
+				// {
+				// 	key: "publications",
+				// 	label: "References",
+				// 	sortable: false
+				// },
 			]
 		}
 	},
