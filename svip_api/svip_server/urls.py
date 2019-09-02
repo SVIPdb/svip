@@ -30,6 +30,7 @@ from rest_framework import permissions
 import api.urls as api_router
 import api.views.beacon as beacon101
 import api.views.beacon_v110 as beacon110
+from api.views import socibp_proxy
 from api.views.swisspo_proxy import swisspo_request, get_pdbs, get_residues, get_pdb_data
 from api.views.variomes_proxy import variomes_single_ref
 
@@ -97,6 +98,10 @@ urlpatterns = [
     re_path(r'^api/v1/swiss_po/get_pdbs/(?P<protein>.+)$', get_pdbs, name='swisspo_get_pdbs'),
     re_path(r'^api/v1/swiss_po/get_residues/(?P<pdb_id>[^:]+):(?P<chain>[A-Z])$', get_residues, name='swisspo_get_residues'),
     re_path(r'^api/v1/swiss_po/get_pdb_data/(?P<pdb_path>.+)$', get_pdb_data, name='swisspo_get_pdb_data'),
+
+    # socibp proxying routes
+    re_path(r'^api/v1/socibp/genes', socibp_proxy.get_genes, name='socibp_get_genes'),
+    re_path(r'^api/v1/socibp/stats/(?P<gene>.+)/(?P<change>.+)$', socibp_proxy.get_changed_samples, name='socibp_stats'),
 ]
 
 # serve static files from the dev server
