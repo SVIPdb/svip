@@ -24,7 +24,7 @@
 								<div class="example" v-if="entry['Example']">
 									<b>Example:</b>
 									<div v-if="typeof entry['Example'] == 'object' && entry['Example'].img">
-										<img :src="require(`./resources/${entry['Example'].img}`)"  alt="Example"/>
+										<img :src="require(`@/components/help/resources/${entry['Example'].img}`)"  alt="Example"/>
 									</div>
 									<span class="example-text" v-else>{{ entry['Example'] }}</span>
 								</div>
@@ -62,23 +62,23 @@ import {slugifySans} from "@/utils";
 const help_sections = [
 	{
 		name: 'Variant Information',
-		content: require('./json/variant_info')
+		content: require('@/components/help/json/variant_info')
 	},
 	{
 		name: 'SVIP: Overview',
-		content: require('./json/svip_info')
+		content: require('@/components/help/json/svip_info')
 	},
 	{
 		name: 'SVIP: Samples',
-		content: require('./json/svip_samples')
+		content: require('@/components/help/json/svip_samples')
 	},
 	{
 		name: 'SVIP: Curation',
-		content: require('./json/svip_curation')
+		content: require('@/components/help/json/svip_curation')
 	},
 	{
 		name: 'Public Databases',
-		content: require('./json/public_info')
+		content: require('@/components/help/json/public_info')
 	},
 ];
 

@@ -8,7 +8,7 @@ import UserInfo from "@/views/user/UserInfo";
 import store from '@/store';
 import {TokenErrors} from "@/store/modules/users";
 import PageNotFound from "@/views/PageNotFound";
-import Help from "@/components/help/Help";
+import Help from "@/views/Help";
 
 Vue.use(Router);
 
