@@ -1,9 +1,10 @@
 from enum import Enum
 
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, F, Value, Func
-from django.db.models.functions import Coalesce
+from django.db.models import Count, F, Value, Func, Sum, IntegerField
+from django.db.models.functions import Coalesce, Cast
 
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
@@ -147,6 +148,16 @@ class VariantInSource(models.Model):
         return q.count() if not is_distinct else q.distinct().count()
 
     def diseases(self):
+        # FIXME: this sucks, but clinvar right now is pre-aggregated by disease, so we need another
+        #  way to surface the real submission count (which is held in extras.num_submissions)
+        if self.source.name == 'clinvar':
+            return (
+                self.association_set
+                    .values(disease=F('phenotype__term'))
+                    .annotate(count=Sum(Cast(KeyTextTransform('num_submissions', 'extras'), IntegerField())))
+                    .distinct().order_by('-count')
+            )
+
         return (
             self.association_set
                 .values(disease=F('phenotype__term'))
@@ -248,6 +259,8 @@ class Association(models.Model):
 
     # stores errors, exceptions encountered while crawling
     crawl_status = JSONField(null=True)
+    # stores extra data that doesn't fit into the association structure
+    extras = JSONField(null=True, verbose_name="Association-specific extra data")
 
 
 class CollapsedAssociation(models.Model):

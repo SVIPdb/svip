@@ -195,7 +195,10 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
 
             'phenotype_set',
             'evidence_set',
-            'environmentalcontext_set'
+            'environmentalcontext_set',
+
+            'crawl_status',
+            'extras'
         )
 
 
