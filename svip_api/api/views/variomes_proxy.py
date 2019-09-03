@@ -21,3 +21,13 @@ def variomes_single_ref(request):
         return HttpResponse(response.content, status=response.status_code)
 
     return JsonResponse(response.json())
+
+
+def variomes_search(request):
+    # proxy requests to variomes server
+    response = cached_sess.get('http://candy.hesge.ch/Variomes/api/getAllPublications.jsp', params=request.GET)
+
+    if response.status_code != 200:
+        return HttpResponse(response.content, status=response.status_code)
+
+    return JsonResponse(response.json())

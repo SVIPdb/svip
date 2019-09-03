@@ -32,7 +32,7 @@ import api.views.beacon as beacon101
 import api.views.beacon_v110 as beacon110
 from api.views import socibp_proxy
 from api.views.swisspo_proxy import swisspo_request, get_pdbs, get_residues, get_pdb_data
-from api.views.variomes_proxy import variomes_single_ref
+from api.views.variomes_proxy import variomes_single_ref, variomes_search
 
 from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
 
@@ -92,7 +92,7 @@ urlpatterns = [
 
     # proxied routes from external APIs
     re_path(r'^api/v1/variomes_single_ref', variomes_single_ref, name='variomes_single_ref'),
-    # re_path(r'^api/v1/swiss_po/(?P<path>.*)$', swisspo_request, name='swisspo_request'),
+    re_path(r'^api/v1/variomes_search', variomes_search, name='variomes_search'),
 
     # swiss-po specific routes
     re_path(r'^api/v1/swiss_po/get_pdbs/(?P<protein>.+)$', get_pdbs, name='swisspo_get_pdbs'),
