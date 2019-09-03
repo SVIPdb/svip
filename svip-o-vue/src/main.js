@@ -9,6 +9,10 @@ import Snotify, {SnotifyPosition} from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
 
+// imports all the bootstrap parts
+import BootstrapVue from 'bootstrap-vue'
+Vue.use(BootstrapVue);
+
 // we import only the icons we actually use in the project to dramatically reduce bundle size
 import "vue-awesome/icons/sign-out-alt";
 import "vue-awesome/icons/sign-in-alt";
@@ -26,9 +30,6 @@ import Icon from "vue-awesome/components/Icon";
 import vSelect from "vue-select";
 
 import store from "./store";
-
-// imports all the bootstrap parts
-import './components/bootstrap-bits';
 
 Vue.config.productionTip = false;
 
