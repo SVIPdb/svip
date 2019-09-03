@@ -10,26 +10,23 @@
 		</b-navbar-brand>
 
 		<b-collapse is-nav id="nav_collapse">
-			<!-- Right aligned nav items -->
-			<b-navbar-nav right>
-				<b-nav-item :to="'/help'">Help</b-nav-item>
-			</b-navbar-nav>
+      <b-navbar-nav>
+        <b-nav-item :to="'/help'">Help</b-nav-item>
+      </b-navbar-nav>
 
-			<b-navbar-nav v-if="user" class="ml-auto">
-				<b-navbar-nav right>
+			<!-- Right aligned nav items -->
+			<b-navbar-nav class="ml-auto">
+				<b-navbar-nav v-if="user" right>
 					<b-nav-text class="login-name">logged in as <router-link to="/user-info">{{ user.username }}</router-link> -</b-nav-text>
 					<b-nav-item>
 						<a class="pointer" @click="logout()"><icon name="sign-out-alt" /> log out</a>
 					</b-nav-item>
 				</b-navbar-nav>
-			</b-navbar-nav>
-
-			<b-navbar-nav v-else class="ml-auto">
-				<b-navbar-nav right>
-					<b-nav-item v-if="$router.currentRoute !== '/login'">
-						<router-link class="pointer" :to="{name: 'login', params: { nextRoute: whereFromHere }}"><icon name="sign-in-alt" /> log in</router-link>
-					</b-nav-item>
-				</b-navbar-nav>
+        <b-navbar-nav v-else right>
+          <b-nav-item v-if="$router.currentRoute !== '/login'">
+            <router-link class="pointer" :to="{name: 'login', params: { nextRoute: whereFromHere }}"><icon name="sign-in-alt" /> log in</router-link>
+          </b-nav-item>
+        </b-navbar-nav>
 			</b-navbar-nav>
 		</b-collapse>
 	</b-navbar>
