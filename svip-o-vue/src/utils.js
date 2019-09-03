@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import slugify from "slugify";
 
 export function change_from_hgvs(x, include_transcript = false) {
 	if (!x || !x.includes(":")) return x;
@@ -72,6 +73,10 @@ export function millisecondsToStr( milliseconds ) {
 
 export function trimPrefix(str, prefix) {
 	return (str.startsWith(prefix)) ? str.slice(prefix.length) : str;
+}
+
+export function slugifySans(x) {
+  return slugify(x.replace(":", "_"));
 }
 
 // used by some item providers to parse PMIDs out of publication URLs

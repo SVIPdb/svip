@@ -1,16 +1,17 @@
 <template>
-  <div class="toc col-md-4 order-md-2 order-sm-0">
+  <div class="toc col-md-3 order-md-2 order-sm-0">
     <h3>Table of Contents</h3>
-    <ol>
-      <li v-for="section in sections" :key="section.name">
-        <a :href="`#sec_${ slugify(section.name) }`">{{ section.name }}</a>
-      </li>
-    </ol>
+    <b-list-group v-b-scrollspy="90">
+      <b-list-group-item v-for="section in sections" :key="section.name"
+        :href="`#sec_${ slugifySans(section.name) }`">
+        {{ section.name }}
+      </b-list-group-item>
+    </b-list-group>
   </div>
 </template>
 
 <script>
-import slugify from "slugify";
+import {slugifySans} from "@/utils";
 
 export default {
 	name: "TableOfContents",
@@ -18,13 +19,13 @@ export default {
 		sections: { type: Array, required: true }
 	},
 	methods: {
-		slugify
+    slugifySans
 	}
 }
 </script>
 
 <style scoped>
-.toc { position: fixed; right: 0; }
+.toc { position: fixed; right: 130px; }
 @media(max-width: 600px) {
   .toc { position: relative; }
 }

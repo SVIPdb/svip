@@ -12,15 +12,14 @@
 
 			<div class="col-md-8 order-1">
 				<div class="section" v-for="section in help_sections" :key="section.name">
-					<h3>{{ section.name }}</h3>
-					<a class="target-label" :name="`sec_${slugify(section.name)}`"> </a>
+					<h3 class="sec-header" :id="`sec_${slugifySans(section.name)}`">{{ section.name }}</h3>
 
 					<div class="terms">
 						<div class="entry" v-for="entry in section.content" :key="entry.Field">
 							<div class="term"><b>{{ entry.Field }}:</b></div>
 							<div class="definition">
 								<span v-if="entry['Complete description']">{{ entry['Complete description'] }}</span>
-								<span v-else><i>missing description!</i></span>
+								<span v-else class="missing-desc"><i>missing description!</i></span>
 
 								<div class="example" v-if="entry['Example']">
 									<b>Example:</b>
@@ -57,8 +56,8 @@
 </template>
 
 <script>
-import slugify from "slugify";
 import TableOfContents from "@/components/help/TableOfContents";
+import {slugifySans} from "@/utils";
 
 const help_sections = [
 	{
@@ -92,19 +91,20 @@ export default {
 		};
 	},
 	methods: {
-		slugify
+    slugifySans
 	}
 }
 </script>
 
 <style scoped>
-.section { margin-bottom: 1em; position: relative; }
-.section .target-label { position: absolute; top: -85px; }
+.section { margin-bottom: 3em; }
+.section .sec-header { position: relative; margin-top: -90px; padding-top: 90px; }
 
 .terms { margin-left: 20px; }
 .terms .entry { margin-bottom: 1em; }
 .terms .term { font-weight: bold; font-size: larger; }
 .terms .definition { margin-left: 10px; }
+.terms .missing-desc { font-style: italic; color: #777; }
 
 .terms .example {
 	margin-top: 0.5em;
