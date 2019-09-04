@@ -10,7 +10,7 @@ const sortRemappings = {
 	'contexts': 'environmentalcontext__description',
 };
 
-export function makeAssociationProvider(metaUpdate=null) {
+export function makeAssociationProvider(metaUpdate=null, remappings=sortRemappings) {
 	// produces an item provider function for bootstrap-vue tables.
 
 	// includes an optional callback when a response is received that sets metadata about the item provider update,
@@ -25,8 +25,8 @@ export function makeAssociationProvider(metaUpdate=null) {
 		const filter_params = JSON.parse(ctx.filter);
 
 		// map virtual columns to their in-database equivalents
-		if (sortRemappings.hasOwnProperty(ctx.sortBy)) {
-			ctx.sortBy = sortRemappings[ctx.sortBy];
+		if (remappings.hasOwnProperty(ctx.sortBy)) {
+			ctx.sortBy = remappings[ctx.sortBy];
 		}
 
 		const params = {
@@ -66,7 +66,8 @@ export function makeAssociationProvider(metaUpdate=null) {
 				evidence_url: a.source_link,
 				publications: _.flatten(a.evidence_set.map((ev_set) =>
 					ev_set.publications.map(parsePublicationURL)
-				))
+				)),
+        extras: a.extras
 			}));
 		});
 	}
