@@ -96,6 +96,7 @@ import SourceIcon from "@/components/widgets/SourceIcon";
 import CivicRowDetails from "@/components/genes/variants/sources/civic/CivicRowDetails";
 import ClinvarRowDetails from "@/components/genes/variants/sources/clinvar/ClinvarRowDetails";
 import SignificanceBarPlot from "@/components/genes/variants/sources/clinvar/SignificanceBarPlot";
+import ClinvarPubCountCol from "@/components/genes/variants/sources/clinvar/ClinvarPubCountCol";
 
 const overrides = {
 	civic: {
@@ -116,6 +117,7 @@ const overrides = {
 		details_part: ClinvarRowDetails,
 		colum_parts: {
       clinical: SignificanceBarPlot,
+        publication_count: ClinvarPubCountCol,
 			scores: UnavailableCol
 		}
 	},
