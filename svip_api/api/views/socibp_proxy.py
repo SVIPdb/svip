@@ -131,7 +131,7 @@ def get_changed_samples(request, gene, change):
             {
                 'study': study_data[study_id],
                 'authed_link': (
-                    SOCIBP_BASE_URL + '/index.do?cancer_study_id=%(study_id)s&case_set_id=luad_broad_cna_seq&gene_list=%(gene)s&geneset_list=+&tab_index=tab_visualize&Action=Submit' %
+                    SOCIBP_BASE_URL + '/study?id=%(study_id)s#summary' %
                     {
                         'study_id': study_id,
                         'gene': gene
