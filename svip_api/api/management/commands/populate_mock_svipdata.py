@@ -179,7 +179,9 @@ def create_svip_related(source, target_model):
                         svip_variant__variant__name=sample['variant'],
                         svip_variant__variant__hgvs_c__endswith=sample['cds']
                     ),
-                    **dict((k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease'))
+                    **dict(
+                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease')
+                    )
                 )
                 candidate.save()
                 succeeded += 1
@@ -231,7 +233,8 @@ def synthesize_samples(num_samples_per_variant=10):
                 'Papillary Thyroid Carcinoma': 'Thyroid',
                 'Breast Cancer': 'Breast',
                 'Colorectal Cancer': 'Colorectal',
-                'Skin Melanoma': 'Skin'
+                'Skin Melanoma': 'Skin',
+                'Prostate Cancer': 'Prostate',
             }
             disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.disease_set.values('name')]
 
