@@ -238,6 +238,11 @@ def synthesize_samples(num_samples_per_variant=10):
             }
             disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.disease_set.values('name')]
 
+        # for sex-specific diseases, we should only use one sex
+        sex_specific = {
+            'Prostate Cancer': 'Male'
+        }
+
 
         # TODO: decide if the sample data and hospital should be the same for all samples for this variant or not
 
@@ -263,7 +268,7 @@ def synthesize_samples(num_samples_per_variant=10):
                 'disease': Disease.objects.get(svip_variant=svip_var, name=disease),
                 'sample_id': str(sample_id),
                 'year_of_birth': str(random.randint(1935, 1988)),
-                'gender': random.choice(('Male', 'Female')),
+                'gender': random.choice(('Male', 'Female')) if disease not in sex_specific else sex_specific[disease],
                 'hospital': hospital,
                 'medical_service': 'Pathology',
                 'provider_annotation': random.choice(('Pathogenic', '-')),
