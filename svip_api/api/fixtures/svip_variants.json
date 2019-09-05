@@ -49,6 +49,7 @@
       }
     ]
   },
+
   {
     "gene_name": "EGFR",
     "variant_name": "L858R",
@@ -104,6 +105,22 @@
       },
       {
         "name": "Lung Adenocarcinoma",
+        "SVIP_status": "Curated",
+        "score": 3
+      }
+    ]
+  },
+
+  {
+    "gene_name": "ALK",
+    "variant_name": "G740R",
+    "HGVScoding": "NM_004304.4:c.2218G>A",
+    "HGVSprotein": "NP_004295.2:p.Gly740Arg",
+    "position": "GRCh37:chr2:29462683",
+    "dbSNP": "rs766541301",
+    "diseases": [
+      {
+        "name": "Prostate Cancer",
         "SVIP_status": "Curated",
         "score": 3
       }
