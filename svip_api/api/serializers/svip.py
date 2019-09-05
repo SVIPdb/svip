@@ -103,10 +103,18 @@ class DiseaseSerializer(NestedHyperlinkedModelSerializer):
         return obj.sample_set.count()
 
     def get_gender_balance(self, obj):
-        return dict(
+        result = dict(
             (x['gender'].lower(), x['count'])
                 for x in obj.sample_set.values('gender').annotate(count=Count('gender'))
         )
+
+        # ensure each gender is represented
+        if 'male' not in result:
+            result['male'] = 0
+        if 'female' not in result:
+            result['female'] = 0
+
+        return result
 
     def get_age_distribution(self, obj):
         # produce the age brackets merged with the number of age entries that match each bracket
