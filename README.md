@@ -32,10 +32,13 @@ All the environments require that docker and docker-compose are installed.
 The `deployment` folder contains (work-in-progress) scripts that facilitate deployment
 and synchronization across the three environments.
 
+The `db_config` folder contains initialization scripts for the postgres database;
+on first execution, it loads a sample database containing some faked SVIP data and
+entries from public databases (CIViC, OncoKB, etc.).
+
 Other random folders:
 - `sql_scratch` contains scratch SQL scripts used for ad-hoc analyses.
 - `notebooks` contains some Jupyter notebooks for ad-hoc analyses.
-- `deployment` holds deployment scripts.
 - `assets` contains artwork and other static assets used in the front-end and promotional.
 - `svip_db_backups` stores snapshots of the database, retrieved from svip-dev.
 - `kibana` contains configuration info for g2p-aggregator's original front-end.
