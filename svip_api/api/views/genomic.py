@@ -178,7 +178,8 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
         'evidence_level',
         'drug_labels',
         'phenotype__term',
-        'environmentalcontext__description'
+        'environmentalcontext__description',
+        'extras__num_submissions'
     )
 
     search_fields = (
