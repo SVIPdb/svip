@@ -13,3 +13,4 @@ EGFR	S768I	c.2303G>T	Non-small cell lung cancer	Predictive	Gefitinib	Sensitive	C
 EGFR	S768I	c.2303G>T	Lung adenocarcinoma	Predictive	Erlotinib	Sensitive	Case reports (Tier II)	Tier II	Somatic	Radiographic response in one patient.	Moderate	PMID:25521405
 EGFR	T790M	c.2369C>T	Non-small cell lung cancer	Predictive	Osimertinib	Sensitive	FDA approved therapy (Tier I) 	Tier I	Somatic		Strong	PMID:26729184
 EGFR	T790M	c.2369C>T	Lung adenocarcinoma	Predictive	"Erlotinib, Gefitinib"	Resistance	Population study (Tier II)	Tier II	Somatic	EGFR T790M is the most common mechanism of acquired resistance.	Strong	PMID:23470965
+ALK	G740R	c.2218G>A	Prostate Cancer	Predictive	Alectinib	Sensitive	Preclinical study (Tier II)	Tier II	Somatic	We describe a patient with refractory de novo SCCP with ALK F1174C activating mutation who obtained clinical benefit from treatment with ALK inhibit	Strong	PMID:29559559
