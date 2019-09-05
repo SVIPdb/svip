@@ -123,6 +123,8 @@ def get_changed_samples(request, gene, change):
                 'proteinChange': item['proteinChange']
             })
 
+    # /index.do?Action=Submit&genetic_profile_ids=lille_prostate_rubin2019_mutations&case_set_id=lille_prostate_rubin2019_all&cancer_study_id=lille_prostate_rubin2019&gene_list=ALK&tab_index=tab_visualize&#mutation_details
+
     return JsonResponse({
         # 'studies': study_data,
         # 'molecular_profiles': molecular_profiles,
@@ -131,9 +133,10 @@ def get_changed_samples(request, gene, change):
             {
                 'study': study_data[study_id],
                 'authed_link': (
-                    SOCIBP_BASE_URL + '/study?id=%(study_id)s#summary' %
+                    SOCIBP_BASE_URL + '/index.do?Action=Submit&genetic_profile_ids=%(study_profile_id)s&case_set_id=%(study_id)s_all&cancer_study_id=%(study_id)s&gene_list=%(gene)s&tab_index=tab_visualize&#mutation_details' %
                     {
                         'study_id': study_id,
+                        'study_profile_id': molecular_profiles[study_id][0]['molecularProfileId'],
                         'gene': gene
                     }
                 ),
