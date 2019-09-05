@@ -8,7 +8,7 @@
       <div class="card-body top-level">
         <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
           <template slot="studyName" slot-scope="row">
-            <a :href="row.item.authed_link">{{ row.item.studyName }}</a>
+            <a :href="row.item.authed_link" v-b-tooltip="row.item.study.name">{{ row.item.studyName }}</a>
           </template>
           <template slot="num_patients_samples" slot-scope="row">
             {{ row.item.num_patients }} / {{ row.item.num_samples }}
@@ -50,6 +50,7 @@ export default {
     HTTP.get(`/socibp/stats/${this.protein}/${this.change}`).then((response) => {
       this.items = response.data.mutations.map(x => ({
         studyName: x.study.shortName,
+        study: x.study,
         num_patients: x.num_patients,
         num_samples: x.num_samples,
         authed_link: x.authed_link
