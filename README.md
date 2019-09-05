@@ -35,7 +35,7 @@ and synchronization across the three environments.
 Other random folders:
 - `sql_scratch` contains scratch SQL scripts used for ad-hoc analyses.
 - `notebooks` contains some Jupyter notebooks for ad-hoc analyses.
-- `staging` is used as a temporary directory by the deployment scripts.
+- `deployment` holds deployment scripts.
 - `assets` contains artwork and other static assets used in the front-end and promotional.
 - `svip_db_backups` stores snapshots of the database, retrieved from svip-dev.
 - `kibana` contains configuration info for g2p-aggregator's original front-end.
