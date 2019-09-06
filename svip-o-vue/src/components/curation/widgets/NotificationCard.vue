@@ -4,6 +4,7 @@
       class="p-1"
       :header-bg-variant="cardHeaderBg"
       :header-text-variant="cardTitleVariant"
+      :class="title == 'ON REQUEST' ? customClass : ''"
     >
       <div class="d-flex justify-content-between">
         <div class="p-2 font-weight-bold">
@@ -55,7 +56,10 @@
           <p class="text-monospace mb-0">{{data.value}}</p>
         </template>
         <template slot="deadline" slot-scope="row">
-          <p :class="setFlagClass(row.item.days_left)+' m-0 p-0'">
+          <p
+            v-if="row.item.curated != 'Complete'"
+            :class="setFlagClass(row.item.days_left)+' m-0 p-0'"
+          >
             <span class="font-weight-bold">{{ setLetter(row.item.days_left) }}</span>
             ({{row.item.days_left}} days)
           </p>
@@ -76,7 +80,6 @@
           <icon class="mr-1" name="eye" />
           <icon :class="!row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-plus" />
           <icon :class="row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-minus" />
-          <icon class="mr-1" name="file-import" />
         </template>
         <template slot="single_action">
           <icon class="mr-1" name="eye" />
@@ -135,6 +138,7 @@ export default {
   },
   data() {
     return {
+      customClass: "customClass",
       curator: "Curator1", //FIXME MANUALLY SETTING THE CURATOR
       // Custom settings for the visual
       settings: {
@@ -221,4 +225,7 @@ export default {
 </script>
 
 <style>
+.customClass {
+  background-color: "#c40000 !important";
+}
 </style>

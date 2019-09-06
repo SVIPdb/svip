@@ -72,10 +72,22 @@
                 >
                   <b-form-select
                     id="evidence"
-                    v-model="form.evidence"
-                    :options="['Predictive / Therapeutic','Prognostic','Diagnostic','Theoretical','In vitro','In vivo','Excluded']"
                     :required="required"
-                  ></b-form-select>
+                    v-model="type_of_evidence"
+                    @input="setEvidence()"
+                  >
+                    <optgroup
+                      v-for="(label,index) in Object.keys(inputs)"
+                      :key="index"
+                      :label="label"
+                    >
+                      <option
+                        v-for="(option,n) in Object.keys(inputs[label])"
+                        :key="n"
+                        :value="{label: label,value: option}"
+                      >{{ option }}</option>
+                    </optgroup>
+                  </b-form-select>
                 </b-form-group>
 
                 <b-form-group
@@ -87,7 +99,7 @@
                   <b-form-select
                     id="effect"
                     v-model="form.effect"
-                    :options="['Pathogenic','Likely pathogenic','VUS','Likely begnin','Begnin','Other']"
+                    :options="effects"
                     :required="required"
                   ></b-form-select>
                 </b-form-group>
@@ -101,7 +113,7 @@
                   <b-form-select
                     id="tier_criteria"
                     v-model="form.tier_criteria"
-                    :options="['Well-established in vitro functional study showing a deleterious effect','None or no convincing evidence of functional effect','Well-established in vitro functional study showing no deleterious effect','Other criteria']"
+                    :options="tier_criteria"
                     :required="required"
                   ></b-form-select>
                 </b-form-group>
@@ -241,7 +253,7 @@
         </b-card>
         <b-card class="shadow-sm" header-bg-variant="white" no-body>
           <h5 slot="header" class="d-flex align-items-center">
-            Statistics
+            Keywords
             <b-link
               class="ml-auto"
               :aria-expanded="showStat ? 'true' : 'false'"
@@ -300,6 +312,7 @@ import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
 
 import fields from "@/components/curation/data/summary/fields.json";
+import inputs from "@/components/curation/data/evidence/options.json";
 import store from "@/store";
 import { HTTP } from "@/router/http";
 
@@ -311,6 +324,7 @@ export default {
   data() {
     return {
       fields,
+      inputs,
       options: [
         {
           name: "Annotate selection",
@@ -326,8 +340,13 @@ export default {
       showAction: true,
       showStat: true,
       variomes: null,
+      type_of_evidence: {
+        value: null,
+        label: null
+      },
+      filterLabel: null,
       form: {
-        type_of_evidence: null,
+        evidence: null,
         effect: null,
         tier_criteria: null,
         origin: null,
@@ -373,6 +392,10 @@ export default {
     },
     onSubmit() {
       this.required = !this.required;
+    },
+    setEvidence() {
+      this.form.evidence = this.type_of_evidence.value;
+      this.filterLabel = this.type_of_evidence.label;
     }
   },
   computed: {
@@ -381,6 +404,16 @@ export default {
     }),
     currentUrl() {
       return window.location.href;
+    },
+    effects() {
+      return this.form.evidence != null
+        ? Object.keys(this.inputs[this.filterLabel][this.form.evidence])
+        : [];
+    },
+    tier_criteria() {
+      return this.form.evidence != null && this.form.effect != null
+        ? this.inputs[this.filterLabel][this.form.evidence][this.form.effect]
+        : [];
     }
   },
   created() {

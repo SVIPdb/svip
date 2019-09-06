@@ -1,0 +1,282 @@
+{
+    "CLINICAL SIGNIFICANCE": {
+        "Predictive / Therapeutic": {
+            "Responsive": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Non responsive": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Sensitive": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Reduced sensitivity": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Resistant": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Adverse response": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Other": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ]
+        },
+        "Prognostic": {
+            "Better outcome": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Poor outcome": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Ultrahigh risk": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Unfavorable": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Intermediate": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Favorable": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Other": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ]
+        },
+        "Diagnostic": {
+            "Positive": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Negative": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
+            "Other": [
+                "Included in Professional Guidelines (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Cases report (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ]
+        }
+    },
+    "PATHOGENICITY": {
+        "In vitro assay": {
+            "Pathogenic": [
+                "Well-established in vitro functional study showing a deleterious effect",
+                "Other criteria"
+            ],
+            "Likely pathogenic": [
+                "Well-established in vitro functional study showing a deleterious effect",
+                "Other criteria"
+            ],
+            "Unknown": [
+                "None or no convincing evidence of functional effect",
+                "Other criteria"
+            ],
+            "Likely benign": [
+                "Well-established in vitro functional study showing no deleterious effect",
+                "Other criteria"
+            ],
+            "Benign": [
+                "Well-established in vitro functional study showing no deleterious effect",
+                "Other criteria"
+            ]
+        },
+        "In vivo assay": {
+            "Pathogenic": [
+                "Well-established in vivo functional study showing a deleterious effect",
+                "Other criteria"
+            ],
+            "Likely pathogenic": [
+                "Well-established in vivo functional study showing a deleterious effect",
+                "Other criteria"
+            ],
+            "Unknown": [
+                "None or no convincing evidence of functional effect",
+                "Other criteria"
+            ],
+            "Likely benign": [
+                "Well-established in vivo functional study showing no deleterious effect",
+                "Other criteria"
+            ],
+            "Benign": [
+                "Well-established in vivo functional study showing no deleterious effect",
+                "Other criteria"
+            ]
+        }
+    },
+    "ONLY FOR CURATORS & REVIEWERS": {
+        "Excluded": {
+            "Bronze": [],
+            "Missing evidence": [],
+            "Missing variant": [],
+            "Other": []
+        }
+    }
+}

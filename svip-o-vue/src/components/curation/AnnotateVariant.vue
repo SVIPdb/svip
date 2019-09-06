@@ -33,7 +33,7 @@
           active-nav-item-class="font-weight-bolder"
         >
           <b-tab title="Enter your reference" active>
-            <b-card-text>
+            <b-card-body>
               <b-container>
                 <b-row no-gutters>
                   <b-col cols="5">
@@ -45,22 +45,12 @@
                     ></b-form-select>
                   </b-col>
                   <b-col cols="5">
-                    <b-form-input v-model="reference" required placeholder="Type reference"></b-form-input>
-                    <!-- <v-select
-                      class="custom-style"
-                      :options="['3213123']"
+                    <b-form-input
                       v-model="reference"
-                      taggable
-                    >
-                      <template #search="{attributes, events}">
-                        <input
-                          class="vs__search"
-                          :required="!reference"
-                          v-bind="attributes"
-                          v-on="events"
-                        />
-                      </template>
-                    </v-select>-->
+                      required
+                      placeholder="Type reference"
+                      class="rounded-0"
+                    ></b-form-input>
                   </b-col>
                   <b-col cols="2">
                     <b-button
@@ -70,16 +60,35 @@
                       class="custom-border-right"
                       variant="success"
                       @click="addEvidence"
+                      target="_blank"
                     >
                       <icon name="plus"></icon>
                     </b-button>
                   </b-col>
                 </b-row>
               </b-container>
-            </b-card-text>
+            </b-card-body>
           </b-tab>
           <b-tab title="Use text mining tool">
-            <b-card-text>Tab Contents 2</b-card-text>
+            <b-card-body>
+              <b-table
+                show-empty
+                :busy="variomes.length == 0"
+                :items="variomes.publications"
+                :sort-by="sortBy"
+                :sort-desc="sortDesc"
+                :fields="fieldsTextMining"
+              >
+                <div slot="table-busy" class="text-center text-danger my-2">
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+                <template slot="id" slot-scope="data">
+                  <b-link @click="addEvidenceFromList(data.value)" target="_blank">{{ data.value }}</b-link>
+                </template>
+                <template slot="score" slot-scope="data">{{ data.value.toFixed(2) }}</template>
+              </b-table>
+            </b-card-body>
           </b-tab>
           <b-tab title="Use prediction tools">
             <b-card-text>Tab Contents 3</b-card-text>
@@ -94,8 +103,10 @@ import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
 import evidenceCard from "@/components/curation/widgets/EvidenceCard";
 import fields from "@/components/curation/data/summary/fields.json";
+import fieldsTextMining from "@/components/curation/data/text_mining/fields.json";
 import store from "@/store";
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
+import { HTTP } from "@/router/http";
 
 export default {
   name: "AnnotateVariant",
@@ -106,8 +117,13 @@ export default {
   data() {
     return {
       fields,
+      fieldsTextMining,
       source: "PMID",
-      reference: null
+      reference: null,
+      variomes: [],
+      totalRows: 1,
+      sortBy: "score",
+      sortDesc: true
     };
   },
   computed: {
@@ -168,7 +184,7 @@ export default {
   methods: {
     desnakify,
     addEvidence() {
-      this.$router.push({
+      let route = this.$router.resolve({
         name: "add-evidence",
         params: {
           gene_id: this.$route.params.gene_id,
@@ -177,7 +193,31 @@ export default {
         },
         query: { source: this.source, reference: this.reference }
       });
+      window.open(route.href, "_blank");
+    },
+    addEvidenceFromList(id) {
+      this.reference = id;
+      return this.addEvidence();
     }
+  },
+  created() {
+    HTTP.get(`variomes_search`, {
+      params: {
+        gene: this.variant.gene.symbol,
+        variant: this.variant.name,
+        disease: this.variant.svip_data.diseases.find(
+          element => element.id == this.$route.params.disease_id
+        ).name
+      }
+    })
+      .then(response => {
+        this.variomes = response.data;
+      })
+      .catch(err => {
+        this.variomes = {
+          error: "Couldn't retrieve publication info, try again later."
+        };
+      });
   },
   beforeRouteEnter(to, from, next) {
     const { variant_id } = to.params;
