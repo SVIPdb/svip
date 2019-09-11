@@ -36,11 +36,12 @@
           </b-link>
         </template>
         <template slot="actions" slot-scope="row">
-          <b-link
+          <b-button
+            size="sm"
             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
           >
             <icon name="tools"></icon>
-          </b-link>
+          </b-button>
         </template>
 
         <template slot="name" slot-scope="row">
