@@ -3,9 +3,9 @@
 ## Main components:
 
 This top-level project coordinates three sub-projects that compose SVIP:
-1. **g2p-aggregator:** contains the pipeline (in `g2p-aggregator/harvester`) that populates the variant database,
-2. **svip_api:** the API server that serves data from the database to the front-end,
-3. **svip-o-vue:** the web front-end (whose repo is managed by Vital IT).
+1. **[g2p-aggregator](https://gitlab.ethz.ch/svip/g2p-aggregator):** contains the pipeline (in `g2p-aggregator/harvester`) that populates the variant database,
+2. **[svip_api](https://gitlab.ethz.ch/svip/svip_api):** the Django/[DRF](https://www.django-rest-framework.org/) API server that serves data from the database to the front-end,
+3. **[svip-o-vue](https://gitlab.ethz.ch/svip/svip-o-vue):** the [Vue.js](https://vuejs.org/)-based web front-end.
 
 `docker-compose.yml` is the main configuration file for launching the set of containers
 that compose the complete SVIP system. It includes definitions for a few other essential
