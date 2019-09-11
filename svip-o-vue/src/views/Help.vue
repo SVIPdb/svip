@@ -18,7 +18,7 @@
 						<div class="entry" v-for="entry in section.content" :key="entry.Field">
 							<div class="term"><b>{{ entry.Field }}:</b></div>
 							<div class="definition">
-								<span v-if="entry['Complete description']">{{ entry['Complete description'] }}</span>
+								<span v-if="entry['Complete description']" v-html="formatNewlines(entry['Complete description'])"></span>
 								<span v-else class="missing-desc"><i>missing description!</i></span>
 
 								<div class="example" v-if="entry['Example']">
@@ -91,7 +91,10 @@ export default {
 		};
 	},
 	methods: {
-    slugifySans
+    slugifySans,
+    formatNewlines(text) {
+        return text.split("\n").join("<br />");
+    }
 	}
 }
 </script>
