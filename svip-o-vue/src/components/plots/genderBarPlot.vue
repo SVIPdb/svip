@@ -48,7 +48,7 @@ export default {
 				.map(([k, v]) => ({ label: k, value: v, color: genderColors[k] }));
 		},
 		totalPatients() {
-			return this.data.male + this.data.female;
+			return (this.data.male || 0) + (this.data.female || 0);
 		},
 		layout: function () {
 			const total = d3.sum(this.formattedData, d => d.value);
