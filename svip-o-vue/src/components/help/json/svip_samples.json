@@ -1,65 +1,65 @@
 [
 	{
 		"Field": "Disease",
-		"Short description": "Same as before",
-		"Example": "",
-		"Complete description": "",
+		"Short description": "Disease name according to ICD-O",
+		"Example": "Lung adenocarcinoma",
+		"Complete description": "Disease name according to International Classification of Disease for Oncology (ICD-O3)",
 		"Reference": null
 	},
 	{
 		"Field": "Sample ID",
 		"Short description": "SVIP sample identifier",
 		"Example": "",
-		"Complete description": "",
+		"Complete description": "SVIP sample identifier",
 		"Reference": null
 	},
 	{
 		"Field": "Year of birth",
 		"Short description": "Year of birth of the patient",
-		"Example": "",
-		"Complete description": "",
+		"Example": "1952",
+		"Complete description": "Year of birth of the patient",
 		"Reference": null
 	},
 	{
 		"Field": "Gender",
 		"Short description": "Gender of the patient",
-		"Example": "",
-		"Complete description": "",
+		"Example": "Female",
+		"Complete description": "Gender of the patient",
 		"Reference": null
 	},
 	{
 		"Field": "Institution",
 		"Short description": "Institution that provided the sample and variant information.",
-		"Example": "",
-		"Complete description": "",
+		"Example": "HUG",
+		"Complete description": "Institution that provided the sample and variant information.",
 		"Reference": null
 	},
 	{
 		"Field": "Department",
 		"Short description": "Department of the institution.",
-		"Example": "",
-		"Complete description": "",
+		"Example": "Service de Pathologie",
+		"Complete description": "Department of the institution.",
 		"Reference": null
 	},
 	{
 		"Field": "Contact",
 		"Short description": "Contact in the insitution.",
 		"Example": "",
-		"Complete description": "",
+		"Complete description": "Contact in the insitution.",
 		"Reference": null
 	},
 	{
 		"Field": "Provider annotation",
 		"Short description": "Interpretation originally given by the data provider.",
-		"Example": "",
-		"Complete description": "",
+		"Example": "Pathogenic",
+		"Complete description": "Interpretation originally given by the data provider.",
 		"Reference": null
 	},
 	{
 		"Field": "Tumor sample",
-		"Short description": "Tumor sample type",
-		"Example": "",
-		"Complete description": "Tumor sample type: blood, List to be refined and completed.",
+		"Short description": "Tumor sample origin",
+		"Example": "Lung",
+		"Complete description": "Tissue of origin of the tumor sample: lung, blood, eye...",
 		"Reference": null
 	},
 	{
@@ -73,49 +73,42 @@
 		"Field": "TNM stage",
 		"Short description": "Classification of the anatomical extent of spread in solid tumor cancer.",
 		"Example": "T1N1M0",
-		"Complete description": "The TNM system classifies the amount and spread of cancer in a patient’s body (solid tumors only). T describes the size of the tumor and any spread of cancer into nearby tissue; N describes spread of cancer to nearby lymph nodes; and M describes metastasis (spread of cancer to other parts of the body",
+		"Complete description": "The TNM system classifies the amount and spread of cancer in a patient’s body (solid tumors only). T describes the size of the tumor and any spread of cancer into nearby tissue; N describes spread of cancer to nearby lymph nodes; and M describes metastasis (spread of cancer to other parts of the body).",
 		"Reference": null
 	},
 	{
 		"Field": "Sample type",
-		"Short description": "",
-		"Example": "",
-		"Complete description": "Type of the analyzed specimen: biopsy, bone marrow, blood, CSF, plasma, serum, PBMC, circulating free DNA... To be refined",
+		"Short description": "Morphological type of sample collection",
+		"Example": "Primary tumor",
+		"Complete description": "Morphological type of sample collection: primary tumor, metastasis, NA (for hematology)",
 		"Reference": null
 	},
 	{
-		"Field": "Specimen site",
-		"Short description": "Morphological site of specimen collection",
-		"Example": "",
-		"Complete description": "Morphological site of sample collection: primary tumor, metastasis, NA (for hematology)",
+		"Field": "Sample site",
+		"Short description": "Source of the sample",
+		"Example": "Biopsy",
+		"Complete description": "Source of the tumor sample: biopsy, bone marrow, blood, CSF, plasma, serum, PBMC, circulating free DNA...",
 		"Reference": null
 	},
 	{
-		"Field": "Tissue of origin",
-		"Short description": "Sample",
-		"Example": "",
-		"Complete description": "List to be defined",
-		"Reference": null
-	},
-	{
-		"Field": "Sample condition",
+		"Field": "Specimen type",
 		"Short description": "Type of the analyzed specimen",
 		"Example": "FFPE",
-		"Complete description": "Sample condition: fresh, fresh frozen, FFPE… To be refined",
+		"Complete description": "Type of the analyzed specimen. Sample condition can be: fresh, fresh frozen, FFPE...",
 		"Reference": null
 	},
 	{
 		"Field": "Tumor AF",
-		"Short description": "",
-		"Example": "",
-		"Complete description": "",
+		"Short description": "Tumor allele frequency",
+		"Example": "90%",
+		"Complete description": "Variant allele frequency in the tumor sample",
 		"Reference": null
 	},
 	{
 		"Field": "Sequencing panel",
 		"Short description": "Name and version of the gene panel",
 		"Example": "HotSpot 2.0",
-		"Complete description": "Name and version (if applicable) of the gene panel used for sequencing:",
+		"Complete description": "Name and version (if applicable) of the gene panel used for sequencing.",
 		"Reference": null
 	},
 	{
@@ -141,9 +134,9 @@
 	},
 	{
 		"Field": "Calling strategy",
-		"Short description": "",
+		"Short description": "(not sure what to put here)",
 		"Example": "",
-		"Complete description": "Not sure what to put here",
+		"Complete description": "",
 		"Reference": null
 	},
 	{

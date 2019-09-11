@@ -83,13 +83,13 @@ export default {
 				{ key: "sample_id", label: "Sample ID", sortable: true },
 				{ key: "year_of_birth", label: "Year of birth", sortable: true },
 				{ key: "gender", label: "Gender", sortable: true },
-				{ key: "hospital", label: "Hospital", sortable: true },
-				{ key: "medical_service", label: "Medical Service", sortable: true },
+				{ key: "hospital", label: "Institution", sortable: true },
+				{ key: "medical_service", label: "Department", sortable: true },
 				{ key: "contact", label: "Contact", sortable: true },
 				{ key: "provider_annotation", label: "Provider Annotation", sortable: true },
 
 				{ key: "sample_tissue", label: "Tumor Sample", sortable: true }, /* links to tumor details */
-				{ key: "panel", label: "Panel", sortable: true },  /* links to sequencing details */
+				{ key: "panel", label: "Sequencing Panel", sortable: true },  /* links to sequencing details */
 			],
 
 			tumor_fields: [
@@ -98,13 +98,13 @@ export default {
 				{ key: "sample_type", label: "Sample Type", sortable: true },
 				{ key: "sample_site", label: "Sample Site", sortable: true },
 				{ key: "specimen_type", label: "Specimen Type", sortable: true },
-				{ key: "allele_frequency", label: "Allele Frequency", sortable: true }
+				{ key: "allele_frequency", label: "Tumor AF", sortable: true }
 			],
 
 			sequencing_fields: [
 				{ key: "sequencing_date", label: "Sequencing Date", sortable: true },
 				{ key: "platform", label: "Platform", sortable: true },
-				{ key: "panel", label: "Panel", sortable: true },
+				{ key: "panel", label: "Sequencing Panel", sortable: true },
 				{ key: "coverage", label: "Coverage", sortable: true },
 				{ key: "calling_strategy", label: "Calling Strategy", sortable: true },
 				{ key: "caller", label: "Caller", sortable: true },

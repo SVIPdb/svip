@@ -1,9 +1,0 @@
-SVIP curation details field	Short description	Example	Complete description	Reference
-Evidence type	Evidence type based on the potential clinical actionability of the variant in a given disease.	Prognostic	Evidence type based on the potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines. Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy. Prognostic: variant that predicts the course of a disease.Diagnostic: variant that supports the diagnosis of a disease.  Also See Pathogenicity for more details.	
-Effect	List still to be worked out	Poor outcome	Consequence of the variant observed during a clinical or functional investigation.	
-Drug	Drug or combination of drugs	Verumafenib	Nomenclature?	Reference?
-Tier Criteria	Level of pathogenicity or actionability of a variant as defined by AMP/ASCO/CAPS guidelines	Clinical trial (Tier IID)	Level of pathogenicity or actionability of a variant as defined by AMP/ASCO/CAPS guidelines. Precise => Tier criteria table to provide	AMP/ASCO/CAPS guidelines
-Mutation origin	same as before	Somatic		
-Complementary information	Additional information for the interpretation of the variant provided during the curation/review process	N.A.	Additional information for the interpretation of the variant provided during the curation/review process	
-Support	Curator/reviewer confidence of the published evidences (strong, moderate, low)	Strong	Curator/reviewer confidence of the published evidences, based on three levels: strong, moderate, low	
-References	PMID, DOI or other.	PMID: 24662454	Pubmed ID, DOI or other type of reference used for the interpretation of the variant pathogenicity and actionability.	

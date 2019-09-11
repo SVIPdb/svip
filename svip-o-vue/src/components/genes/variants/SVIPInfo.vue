@@ -155,7 +155,7 @@ export default {
 				},
 				{
 					key: "nb_patients",
-					label: "# of Patients",
+					label: "# of Samples",
 					formatter: x => `${x}/${this.totalPatients}`,
 					sortable: true,
 					class: "text-center"

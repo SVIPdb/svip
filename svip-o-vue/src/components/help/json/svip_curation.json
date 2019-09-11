@@ -3,12 +3,12 @@
 		"Field": "Evidence type",
 		"Short description": "Evidence type based on the potential clinical actionability of the variant in a given disease.",
 		"Example": "Prognostic",
-		"Complete description": "Evidence type based on the potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines. Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy. Prognostic: variant that predicts the course of a disease.Diagnostic: variant that supports the diagnosis of a disease.  Also See Pathogenicity for more details.",
+		"Complete description": "Evidence type based on the potential clinical actionability or the pathogenicity of the variant in a given disease.",
 		"Reference": null
 	},
 	{
 		"Field": "Effect",
-		"Short description": "List still to be worked out",
+		"Short description": "Consequence of the variant observed during a clinical or functional investigation.",
 		"Example": "Poor outcome",
 		"Complete description": "Consequence of the variant observed during a clinical or functional investigation.",
 		"Reference": null
@@ -17,7 +17,7 @@
 		"Field": "Drug",
 		"Short description": "Drug or combination of drugs",
 		"Example": "Verumafenib",
-		"Complete description": "Nomenclature?",
+		"Complete description": "Drug or combination of drugs used during a therapy",
 		"Reference": ["Reference?"]
 	},
 	{
@@ -29,10 +29,10 @@
 	},
 	{
 		"Field": "Mutation origin",
-		"Short description": "same as before",
+		"Short description": "Origin of the mutation (germline or somatic)",
 		"Example": "Somatic",
-		"Complete description": "",
-		"Reference": null
+		"Complete description": "Either inherited mutation (germline variant) or acquired mutation (somatic variant) using Sequence Ontology terms.",
+		"Reference": ["http://www.sequenceontology.org/"]
 	},
 	{
 		"Field": "Complementary information",
