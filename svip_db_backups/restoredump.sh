@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
-TARGET_DB=${2:-svip_api_debug}
-
-if [ ! -f "$1" ]; then
-  echo "Error: must specify a dump file"
-  exit -1
-fi
-
 function die() {
   echo "$1" >&2
   exit -1
 }
+
+[ -z "$1" ] && die "Usage: $0 <dumpfile> [target_db=svip_api_debug]"
+
+if [ ! -f "$1" ]; then
+  echo "Error: dump file '$1' doesn't exist or was not found"
+  exit -1
+fi
+
+TARGET_DB=${2:-svip_api_debug}
 
 # first, attempt to disconnect everyone
 echo "Attempting to disconnect existing users from ${TARGET_DB}..."
