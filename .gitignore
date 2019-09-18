@@ -1,3 +1,4 @@
 .env
 /.idea
-/svip_db_backups
+/svip_db_backups/**/*.dump
+/svip_db_backups/**/*.sql
