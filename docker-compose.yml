@@ -43,28 +43,6 @@ services:
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
 
-  debug_api:
-    # image: "svip_api:latest"
-    build: ./svip_api
-    # restart: always
-    volumes:
-      - ./svip_api:/app
-      - /Users/faisala/Checkouts:/checkouts
-    ports:
-     - "8085:8085"
-     - "8889:8889"  # jupyterlab port
-    depends_on:
-      - db
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB=svip_api_debug
-      - DJANGO_SU_NAME
-      - DJANGO_SU_EMAIL
-      - DJANGO_SU_PASSWORD
-      - USE_DEV_SERVER=true
-
   local_uta:
     image: biocommons/uta:uta_20171026
     restart: always
@@ -91,28 +69,3 @@ services:
       - db
       # - api
       - local_uta
-
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
-  #   container_name: elasticsearch
-  #   environment:
-  #     - cluster.name=docker-cluster
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   volumes:
-  #     - 'svip_esdata:/usr/share/elasticsearch/data'
-  #   ports:
-  #     - 9200:9200
-
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:6.5.1
-  #   ports:
-  #    - "5601:5601"
-  #   volumes:
-  #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-  #   depends_on:
-  #     - elasticsearch
