@@ -11,7 +11,7 @@ import PageNotFound from "@/views/PageNotFound";
 import Help from "@/views/Help";
 
 import CurationDashboard from "@/components/curation/CurationDashboard";
-import CurationViewVariant from "@/components/curation/ViewVariant";
+import CurationViewVariant from "@/components/curation/CurationViewVariant";
 import CurationAnnotateVariant from "@/components/curation/AnnotateVariant";
 import CurationAddEvidence from "@/components/curation/AddEvidence";
 
