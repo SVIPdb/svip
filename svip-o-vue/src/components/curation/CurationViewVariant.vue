@@ -73,7 +73,7 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 
 export default {
-  name: "ViewVariant",
+  name: "CurationViewVariant",
   components: {
     VariantExternalInfo,
     variantPublicDatabases,
