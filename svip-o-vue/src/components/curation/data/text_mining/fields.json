@@ -1,0 +1,22 @@
+[
+    {
+        "key": "id",
+        "label": "ID",
+        "sortable": true
+    },
+    {
+        "key": "date",
+        "label": "Date",
+        "sortable": true
+    },
+    {
+        "key": "score",
+        "label": "Score",
+        "sortable": true
+    },
+    {
+        "key": "source",
+        "label": "Source",
+        "sortable": true
+    }
+]

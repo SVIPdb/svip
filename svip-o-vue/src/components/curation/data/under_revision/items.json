@@ -1,0 +1,25 @@
+[
+	{
+		"curator": "Curator1",
+		"gene_name": "EGFR",
+		"variant": "E709Q",
+		"hgvs": "NM_005228.3:c.2125G>C",
+		"disease": "NSCLC",
+		"reviewed": [
+			{
+				"label": "Reviewer 1",
+				"value": true
+			},
+			{
+				"label": "Reviewer 2",
+				"value": true
+			},
+			{
+				"label": "Reviewer 3",
+				"value": false
+			}
+		],
+		"deadline": "04.06.2019",
+		"days_left": 6
+	}
+]
