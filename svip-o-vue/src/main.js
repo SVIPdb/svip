@@ -25,6 +25,10 @@ import "vue-awesome/icons/regular/star";
 import "vue-awesome/icons/spinner";
 import "vue-awesome/icons/external-link-alt";
 import "vue-awesome/icons/exclamation-triangle";
+import "vue-awesome/icons/chevron-up";
+import "vue-awesome/icons/chevron-right";
+import "vue-awesome/icons/chevron-down";
+import "vue-awesome/icons/tools";
 
 import Icon from "vue-awesome/components/Icon";
 
