@@ -37,14 +37,13 @@ import store from "./store";
 Vue.config.productionTip = false;
 
 Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop, showProgressBar: false } });
-Vue.use(VeeValidate, { fieldsBagName: "formFields" });
-Vue.use(VueClipboard)
+Vue.use(VueClipboard);
 
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
 Vue.directive("access", Access);
 Vue.component("v-select", vSelect);
-Vue.component('vue-simple-context-menu', VueSimpleContextMenu)
+Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 export default new Vue({
 	el: "#app",
