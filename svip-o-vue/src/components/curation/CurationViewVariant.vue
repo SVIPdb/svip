@@ -30,20 +30,15 @@
       </b-col>
     </b-row>
 
-    <VariantExternalInfo :mvInfo="variant.mv_info" :extras="all_extras" />
+    <VariantExternalInfo :mvInfo="variant.mv_info" :variant="variant" :extras="all_extras" />
+
     <b-row>
       <b-col>
         <b-card class="shadow-sm mt-3" align="left" no-body>
           <b-card-body class="p-0 text-center">
             <b-row no-gutters>
               <b-col v-for="(item,index) in linkItems" :key="index">
-                <b-button
-                  squared
-                  block
-                  variant="outline-secondary"
-                  :href="item.link"
-                  target="_blank"
-                >
+                <b-button squared block variant="outline-secondary" :href="item.link" target="_blank">
                   {{ item.source }}
                   <icon name="external-link-alt"></icon>
                 </b-button>
