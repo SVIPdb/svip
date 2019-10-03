@@ -218,7 +218,7 @@
               aria-controls="action"
               @click="showAction = !showAction"
             >
-              <icon :name="showAction ? 'chevron-up' : 'chevron-down'"></icon>
+              <icon :name="showAction ? 'chevron-down' : 'chevron-right'"></icon>
             </b-link>
           </h5>
           <b-card-body class="p-0 m-0">
@@ -260,7 +260,7 @@
               aria-controls="statistic"
               @click="showStat = !showStat"
             >
-              <icon :name="showStat ? 'chevron-up' : 'chevron-down'"></icon>
+              <icon :name="showStat ? 'chevron-down' : 'chevron-right'"></icon>
             </b-link>
           </h5>
           <b-card-body class="p-0 m-0">

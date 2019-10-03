@@ -32,7 +32,7 @@
       <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
         <template slot="display" slot-scope="row">
           <b-link @click="row.toggleDetails">
-            <icon :name="row.detailsShowing ? 'chevron-up' : 'chevron-down'"></icon>
+            <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
           </b-link>
         </template>
         <template slot="actions" slot-scope="row">

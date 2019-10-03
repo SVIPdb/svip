@@ -2,7 +2,7 @@
   <b-table :fields="fields" :items="items" :show-empty="true" :small="true">
     <template slot="display" slot-scope="row">
       <b-link @click="row.toggleDetails">
-        <icon :name="row.detailsShowing ? 'chevron-up' : 'chevron-down'"></icon>
+        <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
       </b-link>
     </template>
     <template slot="references" slot-scope="data">
