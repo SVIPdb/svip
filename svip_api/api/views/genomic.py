@@ -35,7 +35,7 @@ from references.prot_to_hgvs import three_to_one
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Genes that we've discovered from harvesting.
+    Public sources harvested by g2p-aggregator
     """
     queryset = Source.objects.all().order_by('name')
     serializer_class = SourceSerializer
