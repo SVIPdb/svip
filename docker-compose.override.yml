@@ -4,5 +4,5 @@ services:
   api:
     restart: always
     environment:
-      - POSTGRES_DB=svip_api_debug
+      # - POSTGRES_DB=svip_api_debug
       - USE_DEV_SERVER=true
