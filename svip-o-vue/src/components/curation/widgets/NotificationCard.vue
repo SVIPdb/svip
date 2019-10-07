@@ -14,13 +14,13 @@
             <b-badge
               pill
               class="bg-white text-dark"
-            >{{items.filter(element => element.curator == this.curator && element.curated == 'Ongoing' || !element.curated).length}}</b-badge>
+            >{{items.filter(element => element.curator == this.curator && element.curated == 'Ongoing').length}}</b-badge>
           </b-button>
           <b-button class="ml-3" size="sm" variant="primary" @click="setCustomFilter('all')">
             All curations
             <b-badge pill class="bg-white text-dark">{{items.length}}</b-badge>
           </b-button>
-          <b-button-group class="ml-3" size="sm">
+          <b-button-group v-if="cardFilterOption" class="ml-3" size="sm">
             <b-button variant="danger" @click="setStatusFilter('Not assigned')">Not assigned</b-button>
             <b-button variant="warning" @click="setStatusFilter('Ongoing')">Ongoing</b-button>
             <b-button variant="success" @click="setStatusFilter('Complete')">Complete</b-button>
@@ -49,13 +49,13 @@
         :sort-desc="true"
         show-empty
       >
-        <template slot="gene_name" slot-scope="data">
+        <template v-slot:cell(gene_name)="data">
           <p class="font-weight-bold mb-0">{{data.value}}</p>
         </template>
-        <template slot="hgvs" slot-scope="data">
-          <p class="text-monospace mb-0">{{data.value}}</p>
+        <template v-slot:cell(hgvs)="data">
+          <p class="mb-0">{{data.value}}</p>
         </template>
-        <template slot="deadline" slot-scope="row">
+        <template v-slot:cell(deadline)="row">
           <p
             v-if="row.item.curated != 'Complete'"
             :class="setFlagClass(row.item.days_left)+' m-0 p-0'"
@@ -64,10 +64,10 @@
             ({{row.item.days_left}} days)
           </p>
         </template>
-        <template slot="curated" slot-scope="data">
+        <template v-slot:cell(curated)="data">
           <b-badge :variant="setBadgeClass(data.value)">{{data.value}}</b-badge>
         </template>
-        <template slot="reviewed" slot-scope="data">
+        <template v-slot:cell(reviewed)="data">
           <icon
             v-for="(reviewer, index) in data.value"
             v-bind:key="index"
@@ -76,12 +76,15 @@
             :class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"
           ></icon>
         </template>
-        <template slot="action" slot-scope="row">
-          <icon class="mr-1" name="eye" />
-          <icon :class="!row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-plus" />
-          <icon :class="row.item.curator ? 'mr-1' : 'text-muted mr-1'" name="user-minus" />
+        <template v-slot:cell(action)="row">
+          <b-form-checkbox
+            :disabled="row.item.curated == 'Complete' || row.item.curator != curator && row.item.curator != null"
+            :checked="row.item.curator == curator ? true : false"
+          >
+            <icon class="text-primary" name="eye" />
+          </b-form-checkbox>
         </template>
-        <template slot="single_action">
+        <template v-slot:cell(single_action)>
           <icon class="mr-1" name="eye" />
         </template>
       </b-table>
@@ -134,12 +137,17 @@ export default {
       type: String,
       required: false,
       default: "primary"
+    },
+    cardFilterOption: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
     return {
       customClass: "customClass",
-      curator: "Curator1", //FIXME MANUALLY SETTING THE CURATOR
+      curator: "Curator2", //FIXME MANUALLY SETTING THE CURATOR
       // Custom settings for the visual
       settings: {
         buttonBg: "primary"

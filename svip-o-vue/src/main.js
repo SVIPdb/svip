@@ -29,6 +29,9 @@ import "vue-awesome/icons/chevron-up";
 import "vue-awesome/icons/chevron-right";
 import "vue-awesome/icons/chevron-down";
 import "vue-awesome/icons/tools";
+import "vue-awesome/icons/eye";
+import "vue-awesome/icons/check";
+import "vue-awesome/icons/times";
 
 import Icon from "vue-awesome/components/Icon";
 

@@ -20,22 +20,12 @@
 		"sortable": true
 	},
 	{
-		"key": "reviewed",
-		"label": "Reviewed",
-		"sortable": false
-	},
-	{
-		"key": "deadline",
-		"label": "Deadline (days left)",
-		"sortable": true
-	},
-	{
 		"key": "curator",
 		"label": "Curator",
 		"sortable": true
 	},
 	{
-		"key": "single_action",
+		"key": "action",
 		"label": "Action",
 		"sortable": false
 	}

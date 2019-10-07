@@ -29,6 +29,7 @@
       title="ON REQUEST"
       cardHeaderBg="secondary"
       cardTitleVariant="white"
+      cardFilterOption
     />
     <!-- TO BE CURATED - CARD -->
     <notification-card
@@ -36,13 +37,20 @@
       :fields="fields_to_be_curated"
       sortBy="days_left"
       title="TO BE CURATED"
+      cardFilterOption
     />
     <!-- UNDER REVISION - CARD -->
     <notification-card
       :items="under_revision"
       :fields="fields_under_revision"
       sortBy="days_left"
-      title="UNDER REVISION"
+      title="TO BE DISCUSSED"
+    />
+    <!-- NON SVIP VARIANTS - CARD -->
+    <notification-card
+      :items="nonsvip_variants"
+      :fields="fields_nonsvip_variants"
+      title="NON SVIP VARIANTS"
     />
   </div>
 </template>
@@ -60,6 +68,9 @@ import fields_to_be_curated from "./data/to_be_curated/fields.json";
 import under_revision from "./data/under_revision/items.json";
 import fields_under_revision from "./data/under_revision/fields.json";
 
+import nonsvip_variants from "./data/nonsvip_variants/items.json";
+import fields_nonsvip_variants from "./data/nonsvip_variants/fields.json";
+
 export default {
   name: "CurationDashboard",
   components: {
@@ -75,7 +86,10 @@ export default {
       fields_to_be_curated, // columns
       // UNDER REVISION FAKE DATA
       under_revision, // data
-      fields_under_revision // columns
+      fields_under_revision, // columns
+      // NON SVIP VARIANTS FAKE DATA
+      nonsvip_variants, // data
+      fields_nonsvip_variants // columns
     };
   }
 };
