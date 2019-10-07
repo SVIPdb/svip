@@ -32,6 +32,7 @@ import "vue-awesome/icons/tools";
 import "vue-awesome/icons/eye";
 import "vue-awesome/icons/check";
 import "vue-awesome/icons/times";
+import "vue-awesome/icons/plus";
 
 import Icon from "vue-awesome/components/Icon";
 
