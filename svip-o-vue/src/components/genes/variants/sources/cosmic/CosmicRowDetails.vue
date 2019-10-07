@@ -80,12 +80,12 @@
 					:fields="fields" class="table-sm" :api-url="row.item.associations_url" :items="makeAssociationProvider(this.metaUpdated)"
 					:per-page="perPage" :current-page="currentPage" :filter="packedFilter"
 				>
-					<template slot="disease" slot-scope="c">
+					<template v-slot:cell(disease)="c">
 						<a v-if="c.item.evidence_url" :href="c.item.evidence_url" target="_blank">{{ c.value }}</a>
 						<span v-else>{{ c.value }}</span>
 					</template>
-					<template slot="contexts" slot-scope="c">{{ desnakify(c.value) }}</template>
-					<template slot="publications" slot-scope="c">
+					<template v-slot:cell(contexts)="c">{{ desnakify(c.value) }}</template>
+					<template v-slot:cell(publications)="c">
 						<template v-for="(p, i) in c.value">
 							<VariomesLitPopover
 								:pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol" :disease="c.item.disease"

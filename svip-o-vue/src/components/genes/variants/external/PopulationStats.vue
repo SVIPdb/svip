@@ -7,13 +7,13 @@
 
 			<div class="card-body top-level">
 				<b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
-					<template slot="actions" slot-scope="row">
+					<template v-slot:cell(actions)="row">
 						<!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
 						<b-button size="sm" @click.stop="row.toggleDetails">
 							{{ row.detailsShowing ? "Hide" : "Show" }} Details
 						</b-button>
 					</template>
-					<template slot="name" slot-scope="row">
+					<template v-slot:cell(name)="row">
 						{{ row.item.name }}
 					</template>
 				</b-table>

@@ -1,11 +1,11 @@
 <template>
   <b-table :fields="fields" :items="items" :show-empty="true" :small="true">
-    <template slot="display" slot-scope="row">
+    <template v-slot:cell(display)="row">
       <b-link @click="row.toggleDetails">
         <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
       </b-link>
     </template>
-    <template slot="references" slot-scope="data">
+    <template v-slot:cell(references)="data">
       <VariomesLitPopover
         :pubmeta="{ pmid: trimPrefix(data.value, 'PMID:') }"
         :variant="variant.name"
@@ -14,7 +14,7 @@
       />
     </template>
 
-    <template slot="row-details" slot-scope="row">
+    <template v-slot:cell(row-details)="row">
       <b-card no-body class="border-0">
         <b-container fluid>
           <b-row class="p-3 bg-light">

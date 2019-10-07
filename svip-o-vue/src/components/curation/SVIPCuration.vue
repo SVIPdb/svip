@@ -30,12 +30,12 @@
 
     <div class="card-body top-level">
       <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
-        <template slot="display" slot-scope="row">
+        <template v-slot:cell(display)="row">
           <b-link @click="row.toggleDetails">
             <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
           </b-link>
         </template>
-        <template slot="actions" slot-scope="row">
+        <template v-slot:cell(actions)="row">
           <b-button
             size="sm"
             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
@@ -44,26 +44,26 @@
           </b-button>
         </template>
 
-        <template slot="name" slot-scope="row">
+        <template v-slot:cell(name)="row">
           <span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
         </template>
 
-        <template slot="age" slot-scope="data">
+        <template v-slot:cell(age)="data">
           <age-distribution :data="data.item.age_distribution"></age-distribution>
         </template>
 
-        <template slot="gender" slot-scope="data">
+        <template v-slot:cell(gender)="data">
           <gender-plot :data="data.item.gender_balance"></gender-plot>
         </template>
 
-        <template slot="pathogenic" slot-scope="data">
+        <template v-slot:cell(pathogenic)="data">
           <div style="vertical-align: middle; display: inline-block;">
             <span v-if="data.value">{{ data.value }}</span>
             <span v-else class="unavailable">unavailable</span>
           </div>
         </template>
 
-        <template slot="score" slot-scope="data">
+        <template v-slot:cell(score)="data">
           <div style="white-space: nowrap;">
             <icon
               v-for="score in [1,2,3,4]"
@@ -85,7 +85,7 @@
           </div>
         </template>
 
-        <template slot="row-details" slot-scope="row">
+        <template v-slot:cell(row-details)="row">
           <div class="row-details">
             <b-card no-body>
               <b-tabs
@@ -113,7 +113,7 @@
                       :current-page="dMeta(row).currentPage"
                       :filter="packedFilter(dMeta(row).currentFilter)"
                     >
-                      <template slot="contact" slot-scope="entry">
+                      <template v-slot:cell(contact)="entry">
                         <b-button
                           :href="`${entry.value}?subject=Regarding Sample ID ${entry.item.sample_id}`"
                           size="sm"
@@ -121,14 +121,14 @@
                         >Contact</b-button>
                       </template>
 
-                      <template slot="sample_tissue" slot-scope="entry">
+                      <template v-slot:cell(sample_tissue)="entry">
                         <a
                           href="#"
                           @click.stop="() => changeSubpanel(entry, 'tumor')"
                         >{{ entry.value }}</a>
                       </template>
 
-                      <template slot="sequencing_date" slot-scope="entry">
+                      <template v-slot:cell(sequencing_date)="entry">
                         <a
                           href="#"
                           @click.stop="() => changeSubpanel(entry, 'sequencing')"
@@ -139,7 +139,7 @@
                         <div class="empty-table-msg">- no samples -</div>
                       </template>
 
-                      <template slot="row-details" slot-scope="entry">
+                      <template v-slot:cell(row-details)="entry">
                         <div
                           v-if="entry.item.curSubtable === 'tumor'"
                           class="sample-subtable tumor-subtable"

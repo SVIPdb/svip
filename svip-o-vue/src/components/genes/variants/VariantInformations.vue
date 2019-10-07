@@ -10,34 +10,34 @@
         show-empty
         empty-text="There seems to be an error"
       >
-        <template slot="gene" slot-scope="row">
+        <template v-slot:cell(gene)="row">
           <router-link
             class="font-weight-bold"
             :to="{ name: 'gene', params: { gene_id: row.item.id }}"
           >{{ row.item.gene.symbol }}</router-link>
         </template>
-        <template slot="name" slot-scope="data">
+        <template v-slot:cell(name)="data">
           <b>{{ data.value }}</b>
         </template>
-        <template slot="hgvs_c" slot-scope="data">
+        <template v-slot:cell(hgvs_c)="data">
           <p class="mb-0">
             <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
             {{ data.value.split(":")[1] }}
           </p>
         </template>
-        <template slot="hgvs_p" slot-scope="data">
+        <template v-slot:cell(hgvs_p)="data">
           <p class="mb-0">
             <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
             {{ data.value.split(":")[1] }}
           </p>
         </template>
-        <template slot="hgvs_g" slot-scope="data">
+        <template v-slot:cell(hgvs_g)="data">
           <p class="mb-0">
             <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
             {{ data.value.split(":")[1] }}
           </p>
         </template>
-        <template slot="dbsnp_ids" slot-scope="data">
+        <template v-slot:cell(dbsnp_ids)="data">
           <a
             v-for="rsid in data.value"
             :key="rsid"
@@ -48,7 +48,7 @@
             <icon name="external-link-alt"></icon>
           </a>
         </template>
-        <template slot="position" slot-scope="row">
+        <template v-slot:cell(position)="row">
           <p class="mb-0">
             <span class="text-muted transcript-id">{{ row.item.reference_name }}:</span>
             {{ var_position }}

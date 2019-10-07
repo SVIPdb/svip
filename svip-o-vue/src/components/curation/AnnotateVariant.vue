@@ -83,10 +83,10 @@
                   <b-spinner class="align-middle"></b-spinner>
                   <strong>Loading...</strong>
                 </div>
-                <template slot="id" slot-scope="data">
+                <template v-slot:cell(id)="data">
                   <b-link @click="addEvidenceFromList(data.value)" target="_blank">{{ data.value }}</b-link>
                 </template>
-                <template slot="score" slot-scope="data">{{ data.value.toFixed(2) }}</template>
+                <template v-slot:cell(score)="data">{{ data.value.toFixed(2) }}</template>
               </b-table>
             </b-card-body>
           </b-tab>

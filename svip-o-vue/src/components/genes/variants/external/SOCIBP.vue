@@ -7,10 +7,10 @@
 
       <div class="card-body top-level">
         <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
-          <template slot="studyName" slot-scope="row">
+          <template v-slot:cell(studyName)="row">
             <a :href="row.item.authed_link" v-b-tooltip="row.item.study.name">{{ row.item.studyName }}</a>
           </template>
-          <template slot="num_patients_samples" slot-scope="row">
+          <template v-slot:cell(num_patients_samples)="row">
             {{ row.item.num_patients }} / {{ row.item.num_samples }}
           </template>
         </b-table>
