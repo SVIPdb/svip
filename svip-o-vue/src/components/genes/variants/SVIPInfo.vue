@@ -37,7 +37,7 @@
         </template>
         <template v-slot:cell(actions)="row">
           <b-button
-            v-if="false"
+            v-if="user.groups.indexOf('curators') != -1"
             size="sm"
             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
           >
@@ -119,6 +119,7 @@
 
 <script>
 import Vue from "vue";
+import { mapGetters } from "vuex";
 import store from "@/store";
 import { titleCase } from "../../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
@@ -233,6 +234,9 @@ export default {
     titleCase
   },
   computed: {
+    ...mapGetters({
+      user: "currentUser"
+    }),
     totalPatients() {
       return this.variant.svip_data.diseases.reduce(
         (acc, x) => acc + x.nb_patients,

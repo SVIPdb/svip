@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import fields from "@/components/curation/data/evidence/fields.json";
+import fields from "@/data/curation/evidence/fields.json";
 
 export default {
   name: "EvidenceCard",
@@ -28,8 +28,7 @@ export default {
     return {
       fields
     };
-  },
-  computed: {}
+  }
 };
 </script>
 

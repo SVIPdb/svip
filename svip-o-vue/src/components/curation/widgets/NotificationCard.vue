@@ -4,7 +4,7 @@
       class="p-1"
       :header-bg-variant="cardHeaderBg"
       :header-text-variant="cardTitleVariant"
-      :class="title == 'ON REQUEST' ? customClass : ''"
+      :class="cardCustomClass ? customClass : ''"
     >
       <div class="d-flex justify-content-between">
         <div class="p-2 font-weight-bold">
@@ -80,6 +80,7 @@
           <b-form-checkbox
             :disabled="row.item.curated == 'Complete' || row.item.curator != curator && row.item.curator != null"
             :checked="row.item.curator == curator ? true : false"
+            @change="selectVariant($event, {id: 1 })"
           >
             <icon class="text-primary" name="eye" />
           </b-form-checkbox>
@@ -125,20 +126,29 @@ export default {
     sortBy: {
       type: String,
       required: false,
-      // The default valie is: `id`
+      // The default value is: `id`
       default: "id"
     },
+    // Override the card header background
     cardHeaderBg: {
       type: String,
       required: false,
       default: "light"
     },
+    // Override the card title class
     cardTitleVariant: {
       type: String,
       required: false,
       default: "primary"
     },
+    // On/Off filter options based on status
     cardFilterOption: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    // On/Off custom class for header background
+    cardCustomClass: {
       type: Boolean,
       required: false,
       default: false
@@ -156,11 +166,12 @@ export default {
       filter: null,
       myFilter: "all",
       statusFilter: "all",
-      // Days left limits
+      // Days left limits (Should be reviewed!)
       daysLeft: {
         min: 2,
         max: 14
       },
+      // Mapping between status and classes
       curationStatus: {
         "Not assigned": "danger",
         Ongoing: "warning",
@@ -185,7 +196,7 @@ export default {
     },
     /**
      * @vuese
-     * Used to set up the correct flag class depending on the days left
+     * Used to set up the correct priority depending on the days left
      * @arg `Number` Days left
      */
     setLetter(days_left) {
@@ -205,14 +216,28 @@ export default {
     setBadgeClass(status) {
       return this.curationStatus[status];
     },
+    /**
+     * @vuese
+     * Used to use a specific filter
+     * @arg `String` Filter
+     */
     setCustomFilter(filter) {
       this.myFilter = filter;
     },
+    /**
+     * @vuese
+     * Used to use a status filter
+     * @arg `String` Status Filter
+     */
     setStatusFilter(filter) {
       this.statusFilter = filter;
+    },
+    selectVariant(checked, element) {
+      console.log(`Checked is ${checked} and ID is ${element.id}`);
     }
   },
   computed: {
+    // We are filtering items based on the two filters (custom and status)
     filteredItems() {
       let items = this.items;
       if (this.statusFilter != "all") {

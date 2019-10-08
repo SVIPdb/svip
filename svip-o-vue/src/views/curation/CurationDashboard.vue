@@ -1,25 +1,4 @@
 <template>
-  <!--
-  /************************ LICENCE ***************************
-  *     This file is part of <ViKM Vital-IT Knowledge Management web application>
-  *     Copyright (C) <2016> SIB Swiss Institute of Bioinformatics
-  *
-  *     This program is free software: you can redistribute it and/or modify
-  *     it under the terms of the GNU Affero General Public License as
-  *     published by the Free Software Foundation, either version 3 of the
-  *     License, or (at your option) any later version.
-  *
-  *     This program is distributed in the hope that it will be useful,
-  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  *     GNU Affero General Public License for more details.
-  *
-  *     You should have received a copy of the GNU Affero General Public License
-  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
-  *
-  *****************************************************************/
-  -->
-
   <div class="container-fluid">
     <!-- ON REQUEST - CARD -->
     <notification-card
@@ -29,6 +8,7 @@
       title="ON REQUEST"
       cardHeaderBg="secondary"
       cardTitleVariant="white"
+      cardCustomClass
       cardFilterOption
     />
     <!-- TO BE CURATED - CARD -->
@@ -41,8 +21,8 @@
     />
     <!-- UNDER REVISION - CARD -->
     <notification-card
-      :items="under_revision"
-      :fields="fields_under_revision"
+      :items="to_be_discussed"
+      :fields="fields_to_be_discussed"
       sortBy="days_left"
       title="TO BE DISCUSSED"
     />
@@ -59,17 +39,17 @@
 import NotificationCard from "@/components/curation/widgets/NotificationCard";
 
 // Manual import of fake data (FIXME: API)
-import on_request from "./data/on_request/items.json";
-import fields_on_request from "./data/on_request/fields.json";
+import on_request from "@/data/curation/on_request/items.json";
+import fields_on_request from "@/data/curation/on_request/fields.json";
 
-import to_be_curated from "./data/to_be_curated/items.json";
-import fields_to_be_curated from "./data/to_be_curated/fields.json";
+import to_be_curated from "@/data/curation/to_be_curated/items.json";
+import fields_to_be_curated from "@/data/curation/to_be_curated/fields.json";
 
-import under_revision from "./data/under_revision/items.json";
-import fields_under_revision from "./data/under_revision/fields.json";
+import to_be_discussed from "@/data/curation/to_be_discussed/items.json";
+import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json";
 
-import nonsvip_variants from "./data/nonsvip_variants/items.json";
-import fields_nonsvip_variants from "./data/nonsvip_variants/fields.json";
+import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
+import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 
 export default {
   name: "CurationDashboard",
@@ -84,9 +64,9 @@ export default {
       // TO BE CURATED FAKE DATA
       to_be_curated, // data
       fields_to_be_curated, // columns
-      // UNDER REVISION FAKE DATA
-      under_revision, // data
-      fields_under_revision, // columns
+      // TO BE DISCUSSED FAKE DATA
+      to_be_discussed, // data
+      fields_to_be_discussed, // columns
       // NON SVIP VARIANTS FAKE DATA
       nonsvip_variants, // data
       fields_nonsvip_variants // columns

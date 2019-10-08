@@ -6,14 +6,13 @@ import ViewVariant from "@/views/ViewVariant";
 import Login from "@/views/user/Login";
 import UserInfo from "@/views/user/UserInfo";
 import store from '@/store';
-import {TokenErrors} from "@/store/modules/users";
+import { TokenErrors } from "@/store/modules/users";
 import PageNotFound from "@/views/PageNotFound";
 import Help from "@/views/Help";
 
-import CurationDashboard from "@/components/curation/CurationDashboard";
-import CurationViewVariant from "@/components/curation/CurationViewVariant";
-import CurationAnnotateVariant from "@/components/curation/AnnotateVariant";
-import CurationAddEvidence from "@/components/curation/AddEvidence";
+import CurationDashboard from "@/views/curation/CurationDashboard";
+import AnnotateVariant from "@/views/curation/AnnotateVariant";
+import AddEvidence from "@/views/curation/AddEvidence";
 
 Vue.use(Router);
 
@@ -54,19 +53,14 @@ const router = new Router({
 			component: CurationDashboard
 		},
 		{
-			path: "/curation/gene/:gene_id/variant/:variant_id",
-			name: "curation-variant",
-			component: CurationViewVariant
-		},
-		{
 			path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id",
 			name: "annotate-variant",
-			component: CurationAnnotateVariant
+			component: AnnotateVariant
 		},
 		{
 			path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/add",
 			name: "add-evidence",
-			component: CurationAddEvidence
+			component: AddEvidence
 		},
 		{
 			path: "/",
