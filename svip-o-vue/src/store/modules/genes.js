@@ -1,4 +1,4 @@
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 
 // initial state
 const state = {
@@ -27,7 +27,7 @@ const state = {
 // getters
 const getters = {
 	genes: state => state.genes,
-	gene: state => state.gene,
+	gene: state => state.currentGene,
 	nbGenes: state => state.nbGenes,
 	nbGenesSVIP: state => state.nbGenesSVIP,
 	currentGene: state => state.currentGene,
@@ -45,7 +45,7 @@ const getters = {
 
 // actions
 const actions = {
-	getSiteStats({commit}) {
+	getSiteStats({ commit }) {
 		return HTTP.get("query/stats").then(res => {
 			const stats = res.data;
 
@@ -59,7 +59,7 @@ const actions = {
 		});
 	},
 
-	getSources({commit}) {
+	getSources({ commit }) {
 		if (state.sources && state.sources.length > 0) {
 			return new Promise((resolve) => { resolve(state.sources) });
 		}
@@ -69,13 +69,13 @@ const actions = {
 		});
 	},
 
-	getGene({commit}, params) {
+	getGene({ commit }, params) {
 		return HTTP.get(`genes/${params.gene_id}`).then(res => {
 			commit("SELECT_GENE", res.data);
 		});
 	},
 
-	getGeneVariant({commit}, params) {
+	getGeneVariant({ commit }, params) {
 		return HTTP.get("variants/" + params.variant_id).then(res => {
 			let gene = res.data.gene;
 			let variant = res.data;
@@ -84,19 +84,19 @@ const actions = {
 		});
 	},
 
-	selectVariant({commit}, params) {
+	selectVariant({ commit }, params) {
 		let variant = state.variants.find(v => v.id === params.variant_id);
 		commit("SET_VARIANT", variant);
 	},
 
-	toggleShowSVIP({commit}, params) {
+	toggleShowSVIP({ commit }, params) {
 		commit("SET_SHOW_ONLY_SVIP", params.showOnlySVIP);
 	},
 
 	// FIXME: there's a lot of duplication between this method and getBatchPubmedInfo(); perhaps we can merge them into
 	//  just one method that can accept either a scalar or array, or at least factor out their common code.
 	//  oooor maybe we just get rid of the single-query version, since you can just pass an array with one element.
-	getPubmedInfo({commit}, {pmid}) {
+	getPubmedInfo({ commit }, { pmid }) {
 		return new Promise((resolve, reject) => {
 			if (state.pubmedInfo.hasOwnProperty(pmid)) {
 				// return the existing thing
@@ -117,7 +117,7 @@ const actions = {
 		})
 	},
 
-	getBatchPubmedInfo({commit}, {pmid_set}) {
+	getBatchPubmedInfo({ commit }, { pmid_set }) {
 		return new Promise((resolve, reject) => {
 			// just get the things we don't have
 			const remaining = pmid_set.filter(pmid => !state.pubmedInfo.hasOwnProperty(pmid));
@@ -177,8 +177,8 @@ const mutations = {
 		state.currentGene = gene;
 	},
 	SET_VARIANT(state, variant) {
-		if (variant.svip_data && variant.svip_data.diseases){
-			variant.svip_data.diseases = _.map(variant.svip_data.diseases,d => {
+		if (variant.svip_data && variant.svip_data.diseases) {
+			variant.svip_data.diseases = _.map(variant.svip_data.diseases, d => {
 				d.show_curation = false;
 				d.show_details = false;
 				d.show_samples = false;

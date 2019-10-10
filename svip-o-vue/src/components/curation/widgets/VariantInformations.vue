@@ -25,9 +25,9 @@
             {{ data.value.split(":")[1] }}
           </p>
         </template>
-        <template slot="disease">{{ disease }}</template>
-        <template slot="pathogenicity">{{ pathogenicity }}</template>
-        <template slot="clinical_significance">{{ clinical_significance }}</template>
+        <template v-slot:cell(disease)>{{ disease }}</template>
+        <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
+        <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
       </b-table>
     </b-card-body>
   </b-card>

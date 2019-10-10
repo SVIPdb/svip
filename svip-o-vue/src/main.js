@@ -33,6 +33,12 @@ import "vue-awesome/icons/eye";
 import "vue-awesome/icons/check";
 import "vue-awesome/icons/times";
 import "vue-awesome/icons/plus";
+import "vue-awesome/icons/minus";
+import "vue-awesome/icons/newspaper";
+import "vue-awesome/icons/key";
+import "vue-awesome/icons/calendar";
+import "vue-awesome/icons/user";
+import "vue-awesome/icons/trash";
 
 import Icon from "vue-awesome/components/Icon";
 

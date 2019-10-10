@@ -35,6 +35,7 @@ export default {
         { key: "effect", label: "Effect", sortable: true },
         { key: "drug", label: "Drug", sortable: true },
         { key: "tier_level_criteria", label: "Tier Criteria", sortable: true },
+        { key: "tier_level", label: "Tier Level", sortable: true },
         { key: "mutation_origin", label: "Mutation Origin", sortable: true },
         { key: "summary", label: "Complementary Information", sortable: false },
         { key: "support", label: "Support", sortable: true },

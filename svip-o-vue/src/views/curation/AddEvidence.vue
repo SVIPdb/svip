@@ -6,6 +6,7 @@
         <b-card no-body>
           <b-card-body>
             <b-container
+              fluid
               class="evidence"
               v-if="variomes"
               style="max-height:20rem;overflow-y:scroll;"
@@ -33,6 +34,10 @@
                 >{{variomes.publication.id}}</b-link>
               </small>
             </b-container>
+            <div
+              v-else-if="noResponse()"
+              class="text-center"
+            >We couldn't load the abstract due to some techincal issues.</div>
             <div v-else class="text-center">
               <b-spinner label="Spinning" variant="primary"></b-spinner>Loading
             </div>
@@ -41,8 +46,16 @@
         <br />
         <b-card no-body>
           <b-card-body>
-            <b-container v-if="variomes">
+            <b-container fluid>
               <b-form @submit.prevent>
+                <b-form-group
+                  label-cols-sm="4"
+                  label-cols-lg="3"
+                  label="Add variants ? (In case of a combination)"
+                  label-for="combination"
+                >
+                  <SearchVariant id="combination" />
+                </b-form-group>
                 <b-form-group
                   label-cols-sm="4"
                   label-cols-lg="3"
@@ -246,7 +259,7 @@
             <b-collapse id="statistic" v-model="showStat" class="m-3">
               <div v-if="variomes">
                 <b-link
-                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title]`"
+                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title/Abstract]`"
                   target="_blank"
                 >
                   <b-badge
@@ -254,7 +267,7 @@
                   >{{variomes.query.gene}} ({{variomes.publication.details.query_details.targetGeneCount}})</b-badge>
                 </b-link>
                 <b-link
-                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.variant}[Title]`"
+                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.variant}[Title/Abstract]`"
                   target="_blank"
                 >
                   <b-badge
@@ -262,12 +275,26 @@
                   >{{variomes.query.variant}} ({{variomes.publication.details.query_details.targetVariantCount}})</b-badge>
                 </b-link>
                 <b-link
-                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.disease}[Title]`"
+                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.disease}[Title/Abstract]`"
                   target="_blank"
                 >
                   <b-badge
                     class="bg-disease"
                   >{{variomes.query.disease}} ({{variomes.publication.details.query_details.targetDiseaseCount}})</b-badge>
+                </b-link>
+                <b-link
+                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract] AND ${variomes.query.disease}[Title/Abstract]`"
+                  target="_blank"
+                >
+                  <b-badge
+                    class="bg-primary"
+                  >{{variomes.query.gene}} + {{variomes.query.variant}} + {{variomes.query.disease}}</b-badge>
+                </b-link>
+                <b-link
+                  :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract]`"
+                  target="_blank"
+                >
+                  <b-badge class="bg-info">{{variomes.query.gene}} + {{variomes.query.variant}}</b-badge>
                 </b-link>
               </div>
               <div v-else class="text-center">
@@ -289,6 +316,7 @@
 <script>
 import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
+import SearchVariant from "@/components/curation/widgets/SearchVariant";
 
 import fields from "@/data/curation/summary/fields.json";
 import inputs from "@/data/curation/evidence/options.json";
@@ -298,7 +326,8 @@ import { HTTP } from "@/router/http";
 export default {
   name: "AddEvidence",
   components: {
-    variantInformations
+    variantInformations,
+    SearchVariant
   },
   data() {
     return {
@@ -375,6 +404,11 @@ export default {
     setEvidence() {
       this.form.evidence = this.type_of_evidence.value;
       this.filterLabel = this.type_of_evidence.label;
+    },
+    noResponse() {
+      setTimeout(function() {
+        return this.variomes == null ? true : false;
+      }, 1000);
     }
   },
   computed: {

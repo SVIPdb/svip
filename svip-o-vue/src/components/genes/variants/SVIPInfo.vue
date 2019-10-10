@@ -37,7 +37,7 @@
         </template>
         <template v-slot:cell(actions)="row">
           <b-button
-            v-if="user.groups.indexOf('curators') != -1"
+            v-if="user && user.groups.indexOf('curators') != -1"
             size="sm"
             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
           >
@@ -144,7 +144,8 @@ export default {
   name: "VariantSVIP",
   components: { SampleTable, EvidenceTable, ageDistribution, genderPlot }, // TissueDistribution
   props: {
-    variant: { type: Object, required: true }
+    variant: { type: Object, required: true },
+    gene: { type: String, required: true }
   },
   data() {
     return {
