@@ -5,7 +5,7 @@
       :placeholder="`Search for ${!variantsOnly ? 'gene /' : ''} variant`" @search="onSearch" v-model="selected"
       :multiple="multiple"
 		>
-			<template v-slot:cell(option)="option">
+			<template slot="option" slot-scope="option">
 				<div class="d-center">
 					<div class="bits" v-if="query">
 						<span v-for="(bit, idx) in highlighted( transformedQuery, option.label )" :key="idx" :class="{ segment: true, matched: bit.match }">{{ bit.text }}</span>
