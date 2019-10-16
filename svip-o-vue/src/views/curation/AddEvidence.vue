@@ -8,7 +8,7 @@
             <b-container
               fluid
               class="evidence"
-              v-if="variomes"
+              v-if="variomes && !variomes.error"
               style="max-height:20rem;overflow-y:scroll;"
               @mouseup="getSelectionText()"
               @contextmenu.prevent.stop="handleRightClick($event)"
@@ -35,7 +35,7 @@
               </small>
             </b-container>
             <div
-              v-else-if="noResponse()"
+              v-else-if="variomes && variomes.error"
               class="text-center"
             >We couldn't load the abstract due to some techincal issues.</div>
             <div v-else class="text-center">
@@ -406,6 +406,7 @@ export default {
       this.filterLabel = this.type_of_evidence.label;
     },
     noResponse() {
+        // FIXME: what is this supposed to do? the return value of setTimeout isn't used
       setTimeout(function() {
         return this.variomes == null ? true : false;
       }, 1000);
