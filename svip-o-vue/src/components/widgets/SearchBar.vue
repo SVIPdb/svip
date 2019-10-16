@@ -1,8 +1,9 @@
 <template>
-	<form>
+  <div>
 		<v-select ref="search_bar" label="label"
 			:options="options" :filterBy="() => true"
-			placeholder="Search for gene / variant" @search="onSearch" v-model="selected"
+      :placeholder="`Search for ${!variantsOnly ? 'gene /' : ''} variant`" @search="onSearch" v-model="selected"
+      :multiple="multiple"
 		>
 			<template v-slot:cell(option)="option">
 				<div class="d-center">
@@ -26,7 +27,7 @@
 			<b-checkbox v-model="showOnlySVIP"><span id="show-svip-vars">show only SVIP variants</span></b-checkbox>
 			<b-tooltip target="show-svip-vars" placement="bottom">show only variants for which SVIP-specific data exists</b-tooltip>
 		</div>
-	</form>
+	</div>
 </template>
 
 <script>
@@ -74,6 +75,10 @@ const aa_three_to_one = [
 export default {
 	name: "SearchBar",
 	components: {SourceIcon},
+  props: {
+    variantsOnly: { type: Boolean, required: false, default: false },
+    multiple: { type: Boolean, required: false, default: false },
+  },
 	data() {
 		return {
 			query: "",
@@ -84,6 +89,10 @@ export default {
 	},
 	watch: {
 		selected: function () {
+      if (this.variantsOnly) {
+        return;
+      }
+
 			const val = this.selected;
 
 			if (val.type === "g") {
@@ -93,6 +102,10 @@ export default {
 			}
 		},
 		showOnlySVIP: function () {
+      if (this.variantsOnly) {
+        return;
+      }
+
 			if (this.query === "") {
 				this.getGenesOnly();
 			}
@@ -106,7 +119,12 @@ export default {
 			set(value) {
 				store.dispatch("toggleShowSVIP", {showOnlySVIP: value}).then(() => {
 					// FIXME: perhaps let's reset the contents of the search box when we toggle this
-					this.getGenesOnly();
+          if (!this.variantsOnly) {
+					  this.getGenesOnly();
+          }
+          else {
+            this.selected = null;
+          }
 				});
 			}
 		},
@@ -120,17 +138,9 @@ export default {
 		}
 	},
 	created() {
-		this.getGenesOnly();
-	},
-	mounted() {
-		/*
-		// FIXME: figure out how to get this code to autofocus the bar, or if that even makes sense...
-		const input = this.$refs.search_bar.$el.querySelector('input');
-		// this.$refs.search_bar.focus();
-		console.log(this.$refs.search_bar);
-		console.log(input);
-		input.click();
-	 	*/
+    if (!this.variantsOnly) {
+		  this.getGenesOnly();
+    }
 	},
 	methods: {
 		onSearch(search, loading) {

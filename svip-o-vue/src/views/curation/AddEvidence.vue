@@ -54,7 +54,7 @@
                   label="Add variants ? (In case of a combination)"
                   label-for="combination"
                 >
-                  <SearchVariant id="combination" />
+                    <SearchBar id="combination" variants-only multiple />
                 </b-form-group>
                 <b-form-group
                   label-cols-sm="4"
@@ -322,10 +322,12 @@ import fields from "@/data/curation/summary/fields.json";
 import inputs from "@/data/curation/evidence/options.json";
 import store from "@/store";
 import { HTTP } from "@/router/http";
+import SearchBar from "@/components/widgets/SearchBar";
 
 export default {
   name: "AddEvidence",
   components: {
+      SearchBar,
     variantInformations,
     SearchVariant
   },
