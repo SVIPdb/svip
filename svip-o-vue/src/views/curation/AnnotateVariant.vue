@@ -50,6 +50,38 @@
           </b-tab>
           <b-tab title="Use text mining tool">
             <b-card-body>
+              <b-row>
+                <b-col sm="5" md="6" class="my-1">
+                  <b-form-group
+                    label="Per page"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    label-for="perPageSelect"
+                    class="mb-0"
+                  >
+                    <b-form-select
+                      v-model="perPage"
+                      id="perPageSelect"
+                      size="sm"
+                      :options="pageOptions"
+                    ></b-form-select>
+                  </b-form-group>
+                </b-col>
+
+                <b-col sm="7" md="6" class="my-1">
+                  <b-pagination
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  ></b-pagination>
+                </b-col>
+              </b-row>
               <b-table
                 show-empty
                 :busy="variomes.length == 0"
@@ -57,6 +89,8 @@
                 :sort-by="sortBy"
                 :sort-desc="sortDesc"
                 :fields="fieldsTextMining"
+                :current-page="currentPage"
+                :per-page="perPage"
                 small
               >
                 <template v-slot:table-busy>
@@ -147,7 +181,11 @@ export default {
       variomes: [],
       totalRows: 1,
       sortBy: "score",
-      sortDesc: true
+      sortDesc: true,
+      currentPage: 1,
+      perPage: 10,
+      pageOptions: [10, 25, 50],
+      totalRows: 1
     };
   },
   computed: {
@@ -236,6 +274,7 @@ export default {
     })
       .then(response => {
         this.variomes = response.data;
+        this.totalRows = this.variomes.publications.length;
       })
       .catch(err => {
         this.variomes = {
