@@ -112,14 +112,19 @@
                   <span v-html="data.value"></span>
                 </template>
                 <template v-slot:cell(action)="row">
-                  <b-button size="sm" @click="addEvidenceFromList(row.item.id)" target="_blank">
+                  <b-button
+                    variant="success"
+                    size="sm"
+                    @click="addEvidenceFromList(row.item.id)"
+                    target="_blank"
+                  >
                     <icon name="pen-alt"></icon>
                   </b-button>
                 </template>
                 <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
                 <template v-slot:cell(publication_type)="data">{{ data.value.join(", ") }}</template>
                 <template v-slot:cell(score)="data">
-                  <b :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
+                  <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
                   <b-tooltip :target="() => $refs[data.item.id]">
                     <ul class="p-0 m-0">
                       <li class="d-flex justify-content-between align-items-center variant">
@@ -147,7 +152,9 @@
             </b-card-body>
           </b-tab>
           <b-tab title="Use prediction tools">
-            <b-card-text>Tab Contents 3</b-card-text>
+            <b-card-text class="text-center">
+              <h1 class="display-2">Oops!</h1>Something went wrong here. We're working on it and we'll get it fixed as soon as possible.
+            </b-card-text>
           </b-tab>
         </b-tabs>
       </b-card>
@@ -184,7 +191,7 @@ export default {
       sortDesc: true,
       currentPage: 1,
       perPage: 10,
-      pageOptions: [10, 25, 50],
+      pageOptions: [10, 20, 30],
       totalRows: 1
     };
   },
@@ -344,5 +351,10 @@ export default {
 
 .custom-border-right {
   border-radius: 0 0.25rem 0.25rem 0 !important;
+}
+
+.dotted-line {
+  border-bottom: dotted 1px #555;
+  padding-bottom: 2px;
 }
 </style>

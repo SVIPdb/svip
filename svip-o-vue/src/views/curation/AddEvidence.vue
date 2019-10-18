@@ -48,7 +48,6 @@
           <b-card-body>
             <b-container fluid>
               <b-form @submit.prevent>
-                {{form.variants}}
                 <b-form-group
                   label-cols-sm="4"
                   label-cols-lg="3"
@@ -245,7 +244,7 @@
                 </b-link>
                 <b-button class="ml-auto" variant="outline-success">Save Draft</b-button>
               </div>
-              <b-button class="mt-3" block variant="success" @click="onSubmit">Save evidence</b-button>
+              <b-button class="mt-3" block variant="success" @click="onSubmit">Save Evidence</b-button>
             </b-collapse>
           </b-card-body>
         </b-card>
