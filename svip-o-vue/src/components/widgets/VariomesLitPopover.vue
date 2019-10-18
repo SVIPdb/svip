@@ -6,6 +6,7 @@
 			:target="`linked-${auto_id}`"
 			triggers="hover focus"
 			data-container="body"
+            @show="updateCitation"
 		>
 			<template>
 				<div v-if="variomes && variomes.publication" :class="['variomes-popover', (variomes && variomes.publication && variomes.publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
@@ -54,7 +55,8 @@ export default {
 		pubmeta: {type: Object, required: true},
 		gene: {type: String},
 		variant: {type: String},
-		disease: {type: String}
+		disease: {type: String},
+        deferred: {type: Boolean, default: false}
 	},
 	data() {
 		return {
@@ -64,20 +66,9 @@ export default {
 		}
 	},
 	created() {
-		HTTP.get(`variomes_single_ref`, {
-			params: {
-				id: this.pubmeta.pmid,
-				gene: this.gene,
-				variant: this.variant,
-				disease: this.disease
-			}
-		})
-			.then(response => {
-				this.variomes = response.data;
-			})
-			.catch((err) => {
-				this.variomes = { error: "Couldn't retrieve publication info, try again later." };
-			});
+	    if (!this.deferred) {
+	        this.updateCitation();
+        }
 	},
 	methods: {
 		formatAuthors(authors) {
@@ -86,7 +77,27 @@ export default {
 			}
 
 			return authors.join(", ");
-		}
+		},
+        updateCitation() {
+		    // if it's already loaded, return immediately
+            if (this.variomes && !this.variomes.error)
+                return;
+
+            HTTP.get(`variomes_single_ref`, {
+                params: {
+                    id: this.pubmeta.pmid,
+                    gene: this.gene,
+                    variant: this.variant,
+                    disease: this.disease
+                }
+            })
+                .then(response => {
+                    this.variomes = response.data;
+                })
+                .catch((err) => {
+                    this.variomes = { error: "Couldn't retrieve publication info, try again later." };
+                });
+        }
 	}
 }
 </script>
