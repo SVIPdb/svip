@@ -1,5 +1,10 @@
 [
     {
+        "key": "status",
+        "label": "Status",
+        "sortable": true
+    },
+    {
         "key": "references",
         "label": "Reference",
         "sortable": true
@@ -21,6 +26,11 @@
     },
     {
         "key": "tier_level_criteria",
+        "label": "Tier criteria",
+        "sortable": false
+    },
+    {
+        "key": "tier_level",
         "label": "Tier criteria",
         "sortable": true
     },

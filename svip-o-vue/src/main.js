@@ -39,6 +39,8 @@ import "vue-awesome/icons/key";
 import "vue-awesome/icons/calendar";
 import "vue-awesome/icons/user";
 import "vue-awesome/icons/trash";
+import "vue-awesome/icons/tasks";
+import "vue-awesome/icons/pen-alt";
 
 import Icon from "vue-awesome/components/Icon";
 

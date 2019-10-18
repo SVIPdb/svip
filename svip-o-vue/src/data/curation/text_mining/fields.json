@@ -1,7 +1,22 @@
 [
     {
+        "key": "score",
+        "label": "Score",
+        "sortable": true
+    },
+    {
         "key": "id",
         "label": "ID",
+        "sortable": true
+    },
+    {
+        "key": "title_highlight",
+        "label": "Title",
+        "sortable": true
+    },
+    {
+        "key": "authors",
+        "label": "Authors",
         "sortable": true
     },
     {
@@ -10,13 +25,18 @@
         "sortable": true
     },
     {
-        "key": "score",
-        "label": "Score",
+        "key": "journal",
+        "label": "Journal",
         "sortable": true
     },
     {
-        "key": "source",
-        "label": "Source",
+        "key": "publication_type",
+        "label": "Publication type",
         "sortable": true
+    },
+    {
+        "key": "action",
+        "label": "Action",
+        "sortable": false
     }
 ]

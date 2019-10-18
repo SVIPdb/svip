@@ -34,7 +34,6 @@
         <div class="empty-table-msg">- no evidence items -</div>
       </template>
     </b-table>
-    {{checkInRole("curators")}}
   </b-card-text>
 </template>
 

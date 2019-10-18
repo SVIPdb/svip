@@ -48,13 +48,19 @@
           <b-card-body>
             <b-container fluid>
               <b-form @submit.prevent>
+                {{form.variants}}
                 <b-form-group
                   label-cols-sm="4"
                   label-cols-lg="3"
                   label="Add variants ? (In case of a combination)"
-                  label-for="combination"
+                  label-for="variants-combination"
                 >
-                    <SearchBar id="combination" variants-only multiple />
+                  <SearchBar
+                    id="variants-combination"
+                    variants-only
+                    multiple
+                    v-model="form.variants"
+                  />
                 </b-form-group>
                 <b-form-group
                   label-cols-sm="4"
@@ -239,7 +245,7 @@
                 </b-link>
                 <b-button class="ml-auto" variant="outline-success">Save Draft</b-button>
               </div>
-              <b-button class="mt-3" block variant="success" @click="onSubmit">Validate</b-button>
+              <b-button class="mt-3" block variant="success" @click="onSubmit">Save evidence</b-button>
             </b-collapse>
           </b-card-body>
         </b-card>
@@ -316,7 +322,6 @@
 <script>
 import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
-import SearchVariant from "@/components/curation/widgets/SearchVariant";
 
 import fields from "@/data/curation/summary/fields.json";
 import inputs from "@/data/curation/evidence/options.json";
@@ -325,141 +330,145 @@ import { HTTP } from "@/router/http";
 import SearchBar from "@/components/widgets/SearchBar";
 
 export default {
-	name: "AddEvidence",
-	components: {
-		SearchBar,
-		variantInformations,
-		SearchVariant
-	},
-	data() {
-		return {
-			fields,
-			inputs,
-			options: [
-				{
-					name: "Annotate selection",
-					slug: "annotate"
-				},
-				{
-					name: "Copy selection",
-					slug: "copy"
-				}
-			],
-			required: true,
-			selection: "",
-			showAction: true,
-			showStat: true,
-			variomes: null,
-			type_of_evidence: {
-				value: null,
-				label: null
-			},
-			filterLabel: null,
-			form: {
-				evidence: null,
-				effect: null,
-				tier_criteria: null,
-				origin: null,
-				support: null,
-				comment: null,
-				note: null,
-				annotations: []
-			}
-		};
-	},
-	methods: {
-		getSelectionText() {
-			if (window.getSelection) {
-				this.selection = window.getSelection().toString();
-			} else {
-				this.selection = "";
-			}
-		},
-		handleRightClick(event) {
-			if (this.selection.length > 0) {
-				this.$refs.vueSimpleContextMenu.showMenu(event);
-			}
-		},
-		optionClicked(event) {
-			if (event.option.slug == "copy") {
-				this.doCopy();
-			} else if (event.option.slug == "annotate") {
-				this.form.annotations.push(this.selection);
-			}
-		},
-		doCopy() {
-			this.$copyText(this.selection).then(
-				function(e) {
-					alert("Copied");
-				},
-				function(e) {
-					alert("Can not copy");
-				}
-			);
-		},
-		removeAnnotation(index) {
-			this.form.annotations.splice(index, 1);
-		},
-		onSubmit() {
-			this.required = !this.required;
-		},
-		setEvidence() {
-			this.form.evidence = this.type_of_evidence.value;
-			this.filterLabel = this.type_of_evidence.label;
-		},
-		noResponse() {
-			// FIXME: what is this supposed to do? the return value of setTimeout isn't used
-			setTimeout(function() {
-				return this.variomes == null ? true : false;
-			}, 1000);
-		}
-	},
-	computed: {
-		...mapGetters({
-			variant: "variant"
-		}),
-		currentUrl() {
-			return window.location.href;
-		},
-		effects() {
-			return this.form.evidence != null
-				? Object.keys(this.inputs[this.filterLabel][this.form.evidence])
-				: [];
-		},
-		tier_criteria() {
-			return this.form.evidence != null && this.form.effect != null
-				? this.inputs[this.filterLabel][this.form.evidence][this.form.effect]
-				: [];
-		}
-	},
-	created() {
-		HTTP.get(`variomes_single_ref`, {
-			params: {
-				id: this.$route.query.reference,
-				gene: this.variant.gene.symbol,
-				variant: this.variant.name,
-				disease: this.variant.svip_data.diseases.find(
-					element => element.id == this.$route.params.disease_id
-				).name
-			}
-		})
-			.then(response => {
-				this.variomes = response.data;
-			})
-			.catch(err => {
-				this.variomes = {
-					error: "Couldn't retrieve publication info, try again later."
-				};
-			});
-	},
-	beforeRouteEnter(to, from, next) {
-		const { variant_id } = to.params;
+  name: "AddEvidence",
+  components: {
+    SearchBar,
+    variantInformations
+  },
+  data() {
+    return {
+      fields,
+      inputs,
+      options: [
+        {
+          name: "Add textual evidence",
+          slug: "annotate"
+        },
+        {
+          name: "Copy selection",
+          slug: "copy"
+        }
+      ],
+      required: true,
+      selection: "",
+      showAction: true,
+      showStat: true,
+      variomes: null,
+      type_of_evidence: {
+        value: null,
+        label: null
+      },
+      filterLabel: null,
+      variants: [],
+      form: {
+        variants: [],
+        evidence: null,
+        effect: null,
+        tier_criteria: null,
+        origin: null,
+        support: null,
+        comment: null,
+        note: null,
+        annotations: []
+      }
+    };
+  },
+  methods: {
+    test() {
+      console.log("test");
+    },
+    getSelectionText() {
+      if (window.getSelection) {
+        this.selection = window.getSelection().toString();
+      } else {
+        this.selection = "";
+      }
+    },
+    handleRightClick(event) {
+      if (this.selection.length > 0) {
+        this.$refs.vueSimpleContextMenu.showMenu(event);
+      }
+    },
+    optionClicked(event) {
+      if (event.option.slug == "copy") {
+        this.doCopy();
+      } else if (event.option.slug == "annotate") {
+        this.form.annotations.push(this.selection);
+      }
+    },
+    doCopy() {
+      this.$copyText(this.selection).then(
+        function(e) {
+          alert("Copied");
+        },
+        function(e) {
+          alert("Can not copy");
+        }
+      );
+    },
+    removeAnnotation(index) {
+      this.form.annotations.splice(index, 1);
+    },
+    onSubmit() {
+      this.required = !this.required;
+    },
+    setEvidence() {
+      this.form.evidence = this.type_of_evidence.value;
+      this.filterLabel = this.type_of_evidence.label;
+    },
+    noResponse() {
+      // FIXME: what is this supposed to do? the return value of setTimeout isn't used
+      setTimeout(function() {
+        return this.variomes == null ? true : false;
+      }, 1000);
+    }
+  },
+  computed: {
+    ...mapGetters({
+      variant: "variant"
+    }),
+    currentUrl() {
+      return window.location.href;
+    },
+    effects() {
+      return this.form.evidence != null
+        ? Object.keys(this.inputs[this.filterLabel][this.form.evidence])
+        : [];
+    },
+    tier_criteria() {
+      return this.form.evidence != null && this.form.effect != null
+        ? this.inputs[this.filterLabel][this.form.evidence][this.form.effect]
+        : [];
+    }
+  },
+  created() {
+    HTTP.get(`variomes_single_ref`, {
+      params: {
+        id: this.$route.query.reference,
+        gene: this.variant.gene.symbol,
+        variant: this.variant.name,
+        disease: this.variant.svip_data.diseases.find(
+          element => element.id == this.$route.params.disease_id
+        ).name
+      }
+    })
+      .then(response => {
+        this.variomes = response.data;
+      })
+      .catch(err => {
+        this.variomes = {
+          error: "Couldn't retrieve publication info, try again later."
+        };
+      });
+  },
+  beforeRouteEnter(to, from, next) {
+    const { variant_id } = to.params;
 
-		// ask the store to populate detailed information about this variant
-		store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
-			next();
-		});
-	}
+    // ask the store to populate detailed information about this variant
+    store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
+      next();
+    });
+  }
 };
 </script>
 
