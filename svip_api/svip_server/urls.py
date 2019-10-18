@@ -65,12 +65,13 @@ urlpatterns = [
     re_path(r'^api/token/invalidate/$', TokenInvalidate.as_view(), name='token_invalidate'),
 
     # drf routes
-    re_path(r'^api/v1/', include(api_router.router.urls)),
-    re_path(r'^api/v1/', include(api_router.genes_router.urls)),
-    re_path(r'^api/v1/', include(api_router.variants_router.urls)),
-    re_path(r'^api/v1/', include(api_router.variants_in_sources_router.urls)),
-    re_path(r'^api/v1/', include(api_router.variants_in_svip_router.urls)),
-    re_path(r'^api/v1/', include(api_router.diseases_router.urls)),
+    path('api/v1/', include('api.urls')),
+    re_path(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # drf-yasg routes
+    re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^api/v1/swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     # beacon v1.0.1 route
     re_path(r'^api/v1/beacon/$', beacon101.beacon, name='beacon101'),
@@ -80,15 +81,6 @@ urlpatterns = [
     re_path(r'^api/v1/beacon/v1.1.0/$', beacon110.beacon, name='beacon110'),
     re_path(r'^api/v1/beacon/v1.1.0/query/$', beacon110.beacon_query, name='beacon110_query'),
     re_path(r'^api/v1/beacon/v1.1.0/filtering_terms/$', beacon110.filtering_terms, name='beacon110_filtering_terms'),
-
-    # re_path(r'^api/v1/', include(api.urls)),
-
-    re_path(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    # drf-yasg routes
-    re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^api/v1/swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     # proxied routes from external APIs
     re_path(r'^api/v1/variomes_single_ref', variomes_single_ref, name='variomes_single_ref'),
