@@ -68,51 +68,51 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import {round} from "lodash/math";
 
 export default {
-  name: "VariantInformations",
-  props: {
-    variant: {
-      type: Object,
-      required: true
-    },
-    fields: {
-      type: Array,
-      required: true
-    },
-    theadClass: {
-      type: String,
-      required: false,
-      default: ""
-    },
-    tbodyClass: {
-      type: String,
-      required: false,
-      default: ""
-    }
-  },
-  data() {
-    return {
-      showCurationTool: false
-    };
-  },
-  computed: {
-    allele_frequency() {
-      if (this.variant.mv_info) {
-        if (this.variant.mv_info.gnomad_genome) {
-          return `gnomAD: ${round(
-            this.variant.mv_info.gnomad_genome.af.af * 100.0,
-            4
-          )}%`;
-        } else if (this.variant.mv_info.exac) {
-          return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
-        }
-      }
+	name: "VariantInformations",
+	props: {
+		variant: {
+			type: Object,
+			required: true
+		},
+		fields: {
+			type: Array,
+			required: true
+		},
+		theadClass: {
+			type: String,
+			required: false,
+			default: ""
+		},
+		tbodyClass: {
+			type: String,
+			required: false,
+			default: ""
+		}
+	},
+	data() {
+		return {
+			showCurationTool: false
+		};
+	},
+	computed: {
+		allele_frequency() {
+			if (this.variant.mv_info) {
+				if (this.variant.mv_info.gnomad_genome) {
+					return `gnomAD: ${round(
+						this.variant.mv_info.gnomad_genome.af.af * 100.0,
+						4
+					)}%`;
+				} else if (this.variant.mv_info.exac) {
+					return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+				}
+			}
 
-      return null;
-    },
-    var_position() {
-      return var_to_position(this.variant);
-    }
-  }
+			return null;
+		},
+		var_position() {
+			return var_to_position(this.variant);
+		}
+	}
 };
 </script>
 

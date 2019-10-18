@@ -17,18 +17,18 @@
 import fields from "@/data/curation/evidence/fields.json";
 
 export default {
-  name: "EvidenceCard",
-  props: {
-    items: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      fields
-    };
-  }
+	name: "EvidenceCard",
+	props: {
+		items: {
+			type: Array,
+			required: true
+		}
+	},
+	data() {
+		return {
+			fields
+		};
+	}
 };
 </script>
 

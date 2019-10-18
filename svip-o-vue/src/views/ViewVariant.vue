@@ -101,7 +101,28 @@
 
     <variant-svip v-if="variant.svip_data" :variant="variant" :gene="gene_id"></variant-svip>
     <variant-public-databases :variant="variant"></variant-public-databases>
-
+    <b-row v-access="'curators'">
+      <b-col>
+        <b-card class="shadow-sm mt-3" align="left" no-body>
+          <b-card-body class="p-0 text-center">
+            <b-row no-gutters>
+              <b-col v-for="(item,index) in linkItems" :key="index">
+                <b-button
+                  squared
+                  block
+                  variant="outline-secondary"
+                  :href="item.link"
+                  target="_blank"
+                >
+                  {{ item.source }}
+                  <icon name="external-link-alt"></icon>
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
     <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras" />
   </div>
 </template>
@@ -113,6 +134,7 @@ import { mapGetters } from "vuex";
 import variantPublicDatabases from "@/components/genes/variants/PublicDatabases";
 import variantSvip from "@/components/genes/variants/SVIPInfo";
 import store from "@/store";
+import linkItems from "@/data/curation/links/items.json";
 
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
@@ -122,7 +144,8 @@ export default {
   components: { VariantExternalInfo, variantPublicDatabases, variantSvip },
   data() {
     return {
-      showAliases: false
+      showAliases: false,
+      linkItems
     };
   },
   computed: {

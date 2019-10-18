@@ -83,92 +83,92 @@
 import { makeSampleProvider } from "@/components/genes/variants/item_providers/sample_provider";
 
 export default {
-  name: "SampleTable",
-  props: {
-    variant: { required: true, type: Object },
-    row: { required: true, type: Object },
-    groups: { required: true, type: Array }
-  },
-  data() {
-    return {
-      name: this.row.item.name,
-      totalRows: this.row.item.nb_patients,
-      sortBy: "disease_name",
-      currentFilter: {},
-      currentPage: 1,
-      perPage: 10,
+	name: "SampleTable",
+	props: {
+		variant: { required: true, type: Object },
+		row: { required: true, type: Object },
+		groups: { required: true, type: Array }
+	},
+	data() {
+		return {
+			name: this.row.item.name,
+			totalRows: this.row.item.nb_patients,
+			sortBy: "disease_name",
+			currentFilter: {},
+			currentPage: 1,
+			perPage: 10,
 
-      fields: [
-        { key: "disease_name", label: "Disease", sortable: true },
-        { key: "sample_id", label: "Sample ID", sortable: true },
-        { key: "year_of_birth", label: "Year of birth", sortable: true },
-        { key: "gender", label: "Gender", sortable: true },
-        { key: "hospital", label: "Institution", sortable: true },
-        { key: "medical_service", label: "Department", sortable: true },
-        { key: "contact", label: "Contact", sortable: true },
-        {
-          key: "provider_annotation",
-          label: "Provider Annotation",
-          sortable: true
-        },
+			fields: [
+				{ key: "disease_name", label: "Disease", sortable: true },
+				{ key: "sample_id", label: "Sample ID", sortable: true },
+				{ key: "year_of_birth", label: "Year of birth", sortable: true },
+				{ key: "gender", label: "Gender", sortable: true },
+				{ key: "hospital", label: "Institution", sortable: true },
+				{ key: "medical_service", label: "Department", sortable: true },
+				{ key: "contact", label: "Contact", sortable: true },
+				{
+					key: "provider_annotation",
+					label: "Provider Annotation",
+					sortable: true
+				},
 
-        {
-          key: "sample_tissue",
-          label: "Tumor Sample",
-          sortable: true
-        } /* links to tumor details */,
-        {
-          key: "panel",
-          label: "Sequencing Panel",
-          sortable: true
-        } /* links to sequencing details */
-      ],
+				{
+					key: "sample_tissue",
+					label: "Tumor Sample",
+					sortable: true
+				} /* links to tumor details */,
+				{
+					key: "panel",
+					label: "Sequencing Panel",
+					sortable: true
+				} /* links to sequencing details */
+			],
 
-      tumor_fields: [
-        { key: "tumor_purity", label: "Tumor Purity", sortable: true },
-        { key: "tnm_stage", label: "TNM Stage", sortable: true },
-        { key: "sample_type", label: "Sample Type", sortable: true },
-        { key: "sample_site", label: "Sample Site", sortable: true },
-        { key: "specimen_type", label: "Specimen Type", sortable: true },
-        { key: "allele_frequency", label: "Tumor AF", sortable: true }
-      ],
+			tumor_fields: [
+				{ key: "tumor_purity", label: "Tumor Purity", sortable: true },
+				{ key: "tnm_stage", label: "TNM Stage", sortable: true },
+				{ key: "sample_type", label: "Sample Type", sortable: true },
+				{ key: "sample_site", label: "Sample Site", sortable: true },
+				{ key: "specimen_type", label: "Specimen Type", sortable: true },
+				{ key: "allele_frequency", label: "Tumor AF", sortable: true }
+			],
 
-      sequencing_fields: [
-        { key: "sequencing_date", label: "Sequencing Date", sortable: true },
-        { key: "platform", label: "Platform", sortable: true },
-        { key: "panel", label: "Sequencing Panel", sortable: true },
-        { key: "coverage", label: "Coverage", sortable: true },
-        { key: "calling_strategy", label: "Calling Strategy", sortable: true },
-        { key: "caller", label: "Caller", sortable: true },
-        { key: "aligner", label: "Aligner", sortable: true },
-        { key: "software", label: "Software", sortable: true },
-        { key: "software_version", label: "Software Version", sortable: true }
-      ]
-    };
-  },
-  methods: {
-    packedFilter(filters) {
-      return JSON.stringify(filters);
-    },
-    metaUpdated(response) {
-      this.totalRows = response.count;
-    },
-    changeSubpanel(entry, subpanel_id) {
-      entry.item._showDetails =
+			sequencing_fields: [
+				{ key: "sequencing_date", label: "Sequencing Date", sortable: true },
+				{ key: "platform", label: "Platform", sortable: true },
+				{ key: "panel", label: "Sequencing Panel", sortable: true },
+				{ key: "coverage", label: "Coverage", sortable: true },
+				{ key: "calling_strategy", label: "Calling Strategy", sortable: true },
+				{ key: "caller", label: "Caller", sortable: true },
+				{ key: "aligner", label: "Aligner", sortable: true },
+				{ key: "software", label: "Software", sortable: true },
+				{ key: "software_version", label: "Software Version", sortable: true }
+			]
+		};
+	},
+	methods: {
+		packedFilter(filters) {
+			return JSON.stringify(filters);
+		},
+		metaUpdated(response) {
+			this.totalRows = response.count;
+		},
+		changeSubpanel(entry, subpanel_id) {
+			entry.item._showDetails =
         entry.item.curSubtable === subpanel_id
-          ? !entry.item._showDetails
-          : true;
-      entry.item.curSubtable = subpanel_id;
-    }
-  },
-  computed: {
-    sample_provider() {
-      return makeSampleProvider(this.metaUpdated, {
-        _showDetails: false,
-        curSubtable: null
-      });
-    }
-  }
+        	? !entry.item._showDetails
+        	: true;
+			entry.item.curSubtable = subpanel_id;
+		}
+	},
+	computed: {
+		sample_provider() {
+			return makeSampleProvider(this.metaUpdated, {
+				_showDetails: false,
+				curSubtable: null
+			});
+		}
+	}
 };
 </script>
 

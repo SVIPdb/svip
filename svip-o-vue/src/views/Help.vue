@@ -91,10 +91,10 @@ export default {
 		};
 	},
 	methods: {
-    slugifySans,
-    formatNewlines(text) {
-        return text.split("\n").join("<br />");
-    }
+		slugifySans,
+		formatNewlines(text) {
+			return text.split("\n").join("<br />");
+		}
 	}
 }
 </script>

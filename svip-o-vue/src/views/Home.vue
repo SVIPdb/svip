@@ -58,26 +58,26 @@ import store from "@/store";
 import SearchBar from "../components/widgets/SearchBar";
 
 export default {
-  name: "home",
-  components: { SearchBar },
-  data() {
-    return {
-      gene: {}
-    };
-  },
-  computed: {
-    ...mapGetters({
-      genes: "genes",
-      nbGenes: "nbGenes",
-      nbGenesSVIP: "nbGenesSVIP",
-      nbVariants: "nbVariants",
-      nbVariantsSVIP: "nbVariantsSVIP",
-      nbPhenotypes: "nbPhenotypes"
-    })
-  },
-  created() {
-    store.dispatch("getSiteStats");
-  }
+	name: "home",
+	components: { SearchBar },
+	data() {
+		return {
+			gene: {}
+		};
+	},
+	computed: {
+		...mapGetters({
+			genes: "genes",
+			nbGenes: "nbGenes",
+			nbGenesSVIP: "nbGenesSVIP",
+			nbVariants: "nbVariants",
+			nbVariantsSVIP: "nbVariantsSVIP",
+			nbPhenotypes: "nbPhenotypes"
+		})
+	},
+	created() {
+		store.dispatch("getSiteStats");
+	}
 };
 </script>
 

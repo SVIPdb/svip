@@ -57,26 +57,26 @@ import store from "@/store";
 import Vue from "vue";
 
 export default {
-  name: "navHeader",
-  computed: {
-    ...mapGetters({
-      user: "currentUser"
-    }),
-    whereFromHere() {
-      // if we're at the login page, go home after logging in.
-      // if we're anywhere else, return to that page after we're done
-      return this.$route.path !== "/login" ? this.$route.path : "/";
-    }
-  },
-  methods: {
-    logout() {
-      store.dispatch("logout").then(() => {
-        this.$snotify.success("Logged out");
-        this.$router.push("/");
-        // Vue.prototype.$keycloak.logoutFn();
-      });
-    }
-  }
+	name: "navHeader",
+	computed: {
+		...mapGetters({
+			user: "currentUser"
+		}),
+		whereFromHere() {
+			// if we're at the login page, go home after logging in.
+			// if we're anywhere else, return to that page after we're done
+			return this.$route.path !== "/login" ? this.$route.path : "/";
+		}
+	},
+	methods: {
+		logout() {
+			store.dispatch("logout").then(() => {
+				this.$snotify.success("Logged out");
+				this.$router.push("/");
+				// Vue.prototype.$keycloak.logoutFn();
+			});
+		}
+	}
 };
 </script>
 

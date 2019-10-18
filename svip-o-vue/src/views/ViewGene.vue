@@ -145,43 +145,43 @@ import { change_from_hgvs, var_to_position, desnakify } from "@/utils";
 import SourceIcon from "@/components/widgets/SourceIcon";
 
 export default {
-  components: { SourceIcon },
-  data() {
-    return {
-      currentFilter: {
-        search: "",
-        in_svip: store.state.genes.showOnlySVIP,
-        gene: this.$route.params.gene_id
-      },
-      currentPage: 1,
-      perPage: 20,
-      totalRows: 0,
-      confirmDeletion: false,
-      fields: [
-        {
-          key: "in_svip",
-          label: "",
-          sortable: false,
-          thStyle: "width: 22px;"
-        },
-        {
-          key: "name",
-          label: "Name",
-          sortable: true
-        },
-        {
-          key: "hgvs_c",
-          label: "HGVS coding",
-          formatter: x => change_from_hgvs(x, true),
-          sortable: true
-        },
-        {
-          key: "hgvs_p",
-          label: "HGVS protein",
-          formatter: x => change_from_hgvs(x, true),
-          sortable: true
-        },
-        /*
+	components: { SourceIcon },
+	data() {
+		return {
+			currentFilter: {
+				search: "",
+				in_svip: store.state.genes.showOnlySVIP,
+				gene: this.$route.params.gene_id
+			},
+			currentPage: 1,
+			perPage: 20,
+			totalRows: 0,
+			confirmDeletion: false,
+			fields: [
+				{
+					key: "in_svip",
+					label: "",
+					sortable: false,
+					thStyle: "width: 22px;"
+				},
+				{
+					key: "name",
+					label: "Name",
+					sortable: true
+				},
+				{
+					key: "hgvs_c",
+					label: "HGVS coding",
+					formatter: x => change_from_hgvs(x, true),
+					sortable: true
+				},
+				{
+					key: "hgvs_p",
+					label: "HGVS protein",
+					formatter: x => change_from_hgvs(x, true),
+					sortable: true
+				},
+				/*
 				{
 					key: "hgvs_g",
 					label: "Position",
@@ -189,18 +189,18 @@ export default {
 					sortable: true
 				},
 				*/
-        {
-          key: "hgvs_g",
-          label: "HGVS genomic",
-          formatter: x => change_from_hgvs(x, true),
-          sortable: true
-        },
-        {
-          key: "sources",
-          label: "Sources",
-          sortable: true
-        },
-        /*
+				{
+					key: "hgvs_g",
+					label: "HGVS genomic",
+					formatter: x => change_from_hgvs(x, true),
+					sortable: true
+				},
+				{
+					key: "sources",
+					label: "Sources",
+					sortable: true
+				},
+				/*
 				{
 					key: "so_name",
 					label: "Molecular Consequence",
@@ -208,57 +208,57 @@ export default {
 					formatter: x => desnakify(x)
 				},
 				*/
-        {
-          key: "action",
-          label: "",
-          sortable: false
-        }
-      ],
-      sortBy: null
-    };
-  },
-  computed: {
-    ...mapGetters({
-      gene: "currentGene",
-      variants: "variants",
-      geneVariants: "geneVariants"
-    }),
-    showOnlySVIP: {
-      get() {
-        return store.state.genes.showOnlySVIP;
-      },
-      set(value) {
-        this.currentFilter.in_svip = value;
-        store.dispatch("toggleShowSVIP", { showOnlySVIP: value });
-      }
-    },
-    synonyms() {
-      return this.gene.aliases ? this.gene.aliases.join(", ") : "";
-    },
-    packedFilter() {
-      return JSON.stringify(this.currentFilter);
-    },
-    variant_provider() {
-      return makeVariantProvider(this.metaUpdated);
-    }
-  },
-  methods: {
-    metaUpdated({ count }) {
-      this.totalRows = count;
-    },
-    makeVariantProvider
-  },
-  beforeRouteEnter(to, from, next) {
-    if (to.params.gene_id !== "new") {
-      // ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
-      store.dispatch("getGene", { gene_id: to.params.gene_id }).then(() => {
-        next();
-      });
-    }
-  },
-  created() {
-    this.currentFilter.gene = this.$route.params.gene_id;
-  }
+				{
+					key: "action",
+					label: "",
+					sortable: false
+				}
+			],
+			sortBy: null
+		};
+	},
+	computed: {
+		...mapGetters({
+			gene: "currentGene",
+			variants: "variants",
+			geneVariants: "geneVariants"
+		}),
+		showOnlySVIP: {
+			get() {
+				return store.state.genes.showOnlySVIP;
+			},
+			set(value) {
+				this.currentFilter.in_svip = value;
+				store.dispatch("toggleShowSVIP", { showOnlySVIP: value });
+			}
+		},
+		synonyms() {
+			return this.gene.aliases ? this.gene.aliases.join(", ") : "";
+		},
+		packedFilter() {
+			return JSON.stringify(this.currentFilter);
+		},
+		variant_provider() {
+			return makeVariantProvider(this.metaUpdated);
+		}
+	},
+	methods: {
+		metaUpdated({ count }) {
+			this.totalRows = count;
+		},
+		makeVariantProvider
+	},
+	beforeRouteEnter(to, from, next) {
+		if (to.params.gene_id !== "new") {
+			// ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
+			store.dispatch("getGene", { gene_id: to.params.gene_id }).then(() => {
+				next();
+			});
+		}
+	},
+	created() {
+		this.currentFilter.gene = this.$route.params.gene_id;
+	}
 };
 </script>
 

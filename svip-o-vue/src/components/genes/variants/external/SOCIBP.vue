@@ -23,44 +23,44 @@
 import {HTTP} from "@/router/http";
 
 function parameterize(params) {
-  return Object.entries(params).map(([k,v]) => `${k}=${v}`).join("&");
+	return Object.entries(params).map(([k,v]) => `${k}=${v}`).join("&");
 }
 
 export default {
-  name: "SOCIBP",
-  data() {
-    return {
-      sortBy: "",
-      items: [],
-      fields: [
-        {
-          key: "studyName",
-          label: "Study",
-          sortable: true
-        },
-        {
-          key: "num_patients_samples",
-          label: "# of Samples/Patients",
-          sortable: true
-        }
-      ]
-    };
-  },
-  mounted() {
-    HTTP.get(`/socibp/stats/${this.protein}/${this.change}`).then((response) => {
-      this.items = response.data.mutations.map(x => ({
-        studyName: x.study.shortName,
-        study: x.study,
-        num_patients: x.num_patients,
-        num_samples: x.num_samples,
-        authed_link: x.authed_link
-      }))
-    })
-  },
-  props: {
-    protein: { type: String, required: true },
-    change: { type: String, required: true }
-  }
+	name: "SOCIBP",
+	data() {
+		return {
+			sortBy: "",
+			items: [],
+			fields: [
+				{
+					key: "studyName",
+					label: "Study",
+					sortable: true
+				},
+				{
+					key: "num_patients_samples",
+					label: "# of Samples/Patients",
+					sortable: true
+				}
+			]
+		};
+	},
+	mounted() {
+		HTTP.get(`/socibp/stats/${this.protein}/${this.change}`).then((response) => {
+			this.items = response.data.mutations.map(x => ({
+				studyName: x.study.shortName,
+				study: x.study,
+				num_patients: x.num_patients,
+				num_samples: x.num_samples,
+				authed_link: x.authed_link
+			}))
+		})
+	},
+	props: {
+		protein: { type: String, required: true },
+		change: { type: String, required: true }
+	}
 };
 </script>
 

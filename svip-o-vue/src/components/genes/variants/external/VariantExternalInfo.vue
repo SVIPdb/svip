@@ -14,15 +14,15 @@ import SwissPO from "@/components/genes/variants/external/SwissPO";
 import SOCIBP from "@/components/genes/variants/external/SOCIBP";
 
 export default {
-    name: "VariantExternalInfo",
-    components: {SwissPO, Pathogenicity, PopulationStats, SOCIBP},
-    props: ["variant", "mvInfo", "extras", "exclude"],
-    methods: {
-        included(componentName) {
-            // returns true if no exclusions are specified, or if this component wasn't named in the exclusion list
-            return !this.exclude || !this.exclude.includes(componentName);
-        }
-    }
+	name: "VariantExternalInfo",
+	components: {SwissPO, Pathogenicity, PopulationStats, SOCIBP},
+	props: ["variant", "mvInfo", "extras", "exclude"],
+	methods: {
+		included(componentName) {
+			// returns true if no exclusions are specified, or if this component wasn't named in the exclusion list
+			return !this.exclude || !this.exclude.includes(componentName);
+		}
+	}
 };
 </script>
 

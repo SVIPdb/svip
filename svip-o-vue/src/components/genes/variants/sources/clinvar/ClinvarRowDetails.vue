@@ -68,75 +68,75 @@ import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDeta
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {
-    name: "ClinvarRowDetails",
-    components: {RowDetailsHeader, VariomesLitPopover},
-    props: {
-        row: {type: Object, required: true},
-        variant: {type: Object, required: true}
-    },
-    data() {
-        return {
-            currentFilter: {
-                phenotype__term: '',
-                search: ''
-            },
-            currentPage: 1,
-            perPage: 20,
-            totalRows: this.row.item.association_count,
-            fields: [
-                {
-                    key: "disease",
-                    label: "Disease",
-                    sortable: true
-                },
-                // {
-                // 	key: "evidence_type",
-                // 	label: "Evidence Type",
-                // 	sortable: true
-                // },
-                {
-                    key: "clinical_significance",
-                    label: "Interpretation",
-                    sortable: true
-                },
-                {
-                    key: "evidence_level",
-                    label: "Assertion Criteria",
-                    sortable: true
-                },
-                {
-                    key: "extras.num_submissions",
-                    label: "# of Submissions",
-                    sortable: true
-                },
-                // {
-                // 	key: "publications",
-                // 	label: "References",
-                // 	sortable: false
-                // },
-            ]
-        }
-    },
-    computed: {
-        packedFilter() {
-            return JSON.stringify(this.currentFilter);
-        },
-        assocation_provider() {
-            return makeAssociationProvider(this.metaUpdated, {
-                'disease': 'phenotype__term',
-                'contexts': 'environmentalcontext__description',
-                'extras.num_submissions': 'extras__num_submissions'
-            });
-        }
-    },
-    methods: {
-        metaUpdated({ count }) {
-            this.totalRows = count;
-        },
-        makeAssociationProvider,
-        normalizeItemList,
-        titleCase
-    }
+	name: "ClinvarRowDetails",
+	components: {RowDetailsHeader, VariomesLitPopover},
+	props: {
+		row: {type: Object, required: true},
+		variant: {type: Object, required: true}
+	},
+	data() {
+		return {
+			currentFilter: {
+				phenotype__term: '',
+				search: ''
+			},
+			currentPage: 1,
+			perPage: 20,
+			totalRows: this.row.item.association_count,
+			fields: [
+				{
+					key: "disease",
+					label: "Disease",
+					sortable: true
+				},
+				// {
+				// 	key: "evidence_type",
+				// 	label: "Evidence Type",
+				// 	sortable: true
+				// },
+				{
+					key: "clinical_significance",
+					label: "Interpretation",
+					sortable: true
+				},
+				{
+					key: "evidence_level",
+					label: "Assertion Criteria",
+					sortable: true
+				},
+				{
+					key: "extras.num_submissions",
+					label: "# of Submissions",
+					sortable: true
+				},
+				// {
+				// 	key: "publications",
+				// 	label: "References",
+				// 	sortable: false
+				// },
+			]
+		}
+	},
+	computed: {
+		packedFilter() {
+			return JSON.stringify(this.currentFilter);
+		},
+		assocation_provider() {
+			return makeAssociationProvider(this.metaUpdated, {
+				'disease': 'phenotype__term',
+				'contexts': 'environmentalcontext__description',
+				'extras.num_submissions': 'extras__num_submissions'
+			});
+		}
+	},
+	methods: {
+		metaUpdated({ count }) {
+			this.totalRows = count;
+		},
+		makeAssociationProvider,
+		normalizeItemList,
+		titleCase
+	}
 }
 </script>
 

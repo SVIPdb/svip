@@ -4,15 +4,15 @@
 
 <script>
 export default {
-    name: "ClinvarPubCountCol",
-    props: {
-        row: { type: Object, required: true }
-    },
-    computed: {
-        totalSubmissions() {
-            return this.row.item.diseases.reduce((acc, x) => acc + x.count, 0);
-        }
-    }
+	name: "ClinvarPubCountCol",
+	props: {
+		row: { type: Object, required: true }
+	},
+	computed: {
+		totalSubmissions() {
+			return this.row.item.diseases.reduce((acc, x) => acc + x.count, 0);
+		}
+	}
 }
 </script>
 

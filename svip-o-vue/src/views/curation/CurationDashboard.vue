@@ -52,26 +52,26 @@ import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 
 export default {
-  name: "CurationDashboard",
-  components: {
-    "notification-card": NotificationCard
-  },
-  data() {
-    return {
-      // ON REQUEST FAKE DATA
-      on_request, // data
-      fields_on_request, // columns
-      // TO BE CURATED FAKE DATA
-      to_be_curated, // data
-      fields_to_be_curated, // columns
-      // TO BE DISCUSSED FAKE DATA
-      to_be_discussed, // data
-      fields_to_be_discussed, // columns
-      // NON SVIP VARIANTS FAKE DATA
-      nonsvip_variants, // data
-      fields_nonsvip_variants // columns
-    };
-  }
+	name: "CurationDashboard",
+	components: {
+		"notification-card": NotificationCard
+	},
+	data() {
+		return {
+			// ON REQUEST FAKE DATA
+			on_request, // data
+			fields_on_request, // columns
+			// TO BE CURATED FAKE DATA
+			to_be_curated, // data
+			fields_to_be_curated, // columns
+			// TO BE DISCUSSED FAKE DATA
+			to_be_discussed, // data
+			fields_to_be_discussed, // columns
+			// NON SVIP VARIANTS FAKE DATA
+			nonsvip_variants, // data
+			fields_nonsvip_variants // columns
+		};
+	}
 };
 </script>
 

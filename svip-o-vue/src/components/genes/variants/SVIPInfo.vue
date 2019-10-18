@@ -35,7 +35,7 @@
         </template>
         <template v-slot:cell(actions)="row">
           <b-button
-            v-if="user && user.groups.indexOf('curators') != -1"
+            v-access="'curators'"
             size="sm"
             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
           >

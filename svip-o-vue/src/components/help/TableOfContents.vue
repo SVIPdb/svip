@@ -19,7 +19,7 @@ export default {
 		sections: { type: Array, required: true }
 	},
 	methods: {
-    slugifySans
+		slugifySans
 	}
 }
 </script>

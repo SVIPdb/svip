@@ -99,161 +99,161 @@
  * This Notification card allows to display a card which contains a table filled with samples waiting to be curated or reviewed
  */
 export default {
-  name: "NotificationCard",
-  props: {
-    // The items of the table
-    items: {
-      type: Array,
-      required: true,
-      // The default value is an empty array: `[]`
-      default: []
-    },
-    // The fields of the table
-    fields: {
-      type: Array,
-      required: true,
-      // The default value is an empty array: `[]`
-      default: []
-    },
-    // The title of the card
-    title: {
-      type: String,
-      required: true,
-      // The default value is: `DEFAULT_TITLE`
-      default: "DEFAULT_TITLE"
-    },
-    // The default column used to sort (Desc) the table
-    sortBy: {
-      type: String,
-      required: false,
-      // The default value is: `id`
-      default: "id"
-    },
-    // Override the card header background
-    cardHeaderBg: {
-      type: String,
-      required: false,
-      default: "light"
-    },
-    // Override the card title class
-    cardTitleVariant: {
-      type: String,
-      required: false,
-      default: "primary"
-    },
-    // On/Off filter options based on status
-    cardFilterOption: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    // On/Off custom class for header background
-    cardCustomClass: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  },
-  data() {
-    return {
-      customClass: "customClass",
-      curator: "Curator2", //FIXME MANUALLY SETTING THE CURATOR
-      // Custom settings for the visual
-      settings: {
-        buttonBg: "primary"
-      },
-      // Needed parameters for the table
-      filter: null,
-      myFilter: "all",
-      statusFilter: "all",
-      // Days left limits (Should be reviewed!)
-      daysLeft: {
-        min: 2,
-        max: 14
-      },
-      // Mapping between status and classes
-      curationStatus: {
-        "Not assigned": "danger",
-        Ongoing: "warning",
-        Complete: "success"
-      }
-    };
-  },
-  methods: {
-    /**
+	name: "NotificationCard",
+	props: {
+		// The items of the table
+		items: {
+			type: Array,
+			required: true,
+			// The default value is an empty array: `[]`
+			default: []
+		},
+		// The fields of the table
+		fields: {
+			type: Array,
+			required: true,
+			// The default value is an empty array: `[]`
+			default: []
+		},
+		// The title of the card
+		title: {
+			type: String,
+			required: true,
+			// The default value is: `DEFAULT_TITLE`
+			default: "DEFAULT_TITLE"
+		},
+		// The default column used to sort (Desc) the table
+		sortBy: {
+			type: String,
+			required: false,
+			// The default value is: `id`
+			default: "id"
+		},
+		// Override the card header background
+		cardHeaderBg: {
+			type: String,
+			required: false,
+			default: "light"
+		},
+		// Override the card title class
+		cardTitleVariant: {
+			type: String,
+			required: false,
+			default: "primary"
+		},
+		// On/Off filter options based on status
+		cardFilterOption: {
+			type: Boolean,
+			required: false,
+			default: false
+		},
+		// On/Off custom class for header background
+		cardCustomClass: {
+			type: Boolean,
+			required: false,
+			default: false
+		}
+	},
+	data() {
+		return {
+			customClass: "customClass",
+			curator: "Curator2", //FIXME MANUALLY SETTING THE CURATOR
+			// Custom settings for the visual
+			settings: {
+				buttonBg: "primary"
+			},
+			// Needed parameters for the table
+			filter: null,
+			myFilter: "all",
+			statusFilter: "all",
+			// Days left limits (Should be reviewed!)
+			daysLeft: {
+				min: 2,
+				max: 14
+			},
+			// Mapping between status and classes
+			curationStatus: {
+				"Not assigned": "danger",
+				Ongoing: "warning",
+				Complete: "success"
+			}
+		};
+	},
+	methods: {
+		/**
      * @vuese
      * Used to set up the correct flag class depending on the days left
      * @arg `Number` Days left
      */
-    setFlagClass(days_left) {
-      if (days_left <= this.daysLeft.min) {
-        return "text-danger";
-      } else if (days_left <= this.daysLeft.max) {
-        return "text-warning";
-      } else {
-        return "text-success";
-      }
-    },
-    /**
+		setFlagClass(days_left) {
+			if (days_left <= this.daysLeft.min) {
+				return "text-danger";
+			} else if (days_left <= this.daysLeft.max) {
+				return "text-warning";
+			} else {
+				return "text-success";
+			}
+		},
+		/**
      * @vuese
      * Used to set up the correct priority depending on the days left
      * @arg `Number` Days left
      */
-    setLetter(days_left) {
-      if (days_left <= this.daysLeft.min) {
-        return "H";
-      } else if (days_left <= this.daysLeft.max) {
-        return "M";
-      } else {
-        return "L";
-      }
-    },
-    /**
+		setLetter(days_left) {
+			if (days_left <= this.daysLeft.min) {
+				return "H";
+			} else if (days_left <= this.daysLeft.max) {
+				return "M";
+			} else {
+				return "L";
+			}
+		},
+		/**
      * @vuese
      * Used to set up the correct badge depending on the status
      * @arg `String` Curation status
      */
-    setBadgeClass(status) {
-      return this.curationStatus[status];
-    },
-    /**
+		setBadgeClass(status) {
+			return this.curationStatus[status];
+		},
+		/**
      * @vuese
      * Used to use a specific filter
      * @arg `String` Filter
      */
-    setCustomFilter(filter) {
-      this.myFilter = filter;
-    },
-    /**
+		setCustomFilter(filter) {
+			this.myFilter = filter;
+		},
+		/**
      * @vuese
      * Used to use a status filter
      * @arg `String` Status Filter
      */
-    setStatusFilter(filter) {
-      this.statusFilter = filter;
-    },
-    selectVariant(checked, element) {
-      console.log(`Checked is ${checked} and ID is ${element.id}`);
-    }
-  },
-  computed: {
-    // We are filtering items based on the two filters (custom and status)
-    filteredItems() {
-      let items = this.items;
-      if (this.statusFilter != "all") {
-        items = items.filter(element => element.curated == this.statusFilter);
-      }
-      if (this.myFilter != "all") {
-        return items.filter(
-          element =>
-            (element.curator == this.curator && element.curated == "Ongoing") ||
+		setStatusFilter(filter) {
+			this.statusFilter = filter;
+		},
+		selectVariant(checked, element) {
+			console.log(`Checked is ${checked} and ID is ${element.id}`);
+		}
+	},
+	computed: {
+		// We are filtering items based on the two filters (custom and status)
+		filteredItems() {
+			let items = this.items;
+			if (this.statusFilter != "all") {
+				items = items.filter(element => element.curated == this.statusFilter);
+			}
+			if (this.myFilter != "all") {
+				return items.filter(
+					element =>
+						(element.curator == this.curator && element.curated == "Ongoing") ||
             !element.curated
-        );
-      } else {
-        return items;
-      }
-    }
-  }
+				);
+			} else {
+				return items;
+			}
+		}
+	}
 };
 </script>
 

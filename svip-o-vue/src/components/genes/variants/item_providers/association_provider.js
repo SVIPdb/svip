@@ -67,7 +67,7 @@ export function makeAssociationProvider(metaUpdate=null, remappings=sortRemappin
 				publications: _.flatten(a.evidence_set.map((ev_set) =>
 					ev_set.publications.map(parsePublicationURL)
 				)),
-        extras: a.extras
+				extras: a.extras
 			}));
 		});
 	}

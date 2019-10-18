@@ -88,124 +88,124 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import { HTTP } from "@/router/http";
 
 export default {
-  name: "AnnotateVariant",
-  components: {
-    variantInformations,
-    evidenceCard
-  },
-  data() {
-    return {
-      fields,
-      fieldsTextMining,
-      source: "PMID",
-      reference: null,
-      variomes: [],
-      totalRows: 1,
-      sortBy: "score",
-      sortDesc: true
-    };
-  },
-  computed: {
-    ...mapGetters({
-      variant: "variant",
-      gene: "gene"
-    }),
-    synonyms() {
-      if (this.gene.geneAliases === undefined) return "";
-      return this.gene.geneAliases.join(", ");
-    },
-    gene_id() {
-      let test = this.variant.gene.url.match(/genes\/(\d+)/);
-      if (test) return test[1];
-      return "";
-    },
-    hgvs_c_pos() {
-      return change_from_hgvs(this.variant.hgvs_c, true);
-    },
-    hgvs_p_pos() {
-      return change_from_hgvs(this.variant.hgvs_p, true);
-    },
-    hgvs_g_pos() {
-      return change_from_hgvs(this.variant.hgvs_g, true);
-    },
-    var_position() {
-      return var_to_position(this.variant);
-    },
-    hg19_id() {
-      return var_to_position(this.variant, true);
-    },
-    all_extras() {
-      return this.variant.variantinsource_set.reduce((acc, x) => {
-        return Object.assign({}, acc, x["extras"]);
-      }, {});
-    },
-    allele_frequency() {
-      if (this.variant.mv_info) {
-        if (this.variant.mv_info.gnomad_genome) {
-          return `gnomAD: ${round(
-            this.variant.mv_info.gnomad_genome.af.af * 100.0,
-            4
-          )}%`;
-        } else if (this.variant.mv_info.exac) {
-          return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
-        }
-      }
+	name: "AnnotateVariant",
+	components: {
+		variantInformations,
+		evidenceCard
+	},
+	data() {
+		return {
+			fields,
+			fieldsTextMining,
+			source: "PMID",
+			reference: null,
+			variomes: [],
+			totalRows: 1,
+			sortBy: "score",
+			sortDesc: true
+		};
+	},
+	computed: {
+		...mapGetters({
+			variant: "variant",
+			gene: "gene"
+		}),
+		synonyms() {
+			if (this.gene.geneAliases === undefined) return "";
+			return this.gene.geneAliases.join(", ");
+		},
+		gene_id() {
+			let test = this.variant.gene.url.match(/genes\/(\d+)/);
+			if (test) return test[1];
+			return "";
+		},
+		hgvs_c_pos() {
+			return change_from_hgvs(this.variant.hgvs_c, true);
+		},
+		hgvs_p_pos() {
+			return change_from_hgvs(this.variant.hgvs_p, true);
+		},
+		hgvs_g_pos() {
+			return change_from_hgvs(this.variant.hgvs_g, true);
+		},
+		var_position() {
+			return var_to_position(this.variant);
+		},
+		hg19_id() {
+			return var_to_position(this.variant, true);
+		},
+		all_extras() {
+			return this.variant.variantinsource_set.reduce((acc, x) => {
+				return Object.assign({}, acc, x["extras"]);
+			}, {});
+		},
+		allele_frequency() {
+			if (this.variant.mv_info) {
+				if (this.variant.mv_info.gnomad_genome) {
+					return `gnomAD: ${round(
+						this.variant.mv_info.gnomad_genome.af.af * 100.0,
+						4
+					)}%`;
+				} else if (this.variant.mv_info.exac) {
+					return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+				}
+			}
 
-      return null;
-    },
-    evidences() {
-      return this.variant.svip_data.diseases.find(
-        element => element.id == this.$route.params.disease_id
-      ).curation_entries;
-    }
-  },
-  // components: {geneVariants: geneVariants},
-  methods: {
-    desnakify,
-    addEvidence() {
-      let route = this.$router.resolve({
-        name: "add-evidence",
-        params: {
-          gene_id: this.$route.params.gene_id,
-          variant_id: this.$route.params.variant_id,
-          disease_id: this.$route.params.disease_id
-        },
-        query: { source: this.source, reference: this.reference }
-      });
-      window.open(route.href, "_blank");
-    },
-    addEvidenceFromList(id) {
-      this.reference = id;
-      return this.addEvidence();
-    }
-  },
-  created() {
-    HTTP.get(`variomes_search`, {
-      params: {
-        gene: this.variant.gene.symbol,
-        variant: this.variant.name,
-        disease: this.variant.svip_data.diseases.find(
-          element => element.id == this.$route.params.disease_id
-        ).name
-      }
-    })
-      .then(response => {
-        this.variomes = response.data;
-      })
-      .catch(err => {
-        this.variomes = {
-          error: "Couldn't retrieve publication info, try again later."
-        };
-      });
-  },
-  beforeRouteEnter(to, from, next) {
-    const { variant_id } = to.params;
+			return null;
+		},
+		evidences() {
+			return this.variant.svip_data.diseases.find(
+				element => element.id == this.$route.params.disease_id
+			).curation_entries;
+		}
+	},
+	// components: {geneVariants: geneVariants},
+	methods: {
+		desnakify,
+		addEvidence() {
+			let route = this.$router.resolve({
+				name: "add-evidence",
+				params: {
+					gene_id: this.$route.params.gene_id,
+					variant_id: this.$route.params.variant_id,
+					disease_id: this.$route.params.disease_id
+				},
+				query: { source: this.source, reference: this.reference }
+			});
+			window.open(route.href, "_blank");
+		},
+		addEvidenceFromList(id) {
+			this.reference = id;
+			return this.addEvidence();
+		}
+	},
+	created() {
+		HTTP.get(`variomes_search`, {
+			params: {
+				gene: this.variant.gene.symbol,
+				variant: this.variant.name,
+				disease: this.variant.svip_data.diseases.find(
+					element => element.id == this.$route.params.disease_id
+				).name
+			}
+		})
+			.then(response => {
+				this.variomes = response.data;
+			})
+			.catch(err => {
+				this.variomes = {
+					error: "Couldn't retrieve publication info, try again later."
+				};
+			});
+	},
+	beforeRouteEnter(to, from, next) {
+		const { variant_id } = to.params;
 
-    // ask the store to populate detailed information about this variant
-    store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
-      next();
-    });
-  }
+		// ask the store to populate detailed information about this variant
+		store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
+			next();
+		});
+	}
 };
 </script>
 

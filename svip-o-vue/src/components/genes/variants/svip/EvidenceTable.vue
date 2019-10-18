@@ -22,30 +22,30 @@ import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import { trimPrefix } from "@/utils";
 
 export default {
-  name: "EvidenceTable",
-  components: { VariomesLitPopover },
-  props: {
-    variant: { required: true, type: Object },
-    row: { required: true, type: Object }
-  },
-  data() {
-    return {
-      fields: [
-        { key: "type_of_evidence", label: "Evidence Type", sortable: true },
-        { key: "effect", label: "Effect", sortable: true },
-        { key: "drug", label: "Drug", sortable: true },
-        { key: "tier_level_criteria", label: "Tier Criteria", sortable: true },
-        { key: "tier_level", label: "Tier Level", sortable: true },
-        { key: "mutation_origin", label: "Mutation Origin", sortable: true },
-        { key: "summary", label: "Complementary Information", sortable: false },
-        { key: "support", label: "Support", sortable: true },
-        { key: "references", label: "References", sortable: false }
-      ]
-    };
-  },
-  methods: {
-    trimPrefix
-  }
+	name: "EvidenceTable",
+	components: { VariomesLitPopover },
+	props: {
+		variant: { required: true, type: Object },
+		row: { required: true, type: Object }
+	},
+	data() {
+		return {
+			fields: [
+				{ key: "type_of_evidence", label: "Evidence Type", sortable: true },
+				{ key: "effect", label: "Effect", sortable: true },
+				{ key: "drug", label: "Drug", sortable: true },
+				{ key: "tier_level_criteria", label: "Tier Criteria", sortable: true },
+				{ key: "tier_level", label: "Tier Level", sortable: true },
+				{ key: "mutation_origin", label: "Mutation Origin", sortable: true },
+				{ key: "summary", label: "Complementary Information", sortable: false },
+				{ key: "support", label: "Support", sortable: true },
+				{ key: "references", label: "References", sortable: false }
+			]
+		};
+	},
+	methods: {
+		trimPrefix
+	}
 };
 </script>
 

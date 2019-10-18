@@ -75,10 +75,10 @@ const aa_three_to_one = [
 export default {
 	name: "SearchBar",
 	components: {SourceIcon},
-  props: {
-    variantsOnly: { type: Boolean, required: false, default: false },
-    multiple: { type: Boolean, required: false, default: false },
-  },
+	props: {
+		variantsOnly: { type: Boolean, required: false, default: false },
+		multiple: { type: Boolean, required: false, default: false },
+	},
 	data() {
 		return {
 			query: "",
@@ -89,9 +89,9 @@ export default {
 	},
 	watch: {
 		selected: function () {
-      if (this.variantsOnly) {
-        return;
-      }
+			if (this.variantsOnly) {
+				return;
+			}
 
 			const val = this.selected;
 
@@ -102,9 +102,9 @@ export default {
 			}
 		},
 		showOnlySVIP: function () {
-      if (this.variantsOnly) {
-        return;
-      }
+			if (this.variantsOnly) {
+				return;
+			}
 
 			if (this.query === "") {
 				this.getGenesOnly();
@@ -119,12 +119,12 @@ export default {
 			set(value) {
 				store.dispatch("toggleShowSVIP", {showOnlySVIP: value}).then(() => {
 					// FIXME: perhaps let's reset the contents of the search box when we toggle this
-          if (!this.variantsOnly) {
+					if (!this.variantsOnly) {
 					  this.getGenesOnly();
-          }
-          else {
-            this.selected = null;
-          }
+					}
+					else {
+						this.selected = null;
+					}
 				});
 			}
 		},
@@ -138,9 +138,9 @@ export default {
 		}
 	},
 	created() {
-    if (!this.variantsOnly) {
+		if (!this.variantsOnly) {
 		  this.getGenesOnly();
-    }
+		}
 	},
 	methods: {
 		onSearch(search, loading) {

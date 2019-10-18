@@ -50,114 +50,114 @@ import store from "@/store";
 import SourceIcon from "@/components/widgets/SourceIcon";
 
 const textmapper = {
-  g: "gene",
-  v: "variant"
+	g: "gene",
+	v: "variant"
 };
 
 // maps three-letter AA refs to the one-letter ones we use internally
 // this is done on the client side to make it easier to highlight the matching text in the result
 const aa_three_to_one = [
-  [new RegExp("[Aa]la", "g"), "A"],
-  [new RegExp("[Aa]sx", "g"), "B"],
-  [new RegExp("[Cc]ys", "g"), "C"],
-  [new RegExp("[Aa]sp", "g"), "D"],
-  [new RegExp("[Gg]lu", "g"), "E"],
-  [new RegExp("[Pp]he", "g"), "F"],
-  [new RegExp("[Gg]ly", "g"), "G"],
-  [new RegExp("[Hh]is", "g"), "H"],
-  [new RegExp("[Ii]le", "g"), "I"],
-  [new RegExp("[Ll]ys", "g"), "K"],
-  [new RegExp("[Ll]eu", "g"), "L"],
-  [new RegExp("[Mm]et", "g"), "M"],
-  [new RegExp("[Aa]sn", "g"), "N"],
-  [new RegExp("[Pp]ro", "g"), "P"],
-  [new RegExp("[Gg]ln", "g"), "Q"],
-  [new RegExp("[Aa]rg", "g"), "R"],
-  [new RegExp("[Ss]er", "g"), "S"],
-  [new RegExp("[Tt]hr", "g"), "T"],
-  [new RegExp("[Ss]ec", "g"), "U"],
-  [new RegExp("[Vv]al", "g"), "V"],
-  [new RegExp("[Tt]rp", "g"), "W"],
-  [new RegExp("[Xx]aa", "g"), "Xa"],
-  [new RegExp("[Tt]yr", "g"), "Y"],
-  [new RegExp("[Gg]lx", "g"), "Z"],
-  [new RegExp("\\*", "ig"), "X"]
+	[new RegExp("[Aa]la", "g"), "A"],
+	[new RegExp("[Aa]sx", "g"), "B"],
+	[new RegExp("[Cc]ys", "g"), "C"],
+	[new RegExp("[Aa]sp", "g"), "D"],
+	[new RegExp("[Gg]lu", "g"), "E"],
+	[new RegExp("[Pp]he", "g"), "F"],
+	[new RegExp("[Gg]ly", "g"), "G"],
+	[new RegExp("[Hh]is", "g"), "H"],
+	[new RegExp("[Ii]le", "g"), "I"],
+	[new RegExp("[Ll]ys", "g"), "K"],
+	[new RegExp("[Ll]eu", "g"), "L"],
+	[new RegExp("[Mm]et", "g"), "M"],
+	[new RegExp("[Aa]sn", "g"), "N"],
+	[new RegExp("[Pp]ro", "g"), "P"],
+	[new RegExp("[Gg]ln", "g"), "Q"],
+	[new RegExp("[Aa]rg", "g"), "R"],
+	[new RegExp("[Ss]er", "g"), "S"],
+	[new RegExp("[Tt]hr", "g"), "T"],
+	[new RegExp("[Ss]ec", "g"), "U"],
+	[new RegExp("[Vv]al", "g"), "V"],
+	[new RegExp("[Tt]rp", "g"), "W"],
+	[new RegExp("[Xx]aa", "g"), "Xa"],
+	[new RegExp("[Tt]yr", "g"), "Y"],
+	[new RegExp("[Gg]lx", "g"), "Z"],
+	[new RegExp("\\*", "ig"), "X"]
 ];
 
 export default {
-  name: "SearchVariant",
-  components: { SourceIcon },
-  data() {
-    return {
-      query: "",
-      options: [],
-      selected: null,
-      textmapper: textmapper
-    };
-  },
-  computed: {
-    showOnlySVIP: {
-      get() {
-        return store.state.genes.showOnlySVIP;
-      },
-      set(value) {
-        store.dispatch("toggleShowSVIP", { showOnlySVIP: value }).then(() => {
-          // FIXME: perhaps let's reset the contents of the search box when we toggle this
-          this.selected = null;
-        });
-      }
-    },
-    transformedQuery() {
-      // convert Val600Glu into V600E so that stuff like highlighting continues to function client-side
-      // (NOTE: on the server side we also transform Val600Glu to V600E, and match either description)
+	name: "SearchVariant",
+	components: { SourceIcon },
+	data() {
+		return {
+			query: "",
+			options: [],
+			selected: null,
+			textmapper: textmapper
+		};
+	},
+	computed: {
+		showOnlySVIP: {
+			get() {
+				return store.state.genes.showOnlySVIP;
+			},
+			set(value) {
+				store.dispatch("toggleShowSVIP", { showOnlySVIP: value }).then(() => {
+					// FIXME: perhaps let's reset the contents of the search box when we toggle this
+					this.selected = null;
+				});
+			}
+		},
+		transformedQuery() {
+			// convert Val600Glu into V600E so that stuff like highlighting continues to function client-side
+			// (NOTE: on the server side we also transform Val600Glu to V600E, and match either description)
 
-      // FIXME: ideally we should just send the transformed query instead of mirroring the behavior
-      //  on the client and the server
-      return aa_three_to_one.reduce(
-        (acc, x) => acc.replace(x[0], x[1]),
-        this.query
-      );
-    }
-  },
-  methods: {
-    onSearch(search, loading) {
-      loading(true);
-      this.query = search;
-      this.search(loading, search, this);
-    },
-    search: _.debounce((loading, search, vm) => {
-      return HTTP.get("query", {
-        params: { q: search, in_svip: vm.showOnlySVIP }
-      }).then(res => {
-        vm.options = res.data;
-        loading(false);
-      });
-    }, 350),
-    highlighted: function(query, orig) {
-      if (!query) return orig;
+			// FIXME: ideally we should just send the transformed query instead of mirroring the behavior
+			//  on the client and the server
+			return aa_three_to_one.reduce(
+				(acc, x) => acc.replace(x[0], x[1]),
+				this.query
+			);
+		}
+	},
+	methods: {
+		onSearch(search, loading) {
+			loading(true);
+			this.query = search;
+			this.search(loading, search, this);
+		},
+		search: _.debounce((loading, search, vm) => {
+			return HTTP.get("query", {
+				params: { q: search, in_svip: vm.showOnlySVIP }
+			}).then(res => {
+				vm.options = res.data;
+				loading(false);
+			});
+		}, 350),
+		highlighted: function(query, orig) {
+			if (!query) return orig;
 
-      const r = new RegExp(query, "gi");
-      const bits = orig.split(r);
-      const parts = [];
-      // we just use this to match the query bits
-      orig.replace(r, match => {
-        parts.push(match);
-      });
+			const r = new RegExp(query, "gi");
+			const bits = orig.split(r);
+			const parts = [];
+			// we just use this to match the query bits
+			orig.replace(r, match => {
+				parts.push(match);
+			});
 
-      // zip together bits and parts into an array
-      // (we only want to concatenate the followers if there are some, otherwise we end up popping nothing)
-      return bits.reduce(
-        (acc, next) =>
-          parts.length > 0
-            ? acc.concat(
-                { text: next.replace(" ", "\u00A0"), match: false },
-                { text: parts.pop(), match: true }
-              )
-            : acc.concat({ text: next.replace(" ", "\u00A0"), match: false }),
-        []
-      );
-    }
-  }
+			// zip together bits and parts into an array
+			// (we only want to concatenate the followers if there are some, otherwise we end up popping nothing)
+			return bits.reduce(
+				(acc, next) =>
+					parts.length > 0
+						? acc.concat(
+							{ text: next.replace(" ", "\u00A0"), match: false },
+							{ text: parts.pop(), match: true }
+						)
+						: acc.concat({ text: next.replace(" ", "\u00A0"), match: false }),
+				[]
+			);
+		}
+	}
 };
 </script>
 

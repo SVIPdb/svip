@@ -120,105 +120,105 @@ import SignificanceBarPlot from "@/components/genes/variants/sources/clinvar/Sig
 import ClinvarPubCountCol from "@/components/genes/variants/sources/clinvar/ClinvarPubCountCol";
 
 const overrides = {
-  civic: {
-    details_part: CivicRowDetails
-  },
-  cosmic: {
-    colum_parts: {
-      clinical: UnavailableCol,
-      publication_count: CosmicPubCountCol,
-      scores: UnavailableCol
-    },
-    details_part: CosmicRowDetails
-  },
-  oncokb: {
-    details_part: OncoKBRowDetails
-  },
-  clinvar: {
-    details_part: ClinvarRowDetails,
-    colum_parts: {
-      clinical: SignificanceBarPlot,
-      publication_count: ClinvarPubCountCol,
-      scores: UnavailableCol
-    }
-  }
+	civic: {
+		details_part: CivicRowDetails
+	},
+	cosmic: {
+		colum_parts: {
+			clinical: UnavailableCol,
+			publication_count: CosmicPubCountCol,
+			scores: UnavailableCol
+		},
+		details_part: CosmicRowDetails
+	},
+	oncokb: {
+		details_part: OncoKBRowDetails
+	},
+	clinvar: {
+		details_part: ClinvarRowDetails,
+		colum_parts: {
+			clinical: SignificanceBarPlot,
+			publication_count: ClinvarPubCountCol,
+			scores: UnavailableCol
+		}
+	}
 };
 
 export default {
-  name: "VariantPublicDatabases",
-  components: { SourceIcon, scorePlot, evidenceTypesBarPlot },
-  props: { variant: { type: Object, required: true } },
-  data() {
-    return {
-      sortBy: "source",
-      fields: [
-        {
-          key: "source",
-          label: "Source",
-          sortable: true
-        },
-        {
-          key: "diseases",
-          label: "Diseases",
-          sortable: true
-        },
-        {
-          key: "association_count",
-          label: "Database Evidences",
-          sortable: true
-        },
-        {
-          key: "clinical",
-          label: "Clinical Significance / Interpretation",
-          sortable: false
-        },
-        {
-          key: "scores",
-          label: "Evidence Levels",
-          sortable: false
-        },
-        {
-          key: "actions",
-          label: "",
-          sortable: false
-        }
-      ]
-    };
-  },
-  computed: {
-    items() {
-      return this.variant.variantinsource_set.map(vis => {
-        return {
-          ...vis,
-          _showDetails: false,
-          filter: "",
-          colum_parts: overrides.hasOwnProperty(vis.source.name)
-            ? overrides[vis.source.name].colum_parts
-            : null,
-          details_part: overrides.hasOwnProperty(vis.source.name)
-            ? overrides[vis.source.name].details_part
-            : null
-        };
-      });
-    },
-    sourcesNotFound() {
-      // we're sure sources exists because we populated it from the store
-      return store.state.genes.sources.filter(
-        x =>
-          x.num_variants > 0 &&
+	name: "VariantPublicDatabases",
+	components: { SourceIcon, scorePlot, evidenceTypesBarPlot },
+	props: { variant: { type: Object, required: true } },
+	data() {
+		return {
+			sortBy: "source",
+			fields: [
+				{
+					key: "source",
+					label: "Source",
+					sortable: true
+				},
+				{
+					key: "diseases",
+					label: "Diseases",
+					sortable: true
+				},
+				{
+					key: "association_count",
+					label: "Database Evidences",
+					sortable: true
+				},
+				{
+					key: "clinical",
+					label: "Clinical Significance / Interpretation",
+					sortable: false
+				},
+				{
+					key: "scores",
+					label: "Evidence Levels",
+					sortable: false
+				},
+				{
+					key: "actions",
+					label: "",
+					sortable: false
+				}
+			]
+		};
+	},
+	computed: {
+		items() {
+			return this.variant.variantinsource_set.map(vis => {
+				return {
+					...vis,
+					_showDetails: false,
+					filter: "",
+					colum_parts: overrides.hasOwnProperty(vis.source.name)
+						? overrides[vis.source.name].colum_parts
+						: null,
+					details_part: overrides.hasOwnProperty(vis.source.name)
+						? overrides[vis.source.name].details_part
+						: null
+				};
+			});
+		},
+		sourcesNotFound() {
+			// we're sure sources exists because we populated it from the store
+			return store.state.genes.sources.filter(
+				x =>
+					x.num_variants > 0 &&
           !this.variant.variantinsource_set.find(y => x.name === y.source.name)
-      );
-    }
-  },
-  methods: {
-    rowHasPart(row, part) {
-      return row.item.colum_parts && row.item.colum_parts[part];
-    },
-    normalizeItemList
-  },
-  created() {
-    store.dispatch("getSources");
-  }
+			);
+		}
+	},
+	methods: {
+		rowHasPart(row, part) {
+			return row.item.colum_parts && row.item.colum_parts[part];
+		},
+		normalizeItemList
+	},
+	created() {
+		store.dispatch("getSources");
+	}
 };
 </script>
 

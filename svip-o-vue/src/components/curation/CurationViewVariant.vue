@@ -68,83 +68,83 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 
 export default {
-  name: "CurationViewVariant",
-  components: {
-    VariantExternalInfo,
-    variantPublicDatabases,
-    variantSvip,
-    "variant-informations": variantInformations
-  },
-  data() {
-    return {
-      showAliases: false,
-      showCurationTool: false,
-      fields,
-      linkFields,
-      linkItems
-    };
-  },
-  computed: {
-    ...mapGetters({
-      variant: "variant",
-      gene: "gene"
-    }),
-    synonyms() {
-      if (this.gene.geneAliases === undefined) return "";
-      return this.gene.geneAliases.join(", ");
-    },
-    gene_id() {
-      let test = this.variant.gene.url.match(/genes\/(\d+)/);
-      if (test) return test[1];
-      return "";
-    },
-    hgvs_c_pos() {
-      return change_from_hgvs(this.variant.hgvs_c, true);
-    },
-    hgvs_p_pos() {
-      return change_from_hgvs(this.variant.hgvs_p, true);
-    },
-    hgvs_g_pos() {
-      return change_from_hgvs(this.variant.hgvs_g, true);
-    },
-    var_position() {
-      return var_to_position(this.variant);
-    },
-    hg19_id() {
-      return var_to_position(this.variant, true);
-    },
-    all_extras() {
-      return this.variant.variantinsource_set.reduce((acc, x) => {
-        return Object.assign({}, acc, x["extras"]);
-      }, {});
-    },
-    allele_frequency() {
-      if (this.variant.mv_info) {
-        if (this.variant.mv_info.gnomad_genome) {
-          return `gnomAD: ${round(
-            this.variant.mv_info.gnomad_genome.af.af * 100.0,
-            4
-          )}%`;
-        } else if (this.variant.mv_info.exac) {
-          return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
-        }
-      }
+	name: "CurationViewVariant",
+	components: {
+		VariantExternalInfo,
+		variantPublicDatabases,
+		variantSvip,
+		"variant-informations": variantInformations
+	},
+	data() {
+		return {
+			showAliases: false,
+			showCurationTool: false,
+			fields,
+			linkFields,
+			linkItems
+		};
+	},
+	computed: {
+		...mapGetters({
+			variant: "variant",
+			gene: "gene"
+		}),
+		synonyms() {
+			if (this.gene.geneAliases === undefined) return "";
+			return this.gene.geneAliases.join(", ");
+		},
+		gene_id() {
+			let test = this.variant.gene.url.match(/genes\/(\d+)/);
+			if (test) return test[1];
+			return "";
+		},
+		hgvs_c_pos() {
+			return change_from_hgvs(this.variant.hgvs_c, true);
+		},
+		hgvs_p_pos() {
+			return change_from_hgvs(this.variant.hgvs_p, true);
+		},
+		hgvs_g_pos() {
+			return change_from_hgvs(this.variant.hgvs_g, true);
+		},
+		var_position() {
+			return var_to_position(this.variant);
+		},
+		hg19_id() {
+			return var_to_position(this.variant, true);
+		},
+		all_extras() {
+			return this.variant.variantinsource_set.reduce((acc, x) => {
+				return Object.assign({}, acc, x["extras"]);
+			}, {});
+		},
+		allele_frequency() {
+			if (this.variant.mv_info) {
+				if (this.variant.mv_info.gnomad_genome) {
+					return `gnomAD: ${round(
+						this.variant.mv_info.gnomad_genome.af.af * 100.0,
+						4
+					)}%`;
+				} else if (this.variant.mv_info.exac) {
+					return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+				}
+			}
 
-      return null;
-    }
-  },
-  // components: {geneVariants: geneVariants},
-  methods: {
-    desnakify
-  },
-  beforeRouteEnter(to, from, next) {
-    const { variant_id } = to.params;
+			return null;
+		}
+	},
+	// components: {geneVariants: geneVariants},
+	methods: {
+		desnakify
+	},
+	beforeRouteEnter(to, from, next) {
+		const { variant_id } = to.params;
 
-    // ask the store to populate detailed information about this variant
-    store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
-      next();
-    });
-  }
+		// ask the store to populate detailed information about this variant
+		store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
+			next();
+		});
+	}
 };
 </script>
 

@@ -37,52 +37,52 @@
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 
 export default {
-  name: "VariantInformations",
-  props: {
-    variant: {
-      type: Object,
-      required: true
-    },
-    fields: {
-      type: Array,
-      required: true
-    },
-    theadClass: {
-      type: String,
-      required: false,
-      default: ""
-    },
-    tbodyClass: {
-      type: String,
-      required: false,
-      default: ""
-    }
-  },
-  data() {
-    return {
-      showCurationTool: false
-    };
-  },
-  computed: {
-    var_position() {
-      return var_to_position(this.variant);
-    },
-    disease() {
-      return this.variant.svip_data.diseases.find(
-        element => element.id == this.$route.params.disease_id
-      ).name;
-    },
-    pathogenicity() {
-      return this.variant.svip_data.diseases.find(
-        element => element.id == this.$route.params.disease_id
-      ).pathogenic;
-    },
-    clinical_significance() {
-      return this.variant.svip_data.diseases.find(
-        element => element.id == this.$route.params.disease_id
-      ).clinical_significance;
-    }
-  }
+	name: "VariantInformations",
+	props: {
+		variant: {
+			type: Object,
+			required: true
+		},
+		fields: {
+			type: Array,
+			required: true
+		},
+		theadClass: {
+			type: String,
+			required: false,
+			default: ""
+		},
+		tbodyClass: {
+			type: String,
+			required: false,
+			default: ""
+		}
+	},
+	data() {
+		return {
+			showCurationTool: false
+		};
+	},
+	computed: {
+		var_position() {
+			return var_to_position(this.variant);
+		},
+		disease() {
+			return this.variant.svip_data.diseases.find(
+				element => element.id == this.$route.params.disease_id
+			).name;
+		},
+		pathogenicity() {
+			return this.variant.svip_data.diseases.find(
+				element => element.id == this.$route.params.disease_id
+			).pathogenic;
+		},
+		clinical_significance() {
+			return this.variant.svip_data.diseases.find(
+				element => element.id == this.$route.params.disease_id
+			).clinical_significance;
+		}
+	}
 };
 </script>
 

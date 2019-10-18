@@ -76,7 +76,7 @@ export function trimPrefix(str, prefix) {
 }
 
 export function slugifySans(x) {
-  return slugify(x.replace(":", "_"));
+	return slugify(x.replace(":", "_"));
 }
 
 // used by some item providers to parse PMIDs out of publication URLs

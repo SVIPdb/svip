@@ -42,50 +42,50 @@ import { trimPrefix } from "@/utils";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {
-  name: "EvidenceTable",
-  components: { VariomesLitPopover },
-  props: {
-    variant: { type: Object, required: true },
-    items: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      fields: [
-        { key: "display", label: "", sortable: false },
-        { key: "type_of_evidence", label: "Evidence Type", sortable: true },
-        { key: "drug", label: "Drug", sortable: true },
-        { key: "effect", label: "Effect", sortable: true },
-        {
-          key: "tier_level_criteria",
-          label: "Tier Criteria",
-          sortable: true
-        },
-        {
-          key: "mutation_origin",
-          label: "Mutation Origin",
-          sortable: true
-        },
-        { key: "support", label: "Support", sortable: true },
-        { key: "references", label: "References", sortable: false },
-        {
-          key: "curator",
-          label: "Curator",
-          sortable: false
-        },
-        {
-          key: "date",
-          label: "Date",
-          sortable: true
-        }
-      ]
-    };
-  },
-  methods: {
-    trimPrefix
-  }
+	name: "EvidenceTable",
+	components: { VariomesLitPopover },
+	props: {
+		variant: { type: Object, required: true },
+		items: {
+			type: Array,
+			required: true
+		}
+	},
+	data() {
+		return {
+			fields: [
+				{ key: "display", label: "", sortable: false },
+				{ key: "type_of_evidence", label: "Evidence Type", sortable: true },
+				{ key: "drug", label: "Drug", sortable: true },
+				{ key: "effect", label: "Effect", sortable: true },
+				{
+					key: "tier_level_criteria",
+					label: "Tier Criteria",
+					sortable: true
+				},
+				{
+					key: "mutation_origin",
+					label: "Mutation Origin",
+					sortable: true
+				},
+				{ key: "support", label: "Support", sortable: true },
+				{ key: "references", label: "References", sortable: false },
+				{
+					key: "curator",
+					label: "Curator",
+					sortable: false
+				},
+				{
+					key: "date",
+					label: "Date",
+					sortable: true
+				}
+			]
+		};
+	},
+	methods: {
+		trimPrefix
+	}
 };
 </script>
 
