@@ -45,8 +45,10 @@ import Icon from "vue-awesome/components/Icon";
 import vSelect from "vue-select";
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import VueClipboard from 'vue-clipboard2'
+import Expander from "@/components/widgets/Expander";
 
 import store from "./store";
+
 
 Vue.config.productionTip = false;
 
@@ -58,6 +60,9 @@ Vue.component("icon", Icon);
 Vue.directive("access", Access);
 Vue.component("v-select", vSelect);
 Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
+
+// the little arrow to the left of rows that allows them to be expanded, used everywhere
+Vue.component("expander", Expander);
 
 export default new Vue({
 	el: "#app",

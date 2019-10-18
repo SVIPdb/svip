@@ -1,9 +1,7 @@
 <template>
   <b-table :fields="fields" :items="items" :show-empty="true" :small="true">
     <template v-slot:cell(display)="row">
-      <b-link @click="row.toggleDetails">
-        <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
-      </b-link>
+      <expander :row="row" />
     </template>
     <template v-slot:cell(references)="data">
       <VariomesLitPopover

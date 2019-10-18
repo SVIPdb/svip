@@ -31,9 +31,7 @@
     <div class="card-body top-level">
       <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
         <template v-slot:cell(display)="row">
-          <b-link @click="row.toggleDetails">
-            <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
-          </b-link>
+          <expander :row="row" />
         </template>
         <template v-slot:cell(actions)="row">
           <b-button

@@ -31,9 +31,7 @@
     <div class="card-body top-level">
       <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
         <template v-slot:cell(display)="row">
-          <b-link @click="row.toggleDetails">
-            <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>
-          </b-link>
+          <expander :row="row" />
         </template>
         <template v-slot:cell(actions)="row">
           <b-button
@@ -46,7 +44,7 @@
         </template>
 
         <template v-slot:cell(name)="row">
-          <span :class="row.detailsShowing ? 'bold' : ''">{{ titleCase(row.item.name) }}</span>
+         {{ titleCase(row.item.name) }}
         </template>
 
         <template v-slot:cell(age)="data">
@@ -141,7 +139,7 @@ Vue.component("pass", {
 });
 
 export default {
-  name: "VariantSVIP",
+  name: "SVIPInfo",
   components: { SampleTable, EvidenceTable, ageDistribution, genderPlot }, // TissueDistribution
   props: {
     variant: { type: Object, required: true },
@@ -309,5 +307,9 @@ rect.pathogenicity.automatic {
 }
 .nav-tabs .nav-item .nav-link {
   padding: 5px 20px 8px;
+}
+
+.details-tray {
+  text-align: right;
 }
 </style>
