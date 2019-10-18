@@ -34,13 +34,14 @@
         <div class="empty-table-msg">- no evidence items -</div>
       </template>
     </b-table>
-    {{user}}
+    {{checkInRole("curators")}}
   </b-card-text>
 </template>
 
 <script>
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import { trimPrefix } from "@/utils";
+import { checkInRole } from "@/directives/access";
 
 export default {
   name: "EvidenceTable",
@@ -66,25 +67,20 @@ export default {
           key: "curator",
           label: "Curator",
           sortable: false,
-          thStyle: { display: "" }
+          thStyle: { display: this.checkInRole("curators") ? "" : "none" }
         },
         {
           key: "date",
           label: "Date",
           sortable: true,
-          thStyle: {
-            display: this.isDisplayed()
-          }
+          thStyle: { display: this.checkInRole("curators") ? "" : "none" }
         }
       ]
     };
   },
-  computed: {},
   methods: {
     trimPrefix,
-    isDisplayed() {
-      return this.vm.users;
-    }
+    checkInRole
   }
 };
 </script>
