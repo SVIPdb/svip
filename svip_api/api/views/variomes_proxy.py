@@ -9,7 +9,7 @@ from cachecontrol_django import DjangoCache
 cached_sess = CacheControl(
     requests.session(),
     cache=DjangoCache(),
-    heuristic=ExpiresAfter(days=5)
+    heuristic=ExpiresAfter(days=15)
 )
 
 
