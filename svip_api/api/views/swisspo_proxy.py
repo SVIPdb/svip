@@ -35,7 +35,6 @@ def swisspo_request(request, path):
     payload['get_option'] = 'BRAF'
 
     target_url = 'http://swiss-po.ch/%s' % path
-    print("Accessing %s" % target_url)
 
     resp = cached_sess.request(
         method='POST',
@@ -113,7 +112,6 @@ def get_residues(request, pdb_id, chain):
         return HttpResponse(response.content, status=response.status_code)
 
     response_data = response.content.decode("utf-8").strip()
-    print(response_data)
 
     residues, filename = response_data.split('??separator??')
     residue_min, residue_max = [int(x) for x in residues.split('-')]
