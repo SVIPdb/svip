@@ -125,6 +125,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+AUTH_USER_MODEL = 'auth.User'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -159,15 +161,15 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
     'AUTH_TOKEN_CLASSES': (
         'rest_framework_simplejwt.tokens.AccessToken',
         'rest_framework_simplejwt.tokens.SlidingToken'
     ),
 
     # 'SLIDING_TOKEN_LIFETIME': timedelta(minutes=30),
-    'JWT_AUTH_COOKIE': None # 'jwt-cookie'
+    'JWT_AUTH_COOKIE': None  # 'jwt-cookie'
 }
 
 # CORS config (https://github.com/ottoyiu/django-cors-headers/)
