@@ -7,7 +7,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q, F
 
-from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource, Disease
+from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource, DiseaseInSVIP, Disease
 
 import api
 
@@ -115,7 +115,7 @@ def create_svipvariants(model_variant, model_svip_variant):
         svip_variants = json.load(fp)
 
         model_svip_variant.objects.all().delete()
-        Disease.objects.all().delete()
+        DiseaseInSVIP.objects.all().delete()
 
         succeeded, total = (0, len(svip_variants))
 
@@ -134,9 +134,15 @@ def create_svipvariants(model_variant, model_svip_variant):
 
                 # create disease entries keyed to this candidate, too
                 for disease in s['diseases']:
-                    candidate_disease = Disease(
+                    disease_instance, created = Disease.objects.get_or_create(name__iexact=disease['name'], defaults={
+                        'name': disease['name'],
+                        'icdo_code': None
+                    })
+                    disease_instance.save()
+
+                    candidate_disease = DiseaseInSVIP(
                         svip_variant=candidate,
-                        name=disease['name'],
+                        disease=disease_instance,
                         status=disease['SVIP_status'],
                         score=int(disease['score'])
                     )
@@ -152,29 +158,26 @@ def create_svipvariants(model_variant, model_svip_variant):
         return succeeded, total
 
 
-def create_svip_related(source, target_model):
+def create_svip_samples(source):
     """
-    Load samples from api/fixtures/<source> and insert them into target_model. Deletes the contents of
-    target_model before insertion. The target_model should have a field 'disease', and source should
-    contain a header with entries that have the same names as target_models' fields. source must also
-    contain the fields 'gene', 'variant', and 'cds', which are used to link the new entry to an existing
-    Disease entry (indirectly using VariantInSVIP to match up to the correct variant).
+    Load samples from api/fixtures/<source> and insert them into Sample. Deletes the contents of Sample before insertion.
 
     :return: a tuple (succeeded, total) with the number of samples added vs. the total number tried, respectively
     """
+
     with open(os.path.join(APP_DIR, "fixtures", source), "r") as samples_fp:
         reader = csv.DictReader(samples_fp, dialect=csv.excel_tab)
         succeeded, total = (0, 0)
 
-        target_model.objects.all().delete()
+        Sample.objects.all().delete()
 
         for sample in reader:
             total += 1
 
             try:
-                candidate = target_model(
-                    disease=Disease.objects.get(
-                        name__iexact=sample['disease'],
+                candidate = Sample(
+                    disease_in_svip=DiseaseInSVIP.objects.get(
+                        disease__name__iexact=sample['disease'],
                         svip_variant__variant__gene__symbol=sample['gene'],
                         svip_variant__variant__name=sample['variant'],
                         svip_variant__variant__hgvs_c__endswith=sample['cds']
@@ -189,6 +192,55 @@ def create_svip_related(source, target_model):
                 print(
                     "Couldn't find corresponding disease \"%s\" w/gene, name, cds '%s %s %s', skipping..." %
                     (sample['disease'], sample['gene'], sample['variant'], sample['cds'])
+                )
+
+        return succeeded, total
+
+
+def create_svip_curationentries(source):
+    """
+    Load curation entries from api/fixtures/<source> and insert them into CurationEntry. Deletes the contents of
+    CurationEntry before insertion.
+
+    :return: a tuple (succeeded, total) with the number of curation entries added vs. the total number tried, respectively
+    """
+
+    with open(os.path.join(APP_DIR, "fixtures", source), "r") as samples_fp:
+        reader = csv.DictReader(samples_fp, dialect=csv.excel_tab)
+        succeeded, total = (0, 0)
+
+        CurationEntry.objects.all().delete()
+
+        for sample in reader:
+            total += 1
+
+            try:
+                candidate = CurationEntry(
+                    disease=Disease.objects.get(
+                        name__iexact=sample['disease'],
+                    ),
+                    **dict(
+                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease')
+                    )
+                )
+                candidate.save()
+                candidate.variants.set(
+                    Variant.objects.filter(
+                        gene__symbol=sample['gene'],
+                        name=sample['variant'],
+                        hgvs_c__endswith=sample['cds']
+                    )
+                )
+                succeeded += 1
+            except Disease.DoesNotExist:
+                print(
+                    "Couldn't find corresponding disease \"%s\" w/gene, name, cds '%s %s %s', skipping..." %
+                    (sample['disease'], sample['gene'], sample['variant'], sample['cds'])
+                )
+            except Variant.DoesNotExist:
+                print(
+                    "Couldn't find corresponding variant \"%s\" w/gene, disease, cds '%s %s %s', skipping..." %
+                    (sample['name'], sample['gene'], sample['disease'], sample['cds'])
                 )
 
         return succeeded, total
@@ -236,7 +288,10 @@ def synthesize_samples(num_samples_per_variant=10):
                 'Skin Melanoma': 'Skin',
                 'Prostate Cancer': 'Prostate',
             }
-            disease_tissues = [{'disease': x['name'], 'tissue': tissues[x['name']]} for x in svip_var.disease_set.values('name')]
+            disease_tissues = [
+                {'disease': x['name'], 'tissue': tissues[x['name']]}
+                for x in svip_var.diseaseinsvip_set.values(name=F('disease__name'))
+            ]
 
         # for sex-specific diseases, we should only use one sex
         sex_specific = {
@@ -265,7 +320,7 @@ def synthesize_samples(num_samples_per_variant=10):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
 
             candidate = Sample(**{
-                'disease': Disease.objects.get(svip_variant=svip_var, name=disease),
+                'disease_in_svip': DiseaseInSVIP.objects.get(svip_variant=svip_var, disease__name=disease),
                 'sample_id': str(sample_id),
                 'year_of_birth': str(random.randint(1935, 1988)),
                 'gender': random.choice(('Male', 'Female')) if disease not in sex_specific else sex_specific[disease],
@@ -315,8 +370,8 @@ class Command(BaseCommand):
             created_count, total = synthesize_samples(num_samples_per_variant=30)
             self.stdout.write(self.style.SUCCESS('Generated %d out of %d SVIP mock samples' % (created_count, total)))
         else:
-            created_count, total = create_svip_related("samples.tsv", Sample)
+            created_count, total = create_svip_samples("samples.tsv")
             self.stdout.write(self.style.SUCCESS('Loaded %d out of %d SVIP mock samples from \'samples.tsv\'' % (created_count, total)))
 
-        created_count, total = create_svip_related("curation.tsv", CurationEntry)
+        created_count, total = create_svip_curationentries("curation.tsv")
         self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock curation entries' % (created_count, total)))

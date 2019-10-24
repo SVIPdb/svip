@@ -1,0 +1,154 @@
+common_name	medicine_name	active_substance	target_area	product_number	atc_code
+5-aminolevulinic acid hydrochloride	Gliolan	5-aminolevulinic acid hydrochloride	Glioma	EMEA/H/C/000744	L01XD04
+abemaciclib	Verzenios	abemaciclib	Breast Neoplasms	EMEA/H/C/004302	L01XE50
+abiraterone	Zytiga	abiraterone acetate	Prostatic Neoplasms	EMEA/H/C/002321	L02BX03
+afatinib	Giotrif	afatinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/002280	L01XE13
+aflibercept	Zaltrap	aflibercept	Colorectal Neoplasms	EMEA/H/C/002532	L01XX44
+alectinib	Alecensa	alectinib hydrochloride	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004164	L01XE
+alitretinoin	Panretin	alitretinoin	Sarcoma, Kaposi	EMEA/H/C/000279	L01XX22
+apalutamide	Erleada	apalutamide	Prostatic Neoplasms	EMEA/H/C/004452
+arsenic trioxide	Trisenox	Arsenic trioxide	Leukemia, Promyelocytic, Acute	EMEA/H/C/000388	L01XX27
+asparaginase	Spectrila	asparaginase	Precursor Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/002661	L01XX02
+atezolizumab	Tecentriq	atezolizumab	Carcinoma, Transitional Cell, Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004143	L01XC
+avelumab	Bavencio	avelumab	Neuroendocrine Tumors	EMEA/H/C/004338	L01XC31
+axicabtagene ciloleucel	Yescarta	axicabtagene ciloleucel	Lymphoma, Follicular, Lymphoma, Large B-Cell, Diffuse	EMEA/H/C/004480	L01X
+axitinib	Inlyta	axitinib	Carcinoma, Renal Cell	EMEA/H/C/002406	L01XE17
+azacitidine	Vidaza	azacitidine	Myelodysplastic Syndromes	EMEA/H/C/000978	L01BC07
+bevacizumab	Avastin	bevacizumab	Carcinoma, Non-Small-Cell Lung, Breast Neoplasms, Ovarian Neoplasms, Colorectal Neoplasms, Carcinoma, Renal Cell	EMEA/H/C/000582	L01XC07
+bexarotene	Targretin	bexarotene	Lymphoma, T-Cell, Cutaneous	EMEA/H/C/000326	L01XX25
+bimatoprost	Lumigan	bimatoprost	Glaucoma, Open-Angle, Ocular Hypertension	EMEA/H/C/000391	S01EE03
+binimetinib	Mektovi	binimetinib	Melanoma	EMEA/H/C/004579	L01XE
+blinatumomab	Blincyto	blinatumomab	Precursor Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/003731	L01XC
+bortezomib	Bortezomib Hospira	bortezomib	Multiple Myeloma	EMEA/H/C/004207	L01XX32
+bosutinib	Bosulif	bosutinib (as monohydrate)	Leukemia, Myeloid	EMEA/H/C/002373	L01XE14
+brentuximab vedotin	Adcetris	Brentuximab vedotin	Lymphoma, Non-Hodgkin, Hodgkin Disease	EMEA/H/C/002455	L01XC12
+brigatinib	Alunbrig	brigatinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004248	L01XE43
+brinzolamide	Azopt	brinzolamide	Glaucoma, Open-Angle, Ocular Hypertension	EMEA/H/C/000267	S01EC04
+cabazitaxel	Jevtana	cabazitaxel	Prostatic Neoplasms	EMEA/H/C/002018	L01CD
+cabozantinib	Cometriq	cabozantinib	Thyroid Neoplasms	EMEA/H/C/002640	L01XE
+capecitabine	Xeloda	capecitabine	Colonic Neoplasms, Breast Neoplasms, Colorectal Neoplasms, Stomach Neoplasms	EMEA/H/C/000316	L01BC06
+carfilzomib	Kyprolis	carfilzomib	Multiple Myeloma	EMEA/H/C/003790	L01XX45
+cemiplimab	Libtayo	Cemiplimab	Carcinoma, Squamous Cell	EMEA/H/C/004844	L01XC
+ceritinib	Zykadia	ceritinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/003819	L01XE
+cetuximab	Erbitux	cetuximab	Head and Neck Neoplasms, Colorectal Neoplasms	EMEA/H/C/000558	L01XC06
+cinacalcet	Mimpara	cinacalcet hydrochloride	Hypercalcemia, Parathyroid Neoplasms, Hyperparathyroidism	EMEA/H/C/000570	H05BX01
+cladribine	Litak	Cladribine	Leukemia, Hairy Cell	EMEA/H/C/000504	L01BB04
+clofarabine	Evoltra	clofarabine	Precursor Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/000613	L01BB06
+cobimetinib	Cotellic	cobimetinib hemifumarate	Melanoma	EMEA/H/C/003960	L01XE38
+crizotinib	Xalkori	crizotinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/002489	L01XE16
+cytarabine	DepoCyte	cytarabine	Meningeal Neoplasms	EMEA/H/C/000317	L01BC01
+dabrafenib	Tafinlar	dabrafenib mesylate	Melanoma	EMEA/H/C/002604	L01XE23
+dacomitinib	Vizimpro	dacomitinib monohydrate	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004779	L01XE47
+daratumumab	Darzalex	Daratumumab	Multiple Myeloma	EMEA/H/C/004077	L01XC24
+darbepoetin alfa	Aranesp	darbepoetin alfa	Anemia, Cancer, Kidney Failure, Chronic	EMEA/H/C/000332	B03XA02
+dasatinib	Sprycel	dasatinib	Precursor Cell Lymphoblastic Leukemia-Lymphoma, Leukemia, Myelogenous, Chronic, BCR-ABL Positive	EMEA/H/C/000709	L01XE06
+daunorubicin / cytarabine	Vyxeos	daunorubicin hydrochloride / cytarabine	Leukemia, Myeloid, Acute	EMEA/H/C/004282	L01XY01
+decitabine	Dacogen	Decitabine	Leukemia, Myeloid	EMEA/H/C/002221	L01BC08
+degarelix	Firmagon	degarelix	Prostatic Neoplasms	EMEA/H/C/000986	L02BX02
+denosumab	Xgeva	denosumab	Fractures, Bone, Neoplasm Metastasis	EMEA/H/C/002173	M05BX04
+dexamethasone	Neofordex	dexamethasone	Multiple Myeloma	EMEA/H/C/004071	H02AB02
+dinutuximab beta	Qarziba (previously Dinutuximab beta EUSA and Dinutuximab beta Apeiron)	dinutuximab beta	Neuroblastoma	EMEA/H/C/003918	L01XC
+docetaxel	Docetaxel Teva	docetaxel	Head and Neck Neoplasms, Carcinoma, Non-Small-Cell Lung, Adenocarcinoma, Prostatic Neoplasms, Stomach Neoplasms, Breast Neoplasms	EMEA/H/C/001107	L01CD02
+doxorubicin	Caelyx	doxorubicin hydrochloride	Sarcoma, Kaposi, Multiple Myeloma, Ovarian Neoplasms, Breast Neoplasms	EMEA/H/C/000089	L01DB
+durvalumab	Imfinzi	durvalumab	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004771	L01XC28
+edotreotide	SomaKit TOC	edotreotide	Neuroendocrine Tumors, Radionuclide Imaging	EMEA/H/C/004140	V09IX
+elotuzumab	Empliciti	Elotuzumab	Multiple Myeloma	EMEA/H/C/003967	L01XC
+encorafenib	Braftovi	Encorafenib	Melanoma	EMEA/H/C/004580	L01XE
+enzalutamide	Xtandi	enzalutamide	Prostatic Neoplasms	EMEA/H/C/002639	L02BB04
+epoetin alfa	Epoetin Alfa Hexal	epoetin alfa	Anemia, Kidney Failure, Chronic, Cancer	EMEA/H/C/000726	B03XA01
+epoetin beta	NeoRecormon	epoetin beta	Kidney Failure, Chronic, Anemia, Cancer, Blood Transfusion, Autologous	EMEA/H/C/000116	B03XA01
+epoetin theta	Eporatio	epoetin theta	Kidney Failure, Chronic, Anemia, Cancer	EMEA/H/C/001033	B03XA01
+epoetin zeta	Retacrit	epoetin zeta	Anemia, Blood Transfusion, Autologous, Kidney Failure, Chronic, Cancer	EMEA/H/C/000872	B03XA01
+eribulin	Halaven	Eribulin	Breast Neoplasms, Liposarcoma	EMEA/H/C/002084	L01XX41
+erlotinib	Tarceva	erlotinib	Carcinoma, Non-Small-Cell Lung, Pancreatic Neoplasms	EMEA/H/C/000618	L01XE03
+everolimus	Afinitor	everolimus	Carcinoma, Renal Cell, Breast Neoplasms, Pancreatic Neoplasms	EMEA/H/C/001038	L01XE10
+filgrastim	Tevagrastim	filgrastim	Neutropenia, Hematopoietic Stem Cell Transplantation, Cancer	EMEA/H/C/000827	L03AA02
+fluciclovine (18F)	Axumin	Fluciclovine (18F)	Prostatic Neoplasms, Radionuclide Imaging	EMEA/H/C/004197	V09IX12
+fulvestrant	Faslodex	fulvestrant	Breast Neoplasms	EMEA/H/C/000540	L02BA03
+gefitinib	Gefitinib Mylan	gefitinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004826	L01XE02
+gemtuzumab ozogamicin	Mylotarg	gemtuzumab ozogamicin	Leukemia, Myeloid, Acute	EMEA/H/C/004204	L01XC05
+histamine dihydrochloride	Ceplene	Histamine dihydrochloride	Leukemia, Myeloid, Acute	EMEA/H/C/000796	L03AX14
+ibandronic acid	Bondronat	ibandronic acid	Hypercalcemia, Breast Neoplasms, Neoplasm Metastasis, Fractures, Bone	EMEA/H/C/000101	M05BA06
+ibritumomab tiuxetan	Zevalin	ibritumomab tiuxetan	Lymphoma, Follicular	EMEA/H/C/000547	V10XX02
+ibrutinib	Imbruvica	Ibrutinib	Lymphoma, Mantle-Cell, Leukemia, Lymphocytic, Chronic, B-Cell	EMEA/H/C/003791	L01XE27
+idelalisib	Zydelig	Idelalisib	Lymphoma, Non-Hodgkin, Leukemia, Lymphocytic, Chronic, B-Cell	EMEA/H/C/003843	L01XX47
+imatinib	Imatinib Teva	imatinib	Leukemia, Myelogenous, Chronic, BCR-ABL Positive, Precursor Cell Lymphoblastic Leukemia-Lymphoma, Myelodysplastic-Myeloproliferative Diseases, Hypereosinophilic Syndrome, Dermatofibrosarcoma	EMEA/H/C/002585	L01XE01
+inotuzumab ozogamicin	Besponsa	inotuzumab ozogamicin	Precursor Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/004119	L01XC
+interferon alfa-2b	IntronA	interferon alfa-2b	Carcinoid Tumor, Leukemia, Hairy Cell, Lymphoma, Follicular, Hepatitis B, Chronic, Hepatitis C, Chronic, Leukemia, Myelogenous, Chronic, BCR-ABL Positive, Melanoma, Multiple Myeloma	EMEA/H/C/000281	L03AB05
+ipilimumab	Yervoy	Ipilimumab	Melanoma	EMEA/H/C/002213	L01XC11
+irinotecan hydrochloride trihydrate	Onivyde	irinotecan hydrochloride trihydrate	Pancreatic Neoplasms	EMEA/H/C/004125	L01XX19
+ixazomib	Ninlaro	ixazomib citrate	Multiple Myeloma	EMEA/H/C/003844	L01XX50
+lapatinib	Tyverb	lapatinib	Breast Neoplasms	EMEA/H/C/000795	L01XE07
+lenalidomide	Revlimid	lenalidomide	Multiple Myeloma, Lymphoma, Mantle-Cell, Myelodysplastic Syndromes	EMEA/H/C/000717	L04AX04
+lenvatinib	Kisplyx	lenvatinib mesilate	Carcinoma, Renal Cell	EMEA/H/C/004224	L01XE29
+lorlatinib	Lorviqua	Lorlatinib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004646	L01
+lutetium (177Lu) oxodotreotide	Lutathera	lutetium (177Lu) oxodotreotide	Neuroendocrine Tumors	EMEA/H/C/004123	V10XX04
+mercaptopurine	Xaluprine (previously Mercaptopurine Nova Laboratories)	6-mercaptopurine monohydrate	Leukemia, Lymphoid	EMEA/H/C/002022	L01BB02
+midostaurin	Rydapt	Midostaurin	Leukemia, Myeloid, Acute, Mastocytosis	EMEA/H/C/004095	L01XE
+mifamurtide	Mepact	mifamurtide	Osteosarcoma	EMEA/H/C/000802	L03AX15
+necitumumab	Portrazza	necitumumab	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/003886	L01
+nelarabine	Atriance	nelarabine	Precursor T-Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/000752	L01BB07
+neratinib	Nerlynx	neratinib	Breast Neoplasms	EMEA/H/C/004030	L01X
+nilotinib	Tasigna	nilotinib	Leukemia, Myelogenous, Chronic, BCR-ABL Positive	EMEA/H/C/000798	L01XE08
+nintedanib	Vargatef	nintedanib	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/002569	L01XE3
+niraparib	Zejula	niraparib tosylate monohydrate	Fallopian Tube Neoplasms, Peritoneal Neoplasms, Ovarian Neoplasms	EMEA/H/C/004249	L01XX
+nivolumab	Opdivo	nivolumab	Melanoma, Hodgkin Disease, Carcinoma, Renal Cell, Carcinoma, Non-Small-Cell Lung	EMEA/H/C/003985	L01XC
+obinutuzumab	Gazyvaro	Obinutuzumab	Leukemia, Lymphocytic, Chronic, B-Cell	EMEA/H/C/002799	L01XC15
+olaparib	Lynparza	Olaparib	Ovarian Neoplasms	EMEA/H/C/003726	L01
+osimertinib	Tagrisso	osimertinib mesylate	Carcinoma, Non-Small-Cell Lung	EMEA/H/C/004124	L01XE
+paclitaxel	Abraxane	paclitaxel	Breast Neoplasms, Pancreatic Neoplasms, Carcinoma, Non-Small-Cell Lung	EMEA/H/C/000778	L01CD01
+padeliporfin	Tookad	padeliporfin di-potassium	Prostatic Neoplasms	EMEA/H/C/004182	L01XD07
+palbociclib	Ibrance	palbociclib	Breast Neoplasms	EMEA/H/C/003853	L01XE33
+panitumumab	Vectibix	panitumumab	Colorectal Neoplasms	EMEA/H/C/000741	L01XC08
+panobinostat	Farydak	panobinostat lactate anhydrous	Multiple Myeloma	EMEA/H/C/003725	L01XX42
+pazopanib	Votrient	pazopanib	Carcinoma, Renal Cell	EMEA/H/C/001141	L01XE11
+pegaspargase	Oncaspar	pegaspargase	Precursor Cell Lymphoblastic Leukemia-Lymphoma	EMEA/H/C/003789	L01XX24
+pegfilgrastim	Neulasta	pegfilgrastim	Neutropenia, Cancer	EMEA/H/C/000420	L03AA13
+pembrolizumab	Keytruda	Pembrolizumab	Melanoma, Hodgkin Disease, Carcinoma, Non-Small-Cell Lung	EMEA/H/C/003820	L01
+pemetrexed	Pemetrexed Krka	pemetrexed disodium	Carcinoma, Non-Small-Cell Lung, Mesothelioma	EMEA/H/C/003958	L01BA04
+pertuzumab	Perjeta	pertuzumab	Breast Neoplasms	EMEA/H/C/002547	L01XC13
+pixantrone dimaleate	Pixuvri	pixantrone dimaleate	Lymphoma, Non-Hodgkin	EMEA/H/C/002055	L01DB11
+plerixafor	Mozobil	Plerixafor	Multiple Myeloma, Hematopoietic Stem Cell Transplantation, Lymphoma	EMEA/H/C/001030	L03AX16
+pomalidomide	Imnovid (previously Pomalidomide Celgene)	Pomalidomide	Multiple Myeloma	EMEA/H/C/002682	L04AX06
+ponatinib	Iclusig	ponatinib	Leukemia, Myeloid, Leukemia, Lymphoid	EMEA/H/C/002695	L01XE24
+radium Ra223 dichloride	Xofigo	radium Ra223 dichloride	Prostatic Neoplasms	EMEA/H/C/002653	V10XX03
+ramucirumab	Cyramza	Ramucirumab	Stomach Neoplasms	EMEA/H/C/002829	L01XC
+regorafenib	Stivarga	regorafenib	Colorectal Neoplasms	EMEA/H/C/002573	L01XE21
+ribociclib	Kisqali	ribociclib succinate	Breast Neoplasms	EMEA/H/C/004213	L01XE
+rituximab	Rixathon	rituximab	Lymphoma, Non-Hodgkin, Arthritis, Rheumatoid, Leukemia, Lymphocytic, Chronic, B-Cell, Wegener Granulomatosis, Microscopic Polyangiitis	EMEA/H/C/003903	L01XC02
+ropeginterferon alfa-2b	Besremi	ropeginterferon alfa-2b	Polycythemia Vera	EMEA/H/C/004128	L03AB15
+rucaparib	Rubraca	rucaparib camsylate	Ovarian Neoplasms	EMEA/H/C/004272	L01XX
+ruxolitinib	Jakavi	ruxolitinib (as phosphate)	Myeloproliferative Disorders	EMEA/H/C/002464	L01XE18
+silodosin	Silodosin Recordati	silodosin	Prostatic Hyperplasia	EMEA/H/C/004964	G04CA04
+sonidegib	Odomzo	sonidegib diphosphate	Carcinoma, Basal Cell	EMEA/H/C/002839	L01XX
+sorafenib	Nexavar	sorafenib	Carcinoma, Hepatocellular, Carcinoma, Renal Cell	EMEA/H/C/000690	L01XE05
+sunitinib	Sutent	sunitinib	Gastrointestinal Stromal Tumors, Carcinoma, Renal Cell, Neuroendocrine Tumors	EMEA/H/C/000687	L01XE04
+talazoparib	Talzenna	talazoparib	Breast Neoplasms	EMEA/H/C/004674
+talimogene laherparepvec	Imlygic	talimogene laherparepvec	Melanoma	EMEA/H/C/002771	L01XX51
+tasonermin	Beromun	tasonermin	Sarcoma	EMEA/H/C/000206	L03AX11
+tegafur / gimeracil / oteracil	Teysuno	tegafur, gimeracil, oteracil	Stomach Neoplasms	EMEA/H/C/001242	L01BC53
+telotristat ethyl	Xermelo	telotristat etiprate	Carcinoid Tumor, Neuroendocrine Tumors	EMEA/H/C/003937	A16A
+temoporfin	Foscan	temoporfin	Head and Neck Neoplasms, Carcinoma, Squamous Cell	EMEA/H/C/000318	L01XD05
+temozolomide	Temozolomide Sun	temozolomide	Glioma, Glioblastoma	EMEA/H/C/002198	L01AX03
+temsirolimus	Torisel	Temsirolimus	Carcinoma, Renal Cell, Lymphoma, Mantle-Cell	EMEA/H/C/000799	L01XE09
+thalidomide	Thalidomide Celgene (previously Thalidomide Pharmion)	Thalidomide	Multiple Myeloma	EMEA/H/C/000823	L04AX02
+thyrotropin alfa	Thyrogen	thyrotropin alfa	Thyroid Neoplasms	EMEA/H/C/000220	H01AB01
+tisagenlecleucel	Kymriah	tisagenlecleucel	Precursor B-Cell Lymphoblastic Leukemia-Lymphoma, Lymphoma, Large B-Cell, Diffuse	EMEA/H/C/004090	L01
+tivozanib hydrochloride monohydrate	Fotivda	tivozanib	Carcinoma, Renal Cell	EMEA/H/C/004131	L01XE
+topotecan	Topotecan Hospira	topotecan	Uterine Cervical Neoplasms, Small Cell Lung Carcinoma	EMEA/H/C/001192	L01XX17
+toremifene	Fareston	toremifene	Breast Neoplasms	EMEA/H/C/000091	L02BA02
+trabectedin	Yondelis	trabectedin	Ovarian Neoplasms, Sarcoma	EMEA/H/C/000773	L01CX01
+trametinib	Mekinist	trametinib	Melanoma	EMEA/H/C/002643	L01XE25
+trastuzumab	Herzuma	trastuzumab	Stomach Neoplasms, Breast Neoplasms	EMEA/H/C/002575	L01XC03
+trastuzumab emtansine	Kadcyla	trastuzumab emtansine	Breast Neoplasms	EMEA/H/C/002389	L01XC14
+travoprost	Travatan	travoprost	Glaucoma, Open-Angle, Ocular Hypertension	EMEA/H/C/000390	S01EE04
+travoprost / timolol	DuoTrav	travoprost, timolol	Glaucoma, Open-Angle, Ocular Hypertension	EMEA/H/C/000665	S01ED51
+trifluridine / tipiracil	Lonsurf	trifluridine, tipiracil hydrochloride	Colorectal Neoplasms	EMEA/H/C/003897	L01BC
+ulipristal	Esmya	ulipristal acetate	Leiomyoma	EMEA/H/C/002041	G03XB02
+ulipristal acetate	Ulipristal Acetate Gedeon Richter	ulipristal acetate	Leiomyosarcoma	EMEA/H/C/005017	G03XB02
+vandetanib	Caprelsa	Vandetanib	Thyroid Neoplasms	EMEA/H/C/002315	L01XE
+vemurafenib	Zelboraf	vemurafenib	Melanoma	EMEA/H/C/002409	L01XE15
+venetoclax	Venclyxto	Venetoclax	Leukemia, Lymphocytic, Chronic, B-Cell	EMEA/H/C/004106	L01XX52
+vinflunine	Javlor	vinflunine	Carcinoma, Transitional Cell, Urologic Neoplasms	EMEA/H/C/000983	L01CA05
+vismodegib	Erivedge	vismodegib	Carcinoma, Basal Cell	EMEA/H/C/002602	L01XX43
+zoledronic acid	Zoledronic Acid Accord	zoledronic acid monohydrate	Hypercalcemia, Fractures, Bone, Cancer	EMEA/H/C/002667	M05BA08

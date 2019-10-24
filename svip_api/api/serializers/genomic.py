@@ -12,7 +12,7 @@ from api.serializers.svip import VariantInSVIPSerializer
 
 
 # -----------------------------------------------------------------------------
-# --- app management serializers
+# --- site management serializers
 # -----------------------------------------------------------------------------
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

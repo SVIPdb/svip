@@ -11,7 +11,10 @@ from rest_framework_nested.relations import NestedHyperlinkedRelatedField, Neste
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry
-from api.models.svip import Disease
+from api.models.svip import Disease, DiseaseInSVIP
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class SampleSerializer(serializers.ModelSerializer):
@@ -19,7 +22,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_disease_name(obj):
-        return obj.disease.name
+        return obj.disease_in_svip.disease.name
 
     class Meta:
         model = Sample
@@ -36,7 +39,10 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
     diseases = serializers.SerializerMethodField()
 
     def get_diseases(self, obj):
-        return [DiseaseSerializer(x, context={'request': self.context['request']}).data for x in obj.disease_set.all()]
+        return [
+            DiseaseInSVIPSerializer(x, context={'request': self.context['request']}).data
+            for x in obj.diseaseinsvip_set.all()
+        ]
 
     class Meta:
         model = VariantInSVIP
@@ -49,7 +55,7 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class DiseaseSerializer(NestedHyperlinkedModelSerializer):
+class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     parent_lookup_kwargs = {
         'variant_in_svip_pk': 'svip_variant__pk',
         'pk': 'pk',
@@ -122,7 +128,7 @@ class DiseaseSerializer(NestedHyperlinkedModelSerializer):
         ages = [curYear - int(x[0]) for x in obj.sample_set.values_list('year_of_birth')]
         return dict(
             (bracket, sum(1 for x in ages if bracket_pred(x)))
-                for bracket, bracket_pred in DiseaseSerializer.age_brackets.items()
+                for bracket, bracket_pred in DiseaseInSVIPSerializer.age_brackets.items()
         )
 
     def get_samples(self, obj):
@@ -136,17 +142,14 @@ class DiseaseSerializer(NestedHyperlinkedModelSerializer):
         ]
 
     def get_curation_entries(self, obj):
-        # user = self.context['request'].user
-        # if not user.has_perm('api.view_curationentry'):
-        #     return []
-
+        # FIXME: correctly determine permissions for viewing curation entries
         return [
             CurationEntrySerializer(x).data
-            for x in obj.curationentry_set.all()
+            for x in obj.curation_entries().all()
         ]
 
     class Meta:
-        model = Disease
+        model = DiseaseInSVIP
         fields = (
             'id',
             'samples_url',

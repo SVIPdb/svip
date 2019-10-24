@@ -13,8 +13,13 @@ from .genomic import (
 
 from .svip import (
     VariantInSVIPViewSet,
-    DiseaseViewSet,
-    SampleViewSet
+    DiseaseInSVIPViewSet,
+    SampleViewSet,
+    CurationEntryViewSet
+)
+
+from .reference import (
+    DrugViewSet, DiseaseViewSet
 )
 
 from .query import (
