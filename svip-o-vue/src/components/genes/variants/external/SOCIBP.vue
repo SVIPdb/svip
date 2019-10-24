@@ -22,10 +22,6 @@
 <script>
 import {HTTP} from "@/router/http";
 
-function parameterize(params) {
-	return Object.entries(params).map(([k,v]) => `${k}=${v}`).join("&");
-}
-
 export default {
 	name: "SOCIBP",
 	data() {
@@ -47,7 +43,8 @@ export default {
 		};
 	},
 	mounted() {
-		HTTP.get(`/socibp/stats/${this.protein}/${this.change}`).then((response) => {
+		// noinspection JSCheckFunctionSignatures
+    HTTP.get(`/socibp/stats/${this.protein}/${this.change}`, { handled: true }).then((response) => {
 			this.items = response.data.mutations.map(x => ({
 				studyName: x.study.shortName,
 				study: x.study,
@@ -55,7 +52,11 @@ export default {
 				num_samples: x.num_samples,
 				authed_link: x.authed_link
 			}))
-		})
+		}).catch((err) => {
+		    // just don't display the thing if we encounter an error
+        console.warn("Encountered error when querying SOCIBP, hiding widget. Error: ", err);
+        this.items = [];
+    })
 	},
 	props: {
 		protein: { type: String, required: true },

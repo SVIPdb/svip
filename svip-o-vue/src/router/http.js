@@ -49,6 +49,12 @@ HTTP.interceptors.request.use(request => {
 });
 
 HTTP.interceptors.response.use(null, (err) => {
+  // HTTP users can pass handled: true in the call to get/post to disable these messages
+  // FIXME: see if we can make that part not break spec
+  if (err.config.handled) {
+    return;
+  }
+
   // displays a toast when something goes wrong, but propogates the error
   // (note that HTTProot doesn't need a handler, since it does its own error reporting)
   vueInstance.$snotify.error(err.toString().slice("Error: ".length), `Network Error`, { timeout: 3000 });
