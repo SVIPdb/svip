@@ -34,17 +34,18 @@ def populate_diseases(apps, schema_editor):
 
     added_instances = Disease.objects.filter(id__in=added_set)
 
-    # hook up DiseaseInSVIP to the correct new diseases
+    # hook up DiseaseInSVIP and CurationEntry to the correct new diseases
     DiseaseInSVIP = apps.get_model('api', 'DiseaseInSVIP')
-    for entry in DiseaseInSVIP.objects.all():
-        entry.disease = added_instances.filter(name__iexact=entry.disease.name).first()
-        entry.save()
-
-    # same for CurationEntry
     CurationEntry = apps.get_model('api', 'CurationEntry')
-    for entry in CurationEntry.objects.all():
-        entry.disease = added_instances.filter(name__iexact=entry.disease.name).first()
-        entry.save()
+
+    for model in (DiseaseInSVIP.objects.all(), CurationEntry.objects.all()):
+        for entry in model:
+            try:
+                entry.disease = added_instances.filter(name__iexact=entry.disease.name).first()
+                entry.save()
+            except Exception as ex:
+                print("Failed when trying to find %s" % entry.disease.name)
+                raise ex
 
     # clear out all the non-added entries
     Disease.objects.exclude(id__in=added_set).delete()

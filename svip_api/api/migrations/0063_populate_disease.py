@@ -2,41 +2,22 @@
 import os
 from csv import DictReader
 
-from django.db import migrations
-
-import api
-
-
-APP_DIR = os.path.dirname(api.__file__)
-# DRUGS_TSV = os.path.join(APP_DIR, "fixtures", "drugs.tsv")
+from django.db import migrations, transaction
 
 
 def create_diseases(apps, schema_editor):
-    # with open(DRUGS_TSV) as fp:
-    #     diseases = DictReader(fp, dialect='excel-tab')
-    #
-    #     Disease = apps.get_model('api', 'Disease')
-    #     Disease.objects.all().delete()
-    #
-    #     for s in diseases:
-    #         candidate = Disease(
-    #             id=s['id'],
-    #             name=s['name'],
-    #             icdo_code=s['icdo_code']
-    #         )
-    #         candidate.save()
-
     # for now, we're going to fake the disease table by populating it from our mock SVIP variants
     Disease = apps.get_model('api', 'Disease')
     DiseaseInSVIP = apps.get_model('api', 'DiseaseInSVIP')
 
-    for disease in DiseaseInSVIP.objects.values_list('name').distinct():
-        candidate = Disease(name=disease, icdo_code=None)
-        candidate.save()
-
     # we also need DiseaseInSVIP to point to these newly-created diseases
     for entry in DiseaseInSVIP.objects.all():
-        entry.disease = Disease.objects.get(name=entry.name)
+        (item, created) = Disease.objects.get_or_create(name=entry.name, defaults={
+            'name': entry.name,
+            'icdo_code': None
+        })
+        entry.disease = item
+        entry.save()
 
 
 def drop_diseases(apps, schema_editor):

@@ -9,7 +9,7 @@ coreschema==0.0.4
 decorator==4.3.2
 Django==2.2.4
 django-cors-headers==2.4.0
--e git+https://github.com/jkapelner/django-db-cascade.git@e267ef4771e7bee1626efedcd0ae587a7352c8e1#egg=django_db_cascade_2
+django-db-cascade-2==0.2.2
 django-filter==2.0.0
 djangorestframework==3.9.0
 djangorestframework-simplejwt==3.2.3
