@@ -16,13 +16,13 @@
 import {titleCase} from "@/utils";
 
 export default {
-	name: "CosmicSignificanceCol",
-	props: {
-		row: { type: Object, required: true }
-	},
-	methods: {
-		titleCase
-	}
+    name: "CosmicSignificanceCol",
+    props: {
+        row: {type: Object, required: true}
+    },
+    methods: {
+        titleCase
+    }
 }
 </script>
 

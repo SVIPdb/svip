@@ -6,12 +6,13 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import "@/css/bootstrap.css";
 import "@/css/main.css";
 import "vue-simple-context-menu/dist/vue-simple-context-menu.css";
-import Snotify, { SnotifyPosition } from "vue-snotify";
+import Snotify, {SnotifyPosition} from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
 
 // imports all the bootstrap parts
 import BootstrapVue from 'bootstrap-vue'
+
 Vue.use(BootstrapVue);
 
 // we import only the icons we actually use in the project to dramatically reduce bundle size
@@ -54,7 +55,7 @@ import store from "./store";
 
 Vue.config.productionTip = false;
 
-Vue.use(Snotify, { toast: { position: SnotifyPosition.centerTop, showProgressBar: false } });
+Vue.use(Snotify, {toast: {position: SnotifyPosition.centerTop, showProgressBar: false}});
 Vue.use(VueClipboard);
 
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
@@ -67,9 +68,9 @@ Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 Vue.component("expander", Expander);
 
 export default new Vue({
-	el: "#app",
-	router,
-	store,
-	components: { App },
-	template: "<App/>"
+    el: "#app",
+    router,
+    store,
+    components: {App},
+    template: "<App/>"
 });

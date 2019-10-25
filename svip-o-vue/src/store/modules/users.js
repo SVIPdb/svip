@@ -16,190 +16,197 @@ export const USING_JWT_COOKIE = false;
 
 // initial state
 const state = {
-	currentJWT: JWT_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt") : null,
-	currentRefreshJWT: JWT_REFRESH_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt-refresh") : null,
-	dataViaCookie: null
+    currentJWT: JWT_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt") : null,
+    currentRefreshJWT: JWT_REFRESH_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt-refresh") : null,
+    dataViaCookie: null
 };
 
 // enums
 export const TokenErrors = {
-	NONE_FOUND: 0,
-	EXPIRED: 1,
-	NO_REFRESH_TOKEN: 2,
-	REFRESH_EXPIRED: 3
+    NONE_FOUND: 0,
+    EXPIRED: 1,
+    NO_REFRESH_TOKEN: 2,
+    REFRESH_EXPIRED: 3
 };
 
 // getters
 const getters = {
-	jwt: (state) => state.currentJWT,
-	jwtRefresh: (state) => state.currentRefreshJWT,
+    jwt: (state) => state.currentJWT,
+    jwtRefresh: (state) => state.currentRefreshJWT,
 
-	jwtData: (state, getters) => {
-		return USING_JWT_COOKIE ? state.dataViaCookie : (
-			state.currentJWT ? JSON.parse(atob(getters.jwt.split('.')[1])) : null
-		);
-	},
-	jwtExp: (state, getters) => getters.jwtData ? getters.jwtData.exp : null,
-	jwtSubject: (state, getters) => getters.jwtData ? getters.jwtData.sub : null,
-	jwtIssuer: (state, getters) => getters.jwtData ? getters.jwtData.iss : null,
+    jwtData: (state, getters) => {
+        return USING_JWT_COOKIE ? state.dataViaCookie : (
+            state.currentJWT ? JSON.parse(atob(getters.jwt.split('.')[1])) : null
+        );
+    },
+    jwtExp: (state, getters) => getters.jwtData ? getters.jwtData.exp : null,
+    jwtSubject: (state, getters) => getters.jwtData ? getters.jwtData.sub : null,
+    jwtIssuer: (state, getters) => getters.jwtData ? getters.jwtData.iss : null,
 
-	username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
-	userID: (state, getters) => getters.jwtData ? getters.jwtData.user_id : null,
-	groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
+    username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
+    userID: (state, getters) => getters.jwtData ? getters.jwtData.user_id : null,
+    groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
 
-	currentUser: (state, getters) => {
-		if (!getters.jwtData) {
-			return null;
-		}
+    currentUser: (state, getters) => {
+        if (!getters.jwtData) {
+            return null;
+        }
 
-		return {
-			username: getters.username,
-			user_id: getters.userID,
-			groups: getters.groups
-		};
-	}
+        return {
+            username: getters.username,
+            user_id: getters.userID,
+            groups: getters.groups
+        };
+    }
 };
 
 // actions
 const actions = {
-	login({commit}, { username, password }) {
+    login({commit}, {username, password}) {
 
-		return HTTProot.post(`token/`, { username, password }).then(response => {
-			const { access, refresh } = response.data;
+        return HTTProot.post(`token/`, {username, password}).then(response => {
+            const {access, refresh} = response.data;
 
-			// TODO: extract and decode the JWT from the response, populate structure below
-			commit("LOGIN", { access, refresh });
+            // TODO: extract and decode the JWT from the response, populate structure below
+            commit("LOGIN", {access, refresh});
 
-			return true;
-		});
-	},
+            return true;
+        });
+    },
 
-	async checkCredentials({commit, getters, dispatch}) {
-		if (USING_JWT_COOKIE) {
-			return await HTTProot.get('token/info/').then((response) => {
-				console.log("JWT got: ", response);
-				commit("LOGIN_VIA_COOKIE", response.data);
-				return {valid: true};
-			}).catch((err) => {
-				// FIXME: depending on the error we should return different statuses, but this is fine for now
-				console.error("Cookie-based auth failed: ", err);
-				// we should also clear any stale auth data, since we're not authed
-				commit("LOGOUT");
-				return {valid: false, reason: TokenErrors.NONE_FOUND};
-			});
-		}
-		else {
-			// we need a jwt if it's being stored
-			const jwt = getters.jwt;
-			const jwtRefresh = getters.jwtRefresh;
+    async checkCredentials({commit, getters, dispatch}) {
+        if (USING_JWT_COOKIE) {
+            return await HTTProot.get('token/info/').then((response) => {
+                console.log("JWT got: ", response);
+                commit("LOGIN_VIA_COOKIE", response.data);
+                return {valid: true};
+            }).catch((err) => {
+                // FIXME: depending on the error we should return different statuses, but this is fine for now
+                console.error("Cookie-based auth failed: ", err);
+                // we should also clear any stale auth data, since we're not authed
+                commit("LOGOUT");
+                return {valid: false, reason: TokenErrors.NONE_FOUND};
+            });
+        } else {
+            // we need a jwt if it's being stored
+            const jwt = getters.jwt;
+            const jwtRefresh = getters.jwtRefresh;
 
-			if (!jwt) {
-				return {valid: false, reason: TokenErrors.NONE_FOUND};
-			}
+            if (!jwt) {
+                return {valid: false, reason: TokenErrors.NONE_FOUND};
+            }
 
-			// now verify that it's not expired
-			// console.log("expiration: ", getters.jwtExp);
-			if (getters.jwtExp && Math.floor(Date.now() / 1000) >= getters.jwtExp) {
-				// if it's expired, we should first attempt to refresh it with the current token
-				return dispatch("refresh")
-					.then((response) => {
-						return response;
-					}).catch(() => {
-						// oops, we failed to do that, too
-						return {valid: false, reason: TokenErrors.EXPIRED};
-					});
-			}
+            // now verify that it's not expired
+            // console.log("expiration: ", getters.jwtExp);
+            if (getters.jwtExp && Math.floor(Date.now() / 1000) >= getters.jwtExp) {
+                // if it's expired, we should first attempt to refresh it with the current token
+                return dispatch("refresh")
+                    .then((response) => {
+                        return response;
+                    }).catch(() => {
+                        // oops, we failed to do that, too
+                        return {valid: false, reason: TokenErrors.EXPIRED};
+                    });
+            }
 
-			// if we're here, it means everything is good, so process the login and annotate our requests with the token
-			commit("LOGIN", { access: jwt, refresh: jwtRefresh });
-			return {valid: true};
-		}
-	},
+            // if we're here, it means everything is good, so process the login and annotate our requests with the token
+            commit("LOGIN", {access: jwt, refresh: jwtRefresh});
+            return {valid: true};
+        }
+    },
 
-	checkPermissions({commit}, { permissions, condition='all' }) {
-		return new Promise((resolve) => {
-			// FIXME: think of a meaningful way to verify this in the client
-			resolve(true);
-		});
-	},
+    checkPermissions({commit}, {permissions, condition = 'all'}) {
+        return new Promise((resolve) => {
+            // FIXME: think of a meaningful way to verify this in the client
+            resolve(true);
+        });
+    },
 
-	refresh({commit, getters}) {
-		const jwtRefresh = getters.jwtRefresh;
+    refresh({commit, getters}) {
+        const jwtRefresh = getters.jwtRefresh;
 
-		// ...but if we can't even do that, we can't proceed
-		if (!jwtRefresh) {
-			return {valid: false, reason: TokenErrors.NO_REFRESH_TOKEN};
-		}
+        // ...but if we can't even do that, we can't proceed
+        if (!jwtRefresh) {
+            return {valid: false, reason: TokenErrors.NO_REFRESH_TOKEN};
+        }
 
-		console.log("Attempting refresh with token: ", jwtRefresh);
+        console.log("Attempting refresh with token: ", jwtRefresh);
 
-		return HTTProot.post(`token/refresh/`, { refresh: jwtRefresh }).then(response => {
+        return HTTProot.post(`token/refresh/`, {refresh: jwtRefresh}).then(response => {
 
-			// vm.$snotify.info(`Refreshed access token`);
-			console.log("Refreshed access token");
+            // vm.$snotify.info(`Refreshed access token`);
+            console.log("Refreshed access token");
 
-			// replace the existing token with the new one if we succeed
-			const { access } = response.data;
+            // replace the existing token with the new one if we succeed
+            const {access} = response.data;
 
-			// TODO: extract and decode the JWT from the response, populate structure below
-			commit("LOGIN", { access });
+            // TODO: extract and decode the JWT from the response, populate structure below
+            commit("LOGIN", {access});
 
-			return {valid: true};
-		}).catch((err) => {
-			return {valid: false, reason: TokenErrors.REFRESH_EXPIRED}
-		});
-	},
+            return {valid: true};
+        }).catch((err) => {
+            return {valid: false, reason: TokenErrors.REFRESH_EXPIRED}
+        });
+    },
 
-	async logout({commit}) {
-		console.log("Beginning log out...");
+    async logout({commit}) {
+        console.log("Beginning log out...");
 
-		if (USING_JWT_COOKIE) {
-			// we need to tell the server that we're going away so it can clear our cookie for us
-			await HTTProot.post('token/invalidate/');
-		}
+        if (USING_JWT_COOKIE) {
+            // we need to tell the server that we're going away so it can clear our cookie for us
+            await HTTProot.post('token/invalidate/');
+        }
 
-		console.log("...done");
+        console.log("...done");
 
-		delete HTTP.defaults.headers.common["Authorization"];
-		commit("LOGOUT");
-		return {status: 'done'};
-	}
+        delete HTTP.defaults.headers.common["Authorization"];
+        commit("LOGOUT");
+        return {status: 'done'};
+    }
 };
 
 // mutations
 const mutations = {
-	LOGIN(state, payload) {
-		const { access, refresh } = payload;
-		state.currentJWT = access;
-		if (JWT_IN_LOCALSTORAGE) { localStorage.setItem("user-jwt", access); }
+    LOGIN(state, payload) {
+        const {access, refresh} = payload;
+        state.currentJWT = access;
+        if (JWT_IN_LOCALSTORAGE) {
+            localStorage.setItem("user-jwt", access);
+        }
 
-		if (refresh) {
-			state.currentRefreshJWT = refresh;
+        if (refresh) {
+            state.currentRefreshJWT = refresh;
 
-			if (JWT_REFRESH_IN_LOCALSTORAGE) { localStorage.setItem("user-jwt-refresh", refresh); }
-		}
-	},
+            if (JWT_REFRESH_IN_LOCALSTORAGE) {
+                localStorage.setItem("user-jwt-refresh", refresh);
+            }
+        }
+    },
 
-	LOGIN_VIA_COOKIE(state, payload) {
-		state.dataViaCookie = payload;
-	},
+    LOGIN_VIA_COOKIE(state, payload) {
+        state.dataViaCookie = payload;
+    },
 
-	LOGOUT(state) {
-		if (USING_JWT_COOKIE) {
-			state.dataViaCookie = null;
-		}
+    LOGOUT(state) {
+        if (USING_JWT_COOKIE) {
+            state.dataViaCookie = null;
+        }
 
-		state.currentJWT = null;
-		if (JWT_IN_LOCALSTORAGE) { localStorage.removeItem("user-jwt"); }
+        state.currentJWT = null;
+        if (JWT_IN_LOCALSTORAGE) {
+            localStorage.removeItem("user-jwt");
+        }
 
-		state.currentRefreshJWT = null;
-		if (JWT_REFRESH_IN_LOCALSTORAGE) { localStorage.removeItem("user-jwt-refresh"); }
-	}
+        state.currentRefreshJWT = null;
+        if (JWT_REFRESH_IN_LOCALSTORAGE) {
+            localStorage.removeItem("user-jwt-refresh");
+        }
+    }
 };
 
 export default {
-	state,
-	getters,
-	actions,
-	mutations
+    state,
+    getters,
+    actions,
+    mutations
 };

@@ -1,13 +1,13 @@
 <template functional>
-	<span class="unavailable">unavailable</span>
+    <span class="unavailable">unavailable</span>
 </template>
 
 <script>
 export default {
-	name: "UnavailableCol",
-	props: {
-		row: { type: Object, required: true }
-	}
+    name: "UnavailableCol",
+    props: {
+        row: {type: Object, required: true}
+    }
 }
 </script>
 

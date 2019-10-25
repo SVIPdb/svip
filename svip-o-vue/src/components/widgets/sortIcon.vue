@@ -8,7 +8,7 @@
 
 <script>
 export default {
-	name: "SortIcon",
-	props: ["sorter", "ccas"]
+    name: "SortIcon",
+    props: ["sorter", "ccas"]
 };
 </script>

@@ -1,88 +1,90 @@
 <template>
     <transition
-			name="expand"
-			@enter="enter"
-			@after-enter="afterEnter"
-			@leave="leave"
-		>
-			<slot />
-		</transition>
+        name="expand"
+        @enter="enter"
+        @after-enter="afterEnter"
+        @leave="leave"
+    >
+        <slot/>
+    </transition>
 </template>
 
 <script>
 export default {
-	name: "TransitionExpand",
-	methods: {
-		enter(element) {
-			// noinspection UnnecessaryLocalVariableJS
-			const width = getComputedStyle(element).width;
+    name: "TransitionExpand",
+    methods: {
+        enter(element) {
+            // noinspection UnnecessaryLocalVariableJS
+            const width = getComputedStyle(element).width;
 
-			element.style.width = width;
-			element.style.position = 'absolute';
-			element.style.visibility = 'hidden';
-			element.style.height = 'auto';
+            element.style.width = width;
+            element.style.position = 'absolute';
+            element.style.visibility = 'hidden';
+            element.style.height = 'auto';
 
-			const height = getComputedStyle(element).height;
+            const height = getComputedStyle(element).height;
 
-			element.style.width = null;
-			element.style.position = null;
-			element.style.visibility = null;
-			element.style.height = 0;
+            element.style.width = null;
+            element.style.position = null;
+            element.style.visibility = null;
+            element.style.height = 0;
 
-			// Force repaint to make sure the
-			// animation is triggered correctly.
-			getComputedStyle(element).height;
+            // Force repaint to make sure the
+            // animation is triggered correctly.
+            getComputedStyle(element).height;
 
-			// Trigger the animation.
-			// We use `setTimeout` because we need
-			// to make sure the browser has finished
-			// painting after setting the `height`
-			// to `0` in the line above.
-			setTimeout(() => {
-				element.style.height = height;
-			});
-		},
+            // Trigger the animation.
+            // We use `setTimeout` because we need
+            // to make sure the browser has finished
+            // painting after setting the `height`
+            // to `0` in the line above.
+            setTimeout(() => {
+                element.style.height = height;
+            });
+        },
 
-		afterEnter(element) {
-			element.style.height = 'auto';
-		},
+        afterEnter(element) {
+            element.style.height = 'auto';
+        },
 
-		leave(element) {
-			// noinspection UnnecessaryLocalVariableJS
-			const height = getComputedStyle(element).height;
+        leave(element) {
+            // noinspection UnnecessaryLocalVariableJS
+            const height = getComputedStyle(element).height;
 
-			element.style.height = height;
+            element.style.height = height;
 
-			// Force repaint to make sure the
-			// animation is triggered correctly.
-			getComputedStyle(element).height;
+            // Force repaint to make sure the
+            // animation is triggered correctly.
+            getComputedStyle(element).height;
 
-			setTimeout(() => {
-				element.style.height = 0;
-			});
-		},
-	}
+            setTimeout(() => {
+                element.style.height = 0;
+            });
+        },
+    }
 }
 </script>
 
 <style scoped>
 .expand-enter-active,
 .expand-leave-active {
-	overflow: hidden;
+    overflow: hidden;
 }
+
 .expand-enter-active { transition: height 500ms ease-in-out; }
+
 .expand-leave-active { transition: height 300ms ease-in-out; }
 
 .expand-enter,
 .expand-leave-to {
-	height: 0;
+    height: 0;
 }
 
 /* enable hw-accel */
 * {
-	will-change: height;
-	transform: translateZ(0);
-	backface-visibility: hidden;
-	perspective: 1000px;
+    will-change: height;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 </style>

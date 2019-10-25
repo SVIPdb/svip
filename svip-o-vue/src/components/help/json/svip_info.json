@@ -1,58 +1,66 @@
 [
-	{
-		"Field": "Disease",
-		"Short description": "Disease name according to the ICD-O ontology",
-		"Example": "?",
-		"Complete description": "Disease name according to the International Classification of Disease for Oncology (ICD-O3)",
-		"Reference": ["https://codes.iarc.fr/"]
-	},
-	{
-		"Field": "# of samples",
-		"Short description": "Number of samples in SVIP for the given disease.",
-		"Example": "11/30",
-		"Complete description": "Number of samples in SVIP for the given disease, expressed as (number of samples with this variant in this disease / total number of samples with this variant). This proportion describes the frequency of a variant within a specific disease on the basis of the SVIP data.",
-		"Reference": null
-	},
-	{
-		"Field": "Age distribution",
-		"Short description": "Age distribution of carriers of the variant in a given disease in SVIP (absolute number and percentage)",
-		"Example": { "img": "age_dist.png" },
-		"Complete description": "Age distribution (absolute number and percentage) of carriers of the variant in SVIP, by category of age (under 40, 40 to 60,  60 to 80,  and above 80 years old) for a given disease.",
-		"Reference": null
-	},
-	{
-		"Field": "Gender balance",
-		"Short description": "Male and female carriers of the variant in a given disease in SVIP (absolute number and percentage)",
-		"Example": { "img": "gender_dist.png" },
-		"Complete description": "Gender balance of the carriers of the variant in a given disease in the SVIP samples data.",
-		"Reference": null
-	},
-	{
-		"Field": "Pathogenicity",
-		"Short description": "Potential ability of the variant to cause or to worsen a certain disease.",
-		"Example": "Pathogenic",
-		"Complete description": "Potential ability of the variant to cause or to worsen a certain disease. Five levels are available:\n- Pathogenic,\n- Likely pathogenic,\n- Variant of Unknown Significance (VUS),\n- Likely benign,\n- Benign.\n",
-		"Reference": null
-	},
-	{
-		"Field": "Clinical significance",
-		"Short description": "Potential clinical actionability of the variant in a given disease.",
-		"Example": "Predictive",
-		"Complete description": "Potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines.\n- Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy.\n- Prognostic: variant that predicts the course of a disease.\n- Diagnostic: variant that supports the diagnosis of a disease.",
-		"Reference": ["AMP/ASCO/CAPS guidelines (with our own definitions)"]
-	},
-	{
-		"Field": "Status",
-		"Short description": "Status of the variant in the SVIP database.",
-		"Example": "Curated",
-		"Complete description": "Status of the variant in the SVIP database. Five statuses are available.\n- Loaded: variant present in SVIP but not annotated.\n- Under Curation: variant currently under manual curation.\n- Curated: variant with manually curated evidences of pathogenicity and/or clinical significance.\n- Under Review: curated variant submitted to the expert panel for review.\n- Reviewed: curated variant that went through an expert panel decision.",
-		"Reference": null
-	},
-	{
-		"Field": "SVIP confidence",
-		"Short description": "Not definitive: Level of confidence of the variant interpretation after curation and review process.",
-		"Example": "",
-		"Complete description": "Level of confidence of the variant interpretation after curation and review process.",
-		"Reference": null
-	}
+    {
+        "Field": "Disease",
+        "Short description": "Disease name according to the ICD-O ontology",
+        "Example": "?",
+        "Complete description": "Disease name according to the International Classification of Disease for Oncology (ICD-O3)",
+        "Reference": [
+            "https://codes.iarc.fr/"
+        ]
+    },
+    {
+        "Field": "# of samples",
+        "Short description": "Number of samples in SVIP for the given disease.",
+        "Example": "11/30",
+        "Complete description": "Number of samples in SVIP for the given disease, expressed as (number of samples with this variant in this disease / total number of samples with this variant). This proportion describes the frequency of a variant within a specific disease on the basis of the SVIP data.",
+        "Reference": null
+    },
+    {
+        "Field": "Age distribution",
+        "Short description": "Age distribution of carriers of the variant in a given disease in SVIP (absolute number and percentage)",
+        "Example": {
+            "img": "age_dist.png"
+        },
+        "Complete description": "Age distribution (absolute number and percentage) of carriers of the variant in SVIP, by category of age (under 40, 40 to 60,  60 to 80,  and above 80 years old) for a given disease.",
+        "Reference": null
+    },
+    {
+        "Field": "Gender balance",
+        "Short description": "Male and female carriers of the variant in a given disease in SVIP (absolute number and percentage)",
+        "Example": {
+            "img": "gender_dist.png"
+        },
+        "Complete description": "Gender balance of the carriers of the variant in a given disease in the SVIP samples data.",
+        "Reference": null
+    },
+    {
+        "Field": "Pathogenicity",
+        "Short description": "Potential ability of the variant to cause or to worsen a certain disease.",
+        "Example": "Pathogenic",
+        "Complete description": "Potential ability of the variant to cause or to worsen a certain disease. Five levels are available:\n- Pathogenic,\n- Likely pathogenic,\n- Variant of Unknown Significance (VUS),\n- Likely benign,\n- Benign.\n",
+        "Reference": null
+    },
+    {
+        "Field": "Clinical significance",
+        "Short description": "Potential clinical actionability of the variant in a given disease.",
+        "Example": "Predictive",
+        "Complete description": "Potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines.\n- Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy.\n- Prognostic: variant that predicts the course of a disease.\n- Diagnostic: variant that supports the diagnosis of a disease.",
+        "Reference": [
+            "AMP/ASCO/CAPS guidelines (with our own definitions)"
+        ]
+    },
+    {
+        "Field": "Status",
+        "Short description": "Status of the variant in the SVIP database.",
+        "Example": "Curated",
+        "Complete description": "Status of the variant in the SVIP database. Five statuses are available.\n- Loaded: variant present in SVIP but not annotated.\n- Under Curation: variant currently under manual curation.\n- Curated: variant with manually curated evidences of pathogenicity and/or clinical significance.\n- Under Review: curated variant submitted to the expert panel for review.\n- Reviewed: curated variant that went through an expert panel decision.",
+        "Reference": null
+    },
+    {
+        "Field": "SVIP confidence",
+        "Short description": "Not definitive: Level of confidence of the variant interpretation after curation and review process.",
+        "Example": "",
+        "Complete description": "Level of confidence of the variant interpretation after curation and review process.",
+        "Reference": null
+    }
 ]

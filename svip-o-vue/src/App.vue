@@ -1,13 +1,13 @@
 <template>
-	<div id="app">
-		<vue-snotify></vue-snotify>
-		<nav-header></nav-header>
+    <div id="app">
+        <vue-snotify></vue-snotify>
+        <nav-header></nav-header>
 
-		<!-- content -->
-		<router-view style="margin: 90px auto 200px auto"/>
+        <!-- content -->
+        <router-view style="margin: 90px auto 200px auto"/>
 
-		<nav-footer></nav-footer>
-	</div>
+        <nav-footer></nav-footer>
+    </div>
 </template>
 
 <script>
@@ -16,53 +16,53 @@ import navFooter from "@/components/structure/navfooter";
 import '@/components/widgets/StyledLabels'; // adds components 'optional', 'coordinates'
 
 export default {
-	components: {navHeader, navFooter},
-	name: "App",
-	computed: {
-		year() {
-			return new Date().getFullYear();
-		}
-	}
+    components: {navHeader, navFooter},
+    name: "App",
+    computed: {
+        year() {
+            return new Date().getFullYear();
+        }
+    }
 };
 </script>
 
 <style>
 .pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .ban {
-	cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 .uppercase {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .has-error {
-	color: #dc3545;
+    color: #dc3545;
 }
 
 .has-error input {
-	border: 1px solid #dc3545 !important;
+    border: 1px solid #dc3545 !important;
 }
 
 .has-error input:focus {
-	border: 1px solid #dc3545;
-	box-shadow: 0 0 0 0.15rem #f8e6e0 !important;
+    border: 1px solid #dc3545;
+    box-shadow: 0 0 0 0.15rem #f8e6e0 !important;
 }
 
 .has-error small {
-	float: left;
-	margin-top: 5px;
-	font-style: italic;
-	font-size: 11px;
+    float: left;
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 11px;
 }
 
 .has-error small {
-	float: left;
-	margin-top: 5px;
-	font-style: italic;
-	font-size: 11px;
+    float: left;
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 11px;
 }
 </style>
