@@ -110,6 +110,8 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'default_cache_tbl',
+        'TIMEOUT': 300*60*24*15,  # 15 days
+        'MAX_ENTRIES': 5000,
     }
 }
 
