@@ -4,6 +4,8 @@ import random
 import sys
 import os
 import json
+
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q, F
 
@@ -213,8 +215,9 @@ def create_svip_curationentries(source):
                     disease=Disease.objects.filter(
                         name__iexact=sample['disease'],
                     ).first(),
+                    owner=User.objects.get(username=sample['owner_name']),
                     **dict(
-                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease')
+                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease', 'owner_name')
                     )
                 )
                 candidate.save()
