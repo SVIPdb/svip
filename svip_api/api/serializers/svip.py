@@ -5,15 +5,19 @@ import datetime
 from itertools import chain
 
 from django.db.models import Count
+from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry
-from api.models.svip import Disease, DiseaseInSVIP
+from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 
 from django.contrib.auth import get_user_model
+
+from api.permissions import IsCurationPermitted
+
 User = get_user_model()
 
 
@@ -30,9 +34,47 @@ class SampleSerializer(serializers.ModelSerializer):
 
 
 class CurationEntrySerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
+    created_on = serializers.DateTimeField(read_only=True, default=now)
+
+    owner_name = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_owner_name(obj):
+        fullname = ("%s %s" % (obj.owner.first_name, obj.owner.last_name)).strip()
+        return fullname if fullname else obj.owner.username
+
+    def save(self, **kwargs):
+        # force owner to be the current user
+        # FIXME: we should include a caveat for superusers
+        # TODO: use stricter validation if the status isn't 'draft'
+        kwargs["owner"] = self.fields["owner"].get_default()
+        return super().save(**kwargs)
+
     class Meta:
         model = CurationEntry
-        fields = '__all__'
+        fields = (
+            'id',
+            'disease',
+            'variants',
+
+            'type_of_evidence',
+            'drug',
+            'effect',
+            'tier_level_criteria',
+            'tier_level',
+            'mutation_origin',
+            'summary',
+            'support',
+            'references',
+
+            'created_on',
+            'last_modified',
+            'owner',
+            'owner_name',
+            'status',
+        )
 
 
 class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
@@ -87,14 +129,11 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             if obj.pk is None:
                 return None
 
-            return self.reverse(view_name,
-                                kwargs={
-                                    'disease_pk': obj.id,
-                                    'variant_in_svip_pk': obj.svip_variant.id,
-                                },
-                                request=request,
-                                format=format,
-                                )
+            return self.reverse(
+                view_name,
+                kwargs={'disease_pk': obj.id, 'variant_in_svip_pk': obj.svip_variant.id},
+                request=request, format=format
+            )
 
     samples_url = SamplesHyperlinkedIdentityField(view_name='sample-list')
 
@@ -146,12 +185,14 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         return [
             CurationEntrySerializer(x).data
             for x in obj.curation_entries().all()
+            if IsCurationPermitted.is_user_allowed(user=self.context['request'].user, obj=x, is_reading=True)
         ]
 
     class Meta:
         model = DiseaseInSVIP
         fields = (
             'id',
+            'disease_id',
             'samples_url',
             'name',
             'sample_diseases_count',
@@ -165,6 +206,6 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             'gender_balance',
             'age_distribution',
 
-            # 'samples',
+                # 'samples',
             'curation_entries'
         )

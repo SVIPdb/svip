@@ -132,19 +132,23 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
     variants = models.ManyToManyField(to=Variant)
 
-    type_of_evidence = models.TextField(verbose_name="Type of evidence")
-    drug = models.TextField(verbose_name="Drug")
-    effect = models.TextField(verbose_name="Effect")
-    tier_level_criteria = models.TextField(verbose_name="Tier level Criteria")
-    tier_level = models.TextField(verbose_name="Tier level")
-    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic")
-    summary = models.TextField(verbose_name="Complementary information")
-    support = models.TextField(verbose_name="Support")
-    references = models.TextField(verbose_name="References")
+    type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
+    drug = models.TextField(verbose_name="Drug", null=True)
+    effect = models.TextField(verbose_name="Effect", null=True)
+    tier_level_criteria = models.TextField(verbose_name="Tier level Criteria", null=True)
+    tier_level = models.TextField(verbose_name="Tier level", null=True)
+    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic", null=True)
+    summary = models.TextField(verbose_name="Complementary information", null=True)
+    support = models.TextField(verbose_name="Support", null=True)
+    comment = models.TextField(verbose_name="Comment", null=True)
+    references = models.TextField(verbose_name="References", null=True)
+
+    annotations = ArrayField(base_field=models.TextField(), null=True)
 
     created_on = models.DateTimeField(default=now)
+    last_modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
-    status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft')
+    status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
 
 
 class Sample(SVIPModel):

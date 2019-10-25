@@ -8,12 +8,12 @@
     "dbSNP": "rs113488022",
     "diseases": [
       {
-        "name": "Skin Melanoma",
+        "name": "Malignant melanoma of skin",
         "SVIP_status": "Curated",
         "score": 3
       },
       {
-        "name": "Papillary Thyroid Carcinoma",
+        "name": "Neoplasm of thyroid gland",
         "SVIP_status": "Reviewed",
         "score": 4
       }
@@ -28,7 +28,7 @@
     "dbSNP": "rs121913361",
     "diseases": [
       {
-        "name": "Colorectal Cancer",
+        "name": "Adenocarcinoma of colorectum",
         "SVIP_status": "Curated",
         "score": 2
       }
@@ -43,7 +43,7 @@
     "dbSNP": "rs121913364",
     "diseases": [
       {
-        "name": "Skin Melanoma",
+        "name": "Malignant melanoma of skin",
         "SVIP_status": "Curated",
         "score": 2
       }
@@ -59,12 +59,12 @@
     "dbSNP": "rs121434568",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Cancer",
+        "name": "Non-small cell lung cancer",
         "SVIP_status": "Curated",
         "score": 3
       },
       {
-        "name": "Lung Adenocarcinoma",
+        "name": "Adenocarcinoma of lung",
         "SVIP_status": "Reviewed",
         "score": 4
       }
@@ -79,12 +79,12 @@
     "dbSNP": "rs121913465",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Cancer",
+        "name": "Non-small cell lung cancer",
         "SVIP_status": "Curated",
         "score": 2
       },
       {
-        "name": "Lung Adenocarcinoma",
+        "name": "Adenocarcinoma of lung",
         "SVIP_status": "Reviewed",
         "score": 3
       }
@@ -99,12 +99,12 @@
     "dbSNP": "rs121434569",
     "diseases": [
       {
-        "name": "Non-Small Cell Lung Cancer",
+        "name": "Non-small cell lung cancer",
         "SVIP_status": "Curated",
         "score": 3
       },
       {
-        "name": "Lung Adenocarcinoma",
+        "name": "Adenocarcinoma of lung",
         "SVIP_status": "Curated",
         "score": 3
       }
@@ -120,7 +120,7 @@
     "dbSNP": "rs766541301",
     "diseases": [
       {
-        "name": "Prostate Cancer",
+        "name": "Adenocarcinoma of prostate",
         "SVIP_status": "Curated",
         "score": 3
       }

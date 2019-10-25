@@ -1,14 +1,13 @@
 import django_filters
-from django.db.models import Q
 from rest_framework import viewsets, permissions, filters
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry
 )
+from api.permissions import IsCurationPermitted
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
@@ -51,6 +50,9 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
     """
     serializer_class = DiseaseInSVIPSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     def get_queryset(self):
         if 'svip_variant_pk' in self.kwargs:
@@ -98,54 +100,19 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-class IsCurationPermitted(BasePermission):
-    """
-    Curation entries are visible by everyone *if* they're reviewed. They're editable by nobody except the curator
-    who created them, but only if they're drafts or saved.
-
-    If they're not reviewed, then an entry is visible to a curator if they own it. Reviewers can see submitted
-    """
-
-    def has_object_permission(self, request, view, obj):
-        if not request.user or not request.user.is_authenticated:
-            # for unauthenticated users, we can only return entries that are reviewed
-            return obj.status == 'reviewed'
-
-        user = request.user
-
-        # superusers are almighty
-        if user.is_superuser:
-            return True
-
-        if user.groups.filter(name='curators'):
-            if request.method not in SAFE_METHODS:
-                # curators can only edit their own drafts or saved entries
-                # submitted and reviwed entries are always static to curators
-                return obj.owner == user and obj.status in ('draft', 'saved')
-            else:
-                # curators can see their own entries and only others' reviewed entries
-                return obj.owner == user or obj.status == 'reviewed'
-        elif user.groups.filter(name='reviewers'):
-            # FIXME: create a group called 'reviewers'
-            if request.method not in SAFE_METHODS:
-                # reviewers can't change anything
-                # (side note, reviewers provide their approval on a cross table that relates reviewers and curation entries)
-                return False
-            else:
-                # reviewers can see anything that's submitted or reviewed
-                # FIXME: eventually they should only see things they've been assigned, which we'll check in the cross-table
-                return obj.status in ('submitted', 'reviewed')
-        else:
-            # ok, they're authenticated but not in any known group, so we must give them the default permissions
-            return obj.status == 'reviewed'
-
-
 class CurationEntryViewSet(viewsets.ModelViewSet):
     """
     Curation entry for a specific variant w/SVIP data and disease.
     """
     serializer_class = CurationEntrySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
+
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_fields = (
+        'owner',
+        'disease',
+        'variants'
+    )
 
     def get_queryset(self):
         user = self.request.user

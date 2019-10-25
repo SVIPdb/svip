@@ -11,5 +11,14 @@ class Drug(models.Model):
 
 
 class Disease(models.Model):
+    localization = models.TextField()
+    abbreviation = models.TextField(null=True)
     name = models.TextField()
-    icdo_code = models.TextField(null=True)
+    topo_code = models.TextField(null=True)
+    morpho_code = models.TextField(null=True)
+    snomed_code = models.TextField(null=True)
+    snomed_name = models.TextField(null=True)
+    details = models.TextField(null=True)
+
+    def __str__(self):
+        return "%s (id: %d)" % (self.name, self.id)

@@ -134,15 +134,9 @@ def create_svipvariants(model_variant, model_svip_variant):
 
                 # create disease entries keyed to this candidate, too
                 for disease in s['diseases']:
-                    disease_instance, created = Disease.objects.get_or_create(name__iexact=disease['name'], defaults={
-                        'name': disease['name'],
-                        'icdo_code': None
-                    })
-                    disease_instance.save()
-
                     candidate_disease = DiseaseInSVIP(
                         svip_variant=candidate,
-                        disease=disease_instance,
+                        disease=Disease.objects.filter(name__iexact=disease['name']).first(),
                         status=disease['SVIP_status'],
                         score=int(disease['score'])
                     )
@@ -216,9 +210,9 @@ def create_svip_curationentries(source):
 
             try:
                 candidate = CurationEntry(
-                    disease=Disease.objects.get(
+                    disease=Disease.objects.filter(
                         name__iexact=sample['disease'],
-                    ),
+                    ).first(),
                     **dict(
                         (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease')
                     )
@@ -248,8 +242,9 @@ def create_svip_curationentries(source):
 
 def synthesize_samples(num_samples_per_variant=10):
     """
-    Creates "realistic" patient samples for each variant in SVIP. Uses COSMIC for (disease, tissue) assocations
-    with variants.
+    Creates "realistic" patient samples for each variant in SVIP. If USE_COSMIC_DISEASES is enabled, uses COSMIC for
+    (disease, tissue) assocations with variants. If not, uses a hardcoded list drawn from the SVIP mock variants.
+
     :param num_samples_per_variant: the number of samples to synthesize for each variant
     :return: the total number of created samples
     """
@@ -279,14 +274,12 @@ def synthesize_samples(num_samples_per_variant=10):
             )
         else:
             tissues = {
-                'Lung Adenocarcinoma': 'Lung',
-                'Non-Small Cell Lung Cancer': 'Lung',
-                'Non-Small Cell Lung Carcinoma': 'Lung',
-                'Papillary Thyroid Carcinoma': 'Thyroid',
-                'Breast Cancer': 'Breast',
-                'Colorectal Cancer': 'Colorectal',
-                'Skin Melanoma': 'Skin',
-                'Prostate Cancer': 'Prostate',
+                'Adenocarcinoma of lung': 'Lung',
+                'Non-small cell lung cancer': 'Lung',
+                'Neoplasm of thyroid gland': 'Thyroid',
+                'Adenocarcinoma of colorectum': 'Colorectal',
+                'Malignant melanoma of skin': 'Skin',
+                'Adenocarcinoma of prostate': 'Prostate',
             }
             disease_tissues = [
                 {'disease': x['name'], 'tissue': tissues[x['name']]}
@@ -295,7 +288,7 @@ def synthesize_samples(num_samples_per_variant=10):
 
         # for sex-specific diseases, we should only use one sex
         sex_specific = {
-            'Prostate Cancer': 'Male'
+            'Adenocarcinoma of prostate': 'Male'
         }
 
 
@@ -320,7 +313,7 @@ def synthesize_samples(num_samples_per_variant=10):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
 
             candidate = Sample(**{
-                'disease_in_svip': DiseaseInSVIP.objects.get(svip_variant=svip_var, disease__name=disease),
+                'disease_in_svip': DiseaseInSVIP.objects.get(svip_variant=svip_var, disease__name__iexact=disease),
                 'sample_id': str(sample_id),
                 'year_of_birth': str(random.randint(1935, 1988)),
                 'gender': random.choice(('Male', 'Female')) if disease not in sex_specific else sex_specific[disease],
