@@ -18,6 +18,8 @@ from api.models.reference import Disease
 from api.utils import dictfetchall
 from svip_server import settings
 
+from simple_history.models import HistoricalRecords
+
 
 class SVIPTableBase(ModelBase):
     """
@@ -149,6 +151,8 @@ class CurationEntry(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
     status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
+
+    history = HistoricalRecords()
 
 
 class Sample(SVIPModel):
