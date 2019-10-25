@@ -6,13 +6,14 @@ import ViewVariant from "@/views/ViewVariant";
 import Login from "@/views/user/Login";
 import UserInfo from "@/views/user/UserInfo";
 import store from '@/store';
-import {TokenErrors} from "@/store/modules/users";
+import { TokenErrors } from "@/store/modules/users";
 import PageNotFound from "@/views/PageNotFound";
 import Help from "@/views/Help";
 
 import CurationDashboard from "@/views/curation/CurationDashboard";
 import AnnotateVariant from "@/views/curation/AnnotateVariant";
 import AddEvidence from "@/views/curation/AddEvidence";
+import DebugPage from "@/views/DebugPage";
 
 Vue.use(Router);
 
@@ -63,12 +64,17 @@ const router = new Router({
             component: AddEvidence
         },
         {
+            path: "/debug",
+            name: "debug",
+            component: DebugPage
+        },
+        {
             path: "/",
             name: "home",
             component: Home
         },
 
-        {path: '*', component: PageNotFound}
+        { path: '*', component: PageNotFound }
     ]
 });
 
@@ -79,11 +85,9 @@ router.beforeEach((to, from, next) => {
         if (!result.valid && (result.reason === TokenErrors.EXPIRED || result.reason === TokenErrors.REFRESH_EXPIRED) && to.name !== "login") {
             // if our token's expired, go get a new one from the login page,
             // remembering where we eventually want to go to as well
-            next({
-                name: 'login',
-                params: {default_error_msg: "Token expired, please log in again", nextRoute: to.path}
-            });
-        } else {
+            next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
+        }
+        else {
             next();
         }
     });
