@@ -1,9 +1,9 @@
 <template>
     <b-container fluid>
-        <variant-informations :variant="variant" :fields="fields"/>
+        <variant-informations :variant="variant" :fields="fields" />
         <b-row>
             <b-col sm="9">
-                <b-card no-body>
+                <b-card no-body style="margin-bottom: 1.5em;">
                     <b-card-body>
                         <b-container
                             fluid
@@ -14,16 +14,14 @@
                             @contextmenu.prevent.stop="handleRightClick($event)"
                         >
                             <h5 class="font-weight-bolder" v-html="variomes.publication.title_highlight"></h5>
-                            <span>{{variomes.publication.date}}</span>
-                            <br/>
+                            <div>{{variomes.publication.date}}</div>
                             <p>
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${author}[Author]`"
                                     target="_blank"
                                     v-for="(author,index) in variomes.publication.authors"
                                     :key="index"
-                                >{{author + (index < variomes.publication.authors.length-1 ? ', ' : '')}}
-                                </b-link>
+                                >{{author + (index < variomes.publication.authors.length-1 ? ', ' : '')}}</b-link>
                             </p>
                             <b>Abstract</b>
                             <p class="text-justify" v-html="variomes.publication.abstract_highlight"></p>
@@ -32,22 +30,19 @@
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/${variomes.publication.id}`"
                                     target="_blank"
-                                >{{variomes.publication.id}}
-                                </b-link>
+                                >{{variomes.publication.id}}</b-link>
                             </small>
                         </b-container>
                         <div
                             v-else-if="variomes && variomes.error"
                             class="text-center"
-                        >We couldn't load the abstract due to some techincal issues.
-                        </div>
+                        >We couldn't load the abstract due to some techincal issues.</div>
                         <div v-else class="text-center">
-                            <b-spinner label="Spinning" variant="primary"></b-spinner>
-                            Loading
+                            <b-spinner label="Spinning" variant="primary"></b-spinner>Loading
                         </div>
                     </b-card-body>
                 </b-card>
-                <br/>
+
                 <b-card no-body>
                     <b-card-body>
                         <b-container fluid>
@@ -86,8 +81,7 @@
                                                 v-for="(option,n) in Object.keys(inputs[label])"
                                                 :key="n"
                                                 :value="{label: label,value: option}"
-                                            >{{ option }}
-                                            </option>
+                                            >{{ option }}</option>
                                         </optgroup>
                                     </b-form-select>
                                 </b-form-group>
@@ -103,7 +97,7 @@
                                         v-model="form.effect"
                                         :options="effects"
                                         :required="required"
-                                    ></b-form-select>
+                                    />
                                 </b-form-group>
 
                                 <b-form-group
@@ -117,7 +111,7 @@
                                         v-model="form.tier_criteria"
                                         :options="tier_criteria"
                                         :required="required"
-                                    ></b-form-select>
+                                    />
                                 </b-form-group>
 
                                 <b-form-group
@@ -131,7 +125,7 @@
                                         v-model="form.origin"
                                         :options="['Somatic', 'Germline', 'Both somatic and germline', 'Unknown']"
                                         :required="required"
-                                    ></b-form-select>
+                                    />
                                 </b-form-group>
 
                                 <b-form-group
@@ -145,7 +139,7 @@
                                         v-model="form.support"
                                         :options="['Strong', 'Moderate', 'Low', 'Other']"
                                         :required="required"
-                                    ></b-form-select>
+                                    />
                                 </b-form-group>
 
                                 <b-form-group
@@ -188,11 +182,10 @@
                                         :key="index"
                                         class="mt-3"
                                     >
-                                        <b-form-textarea rows="3" disabled :value="annotation"
-                                            no-resize></b-form-textarea>
+                                        <b-form-textarea rows="3" disabled :value="annotation" no-resize></b-form-textarea>
                                         <b-input-group-append>
                                             <b-button variant="danger" @click="removeAnnotation(index)">
-                                                <icon name="minus"></icon>
+                                                <icon name="minus" />
                                             </b-button>
                                         </b-input-group-append>
                                     </b-input-group>
@@ -211,8 +204,8 @@
                     class="shadow-sm mb-3"
                     :href="currentUrl"
                     target="_blank"
-                >Duplicate
-                </b-button>
+                >Duplicate</b-button>
+
                 <b-card class="shadow-sm mb-3" header-bg-variant="white" no-body>
                     <h5 slot="header" class="d-flex align-items-center">
                         Actions
@@ -222,45 +215,46 @@
                             aria-controls="action"
                             @click="showAction = !showAction"
                         >
-                            <icon :name="showAction ? 'chevron-down' : 'chevron-right'"></icon>
+                            <icon :name="showAction ? 'chevron-down' : 'chevron-right'" />
                         </b-link>
                     </h5>
                     <b-card-body class="p-0 m-0">
                         <b-collapse id="action" v-model="showAction" class="m-3">
-                            <br/>
-                            <icon class="mr-1" name="newspaper"></icon>
-                            PMID:
-                            <b-link
-                                v-if="variomes"
-                                :href="`https://www.ncbi.nlm.nih.gov/pubmed/${variomes.publication.id}`"
-                                target="_blank"
-                            >{{variomes.publication.id}}
-                            </b-link>
-                            <br/>
-                            <icon class="mr-1" name="key"></icon>
-                            Status:
-                            <b>Draft</b>
-                            <br/>
-                            <icon class="mr-1" name="user"></icon>
-                            Creator:
-                            <b>Curator 1</b>
-                            <br/>
-                            <icon class="mr-1" name="calendar"></icon>
-                            Last modification:
-                            <b>2019-08-27</b>
-                            <br/>
-                            <br/>
+                            <ul class="submission_properties">
+                                <li>
+                                    <icon class="mr-1" name="newspaper" />PMID:
+                                    <span class="value">
+                                        <b-link
+                                            v-if="variomes"
+                                            :href="`https://www.ncbi.nlm.nih.gov/pubmed/${variomes.publication.id}`"
+                                            target="_blank"
+                                        >{{variomes.publication.id}}</b-link>
+                                    </span>
+                                </li>
+                                <li>
+                                    <icon class="mr-1" name="key" />Status:
+                                    <span class="value">{{this.submitted.status || '-'}}</span>
+                                </li>
+                                <li>
+                                    <icon class="mr-1" name="user" />Creator: <span class="value">{{this.submitted.owner_name || '-'}}</span>
+                                </li>
+                                <li>
+                                    <icon class="mr-1" name="calendar" />Last modification: <span class="value">{{this.submitted.last_modified || '-'}}</span>
+                                </li>
+                            </ul>
+
                             <div class="d-flex align-items-center">
-                                <b-link class="text-danger">
-                                    <icon class="mr-1" name="trash"></icon>
-                                    Delete
+                                <b-link id="delete-btn" class="text-danger" :disabled="!this.submitted.id" @click="onDelete()">
+                                    <icon class="mr-1" name="trash" /> Delete
                                 </b-link>
-                                <b-button class="ml-auto" variant="outline-success">Save Draft</b-button>
+                                <b-button class="ml-auto" variant="outline-success" @click="onSubmitDraft">{{is_saved ? "Update" : "Save"}} Draft</b-button>
                             </div>
+
                             <b-button class="mt-3" block variant="success" @click="onSubmit">Save Evidence</b-button>
                         </b-collapse>
                     </b-card-body>
                 </b-card>
+
                 <b-card class="shadow-sm" header-bg-variant="white" no-body>
                     <h5 slot="header" class="d-flex align-items-center">
                         Keywords
@@ -270,7 +264,7 @@
                             aria-controls="statistic"
                             @click="showStat = !showStat"
                         >
-                            <icon :name="showStat ? 'chevron-down' : 'chevron-right'"></icon>
+                            <icon :name="showStat ? 'chevron-down' : 'chevron-right'" />
                         </b-link>
                     </h5>
                     <b-card-body class="p-0 m-0">
@@ -282,9 +276,7 @@
                                 >
                                     <b-badge
                                         class="bg-gene"
-                                    >{{variomes.query.gene}}
-                                        ({{variomes.publication.details.query_details.targetGeneCount}})
-                                    </b-badge>
+                                    >{{variomes.query.gene}} ({{variomes.publication.details.query_details.targetGeneCount}})</b-badge>
                                 </b-link>
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.variant}[Title/Abstract]`"
@@ -292,9 +284,7 @@
                                 >
                                     <b-badge
                                         class="bg-variant"
-                                    >{{variomes.query.variant}}
-                                        ({{variomes.publication.details.query_details.targetVariantCount}})
-                                    </b-badge>
+                                    >{{variomes.query.variant}} ({{variomes.publication.details.query_details.targetVariantCount}})</b-badge>
                                 </b-link>
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.disease}[Title/Abstract]`"
@@ -302,9 +292,7 @@
                                 >
                                     <b-badge
                                         class="bg-disease"
-                                    >{{variomes.query.disease}}
-                                        ({{variomes.publication.details.query_details.targetDiseaseCount}})
-                                    </b-badge>
+                                    >{{variomes.query.disease}} ({{variomes.publication.details.query_details.targetDiseaseCount}})</b-badge>
                                 </b-link>
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract] AND ${variomes.query.disease}[Title/Abstract]`"
@@ -312,42 +300,41 @@
                                 >
                                     <b-badge
                                         class="bg-primary"
-                                    >{{variomes.query.gene}} + {{variomes.query.variant}} + {{variomes.query.disease}}
-                                    </b-badge>
+                                    >{{variomes.query.gene}} + {{variomes.query.variant}} + {{variomes.query.disease}}</b-badge>
                                 </b-link>
                                 <b-link
                                     :href="`https://www.ncbi.nlm.nih.gov/pubmed/?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract]`"
                                     target="_blank"
                                 >
-                                    <b-badge class="bg-info">{{variomes.query.gene}} + {{variomes.query.variant}}
-                                    </b-badge>
+                                    <b-badge class="bg-info">{{variomes.query.gene}} + {{variomes.query.variant}}</b-badge>
                                 </b-link>
                             </div>
                             <div v-else class="text-center">
-                                <b-spinner label="Spinning" variant="primary"></b-spinner>
-                                Loading
+                                <b-spinner label="Spinning" variant="primary"></b-spinner>Loading
                             </div>
                         </b-collapse>
                     </b-card-body>
                 </b-card>
             </b-col>
         </b-row>
+
         <vue-simple-context-menu
             :elementId="'annotationMenu'"
             :options="options"
             :ref="'vueSimpleContextMenu'"
             @option-clicked="optionClicked"
-        ></vue-simple-context-menu>
+        />
     </b-container>
 </template>
+
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
 
 import fields from "@/data/curation/summary/fields.json";
 import inputs from "@/data/curation/evidence/options.json";
 import store from "@/store";
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 import SearchBar from "@/components/widgets/SearchBar";
 
 export default {
@@ -358,6 +345,7 @@ export default {
     },
     data() {
         return {
+            disease_id: null,
             fields,
             inputs,
             options: [
@@ -391,6 +379,10 @@ export default {
                 comment: null,
                 note: null,
                 annotations: []
+            },
+            // server's response after submission
+            submitted: {
+                id: null
             }
         };
     },
@@ -419,10 +411,10 @@ export default {
         },
         doCopy() {
             this.$copyText(this.selection).then(
-                function (e) {
+                function(e) {
                     alert("Copied");
                 },
-                function (e) {
+                function(e) {
                     alert("Can not copy");
                 }
             );
@@ -430,8 +422,56 @@ export default {
         removeAnnotation(index) {
             this.form.annotations.splice(index, 1);
         },
+        onSubmitDraft() {
+            const payload = {
+                disease: this.disease_in_svip.disease_id,
+                variants: [this.variant.id, ...this.form.variants.map(x => x.id)], // selected plus the other ones
+                type_of_evidence: this.form.type_of_evidence,
+                drug: this.form.drug,
+                effect: this.form.effect,
+                tier_level_criteria: this.form.tier_level_criteria,
+                tier_level: this.form.tier_level,
+                mutation_origin: this.form.mutation_origin,
+                summary: this.form.summary,
+                support: this.form.support,
+                annotations: this.form.annotations,
+                references: `${this.$route.query.source}:${this.$route.query.reference}`,
+                status: 'draft'
+            };
+
+            // if they've previously submitted, make it an update
+            // if this is a new submission, make it a post
+            (this.is_saved
+                    ? HTTP.put(`/curation_entries/${this.submitted.id}`, payload)
+                    : HTTP.post(`/curation_entries/`, payload)
+            )
+                .then((result) => {
+                    this.$snotify.success(`Draft ${this.is_saved ? 'updated' : 'saved'}!`);
+
+                    // populate submitted with the results
+                    const { id, status, owner_name, last_modified } = result.data;
+                    this.submitted = {
+                        id: id,
+                        status: status,
+                        owner_name: owner_name,
+                        last_modified: new Date(last_modified).toLocaleString()
+                    }
+                })
+                .catch((err, resp) => {
+                    console.log("Error: ", err, resp);
+                });
+        },
         onSubmit() {
             this.required = !this.required;
+        },
+        onDelete() {
+            if (confirm("Are you sure that you want to delete this entry?")) {
+                HTTP.delete(`/curation_entries/${this.submitted.id}`)
+                    .then((result) => {
+                        this.$snotify.info("Entry deleted");
+                        this.submitted = { id: null }
+                    })
+            }
         },
         setEvidence() {
             this.form.evidence = this.type_of_evidence.value;
@@ -439,7 +479,7 @@ export default {
         },
         noResponse() {
             // FIXME: what is this supposed to do? the return value of setTimeout isn't used
-            setTimeout(function () {
+            setTimeout(function() {
                 return this.variomes == null ? true : false;
             }, 1000);
         }
@@ -460,6 +500,12 @@ export default {
             return this.form.evidence != null && this.form.effect != null
                 ? this.inputs[this.filterLabel][this.form.evidence][this.form.effect]
                 : [];
+        },
+        disease_in_svip() {
+            return this.variant.svip_data.diseases.find(element => element.id == this.$route.params.disease_id);
+        },
+        is_saved() {
+            return this.submitted.id != null;
         }
     },
     created() {
@@ -468,9 +514,7 @@ export default {
                 id: this.$route.query.reference,
                 gene: this.variant.gene.symbol,
                 variant: this.variant.name,
-                disease: this.variant.svip_data.diseases.find(
-                    element => element.id == this.$route.params.disease_id
-                ).name
+                disease: this.disease_in_svip.name
             }
         })
             .then(response => {
@@ -483,10 +527,10 @@ export default {
             });
     },
     beforeRouteEnter(to, from, next) {
-        const {variant_id} = to.params;
+        const { variant_id } = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", {variant_id: variant_id}).then(() => {
+        store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
             next();
         });
     }
@@ -498,29 +542,23 @@ export default {
     color: #e3639f;
     font-weight: bold;
 }
-
 .variant {
     color: #4b7bef;
     font-weight: bold;
 }
-
 .disease {
     color: #3d811e;
     font-weight: bold;
 }
-
 .bg-gene {
     background-color: #e3639f !important;
 }
-
 .bg-variant {
     background-color: #4b7bef !important;
 }
-
 .bg-disease {
     background-color: #3d811e !important;
 }
-
 .evidence ::-moz-selection {
     /* Code for Firefox */
     color: white;
@@ -530,5 +568,19 @@ export default {
 .evidence ::selection {
     color: white;
     background: #2c3e50;
+}
+
+#delete-btn.disabled {
+    color: gray !important; /* and thus begin the importance wars... */
+}
+
+.submission_properties {
+    margin-bottom: 1em;
+    list-style-type: none;
+    padding: 0;
+}
+.submission_properties li { margin-bottom: 0.3em; }
+.submission_properties .value {
+    font-weight: bold;
 }
 </style>
