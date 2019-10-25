@@ -152,7 +152,9 @@ class CurationEntry(SVIPModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
     status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        excluded_fields=('created_on', 'last_modified')
+    )
 
 
 class Sample(SVIPModel):
