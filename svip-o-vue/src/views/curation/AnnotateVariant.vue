@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <variant-informations :variant="variant" :fields="fields"/>
-        <evidence-card :items="evidences"/>
+        <variant-informations :variant="variant" :fields="fields" />
+        <evidence-card :items="evidences" />
         <div>
             <b-card no-body>
                 <b-tabs
@@ -21,7 +21,7 @@
                                             class="custom-border-left"
                                             v-model="source"
                                             :options="['PMID']"
-                                        ></b-form-select>
+                                        />
                                     </b-col>
                                     <b-col cols="5">
                                         <b-form-input
@@ -41,7 +41,7 @@
                                             @click="addEvidence"
                                             target="_blank"
                                         >
-                                            <icon name="plus"></icon>
+                                            <icon name="plus" />
                                         </b-button>
                                     </b-col>
                                 </b-row>
@@ -67,7 +67,7 @@
                                             id="perPageSelect"
                                             size="sm"
                                             :options="pageOptions"
-                                        ></b-form-select>
+                                        />
                                     </b-form-group>
                                 </b-col>
 
@@ -118,7 +118,7 @@
                                         @click="addEvidenceFromList(row.item.id)"
                                         target="_blank"
                                     >
-                                        <icon name="pen-alt"></icon>
+                                        <icon name="pen-alt" />
                                     </b-button>
                                 </template>
                                 <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
@@ -153,8 +153,7 @@
                     </b-tab>
                     <b-tab title="Use prediction tools">
                         <b-card-text class="text-center">
-                            <h1 class="display-2">Oops!</h1>Something went wrong here. We're working on it and we'll get
-                            it fixed as soon as possible.
+                            <h1 class="display-2">Oops!</h1>Something went wrong here. We're working on it and we'll get it fixed as soon as possible.
                         </b-card-text>
                     </b-tab>
                 </b-tabs>
@@ -163,15 +162,15 @@
     </div>
 </template>
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import variantInformations from "@/components/curation/widgets/VariantInformations";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import evidenceCard from "@/components/curation/widgets/EvidenceCard";
 import fields from "@/data/curation/summary/fields.json";
 import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import store from "@/store";
-import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
-import {HTTP} from "@/router/http";
+import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
+import { HTTP } from "@/router/http";
 
 export default {
     name: "AnnotateVariant",
@@ -201,49 +200,6 @@ export default {
             variant: "variant",
             gene: "gene"
         }),
-        synonyms() {
-            if (this.gene.geneAliases === undefined) return "";
-            return this.gene.geneAliases.join(", ");
-        },
-        gene_id() {
-            let test = this.variant.gene.url.match(/genes\/(\d+)/);
-            if (test) return test[1];
-            return "";
-        },
-        hgvs_c_pos() {
-            return change_from_hgvs(this.variant.hgvs_c, true);
-        },
-        hgvs_p_pos() {
-            return change_from_hgvs(this.variant.hgvs_p, true);
-        },
-        hgvs_g_pos() {
-            return change_from_hgvs(this.variant.hgvs_g, true);
-        },
-        var_position() {
-            return var_to_position(this.variant);
-        },
-        hg19_id() {
-            return var_to_position(this.variant, true);
-        },
-        all_extras() {
-            return this.variant.variantinsource_set.reduce((acc, x) => {
-                return Object.assign({}, acc, x["extras"]);
-            }, {});
-        },
-        allele_frequency() {
-            if (this.variant.mv_info) {
-                if (this.variant.mv_info.gnomad_genome) {
-                    return `gnomAD: ${round(
-                        this.variant.mv_info.gnomad_genome.af.af * 100.0,
-                        4
-                    )}%`;
-                } else if (this.variant.mv_info.exac) {
-                    return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
-                }
-            }
-
-            return null;
-        },
         evidences() {
             return this.variant.svip_data.diseases.find(
                 element => element.id == this.$route.params.disease_id
@@ -261,7 +217,7 @@ export default {
                     variant_id: this.$route.params.variant_id,
                     disease_id: this.$route.params.disease_id
                 },
-                query: {source: this.source, reference: this.reference}
+                query: { source: this.source, reference: this.reference }
             });
             window.open(route.href, "_blank");
         },
@@ -291,10 +247,10 @@ export default {
             });
     },
     beforeRouteEnter(to, from, next) {
-        const {variant_id} = to.params;
+        const { variant_id } = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", {variant_id: variant_id}).then(() => {
+        store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
             next();
         });
     }
@@ -305,7 +261,6 @@ export default {
 .variant-card .card-body {
     padding: 0;
 }
-
 .variant-header {
     margin-bottom: 0;
 }
@@ -315,7 +270,6 @@ export default {
     vertical-align: text-bottom;
     padding: 1rem;
 }
-
 .aliases-list {
     font-style: italic;
 }
@@ -330,16 +284,13 @@ export default {
 .slide-fade-enter-active {
     transition: all 0.5s ease;
 }
-
 .slide-fade-leave-active {
     transition: all 0.3s ease;
 }
-
 .slide-fade-enter-to,
 .slide-fade-leave {
     max-height: 120px;
 }
-
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active below version 2.1.8 */ {
     opacity: 0;
