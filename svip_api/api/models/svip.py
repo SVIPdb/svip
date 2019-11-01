@@ -147,8 +147,8 @@ class CurationEntry(SVIPModel):
 
     annotations = ArrayField(base_field=models.TextField(), null=True)
 
-    created_on = models.DateTimeField(default=now)
-    last_modified = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(default=now, db_index=True)
+    last_modified = models.DateTimeField(auto_now=True, db_index=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
     status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
 

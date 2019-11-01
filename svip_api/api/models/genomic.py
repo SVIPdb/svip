@@ -93,7 +93,8 @@ class Variant(models.Model):
     crawl_status = JSONField(null=True)
 
     def __str__(self):
-        return "%s %s" % (self.gene.symbol, self.name)
+        # return "%s %s" % (self.gene.symbol, self.name)
+        return self.description
 
     def gene_symbol(self):
         return self.gene.symbol
