@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameModel('disease', 'diseaseinsvip'),
+        migrations.RenameModel('Disease', 'DiseaseInSVIP'),
         migrations.AlterModelTable(
             name='diseaseinsvip',
             table='svip_diseaseinsvip',
