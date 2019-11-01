@@ -61,6 +61,7 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
 
 class VariantSerializer(serializers.HyperlinkedModelSerializer):
     sources = serializers.SerializerMethodField()
+    gene = GeneSerializer(read_only=True)
 
     def get_sources(self, obj):
         return sorted(obj.sources)
