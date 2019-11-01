@@ -19,7 +19,7 @@ from django.urls import path, re_path, include
 
 # jwt auth
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView, TokenRefreshView, TokenVerifyView, TokenRefreshSlidingView
+    TokenRefreshView, TokenVerifyView
 )
 
 # drf-yasg schema metadata
@@ -27,12 +27,12 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-import api.urls as api_router
 import api.views.beacon as beacon101
 import api.views.beacon_v110 as beacon110
-from api.views import socibp_proxy
-from api.views.swisspo_proxy import swisspo_request, get_pdbs, get_residues, get_pdb_data
-from api.views.variomes_proxy import variomes_single_ref, variomes_search
+from api.views.proxies import socibp_proxy
+from api.views.proxies.swisspo_proxy import get_pdbs, get_residues, get_pdb_data
+from api.views.proxies.variomes_proxy import variomes_single_ref, variomes_search
+from svip_server import settings
 
 from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
 
@@ -99,3 +99,11 @@ urlpatterns = [
 # serve static files from the dev server
 # (in deployments, this is handled by a proxy frontend, e.g. nginx)
 urlpatterns += staticfiles_urlpatterns()
+
+# enables the django debug toolbar
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+
+    ] + urlpatterns
