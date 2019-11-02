@@ -32,7 +32,7 @@ import api.views.beacon_v110 as beacon110
 from api.views.proxies import socibp_proxy
 from api.views.proxies.swisspo_proxy import get_pdbs, get_residues, get_pdb_data
 from api.views.proxies.variomes_proxy import variomes_single_ref, variomes_search
-from svip_server import settings
+from django.conf import settings
 
 from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
 

@@ -16,7 +16,7 @@ from django_db_cascade.deletions import DB_CASCADE
 from api.models.genomic import Variant
 from api.models.reference import Disease
 from api.utils import dictfetchall
-from svip_server import settings
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 

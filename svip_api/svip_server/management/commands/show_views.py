@@ -5,7 +5,7 @@ from django.core.management import BaseCommand
 from django.urls import URLResolver, URLPattern
 
 import svip_server.urls as urls
-from svip_server import settings
+from django.conf import settings
 
 
 class Command(BaseCommand):

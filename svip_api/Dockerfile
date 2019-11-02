@@ -4,8 +4,10 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y postgresql-client
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt --src /usr/local/src
+ARG requirefile=requirements.dev.txt
+
+COPY requirements.* ./
+RUN pip install --no-cache-dir -r $requirefile --src /usr/local/src
 
 COPY . .
 

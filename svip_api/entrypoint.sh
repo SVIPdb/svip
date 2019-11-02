@@ -14,7 +14,7 @@ python manage.py createcachetable
 
 # attempt to create superuser if they don't already exist
 python -c "import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'svip_server.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'svip_server.settings.development'
 import django
 django.setup()
 from django.contrib.auth.management.commands.createsuperuser import get_user_model
