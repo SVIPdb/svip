@@ -11,12 +11,13 @@ from rest_framework.reverse import reverse
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from api.models import VariantInSVIP, Sample, CurationEntry
+from api.models import VariantInSVIP, Sample, CurationEntry, Variant
 from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 
 from django.contrib.auth import get_user_model
 
 from api.permissions import IsCurationPermitted
+from api.utils import format_variant
 
 User = get_user_model()
 
@@ -39,11 +40,16 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     created_on = serializers.DateTimeField(read_only=True, default=now)
 
     owner_name = serializers.SerializerMethodField()
+    formatted_variants = serializers.SerializerMethodField()
 
     @staticmethod
     def get_owner_name(obj):
         fullname = ("%s %s" % (obj.owner.first_name, obj.owner.last_name)).strip()
         return fullname if fullname else obj.owner.username
+
+    @staticmethod
+    def get_formatted_variants(obj):
+        return [format_variant(x) for x in obj.variants.all()]
 
     def save(self, **kwargs):
         # force owner to be the current user
@@ -51,6 +57,34 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         # TODO: use stricter validation if the status isn't 'draft'
         kwargs["owner"] = self.fields["owner"].get_default()
         return super().save(**kwargs)
+
+    def validate(self, data):
+        if data['status'] != 'draft':
+            # TODO: perform more stringent validation
+            # FIXME: for now we'll do validation here, but ideally it should be factored out
+            non_empty_fields = (
+                'disease',
+                'variants',
+
+                'type_of_evidence',
+                'drug',
+                'effect',
+                'tier_level_criteria',
+                'mutation_origin',
+
+                'support',
+                # 'comment'
+                # 'references',
+            )
+
+            empty_fields = [k for k in non_empty_fields if k not in data or data[k] in ('', None)]
+
+            if len(empty_fields) > 0:
+                raise serializers.ValidationError(dict(
+                    (k, "Field '%s' cannot be null or empty" % k) for k in empty_fields
+                ))
+
+        return super().validate(data)
 
     class Meta:
         model = CurationEntry
@@ -67,12 +101,15 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'mutation_origin',
             'summary',
             'support',
+            'comment',
             'references',
+            'annotations',
 
             'created_on',
             'last_modified',
             'owner',
             'owner_name',
+            'formatted_variants',
             'status',
         )
 

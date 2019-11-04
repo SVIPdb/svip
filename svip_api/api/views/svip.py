@@ -26,7 +26,8 @@ class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
         if 'variant_pk' in self.kwargs:
             q = VariantInSVIP.objects.filter(variant_id=self.kwargs['variant_pk'])
         else:
-            q = VariantInSVIP.objects.all()
+            q = VariantInSVIP.objects.all().prefetch_related('diseaseinsvip_set', 'diseaseinsvip_set__sample_set')
+
         return q
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
@@ -107,12 +108,30 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     serializer_class = CurationEntrySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
         'owner',
         'disease',
         'variants'
     )
+    ordering_fields = '__all__'
+    search_fields = (
+        'annotations',
+        'comment',
+        'drug',
+        'effect',
+        'mutation_origin',
+        'references',
+        'status',
+        'summary',
+        'support',
+        'tier_level',
+        'tier_level_criteria',
+        'type_of_evidence',
+    )
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     def get_queryset(self):
         user = self.request.user
@@ -132,5 +151,12 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         if not result:
             # unauthenticated users and other users who don't have specific roles just see the default set
             result = CurationEntry.objects.filter(status='reviewed')
+
+        # pre-select variant and gene data to prevent thousands of queries
+        result = (
+            result
+                .select_related('owner')
+                .prefetch_related('variants', 'disease')
+        )
 
         return result.order_by('created_on')

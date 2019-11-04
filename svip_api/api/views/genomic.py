@@ -80,9 +80,12 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'gene_pk' in self.kwargs:
-            return Variant.objects.filter(gene_id=self.kwargs['gene_pk']).order_by('name')
+            q = Variant.objects.filter(gene_id=self.kwargs['gene_pk'])
         else:
-            return Variant.objects.all().order_by('name')
+            q = Variant.objects.all()
+
+        # attempting to reduce the number of queries
+        return q.select_related('gene').order_by('name')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

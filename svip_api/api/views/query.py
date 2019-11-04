@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.models import Phenotype, Variant, Gene
+from api.utils import format_variant
 from references.prot_to_hgvs import three_to_one_icase
 
 
@@ -32,7 +33,7 @@ class QueryView(viewsets.ViewSet):
             vq = Variant.objects.filter(
                 Q(description__icontains=search_term) | Q(hgvs_c__icontains=search_term) |
                 Q(name__contains=collapsed_search)
-            )
+            ).select_related('gene')
 
             if in_svip:
                 gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
@@ -43,14 +44,7 @@ class QueryView(viewsets.ViewSet):
                 'type': 'g',
                 'label': "%s (aka: %s)" % (x.symbol, ", ".join(x.aliases))
             } for x in gq)
-            v_resp = list({
-                'id': x.id,
-                'g_id': x.gene.id,
-                'type': 'v',
-                'label': "%s (%s)" % (
-                    x.description, x.hgvs_c.split(':')[1]) if x.hgvs_c else x.description,
-                'sources': sorted(x.sources)
-            } for x in vq)
+            v_resp = list(format_variant(x) for x in vq)
 
             resp = g_resp + v_resp
         else:
