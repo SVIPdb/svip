@@ -69,6 +69,7 @@ variants_in_sources_router.register(r'collapsed_associations', views.CollapsedAs
 # ------------------------------------------
 
 router.register(r'drugs', views.DrugViewSet)
+router.register(r'diseases', views.DiseaseViewSet)
 
 # ------------------------------------------
 # - SVIP-specific endpoints, top-level and nested
