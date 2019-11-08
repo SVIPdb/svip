@@ -12,7 +12,6 @@ import Access from "@/directives/access";
 
 // imports all the bootstrap parts
 import BootstrapVue from 'bootstrap-vue'
-
 Vue.use(BootstrapVue);
 
 // we import only the icons we actually use in the project to dramatically reduce bundle size
@@ -48,6 +47,7 @@ import Icon from "vue-awesome/components/Icon";
 import vSelect from "vue-select";
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import VueClipboard from 'vue-clipboard2'
+import { ValidationProvider } from 'vee-validate';
 import Expander from "@/components/widgets/Expander";
 
 import store from "./store";
@@ -57,6 +57,9 @@ Vue.config.productionTip = false;
 
 Vue.use(Snotify, {toast: {position: SnotifyPosition.centerTop, showProgressBar: false}});
 Vue.use(VueClipboard);
+
+// register vee-validate's validator
+Vue.component('ValidationProvider', ValidationProvider);
 
 // Vue.use(Vuex) // commented out b/c it's included in ./store.js
 Vue.component("icon", Icon);
