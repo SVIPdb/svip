@@ -62,6 +62,6 @@ HTTP.interceptors.response.use(null, (err) => {
 
     // displays a toast when something goes wrong, but propogates the error
     // (note that HTTProot doesn't need a handler, since it does its own error reporting)
-    vueInstance.$snotify.error(err.toString().slice("Error: ".length), `Network Error`, {timeout: 3000});
+    // vueInstance.$snotify.error(err.toString().slice("Error: ".length), `Network Error`, {timeout: 3000});
     throw err;
 });

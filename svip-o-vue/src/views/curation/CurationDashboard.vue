@@ -27,11 +27,13 @@
             title="TO BE DISCUSSED"
         />
         <!-- NON SVIP VARIANTS - CARD -->
+        <!--
         <notification-card
             :items="nonsvip_variants"
             :fields="fields_nonsvip_variants"
             title="NON SVIP VARIANTS"
         />
+        -->
     </div>
 </template>
 
@@ -61,12 +63,15 @@ export default {
             // ON REQUEST FAKE DATA
             on_request, // data
             fields_on_request, // columns
+
             // TO BE CURATED FAKE DATA
             to_be_curated, // data
             fields_to_be_curated, // columns
+
             // TO BE DISCUSSED FAKE DATA
             to_be_discussed, // data
             fields_to_be_discussed, // columns
+
             // NON SVIP VARIANTS FAKE DATA
             nonsvip_variants, // data
             fields_nonsvip_variants // columns

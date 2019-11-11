@@ -13,25 +13,24 @@
                 />
             </template>
             <template v-slot:row-details="row">
-                <b-card v-access="'curators'" no-body class="border-0">
-                    <b-container fluid>
-                        <b-row class="p-3 bg-light">
-                            <b-col>
-                                <b>Complementary information</b>
-                                <br/>
-                                {{ row.item.summary }}
-                                <br/>
-                                <br/>
-                                <b>Personal comment (Only for curators)</b>
-                                <br/>
-                                {{ row.item.comment == null ? '-' : row.item.comment }}
-                            </b-col>
-                        </b-row>
-                    </b-container>
+                <b-card v-access="'curators'" no-body class="border-0 p-3 bg-light">
+                    <div style="margin-bottom: 1em;">
+                        <b>Complementary information</b><br/>
+                        {{ row.item.summary || '-' }}
+                    </div>
+                    <div>
+                        <b>Personal comment (Only for curators)</b><br/>
+                        {{ row.item.comment || '-' }}
+                    </div>
                 </b-card>
             </template>
+
+            <template v-slot:cell(created_on)="data">
+            {{ new Date(data.value).toLocaleString() }}
+            </template>
+
             <template v-slot:empty="scope">
-                <div class="empty-table-msg">- no evidence items -</div>
+                <div class="empty-table-msg">no evidence items</div>
             </template>
         </b-table>
     </b-card-text>
@@ -63,18 +62,21 @@ export default {
                 {key: "support", label: "Support", sortable: true},
                 {key: "references", label: "References", sortable: false},
                 {
-                    key: "curator",
+                    key: "owner_name",
                     label: "Curator",
                     sortable: false,
                     thStyle: {display: this.checkInRole("curators") ? "" : "none"}
                 },
                 {
-                    key: "date",
+                    key: "created_on",
                     label: "Date",
                     sortable: true,
                     thStyle: {display: this.checkInRole("curators") ? "" : "none"}
                 }
-            ]
+            ].map(x => {
+                if (!x.formatter) { x.formatter = (v) => v || '-'; }
+                return x;
+            })
         };
     },
     methods: {

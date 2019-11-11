@@ -59,7 +59,7 @@ const router = new Router({
             component: AnnotateVariant
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/add",
+            path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/entry/:action",
             name: "add-evidence",
             component: AddEvidence
         },
@@ -74,7 +74,7 @@ const router = new Router({
             component: Home
         },
 
-        { path: '*', component: PageNotFound }
+        { path: '*', name: 'not-found', component: PageNotFound }
     ]
 });
 

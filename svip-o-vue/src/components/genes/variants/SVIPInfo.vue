@@ -33,11 +33,10 @@
                 <template v-slot:cell(display)="row">
                     <expander :row="row"/>
                 </template>
+
                 <template v-slot:cell(actions)="row">
-                    <b-button
-                        v-access="'curators'"
-                        size="sm"
-                        :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.id }}"
+                    <b-button v-access="'curators'" size="sm"
+                        :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.disease_id }}"
                     >
                         <icon name="tools"></icon>
                     </b-button>
@@ -89,15 +88,14 @@
                     <div class="row-details">
                         <b-card no-body>
                             <b-tabs
-                                v-model="svip_entry_tabs[row.item.name]"
-                                card
+                                v-model="svip_entry_tabs[row.item.name]" card
                                 :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
                             >
                                 <b-tab title="Evidence" active>
                                     <EvidenceTable :variant="variant" :row="row"/>
                                 </b-tab>
 
-                                <b-tab title="Samples" :disabled="!(groups && groups.includes('clinicians'))">
+                                <b-tab title="Samples" v-if="groups && groups.includes('clinicians')">
                                     <SampleTable :variant="variant" :row="row" :groups="groups"/>
                                 </b-tab>
                             </b-tabs>

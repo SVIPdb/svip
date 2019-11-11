@@ -35,12 +35,12 @@
         "sortable": true
     },
     {
-        "key": "curator",
+        "key": "owner_name",
         "label": "Curator",
         "sortable": true
     },
     {
-        "key": "date",
+        "key": "created_on",
         "label": "Date of curation",
         "sortable": true
     }

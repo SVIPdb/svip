@@ -102,19 +102,14 @@
 
         <variant-svip v-if="variant.svip_data" :variant="variant" :gene="gene_id"></variant-svip>
         <variant-public-databases :variant="variant"></variant-public-databases>
+
         <b-row v-access="'curators'">
             <b-col>
                 <b-card class="shadow-sm mt-3" align="left" no-body>
                     <b-card-body class="p-0 text-center">
                         <b-row no-gutters>
                             <b-col v-for="(item,index) in linkItems" :key="index">
-                                <b-button
-                                    squared
-                                    block
-                                    variant="outline-secondary"
-                                    :href="item.link"
-                                    target="_blank"
-                                >
+                                <b-button squared block variant="outline-secondary" :href="item.link" target="_blank">
                                     {{ item.source }}
                                     <icon name="external-link-alt"></icon>
                                 </b-button>

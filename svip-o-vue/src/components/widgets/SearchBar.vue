@@ -6,10 +6,11 @@
             :options="options"
             :filterBy="() => true"
             :placeholder="`Search for ${!variantsOnly ? 'gene /' : ''} variant`"
-            @search="onSearch"
             v-model="selected"
             :multiple="multiple"
-            @input="$emit('input', selected)"
+            @search="onSearch"
+            @change="onChange"
+            @input="onInput"
         >
             <template slot="option" slot-scope="option">
                 <div class="d-center">
@@ -91,7 +92,9 @@ export default {
     components: {SourceIcon},
     props: {
         variantsOnly: {type: Boolean, required: false, default: false},
-        multiple: {type: Boolean, required: false, default: false}
+        multiple: {type: Boolean, required: false, default: false},
+        preOptions: {type: Array, required: false, default: null},
+        value: { }
     },
     data() {
         return {
@@ -102,11 +105,17 @@ export default {
         };
     },
     watch: {
+        value: function() {
+            this.selected = this.value;
+        },
         selected: function () {
-            if (this.variantsOnly) {
+            console.log("Selected set to: ", this.selected);
+
+            if (this.variantsOnly || this.multiple) {
                 return;
             }
 
+            // navigates to the gene/variant page when something is selected
             const val = this.selected;
 
             if (val.type === "g") {
@@ -163,6 +172,12 @@ export default {
             loading(true);
             this.query = search;
             this.search(loading, search, this);
+        },
+        onChange() {
+            console.log("onChange invoked");
+        },
+        onInput() {
+            this.$emit('input', this.selected);
         },
         getGenesOnly: function () {
             HTTP.get("query", {params: {q: "", in_svip: this.showOnlySVIP}}).then(

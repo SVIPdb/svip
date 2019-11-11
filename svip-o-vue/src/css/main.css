@@ -61,6 +61,28 @@ footer .version-info .feedback {
     }
 }
 
+/* adds a style for vertically aligning an icon and a label within, say, a button */
+.centered-icons {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+.centered-icons > .fa-icon {
+    margin-right: 7px;
+}
+
+/* removes bootstrap 4's icons in invalid form elems (the red border is enough) */
+.was-validated .custom-select:invalid, .custom-select.is-invalid {
+    /*
+    for select controls: unfortunately bootstrap packs both the select icon and error icon into the same background declaration,
+    so we need to retain the select icon (below) while excluding the error icon.
+     */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+}
+.form-control.is-invalid, .was-validated .form-control:invalid {
+    background-image: none;
+}
+
 /* some tweaks to boostrap-vue's inexplicable whitespace choices */
 .card-title {
     margin-bottom: 0;
@@ -149,7 +171,7 @@ footer .version-info .feedback {
 
 /* general table styles */
 .empty-table-msg {
-    text-align: center; color: #999; padding: 5px; font-size: 18px;
+    text-align: center; color: #777; font-size: 18px; padding: 10px 5px 5px;
     font-style: italic;
 }
 

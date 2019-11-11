@@ -86,7 +86,7 @@ export default {
 
             HTTP.get(`variomes_single_ref`, {
                 params: {
-                    id: this.pubmeta.pmid,
+                    id: this.pubmeta.pmid.replace("PMID:", ""),
                     gene: this.gene,
                     variant: this.variant,
                     disease: this.disease

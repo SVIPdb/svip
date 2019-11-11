@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <variant-informations :variant="variant" :fields="fields" />
-        <evidence-card :items="evidences" />
+        <variant-informations :variant="variant" :disease_id="disease_id" />
+        <evidence-card :variant="variant" :disease_id="disease_id" />
         <div>
             <b-card no-body>
                 <b-tabs
@@ -16,12 +16,7 @@
                             <b-container>
                                 <b-row no-gutters>
                                     <b-col cols="5">
-                                        <b-form-select
-                                            required
-                                            class="custom-border-left"
-                                            v-model="source"
-                                            :options="['PMID']"
-                                        />
+                                        <b-form-select required class="custom-border-left" v-model="source" :options="['PMID']"/>
                                     </b-col>
                                     <b-col cols="5">
                                         <b-form-input
@@ -32,67 +27,29 @@
                                         ></b-form-input>
                                     </b-col>
                                     <b-col cols="2">
-                                        <b-button
-                                            :disabled="source == null || reference == null"
-                                            type="submit"
-                                            block
-                                            class="custom-border-right"
-                                            variant="success"
-                                            @click="addEvidence"
-                                            target="_blank"
-                                        >
-                                            <icon name="plus" />
+                                        <b-button :disabled="source == null || reference == null" type="submit" block class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
+                                            <icon name="plus" /> Create Entry
                                         </b-button>
                                     </b-col>
                                 </b-row>
                             </b-container>
                         </b-card-body>
                     </b-tab>
+
                     <b-tab title="Use text mining tool">
                         <b-card-body>
                             <b-row>
                                 <b-col sm="5" md="6" class="my-1">
-                                    <b-form-group
-                                        label="Per page"
-                                        label-cols-sm="6"
-                                        label-cols-md="4"
-                                        label-cols-lg="3"
-                                        label-align-sm="right"
-                                        label-size="sm"
-                                        label-for="perPageSelect"
-                                        class="mb-0"
-                                    >
-                                        <b-form-select
-                                            v-model="perPage"
-                                            id="perPageSelect"
-                                            size="sm"
-                                            :options="pageOptions"
-                                        />
+                                    <b-form-group label="Per page" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-align-sm="right" label-size="sm" label-for="perPageSelect" class="mb-0">
+                                        <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"/>
                                     </b-form-group>
                                 </b-col>
 
                                 <b-col sm="7" md="6" class="my-1">
-                                    <b-pagination
-                                        v-model="currentPage"
-                                        :total-rows="totalRows"
-                                        :per-page="perPage"
-                                        align="fill"
-                                        size="sm"
-                                        class="my-0"
-                                    ></b-pagination>
+                                    <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"/>
                                 </b-col>
                             </b-row>
-                            <b-table
-                                show-empty
-                                :busy="variomes.length == 0"
-                                :items="variomes.publications"
-                                :sort-by="sortBy"
-                                :sort-desc="sortDesc"
-                                :fields="fieldsTextMining"
-                                :current-page="currentPage"
-                                :per-page="perPage"
-                                small
-                            >
+                            <b-table show-empty :busy="variomes.length == 0" :items="variomes.publications" :sort-by="sortBy" :sort-desc="sortDesc" :fields="fieldsTextMining" :current-page="currentPage" :per-page="perPage" small>
                                 <template v-slot:table-busy>
                                     <div class="text-center text-danger my-2">
                                         <b-spinner class="align-middle"></b-spinner>
@@ -118,7 +75,7 @@
                                         @click="addEvidenceFromList(row.item.id)"
                                         target="_blank"
                                     >
-                                        <icon name="pen-alt" />
+                                        <icon name="plus" />
                                     </b-button>
                                 </template>
                                 <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
@@ -151,11 +108,14 @@
                             </b-table>
                         </b-card-body>
                     </b-tab>
+
+                    <!--
                     <b-tab title="Use prediction tools">
                         <b-card-text class="text-center">
                             <h1 class="display-2">Oops!</h1>Something went wrong here. We're working on it and we'll get it fixed as soon as possible.
                         </b-card-text>
                     </b-tab>
+                    -->
                 </b-tabs>
             </b-card>
         </div>
@@ -163,7 +123,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import variantInformations from "@/components/curation/widgets/VariantInformations";
+import variantInformations from "@/components/curation/widgets/CuratorVariantInformations";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import evidenceCard from "@/components/curation/widgets/EvidenceCard";
 import fields from "@/data/curation/summary/fields.json";
@@ -192,7 +152,8 @@ export default {
             currentPage: 1,
             perPage: 10,
             pageOptions: [10, 20, 30],
-            totalRows: 1
+
+            evidences: []
         };
     },
     computed: {
@@ -200,10 +161,8 @@ export default {
             variant: "variant",
             gene: "gene"
         }),
-        evidences() {
-            return this.variant.svip_data.diseases.find(
-                element => element.id == this.$route.params.disease_id
-            ).curation_entries;
+        disease_id() {
+            return parseInt(this.$route.params.disease_id);
         }
     },
     // components: {geneVariants: geneVariants},
@@ -215,7 +174,8 @@ export default {
                 params: {
                     gene_id: this.$route.params.gene_id,
                     variant_id: this.$route.params.variant_id,
-                    disease_id: this.$route.params.disease_id
+                    disease_id: this.$route.params.disease_id,
+                    action: 'add'
                 },
                 query: { source: this.source, reference: this.reference }
             });
@@ -226,14 +186,18 @@ export default {
             return this.addEvidence();
         }
     },
-    created() {
+    async created() {
+        const { variant_id, disease_id } = this.$route.params;
+
+        // first, get the disease data
+        this.disease = await HTTP.get(`/diseases/${disease_id}`);
+
+        // then, query variomes based on that data
         HTTP.get(`variomes_search`, {
             params: {
                 gene: this.variant.gene.symbol,
                 variant: this.variant.name,
-                disease: this.variant.svip_data.diseases.find(
-                    element => element.id == this.$route.params.disease_id
-                ).name
+                disease: this.disease.name
             }
         })
             .then(response => {
