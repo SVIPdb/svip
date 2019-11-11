@@ -2,7 +2,7 @@
     <v-select
         id="my-select"
         :class="[state === false ? 'invalidated' : '']"
-        :label="label" :options="drugs" :value="value" @input="update" :reduce="x => x[this.label]"
+        :options="drugs" :value="value" @input="update"
         :multiple="multiple" :taggable="allowCreate" :push-tags="allowCreate"
     />
 </template>
@@ -27,10 +27,7 @@ export default {
     },
     created() {
         HTTP.get('/drugs').then(response => {
-            this.drugs = response.data.map(x => {
-                x[this.label] = titleCase(x[this.label]);
-                return x;
-            });
+            this.drugs = response.data.map(x => titleCase(x[this.label]));
         });
     },
     methods: {
