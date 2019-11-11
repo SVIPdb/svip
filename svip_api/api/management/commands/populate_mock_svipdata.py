@@ -216,8 +216,9 @@ def create_svip_curationentries(source):
                         name__iexact=sample['disease'],
                     ).first(),
                     owner=User.objects.get(username=sample['owner_name']),
+                    drugs=[x.strip() for x in sample['drug'].split(", ")],
                     **dict(
-                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease', 'owner_name')
+                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease', 'drug', 'owner_name')
                     )
                 )
                 candidate.save()

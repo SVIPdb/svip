@@ -180,7 +180,7 @@ class CurationEntry(SVIPModel):
     variants = models.ManyToManyField(to=Variant)
 
     type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
-    drug = models.TextField(verbose_name="Drug", null=True)
+    drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True)
     effect = models.TextField(verbose_name="Effect", null=True)
     tier_level_criteria = models.TextField(verbose_name="Tier level Criteria", null=True)
     tier_level = models.TextField(verbose_name="Tier level", null=True)

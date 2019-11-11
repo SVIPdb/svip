@@ -87,7 +87,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 ))
 
             # also ensure that drug is specified if the type_of_evidence is "Predictive / Therapeutic"
-            if data['type_of_evidence'] == "Predictive / Therapeutic" and ('drug' not in data or data['drug'] in ('', None)):
+            if data['type_of_evidence'] == "Predictive / Therapeutic" and ('drugs' not in data or data['drugs'] is None or len(data['drugs']) == 0):
                 errors.update({'drug': "Field 'drug' cannot be null or empty if type_of_evidence is predictive"})
 
             if len(errors) > 0:
@@ -104,7 +104,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'variants',
 
             'type_of_evidence',
-            'drug',
+            'drugs',
             'effect',
             'tier_level_criteria',
             'tier_level',
