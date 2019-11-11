@@ -1,5 +1,7 @@
 import django_filters
+from django.http import JsonResponse
 from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 
 from api.models import (
@@ -132,6 +134,32 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+    @action(detail=True)
+    def history(self, request, pk):
+        entry = CurationEntry.objects.get(id=pk)
+        history = list(entry.history.all())
+        deltas = (
+            {'time': a.history_date, 'diff': a.diff_against(b)}
+            for a, b in zip(history[:-1], history[1:])
+        )
+
+        return JsonResponse({
+            'deltas': [
+                {
+                    'time': str(delta['time']),
+                    'changes': [
+                        {
+                            'field': change.field,
+                            'old': change.old,
+                            'new': change.new
+                        }
+                        for change in delta['diff'].changes
+                    ]
+                }
+                for delta in deltas
+            ]
+        })
 
     def get_queryset(self):
         user = self.request.user

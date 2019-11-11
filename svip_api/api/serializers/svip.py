@@ -67,7 +67,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 'variants',
 
                 'type_of_evidence',
-                'drug',
                 'effect',
                 'tier_level_criteria',
                 'mutation_origin',
@@ -77,12 +76,23 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 # 'references',
             )
 
+            # holds all errors that've been detected so far
+            errors = {}
+
             empty_fields = [k for k in non_empty_fields if k not in data or data[k] in ('', None)]
 
             if len(empty_fields) > 0:
-                raise serializers.ValidationError(dict(
+                errors.update(dict(
                     (k, "Field '%s' cannot be null or empty" % k) for k in empty_fields
                 ))
+
+            # also ensure that drug is specified if the type_of_evidence is "Predictive / Therapeutic"
+            if data['type_of_evidence'] == "Predictive / Therapeutic" and ('drug' not in data or data['drug'] in ('', None)):
+                errors.update({'drug': "Field 'drug' cannot be null or empty if type_of_evidence is predictive"})
+
+            if len(errors) > 0:
+                raise serializers.ValidationError(errors)
+
 
         return super().validate(data)
 
