@@ -91,9 +91,10 @@ const fields = [
         "sortable": true
     },
     {
-        "key": "drug",
-        "label": "Drug",
-        "sortable": true
+        "key": "drugs",
+        "label": "Drugs",
+        "sortable": true,
+        "formatter": (x) => x.join(", ")
     },
     {
         "key": "effect",

@@ -54,7 +54,7 @@ export default {
                 {key: "display", label: "", sortable: false},
                 {key: "type_of_evidence", label: "Evidence Type", sortable: true},
                 {key: "effect", label: "Effect", sortable: true},
-                {key: "drug", label: "Drug", sortable: true},
+                {key: "drugs", label: "Drugs", sortable: true, formatter: (x) => x.join(", ")},
                 {key: "tier_level_criteria", label: "Tier Criteria", sortable: true},
                 {key: "tier_level", label: "Tier Level", sortable: true},
                 {key: "mutation_origin", label: "Mutation Origin", sortable: true},
