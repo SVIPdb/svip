@@ -72,8 +72,8 @@
                                         </b-form-select>
                                     </ValidatedFormField>
 
-                                    <ValidatedFormField v-slot="props" :modeled="form.drug" :enabled="form.type_of_evidence === 'Predictive / Therapeutic'" label="For which drug?" inner-id="drug" required>
-                                        <DrugSearchBar id="drug" allow-create v-model="form.drug" :state="checkValidity(props)" />
+                                    <ValidatedFormField v-slot="props" :modeled="form.drugs" :enabled="form.type_of_evidence === 'Predictive / Therapeutic'" label="For which drug?" inner-id="drug" required>
+                                        <DrugSearchBar id="drug" allow-create v-model="form.drugs" multiple :state="checkValidity(props)" />
                                     </ValidatedFormField>
 
                                     <ValidatedFormField v-slot="props" :modeled="form.effect" label="Effect of the variant on the therapy" inner-id="effect" required>
@@ -337,7 +337,7 @@ export default {
                 disease: null,
                 variants: [],
                 type_of_evidence: null,
-                drug: null,
+                drugs: [],
                 effect: null,
                 tier_criteria: null,
                 mutation_origin: null,
@@ -377,7 +377,7 @@ export default {
         evidenceTypeChanged() {
             // when the type of evidence changes, we clear its dependent fields
             // (otherwise, they might still hold values despite not appearing to due their options changing)
-            this.form.drug = null;
+            this.form.drugs = [];
             this.form.effect = null;
             this.form.tier_criteria = null;
         },
@@ -501,15 +501,12 @@ export default {
                 ? matched.groups
                 : { tier_level: null, tier_level_criteria: this.form.tier_criteria};
 
-            // FIXME: this.form.drug is occasionally a string and occasionally an object; we need to figure
-            //  out when vue-select puts what value into it instead of using that wonky check below
-
             const payload = {
                 disease: this.disease_in_svip.disease_id,
                 variants: [this.variant.id, ...this.form.variants.map(x => x.id)], // selected plus the other ones
 
                 type_of_evidence: this.form.type_of_evidence,
-                drug: this.form.drug && this.form.drug.common_name ? this.form.drug.common_name : this.form.drug,
+                drugs: this.form.drugs || [],
                 effect: this.form.effect,
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,
