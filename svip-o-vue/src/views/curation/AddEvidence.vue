@@ -185,6 +185,9 @@
                                     <li>
                                         <icon class="mr-1" name="calendar" />Last modification: <span class="value">{{this.form.last_modified || '-'}}</span>
                                     </li>
+                                    <li>
+                                        <icon class="mr-1" name="history" />History: <span class="value"><b-link v-if="form.id" @click="showHistory()">show revisions</b-link></span>
+                                    </li>
                                 </ul>
 
                                 <div class="d-flex align-items-center">
@@ -241,6 +244,13 @@
                 :ref="'vueSimpleContextMenu'"
                 @option-clicked="optionClicked"
             />
+
+            <b-modal ref="history-modal" static lazy scrollable size="lg" :title="`Entry #${form.id || '???'} History`">
+                <div style="padding-bottom: 6em;">
+                    <EvidenceHistory v-if="form.id" :entry_id="form.id" />
+                    <div v-else>Error: no curation entry selected</div>
+                </div>
+            </b-modal>
         </div>
     </b-container>
 </template>
@@ -264,21 +274,6 @@ const effect_set = Object.values(inputs).reduce((acc, x) => Object.assign(acc, x
 
 // used to extract tier_level and tier_level_criteria (fields in the model) from the combined string tier_criteria
 const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
-
-extend('requiredIf', {
-    computesRequired: true,
-    message: 'This field is required.',
-    params: ['enabled'],
-    validate: (value, { enabled }) => {
-        const isEmpty = !!(!value || value.length === 0);
-        const isRequired = enabled;
-
-        return {
-            valid: !isRequired ? true : !isEmpty,
-            required: isRequired
-        };
-    }
-});
 
 import { required } from 'vee-validate/dist/rules';
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
@@ -424,6 +419,12 @@ export default {
 
             if (action === 'add') {
                 const { source, reference } = this.$route.query;
+
+                if (!source || !reference) {
+                    this.pageError = { message: "Required querystring params 'source' and/or 'reference' are missing."};
+                    return;
+                }
+
                 this.source = source;
                 this.reference = reference;
                 this.loadVariomeData();
@@ -576,8 +577,8 @@ export default {
         checkValidity(props) {
             return props.invalid && !props.changed ? false : null;
         },
-        closeWindow() {
-            return window.close();
+        showHistory() {
+            this.$refs['history-modal'].show();
         }
     },
     computed: {
