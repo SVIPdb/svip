@@ -3,8 +3,8 @@
         <b-spinner v-if="loading" />
         <div v-else-if="error">{{ error }}</div>
         <div v-else>
-            <div v-for="(entry, idx) in history.deltas">
-                <b-table-simple bordered>
+            <div v-for="(entry, idx) in lean_history">
+                <b-table-simple bordered :key="idx">
                     <caption>Change on {{ new Date(entry.time).toLocaleString() }}</caption>
                     <b-thead head-variant="light">
                         <b-tr>
@@ -18,9 +18,13 @@
                     <b-tbody>
                         <b-tr v-for="change in entry.changes">
                             <b-td>{{ change.field }}</b-td>
-                            <b-td>{{ change.old || '-' }}</b-td>
+                            <b-td>
+                                <ChangeField :value="change.old" />
+                            </b-td>
                             <b-td>&rightarrow;</b-td>
-                            <b-td><b>{{ change.new || '-' }}</b></b-td>
+                            <b-td>
+                                <b><ChangeField :value="change.new" /></b>
+                            </b-td>
                         </b-tr>
                     </b-tbody>
                 </b-table-simple>
@@ -36,8 +40,32 @@
 <script>
 import {HTTP} from '@/router/http';
 
+const ChangeField = {
+    props: {
+        value: { required: true }
+    },
+    render(h) {
+        let v;
+        try {
+            v = JSON.parse(this.value);
+        }
+        catch(e) {
+            v = this.value;
+        }
+
+        if (Array.isArray(v)) {
+            return h('ul', {class: 'items'}, v.map(x => {
+                return h('li', null, x || '-')
+            }))
+        }
+
+        return h('div', null, v || '-')
+    }
+};
+
 export default {
     name: "EvidenceHistory",
+    components: {ChangeField},
     props: {
         entry_id: { type: Number, required: true }
     },
@@ -50,6 +78,11 @@ export default {
     },
     created() {
         this.refresh();
+    },
+    computed: {
+        lean_history() {
+            return this.history.deltas.filter(d => d.changes.length > 0)
+        }
     },
     methods: {
         refresh() {
@@ -68,5 +101,8 @@ export default {
 </script>
 
 <style scoped>
-
+.items {
+    margin: 0;
+    padding: 0 0 0 20px;
+}
 </style>
