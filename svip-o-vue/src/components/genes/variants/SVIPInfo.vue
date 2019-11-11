@@ -34,14 +34,6 @@
                     <expander :row="row"/>
                 </template>
 
-                <template v-slot:cell(actions)="row">
-                    <b-button v-access="'curators'" size="sm"
-                        :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.disease_id }}"
-                    >
-                        <icon name="tools"></icon>
-                    </b-button>
-                </template>
-
                 <template v-slot:cell(name)="row">
                     {{ titleCase(row.item.name) }}
                 </template>
@@ -80,6 +72,16 @@
                             :class="`expander-button ${isAllExpanded ? 'is-expanded' : ''}`"
                             @click.stop="() => setAllExpanded(!isAllExpanded)"
                         >{{ isAllExpanded ? "Collapse All" : "Expand All"}}
+                        </b-button>
+                    </div>
+                </template>
+
+                <template v-slot:cell(actions)="row">
+                    <div class="details-tray" style="text-align: right;">
+                        <b-button v-access="'curators'" class="centered-icons" size="sm"
+                            :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.disease_id }}"
+                        >
+                            <icon name="tools" /> Curate
                         </b-button>
                     </div>
                 </template>
@@ -314,5 +316,9 @@ rect.pathogenicity.automatic {
 
 .details-tray {
     text-align: right;
+}
+
+.details-tray .btn {
+    width: 100px;
 }
 </style>
