@@ -509,7 +509,7 @@ export default {
                 variants: [this.variant.id, ...this.form.variants.map(x => x.id)], // selected plus the other ones
 
                 type_of_evidence: this.form.type_of_evidence,
-                drug: this.form.drug && this.form.drug.medicine_name ? this.form.drug.medicine_name : this.form.drug,
+                drug: this.form.drug && this.form.drug.common_name ? this.form.drug.common_name : this.form.drug,
                 effect: this.form.effect,
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,

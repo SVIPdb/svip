@@ -2,18 +2,19 @@
     <v-select
         id="my-select"
         :class="[state === false ? 'invalidated' : '']"
-        :label="'medicine_name'" :options="drugs" :value="value" @input="update" :reduce="x => x.medicine_name"
+        :label="label" :options="drugs" :value="value" @input="update" :reduce="x => x[this.label]"
         :multiple="multiple" :taggable="allowCreate" :push-tags="allowCreate"
     />
 </template>
 
 <script>
 import { HTTP } from "@/router/http";
+import {titleCase} from "@/utils";
 
 export default {
     name: "DrugSearchBar",
     props: {
-        label: {type: String, defualt: 'medicine_name' },
+        label: {type: String, default: 'common_name' },
         value: {type: Array | Object},
         state: {type: Boolean},
         multiple: {type: Boolean, default: false},
@@ -26,7 +27,10 @@ export default {
     },
     created() {
         HTTP.get('/drugs').then(response => {
-            this.drugs = response.data;
+            this.drugs = response.data.map(x => {
+                x[this.label] = titleCase(x[this.label]);
+                return x;
+            });
         });
     },
     methods: {
