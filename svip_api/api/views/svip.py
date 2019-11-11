@@ -145,6 +145,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
         return JsonResponse({
+            'created_on': history[0].history_date if len(history) > 0 else None,
             'deltas': [
                 {
                     'time': str(delta['time']),
