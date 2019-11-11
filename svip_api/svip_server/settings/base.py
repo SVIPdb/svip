@@ -34,6 +34,12 @@ ALLOWED_HOSTS = [
     'testserver'
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'localhost:8080',
+    'svip-dev.nexus.ethz.ch',
+    'svip-test.nexus.ethz.ch',
+]
+
 # allows django to detect that we're running behind a secure proxy (e.g., nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
