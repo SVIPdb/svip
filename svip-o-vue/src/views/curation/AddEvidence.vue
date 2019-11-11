@@ -100,7 +100,7 @@
                                         />
                                     </ValidatedFormField>
 
-                                    <ValidatedFormField v-slot="props" :modeled="form.summary" label="Complementary information" sublabel="(viewed by others)" inner-id="summary" required>
+                                    <ValidatedFormField v-slot="props" :modeled="form.summary" label="Complementary information" sublabel="(viewed by others)" inner-id="summary">
                                         <b-form-textarea id="summary"
                                             v-model="form.summary"
                                             rows="3" max-rows="5"
