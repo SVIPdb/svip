@@ -2,7 +2,7 @@
     <div>
         <b-spinner v-if="loading" />
         <div v-else-if="error">{{ error }}</div>
-        <div v-else>
+        <div v-else-if="history.deltas && history.deltas.length > 0">
             <div v-for="(entry, idx) in history.deltas">
                 <b-table-simple bordered>
                     <caption>Change on {{ new Date(entry.time).toLocaleString() }}</caption>
@@ -25,6 +25,9 @@
                     </b-tbody>
                 </b-table-simple>
             </div>
+        </div>
+        <div v-else style="text-align: center;">
+            <i>No recorded history yet.</i>
         </div>
     </div>
 </template>

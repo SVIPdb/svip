@@ -41,6 +41,7 @@ import "vue-awesome/icons/user";
 import "vue-awesome/icons/trash";
 import "vue-awesome/icons/tasks";
 import "vue-awesome/icons/pen-alt";
+import "vue-awesome/icons/history";
 
 import Icon from "vue-awesome/components/Icon";
 

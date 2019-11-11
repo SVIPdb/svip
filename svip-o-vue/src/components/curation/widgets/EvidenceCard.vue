@@ -48,9 +48,19 @@
                         <b-button class="centered-icons btn-danger" size="sm" @click="deleteEntry(data.item.id)">
                             <icon class="mr-1" name="trash" /> Delete
                         </b-button>
+                        <b-button class="centered-icons btn-info" size="sm" @click="showHistory(data.item.id)">
+                            <icon class="mr-1" name="history" /> History
+                        </b-button>
                     </span>
                 </template>
             </PagedTable>
+
+            <b-modal ref="history-modal" title="Entry History">
+                <div style="min-height: 300px;">
+                    <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
+                    <div v-else>Error: no curation entry selected</div>
+                </div>
+            </b-modal>
         </b-card-body>
     </b-card>
 </template>
@@ -62,6 +72,7 @@ import PagedTable from "@/components/widgets/PagedTable";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import BroadcastChannel from 'broadcast-channel';
 import {titleCase} from "@/utils";
+import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 
 const fields = [
     {
@@ -118,7 +129,7 @@ const fields = [
 
 export default {
     name: "EvidenceCard",
-    components: {VariomesLitPopover, PagedTable},
+    components: {EvidenceHistory, VariomesLitPopover, PagedTable},
     props: {
         variant: { type: Object, required: true },
         disease_id: { type: Number, required: true }
@@ -127,7 +138,8 @@ export default {
         return {
             fields,
             channel: new BroadcastChannel('curation-update'),
-            evidences: []
+            evidences: [],
+            history_entry_id: null
         };
     },
     created() {
@@ -180,6 +192,13 @@ export default {
                         this.$snotify.error("Failed to delete entry");
                     })
             }
+        },
+        showHistory(entry_id) {
+            // TODO: show the history modal
+            this.history_entry_id = entry_id;
+            setTimeout(() => {
+                this.$refs['history-modal'].show();
+            }, 300);
         },
         colorCurationRows(data) {
             // maps each row to a color variant based on its status (e.g., drafts are gray)
