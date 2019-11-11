@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  api:
+    build:
+      context: ./svip_api
+      args:
+        requirefile: requirements.prod.txt
+    restart: always
+    environment:
+      # - POSTGRES_DB=svip_api
+      - USE_DEV_SERVER=
+      - DJANGO_SETTINGS_MODULE=svip_server.settings.production

@@ -7,7 +7,7 @@ volumes:
 
 services:
   db:
-    image: "postgres:latest"
+    image: "postgres:11.1"
     restart: always
     volumes:
          - "svip_pgdata:/var/lib/postgresql/data" # for now we're storing pg data to a volume
@@ -42,3 +42,4 @@ services:
       - DJANGO_SU_NAME
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
+      - USE_DEV_SERVER=true
