@@ -55,8 +55,8 @@
                 </template>
             </PagedTable>
 
-            <b-modal ref="history-modal" title="Entry History">
-                <div style="min-height: 300px;">
+            <b-modal ref="history-modal" static lazy scrollable size="lg" :title="`Entry #${history_entry_id} History`">
+                <div style="padding-bottom: 6em;">
                     <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
                     <div v-else>Error: no curation entry selected</div>
                 </div>
@@ -194,11 +194,8 @@ export default {
             }
         },
         showHistory(entry_id) {
-            // TODO: show the history modal
+            this.$refs['history-modal'].show();
             this.history_entry_id = entry_id;
-            setTimeout(() => {
-                this.$refs['history-modal'].show();
-            }, 300);
         },
         colorCurationRows(data) {
             // maps each row to a color variant based on its status (e.g., drafts are gray)
