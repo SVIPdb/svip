@@ -42,21 +42,21 @@
                 <template v-slot:cell(action)="data">
                     <span class="action-tray">
                         <b-button target="_blank" class="centered-icons" size="sm" :href="editEntryURL(data.item.id)">
-                            <icon class="mr-1" name="pen-alt" />
+                            <icon name="pen-alt" />
                             Edit
                         </b-button>
-                        <b-button class="centered-icons btn-danger" size="sm" @click="deleteEntry(data.item.id)">
-                            <icon class="mr-1" name="trash" /> Delete
+                        <b-button class="btn-danger" v-b-tooltip="'Delete'" size="sm" @click="deleteEntry(data.item.id)">
+                            <icon name="trash" label="Delete" />
                         </b-button>
-                        <b-button class="centered-icons btn-info" size="sm" @click="showHistory(data.item.id)">
-                            <icon class="mr-1" name="history" /> History
+                        <b-button class="btn-info" v-b-tooltip="'History'" size="sm" @click="showHistory(data.item.id)">
+                            <icon name="history" label="History" />
                         </b-button>
                     </span>
                 </template>
             </PagedTable>
 
-            <b-modal ref="history-modal" static lazy scrollable size="lg" :title="`Entry #${history_entry_id} History`">
-                <div style="padding-bottom: 6em;">
+            <b-modal ref="history-modal" hide-footer static lazy scrollable size="lg" :title="`Entry #${history_entry_id} History`">
+                <div>
                     <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
                     <div v-else>Error: no curation entry selected</div>
                 </div>
@@ -223,13 +223,14 @@ export default {
 
 .action-tray {
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-end;
 }
 .action-tray .btn {
-    min-width: 100px;
     margin-left: 5px;
     margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #evidence_table >>> .table {
