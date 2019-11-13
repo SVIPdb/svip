@@ -1,11 +1,19 @@
 <template>
-    <div class="col-sm-auto" v-if="items && items.length > 0">
+    <div class="col-sm-auto">
+
         <div class="card mt-3 top-level">
             <div class="card-header">
-                <div class="card-title">SOCIBP Samples</div>
+                <div class="card-title">
+                    SOCIBP Samples
+                    <div class="float-right align-middle">
+                        <a :href="`https://socibp.nexus.ethz.ch/cbioportal`" target="_blank">
+                            <icon name="external-link-alt"/>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="card-body top-level">
+            <div v-if="items && items.length > 0" class="card-body top-level">
                 <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
                     <template v-slot:cell(studyName)="row">
                         <a :href="row.item.authed_link" v-b-tooltip="row.item.study.name">{{ row.item.studyName }}</a>
@@ -14,6 +22,9 @@
                         {{ row.item.num_patients }} / {{ row.item.num_samples }}
                     </template>
                 </b-table>
+            </div>
+            <div v-else class="card-body text-muted errorbox">
+                SOCIBP is currently unavailable, please try again later.
             </div>
         </div>
     </div>
@@ -54,7 +65,6 @@ export default {
             }))
         }).catch((err) => {
             // just don't display the thing if we encounter an error
-            console.warn("Encountered error when querying SOCIBP, hiding widget. Error: ", err);
             this.items = [];
         })
     },
@@ -65,4 +75,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.errorbox {
+    text-align: center;
+    padding: 15px; max-width: 250px;
+    font-style: italic;
+}
+</style>
