@@ -33,6 +33,7 @@ import "vue-awesome/icons/eye";
 import "vue-awesome/icons/check";
 import "vue-awesome/icons/times";
 import "vue-awesome/icons/plus";
+import "vue-awesome/icons/plus-square";
 import "vue-awesome/icons/minus";
 import "vue-awesome/icons/newspaper";
 import "vue-awesome/icons/key";

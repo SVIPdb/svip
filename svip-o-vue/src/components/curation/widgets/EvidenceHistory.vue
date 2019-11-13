@@ -3,42 +3,61 @@
         <b-spinner v-if="loading" />
         <div v-else-if="error">{{ error }}</div>
         <div v-else>
-            <div v-for="(entry, idx) in lean_history">
-                <b-table-simple bordered :key="idx">
-                    <caption>Change on {{ new Date(entry.time).toLocaleString() }}</caption>
-                    <b-thead head-variant="light">
-                        <b-tr>
-                            <b-th style="width: 20%;">Field Name</b-th>
-                            <b-th style="width: 20%;">Old</b-th>
-                            <b-th></b-th>
-                            <b-th style="width: 60%;">New</b-th>
-                        </b-tr>
-                    </b-thead>
+            <div v-for="(entry, idx) in lean_history" :key="idx" style="margin-bottom: 2em;">
+                <HistoryHeader icon="pen-alt" action="Edited" :date="entry.time" />
 
-                    <b-tbody>
-                        <b-tr v-for="change in entry.changes">
-                            <b-td>{{ change.field }}</b-td>
-                            <b-td>
-                                <ChangeField :value="change.old" />
-                            </b-td>
-                            <b-td>&rightarrow;</b-td>
-                            <b-td>
-                                <b><ChangeField :value="change.new" /></b>
-                            </b-td>
-                        </b-tr>
-                    </b-tbody>
-                </b-table-simple>
+                <div style="margin-left: 23px; margin-right: 12px;">
+                    <b-table-simple bordered class="change-table">
+                        <b-thead head-variant="light">
+                            <b-tr>
+                                <b-th style="width: 20%;">Field Name</b-th>
+                                <b-th style="width: 20%;">Old</b-th>
+                                <b-th></b-th>
+                                <b-th style="width: 60%;">New</b-th>
+                            </b-tr>
+                        </b-thead>
+
+                        <b-tbody>
+                            <b-tr v-for="change in entry.changes">
+                                <b-td>{{ change.field }}</b-td>
+                                <b-td>
+                                    <ChangeField :value="change.old" />
+                                </b-td>
+                                <b-td>&rightarrow;</b-td>
+                                <b-td>
+                                    <b><ChangeField :value="change.new" /></b>
+                                </b-td>
+                            </b-tr>
+                        </b-tbody>
+                    </b-table-simple>
+                </div>
             </div>
 
-            <div>
-                <b>Created on:</b> {{ history.created_on ? new Date(history.created_on).toLocaleString() : 'unknown' }}
-            </div>
+            <HistoryHeader icon="plus-square" action="Created" :date="history.created_on" />
         </div>
     </div>
 </template>
 
 <script>
 import {HTTP} from '@/router/http';
+
+const HistoryHeader = {
+    props: {
+        icon: { required: true, type: String },
+        action: { required: true, type: String },
+        date: { required: true }
+    },
+    render(h) {
+        return (
+            <h4 class="history-header">
+                <icon name={this.icon} scale="1.1" />
+                <span style="margin-left: 5px;">
+                <b>{this.action}</b> on {this.date ? new Date(this.date).toLocaleString() : 'unknown'}
+                </span>
+            </h4>
+        );
+    }
+};
 
 const ChangeField = {
     props: {
@@ -54,18 +73,18 @@ const ChangeField = {
         }
 
         if (Array.isArray(v)) {
-            return h('ul', {class: 'items'}, v.map(x => {
-                return h('li', null, x || '-')
-            }))
+            return v.length > 0
+                ? <ul class="items">{ v.map(x => <li>{x || '-'}</li>) }</ul>
+                : <div class="text-muted font-italic">empty list</div>;
         }
 
-        return h('div', null, v || '-')
+        return <div class={v ? null : 'text-muted font-italic'}>{ v || 'n/a' }</div>;
     }
 };
 
 export default {
     name: "EvidenceHistory",
-    components: {ChangeField},
+    components: {ChangeField, HistoryHeader},
     props: {
         entry_id: { type: Number, required: true }
     },
@@ -104,5 +123,11 @@ export default {
 .items {
     margin: 0;
     padding: 0 0 0 20px;
+}
+
+.history-header {
+    display: flex; align-items: center;
+    color: #333;
+    margin-bottom: 0.5em;
 }
 </style>
