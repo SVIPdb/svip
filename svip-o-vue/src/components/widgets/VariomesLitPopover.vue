@@ -1,9 +1,9 @@
 <template>
 	<span>
-		<a :id="`linked-${auto_id}`" :href="url" target="_blank">{{ title }}</a>
+		<a ref="anchor" :href="url" target="_blank">{{ title }}</a>
 
 		<b-popover
-            :target="`linked-${auto_id}`"
+            :target="() => $refs.anchor"
             triggers="hover focus"
             data-container="body"
             @show="updateCitation"
@@ -27,33 +27,15 @@
 </template>
 
 <script>
-import store from "@/store";
 import {HTTP} from '@/router/http';
 
 // FIXME: eventually link to http://variomes.hesge.ch/Variomes/literature.jsp?id=27145535&gene=NRAS&variant=Q61R
 
-function parsePubMeta(pubmeta) {
-    if (pubmeta.hasOwnProperty('pmid') && pubmeta.pmid) {
-        // extract the PMID and convert it to a url, then return a { url, title } object
-        const parsedPMID = parseInt(pubmeta.pmid.replace("PMID:", ""));
-
-        return {
-            url: `http://www.ncbi.nlm.nih.gov/pubmed/${parsedPMID}`,
-            title: parsedPMID,
-            pmid: parsedPMID
-        }
-    }
-
-    // otherwise, it's a regular pubmeta object
-    return pubmeta;
-}
-
-let ids = 0;
-
 export default {
     name: "VariomesLitPopover",
     props: {
-        pubmeta: {type: Object, required: true},
+        pubmeta: {type: Object, required: false},
+        pmid: {type: String, required: false},
         gene: {type: String},
         variant: {type: String},
         disease: {type: String},
@@ -61,14 +43,25 @@ export default {
     },
     data() {
         return {
-            auto_id: ids++,
-            variomes: null,
-            ...parsePubMeta(this.pubmeta)
+            variomes: null
         }
     },
     created() {
         if (!this.deferred) {
             this.updateCitation();
+        }
+    },
+    computed: {
+        parsedPMID() {
+            return ((this.pmid) ? this.pmid : this.pubmeta.pmid).replace("PMID:", "");
+        },
+        url() {
+            return `http://www.ncbi.nlm.nih.gov/pubmed/${this.parsedPMID}`;
+        },
+        title() {
+            if (this.pmid) { return this.parsedPMID }
+
+            return this.pubmeta.title ? this.pubmeta.title : this.parsedPMID;
         }
     },
     methods: {
@@ -81,12 +74,15 @@ export default {
         },
         updateCitation() {
             // if it's already loaded, return immediately
-            if (this.variomes && !this.variomes.error)
+            // (note that we need to check if the ids match because elements in a bootstrap-vue table are
+            // retained when you change pages, causing their data to be shared between corresponding elements
+            // on different pages...)
+            if (this.variomes && !this.variomes.error && this.variomes.publication.id === this.parsedPMID)
                 return;
 
             HTTP.get(`variomes_single_ref`, {
                 params: {
-                    id: this.pubmeta.pmid.replace("PMID:", ""),
+                    id: this.parsedPMID,
                     gene: this.gene,
                     variant: this.variant,
                     disease: this.disease
