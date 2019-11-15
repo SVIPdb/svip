@@ -3,7 +3,7 @@
     <b-navbar toggleable="md" type="dark" variant="primary" fixed="top" class="svip-navbar">
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-        <b-navbar-brand href="#">
+        <b-navbar-brand>
             <router-link to="/">
                 <img
                     src="../../assets/logos/SVIP_Logo_white_narrow.png"
