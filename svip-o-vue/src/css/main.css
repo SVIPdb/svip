@@ -61,6 +61,11 @@ footer .version-info .feedback {
     }
 }
 
+/* vue-select styling overrides */
+input.vs__search::placeholder {
+    color: #aaa;
+}
+
 /* adds a style for vertically aligning an icon and a label within, say, a button */
 .centered-icons {
     justify-content: center;

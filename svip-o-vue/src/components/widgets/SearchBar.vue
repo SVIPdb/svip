@@ -9,7 +9,6 @@
             v-model="selected"
             :multiple="multiple"
             @search="onSearch"
-            @change="onChange"
             @input="onInput"
         >
             <template slot="option" slot-scope="option">
@@ -173,9 +172,6 @@ export default {
             this.query = search;
             this.search(loading, search, this);
         },
-        onChange() {
-            console.log("onChange invoked");
-        },
         onInput() {
             this.$emit('input', this.selected);
         },
@@ -254,15 +250,10 @@ export default {
 
 .sources-set {
     margin-right: 3px;
-    width: 5em;
 }
 
 .result-type {
     font-style: italic;
     color: #555;
-}
-
-.v-select .dropdown-toggle::after {
-    content: "";
 }
 </style>

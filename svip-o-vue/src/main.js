@@ -47,6 +47,7 @@ import "vue-awesome/icons/history";
 import Icon from "vue-awesome/components/Icon";
 
 import vSelect from "vue-select";
+import 'vue-select/dist/vue-select.css';
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import VueClipboard from 'vue-clipboard2'
 import { ValidationProvider } from 'vee-validate';
