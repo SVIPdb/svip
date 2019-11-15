@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Prefetch
 from django.http import JsonResponse
 from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
@@ -7,7 +8,8 @@ from rest_framework.exceptions import PermissionDenied
 from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
-    CurationEntry
+    CurationEntry,
+    Variant
 )
 from api.permissions import IsCurationPermitted
 from api.serializers import (
@@ -94,7 +96,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     search_fields = (
         'annotations',
         'comment',
-        'drug',
+        'drugs',
         'effect',
         'mutation_origin',
         'references',
@@ -159,7 +161,11 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         result = (
             result
                 .select_related('owner')
-                .prefetch_related('variants', 'disease')
+                .prefetch_related(
+                    Prefetch('variants', queryset=Variant.objects.all().only('id', 'gene_id', 'hgvs_c', 'sources', 'description')),
+                    'variants__gene',
+                    'disease'
+                )
         )
 
         return result.order_by('created_on')

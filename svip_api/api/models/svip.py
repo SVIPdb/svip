@@ -177,7 +177,8 @@ class CurationEntry(SVIPModel):
     entry whenever they want.
     """
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
-    variants = models.ManyToManyField(to=Variant)
+    # variants = models.ManyToManyField(to=Variant)
+    variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
 
     type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
     drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True)
@@ -207,6 +208,19 @@ class CurationEntry(SVIPModel):
         excluded_fields=('created_on', 'last_modified'),
         cascade_delete_history=True
     )
+
+
+class VariantCuration(SVIPModel):
+    """
+    Binds curation entries to variants, but with an enforced ordering so we can differentiate the 'main'
+    variant from the 'additional' variants. In the future we might also annotate the relationship of the
+    variant to the curation entry.`
+    """
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
+    curationentry = models.ForeignKey(CurationEntry, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('id',)
 
 
 REVIEW_STATUS = OrderedDict((

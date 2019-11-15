@@ -17,6 +17,7 @@ from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 from django.contrib.auth import get_user_model
 
 from api.permissions import IsCurationPermitted
+from api.serializers.reference import DiseaseSerializer
 from api.utils import format_variant
 
 User = get_user_model()
@@ -169,9 +170,16 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 # ================================================================================================================
 
 class CurationEntrySerializer(serializers.ModelSerializer):
+    variants = serializers.PrimaryKeyRelatedField(
+        allow_empty=False, many=True, queryset=Variant.objects.all().order_by('curationentry_variants'),
+        style={'base_template': 'input.html'}
+    )
+
     owner = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
     created_on = serializers.DateTimeField(read_only=True, default=now)
+
+    # disease = DiseaseSerializer()  # returns the full disease object instead of just its ID
 
     owner_name = serializers.SerializerMethodField()
     formatted_variants = serializers.SerializerMethodField()
@@ -183,7 +191,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_formatted_variants(obj):
-        return [format_variant(x) for x in obj.variants.all()]
+        return [format_variant(x) for x in obj.variants.all().order_by('id')]
 
     def save(self, **kwargs):
         # force owner to be the current user
