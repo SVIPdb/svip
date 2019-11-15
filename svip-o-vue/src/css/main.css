@@ -175,6 +175,10 @@ footer .version-info .feedback {
     font-style: italic;
 }
 
+.unwrappable-header th {
+    white-space: nowrap;
+}
+
 /* styles for tables with toggleable details trays */
 .details-tray {
     display: flex;

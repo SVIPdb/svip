@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <!-- ON REQUEST - CARD -->
-        <notification-card
+        <notification-card v-if="REVIEW_ENABLED"
             :items="on_request"
             :fields="fields_on_request"
             sortBy="days_left"
@@ -12,7 +12,7 @@
             cardFilterOption
         />
         <!-- TO BE CURATED - CARD -->
-        <notification-card
+        <notification-card v-if="REVIEW_ENABLED"
             :items="to_be_curated"
             :fields="fields_to_be_curated"
             sortBy="days_left"
@@ -20,7 +20,7 @@
             cardFilterOption
         />
         <!-- UNDER REVISION - CARD -->
-        <notification-card
+        <notification-card v-if="REVIEW_ENABLED"
             :items="to_be_discussed"
             :fields="fields_to_be_discussed"
             sortBy="days_left"
@@ -34,6 +34,12 @@
             title="NON SVIP VARIANTS"
         />
         -->
+
+        <EvidenceCard has-header
+            header-title="YOUR CURATION ENTRIES"
+            cardHeaderBg="secondary"
+            cardTitleVariant="white"
+        />
     </div>
 </template>
 
@@ -52,14 +58,18 @@ import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json"
 
 import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
+import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
 
 export default {
     name: "CurationDashboard",
     components: {
+        EvidenceCard,
         "notification-card": NotificationCard
     },
     data() {
         return {
+            REVIEW_ENABLED: false, // temporary flag to hide review-related bits of the UI until they're ready
+
             // ON REQUEST FAKE DATA
             on_request, // data
             fields_on_request, // columns

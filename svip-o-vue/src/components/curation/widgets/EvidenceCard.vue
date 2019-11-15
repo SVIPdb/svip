@@ -1,11 +1,30 @@
 <template>
     <b-card class="shadow-sm mb-3" align="left" no-body>
+        <b-card-header v-if="hasHeader"
+            class="p-1"
+            :header-bg-variant="cardHeaderBg"
+            :header-text-variant="cardTitleVariant"
+        >
+            <div class="d-flex justify-content-between">
+                <div class="p-2 font-weight-bold">
+                {{headerTitle}}
+                </div>
+                <div>
+                    <b-input-group size="sm" class="p-1">
+                        <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
+                        <b-input-group-append>
+                            <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </div>
+            </div>
+        </b-card-header>
         <b-card-body class="p-0">
             <PagedTable
                 id="evidence_table"
                 ref="paged_table"
                 class="mb-0"
-                thead-class="bg-primary text-light"
+                :thead-class="`${!hasHeader && 'bg-primary text-light'} unwrappable-header`"
                 primary-key="id"
                 :tbody-tr-class="rowClass"
                 :items="evidences"
@@ -14,9 +33,14 @@
                 sort-desc
                 show-empty
                 empty-text="There seems to be an error"
-                :apiUrl="`/curation_entries?variants=${variant.id}&disease=${disease_id}`"
+                :external-search="filter"
+                :apiUrl="apiUrl"
                 :postMapper="colorCurationRows"
             >
+                <template v-slot:cell(display)="row">
+                    <expander :row="row"/>
+                </template>
+
                 <template v-slot:cell(status)="data">
                     <span class="pub-status">
                         <icon
@@ -30,18 +54,22 @@
 
                 <template v-slot:cell(references)="data">
                     <VariomesLitPopover
-                        :pubmeta="{ pmid: data.value }" :variant="variant.name" :gene="variant.gene.symbol"
-                        :disease="disease.name"
+                        :pubmeta="{ pmid: data.value }"
+                        v-bind="variomesParams"
                     />
                 </template>
 
                 <template v-slot:cell(created_on)="data">
+                {{ new Date(data.value).toLocaleString() }}
+                </template>
+
+                <template v-slot:cell(last_modified)="data">
                     {{ new Date(data.value).toLocaleString() }}
                 </template>
 
                 <template v-slot:cell(action)="data">
                     <span class="action-tray">
-                        <b-button target="_blank" class="centered-icons" size="sm" :href="editEntryURL(data.item.id)">
+                        <b-button target="_blank" class="centered-icons" size="sm" :href="editEntryURL(data.item)">
                             <icon name="pen-alt" />
                             Edit
                         </b-button>
@@ -76,6 +104,11 @@ import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 
 const fields = [
     {
+        key: "display",
+        sortable: false,
+        thClass: 'd-none', tdClass: 'd-none'
+    },
+    {
         "key": "status",
         "label": "Status",
         "sortable": true
@@ -108,7 +141,7 @@ const fields = [
     },
     {
         "key": "tier_level",
-        "label": "Tier criteria",
+        "label": "Tier level",
         "sortable": true
     },
     {
@@ -122,6 +155,11 @@ const fields = [
         "sortable": true
     },
     {
+        "key": "last_modified",
+        "label": "Modified",
+        "sortable": true
+    },
+    {
         key: "action",
         label: "",
         sortable: false
@@ -132,15 +170,20 @@ export default {
     name: "EvidenceCard",
     components: {EvidenceHistory, VariomesLitPopover, PagedTable},
     props: {
-        variant: { type: Object, required: true },
-        disease_id: { type: Number, required: true }
+        variant: { type: Object, required: false },
+        disease_id: { type: Number, required: false },
+        hasHeader: { type: Boolean, default: false },
+        headerTitle: { type: String, required: false, default: 'Curation Entries' },
+        cardHeaderBg: {type: String, required: false, default: "light"},
+        cardTitleVariant: {type: String, required: false, default: "primary"},
     },
     data() {
         return {
             fields,
             channel: new BroadcastChannel('curation-update'),
             evidences: [],
-            history_entry_id: null
+            history_entry_id: null,
+            filter: null
         };
     },
     created() {
@@ -150,10 +193,29 @@ export default {
     },
     computed: {
         disease() {
+            if (!this.variant || !this.disease_id) {
+                return null;
+            }
+
             return this.variant.svip_data.diseases.find(
                 element => element.disease_id === this.disease_id
             );
         },
+        apiUrl() {
+            const params = [
+                this.variant && `variants=${this.variant.id}`,
+                this.disease_id && `disease=${this.disease_id}`,
+            ].filter(x => x);
+
+            return `/curation_entries${params ? '?' + params.join("&") : ''}`;
+        },
+        variomesParams() {
+            return {
+                variant: this.variant && this.variant.name,
+                gene: this.variant && this.variant.gene.symbol,
+                disease: this.disease && this.disease.name
+            }
+        }
     },
     methods: {
         titleCase,
@@ -179,8 +241,19 @@ export default {
                 return "pen-alt";
             }
         },
-        editEntryURL(entry_id) {
-            return `/curation/gene/${this.variant.gene.id}/variant/${this.variant.id}/disease/${this.disease_id}/entry/${entry_id}`;
+        editEntryURL(entry) {
+            // FIXME: presumes again that the first variant is the 'main' one; do we want to assume that, or split it
+            //  into a seprate field?
+            // FIXME: alternatively, should curation entries have a 'main' variant at all, or should we restructure the
+            //  URL to remove the gene, variant, disease refererences?
+
+            const [gene_id, variant_id, disease_id] = [
+                entry.formatted_variants[0].g_id,
+                entry.formatted_variants[0].id,
+                entry.disease
+            ];
+
+            return `/curation/gene/${gene_id}/variant/${variant_id}/disease/${disease_id}/entry/${entry.id}`;
         },
         deleteEntry(entry_id) {
             if (confirm('Are you sure that you want to delete this entry?')) {

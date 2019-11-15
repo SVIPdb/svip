@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<a ref="anchor" :href="url" target="_blank">{{ title }}</a>
+		<a ref="anchor" :id="`link-${auto_id}`" :href="url" target="_blank" @click="openReference">{{ title }}</a>
 
 		<b-popover
             :target="() => $refs.anchor"
@@ -31,6 +31,8 @@ import {HTTP} from '@/router/http';
 
 // FIXME: eventually link to http://variomes.hesge.ch/Variomes/literature.jsp?id=27145535&gene=NRAS&variant=Q61R
 
+let ids = 0;
+
 export default {
     name: "VariomesLitPopover",
     props: {
@@ -43,6 +45,7 @@ export default {
     },
     data() {
         return {
+            auto_id: ids++,
             variomes: null
         }
     },
@@ -73,6 +76,9 @@ export default {
             return authors.join(", ");
         },
         updateCitation() {
+            // close all other popovers before showing this one
+            this.$root.$emit('bv::hide::popover');
+
             // if it's already loaded, return immediately
             // (note that we need to check if the ids match because elements in a bootstrap-vue table are
             // retained when you change pages, causing their data to be shared between corresponding elements
@@ -94,6 +100,10 @@ export default {
                 .catch((err) => {
                     this.variomes = {error: "Couldn't retrieve publication info, try again later."};
                 });
+        },
+        openReference() {
+            // hide all popovers before we continue, so that they don't remain open if middle-clicked
+            this.$root.$emit('bv::hide::popover');
         }
     }
 }
