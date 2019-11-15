@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-spinner v-if="loading" />
+        <b-spinner v-if="loading" style="display: block; margin: 0 auto; width: 3rem; height: 3rem;" />
         <div v-else-if="error">{{ error }}</div>
         <div v-else>
             <div v-for="(entry, idx) in lean_history" :key="idx" style="margin-bottom: 2em;">
@@ -18,7 +18,7 @@
                         </b-thead>
 
                         <b-tbody>
-                            <b-tr v-for="change in entry.changes">
+                            <b-tr v-for="(change, idx) in entry.changes" :key="idx">
                                 <b-td>{{ change.field }}</b-td>
                                 <b-td>
                                     <ChangeField :value="change.old" />
