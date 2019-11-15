@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="showFilters && showSearch" class="card-subtitle mb-2 evidence-line">
+        <div v-if="showFilters || showSearch" class="card-subtitle mb-2 evidence-line">
             <span class="text-muted evidence-count">
                 <b-spinner v-if="loading && !loading.error" small />
                 <span v-else-if="loading.error">{{ loading.error }}</span>
@@ -56,13 +56,33 @@
 import {HTTP} from '@/router/http';
 import {desnakify} from "@/utils";
 
+/**
+ * Wraps b-table, generalizing paging, searching and filtering for our API. Props not included here are passed on to the
+ * inner b-table.
+ */
 export default {
     name: "PagedTable",
     props: {
+        /**
+         *  The name of the items in the table, used to customize the item count label (default: "Items")
+         */
         itemNames: { type: String, default: "Items" },
+        /**
+         * Whether to show filter badges from a preselected list.
+         */
         showFilters: { type: Boolean, default: false },
+        /**
+         * Whether to show an inline free-text search box.
+         */
         showSearch: { type: Boolean, default: false },
-        postMapper: { type: Function }
+        /**
+         * Transforms elements immediately after being requested by the API.
+         */
+        postMapper: { type: Function },
+        /**
+         * Search string applied to the table; supersedes the inline search box.
+         */
+        externalSearch: { type: String, default: null }
     },
     data() {
         return {
@@ -81,6 +101,11 @@ export default {
                 __search: this.search,
                 ...this.filters
             };
+        }
+    },
+    watch: {
+        externalSearch(value) {
+            this.search = value;
         }
     },
     methods: {
@@ -130,5 +155,6 @@ export default {
 
 .paginator-holster {
     padding-left: 15px;
+    margin-top: 1em;
 }
 </style>
