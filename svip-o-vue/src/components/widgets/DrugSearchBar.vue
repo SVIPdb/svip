@@ -15,15 +15,15 @@ export default {
     name: "DrugSearchBar",
     props: {
         label: {type: String, default: 'common_name' },
-        value: {type: Array | Object},
+        value: {},
         state: {type: Boolean},
         multiple: {type: Boolean, default: false},
         allowCreate: {type: Boolean, default: false},
     },
     data() {
-      return {
-          drugs: []
-      }
+        return {
+            drugs: []
+        }
     },
     created() {
         HTTP.get('/drugs').then(response => {

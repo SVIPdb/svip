@@ -207,8 +207,8 @@ export default {
                 (acc, next) =>
                     parts.length > 0
                         ? acc.concat(
-                        {text: next.replace(" ", "\u00A0"), match: false},
-                        {text: parts.pop(), match: true}
+                            {text: next.replace(" ", "\u00A0"), match: false},
+                            {text: parts.pop(), match: true}
                         )
                         : acc.concat({text: next.replace(" ", "\u00A0"), match: false}),
                 []

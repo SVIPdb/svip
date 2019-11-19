@@ -10,7 +10,7 @@
                         <div class="page-section">
                             <h4>Variant Search Bar</h4>
                             <ul>
-                                <li v-for="a in selected_variants">{{ a }}</li>
+                                <li v-for="(a, idx) in selected_variants" :key="idx">{{ a }}</li>
                             </ul>
                             <SearchBar multiple variants-only v-model="selected_variants" />
 
@@ -22,7 +22,7 @@
                         <div class="page-section">
                             <h4>Drug Search Bar</h4>
                             <ul>
-                                <li v-for="a in selected_drugs">{{ a.medicine_name }}</li>
+                                <li v-for="(a, idx) in selected_drugs" :key="idx">{{ a.medicine_name }}</li>
                             </ul>
                             <DrugSearchBar v-model="selected_drugs" />
                         </div>

@@ -3,7 +3,7 @@
         <b-form-group :label="label" :label-for="innerId" :description="sublabel" label-cols-sm="4" label-cols-lg="3">
             <slot :invalid="invalid" :changed="changed" :validate="validate" />
             <ul class="error-list" v-if="errors.length > 0 && !changed">
-                <li v-for="err in errors">{{ err }}</li>
+                <li v-for="(err, idx) in errors" :key="idx">{{ err }}</li>
             </ul>
         </b-form-group>
     </ValidationProvider>

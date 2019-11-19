@@ -105,9 +105,7 @@ export default {
     computed: {
         change_parts() {
             const result = this.change.match(/^([A-Z])([0-9]+)([A-Z])$/);
-            if (result) {
-                return {ref: result[1], alt: result[3], pos: result[2]}
-            }
+            return (result) && {ref: result[1], alt: result[3], pos: result[2]};
         }
     },
     watch: {

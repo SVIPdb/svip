@@ -64,7 +64,7 @@ export default {
     name: "CurationDashboard",
     components: {
         EvidenceCard,
-        "notification-card": NotificationCard
+        NotificationCard
     },
     data() {
         return {

@@ -52,7 +52,7 @@ const HistoryHeader = {
             <h4 class="history-header">
                 <icon name={this.icon} scale="1.1" />
                 <span style="margin-left: 5px;">
-                <b>{this.action}</b> on {this.date ? new Date(this.date).toLocaleString() : 'unknown'}
+                    <b>{this.action}</b> on {this.date ? new Date(this.date).toLocaleString() : 'unknown'}
                 </span>
             </h4>
         );

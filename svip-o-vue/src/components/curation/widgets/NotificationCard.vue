@@ -108,14 +108,14 @@ export default {
             type: Array,
             required: true,
             // The default value is an empty array: `[]`
-            default: []
+            default: () => []
         },
         // The fields of the table
         fields: {
             type: Array,
             required: true,
             // The default value is an empty array: `[]`
-            default: []
+            default: () => []
         },
         // The title of the card
         title: {

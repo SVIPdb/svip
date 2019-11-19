@@ -34,14 +34,14 @@ export function makeCollapsedAssociationProvider(metaUpdate = null) {
             // rewrite some fields into what the front-end's expecting
             // fixme: should these be migrated to the tables themselves?
             return res.data.results.map(a => ({
-                    ...a,
-                    disease: titleCase(a.disease),
-                    drug_labels: normalizeItemList(a.drug_labels),
-                    publications: a.publications.map(parsePublicationURL),
-                    /* silly hack: we make all the details panels expanded, and just expand/collapse their contents so we can animate them */
-                    _showDetails: true,
-                    _animatedDetails: false
-                })
+                ...a,
+                disease: titleCase(a.disease),
+                drug_labels: normalizeItemList(a.drug_labels),
+                publications: a.publications.map(parsePublicationURL),
+                /* silly hack: we make all the details panels expanded, and just expand/collapse their contents so we can animate them */
+                _showDetails: true,
+                _animatedDetails: false
+            })
             )
         });
     }
