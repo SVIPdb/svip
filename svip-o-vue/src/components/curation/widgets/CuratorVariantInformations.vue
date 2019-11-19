@@ -27,7 +27,7 @@
                         {{ data.value.split(":")[1] }}
                     </p>
                 </template>
-                <template v-slot:cell(disease)>{{ disease }}</template>
+                <template v-slot:cell(disease)>{{ disease_name }}</template>
                 <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
                 <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
 
@@ -48,11 +48,11 @@ export default {
     props: {
         variant: {
             type: Object,
-            required: false
+            required: true
         },
         disease_id: {
             type: Number,
-            required: false
+            required: true
         },
         multiple: {
             type: Boolean,
@@ -80,22 +80,19 @@ export default {
         var_position() {
             return var_to_position(this.variant);
         },
-        disease() {
-            // FIXME: these could instead query for a combination of variant_id and disease_id
-            //  and at least not depend on appearing on a specific page...
+        disease_from_var() {
             return this.variant.svip_data.diseases.find(
                 element => element.disease_id === this.disease_id
-            ).name;
+            );
+        },
+        disease_name() {
+            return this.disease_from_var.name;
         },
         pathogenicity() {
-            return this.variant.svip_data.diseases.find(
-                element => element.disease_id === this.disease_id
-            ).pathogenic;
+            return this.disease_from_var.pathogenic;
         },
         clinical_significance() {
-            return this.variant.svip_data.diseases.find(
-                element => element.disease_id === this.disease_id
-            ).clinical_significance;
+            return this.disease_from_var.clinical_significance;
         },
         allVariants() {
             return [this.variant, ...this.extraVariants]
