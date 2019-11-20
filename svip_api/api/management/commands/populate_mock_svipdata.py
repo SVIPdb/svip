@@ -207,23 +207,23 @@ def create_svip_curationentries(source):
 
         CurationEntry.objects.all().delete()
 
-        for sample in reader:
+        for curation_entry in reader:
             total += 1
 
             try:
                 candidate = CurationEntry(
                     variant=Variant.objects.get(
-                        gene__symbol=sample['gene'],
-                        name=sample['variant'],
-                        hgvs_c__endswith=sample['cds']
+                        gene__symbol=curation_entry['gene'],
+                        name=curation_entry['variant'],
+                        hgvs_c__endswith=curation_entry['cds']
                     ),
                     disease=Disease.objects.filter(
-                        name__iexact=sample['disease'],
+                        name__iexact=curation_entry['disease'],
                     ).first(),
-                    owner=User.objects.get(username=sample['owner_name']),
-                    drugs=[x.strip() for x in sample['drug'].split(", ")],
+                    owner=User.objects.get(username=curation_entry['owner_name']),
+                    drugs=[x.strip() for x in curation_entry['drug'].split(", ")],
                     **dict(
-                        (k, v.strip()) for k, v in sample.items() if k not in ('gene', 'variant', 'cds', 'disease', 'drug', 'owner_name')
+                        (k, v.strip()) for k, v in curation_entry.items() if k not in ('gene', 'variant', 'cds', 'disease', 'drug', 'owner_name')
                     )
                 )
                 candidate.save()
@@ -231,12 +231,12 @@ def create_svip_curationentries(source):
             except Disease.DoesNotExist:
                 print(
                     "Couldn't find corresponding disease \"%s\" w/gene, name, cds '%s %s %s', skipping..." %
-                    (sample['disease'], sample['gene'], sample['variant'], sample['cds'])
+                    (curation_entry['disease'], curation_entry['gene'], curation_entry['variant'], curation_entry['cds'])
                 )
             except Variant.DoesNotExist:
                 print(
                     "Couldn't find corresponding variant \"%s\" w/gene, disease, cds '%s %s %s', skipping..." %
-                    (sample['name'], sample['gene'], sample['disease'], sample['cds'])
+                    (curation_entry['variant'], curation_entry['gene'], curation_entry['disease'], curation_entry['cds'])
                 )
 
         return succeeded, total
