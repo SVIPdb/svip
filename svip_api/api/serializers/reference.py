@@ -10,6 +10,13 @@ class DrugSerializer(serializers.ModelSerializer):
 
 
 class DiseaseSerializer(serializers.ModelSerializer):
+    def to_internal_value(self, data):
+        from api.utils import to_dict
+        try:
+            return to_dict(Disease.objects.get(id=int(data)))
+        except ValueError:
+            return super().to_internal_value(data)
+
     class Meta:
         model = Disease
         fields = '__all__'

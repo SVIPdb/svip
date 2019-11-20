@@ -3,6 +3,7 @@ Serializers for SVIP-specific models.
 """
 import datetime
 from itertools import chain
+from pprint import pprint
 
 from django.db.models import Count
 from django.utils.timezone import now
@@ -17,6 +18,7 @@ from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 from django.contrib.auth import get_user_model
 
 from api.permissions import IsCurationPermitted
+from api.serializers import SimpleVariantSerializer
 from api.serializers.reference import DiseaseSerializer
 from api.utils import format_variant
 
@@ -137,7 +139,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def get_curation_entries(self, obj):
         # FIXME: correctly determine permissions for viewing curation entries
         return [
-            CurationEntrySerializer(x).data
+            CurationEntrySerializer(x, context={'request': self.context['request']}).data
             for x in obj.curation_entries().all()
             if IsCurationPermitted.is_user_allowed(user=self.context['request'].user, obj=x, is_reading=True)
         ]
@@ -170,16 +172,19 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 # ================================================================================================================
 
 class CurationEntrySerializer(serializers.ModelSerializer):
-    variants = serializers.PrimaryKeyRelatedField(
-        allow_empty=False, many=True, queryset=Variant.objects.all().order_by('curationentry_variants'),
-        style={'base_template': 'input.html'}
-    )
+    variant = SimpleVariantSerializer()
+
+    # extra_variants = serializers.PrimaryKeyRelatedField(
+    #     allow_empty=False, many=True, queryset=Variant.objects.all(),
+    #     style={'base_template': 'input.html'}
+    # )
+    extra_variants = SimpleVariantSerializer(many=True, style={'base_template': 'input.html'}, required=False)
 
     owner = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
     created_on = serializers.DateTimeField(read_only=True, default=now)
 
-    # disease = DiseaseSerializer()  # returns the full disease object instead of just its ID
+    disease = DiseaseSerializer()  # returns the full disease object instead of just its ID
 
     owner_name = serializers.SerializerMethodField()
     formatted_variants = serializers.SerializerMethodField()
@@ -191,7 +196,23 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_formatted_variants(obj):
-        return [format_variant(x) for x in obj.variants.all().order_by('id')]
+        return [format_variant(x) for x in obj.extra_variants.all().order_by('id')]
+
+    @staticmethod
+    def _remap_multifields(validated_data):
+        # replace references to variant and disease IDs with the actual backing objects
+        # note that we presume here that the variant and disease IDs they specify already exist
+        validated_data['variant'] = Variant.objects.get(id=validated_data['variant']['id'])
+        validated_data['disease'] = Disease.objects.get(id=validated_data['disease']['id'])
+        validated_data['extra_variants'] = Variant.objects.filter(id__in=[x['id'] for x in validated_data['extra_variants']])
+
+    def create(self, validated_data):
+        self._remap_multifields(validated_data)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        self._remap_multifields(validated_data)
+        return super().update(instance, validated_data)
 
     def save(self, **kwargs):
         # force owner to be the current user
@@ -202,24 +223,20 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['status'] != 'draft':
+            # holds all errors that've been detected so far
+            errors = {}
+
             # TODO: perform more stringent validation
             # FIXME: for now we'll do validation here, but ideally it should be factored out
             non_empty_fields = (
                 'disease',
-                'variants',
-
+                'variant',
                 'type_of_evidence',
                 'effect',
                 'tier_level_criteria',
                 'mutation_origin',
-
                 'support',
-                # 'comment'
-                # 'references',
             )
-
-            # holds all errors that've been detected so far
-            errors = {}
 
             empty_fields = [k for k in non_empty_fields if k not in data or data[k] in ('', None)]
 
@@ -242,7 +259,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'disease',
-            'variants',
+            'variant',
+            'extra_variants',
 
             'type_of_evidence',
             'drugs',

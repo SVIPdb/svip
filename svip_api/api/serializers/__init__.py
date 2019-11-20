@@ -3,14 +3,18 @@ from .genomic import (
     GroupSerializer,
     SourceSerializer,
     GeneSerializer,
+    SimpleVariantSerializer,
     VariantSerializer,
     VariantInSourceSerializer,
-    FullVariantSerializer,
     AssociationSerializer,
     CollapsedAssociationSerializer,
     PhenotypeSerializer,
     EvidenceSerializer,
     EnvironmentalContextSerializer,
+)
+from api.serializers.genomic_svip import (
+    FullVariantSerializer,
+    OnlySVIPVariantSerializer
 )
 
 from .svip import (

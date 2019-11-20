@@ -1,3 +1,4 @@
+from itertools import chain
 
 def dictfetchall(cursor):
     """"Return all rows from a cursor as a dict"""
@@ -22,3 +23,13 @@ def format_variant(x):
         'label': "%s (%s)" % (x.description, x.hgvs_c.split(':')[1]) if x.hgvs_c else x.description,
         'sources': sorted(x.sources)
     }
+
+
+def to_dict(instance):
+    opts = instance._meta
+    data = {}
+    for f in chain(opts.concrete_fields, opts.private_fields):
+        data[f.name] = f.value_from_object(instance)
+    for f in opts.many_to_many:
+        data[f.name] = [i.id for i in f.value_from_object(instance)]
+    return data

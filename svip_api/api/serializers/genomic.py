@@ -1,14 +1,11 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import (
-    Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
-    VariantInSVIP
+    Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource
 )
 from api.models.genomic import CollapsedAssociation
-from api.serializers.svip import VariantInSVIPSerializer
 
 
 # -----------------------------------------------------------------------------
@@ -56,6 +53,43 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
             'sources',
             'aliases',
             'prev_symbols',
+        )
+
+
+class SimpleGeneSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Gene
+        fields = (
+            'id',
+            'url',
+            'entrez_id',
+            'ensembl_gene_id',
+            'symbol',
+            'uniprot_ids',
+            'location',
+        )
+
+
+class SimpleVariantSerializer(serializers.HyperlinkedModelSerializer):
+    gene = SimpleGeneSerializer()
+
+    def to_internal_value(self, data):
+        from api.utils import to_dict
+
+        try:
+            return to_dict(Variant.objects.get(id=int(data)))
+        except ValueError:
+            return super().to_internal_value(data)
+
+    class Meta:
+        model = Variant
+        fields = (
+            'id',
+            'url',
+            'gene',
+            'name',
+            'description',
+            'hgvs_c'
         )
 
 
@@ -134,40 +168,6 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
             # 'association_set'
         )
         # depth = 1
-
-
-class FullVariantSerializer(VariantSerializer):
-    # sources_set = VariantInSourceSerializer(many=True)
-    variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
-
-    svip_data = VariantInSVIPSerializer()
-
-    def __init__(self, *args, **kwargs):
-        super(FullVariantSerializer, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Variant
-        depth = 1
-        fields = VariantSerializer.Meta.fields.copy()
-        fields.append('mv_info')
-        fields.append('variantinsource_set')
-        fields.append('svip_data')
-
-
-class OnlySVIPVariantSerializer(VariantSerializer):
-    # sources_set = VariantInSourceSerializer(many=True)
-    svip_data = VariantInSVIPSerializer()
-    gene = GeneSerializer()
-
-    def __init__(self, *args, **kwargs):
-        super(OnlySVIPVariantSerializer, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Variant
-        depth = 1
-        fields = VariantSerializer.Meta.fields.copy()
-        fields.append('gene')
-        fields.append('svip_data')
 
 
 # -----------------------------------------------------------------------------

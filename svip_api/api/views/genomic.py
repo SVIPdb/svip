@@ -29,7 +29,7 @@ from api.serializers import (
 
 
 # svip data endpoints
-from api.serializers.genomic import OnlySVIPVariantSerializer
+from api.serializers.genomic_svip import OnlySVIPVariantSerializer
 from references.prot_to_hgvs import three_to_one
 
 
