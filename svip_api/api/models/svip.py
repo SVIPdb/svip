@@ -4,7 +4,7 @@ from enum import Enum
 from django.contrib.postgres.aggregates import ArrayAgg, JSONBAgg
 from django.db import models, ProgrammingError, connection
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, F, Value, Func, Subquery, OuterRef
+from django.db.models import Count, F, Value, Func, Subquery, OuterRef, Q
 from django.db.models.base import ModelBase
 from django.db.models.functions import Coalesce, Concat
 
@@ -106,8 +106,10 @@ class DiseaseInSVIP(SVIPModel):
         return self.sample_set.count()
 
     def curation_entries(self):
+        # returns curation entries in which either the main variant or one of the extra variants is this variant
         return CurationEntry.objects.filter(
-            disease=self.disease, variants=self.svip_variant.variant
+            Q(extra_variants=self.svip_variant.variant) | Q(variant=self.svip_variant.variant),
+            Q(disease=self.disease)
         )
 
     def sample_diseases_count(self):
@@ -178,7 +180,8 @@ class CurationEntry(SVIPModel):
     """
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
     # variants = models.ManyToManyField(to=Variant)
-    variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
+    variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
+    extra_variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
 
     type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
     drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True)

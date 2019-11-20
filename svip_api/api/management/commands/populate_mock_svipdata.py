@@ -212,6 +212,11 @@ def create_svip_curationentries(source):
 
             try:
                 candidate = CurationEntry(
+                    variant=Variant.objects.get(
+                        gene__symbol=sample['gene'],
+                        name=sample['variant'],
+                        hgvs_c__endswith=sample['cds']
+                    ),
                     disease=Disease.objects.filter(
                         name__iexact=sample['disease'],
                     ).first(),
@@ -222,13 +227,6 @@ def create_svip_curationentries(source):
                     )
                 )
                 candidate.save()
-                candidate.variants.set(
-                    Variant.objects.filter(
-                        gene__symbol=sample['gene'],
-                        name=sample['variant'],
-                        hgvs_c__endswith=sample['cds']
-                    )
-                )
                 succeeded += 1
             except Disease.DoesNotExist:
                 print(

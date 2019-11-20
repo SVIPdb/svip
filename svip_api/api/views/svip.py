@@ -90,11 +90,14 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     filter_fields = (
         'owner',
         'disease',
-        'variants'
+        'variant',
+        'extra_variants'
     )
     ordering_fields = '__all__'
     search_fields = (
         'annotations',
+        'variant__description',
+        'disease__name',
         'comment',
         'drugs',
         'effect',
@@ -162,8 +165,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             result
                 .select_related('owner')
                 .prefetch_related(
-                    Prefetch('variants', queryset=Variant.objects.all().only('id', 'gene_id', 'hgvs_c', 'sources', 'description')),
-                    'variants__gene',
+                    'variant',
+                    Prefetch('extra_variants', queryset=Variant.objects.all().only('id', 'gene_id', 'hgvs_c', 'sources', 'description')),
+                    'extra_variants__gene',
                     'disease'
                 )
         )
