@@ -282,9 +282,9 @@ export default {
             //  URL to remove the gene, variant, disease refererences?
 
             const [gene_id, variant_id, disease_id] = [
-                entry.formatted_variants[0].g_id,
-                entry.formatted_variants[0].id,
-                entry.disease
+                entry.variant.gene.id,
+                entry.variant.id,
+                entry.disease.id
             ];
 
             return `/curation/gene/${gene_id}/variant/${variant_id}/disease/${disease_id}/entry/${entry.id}`;
