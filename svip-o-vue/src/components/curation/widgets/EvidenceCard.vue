@@ -316,6 +316,7 @@ export default {
         isDashboard: { type: Boolean, required: false, default: false },
         isSubmittable: { type: Boolean, required: false, default: false },
         onlySubmitted: { type: Boolean, required: false, default: false },
+        notSubmitted: { type: Boolean, required: false, default: false },
         hasHeader: { type: Boolean, default: false },
         headerTitle: { type: String, required: false, default: "Curation Entries" },
         cardHeaderBg: { type: String, required: false, default: "light" },
@@ -370,7 +371,9 @@ export default {
                 this.variant && `variants=${this.variant.id}`,
                 this.disease_id && `disease=${this.disease_id}`,
                 this.filterCurator && `owner=${this.userID}`,
-                this.onlySubmitted && `status=submitted`
+                // FIXME: these two are mutually exclusive
+                this.onlySubmitted && `status=submitted`,
+                this.notSubmitted && `status_ne=submitted`
             ].filter(x => x);
 
             return `/curation_entries${params ? "?" + params.join("&") : ""}`;
