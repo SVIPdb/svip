@@ -11,7 +11,10 @@
                 <svg width="10" height="10" class="legend-swatch">
                     <rect width="10" height="10" :fill="d.color"></rect>
                 </svg>
-                <span><b class="gender-label">{{ d.label }}:</b> {{ d.value.toLocaleString() }} ({{ round(d.value/totalPatients * 100.0) }}%)</span>
+                <span>
+                    <b class="gender-label">{{ d.label }}:</b> {{ d.value.toLocaleString() }}
+                    <span v-if="totalPatients > 0">({{ round(d.value/totalPatients * 100.0) }}%)</span>
+                </span>
             </div>
         </b-tooltip>
     </div>
