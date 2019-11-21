@@ -184,7 +184,7 @@ export default {
         },
         search: _.debounce((loading, search, vm) => {
             return HTTP.get("query", {
-                params: {q: search, in_svip: vm.showOnlySVIP}
+                params: {q: search, in_svip: vm.showOnlySVIP, variants_only: vm.variantsOnly ? 'true' : 'false'}
             }).then(res => {
                 vm.options = res.data;
                 loading(false);
