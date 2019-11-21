@@ -42,6 +42,8 @@
         </b-table>
 
         <div class="paginator-holster">
+            <slot name="extra_commands" />
+
             <b-pagination
                 v-if="totalRows > perPage"
                 v-model="currentPage"
@@ -154,6 +156,7 @@ export default {
 }
 
 .paginator-holster {
+    display: flex;
     padding-left: 15px;
     margin-top: 1em;
 }

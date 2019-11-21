@@ -211,20 +211,20 @@
                                     </ValidatedFormField>
 
                                     <b-form-group label="Your textual evidences" label-cols-sm="4" label-cols-lg="3">
-                    <span v-if="form.annotations && form.annotations.length > 0">
-                      <b-input-group
-                          v-for="(annotation,index) in form.annotations"
-                          :key="index"
-                          class="mt-3"
-                      >
-                        <b-form-textarea rows="3" disabled :value="annotation" no-resize></b-form-textarea>
-                        <b-input-group-append>
-                          <b-button variant="danger" @click="removeAnnotation(index)">
-                            <icon name="minus" />
-                          </b-button>
-                        </b-input-group-append>
-                      </b-input-group>
-                    </span>
+                                        <span v-if="form.annotations && form.annotations.length > 0">
+                                          <b-input-group
+                                              v-for="(annotation,index) in form.annotations"
+                                              :key="index"
+                                              class="mt-3"
+                                          >
+                                            <b-form-textarea rows="3" disabled :value="annotation" no-resize></b-form-textarea>
+                                            <b-input-group-append>
+                                              <b-button variant="danger" @click="removeAnnotation(index)">
+                                                <icon name="minus" />
+                                              </b-button>
+                                            </b-input-group-append>
+                                          </b-input-group>
+                                        </span>
                                         <b-input-group v-else>
                                             <i
                                                 class="text-muted"
@@ -300,7 +300,7 @@
                                     <b-link
                                         id="delete-btn"
                                         class="text-danger"
-                                        :disabled="!this.form.id"
+                                        :disabled="!form.id || form.status === 'submitted'"
                                         @click="onDelete()"
                                     >
                                         <icon class="mr-1" name="trash" />Delete
@@ -309,10 +309,11 @@
                                         class="ml-auto"
                                         variant="outline-success"
                                         @click="onSubmitDraft"
+                                        :disabled="form.status === 'submitted'"
                                     >{{is_saved ? "Update" : "Save"}} Draft</b-button>
                                 </div>
 
-                                <b-button class="mt-3" block variant="success" @click="onSubmit">Save Evidence</b-button>
+                                <b-button class="mt-3" block variant="success" :disabled="form.status === 'submitted'" @click="onSubmit">Save Evidence</b-button>
                             </b-collapse>
                         </b-card-body>
                     </b-card>
@@ -419,6 +420,7 @@ const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
 
 import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
+import {simpleDateTime} from "@/utils";
 
 extend("required", {
     ...required,
@@ -575,6 +577,11 @@ export default {
                     return;
                 }
 
+                // if we're not getting it from a curation entry, we need to load the disease and set the variant id in the form
+                HTTP.get(`/diseases/${this.$route.params.disease_id}`).then(response => {
+                   this.form.disease = response.data;
+                });
+
                 this.source = source;
                 this.reference = reference;
                 this.loadVariomeData();
@@ -629,7 +636,7 @@ export default {
                     ? `${tier_level_criteria} (${tier_level})`
                     : tier_level_criteria,
                 annotations: annotations || [],
-                last_modified: new Date(last_modified).toLocaleString()
+                last_modified: simpleDateTime(last_modified).date
             };
 
             console.log("Results of rehydration: ", this.form);
@@ -709,6 +716,11 @@ export default {
                     }
                 })
                 .catch((err, resp) => {
+                    if (err.response && err.response.status == 403) {
+                        this.$snotify.error("Submitted entries can't be changed!");
+                        return;
+                    }
+
                     // TODO: deal with the server's error response in err.response.data
                     //  to bind error messages to form elements.
                     console.log("Error: ", err);

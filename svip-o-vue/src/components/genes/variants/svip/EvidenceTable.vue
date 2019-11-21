@@ -26,7 +26,7 @@
             </template>
 
             <template v-slot:cell(created_on)="data">
-            {{ new Date(data.value).toLocaleString() }}
+            {{ simpleDateTime(data.value).date }}
             </template>
 
             <template v-slot:empty="scope">
@@ -38,7 +38,7 @@
 
 <script>
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import {trimPrefix} from "@/utils";
+import {simpleDateTime, trimPrefix} from "@/utils";
 import {checkInRole} from "@/directives/access";
 
 export default {
@@ -58,12 +58,17 @@ export default {
                 {key: "tier_level_criteria", label: "Tier Criteria", sortable: true},
                 {key: "tier_level", label: "Tier Level", sortable: true},
                 {key: "mutation_origin", label: "Mutation Origin", sortable: true},
-                {key: "summary", label: "Complementary Information", sortable: false},
                 {key: "support", label: "Support", sortable: true},
                 {key: "references", label: "References", sortable: false},
                 {
                     key: "owner_name",
                     label: "Curator",
+                    sortable: false,
+                    thStyle: {display: this.checkInRole("curators") ? "" : "none"}
+                },
+                {
+                    key: "status",
+                    label: "Status",
                     sortable: false,
                     thStyle: {display: this.checkInRole("curators") ? "" : "none"}
                 },
@@ -81,7 +86,8 @@ export default {
     },
     methods: {
         trimPrefix,
-        checkInRole
+        checkInRole,
+        simpleDateTime
     }
 };
 </script>

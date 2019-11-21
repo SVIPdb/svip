@@ -72,7 +72,7 @@ input.vs__search::placeholder {
     display: flex;
     align-items: center;
 }
-.centered-icons > .fa-icon {
+.centered-icons .fa-icon {
     margin-right: 7px;
 }
 

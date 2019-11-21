@@ -60,7 +60,7 @@
 
                             <PagedTable :apiUrl="`/curation_entries`" :fields="curation_fields">
                                 <template v-slot:cell(created_on)="data">
-                                    {{ new Date(data.value).toLocaleString() }}
+                                    {{ simpleDateTime(data.value).date }}
                                 </template>
                             </PagedTable>
                         </div>
@@ -79,6 +79,7 @@ import {HTTP} from '@/router/http';
 import PagedTable from "@/components/widgets/PagedTable";
 import curation_fields from "@/data/curation/evidence/fields.json";
 import WrappedSelect from "@/components/widgets/debug/WrappedSelect";
+import {simpleDateTime} from "@/utils";
 
 export default {
     name: "Debug",
@@ -102,6 +103,7 @@ export default {
         });
     },
     methods: {
+        simpleDateTime,
         populateSearchBar() {
             const item = { "id": 8, "g_id": 1, "type": "v", "label": "EGFR L858R (c.2573T>G)", "sources": [ "civic", "cosmic", "oncokb" ] };
             this.selected_variants = [item];

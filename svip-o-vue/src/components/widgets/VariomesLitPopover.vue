@@ -19,7 +19,7 @@
 				</div>
 				<div v-else-if="variomes && variomes.error">{{ variomes.error }}</div>
 				<span v-else class="variomes-loading">
-					<icon name="spinner" pulse></icon> &nbsp; loading...
+                    <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> loading...
 				</span>
 			</template>
 		</b-popover>

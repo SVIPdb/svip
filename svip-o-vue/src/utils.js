@@ -83,6 +83,14 @@ export function slugifySans(x) {
     return slugify(x.replace(":", "_"));
 }
 
+export function simpleDateTime(x) {
+    const parsed = new Date(x);
+    return {
+        date: `${parsed.getDate()}.${parsed.getMonth()}.${parsed.getFullYear()}`,
+        time: `${parsed.getHours()}:${parsed.getMinutes()}`
+    }
+}
+
 // used by some item providers to parse PMIDs out of publication URLs
 export function parsePublicationURL(p) {
     if (!p.includes('pubmed')) {

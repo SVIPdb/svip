@@ -35,8 +35,14 @@
         />
         -->
 
-        <EvidenceCard has-header
-            header-title="YOUR CURATION ENTRIES"
+        <EvidenceCard has-header is-dashboard only-submitted
+            header-title="SUBMITTED ENTRIES"
+            cardHeaderBg="secondary"
+            cardTitleVariant="white"
+        />
+
+        <EvidenceCard has-header is-dashboard
+            header-title="ALL CURATION ENTRIES"
             cardHeaderBg="secondary"
             cardTitleVariant="white"
         />

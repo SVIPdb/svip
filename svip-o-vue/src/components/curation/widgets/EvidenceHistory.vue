@@ -4,7 +4,7 @@
         <div v-else-if="error">{{ error }}</div>
         <div v-else>
             <div v-for="(entry, idx) in lean_history" :key="idx" style="margin-bottom: 2em;">
-                <HistoryHeader icon="pen-alt" action="Edited" :date="entry.time" />
+                <HistoryHeader icon="pen-alt" action="Edited" :actor="entry.changed_by" :date="entry.time" />
 
                 <div style="margin-left: 23px; margin-right: 12px;">
                     <b-table-simple bordered class="change-table">
@@ -33,26 +33,32 @@
                 </div>
             </div>
 
-            <HistoryHeader icon="plus-square" action="Created" :date="history.created_on" />
+            <HistoryHeader icon="plus-square" action="Created" :actor="history.created_by" :date="history.created_on" />
         </div>
     </div>
 </template>
 
 <script>
 import {HTTP} from '@/router/http';
+import {simpleDateTime} from "@/utils";
+import moment from "moment";
 
 const HistoryHeader = {
     props: {
         icon: { required: true, type: String },
         action: { required: true, type: String },
-        date: { required: true }
+        date: { required: true },
+        actor: { required: false, type: String }
     },
     render(h) {
+        const datetime = moment(this.date).format("DD.MM.YYYY h:mm:ss a");
+
         return (
             <h4 class="history-header">
                 <icon name={this.icon} scale="1.1" />
                 <span style="margin-left: 5px;">
-                    <b>{this.action}</b> on {this.date ? new Date(this.date).toLocaleString() : 'unknown'}
+                    <b>{this.action}</b> on {datetime ? datetime : 'unknown'}
+                    { this.actor && <span>, by <b>{this.actor}</b></span> }
                 </span>
             </h4>
         );
@@ -104,6 +110,7 @@ export default {
         }
     },
     methods: {
+        simpleDateTime,
         refresh() {
             HTTP.get(`/curation_entries/${this.entry_id}/history`)
                 .then((result) => {

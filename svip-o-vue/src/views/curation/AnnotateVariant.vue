@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <variant-informations :variant="variant" :disease_id="disease_id" />
-        <evidence-card :variant="variant" :disease_id="disease_id" />
+        <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
+        <EvidenceCard :variant="variant" :disease_id="disease_id" is-submittable />
         <div>
             <b-card no-body>
                 <b-tabs
@@ -123,9 +123,9 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import variantInformations from "@/components/curation/widgets/CuratorVariantInformations";
+import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import evidenceCard from "@/components/curation/widgets/EvidenceCard";
+import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
 import fields from "@/data/curation/summary/fields.json";
 import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import store from "@/store";
@@ -135,9 +135,9 @@ import { HTTP } from "@/router/http";
 export default {
     name: "AnnotateVariant",
     components: {
-        variantInformations,
+        CuratorVariantInformations,
         VariomesLitPopover,
-        evidenceCard
+        EvidenceCard
     },
     data() {
         return {
