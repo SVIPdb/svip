@@ -41,7 +41,7 @@
             </template>
         </b-table>
 
-        <div class="paginator-holster">
+        <div v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
             <slot name="extra_commands" />
 
             <b-pagination
@@ -103,7 +103,10 @@ export default {
                 __search: this.search,
                 ...this.filters
             };
-        }
+        },
+        slotsUsed () {
+            return !!this.$slots.extra_commands || (this.totalRows > this.perPage);
+        },
     },
     watch: {
         externalSearch(value) {
@@ -158,6 +161,7 @@ export default {
 .paginator-holster {
     display: flex;
     padding-left: 15px;
-    margin-top: 1em;
+    padding-top: 1em;
+    border-top: solid 1px #ddd;
 }
 </style>
