@@ -98,6 +98,28 @@ class CurationEntryFilter(django_filters.FilterSet):
         )
 
 
+def authed_curation_set(user):
+    result = None
+
+    if user.is_authenticated:
+        groups = [x.name for x in user.groups.all()]
+        if user.is_superuser:
+            # superusers can see everything
+            result = CurationEntry.objects.all()
+        if 'curators' in groups:
+            # curators see only their own entries if ALLOW_ANY_CURATOR is false
+            # if it's true, they can see any curation entry
+            result = CurationEntry.objects.filter(owner=user) if not ALLOW_ANY_CURATOR else CurationEntry.objects.all()
+        elif 'reviewers' in groups:
+            # FIXME: should reviewers see all entries, or just the ones they've been assigned?
+            result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted'))
+
+    if not result:
+        # unauthenticated users and other users who don't have specific roles just see the default set
+        result = CurationEntry.objects.filter(status='reviewed')
+
+    return result
+
 class CurationEntryViewSet(viewsets.ModelViewSet):
     """
     Curation entry for a specific variant w/SVIP data and disease.
@@ -174,23 +196,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        result = None
-
-        if user.is_authenticated:
-            if user.is_superuser:
-                # superusers can see everything
-                result = CurationEntry.objects.all()
-            if user.groups.filter(name='curators').exists():
-                # curators see only their own entries if ALLOW_ANY_CURATOR is false
-                # if it's true, they can see any curation entry
-                result = CurationEntry.objects.filter(owner=user) if not ALLOW_ANY_CURATOR else CurationEntry.objects.all()
-            elif user.groups.filter(name='reviewers').exists():
-                # FIXME: should reviewers see all entries, or just the ones they've been assigned?
-                result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted'))
-
-        if not result:
-            # unauthenticated users and other users who don't have specific roles just see the default set
-            result = CurationEntry.objects.filter(status='reviewed')
+        result = authed_curation_set(user)
 
         # pre-select variant and gene data to prevent thousands of queries
         result = (

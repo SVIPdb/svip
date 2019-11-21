@@ -4,7 +4,9 @@ import django_filters
 from django import forms
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Value
+from django.db.models.functions import Concat
+from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -117,6 +119,58 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
             resp = list({'id': x.id, 'label': x.description} for x in q)
 
         return Response(resp)
+
+    @action(detail=True)
+    def curation_summary(self, request, pk):
+        """
+        Produces a summary of curation data for the given variant, either for a specific disease
+        if 'disease_id' is specified as a parameter, or groups by all diseases associated by a
+        curation entry with this variant.
+
+        :param request:
+        :param pk:
+        :return:
+        """
+        from api.models import CurationEntry
+        from api.models import Disease
+        from api.serializers.reference import DiseaseSerializer
+        from api.views.svip import authed_curation_set
+
+        variant = Variant.objects.get(id=pk)
+        disease_id = request.GET.get('disease_id', None)
+
+        # first, get curation entries that we should be able to view based on our access privileges
+        # returns curation entries in which either the main variant or one of the extra variants is this variant
+        authed_set = authed_curation_set(request.user)
+        curation_entries = authed_set.filter(Q(extra_variants=variant) | Q(variant=variant))
+
+        def summarize_disease(ce_entries, target_disease):
+            disease_ce_entries = ce_entries.filter(disease=target_disease)
+
+            pathogenic = 'Pathogenic' if disease_ce_entries.filter(effect='Pathogenic').count() > 0 else None
+
+            clinical_significance = ' / '.join(
+                x['combined'] for x in disease_ce_entries
+                    .filter(type_of_evidence__in=('Predictive', 'Prognostic'))
+                    .annotate(combined=Concat('type_of_evidence', Value(' ('), 'tier_level', Value(')')))
+                    .values('combined').distinct()
+            )
+
+            return {
+                'disease': DiseaseSerializer(target_disease).data,
+                'pathogenic': pathogenic,
+                'clinical_significance': clinical_significance
+            }
+
+        if disease_id:
+            response = summarize_disease(curation_entries, Disease.objects.get(id=disease_id))
+        else:
+            response = dict(
+                (disease.name, summarize_disease(curation_entries, disease))
+                for disease in Disease.objects.filter(curationentry__id__in=[x.id for x in curation_entries])
+            )
+
+        return JsonResponse(response)
 
 
 class VariantInSourceViewSet(viewsets.ReadOnlyModelViewSet):
