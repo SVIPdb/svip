@@ -2,7 +2,7 @@
     <ValidationProvider v-if="enabled" :rules="required ? 'required' : ''" ref="provider" mode="passive" v-slot="{errors, invalid, changed, validate}">
         <b-form-group :class="`${required && 'reqfield'}`" :label="label" :label-for="innerId" :description="sublabel" label-cols-sm="4" label-cols-lg="3">
             <slot :invalid="invalid" :changed="changed" :validate="validate" />
-            <ul class="error-list" v-if="errors.length > 0 && (ignoresChanges || !changed)">
+            <ul class="error-list" v-if="errors.length > 0">
                 <li v-for="(err, idx) in errors" :key="idx">{{ err }}</li>
             </ul>
         </b-form-group>
@@ -18,7 +18,6 @@ export default {
         innerId: { type: String, required: true },
         enabled: { type: Boolean, default: true },
         required: { type: Boolean, default: false },
-        ignoresChanges: { type: Boolean, default: false },
         modeled: { }
     },
     methods: {

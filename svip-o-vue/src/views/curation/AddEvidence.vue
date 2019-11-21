@@ -110,7 +110,6 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
-                                        ignores-changes
                                         :modeled="form.drugs"
                                         :enabled="form.type_of_evidence === 'Predictive / Therapeutic'"
                                         label="For which drug?"
@@ -122,7 +121,6 @@
                                             allow-create
                                             v-model="form.drugs"
                                             multiple
-                                            @input="props.validate(form.drugs)"
                                             :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
@@ -138,7 +136,7 @@
                                             id="effect"
                                             v-model="form.effect"
                                             :options="effects"
-                                            :state="checkValidity(props)"
+                                            :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
 
@@ -154,7 +152,7 @@
                                             id="tier_criteria"
                                             v-model="form.tier_criteria"
                                             :options="tier_criteria"
-                                            :state="checkValidity(props)"
+                                            :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
 
@@ -657,6 +655,8 @@ export default {
         async submit(isDraft) {
             // manually validate all the fields before we go any further
             if (!isDraft) {
+                console.log("Pre-validation state: ", JSON.parse(JSON.stringify(this.form)));
+
                 // use the validation observer to validate every provider at once
                 // this will update the UI with 'this is required' as well
                 const isValid = await this.$refs.observer.validate();
@@ -811,7 +811,7 @@ export default {
             return this.form.id != null;
         }
     },
-    created() {
+    mounted() {
         this.load();
     },
     watch: {
