@@ -8,6 +8,7 @@
             :placeholder="`Search for ${!variantsOnly ? 'gene /' : ''} variant`"
             v-model="selected"
             :multiple="multiple"
+            :disabled="disabled"
             @search="onSearch"
             @input="onInput"
         >
@@ -92,6 +93,7 @@ export default {
     props: {
         variantsOnly: {type: Boolean, required: false, default: false},
         multiple: {type: Boolean, required: false, default: false},
+        disabled: {type: Boolean, required: false, default: false},
         preOptions: {type: Array, required: false, default: null},
         value: { }
     },

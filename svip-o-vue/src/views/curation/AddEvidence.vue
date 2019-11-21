@@ -77,6 +77,7 @@
                                             variants-only
                                             multiple
                                             v-model="form.extra_variants"
+                                            :disabled="isViewOnly"
                                         />
                                     </ValidatedFormField>
 
@@ -92,6 +93,7 @@
                                             :required="required"
                                             v-model="form.type_of_evidence"
                                             @change="evidenceTypeChanged"
+                                            :disabled="isViewOnly"
                                             :state="checkValidity(props)"
                                         >
                                             <optgroup
@@ -121,6 +123,7 @@
                                             allow-create
                                             v-model="form.drugs"
                                             multiple
+                                            :disabled="isViewOnly"
                                             :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
@@ -135,6 +138,7 @@
                                         <b-form-select
                                             id="effect"
                                             v-model="form.effect"
+                                            :disabled="isViewOnly"
                                             :options="effects"
                                             :state="checkValidity(props, true)"
                                         />
@@ -151,6 +155,7 @@
                                         <b-form-select
                                             id="tier_criteria"
                                             v-model="form.tier_criteria"
+                                            :disabled="isViewOnly"
                                             :options="tier_criteria"
                                             :state="checkValidity(props, true)"
                                         />
@@ -166,6 +171,7 @@
                                         <b-form-select
                                             id="mutation_origin"
                                             v-model="form.mutation_origin"
+                                            :disabled="isViewOnly"
                                             :options="['Somatic', 'Germline', 'Both somatic and germline', 'Unknown']"
                                             :state="checkValidity(props)"
                                         />
@@ -181,6 +187,7 @@
                                         <b-form-select
                                             id="support"
                                             v-model="form.support"
+                                            :disabled="isViewOnly"
                                             :options="['Strong', 'Moderate', 'Low', 'Other']"
                                             :state="checkValidity(props)"
                                         />
@@ -196,8 +203,8 @@
                                         <b-form-textarea
                                             id="summary"
                                             v-model="form.summary"
-                                            rows="3"
-                                            max-rows="5"
+                                            :disabled="isViewOnly"
+                                            rows="3" max-rows="5"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
@@ -212,8 +219,8 @@
                                         <b-form-textarea
                                             id="comment"
                                             v-model="form.comment"
-                                            rows="3"
-                                            max-rows="5"
+                                            :disabled="isViewOnly"
+                                            rows="3" max-rows="5"
                                             :state="checkValidity(props)"
                                         ></b-form-textarea>
                                     </ValidatedFormField>
@@ -513,6 +520,11 @@ export default {
             if (event.option.slug === "copy") {
                 this.doCopy();
             } else if (event.option.slug === "annotate") {
+                if (this.isViewOnly) {
+                    this.$snotify.warning("Can't alter a submitted entry");
+                    return;
+                }
+
                 this.form.annotations.push(this.selection);
             }
         },
@@ -563,6 +575,11 @@ export default {
             };
         },
         removeAnnotation(index) {
+            if (this.isViewOnly) {
+                this.$snotify.warning("Can't alter a submitted entry");
+                return;
+            }
+
             this.form.annotations.splice(index, 1);
         },
         load() {
@@ -809,6 +826,9 @@ export default {
         },
         is_saved() {
             return this.form.id != null;
+        },
+        isViewOnly() {
+            return this.form.id && this.form.status === 'submitted';
         }
     },
     mounted() {

@@ -4,6 +4,7 @@
         :class="[state === false ? 'invalidated' : '']"
         :options="drugs" :value="value" @input="update"
         :multiple="multiple" :taggable="allowCreate" :push-tags="allowCreate"
+        :disabled="disabled"
     />
 </template>
 
@@ -18,6 +19,7 @@ export default {
         value: {},
         state: {type: Boolean},
         multiple: {type: Boolean, default: false},
+        disabled: {type: Boolean, default: false},
         allowCreate: {type: Boolean, default: false},
     },
     data() {
