@@ -152,10 +152,8 @@ const actions = {
     async logout({commit}) {
         console.log("Beginning log out...");
 
-        if (USING_JWT_COOKIE) {
-            // we need to tell the server that we're going away so it can clear our cookie for us
-            await HTTProot.post('token/invalidate/');
-        }
+        // we need to tell the server that we're going away so it can clear our cookie for us
+        await HTTProot.post('token/invalidate/');
 
         console.log("...done");
 
