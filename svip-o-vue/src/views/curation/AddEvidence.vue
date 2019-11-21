@@ -6,6 +6,13 @@
                 <p>{{ pageError.message }}</p>
             </b-col>
         </b-row>
+        <b-row v-else-if="!checkInRole('curators') && !checkInRole('reviewers')">
+            <b-col class="page-error">
+                <h1>Not Authorized</h1>
+                <p>You may only access this page if you're a curator or reviewer.</p>
+                <router-link to="/">return to homepage</router-link>
+            </b-col>
+        </b-row>
         <div v-else>
             <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
@@ -103,6 +110,7 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        ignores-changes
                                         :modeled="form.drugs"
                                         :enabled="form.type_of_evidence === 'Predictive / Therapeutic'"
                                         label="For which drug?"
@@ -114,7 +122,8 @@
                                             allow-create
                                             v-model="form.drugs"
                                             multiple
-                                            :state="checkValidity(props)"
+                                            @input="props.validate(form.drugs)"
+                                            :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
 
@@ -136,6 +145,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.tier_criteria"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Select a Tier criteria"
                                         inner-id="tier_criteria"
                                         required
@@ -226,9 +236,7 @@
                                           </b-input-group>
                                         </span>
                                         <b-input-group v-else>
-                                            <i
-                                                class="text-muted"
-                                            >(Select text in the citation summary and right-click to add a textual evidence.)</i>
+                                            <i class="text-muted">(Select text in the citation summary and right-click to add a textual evidence.)</i>
                                         </b-input-group>
                                     </b-form-group>
                                 </ValidationObserver>
@@ -421,6 +429,7 @@ const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
 import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import {simpleDateTime} from "@/utils";
+import {checkInRole} from "@/directives/access";
 
 extend("required", {
     ...required,
@@ -489,6 +498,7 @@ export default {
         };
     },
     methods: {
+        checkInRole,
         getSelectionText() {
             if (window.getSelection) {
                 this.selection = window.getSelection().toString();
@@ -579,7 +589,7 @@ export default {
 
                 // if we're not getting it from a curation entry, we need to load the disease and set the variant id in the form
                 HTTP.get(`/diseases/${this.$route.params.disease_id}`).then(response => {
-                   this.form.disease = response.data;
+                    this.form.disease = response.data;
                 });
 
                 this.source = source;
@@ -747,8 +757,8 @@ export default {
                 });
             }
         },
-        checkValidity(props) {
-            return props.invalid && !props.changed ? false : null;
+        checkValidity(props, withoutChange) {
+            return props.invalid && (withoutChange || !props.changed) ? false : null;
         },
         showHistory() {
             this.$refs["history-modal"].show();
