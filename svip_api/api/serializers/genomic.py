@@ -98,7 +98,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     gene = GeneSerializer(read_only=True)
 
     def get_sources(self, obj):
-        return sorted(obj.sources)
+        return sorted(obj.sources) if obj.sources else None
 
     class Meta:
         model = Variant
