@@ -11,7 +11,7 @@ from api.models import (
     CurationEntry,
     Variant
 )
-from api.permissions import IsCurationPermitted
+from api.permissions import IsCurationPermitted, ALLOW_ANY_CURATOR
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
@@ -91,7 +91,8 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         'owner',
         'disease',
         'variant',
-        'extra_variants'
+        'extra_variants',
+        'status'
     )
     ordering_fields = '__all__'
     search_fields = (
@@ -114,20 +115,37 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+    @staticmethod
+    def _nice_username(obj):
+        fullname = ("%s %s" % (obj.first_name, obj.last_name)).strip()
+        return fullname if fullname else obj.username
+
+    @action(detail=False, methods=['POST'])
+    def bulk_submit(self, request):
+        # for every ID in items, if it's saved upgrade it to a draft
+        entryIDs = [int(x) for x in request.GET['items'].split(",")]
+        result = CurationEntry.objects.filter(id__in=entryIDs, status='saved').update(status='submitted')
+        return JsonResponse({
+            "input": entryIDs,
+            "changed": result
+        })
+
     @action(detail=True)
     def history(self, request, pk):
         entry = CurationEntry.objects.get(id=pk)
         history = list(entry.history.all())
         deltas = (
-            {'time': a.history_date, 'diff': a.diff_against(b)}
+            {'time': a.history_date, 'diff': a.diff_against(b), 'history_user': self._nice_username(a.history_user)}
             for a, b in zip(history[:-1], history[1:])
         )
 
         return JsonResponse({
             'created_on': history[0].history_date if len(history) > 0 else None,
+            'created_by': self._nice_username(entry.owner),
             'deltas': [
                 {
                     'time': str(delta['time']),
+                    'changed_by': delta['history_user'],
                     'changes': [
                         {
                             'field': change.field,
@@ -150,8 +168,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
                 # superusers can see everything
                 result = CurationEntry.objects.all()
             if user.groups.filter(name='curators').exists():
-                # curators see only their own entries
-                result = CurationEntry.objects.filter(owner=user)
+                # curators see only their own entries if ALLOW_ANY_CURATOR is false
+                # if it's true, they can see any curation entry
+                result = CurationEntry.objects.filter(owner=user) if not ALLOW_ANY_CURATOR else CurationEntry.objects.all()
             elif user.groups.filter(name='reviewers').exists():
                 # FIXME: should reviewers see all entries, or just the ones they've been assigned?
                 result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted'))

@@ -191,8 +191,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_owner_name(obj):
-        fullname = ("%s %s" % (obj.owner.first_name, obj.owner.last_name)).strip()
-        return fullname if fullname else obj.owner.username
+        return obj.owner_name()
 
     @staticmethod
     def get_formatted_variants(obj):
@@ -208,18 +207,20 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         self._remap_multifields(validated_data)
+        validated_data["owner"] = self.fields["owner"].get_default()
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        validated_data.pop('owner')
         self._remap_multifields(validated_data)
         return super().update(instance, validated_data)
 
-    def save(self, **kwargs):
-        # force owner to be the current user
-        # FIXME: we should include a caveat for superusers
-        # TODO: use stricter validation if the status isn't 'draft'
-        kwargs["owner"] = self.fields["owner"].get_default()
-        return super().save(**kwargs)
+    # def save(self, **kwargs):
+    #     # force owner to be the current user
+    #     # FIXME: we should include a caveat for superusers
+    #     # TODO: use stricter validation if the status isn't 'draft'
+    #     kwargs["owner"] = self.fields["owner"].get_default()
+    #     return super().save(**kwargs)
 
     def validate(self, data):
         if data['status'] != 'draft':

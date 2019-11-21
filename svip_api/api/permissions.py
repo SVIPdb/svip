@@ -1,6 +1,10 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
+# gives view/edit permissions to anyone who's a curator, not just the owner
+ALLOW_ANY_CURATOR = True
+
+
 class IsCurationPermitted(BasePermission):
     """
     Curation entries are visible by everyone *if* they're reviewed. They're editable by nobody except the curator
@@ -27,10 +31,10 @@ class IsCurationPermitted(BasePermission):
             if not is_reading:
                 # curators can only edit their own drafts or saved entries
                 # submitted and reviwed entries are always static to curators
-                return obj.owner == user and obj.status in ('draft', 'saved')
+                return (obj.owner == user or ALLOW_ANY_CURATOR) and obj.status in ('draft', 'saved')
             else:
                 # curators can see their own entries and only others' reviewed entries
-                return obj.owner == user or obj.status == 'reviewed'
+                return (obj.owner == user or ALLOW_ANY_CURATOR) or obj.status == 'reviewed'
         elif user.groups.filter(name='reviewers'):
             # FIXME: create a group called 'reviewers'
             if not is_reading:

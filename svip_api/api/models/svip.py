@@ -212,6 +212,10 @@ class CurationEntry(SVIPModel):
         cascade_delete_history=True
     )
 
+    def owner_name(self):
+        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        return fullname if fullname else self.owner.username
+
 
 class VariantCuration(SVIPModel):
     """
