@@ -79,6 +79,25 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
 # === Curation
 # ================================================================================================================
 
+class CurationEntryFilter(django_filters.FilterSet):
+    from api.models.svip import CURATION_STATUS
+    status_ne = django_filters.ChoiceFilter(
+        field_name='status', choices=tuple(CURATION_STATUS.items()),
+        lookup_expr='iexact', exclude=True
+    )
+
+    class Meta:
+        model = CurationEntry
+        fields = (
+            'owner',
+            'disease',
+            'variant',
+            'extra_variants',
+            'status',
+            'status_ne'
+        )
+
+
 class CurationEntryViewSet(viewsets.ModelViewSet):
     """
     Curation entry for a specific variant w/SVIP data and disease.
@@ -87,13 +106,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
-    filter_fields = (
-        'owner',
-        'disease',
-        'variant',
-        'extra_variants',
-        'status'
-    )
+    filterset_class = CurationEntryFilter
     ordering_fields = '__all__'
     search_fields = (
         'annotations',
