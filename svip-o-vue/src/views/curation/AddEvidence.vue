@@ -554,7 +554,7 @@ export default {
                     id: this.reference,
                     gene: this.variant.gene.symbol,
                     variant: this.variant.name,
-                    disease: this.disease_in_svip.name
+                    disease: this.form.disease.name
                 }
             })
                 .then(response => {
@@ -618,7 +618,7 @@ export default {
                         this.loadVariomeData(); // and finally load the data
                     })
                     .catch(err => {
-                        if (err.response.status === 404) {
+                        if (err.response && err.response.status === 404) {
                             // the curation entry doesn't exist, so we redirect to the 404 page
                             this.$router.push({ name: "not-found" });
                         } else {
@@ -818,11 +818,6 @@ export default {
         },
         disease_id() {
             return parseInt(this.$route.params.disease_id);
-        },
-        disease_in_svip() {
-            return this.variant.svip_data.diseases.find(
-                element => element.disease_id === this.disease_id
-            );
         },
         is_saved() {
             return this.form.id != null;

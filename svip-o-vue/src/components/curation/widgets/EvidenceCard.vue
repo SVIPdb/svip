@@ -358,7 +358,7 @@ export default {
             return fields;
         },
         disease() {
-            if (!this.variant || !this.disease_id) {
+            if (!this.variant || !this.disease_id || !this.variant.svip_data) {
                 return null;
             }
 

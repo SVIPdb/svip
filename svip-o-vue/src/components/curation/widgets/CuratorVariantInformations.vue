@@ -3,8 +3,6 @@
         <b-card-body class="p-0">
             <b-table
                 v-if="variant"
-                :thead-class="theadClass"
-                :tbody-class="tbodyClass"
                 class="mb-0"
                 :items="allVariants"
                 :fields="fields"
@@ -15,11 +13,16 @@
                     <router-link
                         class="font-weight-bold"
                         :to="{ name: 'gene', params: { gene_id: row.item.gene.id }}"
+                        target="_blank"
                     >{{ row.item.gene.symbol }}
                     </router-link>
                 </template>
                 <template v-slot:cell(name)="data">
-                    <b>{{ data.value }}</b>
+                    <router-link
+                        class="font-weight-bold"
+                        :to="{ name: 'variant', params: { gene_id: data.item.gene.id, variant_id: data.item.id }}"
+                        target="_blank"
+                    >{{ data.value }}</router-link>
                 </template>
                 <template v-slot:cell(hgvs_c)="data">
                     <p class="mb-0">
@@ -40,6 +43,7 @@
 </template>
 
 <script>
+import { HTTP } from "@/router/http";
 import fields from "@/data/curation/summary/fields.json";
 import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
 
@@ -57,42 +61,32 @@ export default {
         multiple: {
             type: Boolean,
             default: false
-        },
-        theadClass: {
-            type: String,
-            required: false,
-            default: ""
-        },
-        tbodyClass: {
-            type: String,
-            required: false,
-            default: ""
         }
     },
     data() {
         return {
             fields,
             showCurationTool: false,
-            extraVariants: []
+            extraVariants: [],
+            disease_name: null,
+            pathogenicity: null,
+            clinical_significance: null
         };
     },
+    created() {
+        HTTP.get(this.variantInfoUrl).then(response => {
+            const { disease, pathogenic, clinical_significance } = response.data;
+            this.disease_name = disease.name;
+            this.pathogenicity = pathogenic;
+            this.clinical_significance = clinical_significance;
+        });
+    },
     computed: {
+        variantInfoUrl() {
+            return `/variants/${this.variant.id}/curation_summary${ this.disease_id ? `?disease_id=${this.disease_id}` : ''}`;
+        },
         var_position() {
             return var_to_position(this.variant);
-        },
-        disease_from_var() {
-            return this.variant.svip_data.diseases.find(
-                element => element.disease_id === this.disease_id
-            );
-        },
-        disease_name() {
-            return this.disease_from_var.name;
-        },
-        pathogenicity() {
-            return this.disease_from_var.pathogenic;
-        },
-        clinical_significance() {
-            return this.disease_from_var.clinical_significance;
         },
         allVariants() {
             return [this.variant, ...this.extraVariants]
