@@ -38,7 +38,7 @@ export function titleCase(str, lowerCaseAll = false, glue = ["of", "for", "and"]
     if (!str) {
         return str;
     }
-    return str.replace(/(\w)(\w*)/g, function (_, i, r) {
+    return str.replace(/(\w)([A-Za-z0-9_']*)/g, function (_, i, r) {
         const frag = (r != null ? r : "");
         const j = i.toUpperCase() + (lowerCaseAll ? frag.toLocaleLowerCase() : frag);
         return glue.indexOf(j.toLowerCase()) < 0 ? j : j.toLowerCase();
