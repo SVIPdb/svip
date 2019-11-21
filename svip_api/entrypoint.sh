@@ -32,7 +32,7 @@ else:
 python manage.py collectstatic --no-input
 
 # ensure that the mock svip variants are present
-python manage.py populate_mock_svipdata
+# python manage.py populate_mock_svipdata
 
 # and finally run the server
 if [[ -n "${USE_DEV_SERVER}" ]]; then
