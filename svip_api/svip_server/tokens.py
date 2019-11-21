@@ -77,10 +77,17 @@ class TokenInvalidate(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         # FIXME: implement blacklisting the token when we log out, too
 
-        result = 'none'
         response = Response(status=status.HTTP_200_OK)
-        if api_settings.JWT_AUTH_COOKIE:
+        results = []
+
+        # definitely clear their sessionid cookie when they make this request, too
+        response.delete_cookie('sessionid')
+        results.append('cleared sessionid')
+
+        # attempt to clear the JWT_AUTH_COOKIE if it exists
+        if hasattr(api_settings, 'JWT_AUTH_COOKIE') and api_settings.JWT_AUTH_COOKIE:
             response.delete_cookie(api_settings.JWT_AUTH_COOKIE)
-            result = 'cleared cookie'
-        response.data = {'result': result}
+            results.append('cleared ' + api_settings.JWT_AUTH_COOKIE)
+
+        response.data = {'results': results}
         return response

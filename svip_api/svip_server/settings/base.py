@@ -61,6 +61,9 @@ INSTALLED_APPS = [
     'drf_yasg',
     'simple_history',
 
+    # FIXME: enable when we get around to blacklisting tokens correctly
+    # 'rest_framework_simplejwt.token_blacklist',
+
     # # Django Elasticsearch integration
     # 'django_elasticsearch_dsl',
     # # Django REST framework ES integration
