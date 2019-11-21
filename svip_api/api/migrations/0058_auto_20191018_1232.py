@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             model_name='curationentry',
             name='owner',
             field=models.ForeignKey(
-                default=get_user_model().objects.get(username='test_allroles').pk,
+                default=None,
                 on_delete=django_db_cascade.deletions.DB_CASCADE, to=settings.AUTH_USER_MODEL
             ),
             preserve_default=False,
