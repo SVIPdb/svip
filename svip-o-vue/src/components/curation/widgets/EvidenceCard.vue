@@ -57,6 +57,21 @@
                     />
                 </template>
 
+                <template v-slot:cell(variant__gene__symbol)="data">
+                    <b><router-link :to="`/gene/${data.item.variant.gene.id}`">{{ data.item.variant.gene.symbol }}</router-link></b>
+                </template>
+                <template v-slot:cell(variant__name)="data">
+                    <router-link :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`">{{ data.item.variant.name }}</router-link>
+                </template>
+                <template v-slot:cell(disease__name)="data">
+                    <router-link
+                        :to="`/curation/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}/disease/${data.item.disease.id}`"
+                        target="_blank"
+                    >
+                    {{ data.item.disease.name }}
+                    </router-link>
+                </template>
+
                 <template v-slot:cell(created_on)="data">{{ simpleDateTime(data.value).date }}</template>
 
                 <template v-slot:cell(status)="data">
