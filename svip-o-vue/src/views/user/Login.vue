@@ -2,6 +2,11 @@
     <div class="trunk">
         <h1>Log In to SVIP</h1>
         <p>Enter your credentials below to log in to your SVIP account.</p>
+        <div class="text-muted font-italic" style="text-align: center;">
+            If you don't have credentials, or the appropriate credentials<br />
+            for the resource you're trying to access, you can always go home:
+            <div style="margin-top: 0.5em;"><router-link to="/">SVIP homepage</router-link></div>
+        </div>
 
         <transition name="fade">
             <div v-if="error_msg && error_msg.non_field_errors" class="errors">
