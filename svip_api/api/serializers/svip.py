@@ -234,7 +234,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 'variant',
                 'type_of_evidence',
                 'effect',
-                'tier_level_criteria',
+                # 'tier_level_criteria', # only required if type_of_evidence != 'Excluded'
                 'mutation_origin',
                 'support',
             )
@@ -248,7 +248,14 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
             # also ensure that drug is specified if the type_of_evidence is "Predictive / Therapeutic"
             if data['type_of_evidence'] == "Predictive / Therapeutic" and ('drugs' not in data or data['drugs'] is None or len(data['drugs']) == 0):
-                errors.update({'drug': "Field 'drug' cannot be null or empty if type_of_evidence is predictive"})
+                errors.update({
+                    'drug': "Field 'drug' cannot be null or empty if type_of_evidence is 'Predictive / Therapeutic'"
+                })
+
+            if data['type_of_evidence'] != "Excluded" and ('tier_level_criteria' not in data or data['tier_level_criteria'] in (None, '')):
+                errors.update({
+                    'type_of_evidence': "Field 'type_of_evidence' cannot be null or empty if type_of_evidence is not 'Excluded'"
+                })
 
             if len(errors) > 0:
                 raise serializers.ValidationError(errors)
@@ -282,6 +289,12 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'formatted_variants',
             'status',
         )
+
+        extra_kwargs = {
+            # ensure that DRF knows the 'comment' and 'summary' fields aren't required.
+            'comment': { 'required': False, 'allow_blank': True },
+            'summary': { 'required': False, 'allow_blank': True }
+        }
 
 
 # ================================================================================================================
