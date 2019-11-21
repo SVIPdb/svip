@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q, F
 
-from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource, DiseaseInSVIP, Disease
+from api.models import Variant, VariantInSVIP, Sample, CurationEntry, VariantInSource, DiseaseInSVIP, Disease, Gene
 
 import api
 
@@ -106,29 +106,49 @@ ALIGNERS = [
 ]
 
 
-def create_svipvariants(model_variant, model_svip_variant):
+def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False):
     """
-    Loads variant info from SVIP mock data file (api/fixtures/svip_variants.json) into the db
-    :param model_variant: the variant model
-    :param model_svip_variant: the variantinsvip model
+    Loads variant info from SVIP mock data file into the db
+    :param source source JSON file (defualt SVIP_VARS_JSON)
+    :param create_variant create variants that don't exist instead of ignoring them
     :return: a tuple (succeeded, total) with the number of variants added vs. the total number tried, respectively
     """
-    with open(SVIP_VARS_JSON, "r") as fp:
+    with open(source, "r") as fp:
         svip_variants = json.load(fp)
 
-        model_svip_variant.objects.all().delete()
+        VariantInSVIP.objects.all().delete()
         DiseaseInSVIP.objects.all().delete()
 
         succeeded, total = (0, len(svip_variants))
 
         for s in svip_variants:
             try:
-                target_variant = model_variant.objects.get(
-                    gene__symbol=s['gene_name'],
-                    name=s['variant_name'],
-                    hgvs_c__endswith=s['HGVScoding'][s['HGVScoding'].index(':')+1:]
-                )
-                candidate = model_svip_variant(
+                if create_variant:
+                    assembly, chromosome, position = s['position'].split(":")
+
+                    target_variant, was_created = Variant.objects.get_or_create(
+                        gene__symbol=s['gene_name'],
+                        name=s['variant_name'],
+                        hgvs_c__endswith=s['HGVScoding'][s['HGVScoding'].index(':')+1:],
+                        defaults={
+                            'gene': Gene.objects.get(symbol=s['gene_name']),
+                            'name': s['variant_name'],
+                            'description': "%s %s" % (s['gene_name'], s['variant_name']),
+                            'refseq': s["HGVScoding"].split(":")[0],
+                            'hgvs_c': s['HGVScoding'],
+                            'reference_name': assembly,
+                            'chromosome': chromosome,
+                            'start_pos': int(position)
+                        }
+                    )
+                else:
+                    target_variant = Variant.objects.get(
+                        gene__symbol=s['gene_name'],
+                        name=s['variant_name'],
+                        hgvs_c__endswith=s['HGVScoding'][s['HGVScoding'].index(':') + 1:]
+                    )
+
+                candidate = VariantInSVIP(
                     variant=target_variant,
                     data=s
                 )
@@ -145,7 +165,12 @@ def create_svipvariants(model_variant, model_svip_variant):
                     candidate_disease.save()
 
                 succeeded += 1
-            except model_variant.DoesNotExist:
+            except Gene.DoesNotExist:
+                print(
+                    "Couldn't find gene %s for variant w/name '%s', skipping..." %
+                    (s['gene_name'], s['variant_name'])
+                )
+            except Variant.DoesNotExist:
                 print(
                     "Couldn't find corresponding variant w/gene and name '%s %s', skipping..." %
                     (s['gene_name'], s['variant_name'])
@@ -352,21 +377,39 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            '--svip-infile',
+            help='SVIP variants JSON description file (default: %s)' % SVIP_VARS_JSON,
+            default=SVIP_VARS_JSON
+        )
+        parser.add_argument(
+            '--create-variants',
+            action='store_true',
+            help="Creates variant entries referenced in SVIP vars JSON if they don't already exist",
+        )
+        parser.add_argument(
+            '--only-vars',
+            action='store_true',
+            help="Don't create samples or curation entries, just SVIP variants",
+        )
+        parser.add_argument(
             '--no-sample-synth',
             action='store_true',
             help='Use samples.tsv instead of creating samples dynamically',
         )
 
     def handle(self, *args, **options):
-        created_count, total = create_svipvariants(Variant, VariantInSVIP)
+        created_count, total = create_svipvariants(source=options['svip_infile'], create_variant=options['create_variants'])
         self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock variant entries' % (created_count, total)))
 
-        if not options['no_sample_synth']:
-            created_count, total = synthesize_samples(num_samples_per_variant=30)
-            self.stdout.write(self.style.SUCCESS('Generated %d out of %d SVIP mock samples' % (created_count, total)))
-        else:
-            created_count, total = create_svip_samples("samples.tsv")
-            self.stdout.write(self.style.SUCCESS('Loaded %d out of %d SVIP mock samples from \'samples.tsv\'' % (created_count, total)))
+        if not options['only_vars']:
+            if not options['no_sample_synth']:
+                created_count, total = synthesize_samples(num_samples_per_variant=30)
+                self.stdout.write(self.style.SUCCESS('Generated %d out of %d SVIP mock samples' % (created_count, total)))
+            else:
+                created_count, total = create_svip_samples("samples.tsv")
+                self.stdout.write(self.style.SUCCESS('Loaded %d out of %d SVIP mock samples from \'samples.tsv\'' % (created_count, total)))
 
-        created_count, total = create_svip_curationentries("curation.tsv")
-        self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock curation entries' % (created_count, total)))
+            created_count, total = create_svip_curationentries("curation.tsv")
+            self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock curation entries' % (created_count, total)))
+        else:
+            self.stdout.write(self.style.NOTICE('only-vars is specified; skipping creating samples, curation entries'))
