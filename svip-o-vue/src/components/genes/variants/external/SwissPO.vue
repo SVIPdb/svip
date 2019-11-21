@@ -12,7 +12,7 @@
                 </div>
             </div>
 
-            <div class="card-body top-level" style="padding: 0;">
+            <div v-if="!noResults" class="card-body top-level" style="padding: 0;">
                 <div class="not-found" v-if="found_in_swisspo === false">
                     <icon name="exclamation-triangle"/>
                     residue not found in molecule
@@ -28,6 +28,11 @@
                         <option disabled value="">Choose a PDB</option>
                         <option v-for="(x, idx) in pdbs" :key="idx" :value="x">{{ x.pdb }} {{ x.chain }}</option>
                     </select>
+                </div>
+            </div>
+            <div v-else class="card-body top-level" style="padding: 0;">
+                <div class="not-found">
+                    <icon name="exclamation-triangle"/> protein not found in SwissPO
                 </div>
             </div>
         </div>
@@ -76,7 +81,8 @@ export default {
             structure: null,
             pdbs: [],
             selected_pdb: null,
-            found_in_swisspo: null
+            found_in_swisspo: null,
+            noResults: false
         }
     },
     mounted() {
@@ -116,11 +122,13 @@ export default {
             this.zoomResidue(val);
         },
         selected_pdb: function (val) {
-            console.log("Selected: ", val);
+            if (!val) {
+                return;
+            }
+
             HTTP.get(`swiss_po/get_residues/${val.pdb}:${val.chain}`)
                 .then(response => response.data)
                 .then(data => {
-                    console.log("Got PDB info: ", data);
                     this.loadPDB(data.pdb_filename, val.chain, data.residue_range)
                 });
         }
@@ -133,6 +141,12 @@ export default {
         },
         async loadStructure(protein, change) {
             this.pdbs = await HTTP.get(`swiss_po/get_pdbs/${protein}`).then(response => response.data);
+
+            if (this.pdbs.length <= 0) {
+                this.noResults = true;
+                return;
+            }
+
             // get the first PDB by default
             this.selected_pdb = this.pdbs[0];
         },
