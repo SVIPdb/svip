@@ -1,56 +1,68 @@
 <template>
     <div class="container-fluid">
-        <!-- ON REQUEST - CARD -->
-        <notification-card v-if="REVIEW_ENABLED"
-            :items="on_request"
-            :fields="fields_on_request"
-            sortBy="days_left"
-            title="ON REQUEST"
-            cardHeaderBg="secondary"
-            cardTitleVariant="white"
-            cardCustomClass
-            cardFilterOption
-        />
-        <!-- TO BE CURATED - CARD -->
-        <notification-card v-if="REVIEW_ENABLED"
-            :items="to_be_curated"
-            :fields="fields_to_be_curated"
-            sortBy="days_left"
-            title="TO BE CURATED"
-            cardFilterOption
-        />
-        <!-- UNDER REVISION - CARD -->
-        <notification-card v-if="REVIEW_ENABLED"
-            :items="to_be_discussed"
-            :fields="fields_to_be_discussed"
-            sortBy="days_left"
-            title="TO BE DISCUSSED"
-        />
-        <!-- NON SVIP VARIANTS - CARD -->
-        <!--
-        <notification-card
-            :items="nonsvip_variants"
-            :fields="fields_nonsvip_variants"
-            title="NON SVIP VARIANTS"
-        />
-        -->
+        <div v-if="checkInRole('reviewers')">
+            <!-- ON REQUEST - CARD -->
+            <notification-card v-if="REVIEW_ENABLED"
+                :items="on_request"
+                :fields="fields_on_request"
+                sortBy="days_left"
+                title="ON REQUEST"
+                cardHeaderBg="secondary"
+                cardTitleVariant="white"
+                cardCustomClass
+                cardFilterOption
+            />
+            <!-- TO BE CURATED - CARD -->
+            <notification-card v-if="REVIEW_ENABLED"
+                :items="to_be_curated"
+                :fields="fields_to_be_curated"
+                sortBy="days_left"
+                title="TO BE CURATED"
+                cardFilterOption
+            />
+            <!-- UNDER REVISION - CARD -->
+            <notification-card v-if="REVIEW_ENABLED"
+                :items="to_be_discussed"
+                :fields="fields_to_be_discussed"
+                sortBy="days_left"
+                title="TO BE DISCUSSED"
+            />
+            <!-- NON SVIP VARIANTS - CARD -->
+            <!--
+            <notification-card
+                :items="nonsvip_variants"
+                :fields="fields_nonsvip_variants"
+                title="NON SVIP VARIANTS"
+            />
+            -->
+        </div>
 
-        <EvidenceCard has-header is-dashboard only-submitted
-            header-title="SUBMITTED ENTRIES"
-            cardHeaderBg="secondary"
-            cardTitleVariant="white"
-        />
+        <div v-else-if="checkInRole('curators')">
+            <EvidenceCard has-header is-dashboard only-submitted
+                header-title="SUBMITTED ENTRIES"
+                cardHeaderBg="secondary"
+                cardTitleVariant="white"
+            />
 
-        <EvidenceCard has-header is-dashboard
-            header-title="ALL CURATION ENTRIES"
-            cardHeaderBg="secondary"
-            cardTitleVariant="white"
-        />
+            <EvidenceCard has-header is-dashboard not-submitted
+                header-title="UNSUBMITTED ENTRIES"
+                cardHeaderBg="secondary"
+                cardTitleVariant="white"
+            />
+        </div>
+
+        <div v-else style="text-align: center; margin-top: 3em;">
+            <h1>Not Authorized</h1>
+            <p>You may only access this page if you're a curator or reviewer.</p>
+            <router-link to="/">return to homepage</router-link>
+        </div>
     </div>
 </template>
 
 <script>
 import NotificationCard from "@/components/curation/widgets/NotificationCard";
+import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
+import {checkInRole} from "@/directives/access";
 
 // Manual import of fake data (FIXME: API)
 import on_request from "@/data/curation/on_request/items.json";
@@ -64,7 +76,6 @@ import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json"
 
 import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
-import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
 
 export default {
     name: "CurationDashboard",
@@ -92,6 +103,9 @@ export default {
             nonsvip_variants, // data
             fields_nonsvip_variants // columns
         };
+    },
+    methods: {
+        checkInRole
     }
 };
 </script>
