@@ -1,5 +1,5 @@
 import django_filters
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
@@ -81,10 +81,16 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CurationEntryFilter(django_filters.FilterSet):
     from api.models.svip import CURATION_STATUS
+
     status_ne = django_filters.ChoiceFilter(
         field_name='status', choices=tuple(CURATION_STATUS.items()),
         lookup_expr='iexact', exclude=True
     )
+    variant_ref = django_filters.NumberFilter(method='any_variant_ref')
+
+    @staticmethod
+    def any_variant_ref(queryset, name, value):
+        return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
 
     class Meta:
         model = CurationEntry
