@@ -70,7 +70,7 @@
                         </div>
                     </template>
 
-                    <template v-slot:cell(row-details)="row">
+                    <template v-slot:row-details="row">
                         <transition-expand>
                             <div v-if="row.item._animatedDetails">
                                 <div class="sample-subtable tumor-subtable">
