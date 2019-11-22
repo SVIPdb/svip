@@ -605,11 +605,11 @@ export default {
                 // if we're not getting it from a curation entry, we need to load the disease and set the variant id in the form
                 HTTP.get(`/diseases/${this.$route.params.disease_id}`).then(response => {
                     this.form.disease = response.data;
-                });
 
-                this.source = source;
-                this.reference = reference;
-                this.loadVariomeData();
+                    this.source = source;
+                    this.reference = reference;
+                    this.loadVariomeData();
+                });
             } else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
