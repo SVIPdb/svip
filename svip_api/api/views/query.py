@@ -24,22 +24,27 @@ class QueryView(viewsets.ViewSet):
         variants_only = (request.GET.get('variants_only', False) == 'true')
 
         if search_term is not None and search_term != '':
+            # FIXME: tokenize search_term into space-delimited tokens and perform field matching on each token
+            parts = search_term.split(" ")
+            q_set = Q(
+                Q(*(('description__icontains', x) for x in parts), _connector=Q.OR) |
+                Q(*(('hgvs_c__icontains', x) for x in parts), _connector=Q.OR) |
+                Q(*(('hgvs_p__icontains', x) for x in parts), _connector=Q.OR) |
+                Q(*(('hgvs_g__icontains', x) for x in parts), _connector=Q.OR)
+            )
+
             # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the
             # database; e.g., 'Val600Glu' becomes 'V600E'
             collapsed_search = reduce(lambda acc, v: v[0].sub(v[1], acc), three_to_one_icase.items(), search_term)
-            normalized_search = search_term.lower()
 
             vq = Variant.objects.filter(
-                Q(description__icontains=search_term) |
-                Q(hgvs_c__icontains=search_term) |
-                Q(hgvs_p__icontains=search_term) |
-                Q(hgvs_g__icontains=search_term) |
-                Q(name__contains=collapsed_search)
+                q_set | Q(name__contains=collapsed_search)
             ).select_related('gene')
 
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
 
+            normalized_search = search_term.lower()
             v_resp = list(format_variant(x, normalized_search) for x in vq.distinct())
 
             if not variants_only:
@@ -71,9 +76,7 @@ class QueryView(viewsets.ViewSet):
                 'label': x.symbol
             } for x in gq.order_by('symbol'))
             resp = g_resp
-        else:
-            # they're not querying for anything, but they don't want genes, so we can't return them anything
-            resp = []
+
 
         return Response(resp)
 
