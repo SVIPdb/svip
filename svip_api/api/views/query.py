@@ -40,7 +40,7 @@ class QueryView(viewsets.ViewSet):
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
 
-            v_resp = list(format_variant(x, normalized_search) for x in vq)
+            v_resp = list(format_variant(x, normalized_search) for x in vq.distinct())
 
             if not variants_only:
                 gq = Gene.objects.filter(Q(symbol__icontains=search_term) | Q(aliases__icontains=search_term))
