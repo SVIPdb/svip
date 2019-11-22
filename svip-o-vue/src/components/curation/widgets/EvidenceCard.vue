@@ -368,7 +368,7 @@ export default {
         },
         apiUrl() {
             const params = [
-                this.variant && `variants=${this.variant.id}`,
+                this.variant && `variant_ref=${this.variant.id}`,
                 this.disease_id && `disease=${this.disease_id}`,
                 this.filterCurator && `owner=${this.userID}`,
                 // FIXME: these two are mutually exclusive
