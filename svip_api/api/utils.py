@@ -31,7 +31,7 @@ def format_variant(x, search_term=None):
         'g_id': x.gene.id,
         'type': 'v',
         'label': "%s (%s)" % (x.description, target_hgvs.split(':')[1]) if target_hgvs else x.description,
-        'sources': sorted(x.sources)
+        'sources': sorted(x.sources) if x.sources else None
     }
 
 
