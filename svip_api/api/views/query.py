@@ -27,16 +27,20 @@ class QueryView(viewsets.ViewSet):
             # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the
             # database; e.g., 'Val600Glu' becomes 'V600E'
             collapsed_search = reduce(lambda acc, v: v[0].sub(v[1], acc), three_to_one_icase.items(), search_term)
+            normalized_search = search_term.lower()
 
             vq = Variant.objects.filter(
-                Q(description__icontains=search_term) | Q(hgvs_c__icontains=search_term) |
+                Q(description__icontains=search_term) |
+                Q(hgvs_c__icontains=search_term) |
+                Q(hgvs_p__icontains=search_term) |
+                Q(hgvs_g__icontains=search_term) |
                 Q(name__contains=collapsed_search)
             ).select_related('gene')
 
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
 
-            v_resp = list(format_variant(x) for x in vq)
+            v_resp = list(format_variant(x, normalized_search) for x in vq)
 
             if not variants_only:
                 gq = Gene.objects.filter(Q(symbol__icontains=search_term) | Q(aliases__icontains=search_term))
@@ -48,7 +52,7 @@ class QueryView(viewsets.ViewSet):
                     'id': x.id,
                     'type': 'g',
                     'label': "%s (aka: %s)" % (x.symbol, ", ".join(x.aliases))
-                } for x in gq)
+                } for x in gq.order_by('symbol'))
 
                 resp = g_resp + v_resp
             else:
@@ -65,7 +69,7 @@ class QueryView(viewsets.ViewSet):
                 'id': x.id,
                 'type': 'g',
                 'label': x.symbol
-            } for x in gq)
+            } for x in gq.order_by('symbol'))
             resp = g_resp
         else:
             # they're not querying for anything, but they don't want genes, so we can't return them anything
