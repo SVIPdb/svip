@@ -65,7 +65,10 @@ class VariantFilter(df_filters.FilterSet):
     # noinspection PyMethodMayBeStatic
     def filter_has_svipdata(self, queryset, name, value):
         if value:
-            return queryset.filter(variantinsvip__isnull=False)
+            # we require the .distinct() here because we occasionally have multiple VariantInSVIP entries
+            # keyed to the same variant (although that's clearly not great), and this implicit join
+            # causes those variants to be repeated as many times as there are referring VinSVIP entries
+            return queryset.filter(variantinsvip__isnull=False).distinct()
         # otherwise, return all the variants, svip data or not
         return queryset
 
