@@ -37,18 +37,27 @@
                     </b-tab>
 
                     <b-tab title="Use text mining tool">
-                        <b-card-body>
-                            <b-row>
-                                <b-col sm="5" md="6" class="my-1">
+                        <b-card-body style="padding: 0;">
+                            <b-row v-if="loadingVariomes">
+                                <b-col>
+                                    <b-spinner /> loading...
+                                </b-col>
+                            </b-row>
+                            <b-row v-else class="textmining-paginator">
+                                <b-col>
+                                    <b>Results:</b> {{ totalRows && totalRows.toLocaleString() }}
+                                </b-col>
+                                <b-col class="my-1">
                                     <b-form-group label="Per page" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-align-sm="right" label-size="sm" label-for="perPageSelect" class="mb-0">
                                         <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"/>
                                     </b-form-group>
                                 </b-col>
 
-                                <b-col sm="7" md="6" class="my-1">
+                                <b-col class="my-1">
                                     <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"/>
                                 </b-col>
                             </b-row>
+
                             <b-table show-empty :busy="variomes.length === 0" :items="variomes.publications" thead-class="unwrappable-header" :sort-by="sortBy" :sort-desc="sortDesc" :fields="fieldsTextMining" :current-page="currentPage" :per-page="perPage" small>
                                 <template v-slot:table-busy>
                                     <div class="text-center text-danger my-2">
@@ -146,6 +155,7 @@ export default {
             source: "PMID",
             reference: null,
             variomes: [],
+            loadingVariomes: true,
             totalRows: 1,
             sortBy: "score",
             sortDesc: true,
@@ -193,6 +203,7 @@ export default {
         this.disease = await HTTP.get(`/diseases/${disease_id}`);
 
         // then, query variomes based on that data
+        this.loadingVariomes = true;
         HTTP.get(`variomes_search`, {
             params: {
                 gene: this.variant.gene.symbol,
@@ -208,7 +219,8 @@ export default {
                 this.variomes = {
                     error: "Couldn't retrieve publication info, try again later."
                 };
-            });
+            })
+            .finally(() => { this.loadingVariomes = false; });
     },
     beforeRouteEnter(to, from, next) {
         const { variant_id } = to.params;
@@ -241,6 +253,10 @@ export default {
 .details-row {
     background: #eee;
     box-shadow: inset;
+}
+
+.textmining-paginator {
+    border-bottom: solid 1px #ddd; margin-bottom: 10px; padding-bottom: 10px; display: flex; align-items: baseline;
 }
 
 /* Enter and leave animations can use different */
