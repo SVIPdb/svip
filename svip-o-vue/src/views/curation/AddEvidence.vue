@@ -199,6 +199,7 @@
                                         label="Complementary information"
                                         sublabel="(viewed by others)"
                                         inner-id="summary"
+                                        :required="form.type_of_evidence === 'Excluded'"
                                     >
                                         <b-form-textarea
                                             id="summary"
@@ -744,9 +745,16 @@ export default {
                     }
                 })
                 .catch((err, resp) => {
-                    if (err.response && err.response.status == 403) {
-                        this.$snotify.error("Submitted entries can't be changed!");
-                        return;
+                    if (err.response) {
+                        if (err.response.status == 403) {
+                            this.$snotify.error("Submitted entries can't be changed!");
+                            return;
+                        }
+                        if (err.response.status == 400) {
+                            const failedKeys = Object.keys(err.response.data).join(", ");
+                            this.$snotify.error(`Validation failed for these fields: ${failedKeys}`);
+                            return;
+                        }
                     }
 
                     // TODO: deal with the server's error response in err.response.data
