@@ -40,7 +40,7 @@
 
 <script>
 import {HTTP} from '@/router/http';
-import {simpleDateTime} from "@/utils";
+import {millisecondsToStr, simpleDateTime} from "@/utils";
 import moment from "moment";
 
 const HistoryHeader = {
@@ -51,15 +51,20 @@ const HistoryHeader = {
         actor: { required: false, type: String }
     },
     render(h) {
-        const datetime = moment(this.date).format("DD.MM.YYYY h:mm:ss a");
+        const m = moment(this.date);
+        const datetime = m.format("DD.MM.YYYY, h:mm a");
+        const since = moment.duration(m.diff(moment())).humanize(true);
 
         return (
             <h4 class="history-header">
-                <icon name={this.icon} scale="1.1" />
-                <span style="margin-left: 5px;">
-                    <b>{this.action}</b> on {datetime ? datetime : 'unknown'}
-                    { this.actor && <span>, by <b>{this.actor}</b></span> }
-                </span>
+                <div>
+                    <icon name={this.icon} scale="1.1" />
+                    <span style="margin-left: 5px;">
+                        <b>{this.action}</b> on {datetime}
+                        { this.actor && <span> by <b>{this.actor}</b></span> }
+                    </span>
+                </div>
+                <div class="text-muted font-italic">{since}</div>
             </h4>
         );
     }
@@ -133,7 +138,7 @@ export default {
 }
 
 .history-header {
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: space-between;
     color: #333;
     margin-bottom: 0.5em;
 }
