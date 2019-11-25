@@ -20,7 +20,7 @@ from django.contrib.auth import get_user_model
 from api.permissions import IsCurationPermitted
 from api.serializers import SimpleVariantSerializer
 from api.serializers.reference import DiseaseSerializer
-from api.utils import format_variant
+from api.utils import format_variant, field_is_empty
 
 User = get_user_model()
 
@@ -247,15 +247,21 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 ))
 
             # also ensure that drug is specified if the type_of_evidence is "Predictive / Therapeutic"
-            if data['type_of_evidence'] == "Predictive / Therapeutic" and ('drugs' not in data or data['drugs'] is None or len(data['drugs']) == 0):
+            if data['type_of_evidence'] == "Predictive / Therapeutic" and field_is_empty(data, 'drugs', is_array=True):
                 errors.update({
                     'drug': "Field 'drug' cannot be null or empty if type_of_evidence is 'Predictive / Therapeutic'"
                 })
 
-            if data['type_of_evidence'] != "Excluded" and ('tier_level_criteria' not in data or data['tier_level_criteria'] in (None, '')):
+            if data['type_of_evidence'] != "Excluded" and field_is_empty(data, 'tier_level_criteria'):
                 errors.update({
                     'type_of_evidence': "Field 'type_of_evidence' cannot be null or empty if type_of_evidence is not 'Excluded'"
                 })
+
+            if data['type_of_evidence'] == "Excluded" and field_is_empty(data, 'summary'):
+                errors.update({
+                    'summary': "Field 'summary' cannot be null or empty if type_of_evidence is 'Excluded'"
+                })
+
 
             if len(errors) > 0:
                 raise serializers.ValidationError(errors)

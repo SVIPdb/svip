@@ -9,6 +9,20 @@ def dictfetchall(cursor):
     ]
 
 
+def field_is_empty(data, field, is_array=False):
+    """
+    Determines whether the field 'field' within the dict-like 'data' is empty-esque (i.e., None, '', or when stripped is '').
+    If is_array is specified, the field is considered empty if it has zero elements, but is not stripped.
+    :param data: the dict-like object which may contain 'field'
+    :param field: the field to check
+    :param is_array: whether the field's value should be examined as if it's an array
+    :return: True if the field is empty, False otherwise.
+    """
+    if is_array:
+        return field not in data or data[field] is None or len(data[field]) == 0
+    return field not in data or data[field] in (None, '') or data[field].strip() == ''
+
+
 def format_variant(x, search_term=None):
     """
     Produces a terse version of the variant for returning from the autocomplete endpoint; suitable for binding to the
