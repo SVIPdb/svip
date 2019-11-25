@@ -435,6 +435,7 @@ import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import {simpleDateTime} from "@/utils";
 import {checkInRole} from "@/directives/access";
+import moment from "moment";
 
 extend("required", {
     ...required,
@@ -661,7 +662,7 @@ export default {
                     ? `${tier_level_criteria} (${tier_level})`
                     : tier_level_criteria,
                 annotations: annotations || [],
-                last_modified: simpleDateTime(last_modified).date
+                last_modified: moment(last_modified).format("DD.MM.YYYY, h:mm a")
             };
 
             console.log("Results of rehydration: ", this.form);
