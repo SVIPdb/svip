@@ -181,7 +181,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
         return JsonResponse({
-            'created_on': history[0].history_date if len(history) > 0 else None,
+            'created_on': history[-1].history_date if len(history) > 0 else None,
             'created_by': self._nice_username(entry.owner),
             'deltas': [
                 {
