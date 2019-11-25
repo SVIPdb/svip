@@ -1,5 +1,15 @@
 import * as _ from "lodash";
 import slugify from "slugify";
+import moment from "moment";
+
+const specials = [
+    '/', '.', '*', '+', '?', '|',
+    '(', ')', '[', ']', '{', '}', '\\'
+];
+
+export const escapeRegex = function(text) {
+    return text.replace(new RegExp('(\\' + specials.join('|\\') + ')', 'g'), '\\$1');
+};
 
 export function change_from_hgvs(x, include_transcript = false) {
     if (!x || !x.includes(":")) return x;
@@ -84,10 +94,11 @@ export function slugifySans(x) {
 }
 
 export function simpleDateTime(x) {
-    const parsed = new Date(x);
+    const parsed = moment(x);
+
     return {
-        date: `${parsed.getDate()}.${parsed.getMonth()}.${parsed.getFullYear()}`,
-        time: `${parsed.getHours()}:${parsed.getMinutes()}`
+        date: parsed.format("DD.MM.YYYY"),
+        time: parsed.format("h:mm a")
     }
 }
 
