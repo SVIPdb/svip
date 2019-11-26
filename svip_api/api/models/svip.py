@@ -102,35 +102,6 @@ class DiseaseInSVIP(SVIPModel):
     def name(self):
         return self.disease.name
 
-    def sample_count(self):
-        return self.sample_set.count()
-
-    def curation_entries(self):
-        # returns curation entries in which either the main variant or one of the extra variants is this variant
-        return CurationEntry.objects.filter(
-            Q(extra_variants=self.svip_variant.variant) | Q(variant=self.svip_variant.variant),
-            Q(disease=self.disease)
-        )
-
-    def sample_diseases_count(self):
-        return (
-            self.sample_set
-                .values(name=F('disease_in_svip__disease__name'))
-                .annotate(count=Count('disease_in_svip__disease__name'))
-                .distinct().order_by('-count')
-        )
-
-    def pathogenic(self):
-        return 'Pathogenic' if self.curation_entries().filter(effect='Pathogenic').count() > 0 else None
-
-    def clinical_significance(self):
-        return ' / '.join(
-            x['combined'] for x in self.curation_entries()
-                .filter(type_of_evidence__in=('Predictive', 'Prognostic'))
-                .annotate(combined=Concat('type_of_evidence', Value(' ('), 'tier_level', Value(')')))
-                .values('combined').distinct()
-        )
-
 
 # ================================================================================================================
 # === Curation

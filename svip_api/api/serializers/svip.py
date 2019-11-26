@@ -5,7 +5,9 @@ import datetime
 from itertools import chain
 from pprint import pprint
 
-from django.db.models import Count
+from django.db.models import Count, Q, F, Value
+from django.db.models.functions import Concat
+from django.utils.functional import cached_property
 from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -17,9 +19,10 @@ from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 
 from django.contrib.auth import get_user_model
 
-from api.permissions import IsCurationPermitted
+from api.permissions import IsCurationPermitted, authed_curation_set
 from api.serializers import SimpleVariantSerializer
 from api.serializers.reference import DiseaseSerializer
+from api.shared import pathogenic, clinical_significance
 from api.utils import format_variant, field_is_empty
 
 User = get_user_model()
@@ -64,7 +67,11 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     age_distribution = serializers.SerializerMethodField()
 
     # samples = serializers.SerializerMethodField()
+    # sample_count = serializers.SerializerMethodField()
     curation_entries = serializers.SerializerMethodField()
+    sample_diseases_count = serializers.SerializerMethodField()
+    pathogenic = serializers.SerializerMethodField()
+    clinical_significance = serializers.SerializerMethodField()
 
     # samples_url = serializers.SerializerMethodField()
     # samples_url = NestedHyperlinkedRelatedField(
@@ -100,10 +107,12 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         "61-80": lambda x: 61 <= x <= 80
     }
 
-    def get_nb_patients(self, obj):
+    @staticmethod
+    def get_nb_patients(obj):
         return obj.sample_set.count()
 
-    def get_gender_balance(self, obj):
+    @staticmethod
+    def get_gender_balance(obj):
         result = dict(
             (x['gender'].lower(), x['count'])
                 for x in obj.sample_set.values('gender').annotate(count=Count('gender'))
@@ -117,7 +126,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
         return result
 
-    def get_age_distribution(self, obj):
+    @staticmethod
+    def get_age_distribution(obj):
         # produce the age brackets merged with the number of age entries that match each bracket
         curYear = datetime.datetime.now().year
         ages = [curYear - int(x[0]) for x in obj.sample_set.values_list('year_of_birth')]
@@ -136,13 +146,43 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             for x in obj.sample_set.all()
         ]
 
+    @cached_property
+    def _authed_curation_set(self):
+        return authed_curation_set(self.context['request'].user)
+
+    def _curation_entries(self, obj):
+        # authed_set = CurationEntry.objects.all()
+
+        # in addition to getting curation entries we can view, filter them down to the current disease
+        return self._authed_curation_set.filter(
+            Q(extra_variants=obj.svip_variant.variant) | Q(variant=obj.svip_variant.variant),
+            Q(disease=obj.disease)
+        )
+
+    @staticmethod
+    def get_sample_count(obj):
+        return obj.sample_set.count()
+
     def get_curation_entries(self, obj):
-        # FIXME: correctly determine permissions for viewing curation entries
         return [
             CurationEntrySerializer(x, context={'request': self.context['request']}).data
-            for x in obj.curation_entries().all()
-            if IsCurationPermitted.is_user_allowed(user=self.context['request'].user, obj=x, is_reading=True)
+            for x in self._curation_entries(obj)
         ]
+
+    @staticmethod
+    def get_sample_diseases_count(obj):
+        return (
+            obj.sample_set
+                .values(name=F('disease_in_svip__disease__name'))
+                .annotate(count=Count('disease_in_svip__disease__name'))
+                .distinct().order_by('-count')
+        )
+
+    def get_pathogenic(self, obj):
+        return pathogenic(self._curation_entries(obj))
+
+    def get_clinical_significance(self, obj):
+        return clinical_significance(self._curation_entries(obj))
 
     class Meta:
         model = DiseaseInSVIP

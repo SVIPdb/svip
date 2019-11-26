@@ -32,6 +32,7 @@ from api.serializers import (
 
 # svip data endpoints
 from api.serializers.genomic_svip import OnlySVIPVariantSerializer
+from api.shared import pathogenic, clinical_significance
 from references.prot_to_hgvs import three_to_one
 
 
@@ -134,10 +135,9 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         :param pk:
         :return:
         """
-        from api.models import CurationEntry
         from api.models import Disease
         from api.serializers.reference import DiseaseSerializer
-        from api.views.svip import authed_curation_set
+        from api.permissions import authed_curation_set
 
         variant = Variant.objects.get(id=pk)
         disease_id = request.GET.get('disease_id', None)
@@ -150,19 +150,10 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         def summarize_disease(ce_entries, target_disease):
             disease_ce_entries = ce_entries.filter(disease=target_disease)
 
-            pathogenic = 'Pathogenic' if disease_ce_entries.filter(effect='Pathogenic').count() > 0 else None
-
-            clinical_significance = ' / '.join(
-                x['combined'] for x in disease_ce_entries
-                    .filter(type_of_evidence__in=('Predictive', 'Prognostic'))
-                    .annotate(combined=Concat('type_of_evidence', Value(' ('), 'tier_level', Value(')')))
-                    .values('combined').distinct()
-            )
-
             return {
                 'disease': DiseaseSerializer(target_disease).data,
-                'pathogenic': pathogenic,
-                'clinical_significance': clinical_significance
+                'pathogenic': pathogenic(disease_ce_entries),
+                'clinical_significance': clinical_significance(disease_ce_entries)
             }
 
         if disease_id:

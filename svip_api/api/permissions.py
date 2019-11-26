@@ -1,3 +1,4 @@
+from rest_framework import permissions
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
@@ -70,3 +71,41 @@ class IsCurationPermitted(BasePermission):
             obj=obj,
             is_reading=request.method in SAFE_METHODS
         )
+
+
+def authed_curation_set(user):
+    """
+    Returns a QuerySet of CurationEntry instances that this user should be able to view
+    :param user: the user against which to evaluate CurationEntry permissions
+    :return: a QuerySet of CurationEntries visible to the given user
+    """
+    from api.models import CurationEntry
+    result = None
+
+    if user.is_authenticated:
+        groups = [x.name for x in user.groups.all()]
+        if user.is_superuser:
+            # superusers can see everything
+            result = CurationEntry.objects.all()
+        if 'curators' in groups:
+            # curators see only their own entries if ALLOW_ANY_CURATOR is false
+            # if it's true, they can see any curation entry
+            result = CurationEntry.objects.filter(owner=user) if not ALLOW_ANY_CURATOR else CurationEntry.objects.all()
+        elif 'reviewers' in groups:
+            # FIXME: should reviewers see all entries, or just the ones they've been assigned?
+            result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted'))
+
+    if not result:
+        # unauthenticated users and other users who don't have specific roles just see the default set
+        result = CurationEntry.objects.filter(status='reviewed')
+
+    return result
+
+
+class IsSampleViewer(permissions.BasePermission):
+    """
+    Allows only individuals with the view_sample permission to view samples.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return request.user.has_perm('api.view_sample')
