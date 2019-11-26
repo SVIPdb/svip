@@ -41,7 +41,7 @@
 <script>
 import {HTTP} from '@/router/http';
 import {millisecondsToStr, simpleDateTime} from "@/utils";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const HistoryHeader = {
     props: {
@@ -51,9 +51,8 @@ const HistoryHeader = {
         actor: { required: false, type: String }
     },
     render(h) {
-        const m = moment(this.date);
+        const m = dayjs(this.date);
         const datetime = m.format("DD.MM.YYYY, h:mm a");
-        const since = moment.duration(m.diff(moment())).humanize(true);
 
         return (
             <h4 class="history-header">
@@ -64,7 +63,6 @@ const HistoryHeader = {
                         { this.actor && <span> by <b>{this.actor}</b></span> }
                     </span>
                 </div>
-                <div class="text-muted font-italic">{since}</div>
             </h4>
         );
     }

@@ -175,14 +175,14 @@ import BroadcastChannel from "broadcast-channel";
 import {simpleDateTime, titleCase} from "@/utils";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import { mapGetters } from "vuex";
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const DateTimeField = {
     props: {
         datetime: { required: true }
     },
     render(h) {
-        const fullDate = moment(this.datetime).format("h:mm a");
+        const fullDate = dayjs(this.datetime).format("h:mm a");
         const parsed = simpleDateTime(this.datetime);
 
         return (

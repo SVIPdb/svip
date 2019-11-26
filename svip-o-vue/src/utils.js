@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import slugify from "slugify";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const specials = [
     '/', '.', '*', '+', '?', '|',
@@ -94,7 +94,7 @@ export function slugifySans(x) {
 }
 
 export function simpleDateTime(x) {
-    const parsed = moment(x);
+    const parsed = dayjs(x);
 
     return {
         date: parsed.format("DD.MM.YYYY"),
