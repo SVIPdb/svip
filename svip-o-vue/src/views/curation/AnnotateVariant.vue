@@ -40,7 +40,7 @@
                         <b-card-body style="padding: 0;">
                             <b-row v-if="loadingVariomes">
                                 <b-col>
-                                    <b-spinner /> loading...
+                                    <b-spinner small /> loading...
                                 </b-col>
                             </b-row>
                             <b-row v-else class="textmining-paginator">
@@ -61,7 +61,7 @@
                             <b-table show-empty :busy="variomes.length === 0" :items="variomes.publications" thead-class="unwrappable-header" :sort-by="sortBy" :sort-desc="sortDesc" :fields="fieldsTextMining" :current-page="currentPage" :per-page="perPage" small>
                                 <template v-slot:table-busy>
                                     <div class="text-center text-danger my-2">
-                                        <b-spinner class="align-middle"></b-spinner>
+                                        <b-spinner class="align-middle" small style="margin-right: 5px;" />
                                         <strong>Loading...</strong>
                                     </div>
                                 </template>
