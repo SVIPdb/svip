@@ -28,7 +28,7 @@
                             <b-container
                                 fluid
                                 class="evidence"
-                                v-if="variomes && !variomes.error"
+                                v-if="variomes && variomes.publication && !variomes.error"
                                 style="max-height:20rem;overflow-y:scroll;"
                                 @mouseup="getSelectionText()"
                                 @contextmenu.prevent.stop="handleRightClick($event)"
@@ -48,9 +48,12 @@
                                 </small>
                             </b-container>
                             <div
-                                v-else-if="variomes && variomes.error"
-                                class="text-center"
-                            >We couldn't load the abstract due to some techincal issues.</div>
+                                v-else-if="variomes && (variomes.error || !variomes.publication)"
+                                class="text-center text-muted font-italic"
+                            >
+                                <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                                We couldn't load the abstract due to a technical issue
+                            </div>
                             <div v-else class="text-center">
                                 <b-spinner label="Spinning" variant="primary"></b-spinner>Loading
                             </div>
@@ -347,7 +350,7 @@
 
                         <b-card-body class="p-0 m-0">
                             <b-collapse id="statistic" v-model="showStat" class="m-3">
-                                <div v-if="variomes">
+                                <div v-if="variomes && variomes.publication">
                                     <b-link v-bind="pubmedURL(`?term=${variomes.query.gene}[Title/Abstract]`)">
                                         <b-badge
                                             class="bg-gene"
@@ -375,6 +378,10 @@
                                     >
                                         <b-badge class="bg-info">{{variomes.query.gene}} + {{variomes.query.variant}}</b-badge>
                                     </b-link>
+                                </div>
+                                <div v-else-if="variomes" class="text-muted text-center font-italic">
+                                    <icon name="exclamation-triangle" scale="1.5" style="vertical-align: text-bottom; margin-right: 5px;" />
+                                    An error occurred while retrieving this PMID
                                 </div>
                                 <div v-else class="text-center">
                                     <b-spinner label="Spinning" variant="primary" />Loading
