@@ -70,16 +70,28 @@ export default {
             extraVariants: [],
             disease_name: null,
             pathogenicity: null,
-            clinical_significance: null
+            clinical_significance: null,
+            channel: new BroadcastChannel("curation-update")
         };
     },
     created() {
-        HTTP.get(this.variantInfoUrl).then(response => {
-            const { disease, pathogenic, clinical_significance } = response.data;
-            this.disease_name = disease.name;
-            this.pathogenicity = pathogenic;
-            this.clinical_significance = clinical_significance;
-        });
+        this.refresh();
+
+        // deal with updates from people editing curation entries, which could change pathogenicity/clinical sig.
+        this.channel.onmessage = (msg) => {
+            this.refresh();
+        };
+    },
+    methods: {
+        refresh() {
+            HTTP.get(this.variantInfoUrl).then(response => {
+                const { disease, pathogenic, clinical_significance } = response.data;
+                this.disease_name = disease.name;
+                this.pathogenicity = pathogenic;
+                this.clinical_significance = clinical_significance;
+            });
+
+        }
     },
     computed: {
         variantInfoUrl() {
