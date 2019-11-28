@@ -51,6 +51,7 @@ import {HTTP} from "@/router/http";
 
 import store from "@/store";
 import SourceIcon from "@/components/widgets/SourceIcon";
+import {escapeRegex} from "@/utils";
 
 const textmapper = {
     g: "gene",
@@ -195,26 +196,13 @@ export default {
         highlighted: function (query, orig) {
             if (!query) return orig;
 
-            const r = new RegExp(query, "gi");
-            const bits = orig.split(r);
-            const parts = [];
-            // we just use this to match the query bits
-            orig.replace(r, match => {
-                parts.push(match);
-            });
+            const parts = escapeRegex(query).split(" ");
+            const parts_re = new RegExp("(" + parts.join("|") + ")", "gi");
+            const matched = orig.split(parts_re);
 
-            // zip together bits and parts into an array
-            // (we only want to concatenate the followers if there are some, otherwise we end up popping nothing)
-            return bits.reduce(
-                (acc, next) =>
-                    parts.length > 0
-                        ? acc.concat(
-                            {text: next.replace(" ", "\u00A0"), match: false},
-                            {text: parts.pop(), match: true}
-                        )
-                        : acc.concat({text: next.replace(" ", "\u00A0"), match: false}),
-                []
-            );
+            return matched.map((x, idx) => ({
+                text: x.replace(" ", "\u00A0"), match: idx % 2 === 1
+            }));
         }
     }
 };
