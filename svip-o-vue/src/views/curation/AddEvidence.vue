@@ -441,7 +441,6 @@ const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
 
 import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
-import {simpleDateTime} from "@/utils";
 import {checkInRole} from "@/directives/access";
 import dayjs from "dayjs";
 

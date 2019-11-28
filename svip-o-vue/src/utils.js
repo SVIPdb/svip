@@ -102,6 +102,15 @@ export function simpleDateTime(x) {
     }
 }
 
+export function abbreviatedName(name) {
+    const parts = name.toUpperCase().split(/[ _]/);
+
+    return {
+        name,
+        abbrev: (parts.length > 1) ? `${parts[0][0]}${parts[1][0]}` : name.toUpperCase()[0]
+    }
+}
+
 // used by some item providers to parse PMIDs out of publication URLs
 export function parsePublicationURL(p) {
     if (!p.includes('pubmed')) {

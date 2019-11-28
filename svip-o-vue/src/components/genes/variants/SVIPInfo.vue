@@ -64,6 +64,17 @@
                     </div>
                 </template>
 
+                <template v-slot:cell(last_modified)="data">
+                    <pass :summary="curationSummary(data.item)">
+                        <div slot-scope="{ summary }">
+                            <span v-if="summary && summary.last_modified">
+                                <b v-b-tooltip.hover="summary.modified_by.name">{{ summary.modified_by.abbrev }}</b> on
+                                <b v-b-tooltip.hover="summary.last_modified.time">{{ summary.last_modified.date }}</b>
+                            </span>
+                        </div>
+                    </pass>
+                </template>
+
                 <template v-slot:cell(HEAD_actions)="row">
                     <div style="text-align: right; padding-right: 5px; display: none;">
                         <b-button
@@ -122,16 +133,18 @@ import {mapGetters} from "vuex";
 import store from "@/store";
 import {titleCase} from "../../../utils";
 import PubmedPopover from "@/components/widgets/PubmedPopover";
+import {checkInRole} from "@/directives/access";
 
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderPlot from "@/components/plots/genderPlot";
 
 import {makeSampleProvider} from "./item_providers/sample_provider";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import {trimPrefix} from "@/utils";
+import {abbreviatedName, trimPrefix} from "@/utils";
 import TissueDistribution from "@/components/genes/variants/svip/TissueDistribution";
 import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
+import dayjs from "dayjs";
 
 Vue.component("pass", {
     render() {
@@ -215,6 +228,12 @@ export default {
                     class: "text-center"
                 },
                 {
+                    key: "last_modified",
+                    label: "Last Curated",
+                    sortable: false,
+                    thStyle: {display: checkInRole("curators") ? "" : "none"}
+                },
+                {
                     key: "actions",
                     label: "",
                     sortable: false
@@ -230,6 +249,36 @@ export default {
             this.variant.svip_data.diseases.forEach(x => {
                 x._showDetails = isExpanded;
             });
+        },
+        curationCounts(item) {
+            return {
+                drafts: item.curation_entries.filter(x => x.status === 'draft').length,
+                saved: item.curation_entries.filter(x => x.status === 'saved').length,
+                submitted: item.curation_entries.filter(x => x.status === 'submitted').length
+            }
+        },
+        curationSummary(item) {
+            let most_recent = null;
+
+            if (!item.curation_entries || item.curation_entries.length <= 0) {
+                return null;
+            }
+            else if (item.curation_entries.length === 1) {
+                most_recent = item.curation_entries[0];
+            }
+            else {
+                most_recent = [...item.curation_entries].sort((a, b) => dayjs(a.last_modified).diff(dayjs(b.last_modified)))[0];
+            }
+
+            const modify_date =  dayjs(most_recent.last_modified);
+
+            return {
+                last_modified: {
+                    date: modify_date.format("DD.MM.YYYY"),
+                    time: modify_date.format("h:mm a")
+                },
+                modified_by: abbreviatedName(most_recent.owner_name)
+            }
         },
         titleCase
     },
