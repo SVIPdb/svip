@@ -40,7 +40,7 @@
 
 <script>
 import {HTTP} from '@/router/http';
-import {millisecondsToStr, simpleDateTime} from "@/utils";
+import {abbreviatedName, millisecondsToStr, simpleDateTime} from "@/utils";
 import dayjs from "dayjs";
 
 const HistoryHeader = {
@@ -54,13 +54,17 @@ const HistoryHeader = {
         const m = dayjs(this.date);
         const datetime = m.format("DD.MM.YYYY, h:mm a");
 
+        const parsedActor = this.actor && abbreviatedName(this.actor);
+
         return (
             <h4 class="history-header">
                 <div>
                     <icon name={this.icon} scale="1.1" />
                     <span style="margin-left: 5px;">
                         <b>{this.action}</b> on {datetime}
-                        { this.actor && <span> by <b>{this.actor}</b></span> }
+                        {
+                            parsedActor && <span> by <b v-b-tooltip={parsedActor.name}>{parsedActor.abbrev}</b></span>
+                        }
                     </span>
                 </div>
             </h4>

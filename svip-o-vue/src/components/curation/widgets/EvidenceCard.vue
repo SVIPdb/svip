@@ -98,6 +98,12 @@
                     <DateTimeField :datetime="data.value" />
                 </template>
 
+                <template v-slot:cell(owner_name)="data">
+                    <pass :name="abbreviatedName(data.value)">
+                        <span slot-scope="{ name }" v-b-tooltip.hover="name.name">{{ name.abbrev }}</span>
+                    </pass>
+                </template>
+
                 <template v-slot:cell(action)="data">
                     <span class="action-tray">
                         <b-button v-if="data.item.status !== 'submitted'"
@@ -172,7 +178,7 @@ import { HTTP } from "@/router/http";
 import PagedTable from "@/components/widgets/PagedTable";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import BroadcastChannel from "broadcast-channel";
-import {simpleDateTime, titleCase} from "@/utils";
+import {abbreviatedName, simpleDateTime, titleCase} from "@/utils";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs';
@@ -392,6 +398,7 @@ export default {
     methods: {
         titleCase,
         simpleDateTime,
+        abbreviatedName,
         rowClass(item, type) {
             if (!item) return;
             if (item.stats === "completed") return "table-light";
