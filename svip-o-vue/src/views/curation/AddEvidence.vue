@@ -560,7 +560,7 @@ export default {
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
             HTTP.get(`variomes_single_ref`, {
                 params: {
-                    id: this.reference,
+                    id: this.reference.trim(),
                     gene: this.variant.gene.symbol,
                     variant: this.variant.name,
                     disease: this.form.disease.name
@@ -615,8 +615,8 @@ export default {
                 HTTP.get(`/diseases/${this.$route.params.disease_id}`).then(response => {
                     this.form.disease = response.data;
 
-                    this.source = source;
-                    this.reference = reference;
+                    this.source = source.trim();
+                    this.reference = reference.trim();
                     this.loadVariomeData();
                 });
             } else {
@@ -676,7 +676,7 @@ export default {
             console.log("Results of rehydration: ", this.form);
 
             // also populate source and ID, which we need to populate the publication info
-            [this.source, this.reference] = references.split(":");
+            [this.source, this.reference] = references.trim().split(":");
         },
         async submit(isDraft) {
             // manually validate all the fields before we go any further
