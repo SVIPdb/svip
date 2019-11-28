@@ -27,10 +27,17 @@ class QueryView(viewsets.ViewSet):
             # FIXME: tokenize search_term into space-delimited tokens and perform field matching on each token
             parts = search_term.split(" ")
             q_set = Q(
-                Q(*(('description__icontains', x) for x in parts), _connector=Q.OR) |
-                Q(*(('hgvs_c__icontains', x) for x in parts), _connector=Q.OR) |
-                Q(*(('hgvs_p__icontains', x) for x in parts), _connector=Q.OR) |
-                Q(*(('hgvs_g__icontains', x) for x in parts), _connector=Q.OR)
+                # Q(*(('description__icontains', x) for x in parts), _connector=Q.AND) |
+                Q(description__icontains=search_term) |
+                (Q(gene__aliases__icontains=parts[0]) & Q(name__icontains=parts[1:])) |
+                (
+                    (Q(gene__symbol__icontains=parts[0]) | Q(gene__aliases__icontains=parts[0])) &
+                    (
+                        Q(*(('hgvs_c__icontains', x) for x in parts[1:]), _connector=Q.OR) |
+                        Q(*(('hgvs_p__icontains', x) for x in parts[1:]), _connector=Q.OR) |
+                        Q(*(('hgvs_g__icontains', x) for x in parts[1:]), _connector=Q.OR)
+                    )
+                )
             )
 
             # convert full amino acids to their single-letter abbreviations, since that's how they're stored in the
