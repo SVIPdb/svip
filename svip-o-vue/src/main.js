@@ -70,6 +70,11 @@ Vue.directive("access", Access);
 Vue.component("v-select", vSelect);
 Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
+// a utility component that binds variables to its slots
+Vue.component("pass", {
+    render() { return this.$scopedSlots.default(this.$attrs); }
+});
+
 // the little arrow to the left of rows that allows them to be expanded, used everywhere
 Vue.component("expander", Expander);
 

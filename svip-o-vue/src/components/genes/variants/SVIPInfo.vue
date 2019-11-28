@@ -146,12 +146,6 @@ import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
 
-Vue.component("pass", {
-    render() {
-        return this.$scopedSlots.default(this.$attrs);
-    }
-});
-
 export default {
     name: "SVIPInfo",
     components: {SampleTable, EvidenceTable, ageDistribution, genderPlot}, // TissueDistribution
