@@ -13,7 +13,7 @@
                 />
             </template>
             <template v-slot:row-details="row">
-                <b-card v-access="'curators'" no-body class="border-0 p-3 bg-light">
+                <b-card v-access="'curators'" no-body class="border-0 p-3 bg-light" style="border-radius: 0; margin-bottom: 0;">
                     <div style="margin-bottom: 1em;">
                         <b>Complementary information</b><br/>
                         {{ row.item.summary || '-' }}

@@ -200,7 +200,7 @@
                                         v-slot="props"
                                         :modeled="form.summary"
                                         label="Complementary information"
-                                        sublabel="(viewed by others)"
+                                        sublabel="(viewable by everyone)"
                                         inner-id="summary"
                                         :required="form.type_of_evidence === 'Excluded'"
                                     >
@@ -217,7 +217,7 @@
                                         v-slot="props"
                                         :modeled="form.comment"
                                         label="Personal comment"
-                                        sublabel="(viewed by you only)"
+                                        sublabel="(viewable by you and other curators)"
                                         inner-id="comment"
                                     >
                                         <b-form-textarea
