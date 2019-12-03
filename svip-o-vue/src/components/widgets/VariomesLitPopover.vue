@@ -9,7 +9,7 @@
             @show="updateCitation"
         >
 			<template>
-				<div v-if="variomes && variomes.publication"
+				<div v-if="variomes && variomesIsValid"
                     :class="['variomes-popover', (variomes && variomes.publication && variomes.publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
 					<h6 class="title" v-html="variomes.publication.title_highlight"></h6>
 					<div class="authors">{{ formatAuthors(variomes.publication.authors) }}. {{ variomes.publication.journal }} ({{ variomes.publication.date }})</div>
@@ -65,6 +65,9 @@ export default {
             if (this.pmid) { return this.parsedPMID }
 
             return this.pubmeta.title ? this.pubmeta.title : this.parsedPMID;
+        },
+        variomesIsValid() {
+            return this.variomes && !this.variomes.error && this.variomes.publication.id === this.parsedPMID
         }
     },
     methods: {
@@ -83,7 +86,7 @@ export default {
             // (note that we need to check if the ids match because elements in a bootstrap-vue table are
             // retained when you change pages, causing their data to be shared between corresponding elements
             // on different pages...)
-            if (this.variomes && !this.variomes.error && this.variomes.publication.id === this.parsedPMID)
+            if (this.variomesIsValid)
                 return;
 
             HTTP.get(`variomes_single_ref`, {
