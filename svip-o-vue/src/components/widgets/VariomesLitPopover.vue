@@ -17,7 +17,7 @@
 
 					<div class="abstract-fader"></div>
 				</div>
-				<div v-else-if="variomes && variomes.error">{{ variomes.error }}</div>
+				<div v-else-if="variomes && error">{{ error }}</div>
 				<span v-else class="variomes-loading">
                     <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> loading...
 				</span>
@@ -46,7 +46,8 @@ export default {
     data() {
         return {
             auto_id: ids++,
-            variomes: null
+            variomes: null,
+            error: null
         }
     },
     created() {
@@ -67,7 +68,7 @@ export default {
             return this.pubmeta.title ? this.pubmeta.title : this.parsedPMID;
         },
         variomesIsValid() {
-            return this.variomes && !this.variomes.error && this.variomes.publication.id === this.parsedPMID
+            return this.variomes && !this.error && this.variomes.publication.id === this.parsedPMID
         }
     },
     methods: {
@@ -89,6 +90,7 @@ export default {
             if (this.variomesIsValid)
                 return;
 
+            this.error = null;
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.parsedPMID,
@@ -101,7 +103,7 @@ export default {
                     this.variomes = response.data;
                 })
                 .catch((err) => {
-                    this.variomes = {error: "Couldn't retrieve publication info, try again later."};
+                    this.error = {error: "Couldn't retrieve publication info, try again later."};
                 });
         },
         openReference() {
