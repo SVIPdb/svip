@@ -40,6 +40,7 @@ genes_router.register(r'variants', views.VariantViewSet, basename='gene-variants
 
 variants_router = nested_routers.NestedSimpleRouter(router, r'variants', lookup='variant')
 variants_router.register(r'sources', views.VariantInSourceViewSet, basename='sources')
+variants_router.register(r'comments', views.VariantCommentViewSet, basename='comments')
 
 # special endpoint for aggregate and search actions
 router.register(r'query', views.QueryView, basename="query")
@@ -86,9 +87,9 @@ variants_in_svip_router.register(r'diseases', views.DiseaseInSVIPViewSet, basena
 diseases_router = nested_routers.NestedSimpleRouter(variants_in_svip_router, r'diseases', lookup='disease')
 diseases_router.register(r'samples', views.SampleViewSet, basename='sample')
 
-# debug: exposing endpoints to make it easier to test
 router.register(r'curation_entries', views.CurationEntryViewSet, basename='curation_entries')
 
+router.register(r'comments', views.VariantCommentViewSet, basename='variant_comments')
 
 urlpatterns = [
     path('', include(router.urls)),

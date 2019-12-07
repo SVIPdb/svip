@@ -25,3 +25,7 @@ from .reference import (
 from .query import (
     QueryView
 )
+
+from .comments import (
+    VariantCommentViewSet
+)
