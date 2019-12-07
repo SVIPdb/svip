@@ -81,7 +81,9 @@
                                 <b-button
                                     size="sm"
                                     @click.stop="() => { showAliases = !showAliases; }"
-                                >{{ showAliases ? "Hide" : "Show" }} Aliases
+                                >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
+                                <b-button @click="toggleNav">
+                                    <icon name="comment" /> Discuss
                                 </b-button>
                             </div>
                         </td>
@@ -119,7 +121,15 @@
                 </b-card>
             </b-col>
         </b-row>
+
         <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras"/>
+
+        <!-- invisible things are down here -->
+        <Sidebar>
+            <h4>Comments on {{ variant.description }}</h4>
+
+            <CommentList :variant_id="variant.id" />
+        </Sidebar>
     </div>
 </template>
 
@@ -134,10 +144,13 @@ import linkItems from "@/data/curation/links/items.json";
 
 import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
+import Sidebar from "@/components/structure/sidebar/Sidebar";
+import { mutations } from '@/store/modules/site';
+import CommentList from "@/components/widgets/CommentList";
 
 export default {
     name: "ViewVariant",
-    components: {VariantExternalInfo, variantPublicDatabases, variantSvip},
+    components: {CommentList, Sidebar, VariantExternalInfo, variantPublicDatabases, variantSvip},
     data() {
         return {
             showAliases: false,
@@ -195,7 +208,10 @@ export default {
     },
     // components: {geneVariants: geneVariants},
     methods: {
-        desnakify
+        desnakify,
+        toggleNav() {
+            store.commit("TOGGLE_NAV");
+        }
     },
     beforeRouteEnter(to, from, next) {
         const {variant_id} = to.params;
