@@ -99,20 +99,29 @@
 
                 <template v-slot:row-details="row">
                     <div class="row-details">
-                        <b-card no-body>
-                            <b-tabs
-                                v-model="svip_entry_tabs[row.item.name]" card
-                                :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
-                            >
-                                <b-tab title="Evidence" active>
-                                    <EvidenceTable :variant="variant" :row="row"/>
-                                </b-tab>
+                        <pass :entries="splitCurationEntries(row)">
+                            <b-card no-body slot-scope="{ entries }">
+                                <b-tabs
+                                    v-model="svip_entry_tabs[row.item.name]" card
+                                    :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
+                                >
+                                    <b-tab active>
+                                        <template v-slot:title>Evidence <b-badge class="text-center">{{ entries.finalized.length }}</b-badge></template>
+                                        <EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />
+                                    </b-tab>
 
-                                <b-tab title="Samples" v-if="groups && groups.includes('clinicians')">
-                                    <SampleTable :variant="variant" :row="row" :groups="groups"/>
-                                </b-tab>
-                            </b-tabs>
-                        </b-card>
+                                    <b-tab v-if="groups && groups.includes('clinicians')">
+                                        <template v-slot:title>Samples <b-badge class="text-center">{{ row.item.nb_patients }}</b-badge></template>
+                                        <SampleTable :variant="variant" :row="row" :groups="groups"/>
+                                    </b-tab>
+
+                                    <b-tab v-if="groups && groups.includes('curators')">
+                                        <template v-slot:title>Curation <b-badge class="text-center">{{ entries.pending.length }}</b-badge></template>
+                                        <EvidenceTable :variant="variant" :row="row" :entries="entries.pending" />
+                                    </b-tab>
+                                </b-tabs>
+                            </b-card>
+                        </pass>
                     </div>
                 </template>
             </b-table>
@@ -274,6 +283,12 @@ export default {
                 modified_by: abbreviatedName(most_recent.owner_name)
             }
         },
+        splitCurationEntries(row) {
+            return {
+                finalized: row.item.curation_entries.filter(x => x.status === 'reviewed'),
+                pending: row.item.curation_entries.filter(x => x.status !== 'reviewed')
+            };
+        },
         titleCase
     },
     computed: {
@@ -339,6 +354,10 @@ rect.pathogenicity.automatic {
 
 .svip-details-tabs.selected-tab-1 .card-header {
     background-color: #c8bcca;
+}
+
+.svip-details-tabs.selected-tab-2 .card-header {
+    background-color: #8bd4c2;
 }
 
 .svip-details-tabs .card-header a.nav-link.active {

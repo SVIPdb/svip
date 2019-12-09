@@ -1,9 +1,10 @@
 <template>
     <b-card-text>
-        <b-table :fields="fields" :items="row.item.curation_entries" show-empty small>
+        <b-table :fields="fields" :items="entries" show-empty small>
             <template v-slot:cell(display)="row">
                 <expander v-access="'curators'" :row="row"/>
             </template>
+
             <template v-slot:cell(references)="data">
                 <VariomesLitPopover
                     :pubmeta="{ pmid: trimPrefix(data.value, 'PMID:') }"
@@ -12,6 +13,7 @@
                     :disease="row.item.name"
                 />
             </template>
+
             <template v-slot:row-details="row">
                 <b-card v-access="'curators'" no-body class="border-0 p-3 bg-light" style="border-radius: 0; margin-bottom: 0;">
                     <div style="margin-bottom: 1em;">
@@ -46,7 +48,8 @@ export default {
     components: {VariomesLitPopover},
     props: {
         variant: {required: true, type: Object},
-        row: {required: true, type: Object}
+        row: {required: true, type: Object},
+        entries: { required: true, type: Array }
     },
     data() {
         return {
