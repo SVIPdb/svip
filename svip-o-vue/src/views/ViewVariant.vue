@@ -82,7 +82,8 @@
                                     size="sm"
                                     @click.stop="() => { showAliases = !showAliases; }"
                                 >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
-                                <b-button @click="toggleNav">
+
+                                <b-button v-if="commentsEnabled" @click="toggleNav">
                                     <icon name="comment" /> Discuss
                                 </b-button>
                             </div>
@@ -125,9 +126,9 @@
         <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras"/>
 
         <!-- invisible things are down here -->
-        <Sidebar>
+        <Sidebar v-if="commentsEnabled">
             <h4>Comments on {{ variant.description }}</h4>
-
+            <hr />
             <CommentList :variant_id="variant.id" />
         </Sidebar>
     </div>
@@ -147,6 +148,7 @@ import VariantExternalInfo from "@/components/genes/variants/external/VariantExt
 import Sidebar from "@/components/structure/sidebar/Sidebar";
 import { mutations } from '@/store/modules/site';
 import CommentList from "@/components/widgets/CommentList";
+import {commentsEnabled} from "@/app_config";
 
 export default {
     name: "ViewVariant",
@@ -154,7 +156,8 @@ export default {
     data() {
         return {
             showAliases: false,
-            linkItems
+            linkItems,
+            commentsEnabled
         };
     },
     computed: {
