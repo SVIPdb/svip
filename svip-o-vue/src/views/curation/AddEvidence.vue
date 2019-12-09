@@ -33,7 +33,7 @@
                                 @mouseup="getSelectionText()"
                                 @contextmenu.prevent.stop="handleRightClick($event)"
                             >
-                                <h5 class="font-weight-bolder" v-html="variomes.publication.title_highlight"></h5>
+                                <h5 class="font-weight-bolder" v-html="variomes.publication.title_highlight" />
                                 <div>{{variomes.publication.date}}</div>
                                 <p>
                                     <b-link v-bind="pubmedURL(`?term=${author}[Author]`)" v-for="(author, index) in variomes.publication.authors" :key="index">
@@ -41,7 +41,7 @@
                                     </b-link>
                                 </p>
                                 <b>Abstract</b>
-                                <p class="text-justify" v-html="variomes.publication.abstract_highlight"></p>
+                                <p class="text-justify" v-html="variomes.publication.abstract_highlight" />
                                 <small>
                                     PMID:
                                     <b-link v-bind="pubmedURL(variomes.publication.id)">{{variomes.publication.id}}</b-link>
@@ -55,7 +55,7 @@
                                 We couldn't load the abstract due to a technical issue
                             </div>
                             <div v-else class="text-center">
-                                <b-spinner label="Spinning" variant="primary"></b-spinner>Loading
+                                <b-spinner label="Spinning" variant="primary" /> Loading
                             </div>
                         </b-card-body>
                     </b-card>
@@ -226,7 +226,7 @@
                                             :disabled="isViewOnly"
                                             rows="3" max-rows="5"
                                             :state="checkValidity(props)"
-                                        ></b-form-textarea>
+                                        />
                                     </ValidatedFormField>
 
                                     <b-form-group label="Your textual evidences" label-cols-sm="4" label-cols-lg="3">
@@ -236,7 +236,7 @@
                                               :key="index"
                                               class="mt-3"
                                           >
-                                            <b-form-textarea rows="3" disabled :value="annotation" no-resize></b-form-textarea>
+                                            <b-form-textarea rows="3" disabled :value="annotation" no-resize />
                                             <b-input-group-append>
                                               <b-button variant="danger" @click="removeAnnotation(index)">
                                                 <icon name="minus" />
