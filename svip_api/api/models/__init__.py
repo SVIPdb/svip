@@ -9,5 +9,5 @@ from .reference import (
     Drug, Disease
 )
 from .comments import (
-    Comment, TagType, Tag, VariantComment, VariantTag
+    Comment, VariantComment
 )
