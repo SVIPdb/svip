@@ -17,7 +17,7 @@
                             {{ formatCommentDatetime(comment.created_on) }}
                         </div>
                     </div>
-                    <button class="delete" @click="removeComment(comment.id)" aria-label="Remove comment">
+                    <button v-if="ownsComment(comment.owner_name)" class="delete" @click="removeComment(comment.id)" aria-label="Remove comment">
                         <icon name="times" />
                     </button>
 
@@ -67,7 +67,7 @@
 <script>
 import {HTTP} from '@/router/http';
 import {mapGetters} from "vuex";
-import {abbreviatedName, hashCode} from "@/utils";
+import {abbreviatedName, colorizeTag} from "@/utils";
 import dayjs from "dayjs";
 
 export default {
@@ -160,12 +160,13 @@ export default {
                 })
             }
         },
-        colorizeTag(text) {
-            return `hsl(${(50 * hashCode(text)) % 360}, 50%, 50%)`;
-        },
         formatCommentDatetime(x) {
             return dayjs(x).format("h:mm a, DD.MM.YYYY")
         },
+        ownsComment(commenter_name) {
+            return this.username && commenter_name === this.username
+        },
+        colorizeTag,
         abbreviatedName
     }
 }

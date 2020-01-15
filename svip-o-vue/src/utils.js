@@ -132,3 +132,8 @@ export function hashCode(str) { // java String#hashCode
     }
     return hash;
 }
+
+// creates a string usable as a CSS background color for tagss
+export function colorizeTag(text) {
+    return `hsl(${(50 * hashCode(text)) % 360}, 50%, 50%)`;
+}
