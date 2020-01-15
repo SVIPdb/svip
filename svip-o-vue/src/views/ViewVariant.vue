@@ -128,7 +128,6 @@
         <!-- invisible things are down here -->
         <Sidebar v-if="commentsEnabled">
             <h4>Comments on {{ variant.description }}</h4>
-            <hr />
             <CommentList :variant_id="variant.id" />
         </Sidebar>
     </div>

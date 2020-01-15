@@ -123,3 +123,12 @@ export function parsePublicationURL(p) {
     const isPMID = /^[0-9]+$/.test(pmid);
     return {url: p, title: isPMID ? pmid : "(external)", pmid: isPMID && pmid};
 }
+
+// used to produce unique indices for arbitrary strings
+export function hashCode(str) { // java String#hashCode
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+}
