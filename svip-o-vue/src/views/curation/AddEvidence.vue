@@ -560,8 +560,7 @@ export default {
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
-                    gene: this.variant.gene.symbol,
-                    variant: this.variant.name,
+                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                     disease: this.form.disease.name
                 }
             })

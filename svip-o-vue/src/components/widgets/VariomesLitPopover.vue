@@ -94,8 +94,7 @@ export default {
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.parsedPMID,
-                    gene: this.gene,
-                    variant: this.variant,
+                    genvars: `${this.gene} (${this.variant})`,
                     disease: this.disease
                 }
             })

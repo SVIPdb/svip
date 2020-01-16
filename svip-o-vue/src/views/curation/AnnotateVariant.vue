@@ -206,8 +206,7 @@ export default {
         this.loadingVariomes = true;
         HTTP.get(`variomes_search`, {
             params: {
-                gene: this.variant.gene.symbol,
-                variant: this.variant.name,
+                genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                 disease: this.disease.name
             }
         })
