@@ -1,7 +1,6 @@
 <template>
-    <b-link @click="row.toggleDetails">
-        <!--    <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>-->
-        <icon name="chevron-right" :class="`link ${row.detailsShowing ? 'activated' : ''}`"/>
+    <b-link @click="toggle">
+        <icon name="chevron-right" :class="`link ${this.value ? 'activated' : ''}`"/>
     </b-link>
 </template>
 
@@ -9,7 +8,12 @@
 export default {
     name: "Expander",
     props: {
-        row: {type: Object, required: true}
+        value: {type: Boolean}
+    },
+    methods: {
+        toggle() {
+            this.$emit('input', !this.value);
+        }
     }
 }
 </script>

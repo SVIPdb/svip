@@ -44,6 +44,7 @@ import "vue-awesome/icons/tasks";
 import "vue-awesome/icons/pen-alt";
 import "vue-awesome/icons/history";
 import "vue-awesome/icons/comment";
+import "vue-awesome/icons/search";
 
 import Icon from "vue-awesome/components/Icon";
 
@@ -52,6 +53,7 @@ import 'vue-select/dist/vue-select.css';
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import VueClipboard from 'vue-clipboard2'
 import { ValidationProvider } from 'vee-validate';
+import RowExpander from "@/components/widgets/RowExpander";
 import Expander from "@/components/widgets/Expander";
 
 import store from "./store";
@@ -77,6 +79,7 @@ Vue.component("pass", {
 });
 
 // the little arrow to the left of rows that allows them to be expanded, used everywhere
+Vue.component("row-expander", RowExpander);
 Vue.component("expander", Expander);
 
 export default new Vue({

@@ -2,7 +2,7 @@
     <b-card-text>
         <b-table :fields="fields" :items="entries" show-empty small>
             <template v-slot:cell(display)="row">
-                <expander v-access="'curators'" :row="row"/>
+                <row-expander v-access="'curators'" :row="row"/>
             </template>
 
             <template v-slot:cell(references)="data">

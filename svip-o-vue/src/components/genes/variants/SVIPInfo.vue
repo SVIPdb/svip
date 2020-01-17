@@ -31,7 +31,7 @@
         <div class="card-body top-level">
             <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
                 <template v-slot:cell(display)="row">
-                    <expander :row="row"/>
+                    <row-expander :row="row"/>
                 </template>
 
                 <template v-slot:cell(name)="row">
