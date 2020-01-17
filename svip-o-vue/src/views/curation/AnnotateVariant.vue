@@ -24,7 +24,7 @@
                                             required
                                             placeholder="Type reference"
                                             class="rounded-0"
-                                        ></b-form-input>
+                                        />
                                     </b-col>
                                     <b-col cols="2">
                                         <b-button :disabled="source == null || reference == null" type="submit" block class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
@@ -37,85 +37,7 @@
                     </b-tab>
 
                     <b-tab title="Use text mining tool">
-                        <b-card-body style="padding: 0;">
-                            <b-row v-if="loadingVariomes">
-                                <b-col>
-                                    <b-spinner small /> loading...
-                                </b-col>
-                            </b-row>
-                            <b-row v-else class="textmining-paginator">
-                                <b-col>
-                                    <b>Results:</b> {{ totalRows && totalRows.toLocaleString() }}
-                                </b-col>
-                                <b-col class="my-1">
-                                    <b-form-group label="Per page" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-align-sm="right" label-size="sm" label-for="perPageSelect" class="mb-0">
-                                        <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"/>
-                                    </b-form-group>
-                                </b-col>
-
-                                <b-col class="my-1">
-                                    <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"/>
-                                </b-col>
-                            </b-row>
-
-                            <b-table show-empty :busy="variomes.length === 0" :items="variomes.publications" thead-class="unwrappable-header" :sort-by="sortBy" :sort-desc="sortDesc" :fields="fieldsTextMining" :current-page="currentPage" :per-page="perPage" small>
-                                <template v-slot:table-busy>
-                                    <div class="text-center text-danger my-2">
-                                        <b-spinner class="align-middle" small style="margin-right: 5px;" />
-                                        <strong>Loading...</strong>
-                                    </div>
-                                </template>
-                                <template v-slot:cell(id)="row">
-                                    <VariomesLitPopover
-                                        :pubmeta="{ pmid: row.item.id }"
-                                        :variant="variomes.query.variant"
-                                        :gene="variomes.query.gene"
-                                        :disease="variomes.query.disease"
-                                        deferred
-                                    />
-                                </template>
-                                <template v-slot:cell(title_highlight)="data">
-                                    <span v-html="data.value"></span>
-                                </template>
-                                <template v-slot:cell(action)="row">
-                                    <b-button
-                                        variant="success"
-                                        size="sm"
-                                        @click="addEvidenceFromList(row.item.id)"
-                                        target="_blank"
-                                    >
-                                        <icon name="plus" />
-                                    </b-button>
-                                </template>
-                                <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
-                                <template v-slot:cell(publication_type)="data">{{ data.value.join(", ") }}</template>
-                                <template v-slot:cell(score)="data">
-                                    <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
-                                    <b-tooltip :target="() => $refs[data.item.id]">
-                                        <ul class="p-0 m-0">
-                                            <li class="d-flex justify-content-between align-items-center variant">
-                                                {{variomes.query.variant}}
-                                                <span
-                                                    class="text-white pl-1"
-                                                >{{data.item.details.query_details.targetVariantCount}}</span>
-                                            </li>
-                                            <li class="d-flex justify-content-between align-items-center gene">
-                                                {{variomes.query.gene}}
-                                                <span
-                                                    class="text-white pl-1"
-                                                >{{data.item.details.query_details.targetGeneCount}}</span>
-                                            </li>
-                                            <li class="d-flex justify-content-between align-items-center disease">
-                                                {{variomes.query.disease}}
-                                                <span
-                                                    class="text-white pl-1"
-                                                >{{data.item.details.query_details.targetDiseaseCount}}</span>
-                                            </li>
-                                        </ul>
-                                    </b-tooltip>
-                                </template>
-                            </b-table>
-                        </b-card-body>
+                        <VariomesSearch :gene="gene" :variant="variant" @add-evidence-from-list="addEvidenceFromList" />
                     </b-tab>
 
                     <!--
@@ -135,36 +57,24 @@ import { mapGetters } from "vuex";
 import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
-import fields from "@/data/curation/summary/fields.json";
-import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import store from "@/store";
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import { HTTP } from "@/router/http";
+import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
 
 export default {
     name: "AnnotateVariant",
     components: {
+        VariomesSearch,
         CuratorVariantInformations,
         VariomesLitPopover,
         EvidenceCard
     },
     data() {
         return {
-            fields,
-            fieldsTextMining,
             source: "PMID",
-            reference: null,
-            variomes: [],
-            loadingVariomes: true,
-            totalRows: 1,
-            sortBy: "score",
-            sortDesc: true,
-            currentPage: 1,
-            perPage: 10,
-            pageOptions: [10, 20, 30],
-
-            evidences: []
-        };
+            reference: ""
+        }
     },
     computed: {
         ...mapGetters({
@@ -175,7 +85,6 @@ export default {
             return parseInt(this.$route.params.disease_id);
         }
     },
-    // components: {geneVariants: geneVariants},
     methods: {
         desnakify,
         addEvidence() {
@@ -195,31 +104,6 @@ export default {
             this.reference = id;
             return this.addEvidence();
         }
-    },
-    async created() {
-        const { variant_id, disease_id } = this.$route.params;
-
-        // first, get the disease data
-        this.disease = await HTTP.get(`/diseases/${disease_id}`);
-
-        // then, query variomes based on that data
-        this.loadingVariomes = true;
-        HTTP.get(`variomes_search`, {
-            params: {
-                genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                disease: this.disease.name
-            }
-        })
-            .then(response => {
-                this.variomes = response.data;
-                this.totalRows = this.variomes.publications.length;
-            })
-            .catch(err => {
-                this.variomes = {
-                    error: "Couldn't retrieve publication info, try again later."
-                };
-            })
-            .finally(() => { this.loadingVariomes = false; });
     },
     beforeRouteEnter(to, from, next) {
         const { variant_id } = to.params;
@@ -252,10 +136,6 @@ export default {
 .details-row {
     background: #eee;
     box-shadow: inset;
-}
-
-.textmining-paginator {
-    border-bottom: solid 1px #ddd; margin-bottom: 10px; padding-bottom: 10px; display: flex; align-items: baseline;
 }
 
 /* Enter and leave animations can use different */
