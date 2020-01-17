@@ -351,32 +351,10 @@
                         <b-card-body class="p-0 m-0">
                             <b-collapse id="statistic" v-model="showStat" class="m-3">
                                 <div v-if="variomes && variomes.publication">
-                                    <b-link v-bind="pubmedURL(`?term=${variomes.query.gene}[Title/Abstract]`)">
-                                        <b-badge
-                                            class="bg-gene"
-                                        >{{variomes.query.gene}} ({{variomes.publication.details.query_details.targetGeneCount}})</b-badge>
-                                    </b-link>
-                                    <b-link v-bind="pubmedURL(`?term=${variomes.query.variant}[Title/Abstract]`)">
-                                        <b-badge
-                                            class="bg-variant"
-                                        >{{variomes.query.variant}} ({{variomes.publication.details.query_details.targetVariantCount}})</b-badge>
-                                    </b-link>
-                                    <b-link v-bind="pubmedURL(`?term=${variomes.query.disease}[Title/Abstract]`)">
-                                        <b-badge
-                                            class="bg-disease"
-                                        >{{variomes.query.disease}} ({{variomes.publication.details.query_details.targetDiseaseCount}})</b-badge>
-                                    </b-link>
-                                    <b-link
-                                        v-bind="pubmedURL(`?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract] AND ${variomes.query.disease}[Title/Abstract]`)"
+                                    <b-link v-for="entry in keywordSet"
+                                        v-bind="pubmedURL(entry.url)"
                                     >
-                                        <b-badge
-                                            class="bg-primary"
-                                        >{{variomes.query.gene}} + {{variomes.query.variant}} + {{variomes.query.disease}}</b-badge>
-                                    </b-link>
-                                    <b-link
-                                        v-bind="pubmedURL(`?term=${variomes.query.gene}[Title/Abstract] AND ${variomes.query.variant}[Title/Abstract]`)"
-                                    >
-                                        <b-badge class="bg-info">{{variomes.query.gene}} + {{variomes.query.variant}}</b-badge>
+                                        <b-badge :class="entry.class">{{ entry.label }}{{ entry.count !== undefined ? ` (${entry.count})` : ''}}</b-badge>
                                     </b-link>
                                 </div>
                                 <div v-else-if="variomes" class="text-muted text-center font-italic">
@@ -384,7 +362,7 @@
                                     An error occurred while retrieving this PMID
                                 </div>
                                 <div v-else class="text-center">
-                                    <b-spinner label="Spinning" variant="primary" />Loading
+                                    <b-spinner label="Spinning" variant="primary" /> loading...
                                 </div>
                             </b-collapse>
                         </b-card-body>
@@ -815,6 +793,48 @@ export default {
                     reference
                 }
             }).href;
+        },
+        keywordSet() {
+            if (!this.variomes)
+                return [];
+
+            const { gene, variant, disease } = {
+                gene: this.variomes.query.genes_variants[0].gene,
+                variant: this.variomes.query.genes_variants[0].variant,
+                disease: this.variomes.query.diseases[0]
+            };
+            const counts = this.variomes.publication.details.query_details;
+
+            return [
+                {
+                    class: "bg-gene",
+                    url: `?term=${gene}[Title/Abstract]`,
+                    label: gene,
+                    count: counts.query_gene_count.all
+                },
+                {
+                    class: "bg-variant",
+                    url: `?term=${variant}[Title/Abstract]`,
+                    label: variant,
+                    count: counts.query_variant_count.all
+                },
+                {
+                    class: "bg-disease",
+                    url: `?term=${disease}[Title/Abstract]`,
+                    label: disease,
+                    count: counts.query_disease_count.all
+                },
+                {
+                    class: "bg-primary",
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
+                    label: `${gene} + ${variant} + ${disease}`
+                },
+                {
+                    class: "bg-info",
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
+                    label: `${gene} + ${variant}`
+                },
+            ];
         },
         effects() {
             // return this.form.type_of_evidence != null
