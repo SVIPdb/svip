@@ -194,8 +194,8 @@ class VariantCuration(SVIPModel):
     variant from the 'additional' variants. In the future we might also annotate the relationship of the
     variant to the curation entry.`
     """
-    variant = models.ForeignKey(Variant, on_delete=models.CASCADE)
-    curationentry = models.ForeignKey(CurationEntry, on_delete=models.CASCADE)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
+    curationentry = models.ForeignKey(CurationEntry, on_delete=DB_CASCADE)
 
     class Meta:
         ordering = ('id',)
