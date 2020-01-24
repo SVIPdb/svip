@@ -11,3 +11,6 @@ from .reference import (
 from .comments import (
     Comment, VariantComment
 )
+from .harvesting import (
+    HarvestRun
+)
