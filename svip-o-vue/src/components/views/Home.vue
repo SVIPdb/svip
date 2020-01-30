@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="intro section text-center">
                     <img
-                        src="../assets/logos/SVIP_Logo_Text_cmyk_Large.png"
+                        src="../../assets/logos/SVIP_Logo_Text_cmyk_Large.png"
                         class="img-fluid"
                         width="483"
                         height="137"
@@ -40,7 +40,7 @@
                         target="_blank"
                     >
                         <img
-                            src="../assets/logos/sphn_logo_middle.png"
+                            src="../../assets/logos/sphn_logo_middle.png"
                             width="170"
                             alt="SPHN: Swiss Personalized Health Network"
                         />
@@ -55,7 +55,7 @@
 <script>
 import {mapGetters} from "vuex";
 import store from "@/store";
-import SearchBar from "../components/widgets/SearchBar";
+import SearchBar from "../widgets/SearchBar";
 
 export default {
     name: "home",

@@ -1,19 +1,19 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "@/views/Home";
-import ViewGene from "@/views/ViewGene";
-import ViewVariant from "@/views/ViewVariant";
-import Login from "@/views/user/Login";
-import UserInfo from "@/views/user/UserInfo";
+import Home from "@/components/views/Home";
+import ViewGene from "@/components/views/ViewGene";
+import ViewVariant from "@/components/views/ViewVariant";
+import Login from "@/components/views/user/Login";
+import UserInfo from "@/components/views/user/UserInfo";
 import store from '@/store';
 import { TokenErrors } from "@/store/modules/users";
-import PageNotFound from "@/views/PageNotFound";
-import Help from "@/views/Help";
+import PageNotFound from "@/components/views/PageNotFound";
+import Help from "@/components/views/Help";
 
-import CurationDashboard from "@/views/curation/CurationDashboard";
-import AnnotateVariant from "@/views/curation/AnnotateVariant";
-import AddEvidence from "@/views/curation/AddEvidence";
-import DebugPage from "@/views/DebugPage";
+import CurationDashboard from "@/components/views/curation/CurationDashboard";
+import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
+import AddEvidence from "@/components/views/curation/AddEvidence";
+import DebugPage from "@/components/views/DebugPage";
 import {checkInRole} from "@/directives/access";
 
 Vue.use(Router);
