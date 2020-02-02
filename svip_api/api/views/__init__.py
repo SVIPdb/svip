@@ -29,3 +29,7 @@ from .query import (
 from .comments import (
     VariantCommentViewSet
 )
+
+from .statistics import (
+    Statistics
+)

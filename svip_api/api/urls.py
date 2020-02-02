@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_nested import routers as nested_routers
 
@@ -44,6 +44,9 @@ variants_router.register(r'comments', views.VariantCommentViewSet, basename='com
 
 # special endpoint for aggregate and search actions
 router.register(r'query', views.QueryView, basename="query")
+
+# special endpoint for statistics
+router.register(r'stats', views.Statistics, basename="stats")
 
 # ------------------------------------------
 # - public database endpoints
