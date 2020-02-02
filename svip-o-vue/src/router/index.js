@@ -9,6 +9,7 @@ import store from '@/store';
 import { TokenErrors } from "@/store/modules/users";
 import PageNotFound from "@/components/views/PageNotFound";
 import Help from "@/components/views/Help";
+import Statistics from "@/components/views/Statistics";
 
 import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
@@ -36,6 +37,12 @@ const router = new Router({
             path: "/help",
             name: "help",
             component: Help
+        },
+
+        {
+            path: "/statistics",
+            name: "statistics",
+            component: Statistics
         },
 
         {

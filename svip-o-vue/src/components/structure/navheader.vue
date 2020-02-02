@@ -22,6 +22,7 @@
                 >Dashboard
                 </b-nav-item>
                 <b-nav-item :to="'/help'">Help</b-nav-item>
+                <b-nav-item :to="'/statistics'">Statistics</b-nav-item>
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->

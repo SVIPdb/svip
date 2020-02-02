@@ -102,6 +102,11 @@ export function simpleDateTime(x) {
     }
 }
 
+export function combinedDateTime(x) {
+    const parts = simpleDateTime(x);
+    return `${parts.date}, ${parts.time}`
+}
+
 export function abbreviatedName(name) {
     const parts = name.toUpperCase().split(/[ _]/);
 
