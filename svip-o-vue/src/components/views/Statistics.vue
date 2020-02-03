@@ -36,6 +36,7 @@
                         :fields="genes_variants_fields" :items="genes_variants_rows"
                         :per-page="genes.perPage" :current-page="genes.currentPage"
                         :filter="genes.currentFilter"
+                        :sort-by="genes.sortBy" :sort-desc="genes.sortDesc"
                     >
                         <template v-slot:cell(gene)="entry">
                             <b><router-link :to="`/gene/${entry.value.id}`" target="_blank">{{ entry.value.name }}</router-link></b>
@@ -130,7 +131,9 @@ export default {
                 data: null,
                 perPage: 10,
                 currentPage: 1,
-                currentFilter: ''
+                currentFilter: '',
+                sortBy: 'gene',
+                sortDesc: false
             },
             harvests: {
                 data: null,
@@ -154,10 +157,11 @@ export default {
                 return null;
 
             return [
-                { key: 'gene', label: 'Gene' },
+                { key: 'gene', label: 'Gene', sortable: true },
                 ...(Object.values(this.genes.data.sources).map(x => ({
                     key: x.name,
                     label: x.display_name,
+                    sortable: true,
                     formatter: (x) => x || 0
                 })))
             ]
