@@ -18,13 +18,26 @@
                     </div>
                 </div>
 
-                <div class="section stats row justify-content-md-center">
+                <div v-if="loadingStats === 'error'" class="section stats row justify-content-md-center">
+                    <div class="text-center text-muted font-italic">
+                        <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                        The SVIP API is not available.<br />
+                        Please check your connection and then <a href="mailto:feedback@svip.ch">contact us</a>.
+                    </div>
+                </div>
+                <div v-else class="section stats row justify-content-md-center">
                     <div class="col">
-                        <h3>{{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : ''}}</h3>
+                        <h3>
+                            <b-spinner v-if="loadingStats === true" />
+                            <span v-else>{{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : ''}}</span>
+                        </h3>
                         <span class="text-muted">{{ nbGenesSVIP }} with SVIP data</span>
                     </div>
                     <div class="col">
-                        <h3>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</h3>
+                        <h3>
+                            <b-spinner v-if="loadingStats === true" />
+                            <span v-else>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</span>
+                        </h3>
                         <span class="text-muted">{{ nbVariantsSVIP }} with SVIP data</span>
                     </div>
                 </div>
@@ -67,6 +80,7 @@ export default {
     },
     computed: {
         ...mapGetters({
+            loadingStats: "loadingStats",
             genes: "genes",
             nbGenes: "nbGenes",
             nbGenesSVIP: "nbGenesSVIP",

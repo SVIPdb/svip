@@ -1,4 +1,5 @@
 import {HTTP} from "@/router/http";
+import vueInstance from '@/main';
 
 // initial state
 const state = {
@@ -18,6 +19,8 @@ const state = {
     nbPhenotypes: 0,
     associations: [],
     nbGeneVariants: 0,
+    loadingStats: false,
+
     geneVariants: [],
     variant: null,
     showOnlySVIP: localStorage.getItem('showOnlySVIP') === 'true' || localStorage.getItem('showOnlySVIP') == null,
@@ -38,6 +41,8 @@ const getters = {
     nbPhenotypes: state => state.phenotypes.length,
     geneVariants: state => state.geneVariants,
     nbGeneVariants: state => state.nbGeneVariants,
+    loadingStats: state => state.loadingStats,
+
     variant: state => state.variant,
     svipVariants: state => state.svipVariants,
     svipVariant: state => state.svipVariant
@@ -46,6 +51,8 @@ const getters = {
 // actions
 const actions = {
     getSiteStats({commit}) {
+        commit('SET_SITE_STATS_LOADING');
+
         return HTTP.get("query/stats").then(res => {
             const stats = res.data;
 
@@ -56,6 +63,9 @@ const actions = {
                 nbVariantsSVIP: stats.svip_variants,
                 nbPhenotypes: stats.phenotypes
             });
+        }).catch((err) => {
+            vueInstance.$snotify.error('Failed to retrieve site statistics');
+            commit('SET_SITE_STATS_LOADING', {status: 'error'});
         });
     },
 
@@ -145,7 +155,12 @@ const actions = {
 
 // mutations
 const mutations = {
+    SET_SITE_STATS_LOADING(state, params = {status: true}) {
+        state.loadingStats = params.status;
+    },
+
     SET_SITE_STATS(state, {nbGenes, nbGenesSVIP, nbVariants, nbVariantsSVIP, nbPhenotypes}) {
+        state.loadingStats = false;
         state.nbGenes = nbGenes;
         state.nbGenesSVIP = nbGenesSVIP;
         state.nbVariants = nbVariants;
