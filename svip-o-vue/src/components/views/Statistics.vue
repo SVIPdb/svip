@@ -21,7 +21,7 @@
                     -->
 
                     <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <div style="margin-left: 10px;">Showing <b>{{ genes.perPage }}</b> out of <b>{{ genes.data.total_genes }}</b> genes</div>
+                        <div>Showing <b>{{ genes.perPage }}</b> out of <b>{{ genes.data.total_genes }}</b> genes</div>
                         <b-form-group>
                             <b-input-group>
                                 <b-form-input v-model="genes.currentFilter" placeholder="Type to Search"/>
@@ -37,6 +37,7 @@
                         :per-page="genes.perPage" :current-page="genes.currentPage"
                         :filter="genes.currentFilter"
                         :sort-by="genes.sortBy" :sort-desc="genes.sortDesc"
+                        @filtered="genesFiltered"
                     >
                         <template v-slot:cell(gene)="entry">
                             <b><router-link :to="`/gene/${entry.value.id}`" target="_blank">{{ entry.value.name }}</router-link></b>
@@ -49,8 +50,8 @@
                     </b-table>
 
                     <div>
-                        <b-pagination v-if="genes.data.total_genes > genes.perPage" v-model="genes.currentPage"
-                            :total-rows="genes.data.total_genes" :per-page="genes.perPage"
+                        <b-pagination v-if="genes.itemCount > genes.perPage" v-model="genes.currentPage"
+                            :total-rows="genes.itemCount" :per-page="genes.perPage"
                         />
                     </div>
                 </div>
@@ -65,6 +66,8 @@
                     <b-spinner />
                 </div>
                 <div v-else>
+                    <div>Showing <b>{{ harvests.perPage }}</b> out of <b>{{ harvests.data.length }}</b> entries</div>
+
                     <b-table :items="harvests.data" :fields="harvests.fields" :per-page="harvests.perPage" :current-page="harvests.currentPage">
                         <template v-slot:cell(action)="entry">
                             <row-expander :row="entry" />&nbsp;
@@ -82,11 +85,10 @@
                         </template>
                     </b-table>
 
-                    <div style="display: flex;">
+                    <div style="display: flex; justify-content: space-between;">
                         <b-pagination v-if="harvests.data.length > harvests.perPage" v-model="harvests.currentPage"
                             :total-rows="harvests.data.length" :per-page="harvests.perPage"
                         />
-                        <div style="margin-left: 10px;">(showing {{ harvests.perPage }} of {{ harvests.data.length }} total entries)</div>
                     </div>
                 </div>
             </div>
@@ -100,7 +102,6 @@ import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
 import {HTTP} from '@/router/http';
 import SourceIcon from "@/components/widgets/SourceIcon";
 import {combinedDateTime} from "@/utils";
-import PagedTable from "@/components/widgets/PagedTable";
 
 dayjs.extend(RelativeTime);
 
@@ -124,7 +125,7 @@ const harvest_fields = [
 
 export default {
     name: "Statistics",
-    components: {PagedTable, SourceIcon},
+    components: {SourceIcon},
     data() {
         return {
             genes: {
@@ -132,6 +133,7 @@ export default {
                 perPage: 10,
                 currentPage: 1,
                 currentFilter: '',
+                itemCount: 0,
                 sortBy: 'gene',
                 sortDesc: false
             },
@@ -146,6 +148,7 @@ export default {
     created() {
         HTTP.get('/stats/full').then((response) => {
             this.genes.data = response.data.genes;
+            this.genes.itemCount = this.genes.data.total_genes;
         });
         HTTP.get('/stats/harvests').then((response) => {
             this.harvests.data = response.data.harvests;
@@ -157,7 +160,7 @@ export default {
                 return null;
 
             return [
-                { key: 'gene', label: 'Gene', sortable: true },
+                { key: 'gene', label: 'Gene', sortable: true, sortByFormatted: (x) => x.name },
                 ...(Object.values(this.genes.data.sources).map(x => ({
                     key: x.name,
                     label: x.display_name,
@@ -182,6 +185,9 @@ export default {
                 gene: k,
                 ...(_.mapValues(v, x => `${x.inserted} / ${x.skipped}`))
             }));
+        },
+        genesFiltered(results) {
+            this.genes.itemCount = results.length;
         }
     }
 }
