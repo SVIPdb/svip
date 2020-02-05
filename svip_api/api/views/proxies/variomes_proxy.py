@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from cachecontrol import CacheControl
 from cachecontrol.heuristics import ExpiresAfter
 from cachecontrol_django import DjangoCache
-
+from django.views.decorators.gzip import gzip_page
 
 cached_sess = CacheControl(
     requests.session(),
@@ -13,6 +13,7 @@ cached_sess = CacheControl(
 )
 
 
+@gzip_page
 def variomes_single_ref(request):
     # proxy requests to variomes server
     response = cached_sess.get('http://candy.hesge.ch/Variomes3/api/fetchLit.jsp', params=request.GET)
@@ -23,6 +24,7 @@ def variomes_single_ref(request):
     return JsonResponse(response.json())
 
 
+@gzip_page
 def variomes_search(request):
     # proxy requests to variomes server
     response = cached_sess.get('http://candy.hesge.ch/Variomes3/api/rankLit.jsp', params=request.GET)
