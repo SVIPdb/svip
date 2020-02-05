@@ -1,5 +1,6 @@
 import axios from "axios";
 import {serverURL} from "@/app_config";
+import debounce from 'lodash/debounce';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import {TokenErrors, USING_JWT_COOKIE} from "@/store/modules/users";
 import store from '@/store';
@@ -8,6 +9,12 @@ import vueInstance from '@/main';
 
 export var HTTProot = axios.create({baseURL: serverURL.replace("/v1", ""), withCredentials: USING_JWT_COOKIE});
 export var HTTP = axios.create({baseURL: serverURL, withCredentials: USING_JWT_COOKIE});
+
+// shows only one auth warning when the warning is triggered repeatedly within a short timeframe
+// (e.g., if we havemultiple failing auth requests)
+const debouncedAuthWarn = debounce((x) => {
+    vueInstance.$snotify.warning(x);
+});
 
 createAuthRefreshInterceptor(
     HTTP,
@@ -27,7 +34,7 @@ createAuthRefreshInterceptor(
 
             return Promise.resolve();
         }).catch((err) => {
-            vueInstance.$snotify.warning(`Authentication expired!`);
+            debouncedAuthWarn(`Authentication expired!`);
             router.push({name: 'login',
                 params: {
                     default_error_msg: "Refresh token expired, please log in again",
