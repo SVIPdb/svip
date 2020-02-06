@@ -198,6 +198,12 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             ]
         })
 
+    @action(detail=False)
+    def all_references(self, request):
+        return JsonResponse({
+            'references': list(x[0] for x in CurationEntry.objects.all().values_list('references'))
+        })
+
     def get_queryset(self):
         user = self.request.user
         result = authed_curation_set(user)
