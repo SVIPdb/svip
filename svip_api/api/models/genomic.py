@@ -81,6 +81,8 @@ class Variant(models.Model):
     hgvs_c = models.TextField(null=True, db_index=True)
     hgvs_p = models.TextField(null=True, db_index=True)
 
+    somatic_status = models.TextField(null=True)
+
     # external references
     dbsnp_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
