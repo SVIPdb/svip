@@ -9,7 +9,8 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Variant
+    Variant,
+    Disease
 )
 from api.permissions import IsCurationPermitted, authed_curation_set, IsSampleViewer
 from api.serializers import (
@@ -104,6 +105,21 @@ class CurationEntryFilter(django_filters.FilterSet):
         )
 
 
+def remap_curation_history_fields(field, value):
+    """
+    Produces customizable readable identifiers in the history for values that are stored as IDs.
+
+    :param field: the field to remap
+    :param value: the value (e.g., an ID)
+    :return: if a remap for the field exists the readable value, else the original value
+    """
+    CURATION_DELTA_MAPS = {
+        'disease': lambda x: Disease.objects.get(id=x).name
+    }
+
+    return CURATION_DELTA_MAPS[field](value) if field in CURATION_DELTA_MAPS else value
+
+
 class CurationEntryViewSet(viewsets.ModelViewSet):
     """
     Curation entry for a specific variant w/SVIP data and disease.
@@ -154,7 +170,11 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         entry = CurationEntry.objects.get(id=pk)
         history = list(entry.history.all())
         deltas = (
-            {'time': a.history_date, 'diff': a.diff_against(b), 'history_user': self._nice_username(a.history_user)}
+            {
+                'time': a.history_date,
+                'diff': a.diff_against(b),
+                'history_user': self._nice_username(a.history_user)
+            }
             for a, b in zip(history[:-1], history[1:])
         )
 
@@ -168,8 +188,8 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
                     'changes': [
                         {
                             'field': change.field,
-                            'old': change.old,
-                            'new': change.new
+                            'old': remap_curation_history_fields(change.field, change.old),
+                            'new': remap_curation_history_fields(change.field, change.new)
                         }
                         for change in delta['diff'].changes
                     ]
