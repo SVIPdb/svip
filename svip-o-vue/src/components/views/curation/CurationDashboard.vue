@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div v-if="checkInRole('reviewers')">
             <!-- ON REQUEST - CARD -->
-            <notification-card v-if="REVIEW_ENABLED"
-                :items="on_request"
-                :fields="fields_on_request"
-                sortBy="days_left"
+            <NotificationCard v-if="REVIEW_ENABLED"
+                :items="on_request.items"
+                :fields="on_request.fields"
+                defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
@@ -13,23 +13,23 @@
                 cardFilterOption
             />
             <!-- TO BE CURATED - CARD -->
-            <notification-card v-if="REVIEW_ENABLED"
+            <NotificationCard v-if="REVIEW_ENABLED"
                 :items="to_be_curated"
                 :fields="fields_to_be_curated"
-                sortBy="days_left"
+                defaultSortBy="days_left"
                 title="TO BE CURATED"
                 cardFilterOption
             />
             <!-- UNDER REVISION - CARD -->
-            <notification-card v-if="REVIEW_ENABLED"
+            <NotificationCard v-if="REVIEW_ENABLED"
                 :items="to_be_discussed"
                 :fields="fields_to_be_discussed"
-                sortBy="days_left"
+                defaultSortBy="days_left"
                 title="TO BE DISCUSSED"
             />
             <!-- NON SVIP VARIANTS - CARD -->
             <!--
-            <notification-card
+            <NotificationCard
                 :items="nonsvip_variants"
                 :fields="fields_nonsvip_variants"
                 title="NON SVIP VARIANTS"
@@ -38,16 +38,22 @@
         </div>
 
         <div v-else-if="checkInRole('curators')">
-            <EvidenceCard has-header is-dashboard only-submitted
-                header-title="SUBMITTED ENTRIES"
+            <!-- TBC: request queue -->
+            <NotificationCard
+                :items="on_request.items" :fields="on_request.fields" :loading="on_request.loading"
+                defaultSortBy="days_left"
+                title="ON REQUEST"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
+                cardCustomClass
+                cardFilterOption
             />
 
-            <EvidenceCard has-header is-dashboard not-submitted
-                header-title="UNSUBMITTED ENTRIES"
+            <EvidenceCard has-header is-dashboard
+                header-title="CURATION ENTRIES"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
+                small
             />
         </div>
 
@@ -60,13 +66,16 @@
 </template>
 
 <script>
+import { HTTP } from "@/router/http";
+import flatMap from 'lodash/flatMap';
+import uniqBy from 'lodash/uniqBy';
 import NotificationCard from "@/components/curation/widgets/NotificationCard";
 import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
 import {checkInRole} from "@/directives/access";
 
 // Manual import of fake data (FIXME: API)
 import on_request from "@/data/curation/on_request/items.json";
-import fields_on_request from "@/data/curation/on_request/fields.json";
+import fields_on_request from "@/data/curation/on_request/fields.js";
 
 import to_be_curated from "@/data/curation/to_be_curated/items.json";
 import fields_to_be_curated from "@/data/curation/to_be_curated/fields.json";
@@ -76,6 +85,7 @@ import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json"
 
 import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
+import {abbreviatedName} from "@/utils";
 
 export default {
     name: "CurationDashboard",
@@ -88,8 +98,11 @@ export default {
             REVIEW_ENABLED: false, // temporary flag to hide review-related bits of the UI until they're ready
 
             // ON REQUEST FAKE DATA
-            on_request, // data
-            fields_on_request, // columns
+            on_request: {
+                loading: false,
+                fields: fields_on_request,
+                items: []
+            },
 
             // TO BE CURATED FAKE DATA
             to_be_curated, // data
@@ -104,8 +117,34 @@ export default {
             fields_nonsvip_variants // columns
         };
     },
+    created() {
+        this.fetchRequestedVariants();
+    },
     methods: {
-        checkInRole
+        checkInRole,
+        fetchRequestedVariants() {
+            this.on_request.loading = true;
+            HTTP.get(`/variants?in_svip=true&inline_svip_data=true`).then((response) => {
+                this.on_request.loading = false;
+
+                this.on_request.items = response.data.results.map((entry) => {
+                    const all_curations = flatMap(entry.svip_data.diseases, x => x.curation_entries);
+
+                    return {
+                        gene_id: entry.gene.id,
+                        variant_id: entry.id,
+                        'gene_name': entry.gene.symbol,
+                        'variant': entry.name,
+                        'hgvs': entry.hgvs_c,
+                        'disease': entry.svip_data.diseases.map(x => x.name).join(", "),
+                        'status': all_curations.length > 0 ? 'Ongoing' : 'Not assigned',
+                        'deadline': 'n/a',
+                        'requester': 'System',
+                        'curator': uniqBy(all_curations.map(x => ({ id: x.owner, name: x.owner_name })), (x) => x.id)
+                    };
+                });
+            })
+        }
     }
 };
 </script>

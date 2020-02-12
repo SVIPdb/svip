@@ -5,7 +5,7 @@
                 v-if="variant"
                 class="mb-0"
                 :items="allVariants"
-                :fields="fields"
+                :fields="visibleFields"
                 show-empty
                 empty-text="There seems to be an error"
             >
@@ -56,7 +56,7 @@ export default {
         },
         disease_id: {
             type: Number,
-            required: true
+            required: false
         },
         multiple: {
             type: Boolean,
@@ -86,7 +86,7 @@ export default {
         refresh() {
             HTTP.get(this.variantInfoUrl).then(response => {
                 const { disease, pathogenic, clinical_significance } = response.data;
-                this.disease_name = disease.name;
+                this.disease_name = disease && disease.name;
                 this.pathogenicity = pathogenic;
                 this.clinical_significance = clinical_significance;
             });
@@ -94,6 +94,11 @@ export default {
         }
     },
     computed: {
+        visibleFields() {
+            return (!this.disease_id)
+                ? fields.filter(x => x.key !== 'disease')
+                : fields;
+        },
         variantInfoUrl() {
             return `/variants/${this.variant.id}/curation_summary${ this.disease_id ? `?disease_id=${this.disease_id}` : ''}`;
         },

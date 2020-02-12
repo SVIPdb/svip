@@ -1,5 +1,9 @@
 [
     {
+        "key": "expando",
+        "label": ""
+    },
+    {
         "key": "score",
         "label": "Score",
         "sortable": true

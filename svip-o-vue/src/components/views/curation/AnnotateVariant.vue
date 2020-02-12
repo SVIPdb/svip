@@ -1,7 +1,9 @@
 <template>
     <div class="container-fluid">
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
-        <EvidenceCard :variant="variant" :disease_id="disease_id" is-submittable />
+
+        <EvidenceCard :variant="variant" is-submittable small />
+
         <div>
             <b-card no-body>
                 <b-tabs
@@ -15,10 +17,10 @@
                         <b-card-body>
                             <b-container>
                                 <b-row no-gutters>
-                                    <b-col cols="5">
+                                    <b-col cols="3">
                                         <b-form-select required class="custom-border-left" v-model="source" :options="['PMID']"/>
                                     </b-col>
-                                    <b-col cols="5">
+                                    <b-col cols="6">
                                         <b-form-input
                                             v-model="reference"
                                             required
@@ -27,9 +29,30 @@
                                         />
                                     </b-col>
                                     <b-col cols="2">
-                                        <b-button :disabled="source == null || reference == null" type="submit" block class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
-                                            <icon name="plus" /> Create Entry
-                                        </b-button>
+                                        <b-button-group>
+                                            <b-button :disabled="!source || !reference" class="custom-unrounded centered-icons" variant="info" @click="viewCitation">
+                                                <icon name="eye" /> View Abstract
+                                            </b-button>
+                                            <b-button :disabled="!source || !reference" type="submit" class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
+                                                <icon name="plus" /> Create Entry
+                                            </b-button>
+                                        </b-button-group>
+                                    </b-col>
+                                </b-row>
+
+                                <transition name="slide-fade">
+                                    <b-row v-if="annotationUsed" no-gutters>
+                                        <b-col cols="8" offset="2" class="text-center my-2">
+                                            <b-alert :show="annotationUsed" variant="warning" dismissible>
+                                            NOTE: This reference has already been used in another entry.
+                                            </b-alert>
+                                        </b-col>
+                                    </b-row>
+                                </transition>
+
+                                <b-row no-gutters>
+                                    <b-col cols="12">
+                                        <VariomesAbstract v-if="loadingVariomes" style="margin-top: 1em;" :variomes="variomes"/>
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -37,7 +60,7 @@
                     </b-tab>
 
                     <b-tab title="Use text mining tool">
-                        <VariomesSearch :gene="gene" :variant="variant" @add-evidence-from-list="addEvidenceFromList" />
+                        <VariomesSearch :gene="gene" :variant="variant" :used-references="used_references" @add-evidence-from-list="addEvidenceFromList" />
                     </b-tab>
 
                     <!--
@@ -61,11 +84,12 @@ import store from "@/store";
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
+import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
 
 export default {
     name: "AnnotateVariant",
     components: {
-        VariomesSearch,
+        VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
         VariomesLitPopover,
         EvidenceCard
@@ -73,8 +97,17 @@ export default {
     data() {
         return {
             source: "PMID",
-            reference: ""
+            reference: "",
+            loadingVariomes: false,
+            variomes: null,
+            used_references: []
         }
+    },
+    created() {
+        // get a list of used references so we can tell the user if they're about to use one that's been used already
+        HTTP.get('/curation_entries/all_references').then((response) => {
+            this.used_references = response.data.references;
+        })
     },
     computed: {
         ...mapGetters({
@@ -83,6 +116,9 @@ export default {
         }),
         disease_id() {
             return parseInt(this.$route.params.disease_id);
+        },
+        annotationUsed() {
+            return this.source && this.reference && this.used_references.includes(`${this.source.trim()}:${this.reference.trim()}`);
         }
     },
     methods: {
@@ -103,13 +139,36 @@ export default {
         addEvidenceFromList(id) {
             this.reference = id;
             return this.addEvidence();
+        },
+        viewCitation() {
+            // look up the reference via the variomes API
+            this.loadingVariomes = true;
+
+            // FIXME: we should ensure that we have a variant before we fire this off somehow...
+            HTTP.get(`variomes_single_ref`, {
+                params: {
+                    id: this.reference.trim(),
+                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`
+                }
+            })
+                .then(response => {
+                    this.variomes = response.data;
+                    // this.loadingVariomes = false;
+                })
+                .catch(err => {
+                    this.variomes = {
+                        error: "Couldn't retrieve publication info, try again later."
+                    };
+                    // this.loadingVariomes = false;
+                });
         }
     },
     beforeRouteEnter(to, from, next) {
         const { variant_id } = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", { variant_id: variant_id }).then(() => {
+        store.dispatch("getGeneVariant", { variant_id: variant_id }).then(({ gene, variant }) => {
+            to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
             next();
         });
     }
@@ -159,6 +218,10 @@ export default {
 .custom-style .dropdown-toggle {
     border-radius: 0 !important;
     height: calc(2.15625rem + 2px) !important;
+}
+
+.custom-unrounded {
+    border-radius: 0 !important;
 }
 
 .custom-border-left {

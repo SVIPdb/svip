@@ -10,16 +10,8 @@
                 <div class="p-2 font-weight-bold">
                     {{headerTitle}}
                     <b-button-group class="ml-3">
-                        <b-button
-                            size="sm"
-                            :variant="filterCurator ? 'primary' : 'light'"
-                            @click="filterCurator = true"
-                        >My Curations</b-button>
-                        <b-button
-                            size="sm"
-                            :variant="!filterCurator ? 'primary' : 'light'"
-                            @click="filterCurator = false"
-                        >All Curations</b-button>
+                        <b-button size="sm" :variant="filterCurator ? 'primary' : 'light'" @click="filterCurator = true">My Curations</b-button>
+                        <b-button size="sm" :variant="!filterCurator ? 'primary' : 'light'" @click="filterCurator = false">All Curations</b-button>
                     </b-button-group>
                 </div>
                 <div>
@@ -32,6 +24,7 @@
                 </div>
             </div>
         </b-card-header>
+
         <b-card-body class="p-0">
             <PagedTable
                 id="evidence_table"
@@ -41,10 +34,9 @@
                 primary-key="id"
                 :tbody-tr-class="rowClass"
                 :fields="fields"
-                sort-by="created_on"
-                sort-desc
-                show-empty
-                empty-text="There seems to be an error"
+                sort-by="created_on" sort-desc
+                show-empty empty-text="There seems to be an error"
+                :small="small"
                 :external-search="filter"
                 :apiUrl="apiUrl"
                 :postMapper="colorCurationRows"
@@ -63,6 +55,8 @@
                 <template v-slot:cell(variant__name)="data">
                     <router-link :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`">{{ data.item.variant.name }}</router-link>
                 </template>
+
+                <!--
                 <template v-slot:cell(disease__name)="data">
                     <router-link
                         :to="`/curation/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}/disease/${data.item.disease.id}`"
@@ -71,7 +65,7 @@
                     {{ data.item.disease.name }}
                     </router-link>
                 </template>
-
+                -->
                 <template v-slot:cell(created_on)="data">{{ simpleDateTime(data.value).date }}</template>
 
                 <template v-slot:cell(status)="data">
@@ -173,7 +167,7 @@
 </template>
 
 <script>
-// import fields from "@/data/curation/evidence/fields.json";
+// import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import PagedTable from "@/components/widgets/PagedTable";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
@@ -213,6 +207,12 @@ const full_fields = [
         key: "type_of_evidence",
         label: "Type of evidence",
         sortable: true
+    },
+    {
+        key: "disease__name",
+        label: "Disease",
+        sortable: true,
+        formatter: (x, k, obj) => obj.disease.name
     },
     {
         key: "drugs",
@@ -320,6 +320,7 @@ export default {
         variant: { type: Object, required: false },
         disease_id: { type: Number, required: false },
         isDashboard: { type: Boolean, required: false, default: false },
+        small: { type: Boolean, required: false, default: false },
         isSubmittable: { type: Boolean, required: false, default: false },
         onlySubmitted: { type: Boolean, required: false, default: false },
         notSubmitted: { type: Boolean, required: false, default: false },
@@ -375,7 +376,7 @@ export default {
         apiUrl() {
             const params = [
                 this.variant && `variant_ref=${this.variant.id}`,
-                this.disease_id && `disease=${this.disease_id}`,
+                // this.disease_id && `disease=${this.disease_id}`,
                 this.filterCurator && `owner=${this.userID}`,
                 // FIXME: these two are mutually exclusive
                 this.onlySubmitted && `status=submitted`,
@@ -441,7 +442,7 @@ export default {
                 entry.disease.id
             ];
 
-            return `/curation/gene/${gene_id}/variant/${variant_id}/disease/${disease_id}/entry/${entry.id}`;
+            return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry.id}`;
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {

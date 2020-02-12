@@ -23,42 +23,12 @@
                     === ABSTRACT DISPLAY
                     ===========================================================================================================
                     -->
-                    <b-card no-body style="margin-bottom: 1.5em;">
-                        <b-card-body>
-                            <b-container
-                                fluid
-                                class="evidence"
-                                v-if="variomes && variomes.publication && !variomes.error"
-                                style="max-height:20rem;overflow-y:scroll;"
-                                @mouseup="getSelectionText()"
-                                @contextmenu.prevent.stop="handleRightClick($event)"
-                            >
-                                <h5 class="font-weight-bolder" v-html="variomes.publication.title_highlight" />
-                                <div>{{variomes.publication.date}}</div>
-                                <p>
-                                    <b-link v-bind="pubmedURL(`?term=${author}[Author]`)" v-for="(author, index) in variomes.publication.authors" :key="index">
-                                    {{author + (index < variomes.publication.authors.length-1 ? ', ' : '')}}
-                                    </b-link>
-                                </p>
-                                <b>Abstract</b>
-                                <p class="text-justify" v-html="variomes.publication.abstract_highlight" />
-                                <small>
-                                    PMID:
-                                    <b-link v-bind="pubmedURL(variomes.publication.id)">{{variomes.publication.id}}</b-link>
-                                </small>
-                            </b-container>
-                            <div
-                                v-else-if="variomes && (variomes.error || !variomes.publication)"
-                                class="text-center text-muted font-italic"
-                            >
-                                <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
-                                We couldn't load the abstract due to a technical issue
-                            </div>
-                            <div v-else class="text-center">
-                                <b-spinner label="Spinning" variant="primary" /> Loading
-                            </div>
-                        </b-card-body>
-                    </b-card>
+
+                    <VariomesAbstract
+                        :variomes="variomes" citable
+                        @showmenu="handleRightClick"
+                        style="margin-bottom: 1.5em;"
+                    />
 
                     <!--
                     =======================================================================================================
@@ -71,16 +41,17 @@
                                 <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
                                     <ValidatedFormField
                                         v-slot="props"
-                                        :modeled="form.extra_variants"
-                                        label="Add variants? (In case of a combination)"
-                                        inner-id="variants-combination"
+                                        :modeled="form.disease"
+                                        label="Disease"
+                                        inner-id="disease"
+                                        required
                                     >
-                                        <SearchBar
-                                            id="variants-combination"
-                                            variants-only
-                                            multiple
-                                            v-model="form.extra_variants"
+                                        <DiseaseSearchBar
+                                            id="disease"
+                                            allow-create
+                                            v-model="form.disease"
                                             :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
                                         />
                                     </ValidatedFormField>
 
@@ -350,7 +321,7 @@
 
                         <b-card-body class="p-0 m-0">
                             <b-collapse id="statistic" v-model="showStat" class="m-3">
-                                <div v-if="variomes && variomes.publication">
+                                <div v-if="variomes && variomes.publications && variomes.publications.length > 0">
                                     <b-link v-for="entry in keywordSet"
                                         v-bind="pubmedURL(entry.url)"
                                     >
@@ -421,6 +392,9 @@ import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import {checkInRole} from "@/directives/access";
 import dayjs from "dayjs";
+import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
+import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
+import {pubmedURL} from "@/utils";
 
 extend("required", {
     ...required,
@@ -430,6 +404,8 @@ extend("required", {
 export default {
     name: "AddEvidence",
     components: {
+        VariomesAbstract,
+        DiseaseSearchBar,
         EvidenceHistory,
         ValidatedFormField,
         DrugSearchBar,
@@ -490,40 +466,32 @@ export default {
     },
     methods: {
         checkInRole,
-        getSelectionText() {
-            if (window.getSelection) {
-                this.selection = window.getSelection().toString();
-            } else {
-                this.selection = "";
-            }
-        },
-        handleRightClick(event) {
+        pubmedURL,
+
+        handleRightClick({ event, selection }) {
+            this.selection = selection;
             if (this.selection.length > 0) {
                 this.$refs.vueSimpleContextMenu.showMenu(event);
             }
         },
         optionClicked(event) {
             if (event.option.slug === "copy") {
-                this.doCopy();
-            } else if (event.option.slug === "annotate") {
+                this.$copyText(this.selection).then(
+                    () => { this.$snotify.info("Copied text"); },
+                    () => { this.$snotify.warn("Couldn't copy it"); }
+                );
+            }
+            else if (event.option.slug === "annotate") {
                 if (this.isViewOnly) {
                     this.$snotify.warning("Can't alter a submitted entry");
                     return;
                 }
 
+                this.$snotify.info('Added selection to annotations', { position: 'centerBottom' });
                 this.form.annotations.push(this.selection);
             }
         },
-        doCopy() {
-            this.$copyText(this.selection).then(
-                function(e) {
-                    alert("Copied");
-                },
-                function(e) {
-                    alert("Can not copy");
-                }
-            );
-        },
+
         evidenceTypeChanged() {
             // when the type of evidence changes, we clear its dependent fields
             // (otherwise, they might still hold values despite not appearing to due their options changing)
@@ -532,14 +500,12 @@ export default {
             this.form.tier_criteria = null;
         },
         loadVariomeData() {
-            console.log(`Loading Citation for ${this.source}:${this.reference}...`);
-
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.form.disease.name
+                    disease: this.form.disease && this.form.disease.name
                 }
             })
                 .then(response => {
@@ -551,14 +517,6 @@ export default {
                     };
                 });
         },
-        pubmedURL(query) {
-            // given query, produces a props set that configures a pubmed link to open in a new tab
-            // (this props set should be merged into the component using v-bind, e.g. v-bind="pmSearchURL('BRAF')")
-            return {
-                href: `https://www.ncbi.nlm.nih.gov/pubmed/${query}`,
-                target: "_blank"
-            };
-        },
         removeAnnotation(index) {
             if (this.isViewOnly) {
                 this.$snotify.warning("Can't alter a submitted entry");
@@ -568,8 +526,6 @@ export default {
             this.form.annotations.splice(index, 1);
         },
         load() {
-            console.log("Load invoked!");
-
             // optionally loads curation entry data from the server; always kicks off loading variome data
             // 1. for new entries, the citation source and reference will come from the querystring
             // 2. for existing entries, the source and reference come from the entry data
@@ -587,18 +543,13 @@ export default {
                     return;
                 }
 
-                // if we're not getting it from a curation entry, we need to load the disease and set the variant id in the form
-                HTTP.get(`/diseases/${this.$route.params.disease_id}`).then(response => {
-                    this.form.disease = response.data;
-
-                    this.source = source.trim();
-                    this.reference = reference.trim();
-                    this.loadVariomeData();
-                });
-            } else {
+                this.source = source.trim();
+                this.reference = reference.trim();
+                this.loadVariomeData();
+            }
+            else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
-                        console.log(`Loaded data for ${action}: `, response.data);
                         this.rehydrate(response.data); // populates source, reference from the response
                         this.loadVariomeData(); // and finally load the data
                     })
@@ -636,8 +587,6 @@ export default {
             const extra_variants = formatted_variants;
             this.variant.id = variant.id;
 
-            console.log("Rehydrating: ", data);
-
             // repopulate the form, which will bind the elements in the page
             this.form = {
                 ...rest,
@@ -649,22 +598,17 @@ export default {
                 last_modified: dayjs(last_modified).format("DD.MM.YYYY, h:mm a")
             };
 
-            console.log("Results of rehydration: ", this.form);
-
             // also populate source and ID, which we need to populate the publication info
             [this.source, this.reference] = references.trim().split(":");
         },
         async submit(isDraft) {
             // manually validate all the fields before we go any further
             if (!isDraft) {
-                console.log("Pre-validation state: ", JSON.parse(JSON.stringify(this.form)));
-
                 // use the validation observer to validate every provider at once
                 // this will update the UI with 'this is required' as well
                 const isValid = await this.$refs.observer.validate();
-                console.log("Validating...");
+
                 if (!isValid) {
-                    console.log("Failed observer validation!");
                     return;
                 }
             }
@@ -694,8 +638,6 @@ export default {
                 references: `${this.source}:${this.reference}`,
                 status: isDraft ? "draft" : "saved"
             };
-
-            console.log(`Saving ${this.form.id || "new entry"}: `, payload);
 
             // if they've previously submitted, make it an update
             // if this is a new submission, make it a post
@@ -742,7 +684,7 @@ export default {
 
                     // TODO: deal with the server's error response in err.response.data
                     //  to bind error messages to form elements.
-                    console.log("Error: ", err);
+                    console.warn("Error when saving: ", err);
                 });
         },
         onSubmitDraft() {
@@ -803,7 +745,7 @@ export default {
                 variant: this.variomes.query.genes_variants[0].variant,
                 disease: this.variomes.query.diseases[0]
             };
-            const counts = this.variomes.publication.details.query_details;
+            const counts = this.variomes.publications[0].details.query_details;
 
             return [
                 {

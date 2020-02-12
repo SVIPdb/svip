@@ -10,10 +10,10 @@
         >
 			<template>
 				<div v-if="variomes && variomesIsValid"
-                    :class="['variomes-popover', (variomes && variomes.publication && variomes.publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
-					<h6 class="title" v-html="variomes.publication.title_highlight"></h6>
-					<div class="authors">{{ formatAuthors(variomes.publication.authors) }}. {{ variomes.publication.journal }} ({{ variomes.publication.date }})</div>
-					<div class="abstract" v-html="variomes.publication.abstract_highlight"></div>
+                    :class="['variomes-popover', (variomes && single_publication && single_publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
+					<h6 class="title" v-html="single_publication.title_highlight"></h6>
+					<div class="authors">{{ formatAuthors(single_publication.authors) }}. {{ single_publication.journal }} ({{ single_publication.date }})</div>
+					<div class="abstract" v-html="single_publication.abstract_highlight"></div>
 
 					<div class="abstract-fader"></div>
 				</div>
@@ -41,7 +41,8 @@ export default {
         gene: {type: String},
         variant: {type: String},
         disease: {type: String},
-        deferred: {type: Boolean, default: false}
+        deferred: {type: Boolean, default: false},
+        content: { required: false }
     },
     data() {
         return {
@@ -51,6 +52,11 @@ export default {
         }
     },
     created() {
+        if (this.content) {
+            // we were pre-filled with content, so just "update" to that
+            this.variomes = this.content;
+        }
+
         if (!this.deferred) {
             this.updateCitation();
         }
@@ -68,7 +74,14 @@ export default {
             return this.pubmeta.title ? this.pubmeta.title : this.parsedPMID;
         },
         variomesIsValid() {
-            return this.variomes && !this.error && this.variomes.publication.id === this.parsedPMID
+            return this.variomes
+                && !this.error
+                && this.variomes.publications
+                && this.variomes.publications.length > 0
+                && this.single_publication.id === this.parsedPMID;
+        },
+        single_publication() {
+            return this.variomes && this.variomes.publications && this.variomes.publications[0];
         }
     },
     methods: {

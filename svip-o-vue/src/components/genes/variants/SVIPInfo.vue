@@ -29,7 +29,7 @@
         </div>
 
         <div class="card-body top-level">
-            <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false">
+            <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false" style="margin-bottom: 0;">
                 <template v-slot:cell(display)="row">
                     <row-expander :row="row"/>
                 </template>
@@ -87,15 +87,17 @@
                     </div>
                 </template>
 
+                <!--
                 <template v-slot:cell(actions)="row">
                     <div class="details-tray" style="text-align: right;">
                         <b-button v-access="'curators'" class="centered-icons" size="sm"
-                            :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id, disease_id: row.item.disease_id }}"
+                            :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id }}"
                         >
                             <icon name="tools" /> Curate
                         </b-button>
                     </div>
                 </template>
+                -->
 
                 <template v-slot:row-details="row">
                     <div class="row-details">
@@ -125,6 +127,14 @@
                     </div>
                 </template>
             </b-table>
+
+            <div v-access="'curators'" class="paginator-holster mini-inset-tray">
+                <b-button v-access="'curators'" class="centered-icons" size="sm" style="width: 100px;" variant="info"
+                    :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id }}"
+                >
+                    <icon name="pen-alt" /> Curate
+                </b-button>
+            </div>
         </div>
 
         <!--
@@ -236,11 +246,13 @@ export default {
                     sortable: false,
                     thStyle: {display: checkInRole("curators") ? "" : "none"}
                 },
+                /*
                 {
                     key: "actions",
                     label: "",
                     sortable: false
                 }
+                 */
             ]
         };
     },
@@ -382,5 +394,19 @@ rect.pathogenicity.automatic {
 
 .details-tray .btn {
     width: 100px;
+}
+
+.paginator-holster {
+    display: flex;
+    padding-left: 15px;
+    padding-top: 1em;
+    border-top: solid 1px #ddd;
+}
+
+.mini-inset-tray {
+    justify-content: flex-end;
+    padding: 10px; background: #eee;
+    margin: -3px; /* fixme: remove parent padding so we don't need a negative margin */
+    box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.1);
 }
 </style>

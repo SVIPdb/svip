@@ -64,15 +64,27 @@ const router = new Router({
         },
         {
             path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id",
+            path: "/curation/gene/:gene_id/variant/:variant_id",
             name: "annotate-variant",
             component: AnnotateVariant,
             meta: { requiresAuth: true, roles: ['curators', 'reviewers'] }
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: Curate',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
         },
         {
             path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/entry/:action",
+            path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
             name: "add-evidence",
             component: AddEvidence,
             meta: { requiresAuth: true, roles: ['curators', 'reviewers'] }
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: Edit Curation',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
         },
         {
             path: "/debug",

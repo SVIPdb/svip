@@ -9,25 +9,22 @@
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{title}}
-                    <b-button class="ml-3" size="sm" variant="primary" @click="setCustomFilter(curator)">
+
+                    <b-button class="ml-3" size="sm" :variant="myFilter !== 'all' ? 'primary' : 'light'" @click="setCustomFilter(user.user_id)">
                         My curations
-                        <b-badge
-                            pill
-                            class="bg-white text-dark"
-                        >{{items.filter(element => element.curator == this.curator && element.curated ==
-                            'Ongoing').length}}
-                        </b-badge>
+                        <b-badge pill :class="myFilter !== 'all' && 'bg-white text-dark'">{{ myCurations.length }}</b-badge>
                     </b-button>
-                    <b-button class="ml-3" size="sm" variant="primary" @click="setCustomFilter('all')">
+                    <b-button class="ml-3" size="sm" :variant="myFilter === 'all' ? 'primary' : 'light'" @click="setCustomFilter('all')">
                         All curations
-                        <b-badge pill class="bg-white text-dark">{{items.length}}</b-badge>
+                        <b-badge pill :class="myFilter === 'all' && 'bg-white text-dark'">{{items.length}}</b-badge>
                     </b-button>
-                    <b-button-group v-if="cardFilterOption" class="ml-3" size="sm">
-                        <b-button variant="danger" @click="setStatusFilter('Not assigned')">Not assigned</b-button>
-                        <b-button variant="warning" @click="setStatusFilter('Ongoing')">Ongoing</b-button>
-                        <b-button variant="success" @click="setStatusFilter('Complete')">Complete</b-button>
-                        <b-button variant="info" @click="setStatusFilter('all')">All</b-button>
-                    </b-button-group>
+
+                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" :items="[
+                        { label: 'Not assigned', variant: 'danger' },
+                        { label: 'Ongoing', variant: 'warning' },
+                        { label: 'Complete', variant: 'success' },
+                        { label: 'All', value: 'all', variant: 'info' }
+                    ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
@@ -39,36 +36,43 @@
                 </div>
             </div>
         </b-card-header>
+
         <b-card-body class="p-0">
             <b-table
-                small
                 class="mb-0"
-                :items="filteredItems"
-                :fields="fields"
-                hover
+                :items="filteredItems" :fields="fields"
                 :filter="filter"
-                :sort-by.sync="sortBy"
-                :sort-desc="true"
-                show-empty
+                :sort-by.sync="sortBy" :sort-desc="true"
+                :busy="loading"
+                show-empty small hover
             >
                 <template v-slot:cell(gene_name)="data">
                     <p class="font-weight-bold mb-0">{{data.value}}</p>
                 </template>
+
+                <template v-slot:cell(gene_name)="data">
+                    <b><router-link :to="`/gene/${data.item.gene_id}`" target="_blank">{{ data.value }}</router-link></b>
+                </template>
+
+                <template v-slot:cell(variant)="data">
+                    <router-link :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`" target="_blank">{{ data.value }}</router-link>
+                </template>
+
                 <template v-slot:cell(hgvs)="data">
                     <p class="mb-0">{{data.value}}</p>
                 </template>
+
                 <template v-slot:cell(deadline)="row">
-                    <p
-                        v-if="row.item.curated != 'Complete'"
-                        :class="setFlagClass(row.item.days_left)+' m-0 p-0'"
-                    >
+                    <p v-if="row.item.curated !== 'Complete'" :class="setFlagClass(row.item.days_left)+' m-0 p-0'">
                         <span class="font-weight-bold">{{ setLetter(row.item.days_left) }}</span>
                         ({{row.item.days_left}} days)
                     </p>
                 </template>
-                <template v-slot:cell(curated)="data">
+
+                <template v-slot:cell(status)="data">
                     <b-badge :variant="setBadgeClass(data.value)">{{data.value}}</b-badge>
                 </template>
+
                 <template v-slot:cell(reviewed)="data">
                     <icon
                         v-for="(reviewer, index) in data.value"
@@ -78,30 +82,51 @@
                         :class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"
                     ></icon>
                 </template>
-                <template v-slot:cell(action)="row">
-                    <b-form-checkbox
-                        :disabled="row.item.curated == 'Complete' || row.item.curator != curator && row.item.curator != null"
-                        :checked="row.item.curator == curator ? true : false"
-                        @change="selectVariant($event, {id: 1 })"
-                    >
-                        <icon class="text-primary" name="eye"/>
-                    </b-form-checkbox>
+
+                <template v-slot:cell(curator)="data">
+                    <span v-for="(owner, idx) in data.value">
+                        <span v-if="idx > 0">, </span>
+                        <pass :name="abbreviatedName(owner.name)">
+                            <b slot-scope="{ name }" v-b-tooltip.hover="name.name">{{ name.abbrev }}</b>
+                        </pass>
+                    </span>
                 </template>
+
+                <template v-slot:cell(action)="row">
+                    <b-button v-access="'curators'" class="centered-icons" size="sm" style="width: 100px;" variant="info"
+                        :to="{ name: 'annotate-variant', params: { gene_id: row.item.gene_id, variant_id: row.item.variant_id }}"
+                        target="_blank"
+                    >
+                        <icon name="pen-alt" /> Curate
+                    </b-button>
+                </template>
+
                 <template v-slot:cell(single_action)>
                     <icon class="mr-1" name="eye"/>
+                </template>
+
+                <template v-slot:table-busy>
+                    <div class="text-center my-2">
+                        <b-spinner class="align-middle" small></b-spinner>
+                        <strong class="ml-1">Loading...</strong>
+                    </div>
                 </template>
             </b-table>
         </b-card-body>
     </b-card>
 </template>
 
-<script>
-/**
+<script>/**
  * @group Curation
  * This Notification card allows to display a card which contains a table filled with samples waiting to be curated or reviewed
  */
+import {abbreviatedName} from "@/utils";
+import {mapGetters} from "vuex";
+import FilterButtons from "@/components/curation/widgets/FilterButtons";
+
 export default {
     name: "NotificationCard",
+    components: {FilterButtons},
     props: {
         // The items of the table
         items: {
@@ -117,6 +142,9 @@ export default {
             // The default value is an empty array: `[]`
             default: () => []
         },
+        loading: {
+            type: Boolean, default: false
+        },
         // The title of the card
         title: {
             type: String,
@@ -125,7 +153,7 @@ export default {
             default: "DEFAULT_TITLE"
         },
         // The default column used to sort (Desc) the table
-        sortBy: {
+        defaultSortBy: {
             type: String,
             required: false,
             // The default value is: `id`
@@ -159,12 +187,12 @@ export default {
     data() {
         return {
             customClass: "customClass",
-            curator: "Curator2", //FIXME MANUALLY SETTING THE CURATOR
             // Custom settings for the visual
             settings: {
                 buttonBg: "primary"
             },
             // Needed parameters for the table
+            sortBy: this.defaultSortBy,
             filter: null,
             myFilter: "all",
             statusFilter: "all",
@@ -182,6 +210,7 @@ export default {
         };
     },
     methods: {
+        abbreviatedName,
         /**
          * @vuese
          * Used to set up the correct flag class depending on the days left
@@ -235,25 +264,30 @@ export default {
             this.statusFilter = filter;
         },
         selectVariant(checked, element) {
-            console.log(`Checked is ${checked} and ID is ${element.id}`);
+            // console.log(`Checked is ${checked} and ID is ${element.id}`);
         }
     },
     computed: {
+        ...mapGetters({
+            user: "currentUser"
+        }),
         // We are filtering items based on the two filters (custom and status)
         filteredItems() {
             let items = this.items;
-            if (this.statusFilter != "all") {
-                items = items.filter(element => element.curated == this.statusFilter);
+
+            if (this.statusFilter !== "all") {
+                items = items.filter(element => element.status === this.statusFilter);
             }
-            if (this.myFilter != "all") {
-                return items.filter(
-                    element =>
-                        (element.curator == this.curator && element.curated == "Ongoing") ||
-                        !element.curated
-                );
-            } else {
+
+            if (this.myFilter !== "all") {
+                return items.filter(x => x.curator.some(y => y.id === this.user.user_id));
+            }
+            else {
                 return items;
             }
+        },
+        myCurations() {
+            return this.items.filter(element => element.curator.some(x => x.id === this.user.user_id));
         }
     }
 };

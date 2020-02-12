@@ -1,7 +1,9 @@
-[
+import {abbreviatedName} from "@/utils";
+
+export default [
     {
         "key": "gene_name",
-        "label": "Gene name",
+        "label": "Gene",
         "sortable": true
     },
     {
@@ -16,13 +18,13 @@
     },
     {
         "key": "disease",
-        "label": "Disease",
+        "label": "Disease(s)",
         "sortable": true
     },
     {
-        "key": "curated",
-        "label": "Curated",
-        "sortable": false
+        "key": "status",
+        "label": "Status",
+        "sortable": true
     },
     {
         "key": "deadline",
@@ -36,12 +38,13 @@
     },
     {
         "key": "curator",
-        "label": "Curator",
-        "sortable": true
+        "label": "Curator(s)",
+        "sortable": true,
+        "filterByFormatted": (x) => x.map(z => abbreviatedName(z.name).abbrev).join(", ")
     },
     {
         "key": "action",
         "label": "Action",
         "sortable": false
     }
-]
+];

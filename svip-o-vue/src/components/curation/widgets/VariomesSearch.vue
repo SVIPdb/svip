@@ -17,16 +17,44 @@
 
             <b-col class="my-1 pager-search">
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"/>
-                <b-button size="sm" variant="info" :disabled="loadingVariomes" @click="query"><icon name="search" /> Query</b-button>
+            </b-col>
+
+            <b-col>
+                <b-input-group size="sm">
+                    <b-form-input v-model="search" placeholder="Type to Search"/>
+                    <b-input-group-append>
+                        <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
+                    </b-input-group-append>
+                </b-input-group>
             </b-col>
         </b-row>
 
-        <b-collapse class="search-params" :visible="isSearchParamsVisible">
-            <b>Disease:</b>&nbsp;
-            <v-select style="min-width: 400px; background: white;" v-model="disease" placeholder="select a disease to query"
-                :options="diseases" label="name" :clearable="true"
-            />
+        <b-collapse :visible="isSearchParamsVisible">
+            <b-row class="search-params" align-v="center">
+                <b-col class="d-inline-flex align-items-center">
+                    <b>Disease:</b>
+                    <v-select style="background: white; width: 450px; margin-left: 10px;" v-model="disease" placeholder="select a disease to query"
+                        :options="pub_diseases" label="name" :clearable="true"
+                    >
+                        <template v-slot:option="option">
+                            <div style="display: flex; justify-content: space-between; margin: 5px;">
+                                <div style="flex: 1 1;">{{ option.name }}</div>
+                                <div style="font-style: italic; color: #777; font-size: smaller;">{{ option.count }}</div>
+                            </div>
+                        </template>
+                    </v-select>
+                </b-col>
+
+                <!--
+                <b-col cols="auto">
+                    <b-button size="sm" variant="info" :disabled="loadingVariomes" @click="query" style="margin-bottom: 2px;">
+                        <icon name="search" /> Query
+                    </b-button>
+                </b-col>
+                -->
+            </b-row>
         </b-collapse>
+
 
         <div style="margin-top: 10px;">
             <div v-if="variomesError" class="text-center text-muted font-italic">
@@ -34,13 +62,24 @@
                 {{ variomesError.message }}<br />
                 ({{ variomesError.reason }})
             </div>
-            <b-table v-else show-empty :busy="variomes.length === 0" :items="variomes.publications" thead-class="unwrappable-header" :sort-by="sortBy" :sort-desc="sortDesc" :fields="fieldsTextMining" :current-page="currentPage" :per-page="perPage" small>
+            <b-table v-else show-empty :busy="variomes.length === 0"
+                primary-key="id"
+                :fields="fieldsTextMining" :items="pubs_by_disease" thead-class="unwrappable-header"
+                :sort-by="sortBy" :sort-desc="sortDesc"
+                :filter="search" :filter-debounce="300"
+                :current-page="currentPage" :per-page="perPage" small
+            >
                 <template v-slot:table-busy>
                     <div class="text-center text-danger my-2">
                         <b-spinner class="align-middle" small style="margin-right: 5px;" />
                         <strong>Loading...</strong>
                     </div>
                 </template>
+
+                <template v-slot:cell(expando)="row">
+                    <row-expander :row="row" />
+                </template>
+
                 <template v-slot:cell(id)="row">
                     <VariomesLitPopover
                         :pubmeta="{ pmid: row.item.id }"
@@ -55,7 +94,7 @@
                 </template>
                 <template v-slot:cell(action)="row">
                     <b-button
-                        variant="success"
+                        :variant="annotationUsed(source, row.item.id) ? 'warning' : 'success'"
                         size="sm"
                         @click="addEvidenceFromList(row.item.id)"
                         target="_blank"
@@ -77,12 +116,32 @@
                                 {{variomes.query.genes_variants[0].variant}}
                                 <span class="text-white pl-1">{{data.item.details.query_details.query_variant_count.all}}</span>
                             </li>
-                            <li class="d-flex justify-content-between align-items-center disease">
+                            <li v-if="variomes.query.disease !== 'none'" class="d-flex justify-content-between align-items-center disease">
                                 {{variomes.query.disease}}
                                 <span class="text-white pl-1">{{data.item.details.query_details.query_disease_count.all}}</span>
                             </li>
                         </ul>
                     </b-tooltip>
+                </template>
+
+                <template v-slot:row-details="data">
+                    <TransitionExpand>
+                        <div v-if="data.item._showDetails" class="sample-subtable tumor-subtable">
+                            <h5>Facets</h5>
+
+                            <ul>
+                                <li v-for="(data, facet_name) in data.item.details.facet_details">
+                                    <b>{{ facet_name }}</b>
+                                    <ul>
+                                        <li v-for="(entry, idx) in data">
+                                            {{ entry.preferred_term }}
+                                            <i v-if="entry.count">({{ entry.count }})</i>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </TransitionExpand>
                 </template>
             </b-table>
         </div>
@@ -96,15 +155,18 @@ import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
+import TransitionExpand from "@/components/widgets/TransitionExpand";
 
 export default {
     name: "VariomesSearch",
     components: {
-        VariomesLitPopover
+        VariomesLitPopover,
+        TransitionExpand
     },
     props: {
         variant: { type: Object, required: true },
         gene: { type: Object, required: true },
+        used_references: { type: Array, default: () => [] }
     },
     data() {
         return {
@@ -123,12 +185,42 @@ export default {
 
             isSearchParamsVisible: false,
             disease: null,
-            diseases: []
+            diseases: [],
+            search: ''
         };
     },
     computed: {
         disease_id() {
             return parseInt(this.$route.params.disease_id);
+        },
+        /**
+         * Gets the set of diseases mentioned in all returned publications, with the number of times it's been found in a publication.
+         * @return {null|[{name: String, count: Number}]}
+         */
+        pub_diseases() {
+            if (!this.variomes || !this.variomes.publications)
+                return [];
+
+            const disease_map = this.variomes.publications.reduce((diseases, pub) => {
+                // record each disease and the number of publications that feature it
+                const disease_names = pub.details.facet_details.diseases.map(x => x.preferred_term);
+                disease_names.forEach(x => {
+                    if (diseases[x] !== undefined) { diseases[x] += 1; }
+                    else { diseases[x] = 1; }
+                });
+                return diseases;
+            }, {});
+
+            return Object.entries(disease_map)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count);
+        },
+        pubs_by_disease() {
+            if (!this.disease)
+                return this.variomes.publications;
+
+            return this.variomes.publications
+                .filter(pub => pub.details.facet_details.diseases.some(y => y.preferred_term == this.disease.name));
         }
     },
     // components: {geneVariants: geneVariants},
@@ -138,13 +230,12 @@ export default {
             this.$emit('add-evidence-from-list', id);
         },
         query() {
-            console.log("Disease: ", this.disease);
             this.loadingVariomes = true;
             this.variomesError = null;
             HTTP.get(`variomes_search`, {
                 params: {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.disease.name
+                    disease: this.disease && this.disease.name
                 }
             })
                 .then(response => {
@@ -158,18 +249,24 @@ export default {
                     };
                 })
                 .finally(() => { this.loadingVariomes = false; });
+        },
+        annotationUsed(source, reference) {
+            return source && reference && this.used_references.includes(`${source.trim()}:${reference.trim()}`);
         }
     },
     async created() {
-        const { disease_id } = this.$route.params;
+        // const { disease_id } = this.$route.params;
 
         // first, get all the diseases
-        this.diseases = await HTTP.get(`/diseases?page_size=9999`).then(response => response.data.results);
+        this.icdo_diseases = await HTTP.get(`/diseases?page_size=9999`).then(response => response.data.results);
         // preselect the one we found
-        this.disease = this.diseases.find(x => x.id == disease_id);
+        // this.disease = disease_id && this.diseases.find(x => x.id == disease_id);
 
         // then, query variomes based on that data
         this.query();
+
+        // TODO: decide if we should populate the disease dropdown with what's actually returned
+        //  (it'd be nice, but we'll need to scan the query for all diseases before we do it)
     }
 };
 </script>
