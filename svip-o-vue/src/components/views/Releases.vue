@@ -21,7 +21,7 @@
                         </div>
 
                         <div v-if="release.changelog">
-                            <h4><expander v-model="release.full">Full Changelist</expander></h4>
+                            <h4><expander v-model="release.full">Full Changelist ({{ release.changelog.length }} commits)</expander></h4>
 
                             <b-collapse :visible="release.full">
                                 <ul class="changelog">
