@@ -30,9 +30,7 @@ export default {
                 return new Promise((resolve) => { resolve({ valid: true })});
             }
 
-            console.log(`Validating ${this.innerId} against value `, this.modeled);
             return this.$refs.provider.validate(this.modeled).then(x => {
-                console.log(`Result for ${this.innerId}: `, x);
                 if (!x || !x.valid) {
                     this.$refs.provider.setErrors(x.errors);
                 }

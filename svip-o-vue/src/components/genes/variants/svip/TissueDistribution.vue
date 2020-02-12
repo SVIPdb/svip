@@ -51,7 +51,6 @@ export default {
     },
     computed: {
         diseases() {
-            console.log("tissue: ", this.tissue_counts);
             return _.flatten(this.tissue_counts.map(x => x.diseases))
         },
         diseaseColors() {

@@ -34,7 +34,6 @@ export default {
     },
     methods: {
         update(newValue) {
-            console.log("Updating drug selection w/", newValue);
             this.$emit('input', newValue);
         }
     }

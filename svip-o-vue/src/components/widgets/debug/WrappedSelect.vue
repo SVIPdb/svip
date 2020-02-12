@@ -19,7 +19,6 @@ export default {
     },
     methods: {
         onInput() {
-            console.log("Input: ", this.selected);
             this.$emit('input', this.selected);
         }
     }

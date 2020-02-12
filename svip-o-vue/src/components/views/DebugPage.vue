@@ -98,7 +98,6 @@ export default {
     created() {
         // load an example variant and feed it into variant-informations
         HTTP.get(`/variants/119`).then(response => {
-            console.log("Loaded variant: ", response.data);
             this.loaded_variant = response.data;
         });
     },

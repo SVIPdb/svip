@@ -111,8 +111,6 @@ export default {
             this.selected = this.value;
         },
         selected: function () {
-            console.log("Selected set to: ", this.selected);
-
             if (this.variantsOnly || this.multiple) {
                 return;
             }

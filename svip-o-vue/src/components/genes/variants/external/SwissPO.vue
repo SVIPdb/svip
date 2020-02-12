@@ -195,7 +195,6 @@ export default {
             // see if we can extract a position from the change, otherwise bail
             if (this.change && this.change_parts) {
                 myZoom = this.change_parts.pos;
-                console.log("Zooming in on ", myZoom);
             } else {
                 console.log("Unable to find simple position in ", this.change, ", aborting zoom");
                 return;
