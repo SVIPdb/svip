@@ -25,6 +25,7 @@ import "vue-awesome/icons/regular/star";
 import "vue-awesome/icons/spinner";
 import "vue-awesome/icons/external-link-alt";
 import "vue-awesome/icons/exclamation-triangle";
+import "vue-awesome/icons/caret-up";
 import "vue-awesome/icons/chevron-up";
 import "vue-awesome/icons/chevron-right";
 import "vue-awesome/icons/chevron-down";
@@ -88,4 +89,11 @@ export default new Vue({
     store,
     components: {App},
     template: "<App/>"
+});
+
+window.addEventListener('message', e => {
+    if (process.env.NODE_ENV !== 'production' && e.data && e.data.type === 'webpackInvalid') {
+        console.clear();
+        console.log("*** cleared due to hot-module reload ***");
+    }
 });

@@ -16,10 +16,6 @@
                     <b-spinner />
                 </div>
                 <div v-else>
-                    <!--
-                    <div style="margin-left: 10px;">Showing {{ genes.perPage }} of {{ genes.data.total_genes }} total genes</div>
-                    -->
-
                     <div style="display: flex; justify-content: space-between; align-items: baseline;">
                         <div>Showing <b>{{ genes.perPage }}</b> out of <b>{{ genes.data.total_genes }}</b> genes</div>
                         <b-form-group>
@@ -77,9 +73,9 @@
                             <div class="sample-subtable tumor-subtable" style="padding: 0; margin: 0;">
                                 <b-table-lite
                                     style="background: none; margin: 0;"
-                                    :items="harvestGeneList(
-                                        entry.item.stats.genes || entry.item.stats
-                                    )"
+                                    :items="entry.item.stats ? harvestGeneList(
+                                         entry.item.stats.genes || entry.item.stats
+                                    ) : []"
                                 />
                             </div>
                         </template>
@@ -114,7 +110,7 @@ const harvest_fields = [
     { key: 'action', label: '' },
     { key: 'id', label: 'ID' },
     { key: 'started_on', label: 'Started', formatter: v => combinedDateTime(v) },
-    { key: 'ended_on', label: 'Ended', formatter: v => combinedDateTime(v) },
+    { key: 'ended_on', label: 'Ended', formatter: v => v ? combinedDateTime(v) : '--' },
     {
         key: 'duration',
         label: 'Duration',

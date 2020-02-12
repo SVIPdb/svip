@@ -142,3 +142,12 @@ export function hashCode(str) { // java String#hashCode
 export function colorizeTag(text) {
     return `hsl(${(50 * hashCode(text)) % 360}, 50%, 50%)`;
 }
+
+export function pubmedURL(query) {
+    // given query, produces a props set that configures a pubmed link to open in a new tab
+    // (this props set should be merged into the component using v-bind, e.g. v-bind="pmSearchURL('BRAF')")
+    return {
+        href: `https://www.ncbi.nlm.nih.gov/pubmed/${query}`,
+        target: "_blank"
+    };
+}
