@@ -27,6 +27,19 @@
 
         <div class="card-body top-level">
             <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
+                <template v-slot:cell(actions)="row">
+                    <!--
+                    <div class="details-tray" style="text-align: right;">
+                        <b-button
+                            size="sm"
+                            @click.stop="row.toggleDetails"
+                        >{{ row.detailsShowing ? "Hide" : "Show" }} Details
+                        </b-button>
+                    </div>
+                    -->
+                    <row-expander :row="row" />
+                </template>
+
                 <template v-slot:cell(source)="row">
                     <div style="display: flex; align-items: center;">
                         <SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true"/>
@@ -70,17 +83,6 @@
                         :row="data"
                     />
                     <score-plot v-else :scores="data.item.scores" :source-name="data.item.source.name"></score-plot>
-                </template>
-
-                <template v-slot:cell(actions)="row">
-                    <div class="details-tray" style="text-align: right;">
-                        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                        <b-button
-                            size="sm"
-                            @click.stop="row.toggleDetails"
-                        >{{ row.detailsShowing ? "Hide" : "Show" }} Details
-                        </b-button>
-                    </div>
                 </template>
 
                 <template v-slot:row-details="row">
@@ -155,6 +157,11 @@ export default {
             sortBy: "source",
             fields: [
                 {
+                    key: "actions",
+                    label: "",
+                    sortable: false
+                },
+                {
                     key: "source",
                     label: "Source",
                     sortable: true
@@ -177,11 +184,6 @@ export default {
                 {
                     key: "scores",
                     label: "Evidence Levels",
-                    sortable: false
-                },
-                {
-                    key: "actions",
-                    label: "",
                     sortable: false
                 }
             ]

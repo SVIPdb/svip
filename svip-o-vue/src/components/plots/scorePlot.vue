@@ -3,8 +3,7 @@
         <svg ref="thechart" class="bar-chart" :style="`width: ${width}px; height: ${height + 14}px`">
             <g v-for="(d, i) in layout" :key="i">
                 <rect class="bar" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
-                <rect v-if="d.v === 0" class="zero-value" :x="d.x + 3" :y="3" :width="d.width - 6" height="18" rx="2"
-                    ry="2"></rect>
+                <rect v-if="d.v === 0" class="zero-value" :x="d.x + 3" :y="3" :width="d.width - 6" height="10" rx="2" ry="2" />
                 <text :x="d.x + (boxWidth/2.0)" :y="height + 14"
                     text-anchor="middle" font-size="11" class="rating-label">
                     {{ d.k }}
@@ -68,7 +67,7 @@ export default {
         return {
             boxWidth,
             width: boxWidth * source_levels[this.sourceName].length,
-            height: 25,
+            height: 15,
             padding: 1
         };
     },

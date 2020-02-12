@@ -1,6 +1,7 @@
 <template>
     <b-link @click="toggle">
         <icon name="chevron-right" :class="`link ${this.value ? 'activated' : ''}`"/>
+        <slot></slot>
     </b-link>
 </template>
 
@@ -22,6 +23,7 @@ export default {
 .link {
     transform: rotate(0deg);
     transition: all 100ms linear;
+    margin-right: 8px;
 }
 
 .activated {
