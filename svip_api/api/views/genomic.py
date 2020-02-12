@@ -53,6 +53,11 @@ class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GeneSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'symbol',
+    )
+
 
 class VariantFilter(df_filters.FilterSet):
     gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
