@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.5'
 
 volumes:
   svip_pgdata:
@@ -6,8 +6,23 @@ volumes:
   seqrepo:
 
 services:
+  # nginx:
+  #   build:
+  #     context: ./service_config/nginx
+  #     dockerfile: Dockerfile
+  #   container_name: tupro_report_nginx
+  #   volumes:
+  #     - '${PWD}/service_config/nginx/sites/locations.conf:/etc/nginx/locations.conf:ro'
+  #     - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/tupro_reporting.nginx:ro'
+  #   ports:
+  #     - '8020:80'
+  #   depends_on:
+  #     - api
+  #     - frontend
+
   db:
     image: "postgres:11.1"
+    shm_size: '2gb'
     restart: always
     volumes:
          - "svip_pgdata:/var/lib/postgresql/data" # for now we're storing pg data to a volume
@@ -43,3 +58,19 @@ services:
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
       - USE_DEV_SERVER=true
+
+  # frontend:
+  #   build: ./svip-o-vue
+  #   volumes:
+  #     - ./svip-o-vue:/app
+  #     - /app/node_modules
+  #   # starts react in hot-reload mode
+  #   # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
+  #   command: bash -c "npm run serve"
+  #   restart: 'no'
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     - 'VUE_APP_API_URL=http://localhost:8020/api'
+  #   depends_on:
+  #     - api
