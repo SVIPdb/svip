@@ -1,5 +1,6 @@
 import {HTTP} from "@/router/http";
 import vueInstance from '@/main';
+import {MultiGeneError} from "@/exceptions";
 
 // initial state
 const state = {
@@ -87,12 +88,23 @@ const actions = {
         });
     },
 
+    getGeneBySymbol({commit}, {gene_symbol}) {
+        return HTTP.get(`genes?symbol=${gene_symbol}`).then(res => {
+            if (res.data.results.length !== 1) {
+                throw new MultiGeneError(`Found ${res.data.results.length} genes when querying for ${gene_symbol}`);
+            }
+            commit("SELECT_GENE", res.data.results[0]);
+        });
+    },
+
     getGeneVariant({commit}, params) {
         return HTTP.get("variants/" + params.variant_id).then(res => {
             let gene = res.data.gene;
             let variant = res.data;
             commit("SELECT_GENE", gene);
             commit("SET_VARIANT", variant);
+
+            return { gene, variant };
         });
     },
 

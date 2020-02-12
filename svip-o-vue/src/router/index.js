@@ -17,7 +17,26 @@ import AddEvidence from "@/components/views/curation/AddEvidence";
 import DebugPage from "@/components/views/DebugPage";
 import {checkInRole} from "@/directives/access";
 
+import {HTTP} from '@/router/http';
+import Releases from "@/components/views/Releases";
+
 Vue.use(Router);
+
+function remapGeneSymbol(to, from, next) {
+    // remaps to.params.gene_id to an actual ID if it's non-numeric (e.g., "BRAF")
+    // FIXME: we should just commit to using gene/variant symbols in URLs rather than supporting both IDs and symbols
+
+    if (Number.isNaN(to.params.gene_id)) {
+        // map gene_symbol to gene_id
+        HTTP.get(`/genes?symbol=${to.params.gene_id}`).then((response) => {
+            to.params.gene_id = response.data.results[0].id;
+            next();
+        })
+    }
+    else {
+        next();
+    }
+}
 
 const router = new Router({
     mode: "history",
@@ -25,49 +44,67 @@ const router = new Router({
         {
             path: "/gene/:gene_id",
             name: "gene",
-            component: ViewGene
+            component: ViewGene,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: (to) => `SVIP-O: Gene ${to.params.gene_id}`
+            }
         },
         {
             path: "/gene/:gene_id/variant/:variant_id",
             name: "variant",
-            component: ViewVariant
+            component: ViewVariant,
+            // beforeEnter: remapGeneSymbol,
+            meta: { title: 'SVIP-O: Details' }
         },
 
         {
             path: "/help",
             name: "help",
-            component: Help
+            component: Help,
+            meta: { title: 'SVIP-O: Help' }
         },
 
         {
             path: "/statistics",
             name: "statistics",
-            component: Statistics
+            component: Statistics,
+            meta: { title: 'SVIP-O: Stats' }
+        },
+
+        {
+            path: "/releases",
+            name: "releases",
+            component: Releases,
+            meta: { title: 'SVIP-O: Releases' }
         },
 
         {
             path: "/login",
             name: "login",
             component: Login,
-            props: true
+            props: true,
+            meta: { title: 'SVIP-O: Login' }
         },
         {
             path: "/user-info",
             name: "user-info",
-            component: UserInfo
+            component: UserInfo,
+            meta: { title: 'SVIP-O: Your Profile' }
         },
         {
             path: "/curation/dashboard",
             name: "curation-dashboard",
             component: CurationDashboard,
-            meta: { requiresAuth: true, roles: ['curators', 'reviewers'] }
+            meta: {
+                title: 'SVIP-O: Dashboard',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id",
             path: "/curation/gene/:gene_id/variant/:variant_id",
             name: "annotate-variant",
             component: AnnotateVariant,
-            meta: { requiresAuth: true, roles: ['curators', 'reviewers'] }
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Curate',
@@ -75,11 +112,9 @@ const router = new Router({
             }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/disease/:disease_id/entry/:action",
             path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
             name: "add-evidence",
             component: AddEvidence,
-            meta: { requiresAuth: true, roles: ['curators', 'reviewers'] }
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Edit Curation',
@@ -110,8 +145,6 @@ router.beforeEach((to, from, next) => {
             return record.meta.roles ? acc.concat(record.meta.roles) : acc;
         }, []);
 
-        console.log("Requires auth, roles?: ", possibleRoles);
-
         store.dispatch("checkCredentials").then((result) => {
             if (!result.valid && (result.reason === TokenErrors.EXPIRED || result.reason === TokenErrors.REFRESH_EXPIRED) && to.name !== "login") {
                 // if our token's expired, go get a new one from the login page,
@@ -119,7 +152,7 @@ router.beforeEach((to, from, next) => {
                 next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
             }
             else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
-                console.log("Roles check failed!");
+                console.warn("Roles check failed!");
                 next({ name: 'login', params: {
                     default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
                     nextRoute: to.path

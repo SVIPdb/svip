@@ -219,7 +219,8 @@ export default {
         const {variant_id} = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", {variant_id: variant_id}).then(() => {
+        store.dispatch("getGeneVariant", {variant_id: variant_id}).then(({ gene, variant }) => {
+            to.meta.title = `SVIP-O: ${gene.symbol} ${variant.name}`;
             next();
         });
     }

@@ -254,7 +254,11 @@ export default {
         if (to.params.gene_id !== "new") {
             // ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
             store.dispatch("getGene", {gene_id: to.params.gene_id}).then(() => {
+                // annotate the title w/the gene name
+                to.meta.title = `SVIP-O: ${store.state.genes.currentGene.symbol}`;
                 next();
+            }).catch((err) => {
+                next({ name: 'not-found', params: { '0': to.path } });
             });
         }
     },

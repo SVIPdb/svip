@@ -22,6 +22,14 @@ export default {
         year() {
             return new Date().getFullYear();
         }
+    },
+    watch: {
+        '$route': {
+            handler: (to, from) => {
+                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title || 'SVIP-O'
+            },
+            immediate: true
+        }
     }
 };
 </script>
