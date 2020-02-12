@@ -1,7 +1,7 @@
 <template>
     <div class="comment-harness">
         <div class="comments">
-            <div v-if="!isLoading && comments">
+            <div v-if="!isLoading && comments && comments.length > 0">
                 <div class="comment" v-for="comment in comments" :key="comment.id">
                     <div class="body">
                         <pass :bits="abbreviatedName(comment.owner_name)">
@@ -27,6 +27,9 @@
             <div v-else-if="error" class="text-center text-muted font-italic">
                 <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" />
                 <div>We couldn't load the comments due to a technical issue</div>
+            </div>
+            <div v-else-if="comments.length === 0">
+                <h5 class="text-center font-italic" style="color: #777;">~ no comments yet ~</h5>
             </div>
             <div v-else style="margin: 0 auto; text-align: center;">
                 <b-spinner />
@@ -132,6 +135,7 @@ export default {
             }).then((response) => {
                 this.comment_text = '';
                 this.comment_tags = [];
+                this.$emit("commented", response);
                 this.refresh();
             }).catch((response) => {
                 this.isLoading = false;

@@ -83,8 +83,14 @@
                                     @click.stop="() => { showAliases = !showAliases; }"
                                 >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
 
-                                <b-button v-if="commentsEnabled" @click="toggleNav">
-                                    <icon name="comment" /> Discuss
+                                <b-button class="discuss-btn" v-access="'curators'" v-if="commentsEnabled" @click="toggleNav">
+                                    <!--
+                                    <div class="icon-composer">
+                                        <icon name="comment" scale="1.4" />
+                                        <span class="overlay">{{ commentCount }}</span>
+                                    </div> Discuss
+                                    -->
+                                    <icon name="comment" scale="1.4" /> Discuss
                                 </b-button>
                             </div>
                         </td>
@@ -126,9 +132,9 @@
         <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras"/>
 
         <!-- invisible things are down here -->
-        <Sidebar v-if="commentsEnabled">
-            <h4>Comments on {{ variant.description }}</h4>
-            <CommentList :variant_id="variant.id" />
+        <Sidebar v-access="'curators'" v-if="commentsEnabled">
+            <h4 style="border-bottom: solid 1px #ccc; padding-bottom: 15px;">Comments on {{ variant.description }}</h4>
+            <CommentList :variant_id="variant.id" @commented="getCommentCount" />
         </Sidebar>
     </div>
 </template>
@@ -148,6 +154,8 @@ import Sidebar from "@/components/structure/sidebar/Sidebar";
 import { mutations } from '@/store/modules/site';
 import CommentList from "@/components/widgets/CommentList";
 import {commentsEnabled} from "@/app_config";
+import {HTTP} from "@/router/http";
+import BroadcastChannel from "broadcast-channel";
 
 export default {
     name: "ViewVariant",
@@ -156,13 +164,23 @@ export default {
         return {
             showAliases: false,
             linkItems,
+            commentCount: null,
             commentsEnabled
         };
+    },
+    created() {
+        this.getCommentCount();
+    },
+    watch: {
+        '$route': (to, from) => {
+            this.getCommentCount();
+        }
     },
     computed: {
         ...mapGetters({
             variant: "variant",
-            gene: "gene"
+            gene: "gene",
+            user: "currentUser"
         }),
         synonyms() {
             if (this.gene.geneAliases === undefined) return "";
@@ -208,11 +226,21 @@ export default {
             return null;
         }
     },
-    // components: {geneVariants: geneVariants},
     methods: {
         desnakify,
         toggleNav() {
             store.commit("TOGGLE_NAV");
+        },
+        getCommentCount() {
+            this.commentCount = null;
+
+            if (!this.user  || !this.user.groups.includes('curators')) {
+                return;
+            }
+
+            return HTTP.get(`/comments?variant=${this.$route.params.variant_id}&page_size=9999`).then((response) => {
+                this.commentCount = response.data.count;
+            })
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -270,5 +298,17 @@ export default {
     /* .slide-fade-leave-active below version 2.1.8 */ {
     opacity: 0;
     max-height: 0;
+}
+
+.icon-composer {
+    display: inline-block;
+    position: relative;
+    bottom: 1px;
+}
+.icon-composer .overlay {
+    position: absolute; color: #839596;
+    left: 6px; top: 4px;
+    font-size: 13px; font-weight: bold;
+    text-align: center;
 }
 </style>
