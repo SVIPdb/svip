@@ -196,7 +196,7 @@ export default {
     border-radius: 5px; background-color: #bababa; color: black;
 }
 .comment .body {
-    width: 93%; text-align: justify;
+    width: 90%; text-align: justify;
     margin-bottom: 2px;
 }
 .comment .metaframe {
