@@ -1,3 +1,4 @@
+import itertools
 from enum import Enum
 
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
@@ -183,6 +184,20 @@ class VariantInSource(models.Model):
                 .exclude(context__isnull=True)
                 .annotate(count=Count('environmentalcontext__description'))
                 .distinct().order_by('-count')
+        )
+
+    def diseases_contexts(self):
+        # this is used to render the 'diseases/tissues' visualization on the variant details page
+        pairs = (
+            self.association_set
+                .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
+                .exclude(disease__isnull=True, context__isnull=True)
+                .annotate(count=Count('environmentalcontext__description'))
+                .distinct().order_by('disease')
+        )
+        return (
+            {x[0]: {y['context']: y['count'] for y in x[1]}}
+            for x in itertools.groupby(pairs, lambda x: x['disease'])
         )
 
     def clinical_significances(self):

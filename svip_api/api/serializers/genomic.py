@@ -164,6 +164,7 @@ class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
             'diseases',
             'diseases_collapsed',
             'contexts',
+            'diseases_contexts',
             'scores',
             # 'association_set'
         )
