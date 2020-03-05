@@ -1,13 +1,12 @@
 # install-deps: just installs node module dependencies
 FROM node:8.11.0 as install-deps
-WORKDIR /usr/src/app
+WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . ./
 
 # builds the app using preinstalled libraries
 FROM install-deps as build-deps
-ENV VUE_APP_API_URL
 RUN npm run build
 
 # runs a hot-module reloading (hmr) dev server within the installed directory
