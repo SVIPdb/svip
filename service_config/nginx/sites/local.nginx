@@ -1,0 +1,19 @@
+upstream svip_api {
+  server api:8085 fail_timeout=10;
+}
+
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  ''      close;
+}
+
+server {
+    listen         80 default_server;
+    listen         [::]:80 default_server;
+
+    root           /usr/share/nginx/html;
+    index          index.html;
+
+    #  API routes
+    include shared.conf;
+}

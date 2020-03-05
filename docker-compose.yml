@@ -4,22 +4,10 @@ volumes:
   svip_pgdata:
   svip_esdata:
   seqrepo:
+  web_built:
+  api_static:
 
 services:
-  # nginx:
-  #   build:
-  #     context: ./service_config/nginx
-  #     dockerfile: Dockerfile
-  #   container_name: tupro_report_nginx
-  #   volumes:
-  #     - '${PWD}/service_config/nginx/sites/locations.conf:/etc/nginx/locations.conf:ro'
-  #     - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/tupro_reporting.nginx:ro'
-  #   ports:
-  #     - '8020:80'
-  #   depends_on:
-  #     - api
-  #     - frontend
-
   db:
     image: "postgres:11.1"
     shm_size: '2gb'
@@ -27,7 +15,7 @@ services:
     volumes:
          - "svip_pgdata:/var/lib/postgresql/data" # for now we're storing pg data to a volume
          - ./svip_db_backups:/backups
-         - ./db_config:/docker-entrypoint-initdb.d
+         - ./service_config/postgres:/docker-entrypoint-initdb.d
     ports:
       - "30432:5432" # FIXME: dev access port, remove later
     environment:
@@ -59,18 +47,21 @@ services:
       - DJANGO_SU_PASSWORD
       - USE_DEV_SERVER=true
 
-  # frontend:
-  #   build: ./svip-o-vue
-  #   volumes:
-  #     - ./svip-o-vue:/app
-  #     - /app/node_modules
-  #   # starts react in hot-reload mode
-  #   # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
-  #   command: bash -c "npm run serve"
-  #   restart: 'no'
-  #   ports:
-  #     - '3000:3000'
-  #   environment:
-  #     - 'VUE_APP_API_URL=http://localhost:8020/api'
-  #   depends_on:
-  #     - api
+  frontend:
+    build:
+      context: ./svip-o-vue
+      dockerfile: Dockerfile
+      target: hmr-debug
+    volumes:
+      - ./svip-o-vue:/app
+      - web_built:/web
+    # starts react in hot-reload mode
+    # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
+    command: sh -c "npm run serve"
+    restart: 'no'
+    ports:
+      - '3000:8080'
+    environment:
+      - 'VUE_APP_API_URL=http://localhost:8085/api/v1/'
+    depends_on:
+      - api

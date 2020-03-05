@@ -1,5 +1,9 @@
 version: '3.5'
 
+# legacy elasticsearch config for g2p-aggregator
+# the version of g2p-aggregator we're using is heavily dependent on postgres
+# as the target silo, but elasticsearch could conceivably still be used...
+
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1

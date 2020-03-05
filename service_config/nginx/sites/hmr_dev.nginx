@@ -1,18 +1,9 @@
-# this file sets up nginx to serve the following:
-# - the frontend at /, proxied from webpack dev server w/support for hot reloading
-# - keycloak at /auth
-# - DRF API at /api
-
 upstream svip_api {
-    server backend:8000 fail_timeout=15;
-}
-
-upstream keycloak_server {
-  server keycloak:8080 fail_timeout=15;
+  server api:8085 fail_timeout=10;
 }
 
 upstream frontend {
-  server frontend:3000 fail_timeout=15;
+  server frontend:8080 fail_timeout=15;
 }
 
 map $http_upgrade $connection_upgrade {
@@ -27,7 +18,8 @@ server {
     root           /usr/share/nginx/html;
     index          index.html;
 
-    include locations.conf;
+    #  API routes
+    include shared.conf;
 
     # ------------------------------------------------------------------------
     # --- dynamic frontend via webpack-dev-server
