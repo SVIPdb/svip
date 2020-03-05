@@ -6,7 +6,7 @@ set -e -o pipefail
 # wait for postgres to wake up
 until PGPASSWORD="$POSTGRES_PASSWORD" psql -d  "$POSTGRES_DB" -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -c '\q'; do # 2> /dev/null
   >&2 echo "Postgres is unavailable at $POSTGRES_HOST - sleeping"
-  sleep 1
+  sleep 3
 done
 
 python manage.py migrate
