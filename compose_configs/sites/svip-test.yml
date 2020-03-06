@@ -2,6 +2,8 @@ version: '3.5'
 
 services:
   nginx:
+          - '443:443'
+          - '80:80'
     volumes:
       - '${PWD}/service_config/nginx/sites/with_ssl.nginx:/etc/nginx/conf.d/svip.nginx:ro'
       - /etc/pki/tls/certs/svip-test.nexus.ethz.ch.crt.pem:/etc/pki/tls/certs/host.crt.pem
