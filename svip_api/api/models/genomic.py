@@ -154,6 +154,8 @@ class VariantInSource(models.Model):
     def diseases(self):
         # FIXME: this sucks, but clinvar right now is pre-aggregated by disease, so we need another
         #  way to surface the real submission count (which is held in extras.num_submissions)
+
+        # this is used to render the 'disease' filtering side tables in the third-party evidence panel
         if self.source.name == 'clinvar':
             return (
                 self.association_set
@@ -170,6 +172,8 @@ class VariantInSource(models.Model):
         )
 
     def diseases_collapsed(self):
+        # this is used to render the 'disease' filtering side tables in specifically civic's third-party evidence panel
+        # (or whichever third-party evidence lists use collapsed associations rather than normal ones)
         return (
             self.collapsedassociation_set
                 .values('disease')
@@ -178,6 +182,7 @@ class VariantInSource(models.Model):
         )
 
     def contexts(self):
+        # this is used to render the 'tissues' filtering side tables in specifically cosmic's third-party evidence panel
         return (
             self.association_set
                 .values(context=F('environmentalcontext__description'))

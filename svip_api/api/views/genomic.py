@@ -137,7 +137,7 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         curation entry with this variant.
 
         :param request:
-        :param pk:
+        :param pk: the primary key of the variant
         :return:
         """
         from api.models import Disease
