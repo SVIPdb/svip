@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     'localhost', '127.0.0.1', '0.0.0.0',
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
-    'testserver'
+    'svip.nexus.ethz.ch'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
