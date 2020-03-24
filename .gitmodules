@@ -1,12 +1,12 @@
 [submodule "g2p-aggregator"]
 	path = g2p-aggregator
-	url = git@gitlab.ethz.ch:svip/g2p-aggregator.git
+	url = git@github.com:SVIPdb/g2p-aggregator.git 
 [submodule "svip_server"]
 	path = svip_api
-	url = git@gitlab.ethz.ch:svip/svip_api.git
+	url = git@github.com:SVIPdb/svip_api.git
 [submodule "outputs"]
 	path = outputs
 	url = git@gitlab.ethz.ch:faisala/svip_outputs.git
 [submodule "svip-o-vue"]
 	path = svip-o-vue
-	url = git@gitlab.ethz.ch:svip/svip-o-vue.git
+	url = git@github.com:SVIPdb/frontend.git 
