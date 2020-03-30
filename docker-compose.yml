@@ -45,6 +45,7 @@ services:
       - DJANGO_SU_NAME
       - DJANGO_SU_EMAIL
       - DJANGO_SU_PASSWORD
+      - SOCIBP_BASE_URL
       - USE_DEV_SERVER=true
 
   frontend:
