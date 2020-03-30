@@ -5,6 +5,7 @@ from itertools import groupby
 from operator import itemgetter
 
 import requests
+from django.conf import settings
 from requests_futures.sessions import FuturesSession
 from django.http import HttpResponse, JsonResponse
 
@@ -21,10 +22,6 @@ cached_sess = CacheControl(
 )
 
 
-SOCIBP_BASE_URL = 'https://andre:tf12.57g@socibp.nexus.ethz.ch/cbioportal'
-SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
-
-
 # -------------------------------------------------------------
 # --- SOCIBP acquisition endpoints
 # -------------------------------------------------------------
@@ -32,7 +29,7 @@ SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
 
 def get_genes(request):
     # params: projection=SUMMARY&pageSize=100000&pageNumber=0&direction=ASC
-    response = requests.get(SOCIBP_API_URL + '/genes', params={
+    response = requests.get(settings.SOCIBP_API_URL + '/genes', params={
         'projection': 'SUMMARY',
         'pageSize': 100000,
         'pageNumber': '0',
@@ -61,7 +58,7 @@ def get_changed_samples(request, gene, change):
     #
     # -- step 1. get study metadata
     # --------------------------------------------------------------------------------------
-    resp_future = session.get(SOCIBP_API_URL + '/studies')
+    resp_future = session.get(settings.SOCIBP_API_URL + '/studies')
     resp = resp_future.result()
     study_data = dict(
         (x['studyId'], x)
@@ -69,7 +66,7 @@ def get_changed_samples(request, gene, change):
     )
 
     # get molecular profiles for each study
-    resp_future = session.post(SOCIBP_API_URL + '/molecular-profiles/fetch', json={
+    resp_future = session.post(settings.SOCIBP_API_URL + '/molecular-profiles/fetch', json={
         'studyIds': list(study_data.keys())
     })
     resp = resp_future.result()
@@ -81,7 +78,7 @@ def get_changed_samples(request, gene, change):
 
     # get sample IDs which have mutation data
     # (we really only care about category: 'all_cases_with_mutation_data')
-    resp_future = session.get(SOCIBP_API_URL + '/sample-lists', params={
+    resp_future = session.get(settings.SOCIBP_API_URL + '/sample-lists', params={
         'projection': 'SUMMARY',
         'pageSize': 10000000,
         'pageNumber': 0,
@@ -106,7 +103,7 @@ def get_changed_samples(request, gene, change):
 
         assert len(sample_lists[study_id]) == 1
 
-        resp_future = session.post(SOCIBP_API_URL + '/molecular-profiles/' + profile_id + '/mutations/fetch', json={
+        resp_future = session.post(settings.SOCIBP_API_URL + '/molecular-profiles/' + profile_id + '/mutations/fetch', json={
             'entrezGeneIds': [entrez_gene_id],
             'sampleListId': sample_lists[study_id][0]['sampleListId']
         })
@@ -133,7 +130,7 @@ def get_changed_samples(request, gene, change):
             {
                 'study': study_data[study_id],
                 'authed_link': (
-                    SOCIBP_BASE_URL + '/index.do?Action=Submit&genetic_profile_ids=%(study_profile_id)s&case_set_id=%(study_id)s_all&cancer_study_id=%(study_id)s&gene_list=%(gene)s&tab_index=tab_visualize&#mutation_details' %
+                    settings.SOCIBP_BASE_URL + '/index.do?Action=Submit&genetic_profile_ids=%(study_profile_id)s&case_set_id=%(study_id)s_all&cancer_study_id=%(study_id)s&gene_list=%(gene)s&tab_index=tab_visualize&#mutation_details' %
                     {
                         'study_id': study_id,
                         'study_profile_id': molecular_profiles[study_id][0]['molecularProfileId'],

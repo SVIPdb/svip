@@ -206,3 +206,6 @@ CORS_ALLOW_CREDENTIALS = True
 #         'hosts': 'elasticsearch:9200'
 #     },
 # }
+
+SOCIBP_BASE_URL = os.environ['SOCIBP_BASE_URL']
+SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
