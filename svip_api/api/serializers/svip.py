@@ -36,9 +36,15 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
     diseases = serializers.SerializerMethodField()
 
     def get_diseases(self, obj):
+        qset = (
+            obj.diseaseinsvip_set
+                .select_related('disease')
+                .prefetch_related('sample_set', 'disease__curationentry_set')
+                .all()
+        )
         return [
             DiseaseInSVIPSerializer(x, context={'request': self.context['request']}).data
-            for x in obj.diseaseinsvip_set.all()
+            for x in qset
         ]
 
     class Meta:

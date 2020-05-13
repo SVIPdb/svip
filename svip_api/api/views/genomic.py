@@ -96,7 +96,11 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
             q = Variant.objects.all()
 
         # attempting to reduce the number of queries
-        return q.select_related('gene').order_by('name')
+        return (
+            q.select_related('gene')
+                .prefetch_related('variantinsvip_set', 'variantinsvip_set__diseaseinsvip_set')
+                .order_by('name')
+        )
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
