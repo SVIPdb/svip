@@ -2,6 +2,8 @@
     <div class="container-fluid">
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
+        <VariantSummary :variant="variant" />
+
         <EvidenceCard :variant="variant" is-submittable small />
 
         <div>
@@ -85,10 +87,12 @@ import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
+import VariantSummary from "@/components/curation/widgets/VariantSummary";
 
 export default {
     name: "AnnotateVariant",
     components: {
+        VariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
         VariomesLitPopover,
