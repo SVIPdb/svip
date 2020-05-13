@@ -15,7 +15,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Non responsive": [
+            "Not responsive": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
@@ -29,7 +29,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Sensitive": [
+            "Sensitive (in vitro)": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
@@ -57,7 +57,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Resistant": [
+            "Resistant (in vitro)": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
@@ -101,7 +101,7 @@
             ]
         },
         "Prognostic": {
-            "Better outcome": [
+            "Good outcome": [
                 "Included in Professional Guidelines (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
                 "Small published studies with some consensus (Tier IIC)",
@@ -125,55 +125,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Ultrahigh risk": [
-                "Included in Professional Guidelines (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
-                "Other criteria"
-            ],
-            "Unfavorable": [
-                "Included in Professional Guidelines (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
-                "Other criteria"
-            ],
             "Intermediate": [
-                "Included in Professional Guidelines (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
-                "Other criteria"
-            ],
-            "Favorable": [
-                "Included in Professional Guidelines (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
-                "Other criteria"
-            ],
-            "Other": [
                 "Included in Professional Guidelines (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
                 "Small published studies with some consensus (Tier IIC)",
@@ -187,7 +139,7 @@
             ]
         },
         "Diagnostic": {
-            "Positive": [
+            "Associated with diagnosis": [
                 "Included in Professional Guidelines (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
                 "Small published studies with some consensus (Tier IIC)",
@@ -199,7 +151,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Negative": [
+            "Not associated with diagnosis": [
                 "Included in Professional Guidelines (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
                 "Small published studies with some consensus (Tier IIC)",
@@ -225,58 +177,193 @@
             ]
         }
     },
-    "PATHOGENICITY": {
-        "In vitro assay": {
-            "Pathogenic": [
-                "Well-established in vitro functional study showing a deleterious effect",
+    "BIOLOGICAL RELEVANCE": {
+        "Function": {
+            "Gain of function": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Likely pathogenic": [
-                "Well-established in vitro functional study showing a deleterious effect",
+            "Loss of function": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Unknown": [
-                "None or no convincing evidence of functional effect",
+            "Neomorphic": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Likely benign": [
-                "Well-established in vitro functional study showing no deleterious effect",
+            "Unaltered function": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Benign": [
-                "Well-established in vitro functional study showing no deleterious effect",
+            "Dominant negative": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ]
         },
-        "In vivo assay": {
-            "Pathogenic": [
-                "Well-established in vivo functional study showing a deleterious effect",
+        "Subcellular location": {
+            "Loss of physiological location": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Likely pathogenic": [
-                "Well-established in vivo functional study showing a deleterious effect",
+            "Decreased physiological location": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Unknown": [
-                "None or no convincing evidence of functional effect",
+            "Increased physiological location": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Likely benign": [
-                "Well-established in vivo functional study showing no deleterious effect",
+            "New location": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ],
-            "Benign": [
-                "Well-established in vivo functional study showing no deleterious effect",
+            "Unaltered location": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Other": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
                 "Other criteria"
             ]
-        }
-    },
-    "ONLY FOR CURATORS & REVIEWERS": {
-        "Excluded": {
-            "Bronze": [],
-            "Missing evidence": [],
-            "Missing variant": [],
-            "Other": []
+        },
+        "Interaction": {
+            "Loss of interaction with known partner(s)": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Decreased interaction with known partner(s)": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Increased interaction with known partner(s)": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "New interaction partner(s)": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Other": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ]
+        },
+        "Expression": {
+            "Loss of expression": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Decreased expression": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Increased expression": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Misexpression": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Other": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Author statement",
+                "Other criteria"
+            ]
+        },
+        "Response to drug": {
+            "Loss of drug response": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Decreased drug response": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Increased drug response": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Newly acquired drug response": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ],
+            "Other": [
+                "Well-established in vitro study",
+                "Well-established in vivo study ",
+                "Prediction",
+                "Author statement",
+                "Other criteria"
+            ]
         }
     }
 }
