@@ -22,8 +22,10 @@ from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerialize
 # ================================================================================================================
 # === Variant Aggregation
 # ================================================================================================================
+from api.support.history import make_history_response
 
-class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
+
+class VariantInSVIPViewSet(viewsets.ModelViewSet):
     """
     Connects a variant, e.g. EGFR L858R, to its SVIP-specific data. Currently that consists of samples
     and curation data, but more will come in the future.
@@ -51,6 +53,11 @@ class VariantInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
         'variant__name',
         'disease__name'
     )
+
+    @action(detail=True)
+    def history(self, request, pk):
+        entry = VariantInSVIP.objects.get(id=pk)
+        return make_history_response(entry, add_created_by=False)
 
 
 # ================================================================================================================
@@ -168,35 +175,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def history(self, request, pk):
         entry = CurationEntry.objects.get(id=pk)
-        history = list(entry.history.all())
-        deltas = (
-            {
-                'time': a.history_date,
-                'diff': a.diff_against(b),
-                'history_user': self._nice_username(a.history_user)
-            }
-            for a, b in zip(history[:-1], history[1:])
-        )
-
-        return JsonResponse({
-            'created_on': history[-1].history_date if len(history) > 0 else None,
-            'created_by': self._nice_username(entry.owner),
-            'deltas': [
-                {
-                    'time': str(delta['time']),
-                    'changed_by': delta['history_user'],
-                    'changes': [
-                        {
-                            'field': change.field,
-                            'old': remap_curation_history_fields(change.field, change.old),
-                            'new': remap_curation_history_fields(change.field, change.new)
-                        }
-                        for change in delta['diff'].changes
-                    ]
-                }
-                for delta in deltas
-            ]
-        })
+        return make_history_response(entry, remap_curation_history_fields)
 
     @action(detail=False)
     def all_references(self, request):

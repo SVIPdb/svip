@@ -65,6 +65,11 @@ class VariantInSVIP(models.Model):
     variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
     data = JSONField()
 
+    # contains a summary from the curators about this variant
+    summary = models.TextField(null=True, blank=True)
+
+    history = HistoricalRecords(cascade_delete_history=True)
+
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
         with connection.cursor() as cursor:
