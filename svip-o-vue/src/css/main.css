@@ -196,6 +196,13 @@ input.vs__search::placeholder {
     margin: 0 5px;
 }
 
+.paginator-holster {
+    display: flex;
+    padding-left: 15px;
+    padding-top: 1em;
+    border-top: solid 1px #ddd;
+}
+
 /* for subtables which occur within an already-nested table (they're inset instead of overlaid) */
 .sample-subtable {
     padding: 10px;

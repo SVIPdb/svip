@@ -157,11 +157,4 @@ export default {
 .badges {
     align-self: center;
 }
-
-.paginator-holster {
-    display: flex;
-    padding-left: 15px;
-    padding-top: 1em;
-    border-top: solid 1px #ddd;
-}
 </style>
