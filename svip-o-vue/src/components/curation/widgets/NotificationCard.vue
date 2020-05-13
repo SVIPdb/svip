@@ -44,12 +44,9 @@
                 :filter="filter"
                 :sort-by.sync="sortBy" :sort-desc="true"
                 :busy="loading"
+                :per-page="perPage" :current-page="currentPage"
                 show-empty small hover
             >
-                <template v-slot:cell(gene_name)="data">
-                    <p class="font-weight-bold mb-0">{{data.value}}</p>
-                </template>
-
                 <template v-slot:cell(gene_name)="data">
                     <b><router-link :to="`/gene/${data.item.gene_id}`" target="_blank">{{ data.value }}</router-link></b>
                 </template>
@@ -112,6 +109,17 @@
                     </div>
                 </template>
             </b-table>
+
+            <div v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
+                <slot name="extra_commands" />
+
+                <b-pagination
+                    v-if="totalRows > perPage"
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                />
+            </div>
         </b-card-body>
     </b-card>
 </template>
@@ -206,7 +214,11 @@ export default {
                 "Not assigned": "danger",
                 Ongoing: "warning",
                 Complete: "success"
-            }
+            },
+
+            // pagination controls
+            perPage: 10,
+            currentPage: 1
         };
     },
     methods: {
@@ -288,6 +300,12 @@ export default {
         },
         myCurations() {
             return this.items.filter(element => element.curator.some(x => x.id === this.user.user_id));
+        },
+        totalRows() {
+            return this.items ? this.filteredItems.length : 0;
+        },
+        slotsUsed () {
+            return !!this.$slots.extra_commands || (this.totalRows > this.perPage);
         }
     }
 };
@@ -295,6 +313,6 @@ export default {
 
 <style>
 .customClass {
-    background-color: "#c40000 !important";
+    background-color: #c40000 !important;
 }
 </style>

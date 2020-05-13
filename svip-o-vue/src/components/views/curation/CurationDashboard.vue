@@ -124,7 +124,7 @@ export default {
         checkInRole,
         fetchRequestedVariants() {
             this.on_request.loading = true;
-            HTTP.get(`/variants?in_svip=true&inline_svip_data=true`).then((response) => {
+            HTTP.get(`/variants?in_svip=true&inline_svip_data=true&page_size=10000`).then((response) => {
                 this.on_request.loading = false;
 
                 this.on_request.items = response.data.results.map((entry) => {
