@@ -145,6 +145,20 @@
                 </template>
             </b-table>
         </div>
+
+        <b-row>
+            <b-col>
+                <b-alert show variant="info" class="d-flex align-items-center justify-content-between mb-0">
+                    <icon name="star" style="flex: 0 1;" class="mr-1" />
+                    <div class="d-flex align-items-center">
+                        For multi-variant search, batch querying, and many other features, see the official interface:
+                        <a class="ml-1" href="https://candy.hesge.ch/Variomes3/" target="_blank">Variomes</a>
+                        <icon class="ml-1" name="external-link-alt" />
+                    </div>
+                    <icon name="star" style="flex: 0 1;" />
+                </b-alert>
+            </b-col>
+        </b-row>
     </b-card-body>
 </template>
 
