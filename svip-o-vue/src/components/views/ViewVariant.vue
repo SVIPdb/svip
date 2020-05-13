@@ -1,133 +1,120 @@
 <template>
-    <!--
-    /************************ LICENCE ***************************
-    *     This file is part of <ViKM Vital-IT Knowledge Management web application>
-    *     Copyright (C) <2016> SIB Swiss Institute of Bioinformatics
-    *
-    *     This program is free software: you can redistribute it and/or modify
-    *     it under the terms of the GNU Affero General Public License as
-    *     published by the Free Software Foundation, either version 3 of the
-    *     License, or (at your option) any later version.
-    *
-    *     This program is distributed in the hope that it will be useful,
-    *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    *     GNU Affero General Public License for more details.
-    *
-    *     You should have received a copy of the GNU Affero General Public License
-    *    along with this program.  If not, see <http://www.gnu.org/licenses/>
-    *
-    *****************************************************************/
-    -->
+    <div>
+        <div class="container-fluid">
+            <div class="card variant-card">
+                <div class="card-body top-level">
+                    <table class="table variant-header">
+                        <tr>
+                            <th></th>
+                            <th>Gene Name</th>
+                            <th>Variant</th>
+                            <th>HGVS.c</th>
+                            <th>HGVS.p</th>
+                            <th>HGVS.g</th>
+                            <th :class="hiddenCols">dbSNP</th>
+                            <!-- <th>Molecular consequence</th> -->
+                            <th :class="hiddenCols">Position</th>
+                            <th :class="hiddenCols">Allele Frequency</th>
+                            <th></th>
+                            <!--- for actions -->
+                        </tr>
 
-    <div class="container-fluid">
-        <div class="card variant-card">
-            <div class="card-body top-level">
-                <table class="table variant-header">
-                    <tr>
-                        <th>Gene Name</th>
-                        <th>Variant</th>
-                        <th>HGVS.c</th>
-                        <th>HGVS.p</th>
-                        <th>HGVS.g</th>
-                        <th>dbSNP</th>
-                        <!-- <th>Molecular consequence</th> -->
-                        <th>Position</th>
-                        <th>Allele Frequency</th>
-                        <th></th>
-                        <!--- for actions -->
-                    </tr>
+                        <tr>
+                            <td>
+                                <expander v-model="showAliases" />
+                            </td>
+                            <td>
+                                <b>
+                                    <router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link>
+                                </b>
+                            </td>
+                            <td>
+                                <b>{{ variant.name }}</b>
+                            </td>
 
-                    <tr>
-                        <td>
-                            <b>
-                                <router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link>
-                            </b>
-                        </td>
-                        <td>
-                            <b>{{ variant.name }}</b>
-                        </td>
+                            <coordinates :val="hgvs_c_pos"/>
+                            <coordinates :val="hgvs_p_pos"/>
+                            <coordinates :val="hgvs_g_pos"/>
 
-                        <coordinates :val="hgvs_c_pos"/>
-                        <coordinates :val="hgvs_p_pos"/>
-                        <coordinates :val="hgvs_g_pos"/>
+                            <optional :class="hiddenCols" :val="variant.dbsnp_ids">
+                                <a
+                                    v-for="rsid in variant.dbsnp_ids"
+                                    :key="rsid"
+                                    :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
+                                    target="_blank"
+                                >
+                                    rs{{ rsid }}
+                                    <icon name="external-link-alt"></icon>
+                                </a>
+                            </optional>
 
-                        <optional :val="variant.dbsnp_ids">
-                            <a
-                                v-for="rsid in variant.dbsnp_ids"
-                                :key="rsid"
-                                :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
-                                target="_blank"
-                            >
-                                rs{{ rsid }}
-                                <icon name="external-link-alt"></icon>
-                            </a>
-                        </optional>
+                            <!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
-                        <!-- <td>{{ desnakify(variant.so_name) }}</td> -->
+                            <optional :class="hiddenCols" :val="var_position">
+                                <span class="text-muted transcript-id">{{ variant.reference_name }}:</span>
+                                &#x200b;{{ var_position }}
+                            </optional>
 
-                        <optional :val="var_position">
-                            <span class="text-muted transcript-id">{{ variant.reference_name }}:</span>
-                            &#x200b;{{ var_position }}
-                        </optional>
+                            <td :class="hiddenCols">
+                                <span v-if="allele_frequency">{{ allele_frequency }}</span>
+                                <span v-else class="unavailable">unavailable</span>
+                            </td>
 
-                        <td>
-                            <span v-if="allele_frequency">{{ allele_frequency }}</span>
-                            <span v-else class="unavailable">unavailable</span>
-                        </td>
-
-                        <td>
-                            <div class="details-tray" style="text-align: right;">
-                                <b-button
-                                    size="sm"
-                                    @click.stop="() => { showAliases = !showAliases; }"
-                                >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
-
-                                <b-button class="discuss-btn" v-access="'curators'" v-if="commentsEnabled" @click="toggleNav">
+                            <td>
+                                <div class="details-tray" style="text-align: right;">
                                     <!--
-                                    <div class="icon-composer">
-                                        <icon name="comment" scale="1.4" />
-                                        <span class="overlay">{{ commentCount }}</span>
-                                    </div> Discuss
+                                    <b-button
+                                        size="sm"
+                                        @click.stop="() => { showAliases = !showAliases; }"
+                                    >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
                                     -->
-                                    <icon name="comment" scale="1.4" /> Discuss
-                                </b-button>
-                            </div>
-                        </td>
-                    </tr>
 
-                    <transition name="slide-fade">
-                        <tr v-if="showAliases" class="details-row">
-                            <td colspan="9">
-                                <div class="aliases-list">
-                                    <div v-for="(x) in variant.gene.aliases" :key="x">{{ x }}</div>
+                                    <b-button class="discuss-btn" v-access="'curators'" v-if="commentsEnabled" @click="toggleNav">
+                                        <!--
+                                        <div class="icon-composer">
+                                            <icon name="comment" scale="1.4" />
+                                            <span class="overlay">{{ commentCount }}</span>
+                                        </div> Discuss
+                                        -->
+                                        <icon name="comment" scale="1.4" /> Discuss
+                                    </b-button>
                                 </div>
                             </td>
                         </tr>
-                    </transition>
-                </table>
+
+                        <transition name="slide-fade">
+                            <tr v-if="showAliases" class="details-row">
+                                <td colspan="10">
+                                    <div class="aliases-list">
+                                        <div v-for="(x) in variant.gene.aliases" :key="x">{{ x }}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </transition>
+                    </table>
+                </div>
             </div>
+
+            <variant-svip v-if="variant.svip_data" :variant="variant" :gene="gene_id"></variant-svip>
+            <variant-public-databases :variant="variant"></variant-public-databases>
+
+            <b-row v-access="'curators'">
+                <b-col>
+                    <b-card class="shadow-sm mt-3" align="left" no-body>
+                        <b-card-body class="p-0 text-center">
+                            <b-row no-gutters>
+                                <b-col v-for="(item,index) in linkItems" :key="index">
+                                    <b-button squared block variant="outline-secondary" :href="item.link" target="_blank">
+                                        {{ item.source }}
+                                        <icon name="external-link-alt"></icon>
+                                    </b-button>
+                                </b-col>
+                            </b-row>
+                        </b-card-body>
+                    </b-card>
+                </b-col>
+            </b-row>
         </div>
-
-        <variant-svip v-if="variant.svip_data" :variant="variant" :gene="gene_id"></variant-svip>
-        <variant-public-databases :variant="variant"></variant-public-databases>
-
-        <b-row v-access="'curators'">
-            <b-col>
-                <b-card class="shadow-sm mt-3" align="left" no-body>
-                    <b-card-body class="p-0 text-center">
-                        <b-row no-gutters>
-                            <b-col v-for="(item,index) in linkItems" :key="index">
-                                <b-button squared block variant="outline-secondary" :href="item.link" target="_blank">
-                                    {{ item.source }}
-                                    <icon name="external-link-alt"></icon>
-                                </b-button>
-                            </b-col>
-                        </b-row>
-                    </b-card-body>
-                </b-card>
-            </b-col>
-        </b-row>
 
         <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras"/>
 
@@ -165,7 +152,8 @@ export default {
             showAliases: false,
             linkItems,
             commentCount: null,
-            commentsEnabled
+            commentsEnabled,
+            hiddenCols: "d-none d-lg-table-cell"
         };
     },
     created() {

@@ -98,7 +98,8 @@ export default {
 
 <style>
 .sig-bar-chart {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     height: 28px;
 }
 
