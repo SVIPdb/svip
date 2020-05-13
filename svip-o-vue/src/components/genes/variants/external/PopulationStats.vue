@@ -1,5 +1,5 @@
 <template>
-    <div class="col-sm-auto">
+    <div>
         <div class="card mt-3 top-level">
             <div class="card-header">
                 <div class="card-title">Polymorphisms</div>

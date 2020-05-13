@@ -1,5 +1,5 @@
 <template>
-    <div class="col-sm-auto">
+    <div>
         <div class="card mt-3 top-level">
             <div class="card-header">
                 <div class="card-title">
@@ -18,11 +18,11 @@
                     residue not found in molecule
                 </div>
                 <!-- tbc: ngl visualizer -->
-                <div style="background-color: white; width: 300px;">
+                <div style="background-color: white;">
                     <div id="viewport" style="width: 100%; height: 250px;"></div>
                 </div>
 
-                <div style="border-top: solid 1px #ccc; padding: 10px; padding-bottom: 3px;">
+                <div style="border-top: solid 1px #ccc; padding: 10px;">
                     <label for="pdb_select">Selected PDB/Chain:</label>&nbsp;
                     <select id="pdb_select" v-if="pdbs" v-model="selected_pdb">
                         <option disabled value="">Choose a PDB</option>
@@ -42,6 +42,7 @@
 <script>
 import {HTTP} from "@/router/http";
 import {serverURL} from "@/app_config";
+import debounce from 'lodash/debounce';
 import * as NGL from "ngl";
 
 const one_to_three = {
@@ -82,8 +83,12 @@ export default {
             pdbs: [],
             selected_pdb: null,
             found_in_swisspo: null,
-            noResults: false
+            noResults: false,
+            resizeListener: null
         }
+    },
+    created() {
+        this.handleNGLResize = debounce(this.handleNGLResize, 300);
     },
     mounted() {
         if (this.stage) {
@@ -103,10 +108,18 @@ export default {
             sampleLevel: 2
         });
 
-        window.addEventListener('resize', this.handleNGLResize);
+        this.resizeListener = window.addEventListener('resize', () => { this.handleNGLResize() });
 
         // and do an initial load
         this.loadStructure(this.protein, this.change);
+    },
+    beforeDestroy() {
+        if (this.stage) {
+            this.stage.removeAllComponents();
+        }
+        if (this.resizeListener) {
+            window.removeEventListener('resize', this.resizeListener);
+        }
     },
     computed: {
         change_parts() {
@@ -136,7 +149,11 @@ export default {
     methods: {
         handleNGLResize() {
             if (this.stage) {
+                console.log("NGL resize executing");
                 this.stage.handleResize();
+            }
+            else {
+                console.log("NGL resize requested, but was null");
             }
         },
         async loadStructure(protein, change) {

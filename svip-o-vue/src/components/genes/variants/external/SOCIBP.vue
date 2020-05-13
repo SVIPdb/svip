@@ -1,6 +1,5 @@
 <template>
-    <div class="col-sm-auto">
-
+    <div>
         <div class="card mt-3 top-level">
             <div class="card-header">
                 <div class="card-title">
@@ -47,7 +46,7 @@ export default {
                 },
                 {
                     key: "num_patients_samples",
-                    label: "# of Samples/Patients",
+                    label: "Samples/Patients",
                     sortable: true
                 }
             ]
@@ -62,7 +61,8 @@ export default {
                 num_patients: x.num_patients,
                 num_samples: x.num_samples,
                 authed_link: x.authed_link
-            }))
+            }));
+            this.$emit('updated');
         }).catch((err) => {
             // just don't display the thing if we encounter an error
             this.items = [];
@@ -78,7 +78,7 @@ export default {
 <style scoped>
 .errorbox {
     text-align: center;
-    padding: 15px; max-width: 250px;
+    padding: 15px;
     font-style: italic;
 }
 </style>
