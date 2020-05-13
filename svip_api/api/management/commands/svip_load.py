@@ -106,7 +106,7 @@ ALIGNERS = [
 ]
 
 
-def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False):
+def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False, delete_existing=True):
     """
     Loads variant info from SVIP mock data file into the db
     :param source source JSON file (defualt SVIP_VARS_JSON)
@@ -116,8 +116,9 @@ def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False):
     with open(source, "r") as fp:
         svip_variants = json.load(fp)
 
-        VariantInSVIP.objects.all().delete()
-        DiseaseInSVIP.objects.all().delete()
+        if delete_existing:
+            VariantInSVIP.objects.all().delete()
+            DiseaseInSVIP.objects.all().delete()
 
         succeeded, total = (0, len(svip_variants))
 
@@ -125,6 +126,8 @@ def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False):
             try:
                 if create_variant:
                     assembly, chromosome, position = s['position'].split(":")
+
+                    # should we also create the gene if it doesn't exist?
 
                     target_variant, was_created = Variant.objects.get_or_create(
                         gene__symbol=s['gene_name'],
@@ -147,6 +150,11 @@ def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False):
                         name=s['variant_name'],
                         hgvs_c__endswith=s['HGVScoding'][s['HGVScoding'].index(':') + 1:]
                     )
+
+                # check if it exists and bail if so
+                if not delete_existing and VariantInSVIP.objects.filter(variant=target_variant).exists():
+                    print("Variant %s already exists in SVIP, skipping..." % str(target_variant))
+                    continue
 
                 candidate = VariantInSVIP(
                     variant=target_variant,
@@ -285,6 +293,10 @@ def synthesize_samples(num_samples_per_variant=10):
 
     # for each SVIP variant, produce a random amount of randomly-generated sample data
     for svip_var in svip_variants:
+        if svip_var.diseaseinsvip_set.count() == 0:
+            print("SVIP variant %s has no associated diseases, skipping sample synthesis..." % str(svip_var.description))
+            continue
+
         # get (disease, tissue) pairs from COSMIC for the current variant
         if USE_COSMIC_DISEASES:
             disease_tissues = (
@@ -387,6 +399,11 @@ class Command(BaseCommand):
             help="Creates variant entries referenced in SVIP vars JSON if they don't already exist",
         )
         parser.add_argument(
+            '--delete-existing',
+            action='store_true',
+            help="Drop existing SVIP variants before creation",
+        )
+        parser.add_argument(
             '--only-vars',
             action='store_true',
             help="Don't create samples or curation entries, just SVIP variants",
@@ -398,7 +415,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        created_count, total = create_svipvariants(source=options['svip_infile'], create_variant=options['create_variants'])
+        created_count, total = create_svipvariants(
+            source=options['svip_infile'],
+            create_variant=options['create_variants'],
+            delete_existing=options['delete_existing']
+        )
         self.stdout.write(self.style.SUCCESS('Created %d out of %d SVIP mock variant entries' % (created_count, total)))
 
         if not options['only_vars']:
