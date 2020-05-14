@@ -364,6 +364,11 @@
                 "Author statement",
                 "Other criteria"
             ]
+        },
+        "Variant identification": {
+            "Unknown": [
+                "None"
+            ]
         }
     }
 }

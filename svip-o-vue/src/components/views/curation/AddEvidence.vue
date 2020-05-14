@@ -88,7 +88,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.drugs"
-                                        :enabled="form.type_of_evidence === 'Predictive / Therapeutic'"
+                                        :enabled="form.type_of_evidence === 'Predictive / Therapeutic' || form.type_of_evidence === 'Response to drug'"
                                         label="For which drug?"
                                         inner-id="drug"
                                         required
@@ -105,8 +105,26 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.drugs"
+                                        :enabled="form.type_of_evidence === 'Interaction'"
+                                        label="For which gene or chemical compound?"
+                                        inner-id="drug"
+                                        required
+                                    >
+                                        <GeneSearchBar
+                                            id="drug"
+                                            allow-create
+                                            v-model="form.drugs"
+                                            multiple
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.effect"
-                                        label="Effect of the variant on the therapy"
+                                        label="Effect of the variant"
                                         inner-id="effect"
                                         required
                                     >
@@ -415,6 +433,7 @@ import { HTTP } from "@/router/http";
 import SearchBar from "@/components/widgets/SearchBar";
 import { extend, ValidationObserver } from "vee-validate";
 import DrugSearchBar from "@/components/widgets/DrugSearchBar";
+import GeneSearchBar from "@/components/widgets/GeneSearchBar";
 import ValidatedFormField from "@/components/curation/widgets/ValidatedFormField";
 
 // options.json's top-level organization by separator makes it difficult to index the structure
@@ -449,6 +468,7 @@ export default {
         EvidenceHistory,
         ValidatedFormField,
         DrugSearchBar,
+        GeneSearchBar,
         SearchBar,
         CuratorVariantInformations,
         ValidationObserver
