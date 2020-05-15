@@ -1,6 +1,20 @@
 {
     "CLINICAL SIGNIFICANCE": {
         "Predictive / Therapeutic": {
+            "Sensitive (in vitro)": [
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Case reports (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ],
             "Responsive": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
@@ -15,21 +29,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Not responsive": [
-                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
-                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
-                "Other criteria"
-            ],
-            "Sensitive (in vitro)": [
+            "Resistant (in vitro)": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
@@ -57,7 +57,7 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ],
-            "Resistant (in vitro)": [
+            "Not responsive": [
                 "FDA/EMA/Swissmedic approved therapy (Tier IA)",
                 "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
                 "Well-powered studies with consensus from experts in the field (Tier IB)",
