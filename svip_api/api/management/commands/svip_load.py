@@ -4,6 +4,7 @@ import random
 import sys
 import os
 import json
+import mygene
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -113,6 +114,10 @@ def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False, delete_exis
     :param create_variant create variants that don't exist instead of ignoring them
     :return: a tuple (succeeded, total) with the number of variants added vs. the total number tried, respectively
     """
+
+    # acquire handles to services we'll use for info lookup
+    mg = mygene.MyGeneInfo()
+
     with open(source, "r") as fp:
         svip_variants = json.load(fp)
 
@@ -127,7 +132,33 @@ def create_svipvariants(source=SVIP_VARS_JSON, create_variant=False, delete_exis
                 if create_variant:
                     assembly, chromosome, position = s['position'].split(":")
 
-                    # should we also create the gene if it doesn't exist?
+                    # query for the gene if it doesn't exist in the db yet
+                    if not Gene.objects.filter(symbol=s['gene_name']).exists():
+                        # populate the newly-created gene
+                        result = mg.query(
+                            s['gene_name'], size=1, species='human',
+                            fields='entrezgene,ensembl.gene,symbol,alias,uniprot,hgnc'
+                        )
+
+                        if len(result['hits']) > 0:
+                            hit = result['hits'][0]
+
+                            Gene.objects.create(
+                                symbol=s['gene_name'],
+                                entrez_id=int(hit['entrezgene']),
+                                ensembl_gene_id=hit['ensembl']['gene'],
+                                uniprot_ids=[hit['uniprot']['Swiss-Prot']],
+                                location="",
+                                aliases=hit['alias'],
+                                prev_symbols=[],
+                            )
+                        else:
+                            print("Couldn't insert %s b/c we couldn't find gene %s in MyGene.info, continuing..." % (
+                                "%s %s" % (s['gene_name'], s['variant_name']),
+                                s['gene_name']
+                            ))
+                            continue
+
 
                     target_variant, was_created = Variant.objects.get_or_create(
                         gene__symbol=s['gene_name'],
