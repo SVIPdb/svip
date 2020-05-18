@@ -175,6 +175,11 @@
                 "Reported evidence supportive of benign/likely benign effect (Tier IV)",
                 "Other criteria"
             ]
+        },
+        "Variant identification": {
+            "Unknown": [
+                "None"
+            ]
         }
     },
     "BIOLOGICAL RELEVANCE": {
@@ -363,11 +368,6 @@
                 "Prediction",
                 "Author statement",
                 "Other criteria"
-            ]
-        },
-        "Variant identification": {
-            "Unknown": [
-                "None"
             ]
         }
     }
