@@ -143,6 +143,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         'disease__name',
         'comment',
         'drugs',
+        'interactions',
         'effect',
         'mutation_origin',
         'references',

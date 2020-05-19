@@ -325,6 +325,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
             'type_of_evidence',
             'drugs',
+            'interactions',
             'effect',
             'tier_level_criteria',
             'tier_level',
