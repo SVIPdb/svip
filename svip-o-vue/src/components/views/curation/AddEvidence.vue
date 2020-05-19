@@ -105,16 +105,16 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
-                                        :modeled="form.drugs"
+                                        :modeled="form.interactions"
                                         :enabled="form.type_of_evidence === 'Interaction'"
                                         label="For which gene or chemical compound?"
-                                        inner-id="drug"
+                                        inner-id="interactions"
                                         required
                                     >
                                         <GeneSearchBar
-                                            id="drug"
+                                            id="interactions"
                                             allow-create
-                                            v-model="form.drugs"
+                                            v-model="form.interactions"
                                             multiple
                                             :disabled="isViewOnly"
                                             :state="checkValidity(props, true)"
@@ -514,6 +514,7 @@ export default {
                 extra_variants: [],
                 type_of_evidence: null,
                 drugs: [],
+                interactions: [],
                 effect: null,
                 tier_criteria: null,
                 mutation_origin: null,
@@ -696,6 +697,7 @@ export default {
 
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: this.form.drugs || [],
+                interactions: this.form.interactions || [],
                 effect: this.form.effect,
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,
