@@ -25,7 +25,8 @@
                     -->
 
                     <VariomesAbstract
-                        :variomes="variomes" citable
+                        :variomes="variomes"
+                        citable
                         @showmenu="handleRightClick"
                         style="margin-bottom: 1.5em;"
                     />
@@ -87,7 +88,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.drugs"
-                                        :enabled="form.type_of_evidence === 'Predictive / Therapeutic'"
+                                        :enabled="form.type_of_evidence === 'Predictive / Therapeutic' || form.type_of_evidence === 'Response to drug'"
                                         label="For which drug?"
                                         inner-id="drug"
                                         required
@@ -104,8 +105,26 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.drugs"
+                                        :enabled="form.type_of_evidence === 'Interaction'"
+                                        label="For which gene or chemical compound?"
+                                        inner-id="drug"
+                                        required
+                                    >
+                                        <GeneSearchBar
+                                            id="drug"
+                                            allow-create
+                                            v-model="form.drugs"
+                                            multiple
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.effect"
-                                        label="Effect of the variant on the therapy"
+                                        label="Effect of the variant"
                                         inner-id="effect"
                                         required
                                     >
@@ -122,7 +141,7 @@
                                         v-slot="props"
                                         :modeled="form.tier_criteria"
                                         :enabled="form.type_of_evidence !== 'Excluded'"
-                                        label="Select a Tier criteria"
+                                        label="Select a Tier or Functional criteria"
                                         inner-id="tier_criteria"
                                         required
                                     >
@@ -179,7 +198,8 @@
                                             id="summary"
                                             v-model="form.summary"
                                             :disabled="isViewOnly"
-                                            rows="3" max-rows="5"
+                                            rows="3"
+                                            max-rows="5"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
@@ -195,35 +215,51 @@
                                             id="comment"
                                             v-model="form.comment"
                                             :disabled="isViewOnly"
-                                            rows="3" max-rows="5"
+                                            rows="3"
+                                            max-rows="5"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
 
-                                    <b-form-group label="Your textual evidences" label-cols-sm="4" label-cols-lg="3">
-                                        <span v-if="form.annotations && form.annotations.length > 0">
-                                          <b-input-group
-                                              v-for="(annotation,index) in form.annotations"
-                                              :key="index"
-                                              class="mt-3"
-                                          >
-                                            <b-form-textarea rows="3" disabled :value="annotation" no-resize />
-                                            <b-input-group-append>
-                                              <b-button variant="danger" @click="removeAnnotation(index)">
-                                                <icon name="minus" />
-                                              </b-button>
-                                            </b-input-group-append>
-                                          </b-input-group>
+                                    <b-form-group
+                                        label="Your textual evidences"
+                                        label-cols-sm="4"
+                                        label-cols-lg="3"
+                                    >
+                                        <span
+                                            v-if="form.annotations && form.annotations.length > 0"
+                                        >
+                                            <b-input-group
+                                                v-for="(annotation,index) in form.annotations"
+                                                :key="index"
+                                                class="mt-3"
+                                            >
+                                                <b-form-textarea
+                                                    rows="3"
+                                                    disabled
+                                                    :value="annotation"
+                                                    no-resize
+                                                />
+                                                <b-input-group-append>
+                                                    <b-button
+                                                        variant="danger"
+                                                        @click="removeAnnotation(index)"
+                                                    >
+                                                        <icon name="minus" />
+                                                    </b-button>
+                                                </b-input-group-append>
+                                            </b-input-group>
                                         </span>
                                         <b-input-group v-else>
-                                            <i class="text-muted">(Select text in the citation summary and right-click to add a textual evidence.)</i>
+                                            <i
+                                                class="text-muted"
+                                            >(Select text in the citation summary and right-click to add a textual evidence.)</i>
                                         </b-input-group>
                                     </b-form-group>
                                 </ValidationObserver>
                             </b-container>
                         </b-card-body>
                     </b-card>
-
                 </b-col>
 
                 <!--
@@ -274,12 +310,17 @@
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="calendar" />Last modification:
-                                        <span class="value">{{this.form.last_modified || '-'}}</span>
+                                        <span
+                                            class="value"
+                                        >{{this.form.last_modified || '-'}}</span>
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="history" />History:
                                         <span class="value">
-                                          <b-link v-if="form.id" @click="showHistory()">show revisions</b-link>
+                                            <b-link
+                                                v-if="form.id"
+                                                @click="showHistory()"
+                                            >show revisions</b-link>
                                         </span>
                                     </li>
                                 </ul>
@@ -301,7 +342,13 @@
                                     >{{is_saved ? "Update" : "Save"}} Draft</b-button>
                                 </div>
 
-                                <b-button class="mt-3" block variant="success" :disabled="form.status === 'submitted'" @click="onSubmit">Save Evidence</b-button>
+                                <b-button
+                                    class="mt-3"
+                                    block
+                                    variant="success"
+                                    :disabled="form.status === 'submitted'"
+                                    @click="onSubmit"
+                                >Save Evidence</b-button>
                             </b-collapse>
                         </b-card-body>
                     </b-card>
@@ -321,19 +368,30 @@
 
                         <b-card-body class="p-0 m-0">
                             <b-collapse id="statistic" v-model="showStat" class="m-3">
-                                <div v-if="variomes && variomes.publications && variomes.publications.length > 0">
-                                    <b-link v-for="entry in keywordSet"
+                                <div
+                                    v-if="variomes && variomes.publications && variomes.publications.length > 0"
+                                >
+                                    <b-link
+                                        v-for="entry in keywordSet"
                                         v-bind="pubmedURL(entry.url)"
                                     >
-                                        <b-badge :class="entry.class">{{ entry.label }}{{ entry.count !== undefined ? ` (${entry.count})` : ''}}</b-badge>
+                                        <b-badge
+                                            :class="entry.class"
+                                        >{{ entry.label }}{{ entry.count !== undefined ? ` (${entry.count})` : ''}}</b-badge>
                                     </b-link>
                                 </div>
-                                <div v-else-if="variomes" class="text-muted text-center font-italic">
-                                    <icon name="exclamation-triangle" scale="1.5" style="vertical-align: text-bottom; margin-right: 5px;" />
-                                    An error occurred while retrieving this PMID
+                                <div
+                                    v-else-if="variomes"
+                                    class="text-muted text-center font-italic"
+                                >
+                                    <icon
+                                        name="exclamation-triangle"
+                                        scale="1.5"
+                                        style="vertical-align: text-bottom; margin-right: 5px;"
+                                    />An error occurred while retrieving this PMID
                                 </div>
                                 <div v-else class="text-center">
-                                    <b-spinner label="Spinning" variant="primary" /> loading...
+                                    <b-spinner label="Spinning" variant="primary" />loading...
                                 </div>
                             </b-collapse>
                         </b-card-body>
@@ -375,6 +433,7 @@ import { HTTP } from "@/router/http";
 import SearchBar from "@/components/widgets/SearchBar";
 import { extend, ValidationObserver } from "vee-validate";
 import DrugSearchBar from "@/components/widgets/DrugSearchBar";
+import GeneSearchBar from "@/components/widgets/GeneSearchBar";
 import ValidatedFormField from "@/components/curation/widgets/ValidatedFormField";
 
 // options.json's top-level organization by separator makes it difficult to index the structure
@@ -390,11 +449,11 @@ const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
 
 import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
-import {checkInRole} from "@/directives/access";
+import { checkInRole } from "@/directives/access";
 import dayjs from "dayjs";
 import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
-import {pubmedURL} from "@/utils";
+import { pubmedURL } from "@/utils";
 
 extend("required", {
     ...required,
@@ -409,6 +468,7 @@ export default {
         EvidenceHistory,
         ValidatedFormField,
         DrugSearchBar,
+        GeneSearchBar,
         SearchBar,
         CuratorVariantInformations,
         ValidationObserver
@@ -477,17 +537,22 @@ export default {
         optionClicked(event) {
             if (event.option.slug === "copy") {
                 this.$copyText(this.selection).then(
-                    () => { this.$snotify.info("Copied text"); },
-                    () => { this.$snotify.warn("Couldn't copy it"); }
+                    () => {
+                        this.$snotify.info("Copied text");
+                    },
+                    () => {
+                        this.$snotify.warn("Couldn't copy it");
+                    }
                 );
-            }
-            else if (event.option.slug === "annotate") {
+            } else if (event.option.slug === "annotate") {
                 if (this.isViewOnly) {
                     this.$snotify.warning("Can't alter a submitted entry");
                     return;
                 }
 
-                this.$snotify.info('Added selection to annotations', { position: 'centerBottom' });
+                this.$snotify.info("Added selection to annotations", {
+                    position: "centerBottom"
+                });
                 this.form.annotations.push(this.selection);
             }
         },
@@ -513,7 +578,8 @@ export default {
                 })
                 .catch(err => {
                     this.variomes = {
-                        error: "Couldn't retrieve publication info, try again later."
+                        error:
+                            "Couldn't retrieve publication info, try again later."
                     };
                 });
         },
@@ -546,8 +612,7 @@ export default {
                 this.source = source.trim();
                 this.reference = reference.trim();
                 this.loadVariomeData();
-            }
-            else {
+            } else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
                         this.rehydrate(response.data); // populates source, reference from the response
@@ -617,12 +682,17 @@ export default {
             const matched = tier_criteria_parser.exec(this.form.tier_criteria);
             const { tier_level, tier_level_criteria } = matched
                 ? matched.groups
-                : { tier_level: null, tier_level_criteria: this.form.tier_criteria };
+                : {
+                      tier_level: null,
+                      tier_level_criteria: this.form.tier_criteria
+                  };
 
             const payload = {
                 disease: this.form.disease.id,
                 variant: this.variant.id,
-                extra_variants: this.form.extra_variants ? this.form.extra_variants.map(x => x.id) : [], // selected plus the other ones
+                extra_variants: this.form.extra_variants
+                    ? this.form.extra_variants.map(x => x.id)
+                    : [], // selected plus the other ones
 
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: this.form.drugs || [],
@@ -665,19 +735,28 @@ export default {
                     if (this.$route.params.action === "add") {
                         this.$router.replace({
                             name: "add-evidence",
-                            params: { ...this.$route.params, action: result.data.id }
+                            params: {
+                                ...this.$route.params,
+                                action: result.data.id
+                            }
                         });
                     }
                 })
                 .catch((err, resp) => {
                     if (err.response) {
                         if (err.response.status == 403) {
-                            this.$snotify.error("Submitted entries can't be changed!");
+                            this.$snotify.error(
+                                "Submitted entries can't be changed!"
+                            );
                             return;
                         }
                         if (err.response.status == 400) {
-                            const failedKeys = Object.keys(err.response.data).join(", ");
-                            this.$snotify.error(`Validation failed for these fields: ${failedKeys}`);
+                            const failedKeys = Object.keys(
+                                err.response.data
+                            ).join(", ");
+                            this.$snotify.error(
+                                `Validation failed for these fields: ${failedKeys}`
+                            );
                             return;
                         }
                     }
@@ -695,21 +774,27 @@ export default {
         },
         onDelete() {
             if (confirm("Are you sure that you want to delete this entry?")) {
-                HTTP.delete(`/curation_entries/${this.form.id}`).then(result => {
-                    // refresh curation lists on other pages
-                    this.channel.postMessage(`Deleted ID ${result.data.id}`);
+                HTTP.delete(`/curation_entries/${this.form.id}`).then(
+                    result => {
+                        // refresh curation lists on other pages
+                        this.channel.postMessage(
+                            `Deleted ID ${result.data.id}`
+                        );
 
-                    this.$snotify.info("Entry deleted");
-                    this.form.id = null;
-                    this.pageError = {
-                        title: "Entry Deleted",
-                        message: "You may now close this window/tab."
-                    };
-                });
+                        this.$snotify.info("Entry deleted");
+                        this.form.id = null;
+                        this.pageError = {
+                            title: "Entry Deleted",
+                            message: "You may now close this window/tab."
+                        };
+                    }
+                );
             }
         },
         checkValidity(props, withoutChange) {
-            return props.invalid && (withoutChange || !props.changed) ? false : null;
+            return props.invalid && (withoutChange || !props.changed)
+                ? false
+                : null;
         },
         showHistory() {
             this.$refs["history-modal"].show();
@@ -737,8 +822,7 @@ export default {
             }).href;
         },
         keywordSet() {
-            if (!this.variomes)
-                return [];
+            if (!this.variomes) return [];
 
             const { gene, variant, disease } = {
                 gene: this.variomes.query.genes_variants[0].gene,
@@ -775,7 +859,7 @@ export default {
                     class: "bg-info",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
                     label: `${gene} + ${variant}`
-                },
+                }
             ];
         },
         effects() {
@@ -783,7 +867,7 @@ export default {
             //     ? Object.keys(this.inputs[this.filterLabel][this.form.type_of_evidence])
             //     : [];
             return this.form.type_of_evidence &&
-            effect_set[this.form.type_of_evidence]
+                effect_set[this.form.type_of_evidence]
                 ? Object.keys(effect_set[this.form.type_of_evidence])
                 : [];
         },
@@ -799,7 +883,7 @@ export default {
             return this.form.id != null;
         },
         isViewOnly() {
-            return this.form.id && this.form.status === 'submitted';
+            return this.form.id && this.form.status === "submitted";
         }
     },
     mounted() {
