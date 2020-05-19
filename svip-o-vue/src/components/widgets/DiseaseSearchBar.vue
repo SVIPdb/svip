@@ -6,7 +6,13 @@
         :multiple="multiple" :taggable="allowCreate" :push-tags="allowCreate"
         :disabled="disabled"
         label="name"
-    />
+        :filter-by="filterBy"
+    >
+        <template v-slot:option="option">
+            {{ option.name || option.label }}
+            <span class="text-muted float-right">{{ option.localization && titleCase(option.localization.toLowerCase()) }}</span>
+        </template>
+    </v-select>
 </template>
 
 <script>
@@ -33,8 +39,16 @@ export default {
         });
     },
     methods: {
+        titleCase,
         update(newValue) {
             this.$emit('input', newValue);
+        },
+        filterBy(option, label, search) {
+            const isearch = search.toLowerCase();
+            return (
+                (option.name && option.name.toLowerCase().includes(isearch)) ||
+                (option.localization && option.localization.toLowerCase().includes(isearch))
+            );
         }
     }
 }
