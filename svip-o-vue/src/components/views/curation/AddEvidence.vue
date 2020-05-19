@@ -372,7 +372,7 @@
                                     v-if="variomes && variomes.publications && variomes.publications.length > 0"
                                 >
                                     <b-link
-                                        v-for="entry in keywordSet"
+                                        v-for="(entry, idx) in keywordSet" :key="idx"
                                         v-bind="pubmedURL(entry.url)"
                                     >
                                         <b-badge
@@ -469,7 +469,6 @@ export default {
         ValidatedFormField,
         DrugSearchBar,
         GeneSearchBar,
-        SearchBar,
         CuratorVariantInformations,
         ValidationObserver
     },
@@ -684,9 +683,9 @@ export default {
             const { tier_level, tier_level_criteria } = matched
                 ? matched.groups
                 : {
-                      tier_level: null,
-                      tier_level_criteria: this.form.tier_criteria
-                  };
+                    tier_level: null,
+                    tier_level_criteria: this.form.tier_criteria
+                };
 
             const payload = {
                 disease: this.form.disease.id,
