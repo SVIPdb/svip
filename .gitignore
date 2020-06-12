@@ -1,4 +1,13 @@
 .env
-/.idea
+.idea
+.history
+.venv
+__pycache__
+/.ipynb_checkpoints
 /svip_db_backups/**/*.dump
 /svip_db_backups/**/*.sql
+
+# stuff we don't want to commit quite yet
+/sensitive
+/docs
+/resources
