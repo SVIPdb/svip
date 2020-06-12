@@ -6,20 +6,9 @@ version: '3.5'
 
 services:
   nginx:
-    build:
-      context: ./service_config/nginx
-      dockerfile: Dockerfile
-    volumes:
-      - '${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro'
-      - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro'
-      - 'web_built:/usr/share/nginx/html'
-      - 'api_static:/usr/share/api_static'
     ports:
       - '8020:80'
-    depends_on:
-      - api
-      - frontend
-
+      
   api:
     build:
       context: ./svip_api
@@ -36,8 +25,7 @@ services:
     build:
       context: ./svip-o-vue
       dockerfile: Dockerfile
-      target: build-deps
-    command: 'cp -R /app/dist/* /web'
+      target: install-deps
     restart: 'no'
     environment:
       - 'VUE_APP_API_URL=http://localhost:8020/api/v1/'
