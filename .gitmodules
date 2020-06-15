@@ -4,9 +4,6 @@
 [submodule "svip_server"]
 	path = svip_api
 	url = git@github.com:SVIPdb/svip_api.git
-[submodule "outputs"]
-	path = outputs
-	url = git@gitlab.ethz.ch:faisala/svip_outputs.git
 [submodule "svip-o-vue"]
 	path = svip-o-vue
 	url = git@github.com:SVIPdb/frontend.git 
