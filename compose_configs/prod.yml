@@ -25,7 +25,6 @@ services:
     build:
       context: ./svip-o-vue
       dockerfile: Dockerfile
-      target: install-deps
     restart: 'no'
     environment:
       - 'VUE_APP_API_URL=http://localhost:8020/api/v1/'

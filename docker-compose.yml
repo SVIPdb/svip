@@ -65,11 +65,13 @@ services:
     build:
       context: ./svip-o-vue
       dockerfile: Dockerfile
-      target: hmr-debug
     volumes:
       - web_built:/web
       - ./svip-o-vue:/app:delegated
       - /app/node_modules # prevent syncing of node_modules
+      # allows the module's git repo to be accessed in the container, which
+      # lets GitRevisionPlugin tag each build with its commit hash, branch, etc. 
+      - .git/modules/svip-o-vue:/.git/modules/svip-o-vue:delegated,ro
     # # starts react in hot-reload mode
     # # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
     # command: sh -c "npm run serve"
