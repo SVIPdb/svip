@@ -1,9 +1,12 @@
 [submodule "g2p-aggregator"]
 	path = g2p-aggregator
 	url = git@github.com:SVIPdb/g2p-aggregator.git 
+	branch = v0.11
 [submodule "svip_server"]
 	path = svip_api
 	url = git@github.com:SVIPdb/svip_api.git
+	branch = master
 [submodule "svip-o-vue"]
 	path = svip-o-vue
 	url = git@github.com:SVIPdb/frontend.git 
+	branch = master
