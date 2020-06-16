@@ -26,7 +26,7 @@ To initially start the database server, API, and frontend:
 1. Copy the contents of `.env.TEMPLATE` into `.env` and change the fields in it as necessary.
 2. Run `docker-compose up -d`, which will launch the database server, API server,
    and static webserver which hosts the frontend.
-3. (Optional) If you'd like to load a different data dump, execute the following:
+3. (Optional) If you'd like to load a data dump, execute the following:
    1. `docker-compose exec db /bin/bash`
    2. `cd /backups` and `ls -lt` to review the list of available dumpfiles.
    3. `./restoredump.sh <your_dumpfile> svip_api` to load the dumpfile.
