@@ -130,10 +130,10 @@
                             <h5>Facets</h5>
 
                             <ul>
-                                <li v-for="(data, facet_name) in data.item.details.facet_details">
+                                <li v-for="(data, facet_name) in data.item.details.facet_details" :key="facet_name">
                                     <b>{{ facet_name }}</b>
                                     <ul>
-                                        <li v-for="(entry, idx) in data">
+                                        <li v-for="(entry, idx) in data" :key="idx">
                                             {{ entry.preferred_term }}
                                             <i v-if="entry.count">({{ entry.count }})</i>
                                         </li>

@@ -5,7 +5,7 @@
                 <h1>Releases</h1>
                 <p>The current SVIP release is <b>v0.3.0</b>. The full changelog with each version is listed below.</p>
 
-                <div v-for="(release, code) in releases" class="release">
+                <div v-for="(release, code) in releases" class="release" :key="code">
                     <h3>v{{ code }} - {{ release.name }}</h3>
                     <p>{{ release.summary }}</p>
 
@@ -15,7 +15,7 @@
 
                             <b-collapse :visible="release.significant">
                                 <ul class="changelog">
-                                    <li v-for="entry in release.changes">{{ entry }}</li>
+                                    <li v-for="(entry, idx) in release.changes" :key="idx">{{ entry }}</li>
                                 </ul>
                             </b-collapse>
                         </div>
@@ -25,7 +25,7 @@
 
                             <b-collapse :visible="release.full">
                                 <ul class="changelog">
-                                    <li v-for="commit in release.changelog">
+                                    <li v-for="commit in release.changelog" :key="commit.commit">
                                         <b v-b-tooltip="`${commit.author.name} on ${commit.author.date}`">
                                             {{ relativeDate(commit.author.date) }}:
                                         </b>

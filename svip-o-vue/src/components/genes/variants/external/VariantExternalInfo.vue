@@ -47,7 +47,7 @@ import SOCIBP from "@/components/genes/variants/external/SOCIBP";
 
 export default {
     name: "VariantExternalInfo",
-    components: {SwissPO, Pathogenicity, PopulationStats, SOCIBP, Isotope},
+    components: {SwissPO, Pathogenicity, PopulationStats, SOCIBP},
     props: ["variant", "mvInfo", "extras", "exclude"],
     data() {
         return {

@@ -81,7 +81,7 @@
                 </template>
 
                 <template v-slot:cell(curator)="data">
-                    <span v-for="(owner, idx) in data.value">
+                    <span v-for="(owner, idx) in data.value" :key="owner.name">
                         <span v-if="idx > 0">, </span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b slot-scope="{ name }" v-b-tooltip.hover="name.name">{{ name.abbrev }}</b>

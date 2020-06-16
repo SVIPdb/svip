@@ -80,10 +80,9 @@
 <script>
 import { mapGetters } from "vuex";
 import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
-import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
 import store from "@/store";
-import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
+import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
@@ -95,7 +94,6 @@ export default {
         VariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
-        VariomesLitPopover,
         EvidenceCard
     },
     data() {

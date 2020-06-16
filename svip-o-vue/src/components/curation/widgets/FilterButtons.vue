@@ -1,6 +1,6 @@
 <template>
     <b-button-group :size="size">
-        <b-button class="filter-btn" v-for="item in items" :variant="item.variant || 'primary'" @click="update(item.value || item.label)">
+        <b-button class="filter-btn" v-for="item in items" :variant="item.variant || 'primary'" @click="update(item.value || item.label)" :key="item.label">
             {{ item.label }}
             <transition name="fade">
                 <icon class="caret" scale="1.5" v-if="value === (item.value || item.label)" name="caret-up" />

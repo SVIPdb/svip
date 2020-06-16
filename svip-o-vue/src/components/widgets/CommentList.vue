@@ -11,7 +11,7 @@
                     </div>
                     <div class="metaframe">
                         <div v-if="comment.tags">
-                            <b-badge small :style="`background-color: ${colorizeTag(c)};`" v-for="c in comment.tags">{{ c }}</b-badge>
+                            <b-badge small :style="`background-color: ${colorizeTag(c)};`" v-for="c in comment.tags" :key="c">{{ c }}</b-badge>
                         </div>
                         <div class="datetime">
                             {{ formatCommentDatetime(comment.created_on) }}
