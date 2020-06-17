@@ -14,6 +14,8 @@ module.exports = {
         plugins: [
             new GitRevisionPlugin({ branch: true })
         ]
+    },
+    chainWebpack: config => {
+        config.plugins.delete('progress')
     }
 };
-
