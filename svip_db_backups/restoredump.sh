@@ -20,4 +20,4 @@ psql -U postgres -c "SELECT pid, (SELECT pg_terminate_backend(pid)) as killed fr
 
 dropdb ${TARGET_DB} || die "Can't drop DB, presumably because it's in use"
 
-createdb ${TARGET_DB}; pg_restore -F c -d ${TARGET_DB} $1
+createdb ${TARGET_DB}; pg_restore -j 16 -F c -d ${TARGET_DB} $1

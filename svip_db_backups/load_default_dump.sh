@@ -11,7 +11,7 @@ if [ -z "${DB_CONTAINER}" ]; then
 fi
 
 echo "=> Loading SVIP db from ${DEFAULT_DUMPFILE} into ${DB_CONTAINER}; this may take some time (~8+ minutes)..."
-docker exec -it ${DB_CONTAINER} bash -c "/backups/restoredump.sh ${DEFAULT_DUMPFILE} ${TARGET_DB}"
+time docker exec -it ${DB_CONTAINER} bash -c "/backups/restoredump.sh ${DEFAULT_DUMPFILE} ${TARGET_DB}"
 
 # run migrations in API container, if present
 if [ ! -z "${API_CONTAINER}" ]; then
