@@ -31,8 +31,8 @@ server {
 
 
 server {
-  listen       443 ssl http2 default_server;
-  listen       [::]:443 ssl http2 default_server;
+  listen       443 ssl http2;
+  listen       [::]:443 ssl http2;
   server_name  svip.nexus.ethz.ch;
 
   root           /usr/share/nginx/html;
