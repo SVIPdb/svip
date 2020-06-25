@@ -4,3 +4,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . ./
+
+# create a symlink to /app in /svip-o-vue to mirror the host's paths
+RUN ln -s /app /svip-o-vue
