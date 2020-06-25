@@ -16,4 +16,4 @@ services:
 
   frontend:
     environment:
-      - 'VUE_APP_API_URL=https://svip.ch/api/v1/'
+      - 'VUE_APP_API_URL=/api/v1/'
