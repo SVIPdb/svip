@@ -25,6 +25,7 @@ services:
     image: "postgres:11.1"
     shm_size: '2gb'
     restart: always
+    command: -c 'max_wal_size=2GB'
     ports:
       - "30432:5432" # FIXME: dev access port
     volumes:

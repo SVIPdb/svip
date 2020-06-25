@@ -16,5 +16,5 @@ time docker exec -it ${DB_CONTAINER} bash -c "/backups/restoredump.sh ${DEFAULT_
 # run migrations in API container, if present
 if [ ! -z "${API_CONTAINER}" ]; then
     echo "=> API container '${API_CONTAINER}' found, migrating..."
-    docker exec -it ${API_CONTAINER} '/app/manage.py migrate'
+    docker exec -it ${API_CONTAINER} /app/manage.py migrate
 fi
