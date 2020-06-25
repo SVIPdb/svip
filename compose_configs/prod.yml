@@ -5,10 +5,6 @@ version: '3.5'
 # docker-compose -f docker-compose.yml -f compose/prod.yml -f compose/sites/svip-dev.yml "$@"
 
 services:
-  nginx:
-    ports:
-      - '8020:80'
-      
   api:
     build:
       context: ./svip_api
@@ -20,11 +16,3 @@ services:
       # - POSTGRES_DB=svip_api
       - USE_DEV_SERVER=
       - DJANGO_SETTINGS_MODULE=svip_server.settings.production
-
-  frontend:
-    build:
-      context: ./svip-o-vue
-      dockerfile: Dockerfile
-    restart: 'no'
-    environment:
-      - 'VUE_APP_API_URL=http://localhost:8020/api/v1/'
