@@ -4,6 +4,9 @@ case $(hostname) in
   "svip-dev")
     SITE_COMPOSE="-f compose_configs/sites/svip-dev.yml"
     ;;
+  "svip-public")
+    SITE_COMPOSE="-f compose_configs/sites/sib-svip.yml"
+    ;;
   "svip-test")
     SITE_COMPOSE="-f compose_configs/sites/svip-test.yml"
     ;;

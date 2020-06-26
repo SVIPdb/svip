@@ -1,0 +1,30 @@
+# Settings for a TLS enabled server.
+upstream svip_api {
+  server api:8085 fail_timeout=10;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name _;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen       443 ssl http2 default_server;
+  listen       [::]:443 ssl http2 default_server;
+  server_name  _;
+
+  root           /usr/share/nginx/html;
+  index          index.html;
+
+  ssl_certificate "/etc/pki/tls/certs/svip.ch.chained.crt";
+  ssl_certificate_key "/etc/pki/tls/private/svip.ch.key";
+  ssl_session_cache shared:SSL:1m;
+  ssl_session_timeout  10m;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+  ssl_prefer_server_ciphers on;
+
+  #  API routes
+  include shared.conf;
+}
