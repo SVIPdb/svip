@@ -22,6 +22,7 @@
                 >Dashboard
                 </b-nav-item>
                 <b-nav-item :to="'/help'">Help</b-nav-item>
+                <b-nav-item :to="'/about'">About</b-nav-item>
                 <b-nav-item :to="'/statistics'">Statistics</b-nav-item>
                 <b-nav-item :to="'/releases'">Releases</b-nav-item>
             </b-navbar-nav>

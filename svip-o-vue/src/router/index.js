@@ -15,10 +15,11 @@ import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
 import AddEvidence from "@/components/views/curation/AddEvidence";
 import DebugPage from "@/components/views/DebugPage";
-import {checkInRole} from "@/directives/access";
+import { checkInRole } from "@/directives/access";
 
-import {HTTP} from '@/router/http';
+import { HTTP } from '@/router/http';
 import Releases from "@/components/views/Releases";
+import About from "@/components/views/About";
 
 Vue.use(Router);
 
@@ -63,6 +64,13 @@ const router = new Router({
             name: "help",
             component: Help,
             meta: { title: 'SVIP-O: Help' }
+        },
+
+        {
+            path: "/about",
+            name: "about",
+            component: About,
+            meta: { title: 'SVIP-O: About' }
         },
 
         {
