@@ -21,6 +21,7 @@
     "lodash": "^4.17.15",
     "ngl": "2.0.0-dev.37",
     "slugify": "^1.4.0",
+    "ulog": "^2.0.0-beta.7",
     "url-polyfill": "^1.1.9",
     "vee-validate": "^3.3.3",
     "vue": "^2.6.11",
