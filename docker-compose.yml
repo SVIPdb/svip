@@ -69,7 +69,7 @@ services:
     volumes:
       - web_built:/web
       - ./svip-o-vue:/app:delegated
-      - /app/node_modules # prevent syncing of node_modules
+      - /app/node_modules/ # prevent syncing of node_modules
       # allows the module's git repo to be accessed in the container, which
       # lets GitRevisionPlugin tag each build with its commit hash, branch, etc. 
       - .git/modules/svip-o-vue:/.git/modules/svip-o-vue:delegated,ro
