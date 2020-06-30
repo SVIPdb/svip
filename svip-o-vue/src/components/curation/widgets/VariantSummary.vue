@@ -41,13 +41,11 @@
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
-import PagedTable from "@/components/widgets/PagedTable";
-import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import BroadcastChannel from "broadcast-channel";
-import {abbreviatedName, simpleDateTime, titleCase} from "@/utils";
 import VariantInSVIPHistory from "@/components/curation/widgets/VariantInSVIPHistory";
-import { mapGetters } from "vuex";
-import dayjs from 'dayjs';
+import ulog from 'ulog';
+
+const log = ulog('VariantSummary');
 
 export default {
     name: "VariantSummary",
@@ -66,7 +64,7 @@ export default {
         };
     },
     created() {
-        this.channel.onmessage = (msg) => {
+        this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
             }
@@ -83,7 +81,7 @@ export default {
                     this.$snotify.success("Summary updated!");
                 })
                 .catch((err) => {
-                    console.warn(err);
+                    log.warn(err);
                     this.$snotify.error("Failed to update summary");
                 })
         },

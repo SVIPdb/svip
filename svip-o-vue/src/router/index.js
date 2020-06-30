@@ -17,12 +17,16 @@ import AddEvidence from "@/components/views/curation/AddEvidence";
 import DebugPage from "@/components/views/DebugPage";
 import { checkInRole } from "@/directives/access";
 
-import { HTTP } from '@/router/http';
 import Releases from "@/components/views/Releases";
 import About from "@/components/views/About";
 
+import ulog from 'ulog';
+
+const log = ulog('Router:index');
+
 Vue.use(Router);
 
+/*
 function remapGeneSymbol(to, from, next) {
     // remaps to.params.gene_id to an actual ID if it's non-numeric (e.g., "BRAF")
     // FIXME: we should just commit to using gene/variant symbols in URLs rather than supporting both IDs and symbols
@@ -38,6 +42,7 @@ function remapGeneSymbol(to, from, next) {
         next();
     }
 }
+*/
 
 const router = new Router({
     mode: "history",
@@ -160,7 +165,7 @@ router.beforeEach((to, from, next) => {
                 next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
             }
             else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
-                console.warn("Roles check failed!");
+                log.warn("Roles check failed!");
                 next({ name: 'login', params: {
                     default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
                     nextRoute: to.path

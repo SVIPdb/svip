@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import {makeSampleProvider} from "@/components/genes/variants/item_providers/sample_provider";
+import { makeSampleProvider } from "@/components/genes/variants/item_providers/sample_provider";
 
 export default {
     name: "SampleTable",

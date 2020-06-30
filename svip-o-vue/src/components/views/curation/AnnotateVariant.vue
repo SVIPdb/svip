@@ -87,6 +87,9 @@ import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
 import VariantSummary from "@/components/curation/widgets/VariantSummary";
+import ulog from 'ulog';
+
+const log = ulog('Curation:AnnotateVariant');
 
 export default {
     name: "AnnotateVariant",
@@ -157,7 +160,8 @@ export default {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
-                .catch(err => {
+                .catch((err) => {
+                    log.warn(err);
                     this.variomes = {
                         error: "Couldn't retrieve publication info, try again later."
                     };

@@ -40,8 +40,8 @@
 
 <script>
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import {simpleDateTime, trimPrefix} from "@/utils";
-import {checkInRole} from "@/directives/access";
+import { simpleDateTime, trimPrefix } from "@/utils";
+import { checkInRole } from "@/directives/access";
 
 export default {
     name: "EvidenceTable",

@@ -27,7 +27,10 @@
 </template>
 
 <script>
-import {HTTP} from '@/router/http';
+import { HTTP } from '@/router/http';
+import ulog from 'ulog'
+
+const log = ulog('VariomesLitPopover');
 
 // FIXME: eventually link to http://variomes.hesge.ch/Variomes/literature.jsp?id=27145535&gene=NRAS&variant=Q61R
 
@@ -115,6 +118,7 @@ export default {
                     this.variomes = response.data;
                 })
                 .catch((err) => {
+                    log.warn(err);
                     this.error = {error: "Couldn't retrieve publication info, try again later."};
                 });
         },

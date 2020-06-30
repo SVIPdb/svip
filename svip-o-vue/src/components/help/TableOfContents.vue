@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {slugifySans} from "@/utils";
+import { slugifySans } from "@/utils";
 
 export default {
     name: "TableOfContents",

@@ -163,10 +163,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import fieldsTextMining from "@/data/curation/text_mining/fields.json";
-import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import TransitionExpand from "@/components/widgets/TransitionExpand";

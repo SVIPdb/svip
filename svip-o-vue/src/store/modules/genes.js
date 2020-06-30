@@ -1,6 +1,9 @@
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 import vueInstance from '@/main';
-import {MultiGeneError} from "@/exceptions";
+import { MultiGeneError } from "@/exceptions";
+import ulog from 'ulog';
+
+const log = ulog('Base64Mixin');
 
 // initial state
 const state = {
@@ -65,6 +68,7 @@ const actions = {
                 nbPhenotypes: stats.phenotypes
             });
         }).catch((err) => {
+            log.warn(err);
             vueInstance.$snotify.error('Failed to retrieve site statistics');
             commit('SET_SITE_STATS_LOADING', {status: 'error'});
         });

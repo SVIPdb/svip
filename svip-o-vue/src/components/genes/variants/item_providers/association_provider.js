@@ -1,7 +1,5 @@
-import {HTTP} from "@/router/http";
-import {titleCase, parsePublicationURL} from "@/utils";
-import {normalizeItemList} from "@/utils";
-import store from "@/store";
+import { HTTP } from "@/router/http";
+import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
 
 import * as _ from 'lodash';
 

@@ -126,20 +126,14 @@
 
 
 <script>
-import Vue from "vue";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import store from "@/store";
-import {titleCase} from "../../../utils";
-import PubmedPopover from "@/components/widgets/PubmedPopover";
-import {checkInRole} from "@/directives/access";
+import { titleCase } from "../../../utils";
+import { checkInRole } from "@/directives/access";
 
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderPlot from "@/components/plots/genderPlot";
-
-import {makeSampleProvider} from "./item_providers/sample_provider";
-import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import {abbreviatedName, trimPrefix} from "@/utils";
-import TissueDistribution from "@/components/genes/variants/svip/TissueDistribution";
+import { abbreviatedName } from "@/utils";
 import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";

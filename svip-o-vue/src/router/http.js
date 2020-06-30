@@ -1,11 +1,14 @@
 import axios from "axios";
-import {serverURL} from "@/app_config";
+import { serverURL } from "@/app_config";
 import debounce from 'lodash/debounce';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import {TokenErrors, USING_JWT_COOKIE} from "@/store/modules/users";
+import { USING_JWT_COOKIE } from "@/store/modules/users";
 import store from '@/store';
 import router from '@/router';
 import vueInstance from '@/main';
+import ulog from 'ulog';
+
+const log = ulog('Support:HTTP');
 
 export var HTTProot = axios.create({baseURL: serverURL.replace("/v1", ""), withCredentials: USING_JWT_COOKIE});
 export var HTTP = axios.create({baseURL: serverURL, withCredentials: USING_JWT_COOKIE});
@@ -34,6 +37,8 @@ createAuthRefreshInterceptor(
 
             return Promise.resolve();
         }).catch((err) => {
+            log.warn(err);
+
             debouncedAuthWarn(`Authentication expired!`);
             router.push({name: 'login',
                 params: {

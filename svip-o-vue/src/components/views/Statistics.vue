@@ -95,9 +95,9 @@
 <script>
 import dayjs from "dayjs";
 import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
-import {HTTP} from '@/router/http';
+import { HTTP } from '@/router/http';
 import SourceIcon from "@/components/widgets/SourceIcon";
-import {combinedDateTime} from "@/utils";
+import { combinedDateTime } from "@/utils";
 
 dayjs.extend(RelativeTime);
 

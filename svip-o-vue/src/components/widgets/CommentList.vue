@@ -68,10 +68,13 @@
 </template>
 
 <script>
-import {HTTP} from '@/router/http';
-import {mapGetters} from "vuex";
-import {abbreviatedName, colorizeTag} from "@/utils";
+import { HTTP } from '@/router/http';
+import { mapGetters } from "vuex";
+import { abbreviatedName, colorizeTag } from "@/utils";
 import dayjs from "dayjs";
+import ulog from 'ulog';
+
+const log = ulog('CommentList');
 
 export default {
     name: "CommentList",
@@ -125,7 +128,7 @@ export default {
                 });
         },
         createTag(value) {
-            console.log("Creating tag: ", value);
+            log.trace("Creating tag: ", value);
         },
         addComment() {
             HTTP.post(`/comments`, {
@@ -150,7 +153,7 @@ export default {
         },
         removeComment(id) {
             if (confirm('Are you sure you wish to delete this comment?')) {
-                HTTP.delete(`/comments/${id}`).then((response) => {
+                HTTP.delete(`/comments/${id}`).then(() => {
                     this.refresh();
                 }).catch((response) => {
                     this.isLoading = false;

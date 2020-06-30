@@ -151,3 +151,28 @@ export function pubmedURL(query) {
         target: "_blank"
     };
 }
+
+export const one_to_three = {
+    "A": "ALA",
+    "R": "ARG",
+    "N": "ASN",
+    "D": "ASP",
+    "B": "ASX",
+    "C": "CYS",
+    "E": "GLU",
+    "Q": "GLN",
+    "Z": "GLX",
+    "G": "GLY",
+    "H": "HIS",
+    "I": "ILE",
+    "L": "LEU",
+    "K": "LYS",
+    "M": "MET",
+    "F": "PHE",
+    "P": "PRO",
+    "S": "SER",
+    "T": "THR",
+    "W": "TRP",
+    "Y": "TYR",
+    "V": "VAL"
+};

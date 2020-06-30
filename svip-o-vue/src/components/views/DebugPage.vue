@@ -75,11 +75,11 @@
 import SearchBar from "@/components/widgets/SearchBar";
 import DrugSearchBar from "@/components/widgets/DrugSearchBar";
 import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
-import {HTTP} from '@/router/http';
+import { HTTP } from '@/router/http';
 import PagedTable from "@/components/widgets/PagedTable";
 import curation_fields from "@/data/curation/evidence/fields.json";
 import WrappedSelect from "@/components/widgets/debug/WrappedSelect";
-import {simpleDateTime} from "@/utils";
+import { simpleDateTime } from "@/utils";
 
 export default {
     name: "Debug",

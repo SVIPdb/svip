@@ -114,9 +114,8 @@
 </template>
 
 <script>
-import {normalizeItemList, titleCase, desnakify} from "@/utils";
-import {makeAssociationProvider} from "../../item_providers/association_provider";
-import PubmedPopover from "@/components/widgets/PubmedPopover";
+import { desnakify, normalizeItemList, titleCase } from "@/utils";
+import { makeAssociationProvider } from "../../item_providers/association_provider";
 import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 

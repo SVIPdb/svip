@@ -172,16 +172,19 @@ import { HTTP } from "@/router/http";
 import PagedTable from "@/components/widgets/PagedTable";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import BroadcastChannel from "broadcast-channel";
-import {abbreviatedName, simpleDateTime, titleCase} from "@/utils";
+import { abbreviatedName, simpleDateTime, titleCase } from "@/utils";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs';
+import ulog from 'ulog';
+
+const log = ulog('Curation:EvidenceCard');
 
 const DateTimeField = {
     props: {
         datetime: { required: true }
     },
-    render(h) {
+    render() {
         const fullDate = dayjs(this.datetime).format("h:mm a");
         const parsed = simpleDateTime(this.datetime);
 
@@ -339,7 +342,7 @@ export default {
         };
     },
     created() {
-        this.channel.onmessage = (msg) => {
+        this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
             }
@@ -400,7 +403,7 @@ export default {
         titleCase,
         simpleDateTime,
         abbreviatedName,
-        rowClass(item, type) {
+        rowClass(item) {
             if (!item) return;
             if (item.stats === "completed") return "table-light";
         },
@@ -436,7 +439,7 @@ export default {
             // FIXME: alternatively, should curation entries have a 'main' variant at all, or should we restructure the
             //  URL to remove the gene, variant, disease refererences?
 
-            const [gene_id, variant_id, disease_id] = [
+            const [gene_id, variant_id] = [
                 entry.variant.gene.id,
                 entry.variant.id,
                 entry.disease.id
@@ -475,7 +478,7 @@ export default {
                     })
                     .catch((err) => {
                         this.$snotify.error("Failed to submit entries");
-                        console.warn(err);
+                        log.warn(err);
                     });
             }
         },

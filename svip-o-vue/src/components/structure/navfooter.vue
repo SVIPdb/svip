@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import {serverURL, appVersion, releaseName} from "../../app_config";
+import { appVersion, releaseName, serverURL } from "../../app_config";
 
 export default {
     name: "navFooter",

@@ -25,7 +25,7 @@ export default {
     },
     watch: {
         '$route': {
-            handler: (to, from) => {
+            handler: (to) => {
                 document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title || 'SVIP-O'
             },
             immediate: true

@@ -47,11 +47,11 @@
 
 <script>
 import _ from "lodash";
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 
 import store from "@/store";
 import SourceIcon from "@/components/widgets/SourceIcon";
-import {escapeRegex} from "@/utils";
+import { escapeRegex } from "@/utils";
 
 const textmapper = {
     g: "gene",

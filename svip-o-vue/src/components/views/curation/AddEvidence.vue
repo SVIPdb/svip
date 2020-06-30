@@ -430,11 +430,20 @@ import CuratorVariantInformations from "@/components/curation/widgets/CuratorVar
 import inputs from "@/data/curation/evidence/options.json";
 import store from "@/store";
 import { HTTP } from "@/router/http";
-import SearchBar from "@/components/widgets/SearchBar";
 import { extend, ValidationObserver } from "vee-validate";
 import DrugSearchBar from "@/components/widgets/DrugSearchBar";
 import GeneSearchBar from "@/components/widgets/GeneSearchBar";
 import ValidatedFormField from "@/components/curation/widgets/ValidatedFormField";
+import { required } from "vee-validate/dist/rules";
+import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
+import { checkInRole } from "@/directives/access";
+import dayjs from "dayjs";
+import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
+import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
+import { pubmedURL } from "@/utils";
+import ulog from 'ulog';
+
+const log = ulog('Curation:AddEvidence')
 
 // options.json's top-level organization by separator makes it difficult to index the structure
 // by just what we store in the database, since you also need to know (unstored) the top-level category.
@@ -446,14 +455,6 @@ const effect_set = Object.values(inputs).reduce(
 
 // used to extract tier_level and tier_level_criteria (fields in the model) from the combined string tier_criteria
 const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
-
-import { required } from "vee-validate/dist/rules";
-import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
-import { checkInRole } from "@/directives/access";
-import dayjs from "dayjs";
-import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
-import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
-import { pubmedURL } from "@/utils";
 
 extend("required", {
     ...required,
@@ -577,6 +578,7 @@ export default {
                     this.variomes = response.data;
                 })
                 .catch(err => {
+                    log.error(err);
                     this.variomes = {
                         error:
                             "Couldn't retrieve publication info, try again later."
@@ -743,7 +745,7 @@ export default {
                         });
                     }
                 })
-                .catch((err, resp) => {
+                .catch((err) => {
                     if (err.response) {
                         if (err.response.status == 403) {
                             this.$snotify.error(
@@ -764,7 +766,7 @@ export default {
 
                     // TODO: deal with the server's error response in err.response.data
                     //  to bind error messages to form elements.
-                    console.warn("Error when saving: ", err);
+                    log.warn("Error when saving: ", err);
                 });
         },
         onSubmitDraft() {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Vue from "vue";
 import App from "./App";
 import router from "./router";
@@ -6,14 +7,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import "@/css/bootstrap.css";
 import "@/css/main.css";
 import "vue-simple-context-menu/dist/vue-simple-context-menu.css";
-import Snotify, {SnotifyPosition} from "vue-snotify";
+import Snotify, { SnotifyPosition } from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
-
 // imports all the bootstrap parts
 import BootstrapVue from 'bootstrap-vue'
-Vue.use(BootstrapVue);
-
 // we import only the icons we actually use in the project to dramatically reduce bundle size
 import "vue-awesome/icons/sign-out-alt";
 import "vue-awesome/icons/sign-in-alt";
@@ -58,6 +56,8 @@ import RowExpander from "@/components/widgets/RowExpander";
 import Expander from "@/components/widgets/Expander";
 
 import store from "./store";
+
+Vue.use(BootstrapVue);
 
 
 Vue.config.productionTip = false;

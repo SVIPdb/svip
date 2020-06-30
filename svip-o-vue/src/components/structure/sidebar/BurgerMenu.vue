@@ -11,7 +11,7 @@
     </div>
 </template>
 <script>
-import { state, mutations } from "@/store/modules/site";
+import { mutations, state } from "@/store/modules/site";
 
 export default {
     name: "BurgerMenu",

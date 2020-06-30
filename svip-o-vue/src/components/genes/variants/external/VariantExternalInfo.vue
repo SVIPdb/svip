@@ -44,6 +44,9 @@ import Pathogenicity from "./Pathogenicity";
 import PopulationStats from "./PopulationStats";
 import SwissPO from "@/components/genes/variants/external/SwissPO";
 import SOCIBP from "@/components/genes/variants/external/SOCIBP";
+import ulog from 'ulog';
+
+const log = ulog('VariantExternalInfo');
 
 export default {
     name: "VariantExternalInfo",
@@ -75,7 +78,7 @@ export default {
         relayout() {
             if (this.iso) {
                 this.$nextTick(() => {
-                    console.log("Triggering layout");
+                    log.trace("Triggering layout");
                     this.iso.layout();
                 });
             }

@@ -45,7 +45,7 @@
 <script>
 import { HTTP } from "@/router/http";
 import fields from "@/data/curation/summary/fields.json";
-import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
+import { var_to_position } from "@/utils";
 
 export default {
     name: "CuratorVariantInformations",
@@ -78,7 +78,7 @@ export default {
         this.refresh();
 
         // deal with updates from people editing curation entries, which could change pathogenicity/clinical sig.
-        this.channel.onmessage = (msg) => {
+        this.channel.onmessage = () => {
             this.refresh();
         };
     },

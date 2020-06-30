@@ -1,6 +1,5 @@
-import {HTTP} from "@/router/http";
-import {normalizeItemList, parsePublicationURL, titleCase} from "@/utils";
-import * as _ from "lodash";
+import { HTTP } from "@/router/http";
+import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
 
 export function makeCollapsedAssociationProvider(metaUpdate = null) {
     // produces an item provider function for bootstrap-vue tables.

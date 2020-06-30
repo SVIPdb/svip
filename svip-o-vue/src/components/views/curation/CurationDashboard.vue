@@ -71,10 +71,8 @@ import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 import NotificationCard from "@/components/curation/widgets/NotificationCard";
 import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
-import {checkInRole} from "@/directives/access";
-
+import { checkInRole } from "@/directives/access";
 // Manual import of fake data (FIXME: API)
-import on_request from "@/data/curation/on_request/items.json";
 import fields_on_request from "@/data/curation/on_request/fields.js";
 
 import to_be_curated from "@/data/curation/to_be_curated/items.json";
@@ -85,7 +83,6 @@ import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json"
 
 import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
-import {abbreviatedName} from "@/utils";
 
 export default {
     name: "CurationDashboard",

@@ -40,35 +40,13 @@
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
-import {serverURL} from "@/app_config";
+import { HTTP } from "@/router/http";
+import { serverURL } from "@/app_config";
 import debounce from 'lodash/debounce';
 import * as NGL from "ngl";
+import ulog from 'ulog';
 
-const one_to_three = {
-    "A": "ALA",
-    "R": "ARG",
-    "N": "ASN",
-    "D": "ASP",
-    "B": "ASX",
-    "C": "CYS",
-    "E": "GLU",
-    "Q": "GLN",
-    "Z": "GLX",
-    "G": "GLY",
-    "H": "HIS",
-    "I": "ILE",
-    "L": "LEU",
-    "K": "LYS",
-    "M": "MET",
-    "F": "PHE",
-    "P": "PRO",
-    "S": "SER",
-    "T": "THR",
-    "W": "TRP",
-    "Y": "TYR",
-    "V": "VAL"
-};
+const log = ulog('SwissPO');
 
 export default {
     name: "SwissPO",
@@ -149,14 +127,14 @@ export default {
     methods: {
         handleNGLResize() {
             if (this.stage) {
-                console.log("NGL resize executing");
+                log.info("NGL resize executing");
                 this.stage.handleResize();
             }
             else {
-                console.log("NGL resize requested, but was null");
+                log.info("NGL resize requested, but was null");
             }
         },
-        async loadStructure(protein, change) {
+        async loadStructure(protein) {
             this.pdbs = await HTTP.get(`swiss_po/get_pdbs/${protein}`).then(response => response.data);
 
             if (this.pdbs.length <= 0) {
@@ -201,7 +179,7 @@ export default {
                     this.zoomResidue(this.change);
                 } else {
                     this.found_in_swisspo = false;
-                    console.warn("Residue not located in molecule, showing anyway");
+                    log.warn("Residue not located in molecule, showing anyway");
                 }
             });
         },
@@ -213,7 +191,7 @@ export default {
             if (this.change && this.change_parts) {
                 myZoom = this.change_parts.pos;
             } else {
-                console.log("Unable to find simple position in ", this.change, ", aborting zoom");
+                log.info("Unable to find simple position in ", this.change, ", aborting zoom");
                 return;
             }
 
@@ -242,7 +220,7 @@ export default {
             const zoom = o.getZoom(myZoom);
             this.stage.animationControls.zoomMove(center, zoom, 2000);
             // label selected amino acid
-            const l = o.addRepresentation("label", {
+            o.addRepresentation("label", {
                 sele: `( ${myZoom} ) and .CA`,
                 color: "orange",
                 borderColor: 'black',
@@ -250,14 +228,14 @@ export default {
             });
 
             // show the selected residue in ball and stick
-            const bns = bnsRepr.setSelection(myZoom);
+            bnsRepr.setSelection(myZoom);
 
             // show residues around the selected one in licorice
             const selection = new NGL.Selection(myZoom);
             const radius = 5;
             const atomSet = o.structure.getAtomSetWithinSelection(selection, radius);
             const atomSet2 = o.structure.getAtomSetWithinGroup(atomSet).toSeleString();
-            let lic = licRepr.setSelection(atomSet2);
+            licRepr.setSelection(atomSet2);
 
             // show contacts made by residues around the selected one
             const contacts = conRepr.setSelection(atomSet2);

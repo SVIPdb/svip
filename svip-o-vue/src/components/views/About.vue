@@ -444,7 +444,7 @@
 </template>
 
 <script>
-import {slugifySans} from "@/utils";
+import { slugifySans } from "@/utils";
 import "@/css/infocards.scss";
 
 export default {

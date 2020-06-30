@@ -30,7 +30,10 @@
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
+import ulog from 'ulog';
+import { HTTP } from "@/router/http";
+
+const log = ulog('SOCIBP');
 
 export default {
     name: "SOCIBP",
@@ -64,6 +67,8 @@ export default {
             }));
             this.$emit('updated');
         }).catch((err) => {
+            log.warn(err);
+            
             // just don't display the thing if we encounter an error
             this.items = [];
         })

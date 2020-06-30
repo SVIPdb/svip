@@ -59,7 +59,7 @@
 
 <script>
 import TableOfContents from "@/components/help/TableOfContents";
-import {slugifySans} from "@/utils";
+import { slugifySans } from "@/utils";
 
 const help_sections = [
     {

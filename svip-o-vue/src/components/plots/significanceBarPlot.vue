@@ -19,7 +19,7 @@
 
 <script>
 import * as d3 from "d3";
-import {titleCase} from "@/utils";
+import { titleCase } from "@/utils";
 import * as _ from "lodash";
 
 const colorMap = d3

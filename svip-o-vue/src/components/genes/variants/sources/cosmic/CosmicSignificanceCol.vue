@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import {titleCase} from "@/utils";
+import { titleCase } from "@/utils";
 
 export default {
     name: "CosmicSignificanceCol",

@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import {HTTP} from '@/router/http';
-import {abbreviatedName, millisecondsToStr, simpleDateTime} from "@/utils";
+import { HTTP } from '@/router/http';
+import { abbreviatedName, simpleDateTime } from "@/utils";
 import dayjs from "dayjs";
 
 const HistoryHeader = {
@@ -50,7 +50,7 @@ const HistoryHeader = {
         date: { required: true },
         actor: { required: false, type: String }
     },
-    render(h) {
+    render() {
         const m = dayjs(this.date);
         const datetime = m.format("DD.MM.YYYY, h:mm a");
 
@@ -76,7 +76,7 @@ const ChangeField = {
     props: {
         value: { required: true }
     },
-    render(h) {
+    render() {
         let v;
         try {
             v = JSON.parse(this.value);

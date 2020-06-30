@@ -129,20 +129,18 @@
 <script>
 // import geneVariants from '@/components/Variants'
 import round from "lodash/round";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import variantPublicDatabases from "@/components/genes/variants/PublicDatabases";
 import variantSvip from "@/components/genes/variants/SVIPInfo";
 import store from "@/store";
 import linkItems from "@/data/curation/links/items.json";
 
-import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
+import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 import Sidebar from "@/components/structure/sidebar/Sidebar";
-import { mutations } from '@/store/modules/site';
 import CommentList from "@/components/widgets/CommentList";
-import {commentsEnabled} from "@/app_config";
-import {HTTP} from "@/router/http";
-import BroadcastChannel from "broadcast-channel";
+import { commentsEnabled } from "@/app_config";
+import { HTTP } from "@/router/http";
 
 export default {
     name: "ViewVariant",
@@ -160,7 +158,7 @@ export default {
         this.getCommentCount();
     },
     watch: {
-        '$route': (to, from) => {
+        '$route': () => {
             this.getCommentCount();
         }
     },

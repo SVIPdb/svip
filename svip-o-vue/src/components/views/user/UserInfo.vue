@@ -31,9 +31,12 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {millisecondsToStr} from "@/utils";
+import { mapGetters } from "vuex";
+import { millisecondsToStr } from "@/utils";
 import store from '@/store';
+import ulog from 'ulog';
+
+const log = ulog('Store:UserInfo');
 
 export default {
     name: "UserInfo",
@@ -55,7 +58,7 @@ export default {
     },
     created() {
         store.dispatch("checkCredentials").then((result) => {
-            console.log("Logged in?: ", result);
+            log.trace("Logged in?: ", result);
         });
 
         setInterval(() => {

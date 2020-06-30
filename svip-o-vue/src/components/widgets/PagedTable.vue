@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import {HTTP} from '@/router/http';
-import {desnakify} from "@/utils";
+import { HTTP } from '@/router/http';
+import { desnakify } from "@/utils";
 
 /**
  * Wraps b-table, generalizing paging, searching and filtering for our API. Props not included here are passed on to the

@@ -1,4 +1,4 @@
-import {abbreviatedName} from "@/utils";
+import { abbreviatedName } from "@/utils";
 
 export default [
     {

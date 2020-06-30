@@ -140,14 +140,18 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import store from "@/store";
-import {makeVariantProvider} from "@/components/genes/variants/item_providers/variant_provider";
-import {change_from_hgvs, var_to_position, desnakify} from "@/utils";
+import { makeVariantProvider } from "@/components/genes/variants/item_providers/variant_provider";
+import { change_from_hgvs } from "@/utils";
 import SourceIcon from "@/components/widgets/SourceIcon";
+import ulog from 'ulog';
+
+const log = ulog('ViewGene');
 
 export default {
     components: {SourceIcon},
+    name: 'ViewGene',
     data() {
         return {
             currentFilter: {
@@ -258,6 +262,7 @@ export default {
                 to.meta.title = `SVIP-O: ${store.state.genes.currentGene.symbol}`;
                 next();
             }).catch((err) => {
+                log.warn(err);
                 next({ name: 'not-found', params: { '0': to.path } });
             });
         }

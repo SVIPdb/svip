@@ -1,4 +1,4 @@
-import {Bus} from "@/bus";
+import { Bus } from "@/bus";
 import store from "@/store";
 
 /**

@@ -1,4 +1,4 @@
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 
 export function makeVariantProvider(metaUpdate = null) {
     // produces an item provider function for bootstrap-vue tables.

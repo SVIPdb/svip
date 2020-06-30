@@ -1,5 +1,7 @@
-import {HTTP, HTTProot} from "@/router/http";
-import {serverURL} from "@/app_config";
+import { HTTP, HTTProot } from "@/router/http";
+import ulog from 'ulog';
+
+const log = ulog('Store:users');
 
 // FIXME: we currently store the JWT access/refresh tokens in localstorage, but this might make us vulnerable to
 //  an XSS attack through our dependencies...i mean, i don't really know if any of this is "secure" if we can't
@@ -77,12 +79,12 @@ const actions = {
     async checkCredentials({commit, getters, dispatch}) {
         if (USING_JWT_COOKIE) {
             return await HTTProot.get('token/info/').then((response) => {
-                console.log("JWT got: ", response);
+                log.trace("JWT got: ", response);
                 commit("LOGIN_VIA_COOKIE", response.data);
                 return {valid: true};
             }).catch((err) => {
                 // FIXME: depending on the error we should return different statuses, but this is fine for now
-                console.error("Cookie-based auth failed: ", err);
+                log.warn("Cookie-based auth failed: ", err);
                 // we should also clear any stale auth data, since we're not authed
                 commit("LOGOUT");
                 return {valid: false, reason: TokenErrors.NONE_FOUND};
@@ -97,7 +99,7 @@ const actions = {
             }
 
             // now verify that it's not expired
-            // console.log("expiration: ", getters.jwtExp);
+            // log.trace("expiration: ", getters.jwtExp);
             if (getters.jwtExp && Math.floor(Date.now() / 1000) >= getters.jwtExp) {
                 // if it's expired, we should first attempt to refresh it with the current token
                 return dispatch("refresh")
@@ -115,7 +117,7 @@ const actions = {
         }
     },
 
-    checkPermissions({commit}, {permissions, condition = 'all'}) {
+    checkPermissions() { // params: ({commit}, {permissions, condition = 'all'})
         return new Promise((resolve) => {
             // FIXME: think of a meaningful way to verify this in the client
             resolve(true);
@@ -130,12 +132,12 @@ const actions = {
             return {valid: false, reason: TokenErrors.NO_REFRESH_TOKEN};
         }
 
-        console.log("Attempting refresh with token: ", jwtRefresh);
+        log.trace("Attempting refresh with token: ", jwtRefresh);
 
         return HTTProot.post(`token/refresh/`, {refresh: jwtRefresh}).then(response => {
 
             // vm.$snotify.info(`Refreshed access token`);
-            console.log("Refreshed access token");
+            log.trace("Refreshed access token");
 
             // replace the existing token with the new one if we succeed
             const {access} = response.data;
@@ -145,17 +147,18 @@ const actions = {
 
             return {valid: true};
         }).catch((err) => {
+            log.warn(err);
             return {valid: false, reason: TokenErrors.REFRESH_EXPIRED}
         });
     },
 
     async logout({commit}) {
-        console.log("Beginning log out...");
+        log.trace("Beginning log out...");
 
         // we need to tell the server that we're going away so it can clear our cookie for us
         await HTTProot.post('token/invalidate/');
 
-        console.log("...done");
+        log.trace("...done");
 
         delete HTTP.defaults.headers.common["Authorization"];
         commit("LOGOUT");

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {desnakify, titleCase} from "@/utils";
+import { desnakify } from "@/utils";
 import round from 'lodash/round';
 
 function deref_path(target, path) {

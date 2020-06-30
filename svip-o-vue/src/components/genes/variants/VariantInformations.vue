@@ -65,8 +65,8 @@
 </template>
 
 <script>
-import {change_from_hgvs, desnakify, var_to_position} from "@/utils";
-import {round} from "lodash/math";
+import { var_to_position } from "@/utils";
+import { round } from "lodash/math";
 
 export default {
     name: "VariantInformations",

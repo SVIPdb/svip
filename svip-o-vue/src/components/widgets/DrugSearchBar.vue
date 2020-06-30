@@ -10,7 +10,7 @@
 
 <script>
 import { HTTP } from "@/router/http";
-import {titleCase} from "@/utils";
+import { titleCase } from "@/utils";
 
 export default {
     name: "DrugSearchBar",

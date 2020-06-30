@@ -106,12 +106,10 @@
 </template>
 
 <script>
-import {normalizeItemList, parsePublicationURL, titleCase} from "@/utils";
-import {makeAssociationProvider} from '@/components/genes/variants/item_providers/association_provider';
-import PubmedPopover from "@/components/widgets/PubmedPopover";
+import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
 import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import {makeCollapsedAssociationProvider} from "@/components/genes/variants/item_providers/collapsed_association_provider";
+import { makeCollapsedAssociationProvider } from "@/components/genes/variants/item_providers/collapsed_association_provider";
 import TransitionExpand from "@/components/widgets/TransitionExpand";
 
 export default {

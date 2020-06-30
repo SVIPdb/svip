@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import {pubmedURL} from "@/utils";
+import { pubmedURL } from "@/utils";
 
 export default {
     name: "VariomesAbstract",

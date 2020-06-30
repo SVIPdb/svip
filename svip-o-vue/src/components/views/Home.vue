@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import store from "@/store";
 import SearchBar from "../widgets/SearchBar";
 

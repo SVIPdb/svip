@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import {desnakify, titleCase} from "@/utils";
+import { desnakify, titleCase } from "@/utils";
 
 export default {
     name: "RowDetailsHeader",

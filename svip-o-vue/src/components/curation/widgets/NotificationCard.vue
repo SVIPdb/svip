@@ -128,8 +128,8 @@
  * @group Curation
  * This Notification card allows to display a card which contains a table filled with samples waiting to be curated or reviewed
  */
-import {abbreviatedName} from "@/utils";
-import {mapGetters} from "vuex";
+import { abbreviatedName } from "@/utils";
+import { mapGetters } from "vuex";
 import FilterButtons from "@/components/curation/widgets/FilterButtons";
 
 export default {
@@ -275,7 +275,7 @@ export default {
         setStatusFilter(filter) {
             this.statusFilter = filter;
         },
-        selectVariant(checked, element) {
+        selectVariant() { // (checked, element)
             // console.log(`Checked is ${checked} and ID is ${element.id}`);
         }
     },

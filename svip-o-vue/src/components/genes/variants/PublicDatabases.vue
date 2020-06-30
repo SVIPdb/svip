@@ -91,7 +91,7 @@ import store from "@/store";
 import scorePlot from "@/components/plots/scorePlot";
 // import significanceBarPlot from "@/components/plots/significanceBarPlot";
 import evidenceTypesBarPlot from "@/components/plots/evidenceTypesBarPlot";
-import {normalizeItemList} from "../../../utils";
+import { normalizeItemList } from "../../../utils";
 import CosmicRowDetails from "./sources/cosmic/CosmicRowDetails";
 import CosmicPubCountCol from "@/components/genes/variants/sources/cosmic/CosmicPubCountCol";
 import UnavailableCol from "@/components/genes/variants/sources/shared/UnavailableCol";
