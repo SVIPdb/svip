@@ -3,7 +3,9 @@
         <div class="card-header">
             <div class="card-title">
                 SVIP Information
+                <!--
                 <span class="text-danger float-right">WARNING: fake data - only as a demo</span>
+                -->
             </div>
         </div>
 
