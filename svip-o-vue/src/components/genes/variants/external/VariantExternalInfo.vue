@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div class="container-fluid pl-0 pr-0">
         <div class="grid">
             <!--
             <isotope :options="isotopeOptions" :list="componentList">
