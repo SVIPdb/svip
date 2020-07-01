@@ -40,7 +40,7 @@
                 <RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter"/>
 
                 <b-table
-                    :fields="fields" class="table-sm filter-table" :api-url="row.item.collapsed_associations_url"
+                    :fields="fields" class="table-sm filter-table" :api-url="apiUrl"
                     :items="association_provider"
                     :per-page="perPage" :current-page="currentPage" :filter="packedFilter"
                 >
@@ -111,6 +111,10 @@ import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDeta
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import { makeCollapsedAssociationProvider } from "@/components/genes/variants/item_providers/collapsed_association_provider";
 import TransitionExpand from "@/components/widgets/TransitionExpand";
+import { makeAssociationProvider } from "@/components/genes/variants/item_providers/association_provider";
+
+// if true, aggregate evidences with mostly the same values under a single entry
+const isCollapsed = true;
 
 export default {
     name: "CivicRowDetails",
@@ -151,7 +155,7 @@ export default {
                     sortable: true
                 },
                 {
-                    key: "evidence_levels",
+                    key: isCollapsed ? "evidence_levels" : "evidence_level",
                     label: "Evidence Level(s)",
                     sortable: true
                 },
@@ -182,8 +186,14 @@ export default {
         packedFilter() {
             return JSON.stringify(this.currentFilter);
         },
+        apiUrl() {
+            return isCollapsed ? this.row.item.collapsed_associations_url : this.row.item.associations_url;
+        },
         association_provider() {
-            return makeCollapsedAssociationProvider(this.metaUpdated);
+            if (isCollapsed) {
+                return makeCollapsedAssociationProvider(this.metaUpdated);
+            }
+            return makeAssociationProvider(this.metaUpdated);
         }
     },
     methods: {
