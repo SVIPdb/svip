@@ -445,7 +445,6 @@
 
 <script>
 import { slugifySans } from "@/utils";
-import "@/css/infocards.scss";
 
 export default {
     name: "About",
@@ -474,7 +473,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '~@/css/infocards.scss';
+
 /*.videoWrapper {*/
 /*    position: relative;*/
 /*    padding-bottom: 56.25%; !* 16:9 *!*/
@@ -498,4 +499,8 @@ export default {
 
 section { border-bottom: solid 1px #eee; margin-top: -90px; padding-top: 90px; margin-bottom: 2em; padding-bottom: 1em; }
 section:last-child { border-bottom: none; }
+
+.card {
+    border-radius: 0.3rem;
+}
 </style>
