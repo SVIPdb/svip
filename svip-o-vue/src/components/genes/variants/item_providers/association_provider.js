@@ -54,13 +54,11 @@ export function makeAssociationProvider(metaUpdate = null, remappings = sortRema
 
             // rewrite associations into the structure that -RowDetails expects
             return res.data.results.map(a => ({
+                ...a,
                 disease: a.phenotype_set.map(x => titleCase(x.term)).join("; "),
                 contexts: a.environmentalcontext_set.map(x => x.description).join("; "),
                 drug_labels: normalizeItemList(a.drug_labels),
                 clinical_significance: a.clinical_significance,
-                evidence_type: a.evidence_type,
-                evidence_direction: a.evidence_direction,
-                evidence_level: a.evidence_level,
                 evidence_url: a.source_link,
                 publications: _.flatten(a.evidence_set.map((ev_set) =>
                     ev_set.publications.map(parsePublicationURL)
