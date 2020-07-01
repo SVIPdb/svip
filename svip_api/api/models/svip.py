@@ -116,6 +116,7 @@ CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
     ('saved', 'saved'),
     ('submitted', 'submitted'),
+    ('unreviewed', 'unreviewed'),
     ('reviewed', 'reviewed'),
 ))
 
@@ -175,7 +176,7 @@ class CurationEntry(SVIPModel):
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
 
     # optionally, this curation entry could be the result of "claiming" a curation request
