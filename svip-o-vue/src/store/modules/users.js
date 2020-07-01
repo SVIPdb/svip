@@ -79,7 +79,7 @@ const actions = {
     async checkCredentials({commit, getters, dispatch}) {
         if (USING_JWT_COOKIE) {
             return await HTTProot.get('token/info/').then((response) => {
-                log.trace("JWT got: ", response);
+                log.debug("JWT got: ", response);
                 commit("LOGIN_VIA_COOKIE", response.data);
                 return {valid: true};
             }).catch((err) => {
@@ -99,7 +99,7 @@ const actions = {
             }
 
             // now verify that it's not expired
-            // log.trace("expiration: ", getters.jwtExp);
+            // log.debug("expiration: ", getters.jwtExp);
             if (getters.jwtExp && Math.floor(Date.now() / 1000) >= getters.jwtExp) {
                 // if it's expired, we should first attempt to refresh it with the current token
                 return dispatch("refresh")
@@ -132,12 +132,12 @@ const actions = {
             return {valid: false, reason: TokenErrors.NO_REFRESH_TOKEN};
         }
 
-        log.trace("Attempting refresh with token: ", jwtRefresh);
+        log.debug("Attempting refresh with token: ", jwtRefresh);
 
         return HTTProot.post(`token/refresh/`, {refresh: jwtRefresh}).then(response => {
 
             // vm.$snotify.info(`Refreshed access token`);
-            log.trace("Refreshed access token");
+            log.debug("Refreshed access token");
 
             // replace the existing token with the new one if we succeed
             const {access} = response.data;
@@ -153,12 +153,12 @@ const actions = {
     },
 
     async logout({commit}) {
-        log.trace("Beginning log out...");
+        log.debug("Beginning log out...");
 
         // we need to tell the server that we're going away so it can clear our cookie for us
         await HTTProot.post('token/invalidate/');
 
-        log.trace("...done");
+        log.debug("...done");
 
         delete HTTP.defaults.headers.common["Authorization"];
         commit("LOGOUT");

@@ -58,7 +58,7 @@ export default {
     },
     created() {
         store.dispatch("checkCredentials").then((result) => {
-            log.trace("Logged in?: ", result);
+            log.debug("Logged in?: ", result);
         });
 
         setInterval(() => {

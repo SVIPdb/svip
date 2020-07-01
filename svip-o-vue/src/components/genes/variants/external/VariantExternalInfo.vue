@@ -78,7 +78,7 @@ export default {
         relayout() {
             if (this.iso) {
                 this.$nextTick(() => {
-                    log.trace("Triggering layout");
+                    log.debug("Triggering layout");
                     this.iso.layout();
                 });
             }

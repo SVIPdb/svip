@@ -128,7 +128,7 @@ export default {
                 });
         },
         createTag(value) {
-            log.trace("Creating tag: ", value);
+            log.debug("Creating tag: ", value);
         },
         addComment() {
             HTTP.post(`/comments`, {
