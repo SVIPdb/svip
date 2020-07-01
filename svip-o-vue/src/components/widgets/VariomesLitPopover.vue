@@ -1,3 +1,4 @@
+
 <template>
 	<span>
 		<a ref="anchor" :id="`link-${auto_id}`" :href="url" target="_blank" @click="openReference">{{ title }}</a>
@@ -66,9 +67,14 @@ export default {
     },
     computed: {
         parsedPMID() {
-            return ((this.pmid) ? this.pmid : this.pubmeta.pmid).replace("PMID:", "");
+            const target = ((this.pmid) ? this.pmid : this.pubmeta.pmid);
+            return target && target.replace("PMID:", "");
         },
         url() {
+            if (!this.parsedPMID) {
+                return null;
+            }
+
             return `http://www.ncbi.nlm.nih.gov/pubmed/${this.parsedPMID}`;
         },
         title() {
@@ -77,11 +83,14 @@ export default {
             return this.pubmeta.title ? this.pubmeta.title : this.parsedPMID;
         },
         variomesIsValid() {
-            return this.variomes
+            return (
+                this.variomes
+                && this.parsedPMID
                 && !this.error
                 && this.variomes.publications
                 && this.variomes.publications.length > 0
-                && this.single_publication.id === this.parsedPMID;
+                && this.single_publication.id === this.parsedPMID
+            );
         },
         single_publication() {
             return this.variomes && this.variomes.publications && this.variomes.publications[0];
