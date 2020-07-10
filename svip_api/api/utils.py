@@ -33,20 +33,20 @@ def format_variant(x, search_term=None):
     :return: a terse representation of said variant
     """
 
-    target_hgvs = x.hgvs_c
+    target_hgvs = x['hgvs_c']
 
     if search_term:
-        if x.hgvs_p and search_term in x.hgvs_p.lower():
-            target_hgvs = x.hgvs_p
-        elif x.hgvs_g and search_term in x.hgvs_g.lower():
-            target_hgvs = x.hgvs_g
+        if x['hgvs_p'] and search_term in x['hgvs_p'].lower():
+            target_hgvs = x['hgvs_p']
+        elif x['hgvs_g'] and search_term in x['hgvs_g'].lower():
+            target_hgvs = x['hgvs_g']
 
     return {
-        'id': x.id,
-        'g_id': x.gene.id,
+        'id': x['id'],
+        'g_id': x['gene'],
         'type': 'v',
-        'label': "%s (%s)" % (x.description, target_hgvs.split(':')[1]) if target_hgvs else x.description,
-        'sources': sorted(x.sources) if x.sources else None
+        'label': "%s (%s)" % (x['description'], target_hgvs.split(':')[1]) if target_hgvs else x['description'],
+        'sources': sorted(x['sources']) if x['sources'] else None
     }
 
 

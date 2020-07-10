@@ -10,6 +10,8 @@ from api.models import Phenotype, Variant, Gene
 from api.utils import format_variant
 from references.prot_to_hgvs import three_to_one_icase
 
+MAX_GENES = 100
+MAX_VARIANTS = 100
 
 class QueryView(viewsets.ViewSet):
     def list(self, request, format=None):
@@ -51,8 +53,14 @@ class QueryView(viewsets.ViewSet):
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
 
+            vq = vq.values('id', 'gene', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'description', 'sources')
+
+            final_vq = vq.distinct()[:MAX_VARIANTS]
+
+            print("Variant query: %s" % final_vq.query)
+
             normalized_search = search_term.lower()
-            v_resp = list(format_variant(x, normalized_search) for x in vq.distinct())
+            v_resp = list(format_variant(x, normalized_search) for x in final_vq)
 
             if not variants_only:
                 gq = Gene.objects.filter(Q(symbol__icontains=search_term) | Q(aliases__icontains=search_term))
@@ -60,11 +68,17 @@ class QueryView(viewsets.ViewSet):
                 if in_svip:
                     gq = gq.annotate(svip_vars=Count('variant__variantinsvip')).filter(svip_vars__gt=0)
 
+                gq = gq.values('id', 'symbol', 'aliases')
+
                 g_resp = list({
-                    'id': x.id,
+                    'id': x['id'],
                     'type': 'g',
-                    'label': "%s (aka: %s)" % (x.symbol, ", ".join(x.aliases))
-                } for x in gq.order_by('symbol'))
+                    'label': (
+                        "%s (aka: %s)" % (x['symbol'], ", ".join(x['aliases']))
+                        if len(x['aliases']) > 0 else
+                        x['symbol']
+                    )
+                } for x in gq.order_by('symbol')[:MAX_GENES])
 
                 resp = g_resp + v_resp
             else:
