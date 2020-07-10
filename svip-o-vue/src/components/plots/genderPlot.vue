@@ -1,23 +1,26 @@
 <template>
     <div>
-        <svg ref="thechart" class="sig-bar-chart">
-            <rect class="bar" v-for="(d, i) in layout" :key="i" :x="d.x" :y="d.y" :width="d.width" :height="d.height"
-                :fill="d.c"></rect>
+        <div v-if="totalPatients > 0">
+            <svg ref="thechart" class="sig-bar-chart">
+                <rect class="bar" v-for="(d, i) in layout" :key="i" :x="d.x" :y="d.y" :width="d.width" :height="d.height"
+                    :fill="d.c"></rect>
 
-            <line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
-        </svg>
+                <line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
+            </svg>
 
-        <b-tooltip :target="() => $refs.thechart" placement="top">
-            <div v-for="d in this.formattedData" :key="d.k" style="text-align: left;">
-                <svg width="10" height="10" class="legend-swatch">
-                    <rect width="10" height="10" :fill="d.c"></rect>
-                </svg>
-                <span>
-                    <b class="gender-label">{{ d.k }}:</b> {{ d.v.toLocaleString() }}
-                    <span v-if="totalPatients > 0">({{ round(d.v/totalPatients * 100.0) }}%)</span>
-                </span>
-            </div>
-        </b-tooltip>
+            <b-tooltip :target="() => $refs.thechart" placement="top">
+                <div v-for="d in this.formattedData" :key="d.k" style="text-align: left;">
+                    <svg width="10" height="10" class="legend-swatch">
+                        <rect width="10" height="10" :fill="d.c"></rect>
+                    </svg>
+                    <span>
+                        <b class="gender-label">{{ d.k }}:</b> {{ d.v.toLocaleString() }}
+                        <span v-if="totalPatients > 0">({{ round(d.v/totalPatients * 100.0) }}%)</span>
+                    </span>
+                </div>
+            </b-tooltip>
+        </div>
+        <span v-else class="unavailable">unavailable</span>
     </div>
 </template>
 
