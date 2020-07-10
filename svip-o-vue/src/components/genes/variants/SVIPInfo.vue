@@ -148,10 +148,11 @@ import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
 
-// noinspection JSUnusedLocalSymbols
 const NoSVIPInfo = {
     name: 'NoSVIPInfo',
     render: function(h) {
+        h();
+        
         return (
             <div class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center" style="font-size: 150%;">
                 <icon name="question-circle" scale="1.5" style="margin-right: 10px;"/>
