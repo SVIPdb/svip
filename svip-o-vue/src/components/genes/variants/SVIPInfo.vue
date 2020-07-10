@@ -10,7 +10,10 @@
         </div>
 
         <div class="card-body top-level">
-            <b-table :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false" style="margin-bottom: 0;">
+            <b-table v-if="svip_entries"
+                :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false"
+                style="margin-bottom: 0;" show-empty
+            >
                 <template v-slot:cell(display)="row">
                     <row-expander :row="row"/>
                 </template>
@@ -28,7 +31,7 @@
                 </template>
 
                 <template v-slot:cell(pathogenic)="data">
-                    <div style="vertical-align: middle; display: inline-block;">
+                    <div>
                         <span v-if="data.value">{{ data.value }}</span>
                         <span v-else class="unavailable">unavailable</span>
                     </div>
@@ -107,7 +110,12 @@
                         </pass>
                     </div>
                 </template>
+
+                <template v-slot:empty>
+                    <NoSVIPInfo />
+                </template>
             </b-table>
+            <NoSVIPInfo v-else />
 
             <div v-access="'curators'" class="paginator-holster mini-inset-tray">
                 <b-button v-access="'curators'" class="centered-icons" size="sm" style="width: 100px;" variant="info"
@@ -140,9 +148,21 @@ import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
 
+const NoSVIPInfo = {
+    name: 'NoSVIPInfo',
+    render: function(h) {
+        return (
+            <div class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center" style="font-size: 150%;">
+                <icon name="question-circle" scale="1.5" style="margin-right: 10px;"/>
+                <div>No SVIP information found</div>
+            </div>
+        );
+    }
+}
+
 export default {
     name: "SVIPInfo",
-    components: {SampleTable, EvidenceTable, ageDistribution, genderPlot}, // TissueDistribution
+    components: {SampleTable, EvidenceTable, ageDistribution, genderPlot, NoSVIPInfo}, // TissueDistribution
     props: {
         variant: {type: Object, required: true},
         gene: {type: String, required: true}
@@ -151,20 +171,90 @@ export default {
         return {
             // we're storing the selected tab per disease so that we can manipulate the selection with the per-disease buttons
             // FIXME: (which, incidentally, aren't even being displayed right now...maybe we just remove this?)
-            svip_entry_tabs: this.variant.svip_data.diseases.reduce((acc, x) => {
+            svip_entry_tabs: this.variant.svip_data ? this.variant.svip_data.diseases.reduce((acc, x) => {
                 // map each entry in the SVIP table by ID to a selected tab for that entry (e.g., evidence or samples)
                 // by default, it'll be the first tab (evidence)
                 acc[x.name] = 0;
                 return acc;
-            }, {}),
+            }, {}) : {},
+            sortBy: "name"
+        };
+    },
+    methods: {
+        packedFilter(filters) {
+            return JSON.stringify(filters);
+        },
+        setAllExpanded(isExpanded) {
+            this.variant.svip_data.diseases.forEach(x => {
+                x._showDetails = isExpanded;
+            });
+        },
+        curationCounts(item) {
+            return {
+                drafts: item.curation_entries.filter(x => x.status === 'draft').length,
+                saved: item.curation_entries.filter(x => x.status === 'saved').length,
+                submitted: item.curation_entries.filter(x => x.status === 'submitted').length
+            }
+        },
+        curationSummary(item) {
+            let most_recent = null;
 
-            svip_entries: this.variant.svip_data.diseases.map(x => ({
+            if (!item.curation_entries || item.curation_entries.length <= 0) {
+                return null;
+            }
+            else if (item.curation_entries.length === 1) {
+                most_recent = item.curation_entries[0];
+            }
+            else {
+                most_recent = [...item.curation_entries].sort((a, b) => dayjs(a.last_modified).diff(dayjs(b.last_modified)))[0];
+            }
+
+            const modify_date =  dayjs(most_recent.last_modified);
+
+            return {
+                last_modified: {
+                    date: modify_date.format("DD.MM.YYYY"),
+                    time: modify_date.format("h:mm a")
+                },
+                modified_by: abbreviatedName(most_recent.owner_name)
+            }
+        },
+        splitCurationEntries(row) {
+            return {
+                finalized: row.item.curation_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
+                pending: row.item.curation_entries.filter(x => x.status !== 'reviewed')
+            };
+        },
+        titleCase
+    },
+    computed: {
+        ...mapGetters({
+            user: "currentUser"
+        }),
+        svip_entries() {
+            if (!this.variant || !this.variant.svip_data || !this.variant.svip_data.diseases) {
+                return null;
+            }
+
+            return this.variant.svip_data.diseases.map(x => ({
                 _showDetails: false,
                 ...x
-            })),
-
-            sortBy: "name",
-            fields: [
+            }));
+        },
+        totalPatients() {
+            return this.variant.svip_data.diseases.reduce(
+                (acc, x) => acc + x.nb_patients,
+                0
+            );
+        },
+        groups() {
+            return store.getters.groups;
+        },
+        isAllExpanded() {
+            return this.variant.svip_data.diseases.every(x => x._showDetails);
+        },
+        fields() {
+            return [
                 {
                     key: "display",
                     label: "",
@@ -220,7 +310,7 @@ export default {
                     key: "last_modified",
                     label: "Last Curated",
                     sortable: false,
-                    thStyle: {display: checkInRole("curators") ? "" : "none"}
+                    class: [checkInRole("curators") ? "" : "d-none"]
                 },
                 /*
                 {
@@ -230,70 +320,6 @@ export default {
                 }
                  */
             ]
-        };
-    },
-    methods: {
-        packedFilter(filters) {
-            return JSON.stringify(filters);
-        },
-        setAllExpanded(isExpanded) {
-            this.variant.svip_data.diseases.forEach(x => {
-                x._showDetails = isExpanded;
-            });
-        },
-        curationCounts(item) {
-            return {
-                drafts: item.curation_entries.filter(x => x.status === 'draft').length,
-                saved: item.curation_entries.filter(x => x.status === 'saved').length,
-                submitted: item.curation_entries.filter(x => x.status === 'submitted').length
-            }
-        },
-        curationSummary(item) {
-            let most_recent = null;
-
-            if (!item.curation_entries || item.curation_entries.length <= 0) {
-                return null;
-            }
-            else if (item.curation_entries.length === 1) {
-                most_recent = item.curation_entries[0];
-            }
-            else {
-                most_recent = [...item.curation_entries].sort((a, b) => dayjs(a.last_modified).diff(dayjs(b.last_modified)))[0];
-            }
-
-            const modify_date =  dayjs(most_recent.last_modified);
-
-            return {
-                last_modified: {
-                    date: modify_date.format("DD.MM.YYYY"),
-                    time: modify_date.format("h:mm a")
-                },
-                modified_by: abbreviatedName(most_recent.owner_name)
-            }
-        },
-        splitCurationEntries(row) {
-            return {
-                finalized: row.item.curation_entries.filter(x => x.status === 'reviewed'),
-                pending: row.item.curation_entries.filter(x => x.status !== 'reviewed')
-            };
-        },
-        titleCase
-    },
-    computed: {
-        ...mapGetters({
-            user: "currentUser"
-        }),
-        totalPatients() {
-            return this.variant.svip_data.diseases.reduce(
-                (acc, x) => acc + x.nb_patients,
-                0
-            );
-        },
-        groups() {
-            return store.getters.groups;
-        },
-        isAllExpanded() {
-            return this.variant.svip_data.diseases.every(x => x._showDetails);
         }
     }
 };

@@ -95,7 +95,7 @@
                 </div>
             </div>
 
-            <variant-svip v-if="variant.svip_data" :variant="variant" :gene="gene_id"></variant-svip>
+            <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
             <variant-public-databases :variant="variant"></variant-public-databases>
 
             <b-row v-access="'curators'">
