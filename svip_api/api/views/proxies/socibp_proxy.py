@@ -34,9 +34,7 @@ def get_genes(request):
         'pageSize': 100000,
         'pageNumber': '0',
         'direction': 'ASC'
-    }, headers={
-        # 'Authorization': 'Basic andre:tf12.57g'
-    })
+    }, headers={})
 
     if response.status_code != 200:
         return HttpResponse(response.content, status=response.status_code)
