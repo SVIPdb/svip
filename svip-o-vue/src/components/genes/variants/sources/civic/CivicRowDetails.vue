@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-xl-3 col-4">
+        <div class="col-xl-3 col-4 d-none d-xl-block">
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
                     Diseases
@@ -35,11 +35,11 @@
 
         <!-- FIXME: add filtering on categorical columns w/a dropdown -->
 
-        <div class="col-xl-9 col-8">
+        <div class="col-xl-9 col-md-12">
             <b-card>
                 <RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter"/>
 
-                <b-table
+                <b-table responsive
                     :fields="fields" class="table-sm filter-table" :api-url="apiUrl"
                     :items="association_provider"
                     :per-page="perPage" :current-page="currentPage" :filter="packedFilter"
@@ -157,7 +157,8 @@ export default {
                 {
                     key: isCollapsed ? "evidence_levels" : "evidence_level",
                     label: "Evidence Level(s)",
-                    sortable: true
+                    sortable: true,
+                    class: "d-none d-lg-table-cell"
                 },
                 {
                     key: "drug_labels",
@@ -167,7 +168,8 @@ export default {
                 {
                     key: "publications",
                     label: "References",
-                    sortable: false
+                    sortable: false,
+                    class: "d-none d-lg-table-cell"
                 },
                 {
                     key: "actions",
@@ -176,9 +178,15 @@ export default {
                 }
             ],
             evidenceChildFields: [
-                {key: "url", label: "Source", sortable: true},
-                {key: "evidence_level", label: "Evidence Level", sortable: true},
-                {key: "publications", label: "Reference(s)", sortable: true},
+                {
+                    key: "url", label: "Source", sortable: true
+                },
+                {
+                    key: "evidence_level", label: "Evidence Level", sortable: true
+                },
+                {
+                    key: "publications", label: "Reference(s)", sortable: true
+                },
             ]
         }
     },
