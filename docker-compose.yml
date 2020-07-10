@@ -75,7 +75,7 @@ services:
     # # starts react in hot-reload mode
     # # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
     # command: sh -c "npm run serve"
-    command: bash -c "npm install && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
+    command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
     restart: 'no'
     ports:
       - '3000:8080'
