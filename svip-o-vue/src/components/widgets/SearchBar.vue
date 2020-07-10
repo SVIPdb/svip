@@ -46,12 +46,15 @@
 </template>
 
 <script>
-import _ from "lodash";
+import debounce from "lodash/debounce";
+import ulog from 'ulog';
 import { HTTP } from "@/router/http";
 
 import store from "@/store";
 import SourceIcon from "@/components/widgets/SourceIcon";
 import { escapeRegex } from "@/utils";
+
+const log = ulog('SearchBar');
 
 const textmapper = {
     g: "gene",
@@ -101,7 +104,7 @@ export default {
     data() {
         return {
             query: "",
-            options: [],
+            raw_options: [],
             selected: null,
             textmapper: textmapper
         };
@@ -119,9 +122,11 @@ export default {
             const val = this.selected;
 
             if (val.type === "g") {
-                this.$router.push("gene/" + val.id);
+                const real_id = val.id.split('_')[1];
+                this.$router.push("gene/" + real_id);
             } else if (val.type === "v") {
-                this.$router.push("gene/" + val.g_id + "/variant/" + val.id);
+                const real_id = val.id.split('_')[1];
+                this.$router.push("gene/" + val.g_id + "/variant/" + real_id);
             }
         },
         showOnlySVIP: function () {
@@ -160,6 +165,12 @@ export default {
                 (acc, x) => acc.replace(x[0], x[1]),
                 this.query
             );
+        },
+        options() {
+            return this.raw_options.map(x => ({
+                ...x,
+                id: `${x.type}_${x.id}`
+            }))
         }
     },
     created() {
@@ -179,15 +190,19 @@ export default {
         getGenesOnly: function () {
             HTTP.get("query", {params: {q: "", in_svip: this.showOnlySVIP}}).then(
                 res => {
-                    this.options = res.data;
+                    this.raw_options = res.data;
                 }
             );
         },
-        search: _.debounce((loading, search, vm) => {
+        search: debounce((loading, search, vm) => {
             return HTTP.get("query", {
                 params: {q: search, in_svip: vm.showOnlySVIP, variants_only: vm.variantsOnly ? 'true' : 'false'}
             }).then(res => {
-                vm.options = res.data;
+                vm.raw_options = res.data;
+                loading(false);
+            }).catch((err) => {
+                vm.$snotify.error("An error occurred while searching");
+                log.warn(err);
                 loading(false);
             });
         }, 350),
