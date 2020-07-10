@@ -188,7 +188,7 @@ router.beforeEach((to, from, next) => {
     }
 });
 
-router.afterEach((to, from) => {
+router.afterEach(() => {
     // Complete the animation of the route progress bar.
     np_manager && np_manager.done()
 })
