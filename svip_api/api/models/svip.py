@@ -31,6 +31,12 @@ class SVIPTableBase(ModelBase):
         if name != "SVIPModel":
             class MetaB:
                 db_table = "svip_" + name.lower()
+
+            # copy existing non-special fields in the meta into the new meta
+            if 'Meta' in attrs:
+                for field in [a for a in dir(attrs["Meta"]) if not a.startswith('__')]:
+                    setattr(MetaB, field, getattr(attrs["Meta"], field))
+
             attrs["Meta"] = MetaB
 
         r = super().__new__(mcs, name, bases, attrs, **kwargs)
@@ -92,6 +98,9 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
+    class Meta:
+        verbose_name = "Variant in SVIP"
+        verbose_name_plural = "Variants in SVIP"
 
 # ================================================================================================================
 # === Disease Aggregation
@@ -106,6 +115,10 @@ class DiseaseInSVIP(SVIPModel):
 
     def name(self):
         return self.disease.name
+
+    class Meta(SVIPModel.Meta):
+        verbose_name = "Disease in SVIP"
+        verbose_name_plural = "Diseases in SVIP"
 
 
 # ================================================================================================================
@@ -156,20 +169,21 @@ class CurationEntry(SVIPModel):
     entry whenever they want.
     """
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
+
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
     extra_variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
 
     type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
-    drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True)
-    interactions = ArrayField(base_field=models.TextField(), verbose_name="Interactions", null=True)
+    drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True, blank=True)
+    interactions = ArrayField(base_field=models.TextField(), verbose_name="Interactions", null=True, blank=True)
     effect = models.TextField(verbose_name="Effect", null=True)
     tier_level_criteria = models.TextField(verbose_name="Tier level Criteria", null=True)
     tier_level = models.TextField(verbose_name="Tier level", null=True)
     mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic", null=True)
-    summary = models.TextField(verbose_name="Complementary information", null=True)
-    support = models.TextField(verbose_name="Support", null=True)
-    comment = models.TextField(verbose_name="Comment", null=True)
+    summary = models.TextField(verbose_name="Complementary information", null=True, blank=True)
+    support = models.TextField(verbose_name="Support", null=True, blank=True)
+    comment = models.TextField(verbose_name="Comment", null=True, blank=True)
     references = models.TextField(verbose_name="References", null=True)
 
     annotations = ArrayField(base_field=models.TextField(), null=True)
@@ -182,7 +196,7 @@ class CurationEntry(SVIPModel):
     # optionally, this curation entry could be the result of "claiming" a curation request
     # FIXME: should we always generate a curation request to make tracking its review easier?
     # FIXME #2: assumedly batches of curation entries are submitted for a single request, so this should be mandatory
-    request = ForeignKey(to=CurationRequest, on_delete=DB_CASCADE, null=True)
+    request = ForeignKey(to=CurationRequest, on_delete=DB_CASCADE, null=True, blank=True)
 
     # FIXME: should we also track the review status's in the entry's history? is that even possible?
     history = HistoricalRecords(
@@ -193,6 +207,10 @@ class CurationEntry(SVIPModel):
     def owner_name(self):
         fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
+
+    class Meta:
+        verbose_name = "Curation Entry"
+        verbose_name_plural = "Curation Entries"
 
 
 class VariantCuration(SVIPModel):
