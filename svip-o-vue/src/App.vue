@@ -13,7 +13,10 @@
 <script>
 import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
-import '@/components/widgets/StyledLabels'; // adds components 'optional', 'coordinates'
+import '@/components/widgets/StyledLabels';
+import * as NProgress from "nprogress";
+
+export let np_manager = null;
 
 export default {
     components: {navHeader, navFooter},
@@ -21,6 +24,11 @@ export default {
     computed: {
         year() {
             return new Date().getFullYear();
+        }
+    },
+    mounted() {
+        if (!np_manager) {
+            np_manager = NProgress.configure({ parent: '.ajax-loader-bar' });
         }
     },
     watch: {

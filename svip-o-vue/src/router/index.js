@@ -20,6 +20,8 @@ import { checkInRole } from "@/directives/access";
 import Releases from "@/components/views/Releases";
 import About from "@/components/views/About";
 
+import { np_manager } from '@/App';
+
 import ulog from 'ulog';
 
 const log = ulog('Router:index');
@@ -150,6 +152,11 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+    if (to.name && np_manager) {
+        // Start the route progress bar.
+        np_manager.start()
+    }
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
         // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
@@ -180,5 +187,10 @@ router.beforeEach((to, from, next) => {
         next(); // just let them proceed
     }
 });
+
+router.afterEach((to, from) => {
+    // Complete the animation of the route progress bar.
+    np_manager && np_manager.done()
+})
 
 export default router;

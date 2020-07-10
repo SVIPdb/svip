@@ -7,6 +7,7 @@ import store from '@/store';
 import router from '@/router';
 import vueInstance from '@/main';
 import ulog from 'ulog';
+import { np_manager } from "@/App";
 
 const log = ulog('Support:HTTP');
 
@@ -51,6 +52,9 @@ createAuthRefreshInterceptor(
     }, {statusCodes: [401, 403]});
 
 HTTP.interceptors.request.use(request => {
+    // update nprogress
+    np_manager && np_manager.start()
+
     // always make sure to use the most up-to-date access token.
     // (this is especially important when using axios-auth-refresh, since it intercepts and stalls
     // requests that occur after an auth failure until the original succeeds, then allows them to proceed
@@ -65,15 +69,22 @@ HTTP.interceptors.request.use(request => {
     return request;
 });
 
-HTTP.interceptors.response.use(null, (err) => {
-    // HTTP users can pass handled: true in the call to get/post to disable these messages
-    // FIXME: see if we can make that part not break spec
-    if (err.config.handled) {
-        return;
-    }
+HTTP.interceptors.response.use(
+    (response) => {
+        np_manager && np_manager.done(); return response;
+    },
+    (err) => {
+        np_manager && np_manager.done();
 
-    // displays a toast when something goes wrong, but propogates the error
-    // (note that HTTProot doesn't need a handler, since it does its own error reporting)
-    // vueInstance.$snotify.error(err.toString().slice("Error: ".length), `Network Error`, {timeout: 3000});
-    throw err;
-});
+        // HTTP users can pass handled: true in the call to get/post to disable these messages
+        // FIXME: see if we can make that part not break spec
+        if (err.config.handled) {
+            return;
+        }
+
+        // displays a toast when something goes wrong, but propogates the error
+        // (note that HTTProot doesn't need a handler, since it does its own error reporting)
+        // vueInstance.$snotify.error(err.toString().slice("Error: ".length), `Network Error`, {timeout: 3000});
+        throw err;
+    }
+);
