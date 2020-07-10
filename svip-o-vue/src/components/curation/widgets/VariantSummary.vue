@@ -55,7 +55,7 @@ export default {
     },
     data() {
         return {
-            summary: this.variant.svip_data.summary,
+            summary: this.variant.svip_data && this.variant.svip_data.summary,
             history_entry_id: null,
 
             loading: false,
@@ -75,6 +75,19 @@ export default {
     },
     methods: {
         saveSummary() {
+            if (!this.variant.svip_data) {
+                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summary })
+                    .then((response) => {
+                        this.variant.svip_data = response.data;
+                        this.summary = response.data.summary;
+                        this.$snotify.success("Summary updated! (SVIP variant created, too.)");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary");
+                    })
+            }
+
             HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summary })
                 .then((response) => {
                     this.summary = response.data.summary;
