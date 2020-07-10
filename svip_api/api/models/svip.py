@@ -63,7 +63,7 @@ class VariantInSVIP(models.Model):
     mock SVIP variants file into 'data' for each variant.
     """
     variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
-    data = JSONField()
+    data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
