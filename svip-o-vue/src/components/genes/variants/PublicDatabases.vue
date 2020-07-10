@@ -158,13 +158,14 @@ export default {
                 {
                     key: "clinical",
                     label: "Clinical Significance / Interpretation",
-                    sortable: false
+                    sortable: false,
+                    class: "d-none d-md-table-cell"
                 },
                 {
                     key: "scores",
                     label: "Evidence Levels",
                     sortable: false,
-                    class: "d-none d-lg-block"
+                    class: "d-none d-lg-table-cell"
                 }
             ]
         };
