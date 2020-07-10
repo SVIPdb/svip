@@ -1,10 +1,16 @@
-from rest_framework import permissions
+from django.http import Http404
+from rest_framework import permissions, status
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 # gives view/edit permissions to anyone who's a curator, not just the owner
+from rest_framework.request import clone_request
+from rest_framework.response import Response
+
 ALLOW_ANY_CURATOR = True
 
+# curation with these statuses are visible by the public
+PUBLIC_VISIBLE_STATUSES = ('reviewed', 'unreviewed')
 
 class IsCurationPermitted(BasePermission):
     """
@@ -45,10 +51,10 @@ class IsCurationPermitted(BasePermission):
             else:
                 # reviewers can see anything that's submitted or reviewed
                 # FIXME: eventually they should only see things they've been assigned, which we'll check in the cross-table
-                return obj.status in ('submitted', 'reviewed')
+                return obj.status in ('submitted', 'reviewed', 'unreviewed')
         else:
             # ok, they're authenticated but not in any known group, so we must give them the default permissions
-            return obj.status == 'reviewed'
+            return obj.status in PUBLIC_VISIBLE_STATUSES
 
     def has_permission(self, request, view):
         # superusers have all permissions
@@ -63,8 +69,8 @@ class IsCurationPermitted(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if not request.user or not request.user.is_authenticated:
-            # for unauthenticated users, we can only return entries that are reviewed
-            return obj.status == 'reviewed'
+            # for unauthenticated users, we can only return entries that are in the list of public-visible statuses
+            return obj.status in IsCurationPermitted.PUBLIC_VISIBLE_STATUSES
 
         return IsCurationPermitted.is_user_allowed(
             user=request.user,
@@ -93,11 +99,11 @@ def authed_curation_set(user):
             result = CurationEntry.objects.filter(owner=user) if not ALLOW_ANY_CURATOR else CurationEntry.objects.all()
         elif 'reviewers' in groups:
             # FIXME: should reviewers see all entries, or just the ones they've been assigned?
-            result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted'))
+            result = CurationEntry.objects.filter(status__in=('reviewed', 'submitted', 'unreviewed'))
 
     if not result:
         # unauthenticated users and other users who don't have specific roles just see the default set
-        result = CurationEntry.objects.filter(status='reviewed')
+        result = CurationEntry.objects.filter(status__in=PUBLIC_VISIBLE_STATUSES)
 
     return result
 
