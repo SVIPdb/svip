@@ -2,6 +2,8 @@
 FROM node:12.18.2-stretch-slim as install-deps
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y git
+
 COPY package.json package-lock.json ./
 RUN npm install
 
