@@ -55,6 +55,8 @@
                 </b-navbar-nav>
             </b-navbar-nav>
         </b-collapse>
+
+        <div class="ajax-loader-bar" style="position: relative; z-index: 1035;"></div>
     </b-navbar>
 </template>
 
@@ -93,5 +95,14 @@ export default {
 
 .login-name b {
     color: #e6ebf2;
+}
+
+.ajax-loader-bar {
+    position: absolute !important;
+    left: 0;
+    bottom: -40px;
+    right: 0;
+    height: 40px;
+    z-index: 9999;
 }
 </style>

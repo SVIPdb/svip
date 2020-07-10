@@ -41,6 +41,7 @@ export default {
     background-color: rgba(19, 15, 64, 0.2);
     width: 100vw;
     height: 100vh;
+    z-index: 1040;
     position: fixed;
     top: 0;
     right: 0;
@@ -56,7 +57,7 @@ export default {
     top: 0;
     bottom: 0;
     height: 100vh;
-    z-index: 1040; /* previously 999, but we need it to be over the nav at 1030 */
+    z-index: 1050; /* previously 999, but we need it to be over the nav at 1030 */
     padding: 35px 20px 2rem 20px; /* top ppadding was previously 6.3rem, but we want it to cover the navbar now */
     width: 400px;
     border-left: solid 1px #ccc;
