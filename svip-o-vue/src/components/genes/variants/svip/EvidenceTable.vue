@@ -1,8 +1,14 @@
 <template>
     <b-card-text>
-        <b-table :fields="fields" :items="entries" show-empty small>
-            <template v-slot:cell(display)="row">
-                <row-expander v-access="'curators'" :row="row"/>
+        <b-table :fields="fields" responsive :items="entries" show-empty small class="align-rows-center">
+            <template v-slot:cell(display)="row2">
+                <row-expander v-access="'curators'" :row="row2"/>
+            </template>
+
+            <template v-slot:cell(warning)="row">
+                <div v-b-tooltip.right="'this entry is unreviewed'" class="d-flex justify-content-center align-items-center" style="font-size: 30px;">
+                    <icon name="exclamation-triangle" color="#cfb578" style="margin-top: 5px;" />
+                </div>
             </template>
 
             <template v-slot:cell(references)="data">
@@ -55,6 +61,7 @@ export default {
         return {
             fields: [
                 {key: "display", label: "", sortable: false},
+                {key:"warning", label:"", sortable: false},
                 {key: "type_of_evidence", label: "Evidence Type", sortable: true},
                 {key: "effect", label: "Effect", sortable: true},
                 {key: "drugs", label: "Drugs", sortable: true, formatter: (x) => x.join(", ")},
@@ -67,19 +74,19 @@ export default {
                     key: "owner_name",
                     label: "Curator",
                     sortable: false,
-                    thStyle: {display: this.checkInRole("curators") ? "" : "none"}
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
                 },
                 {
                     key: "status",
                     label: "Status",
                     sortable: false,
-                    thStyle: {display: this.checkInRole("curators") ? "" : "none"}
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
                 },
                 {
                     key: "created_on",
                     label: "Date",
                     sortable: true,
-                    thStyle: {display: this.checkInRole("curators") ? "" : "none"}
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
                 }
             ].map(x => {
                 if (!x.formatter) { x.formatter = (v) => v || '-'; }
@@ -96,4 +103,7 @@ export default {
 </script>
 
 <style scoped>
+.align-rows-center td {
+    vertical-align: middle;
+}
 </style>
