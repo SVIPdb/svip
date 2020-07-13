@@ -8,9 +8,11 @@
                             <th></th>
                             <th>Gene Name</th>
                             <th>Variant</th>
+
                             <th>HGVS.c</th>
-                            <th>HGVS.p</th>
-                            <th>HGVS.g</th>
+                            <th class="d-none d-sm-table-cell">HGVS.p</th>
+                            <th class="d-none d-sm-table-cell">HGVS.g</th>
+
                             <th :class="hiddenCols">dbSNP</th>
                             <!-- <th>Molecular consequence</th> -->
                             <th :class="hiddenCols">Position</th>
@@ -33,8 +35,8 @@
                             </td>
 
                             <coordinates :val="hgvs_c_pos"/>
-                            <coordinates :val="hgvs_p_pos"/>
-                            <coordinates :val="hgvs_g_pos"/>
+                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_p_pos"/>
+                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_g_pos"/>
 
                             <optional :class="hiddenCols" :val="variant.dbsnp_ids">
                                 <a
@@ -84,7 +86,8 @@
 
                         <transition name="slide-fade">
                             <tr v-if="showAliases" class="details-row">
-                                <td colspan="10">
+                                <td></td>
+                                <td colspan="9">
                                     <div class="aliases-list">
                                         <div v-for="(x) in variant.gene.aliases" :key="x">{{ x }}</div>
                                     </div>
