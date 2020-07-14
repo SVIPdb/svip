@@ -159,13 +159,27 @@
                                         :modeled="form.mutation_origin"
                                         label="Origin of the mutation"
                                         inner-id="mutation_origin"
-                                        required
                                     >
                                         <b-form-select
                                             id="mutation_origin"
                                             v-model="form.mutation_origin"
                                             :disabled="isViewOnly"
                                             :options="['Somatic', 'Germline', 'Both somatic and germline', 'Unknown']"
+                                            :state="checkValidity(props)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
+                                        :modeled="form.associated_mendelian_diseases"
+                                        :enabled="form.mutation_origin === 'Germline' || form.mutation_origin === 'Both somatic and germline'"
+                                        label="Associated Mendelian disease(s)"
+                                        inner-id="associated_mendelian_diseases"
+                                    >
+                                        <b-form-input
+                                            id="associated_mendelian_diseases"
+                                            v-model="form.associated_mendelian_diseases"
+                                            :disabled="isViewOnly"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
@@ -518,6 +532,7 @@ export default {
                 effect: null,
                 tier_criteria: null,
                 mutation_origin: null,
+                associated_mendelian_diseases: null,
                 support: null,
                 summary: null,
                 comment: null,
@@ -703,6 +718,7 @@ export default {
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,
                 mutation_origin: this.form.mutation_origin,
+                associated_mendelian_diseases: this.form.associated_mendelian_diseases,
                 summary: this.form.summary,
                 support: this.form.support,
                 comment: this.form.comment,
