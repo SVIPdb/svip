@@ -92,16 +92,40 @@
                 <template v-slot:cell(title_highlight)="data">
                     <span v-html="data.value"></span>
                 </template>
+
                 <template v-slot:cell(action)="row">
-                    <b-button
-                        :variant="annotationUsed(source, row.item.id) ? 'warning' : 'success'"
-                        size="sm"
-                        @click="addEvidenceFromList(row.item.id)"
-                        target="_blank"
-                    >
-                        <icon name="plus" />
-                    </b-button>
+                    <pass :used_ref="annotationUsed(source, row.item.id)">
+                        <span slot-scope="{ used_ref }">
+                            <b-button
+                                :ref="`add_btn_${row.item.id}`"
+                                :variant="used_ref ? 'warning' : 'success'"
+                                size="sm"
+                                @click="addEvidenceFromList(row.item.id)"
+                                target="_blank"
+                            >
+                                <icon name="plus" />
+                            </b-button>
+                            <b-popover v-if="used_ref"
+                                :target="() => $refs[`add_btn_${row.item.id}`]"
+                                triggers="hover focus"
+                                data-container="body"
+                            >
+                                This reference is already in use by:
+                                <div class="mt-1 text-left">
+                                    <b-button pill class="mr-1" variant="primary" size="sm"
+                                        v-for="x in used_ref" :key="x.id"
+                                        @click="() => { $root.$emit('bv::hide::popover') }"
+                                        :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
+                                        target="_blank"
+                                    >
+                                        Entry #{{ x.id }}
+                                    </b-button>
+                                </div>
+                            </b-popover>
+                        </span>
+                    </pass>
                 </template>
+
                 <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
                 <template v-slot:cell(publication_type)="data">{{ data.value.join(", ") }}</template>
                 <template v-slot:cell(score)="data">
@@ -178,7 +202,7 @@ export default {
     props: {
         variant: { type: Object, required: true },
         gene: { type: Object, required: true },
-        used_references: { type: Array, default: () => [] }
+        used_references: { type: Object }
     },
     data() {
         return {
@@ -263,7 +287,11 @@ export default {
                 .finally(() => { this.loadingVariomes = false; });
         },
         annotationUsed(source, reference) {
-            return source && reference && this.used_references.includes(`${source.trim()}:${reference.trim()}`);
+            if (!source || !reference || !this.used_references) {
+                return null;
+            }
+
+            return this.used_references[`${source.trim()}:${reference.trim()}`];
         }
     },
     async created() {

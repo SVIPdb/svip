@@ -42,14 +42,25 @@
                                     </b-col>
                                 </b-row>
 
-                                <transition name="slide-fade">
-                                    <b-row v-if="annotationUsed" no-gutters>
-                                        <b-col cols="8" offset="2" class="text-center my-2">
-                                            <b-alert :show="annotationUsed" variant="warning" dismissible>
-                                            NOTE: This reference has already been used in another entry.
-                                            </b-alert>
-                                        </b-col>
-                                    </b-row>
+                                <transition name="slide-fade" mode="out-in">
+                                    <MessageWithIcon v-if="annotationUsed" class="mt-4 mr-5 ml-5">
+                                        <template v-slot:icon>
+                                            <icon name="exclamation-triangle" scale="2.5" />
+                                        </template>
+                                        <template>
+                                            This reference has already been used in other entries:
+
+                                            <div class="mt-1 text-left">
+                                                <b-button pill class="mr-1" variant="primary" size="sm"
+                                                    v-for="x in annotationUsed" :key="x.id"
+                                                    :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
+                                                    target="_blank"
+                                                >
+                                                    Entry #{{ x.id }}
+                                                </b-button>
+                                            </div>
+                                        </template>
+                                    </MessageWithIcon>
                                 </transition>
 
                                 <b-row no-gutters>
@@ -62,7 +73,7 @@
                     </b-tab>
 
                     <b-tab title="Use text mining tool">
-                        <VariomesSearch :gene="gene" :variant="variant" :used-references="used_references" @add-evidence-from-list="addEvidenceFromList" />
+                        <VariomesSearch :gene="gene" :variant="variant" :used_references="used_references" @add-evidence-from-list="addEvidenceFromList" />
                     </b-tab>
 
                     <!--
@@ -88,12 +99,15 @@ import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
 import VariantSummary from "@/components/curation/widgets/VariantSummary";
 import ulog from 'ulog';
+import BroadcastChannel from "broadcast-channel";
+import MessageWithIcon from "@/components/widgets/MessageWithIcon";
 
 const log = ulog('Curation:AnnotateVariant');
 
 export default {
     name: "AnnotateVariant",
     components: {
+        MessageWithIcon,
         VariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
@@ -101,18 +115,21 @@ export default {
     },
     data() {
         return {
+            channel: new BroadcastChannel("curation-update"),
             source: "PMID",
             reference: "",
             loadingVariomes: false,
             variomes: null,
-            used_references: []
+            used_references: {}
         }
     },
     created() {
-        // get a list of used references so we can tell the user if they're about to use one that's been used already
-        HTTP.get('/curation_entries/all_references').then((response) => {
-            this.used_references = response.data.references;
-        })
+        this.refreshReferences();
+
+        this.channel.onmessage = () => {
+            // update the list of references, since we likely added one
+            this.refreshReferences();
+        };
     },
     computed: {
         ...mapGetters({
@@ -123,11 +140,23 @@ export default {
             return parseInt(this.$route.params.disease_id);
         },
         annotationUsed() {
-            return this.source && this.reference && this.used_references.includes(`${this.source.trim()}:${this.reference.trim()}`);
+            if (!this.source || !this.reference) {
+                return null;
+            }
+
+            const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
+            return this.used_references[thisRef];
         }
     },
     methods: {
         desnakify,
+        refreshReferences() {
+            // get a list of used references so we can tell the user if they're about to use one that's been used already
+            HTTP.get('/curation_entries/all_references').then((response) => {
+                this.used_references = response.data.references;
+                console.log("Refreshed refs: ", this.used_references);
+            })
+        },
         addEvidence() {
             let route = this.$router.resolve({
                 name: "add-evidence",
