@@ -21,7 +21,7 @@
 
             <b-col>
                 <b-input-group size="sm">
-                    <b-form-input v-model="search" placeholder="Type to Search"/>
+                    <b-form-input v-model="search" debounce="300" placeholder="Type to Search"/>
                     <b-input-group-append>
                         <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
                     </b-input-group-append>
@@ -66,7 +66,7 @@
                 primary-key="id"
                 :fields="fieldsTextMining" :items="pubs_by_disease" thead-class="unwrappable-header"
                 :sort-by="sortBy" :sort-desc="sortDesc"
-                :filter="search" :filter-debounce="300"
+                :filter="search"
                 :current-page="currentPage" :per-page="perPage" small
             >
                 <template v-slot:table-busy>
