@@ -1,4 +1,5 @@
 import django_filters
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from rest_framework import viewsets, permissions, filters
@@ -17,12 +18,11 @@ from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer
-
-
 # ================================================================================================================
 # === Variant Aggregation
 # ================================================================================================================
 from api.support.history import make_history_response
+from api.utils import json_build_fields
 
 
 class VariantInSVIPViewSet(viewsets.ModelViewSet):
@@ -181,7 +181,15 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def all_references(self, request):
         return JsonResponse({
-            'references': list(x[0] for x in CurationEntry.objects.all().values_list('references'))
+            'references': {
+                x['references']: x['recs'] for x in (
+                    CurationEntry.objects
+                        .values('references')
+                        .annotate(recs=ArrayAgg(json_build_fields(
+                            id='id', variant_id='variant__id', gene_id='variant__gene__id'
+                        )))
+                )
+            }
         })
 
     def get_queryset(self):

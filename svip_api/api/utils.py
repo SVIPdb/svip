@@ -1,5 +1,8 @@
 from itertools import chain
 
+from django.contrib.postgres.fields import JSONField
+from django.db.models import Func, Value, F
+
 
 def dictfetchall(cursor):
     """"Return all rows from a cursor as a dict"""
@@ -58,3 +61,15 @@ def to_dict(instance):
     for f in opts.many_to_many:
         data[f.name] = [i.id for i in f.value_from_object(instance)]
     return data
+
+
+class JsonBuildObject(Func):
+    function = 'jsonb_build_object'
+    output_field = JSONField()
+
+
+def json_build_fields(**args):
+    pairs = [(Value(k), F(v)) for k, v in args.items()]
+    return JsonBuildObject(
+        *[item for sublist in pairs for item in sublist]
+    )
