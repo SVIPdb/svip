@@ -7,10 +7,16 @@
         :disabled="disabled"
         label="name"
         :filter-by="filterBy"
+        @option:created="refreshDiseases"
     >
         <template v-slot:option="option">
-            {{ option.name || option.label }}
-            <span class="text-muted float-right">{{ option.localization && titleCase(option.localization.toLowerCase()) }}</span>
+            <span :class="[option.user_created && 'user_created']">
+                {{ option.name || option.label }}
+            </span>
+
+            <span class="text-muted float-right">
+                {{ option.localization && titleCase(option.localization.toLowerCase()) }}
+            </span>
         </template>
     </v-select>
 </template>
@@ -18,6 +24,7 @@
 <script>
 import { HTTP } from "@/router/http";
 import { titleCase } from "@/utils";
+import sortBy from 'lodash/sortBy';
 
 export default {
     name: "DiseaseSearchBar",
@@ -34,12 +41,15 @@ export default {
         }
     },
     created() {
-        HTTP.get('/diseases?page_size=9999').then(response => {
-            this.diseases = response.data.results;
-        });
+        this.refreshDiseases();
     },
     methods: {
         titleCase,
+        refreshDiseases() {
+            HTTP.get('/diseases?page_size=9999').then(response => {
+                this.diseases = sortBy(response.data.results, x => !x.user_created);
+            });
+        },
         update(newValue) {
             this.$emit('input', newValue);
         },
@@ -59,4 +69,5 @@ export default {
 .invalidated >>> .vs__dropdown-toggle  {
     border-color: #e74c3c !important;
 }
+.user_created { font-style: italic; }
 </style>

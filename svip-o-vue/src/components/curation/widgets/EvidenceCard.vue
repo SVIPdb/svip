@@ -79,7 +79,7 @@
                     <VariomesLitPopover v-if="isDashboard" :pubmeta="{ pmid: data.value }"
                         :variant="data.item.variant.name"
                         :gene="data.item.variant.gene.symbol"
-                        :disease="data.item.disease.name"
+                        :disease="data.item.disease && data.item.disease.name"
                     />
                     <VariomesLitPopover v-else :pubmeta="{ pmid: data.value }" v-bind="variomesParams" />
                 </template>
@@ -215,7 +215,7 @@ const full_fields = [
         key: "disease__name",
         label: "Disease",
         sortable: true,
-        formatter: (x, k, obj) => obj.disease.name
+        formatter: (x, k, obj) => obj.disease && obj.disease.name
     },
     {
         key: "drugs",
@@ -277,7 +277,7 @@ const dashboard_fields = [
         key: "disease__name",
         label: "Disease",
         sortable: true,
-        formatter: (x, k, obj) => obj.disease.name
+        formatter: (x, k, obj) => obj.disease && obj.disease.name
     },
     {
         key: "references",
@@ -441,8 +441,7 @@ export default {
 
             const [gene_id, variant_id] = [
                 entry.variant.gene.id,
-                entry.variant.id,
-                entry.disease.id
+                entry.variant.id
             ];
 
             return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry.id}`;

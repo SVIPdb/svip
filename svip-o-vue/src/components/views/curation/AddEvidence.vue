@@ -44,8 +44,8 @@
                                         v-slot="props"
                                         :modeled="form.disease"
                                         label="Disease"
+                                        sublabel="Type in a value and press 'enter' to create a new entry. User-created entries are in italics."
                                         inner-id="disease"
-                                        required
                                     >
                                         <DiseaseSearchBar
                                             id="disease"
@@ -690,7 +690,7 @@ export default {
                 };
 
             const payload = {
-                disease: this.form.disease.id,
+                disease: this.form.disease, // this.form.disease.id,
                 variant: this.variant.id,
                 extra_variants: this.form.extra_variants
                     ? this.form.extra_variants.map(x => x.id)
