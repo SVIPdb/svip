@@ -154,7 +154,6 @@ export default {
             // get a list of used references so we can tell the user if they're about to use one that's been used already
             HTTP.get('/curation_entries/all_references').then((response) => {
                 this.used_references = response.data.references;
-                console.log("Refreshed refs: ", this.used_references);
             })
         },
         addEvidence() {
