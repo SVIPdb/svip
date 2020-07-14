@@ -168,7 +168,7 @@ class CurationEntry(SVIPModel):
     Generally, these are in response to a request, although (apparently?) a curator can create a curation
     entry whenever they want.
     """
-    disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
+    disease = ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
@@ -180,7 +180,8 @@ class CurationEntry(SVIPModel):
     effect = models.TextField(verbose_name="Effect", null=True)
     tier_level_criteria = models.TextField(verbose_name="Tier level Criteria", null=True)
     tier_level = models.TextField(verbose_name="Tier level", null=True)
-    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic", null=True)
+    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic", null=True, blank=True)
+    associated_mendelian_diseases = models.TextField(verbose_name="Associated Mendelian Disease(s)", null=True, blank=True)
     summary = models.TextField(verbose_name="Complementary information", null=True, blank=True)
     support = models.TextField(verbose_name="Support", null=True, blank=True)
     comment = models.TextField(verbose_name="Comment", null=True, blank=True)

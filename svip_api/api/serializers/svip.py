@@ -14,7 +14,7 @@ from rest_framework.reverse import reverse
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from api.models import VariantInSVIP, Sample, CurationEntry, Variant
+from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug
 from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
 
 from django.contrib.auth import get_user_model
@@ -231,7 +231,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
     created_on = serializers.DateTimeField(read_only=True, default=now)
 
-    disease = DiseaseSerializer()  # returns the full disease object instead of just its ID
+    disease = DiseaseSerializer(required=False, allow_null=True)  # returns the full disease object instead of just its ID
 
     owner_name = serializers.SerializerMethodField()
     formatted_variants = serializers.SerializerMethodField()
@@ -249,17 +249,29 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         # replace references to variant and disease IDs with the actual backing objects
         # note that we presume here that the variant and disease IDs they specify already exist
         validated_data['variant'] = Variant.objects.get(id=validated_data['variant']['id'])
-        validated_data['disease'] = Disease.objects.get(id=validated_data['disease']['id'])
+        validated_data['disease'] = Disease.objects.get(id=validated_data['disease']['id']) if validated_data['disease'] else None
         validated_data['extra_variants'] = Variant.objects.filter(id__in=[x['id'] for x in validated_data['extra_variants']])
+
+    @staticmethod
+    def ensure_drugs_exist(validated_data):
+        if 'drugs' not in validated_data:
+            return
+
+        for drug in validated_data['drugs']:
+            if not Drug.objects.filter(common_name=drug).first():
+                Drug.objects.create(common_name=drug, user_created=True)
+
 
     def create(self, validated_data):
         self._remap_multifields(validated_data)
+        self.ensure_drugs_exist(validated_data)
         validated_data["owner"] = self.fields["owner"].get_default()
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         validated_data.pop('owner')
         self._remap_multifields(validated_data)
+        self.ensure_drugs_exist(validated_data)
         return super().update(instance, validated_data)
 
     # def save(self, **kwargs):
@@ -277,12 +289,12 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             # TODO: perform more stringent validation
             # FIXME: for now we'll do validation here, but ideally it should be factored out
             non_empty_fields = (
-                'disease',
+                # 'disease',
                 'variant',
                 'type_of_evidence',
                 'effect',
                 # 'tier_level_criteria', # only required if type_of_evidence != 'Excluded'
-                'mutation_origin',
+                # 'mutation_origin', # no longer requireds
                 'support',
             )
 
@@ -330,6 +342,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'tier_level_criteria',
             'tier_level',
             'mutation_origin',
+            'associated_mendelian_diseases',
             'summary',
             'support',
             'comment',
