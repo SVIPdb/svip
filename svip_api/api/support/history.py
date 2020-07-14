@@ -38,6 +38,6 @@ def make_history_response(entry, remapper=identity_mapper, add_created_by=True):
     }
 
     if add_created_by:
-        resp['created_by'] = _nice_username(entry.owner),
+        resp['created_by'] = _nice_username(entry.owner)
 
     return JsonResponse(resp)
