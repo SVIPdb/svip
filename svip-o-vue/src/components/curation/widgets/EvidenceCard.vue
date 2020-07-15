@@ -194,7 +194,7 @@ const DateTimeField = {
     }
 };
 
-
+// used by the citations browser
 const full_fields = [
     {
         key: "status",
@@ -260,6 +260,7 @@ const full_fields = [
     }
 ];
 
+// used by the queue of pending/in progress/complete citations
 const dashboard_fields = [
     {
         key: "variant__gene__symbol",
@@ -323,6 +324,7 @@ export default {
         variant: { type: Object, required: false },
         disease_id: { type: Number, required: false },
         isDashboard: { type: Boolean, required: false, default: false },
+        includeGeneVar: { type: Boolean, required: false, default: false },
         small: { type: Boolean, required: false, default: false },
         isSubmittable: { type: Boolean, required: false, default: false },
         onlySubmitted: { type: Boolean, required: false, default: false },
@@ -360,6 +362,24 @@ export default {
                         key: "submit_box",
                         label: "",
                         sortable: false
+                    },
+                    ...fields
+                ];
+            }
+
+            if (this.includeGeneVar) {
+                fields = [
+                    {
+                        key: "variant__gene__symbol",
+                        label: "Gene",
+                        sortable: true,
+                        formatter: (x, k, obj) => obj.variant.gene.symbol
+                    },
+                    {
+                        key: "variant__name",
+                        label: "Variant",
+                        sortable: true,
+                        formatter: (x, k, obj) => obj.variant.name
                     },
                     ...fields
                 ];

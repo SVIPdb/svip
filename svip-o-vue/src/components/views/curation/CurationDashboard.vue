@@ -49,7 +49,7 @@
                 cardFilterOption
             />
 
-            <EvidenceCard has-header is-dashboard
+            <EvidenceCard has-header include-gene-var
                 header-title="CURATION ENTRIES"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
