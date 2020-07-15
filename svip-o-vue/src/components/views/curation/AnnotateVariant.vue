@@ -51,7 +51,7 @@
                                             This reference has already been used in other entries:
 
                                             <div class="mt-1 text-left">
-                                                <b-button pill class="mr-1" variant="primary" size="sm"
+                                                <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
                                                     v-for="x in annotationUsed" :key="x.id"
                                                     :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
                                                     target="_blank"
