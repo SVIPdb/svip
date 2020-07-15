@@ -186,35 +186,35 @@
         "Function": {
             "Gain of function": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Loss of function": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Neomorphic": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Unaltered function": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Dominant negative": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
@@ -223,42 +223,42 @@
         "Subcellular location": {
             "Loss of physiological location": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Decreased physiological location": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Increased physiological location": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "New location": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Unaltered location": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Other": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
@@ -267,35 +267,35 @@
         "Interaction": {
             "Loss of interaction with known partner(s)": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Decreased interaction with known partner(s)": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Increased interaction with known partner(s)": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "New interaction partner(s)": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Other": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
@@ -304,31 +304,31 @@
         "Expression": {
             "Loss of expression": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Author statement",
                 "Other criteria"
             ],
             "Decreased expression": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Author statement",
                 "Other criteria"
             ],
             "Increased expression": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Author statement",
                 "Other criteria"
             ],
             "Misexpression": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Author statement",
                 "Other criteria"
             ],
             "Other": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Author statement",
                 "Other criteria"
             ]
@@ -336,35 +336,35 @@
         "Response to drug": {
             "Loss of drug response": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Decreased drug response": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Increased drug response": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Newly acquired drug response": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
             ],
             "Other": [
                 "Well-established in vitro study",
-                "Well-established in vivo study ",
+                "Well-established in vivo study",
                 "Prediction",
                 "Author statement",
                 "Other criteria"
