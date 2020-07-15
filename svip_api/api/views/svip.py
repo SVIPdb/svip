@@ -18,12 +18,13 @@ from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer
-# ================================================================================================================
-# === Variant Aggregation
-# ================================================================================================================
 from api.support.history import make_history_response
 from api.utils import json_build_fields
 
+
+# ================================================================================================================
+# === Variant Aggregation
+# ================================================================================================================
 
 class VariantInSVIPViewSet(viewsets.ModelViewSet):
     """
