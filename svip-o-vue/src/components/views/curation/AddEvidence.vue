@@ -446,7 +446,6 @@ import store from "@/store";
 import { HTTP } from "@/router/http";
 import { extend, ValidationObserver } from "vee-validate";
 import DrugSearchBar from "@/components/widgets/DrugSearchBar";
-import GeneSearchBar from "@/components/widgets/GeneSearchBar";
 import ValidatedFormField from "@/components/curation/widgets/ValidatedFormField";
 import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
@@ -485,7 +484,6 @@ export default {
         EvidenceHistory,
         ValidatedFormField,
         DrugSearchBar,
-        GeneSearchBar,
         CuratorVariantInformations,
         ValidationObserver
     },

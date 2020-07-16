@@ -20,7 +20,7 @@
 
             <div v-if="showSearch" class="search-box" style="margin-left: 10px;">
                 <b-input-group size="sm">
-                    <b-form-input v-model="search" placeholder="Type to Search"/>
+                    <b-form-input v-model="search" debounce="300" placeholder="Type to Search"/>
                     <b-input-group-append>
                         <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
                     </b-input-group-append>
