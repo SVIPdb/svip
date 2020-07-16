@@ -107,11 +107,11 @@
                                         v-slot="props"
                                         :modeled="form.interactions"
                                         :enabled="form.type_of_evidence === 'Interaction'"
-                                        label="For which gene or chemical compound?"
+                                        label="For which interactor?"
                                         inner-id="interactions"
                                         required
                                     >
-                                        <GeneSearchBar
+                                        <InteractorSearchBar
                                             id="interactions"
                                             allow-create
                                             v-model="form.interactions"
@@ -456,6 +456,7 @@ import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
 import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
 import { pubmedURL } from "@/utils";
 import ulog from 'ulog';
+import InteractorSearchBar from "@/components/widgets/InteractorSearchBar";
 
 const log = ulog('Curation:AddEvidence')
 
@@ -478,6 +479,7 @@ extend("required", {
 export default {
     name: "AddEvidence",
     components: {
+        InteractorSearchBar,
         VariomesAbstract,
         DiseaseSearchBar,
         EvidenceHistory,
