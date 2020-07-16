@@ -16,7 +16,7 @@
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
-                        <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
+                        <b-form-input v-model="filter" debounce="300" placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
                         </b-input-group-append>
