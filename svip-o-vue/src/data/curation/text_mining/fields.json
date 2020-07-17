@@ -34,8 +34,8 @@
         "sortable": true
     },
     {
-        "key": "publication_type",
-        "label": "Publication type",
+        "key": "publication_types",
+        "label": "Publication types",
         "sortable": true
     },
     {

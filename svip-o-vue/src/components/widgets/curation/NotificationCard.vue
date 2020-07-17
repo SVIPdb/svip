@@ -130,7 +130,7 @@
  */
 import { abbreviatedName } from "@/utils";
 import { mapGetters } from "vuex";
-import FilterButtons from "@/components/curation/widgets/FilterButtons";
+import FilterButtons from "@/components/widgets/curation/FilterButtons";
 
 export default {
     name: "NotificationCard",

@@ -440,22 +440,22 @@
 <script>
 import { mapGetters } from "vuex";
 import BroadcastChannel from "broadcast-channel";
-import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
+import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
 import inputs from "@/data/curation/evidence/options.json";
 import store from "@/store";
 import { HTTP } from "@/router/http";
 import { extend, ValidationObserver } from "vee-validate";
-import DrugSearchBar from "@/components/widgets/DrugSearchBar";
-import ValidatedFormField from "@/components/curation/widgets/ValidatedFormField";
+import DrugSearchBar from "@/components/widgets/searchbars/DrugSearchBar";
+import ValidatedFormField from "@/components/widgets/curation/ValidatedFormField";
 import { required } from "vee-validate/dist/rules";
-import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
+import EvidenceHistory from "@/components/widgets/curation/EvidenceHistory";
 import { checkInRole } from "@/directives/access";
 import dayjs from "dayjs";
-import DiseaseSearchBar from "@/components/widgets/DiseaseSearchBar";
-import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
+import DiseaseSearchBar from "@/components/widgets/searchbars/DiseaseSearchBar";
+import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import { pubmedURL } from "@/utils";
 import ulog from 'ulog';
-import InteractorSearchBar from "@/components/widgets/InteractorSearchBar";
+import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearchBar";
 
 const log = ulog('Curation:AddEvidence')
 

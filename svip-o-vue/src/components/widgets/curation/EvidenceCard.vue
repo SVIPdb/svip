@@ -173,7 +173,7 @@ import PagedTable from "@/components/widgets/PagedTable";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 import BroadcastChannel from "broadcast-channel";
 import { abbreviatedName, simpleDateTime, titleCase } from "@/utils";
-import EvidenceHistory from "@/components/curation/widgets/EvidenceHistory";
+import EvidenceHistory from "@/components/widgets/curation/EvidenceHistory";
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs';
 import ulog from 'ulog';

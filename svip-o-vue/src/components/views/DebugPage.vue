@@ -72,9 +72,9 @@
 </template>
 
 <script>
-import SearchBar from "@/components/widgets/SearchBar";
-import DrugSearchBar from "@/components/widgets/DrugSearchBar";
-import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
+import SearchBar from "@/components/widgets/searchbars/SearchBar";
+import DrugSearchBar from "@/components/widgets/searchbars/DrugSearchBar";
+import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
 import { HTTP } from '@/router/http';
 import PagedTable from "@/components/widgets/PagedTable";
 import curation_fields from "@/data/curation/evidence/fields.json";

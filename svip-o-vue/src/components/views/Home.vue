@@ -68,7 +68,7 @@
 <script>
 import { mapGetters } from "vuex";
 import store from "@/store";
-import SearchBar from "../widgets/SearchBar";
+import SearchBar from "../widgets/searchbars/SearchBar";
 
 export default {
     name: "home",

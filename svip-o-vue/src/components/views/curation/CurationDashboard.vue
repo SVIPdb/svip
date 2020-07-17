@@ -69,8 +69,8 @@
 import { HTTP } from "@/router/http";
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
-import NotificationCard from "@/components/curation/widgets/NotificationCard";
-import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
+import NotificationCard from "@/components/widgets/curation/NotificationCard";
+import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
 // Manual import of fake data (FIXME: API)
 import fields_on_request from "@/data/curation/on_request/fields.js";

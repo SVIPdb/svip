@@ -90,14 +90,14 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import CuratorVariantInformations from "@/components/curation/widgets/CuratorVariantInformations";
-import EvidenceCard from "@/components/curation/widgets/EvidenceCard";
+import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
+import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
-import VariomesSearch from "@/components/curation/widgets/VariomesSearch";
-import VariomesAbstract from "@/components/curation/widgets/VariomesAbstract";
-import VariantSummary from "@/components/curation/widgets/VariantSummary";
+import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
+import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
+import VariantSummary from "@/components/widgets/curation/VariantSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 import MessageWithIcon from "@/components/widgets/MessageWithIcon";

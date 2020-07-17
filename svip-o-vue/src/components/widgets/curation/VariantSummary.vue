@@ -42,7 +42,7 @@
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import VariantInSVIPHistory from "@/components/curation/widgets/VariantInSVIPHistory";
+import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHistory";
 import ulog from 'ulog';
 
 const log = ulog('VariantSummary');

@@ -135,7 +135,7 @@
                 </template>
 
                 <template v-slot:cell(authors)="data">{{ data.value && data.value.join(", ") }}</template>
-                <template v-slot:cell(publication_type)="data">{{ data.value && data.value.join(", ") }}</template>
+                <template v-slot:cell(publication_types)="data">{{ data.value && data.value.join(", ") }}</template>
                 <template v-slot:cell(score)="data">
                     <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
                     <b-tooltip :target="() => $refs[data.item.id]">
