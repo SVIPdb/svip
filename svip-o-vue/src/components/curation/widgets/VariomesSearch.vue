@@ -83,9 +83,9 @@
                 <template v-slot:cell(id)="row">
                     <VariomesLitPopover
                         :pubmeta="{ pmid: row.item.id }"
-                        :variant="variomes.query.variant"
-                        :gene="variomes.query.gene"
-                        :disease="variomes.query.disease"
+                        :variant="preferredTerms.variant"
+                        :gene="preferredTerms.gene"
+                        :disease="preferredTerms.disease"
                         deferred
                     />
                 </template>
@@ -134,22 +134,22 @@
                     </pass>
                 </template>
 
-                <template v-slot:cell(authors)="data">{{ data.value.join(", ") }}</template>
-                <template v-slot:cell(publication_type)="data">{{ data.value.join(", ") }}</template>
+                <template v-slot:cell(authors)="data">{{ data.value && data.value.join(", ") }}</template>
+                <template v-slot:cell(publication_type)="data">{{ data.value && data.value.join(", ") }}</template>
                 <template v-slot:cell(score)="data">
                     <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
                     <b-tooltip :target="() => $refs[data.item.id]">
                         <ul class="p-0 m-0">
                             <li class="d-flex justify-content-between align-items-center gene">
-                                {{variomes.query.genes_variants[0].gene}}
+                                {{preferredTerms.gene}}
                                 <span class="text-white pl-1">{{data.item.details.query_details.query_gene_count.all}}</span>
                             </li>
                             <li class="d-flex justify-content-between align-items-center variant">
-                                {{variomes.query.genes_variants[0].variant}}
+                                {{preferredTerms.variant}}
                                 <span class="text-white pl-1">{{data.item.details.query_details.query_variant_count.all}}</span>
                             </li>
-                            <li v-if="variomes.query.disease !== 'none'" class="d-flex justify-content-between align-items-center disease">
-                                {{variomes.query.disease}}
+                            <li v-if="preferredTerms.disease !== 'none'" class="d-flex justify-content-between align-items-center disease">
+                                {{preferredTerms.disease}}
                                 <span class="text-white pl-1">{{data.item.details.query_details.query_disease_count.all}}</span>
                             </li>
                         </ul>
@@ -237,15 +237,31 @@ export default {
         disease_id() {
             return parseInt(this.$route.params.disease_id);
         },
+        combinedPubs() {
+            if (!this.variomes || !this.variomes.publications)
+                return [];
+
+            // FIXME: deal with things other than medline pubs soonish
+            return this.variomes.publications.medline;
+        },
+        preferredTerms() {
+            if (!this.variomes || !this.variomes.normalized_query)
+                return {};
+
+            const nq = this.variomes.normalized_query;
+
+            return {
+                gene: nq.genes && nq.genes.length > 0  && (nq.genes[0].preferred_term || nq.genes[0].query_term),
+                variant: nq.variants && nq.variants.length > 0  && (nq.variants[0].preferred_term || nq.variants[0].query_term),
+                disease: nq.diseases && nq.diseases.length > 0  && (nq.diseases[0].preferred_term || nq.diseases[0].query_term),
+            }
+        },
         /**
          * Gets the set of diseases mentioned in all returned publications, with the number of times it's been found in a publication.
          * @return {null|[{name: String, count: Number}]}
          */
         pub_diseases() {
-            if (!this.variomes || !this.variomes.publications)
-                return [];
-
-            const disease_map = this.variomes.publications.reduce((diseases, pub) => {
+            const disease_map = this.combinedPubs.reduce((diseases, pub) => {
                 // record each disease and the number of publications that feature it
                 const disease_names = pub.details.facet_details.diseases.map(x => x.preferred_term);
                 disease_names.forEach(x => {
@@ -261,10 +277,10 @@ export default {
         },
         pubs_by_disease() {
             if (!this.disease)
-                return this.variomes.publications;
+                return this.combinedPubs;
 
-            return this.variomes.publications
-                .filter(pub => pub.details.facet_details.diseases.some(y => y.preferred_term == this.disease.name));
+            return this.combinedPubs
+                .filter(pub => pub.details.facet_details.diseases.some(y => y.preferred_term === this.disease.name));
         }
     },
     // components: {geneVariants: geneVariants},
@@ -284,7 +300,7 @@ export default {
             })
                 .then(response => {
                     this.variomes = response.data;
-                    this.totalRows = this.variomes.publications.length;
+                    this.totalRows = this.combinedPubs.length;
                 })
                 .catch(err => {
                     this.variomesError = {
