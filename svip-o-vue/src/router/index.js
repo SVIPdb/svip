@@ -1,25 +1,42 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from '@/store';
+import { TokenErrors } from "@/store/modules/users";
+
+/*
 import Home from "@/components/views/Home";
+import Releases from "@/components/views/Releases";
+import About from "@/components/views/About";
+import Help from "@/components/views/Help";
 import ViewGene from "@/components/views/ViewGene";
 import ViewVariant from "@/components/views/ViewVariant";
 import Login from "@/components/views/user/Login";
 import UserInfo from "@/components/views/user/UserInfo";
-import store from '@/store';
-import { TokenErrors } from "@/store/modules/users";
-import PageNotFound from "@/components/views/PageNotFound";
-import Help from "@/components/views/Help";
 import Statistics from "@/components/views/Statistics";
-
 import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
 import AddEvidence from "@/components/views/curation/AddEvidence";
 import DebugPage from "@/components/views/DebugPage";
+import PageNotFound from "@/components/views/PageNotFound";
+*/
+
+// lazy-load routes rather than directly importing them
+const Home = () => import("@/components/views/Home");
+const Releases = () => import("@/components/views/Releases");
+const About = () => import("@/components/views/About");
+const Help = () => import("@/components/views/Help");
+const ViewGene = () => import("@/components/views/ViewGene");
+const ViewVariant = () => import("@/components/views/ViewVariant");
+const Login = () => import("@/components/views/user/Login");
+const UserInfo = () => import("@/components/views/user/UserInfo");
+const Statistics = () => import("@/components/views/Statistics");
+const CurationDashboard = () => import("@/components/views/curation/CurationDashboard");
+const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
+const AddEvidence = () => import("@/components/views/curation/AddEvidence");
+const DebugPage = () => import("@/components/views/DebugPage");
+const PageNotFound = () => import("@/components/views/PageNotFound");
+
 import { checkInRole } from "@/directives/access";
-
-import Releases from "@/components/views/Releases";
-import About from "@/components/views/About";
-
 import { np_manager } from '@/App';
 
 import ulog from 'ulog';
