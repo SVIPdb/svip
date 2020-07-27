@@ -1,6 +1,6 @@
 {
   "name": "svip-o-frontend",
-  "version": "0.3.0",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -56,5 +56,5 @@
     "vue-cli-plugin-bootstrap-vue": "~0.6.0",
     "vue-template-compiler": "^2.6.11"
   },
-  "release_name": "Alpha Centauri"
+  "release_name": "Alpha Zett"
 }

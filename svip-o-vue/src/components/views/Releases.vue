@@ -26,7 +26,7 @@
                             <b-collapse :visible="release.full">
                                 <ul class="changelog">
                                     <li v-for="commit in release.changelog" :key="commit.commit">
-                                        <b v-b-tooltip="`${commit.author.name} on ${commit.author.date}`">
+                                        <b v-b-tooltip="`${commit.author.name} on ${commit.author.date} [${commit.abbreviated_commit}]`">
                                             {{ relativeDate(commit.author.date) }}:
                                         </b>
                                         {{ commit.subject }}
@@ -44,6 +44,7 @@
 <script>
 import v020_commits from '@/data/releases/v020_commits.js';
 import v030_commits from '@/data/releases/v030_commits.js';
+import v090_commits from '@/data/releases/v090_commits.js';
 import dayjs from "dayjs";
 import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
 dayjs.extend(RelativeTime);
@@ -53,6 +54,18 @@ export default {
     data() {
         return {
             releases: {
+                "0.9.0": {
+                    name: 'Alpha Zett',
+                    summary: 'Released on 01.06.2020, this release includes a lot of small polishes in anticipation of the public release.',
+                    changes: [
+                        'Merges project page with main site.',
+                        'Fixes many small issues, removes debugging code in anticipation of the public release.',
+                        '[Backend]: includes all dependencies in the deployment scripts.',
+                        '[Backend]: fixes lots of frontend build issues.',
+                        '[Backend]: adds load-balancing between multiple SVIP instances.',
+                    ],
+                    significant: true, full: false, changelog: v090_commits
+                },
                 "0.3.0": {
                     name: 'Alpha Centauri',
                     summary: 'Released on 10.02.2020, this release includes a work-in-progress curation interface as well as many small tweaks and bugfixes.',
