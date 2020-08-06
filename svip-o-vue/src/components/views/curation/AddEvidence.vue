@@ -844,9 +844,9 @@ export default {
             if (!this.variomes) return [];
 
             const { gene, variant, disease } = {
-                gene: this.variomes.query.genes_variants[0].gene,
-                variant: this.variomes.query.genes_variants[0].variant,
-                disease: this.variomes.query.diseases[0]
+                gene: this.variomes.normalized_query.genes[0].preferred_term,
+                variant: this.variomes.normalized_query.variants[0].preferred_term,
+                disease: this.variomes.normalized_query.diseases && this.variomes.normalized_query.diseases[0].preferred_term
             };
             const counts = this.variomes.publications[0].details.query_details;
 
@@ -863,13 +863,13 @@ export default {
                     label: variant,
                     count: counts.query_variant_count.all
                 },
-                {
+                disease && {
                     class: "bg-disease",
                     url: `?term=${disease}[Title/Abstract]`,
                     label: disease,
                     count: counts.query_disease_count.all
                 },
-                {
+                disease && {
                     class: "bg-primary",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
                     label: `${gene} + ${variant} + ${disease}`
@@ -879,7 +879,7 @@ export default {
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
                     label: `${gene} + ${variant}`
                 }
-            ];
+            ].filter(x => x);
         },
         effects() {
             // return this.form.type_of_evidence != null
