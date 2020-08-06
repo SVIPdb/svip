@@ -190,6 +190,16 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        },
+        isCurator: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        isReviewer: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     data() {

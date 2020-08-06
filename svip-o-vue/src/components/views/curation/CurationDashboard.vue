@@ -1,10 +1,13 @@
 <template>
     <div class="container-fluid">
-        <div v-if="checkInRole('reviewers')">
+        <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
+        <!-- Ivo - suggestion : replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ??? -->
+        <div>
             <!-- ON REQUEST - CARD -->
             <NotificationCard v-if="REVIEW_ENABLED"
                 :items="on_request.items"
                 :fields="on_request.fields"
+                :isReviewer="true"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
@@ -16,6 +19,7 @@
             <NotificationCard v-if="REVIEW_ENABLED"
                 :items="to_be_curated"
                 :fields="fields_to_be_curated"
+                :isReviewer="true"
                 defaultSortBy="days_left"
                 title="TO BE CURATED"
                 cardFilterOption
@@ -24,6 +28,7 @@
             <NotificationCard v-if="REVIEW_ENABLED"
                 :items="to_be_discussed"
                 :fields="fields_to_be_discussed"
+                :isReviewer="true"
                 defaultSortBy="days_left"
                 title="TO BE DISCUSSED"
             />
@@ -32,15 +37,18 @@
             <NotificationCard
                 :items="nonsvip_variants"
                 :fields="fields_nonsvip_variants"
+                :isReviewer="true"
                 title="NON SVIP VARIANTS"
             />
             -->
         </div>
 
-        <div v-else-if="checkInRole('curators')">
+        <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
+        <div v-if="checkInRole('curators')">
             <!-- TBC: request queue -->
             <NotificationCard
                 :items="on_request.items" :fields="on_request.fields" :loading="on_request.loading"
+                :isCurator="true"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
@@ -92,7 +100,8 @@ export default {
     },
     data() {
         return {
-            REVIEW_ENABLED: false, // temporary flag to hide review-related bits of the UI until they're ready
+            // Ivo - orignial : REVIEW_ENABLED: false,
+            REVIEW_ENABLED: true, // temporary flag to hide review-related bits of the UI until they're ready
 
             // ON REQUEST FAKE DATA
             on_request: {
