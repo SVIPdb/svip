@@ -4,43 +4,16 @@
         <!-- Ivo - suggestion : replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ??? -->
         <div>
             <!-- ON REQUEST - CARD -->
+            <!-- Ivo : replace "on_request.items" with a service that gets the stuff to be reviewed -->
             <NotificationCard v-if="REVIEW_ENABLED"
-                :items="on_request.items"
-                :fields="on_request.fields"
+                :items="on_request.items" :fields="on_request.fields" :loading="on_request.loading"
                 :isReviewer="true"
-                defaultSortBy="days_left"
-                title="ON REQUEST"
+                title="REVIEWS"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
                 cardCustomClass
                 cardFilterOption
             />
-            <!-- TO BE CURATED - CARD -->
-            <NotificationCard v-if="REVIEW_ENABLED"
-                :items="to_be_curated"
-                :fields="fields_to_be_curated"
-                :isReviewer="true"
-                defaultSortBy="days_left"
-                title="TO BE CURATED"
-                cardFilterOption
-            />
-            <!-- UNDER REVISION - CARD -->
-            <NotificationCard v-if="REVIEW_ENABLED"
-                :items="to_be_discussed"
-                :fields="fields_to_be_discussed"
-                :isReviewer="true"
-                defaultSortBy="days_left"
-                title="TO BE DISCUSSED"
-            />
-            <!-- NON SVIP VARIANTS - CARD -->
-            <!--
-            <NotificationCard
-                :items="nonsvip_variants"
-                :fields="fields_nonsvip_variants"
-                :isReviewer="true"
-                title="NON SVIP VARIANTS"
-            />
-            -->
         </div>
 
         <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
