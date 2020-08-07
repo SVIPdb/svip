@@ -1,118 +1,31 @@
 <template>
     <div class="container-fluid">
-        <!-- Ivo : to change? -->
+        <!-- Ivo : To change? -->
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
+        <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <EvidenceCard :variant="variant" is-submittable small />
-
-        <div>
-            <b-card no-body>
-                <b-tabs
-                    card
-                    justified
-                    nav-wrapper-class="bg-primary"
-                    nav-class="text-white"
-                    active-nav-item-class="font-weight-bolder"
-                >
-                    <b-tab title="Enter your reference" active>
-                        <b-card-body>
-                            <b-container>
-                                <b-row no-gutters>
-                                    <b-col cols="3">
-                                        <b-form-select required class="custom-border-left" v-model="source" :options="['PMID']"/>
-                                    </b-col>
-                                    <b-col cols="6">
-                                        <b-form-input
-                                            v-model="reference"
-                                            required
-                                            placeholder="Type reference"
-                                            class="rounded-0"
-                                        />
-                                    </b-col>
-                                    <b-col cols="2">
-                                        <b-button-group>
-                                            <b-button :disabled="!source || !reference" class="custom-unrounded centered-icons" variant="info" @click="viewCitation">
-                                                <icon name="eye" /> View Abstract
-                                            </b-button>
-                                            <b-button :disabled="!source || !reference" type="submit" class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
-                                                <icon name="plus" /> Create Entry
-                                            </b-button>
-                                        </b-button-group>
-                                    </b-col>
-                                </b-row>
-
-                                <transition name="slide-fade" mode="out-in">
-                                    <MessageWithIcon v-if="annotationUsed" class="mt-4 mr-5 ml-5">
-                                        <template v-slot:icon>
-                                            <icon name="exclamation-triangle" scale="2.5" />
-                                        </template>
-                                        <template>
-                                            This reference has already been used in other entries:
-
-                                            <div class="mt-1 text-left">
-                                                <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                    v-for="x in annotationUsed" :key="x.id"
-                                                    :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                                    target="_blank"
-                                                >
-                                                    Entry #{{ x.id }}
-                                                </b-button>
-                                            </div>
-                                        </template>
-                                    </MessageWithIcon>
-                                </transition>
-
-                                <b-row no-gutters>
-                                    <b-col cols="12">
-                                        <VariomesAbstract v-if="loadingVariomes" style="margin-top: 1em;" :variomes="variomes"/>
-                                    </b-col>
-                                </b-row>
-                            </b-container>
-                        </b-card-body>
-                    </b-tab>
-
-                    <b-tab title="Use text mining tool">
-                        <VariomesSearch :gene="gene" :variant="variant" :used_references="used_references" @add-evidence-from-list="addEvidenceFromList" />
-                    </b-tab>
-
-                    <!--
-                    <b-tab title="Use prediction tools">
-                        <b-card-text class="text-center">
-                            <h1 class="display-2">Oops!</h1>Something went wrong here. We're working on it and we'll get it fixed as soon as possible.
-                        </b-card-text>
-                    </b-tab>
-                    -->
-                </b-tabs>
-            </b-card>
-        </div>
+        
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
-import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
-import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
-import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
-import VariantSummary from "@/components/widgets/curation/VariantSummary";
+import VariantSummary from "@/components/widgets/review/VariantSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
-import MessageWithIcon from "@/components/widgets/MessageWithIcon";
 
 const log = ulog('Review:AnnotateReview');
 
 export default {
     name: "AnnotateReview",
     components: {
-        MessageWithIcon,
         VariantSummary,
-        VariomesSearch, VariomesAbstract,
-        CuratorVariantInformations,
-        EvidenceCard
+        CuratorVariantInformations
     },
     data() {
         return {
