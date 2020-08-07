@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <!-- Ivo - suggestion : replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ??? -->
         <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
-            <!-- Ivo : is it normal that there is no record in review? -->
+            <!-- Ivo : is it normal that there is no record in review? PS: change :items="review.items" -->
             <!-- ON REQUEST - CARD -->
             <NotificationCard v-if="REVIEW_ENABLED"
-                :items="review.items" :fields="review.fields" :loading="review.loading"
+                :items="on_request.items" :fields="review.fields" :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
                 cardHeaderBg="secondary"

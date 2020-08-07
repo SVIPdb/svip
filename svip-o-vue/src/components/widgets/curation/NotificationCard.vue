@@ -198,7 +198,7 @@
                 <template v-slot:cell(action)="row">
                     <!-- Ivo : replace v-access="'curators'" with v-access="'reviewers'" -->
                     <b-button v-access="'curators'" class="centered-icons" size="sm" style="width: 100px;" variant="info"
-                        :to="{ name: 'annotate-variant', params: { gene_id: row.item.gene_id, variant_id: row.item.variant_id }}"
+                        :to="{ name: 'annotate-review', params: { gene_id: row.item.gene_id, variant_id: row.item.variant_id }}"
                         target="_blank"
                     >
                         <icon name="pen-alt" /> Review
