@@ -15,6 +15,7 @@ import UserInfo from "@/components/views/user/UserInfo";
 import Statistics from "@/components/views/Statistics";
 import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
+import AnnotateReview from "@/components/views/review/AnnotateReview";
 import AddEvidence from "@/components/views/curation/AddEvidence";
 import DebugPage from "@/components/views/DebugPage";
 import PageNotFound from "@/components/views/PageNotFound";
@@ -32,6 +33,7 @@ const UserInfo = () => import("@/components/views/user/UserInfo");
 const Statistics = () => import("@/components/views/Statistics");
 const CurationDashboard = () => import("@/components/views/curation/CurationDashboard");
 const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
+const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
@@ -151,6 +153,16 @@ const router = new Router({
             meta: {
                 title: 'SVIP-O: Edit Curation',
                 requiresAuth: true, roles: ['curators', 'reviewers']
+            }
+        },
+        {
+            path: "/review/gene/:gene_id/variant/:variant_id",
+            name: "annotate-review",
+            component: AnnotateReview,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: Review',
+                requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
             }
         },
         {
