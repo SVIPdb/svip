@@ -1,12 +1,11 @@
 <template>
     <div class="container-fluid">
-        <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
         <!-- Ivo - suggestion : replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ??? -->
-        <div>
+        <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
+            <!-- Ivo : is it normal that there is no record in review? -->
             <!-- ON REQUEST - CARD -->
-            <!-- Ivo : replace "on_request.items" with a service that gets the stuff to be reviewed -->
             <NotificationCard v-if="REVIEW_ENABLED"
-                :items="on_request.items" :fields="on_request.fields" :loading="on_request.loading"
+                :items="review.items" :fields="review.fields" :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
                 cardHeaderBg="secondary"
@@ -55,6 +54,8 @@ import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
 // Manual import of fake data (FIXME: API)
 import fields_on_request from "@/data/curation/on_request/fields.js";
+// Manual import of fake data (FIXME: API)
+import fields_review from "@/data/review/fields.js";
 
 import to_be_curated from "@/data/curation/to_be_curated/items.json";
 import fields_to_be_curated from "@/data/curation/to_be_curated/fields.json";
@@ -80,6 +81,13 @@ export default {
             on_request: {
                 loading: false,
                 fields: fields_on_request,
+                items: []
+            },
+
+            // REVIEW FAKE DATA
+            review: {
+                loading: false,
+                fields: fields_review,
                 items: []
             },
 
