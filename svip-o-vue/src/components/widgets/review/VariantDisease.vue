@@ -11,7 +11,7 @@
                     <div v-if="showAliases">
                         <b-card-text class="p-2 m-0">
                             <b-container class="bv-example-row">
-                                <b-row>
+                                <b-row align-v="center">
                                     <b-col cols="2">Prognostic</b-col>
                                     <b-col cols="3">
                                         Good outcome (4 evidences)<br>
@@ -19,9 +19,17 @@
                                         Poor outcome (1 evidence)<br>
                                     </b-col>
                                     <b-col cols="2">
+                                        <p><b-input id="prognosticOutcome" readonly /></p>
                                         <b-input id="prognosticOutcome" readonly />
                                     </b-col>
                                     <b-col cols="2">
+                                        <p><b-form-select class="form-control" id="exampleFormControlSelect1">
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select></p>
                                         <b-form-select class="form-control" id="exampleFormControlSelect1">
                                             <option>Good outcome</option>
                                             <option>Intermediate</option>
@@ -32,13 +40,12 @@
                                     </b-col>
                                     <b-col cols="1">
                                         Review status<br>
-                                        <b-iconstack font-scale="5">
-                                            <b-icon stacked icon="square"></b-icon>
-                                            <b-icon stacked icon="check"></b-icon>
-                                        </b-iconstack>
+                                        <b-icon class="h5 mb-2" icon="check-square"></b-icon>
+                                        <b-icon class="h5 mb-2" icon="square"></b-icon>
+                                        <b-icon class="h5 mb-2" icon="x-square"></b-icon>
                                     </b-col>
                                     <b-col cols="2">
-                                        <b-textarea class="summary-box" rows="2" placeholder="Comment..." />
+                                        <b-textarea class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -51,9 +58,11 @@
 </template>
 
 <script>
+/* eslint-disable */
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
+import { BIcon, BIconSquare, BIconCheckSquare, BIconXSquare } from 'bootstrap-vue'
 import ulog from 'ulog';
 
 const log = ulog('VariantDisease');
@@ -61,7 +70,10 @@ const log = ulog('VariantDisease');
 export default {
     name: "VariantDisease",
     components: {
-
+        BIcon,
+        BIconSquare,
+        BIconCheckSquare,
+        BIconXSquare
     },
     props: {
         variant: { type: Object, required: false }
