@@ -4,23 +4,45 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showAliases" />
-                    Variant Summary
+                    Disease 1
                 </h6>
 
                 <transition name="slide-fade">
                     <div v-if="showAliases">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
+                            <b-container class="bv-example-row">
+                                <b-row>
+                                    <b-col cols="2">Prognostic</b-col>
+                                    <b-col cols="3">
+                                        Good outcome (4 evidences)<br>
+                                        Intermediate (2 evidences)<br>
+                                        Poor outcome (1 evidence)<br>
+                                    </b-col>
+                                    <b-col cols="2">
+                                        <b-input id="prognosticOutcome" readonly />
+                                    </b-col>
+                                    <b-col cols="2">
+                                        <b-form-select class="form-control" id="exampleFormControlSelect1">
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select>
+                                    </b-col>
+                                    <b-col cols="1">
+                                        Review status<br>
+                                        <b-iconstack font-scale="5">
+                                            <b-icon stacked icon="square"></b-icon>
+                                            <b-icon stacked icon="check"></b-icon>
+                                        </b-iconstack>
+                                    </b-col>
+                                    <b-col cols="2">
+                                        <b-textarea class="summary-box" rows="2" placeholder="Comment..." />
+                                    </b-col>
+                                </b-row>
+                            </b-container>
                         </b-card-text>
-
-                        <b-card-footer class="d-flex justify-content-end p-2">
-                            <b-card-text class="p-2 m-0">
-                                <b>Your comment :</b> I don't agree with this summary...
-                            </b-card-text>
-                            <b-button variant="success" class="centered-icons" @click="saveSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
-                                Comment Summary
-                            </b-button>
-                        </b-card-footer>
                     </div>
                 </transition>
             </b-card-body>
@@ -34,25 +56,25 @@ import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import ulog from 'ulog';
 
-const log = ulog('VariantSummary');
+const log = ulog('VariantDisease');
 
 export default {
-    name: "VariantSummary",
+    name: "VariantDisease",
     components: {
-        
+
     },
     props: {
         variant: { type: Object, required: false }
     },
     data() {
         return {
-            summary: this.variant.svip_data && this.variant.svip_data.summary,
+            summary: null,
             history_entry_id: null,
 
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showAliases: false,
+            showAliases: true,
         };
     },
     created() {

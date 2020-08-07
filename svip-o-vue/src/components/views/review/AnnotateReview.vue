@@ -6,7 +6,12 @@
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        
+        <!-- -->
+        <VariantDisease />
+
+        <b-button class="align-self-end">
+            Submit review
+        </b-button>
     </div>
 </template>
 <script>
@@ -16,6 +21,7 @@ import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariantSummary from "@/components/widgets/review/VariantSummary";
+import VariantDisease from "@/components/widgets/review/VariantDisease";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 
@@ -25,6 +31,7 @@ export default {
     name: "AnnotateReview",
     components: {
         VariantSummary,
+        VariantDisease,
         CuratorVariantInformations
     },
     data() {
