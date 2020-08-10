@@ -16,6 +16,7 @@ import Statistics from "@/components/views/Statistics";
 import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
 import AddEvidence from "@/components/views/curation/AddEvidence";
+import ViewEvidence from "@/components/views/curation/viewEvidence";
 import DebugPage from "@/components/views/DebugPage";
 import PageNotFound from "@/components/views/PageNotFound";
 */
@@ -33,6 +34,7 @@ const Statistics = () => import("@/components/views/Statistics");
 const CurationDashboard = () => import("@/components/views/curation/CurationDashboard");
 const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
+const ViewEvidence = () => import("@/components/views/curation/ViewEvidence");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
 
@@ -145,11 +147,21 @@ const router = new Router({
         },
         {
             path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
-            name: "add-evidence",
-            component: AddEvidence,
+            name: "view-evidence", // Ivo : Original - name: "add-evidence",
+            component: ViewEvidence, // Ivo : Original - component: AddEvidence,
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Edit Curation',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
+        },
+        {
+            path: "/curation/gene/:gene_id/variant/:variant_id/evidence",
+            name: "view-evidence",
+            component: ViewEvidence,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: View Evidence',
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
         },
