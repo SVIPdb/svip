@@ -3,23 +3,26 @@
         <b-card class="shadow-sm mb-3" align="left" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showAliases" />
+                    <expander v-model="showSummary" />
                     Variant Summary
                 </h6>
 
                 <transition name="slide-fade">
-                    <div v-if="showAliases">
+                    <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
                             <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
                         </b-card-text>
 
-                        <b-card-footer class="d-flex justify-content-end p-2">
-                            <b-card-text class="p-2 m-0">
-                                <b>Your comment :</b> I don't agree with this summary...
-                            </b-card-text>
-                            <b-button variant="success" class="centered-icons" @click="saveSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
-                                Comment Summary
-                            </b-button>
+                        <b-card-footer class="p-2 m-0">
+                            <b-row align-v="center">
+                                <b-col align="left" cols="2"><b>Your comment :</b></b-col>
+                                <b-col align="left" cols="8">I don't agree with this summary...</b-col>
+                                <b-col align="right" cols="2">
+                                    <b-button variant="success" class="centered-icons" @click="saveSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                        Comment Summary
+                                    </b-button>
+                                </b-col>
+                            </b-row>
                         </b-card-footer>
                     </div>
                 </transition>
@@ -52,7 +55,7 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showAliases: false,
+            showSummary: true,
         };
     },
     created() {
