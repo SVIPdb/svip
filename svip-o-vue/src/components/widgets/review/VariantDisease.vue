@@ -3,8 +3,7 @@
         <b-card class="shadow-sm mb-3" align="left" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showDisease" />
-                    Disease 1
+                    <expander v-model="showDisease" />Disease 1
                 </h6>
 
                 <transition name="slide-fade">
@@ -12,29 +11,43 @@
                         <b-card-text class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col align="center" cols="1">
-                                    <expander v-model="showPrognostic" />
-                                    Prognostic
+                                    <expander v-model="showPrognostic" />Prognostic
                                 </b-col>
                                 <b-col cols="2">
-                                    Good outcome (4 evidences)<br>
-                                    Intermediate (2 evidences)<br>
-                                    Poor outcome (1 evidence)<br>
+                                    Good outcome (4 evidences)
+                                    <br />Intermediate (2 evidences)
+                                    <br />Poor outcome (1 evidence)
+                                    <br />
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-input id="prognosticOutcome" readonly /></p>
-                                    <b-input id="prognosticOutcome" readonly />
+                                    <b-row class="p-2">
+                                        <b-input id="prognosticOutcome" readonly />
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-input id="prognosticOutcome" readonly />
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Good outcome</option>
-                                        <option>Intermediate</option>
-                                        <option>Poor outcome</option>
-                                        <option>Unclear</option>
-                                        <option>Context-dependent</option>
-                                    </b-form-select></p>
-                                    <b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Tier-level</option>
-                                    </b-form-select>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select>
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Tier-level</option>
+                                        </b-form-select>
+                                    </b-row>
                                 </b-col>
                                 <b-col align="center" cols="1">
                                     <p>Review status</p>
@@ -43,7 +56,11 @@
                                     <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-textarea
+                                        class="summary-box"
+                                        rows="3"
+                                        placeholder="Comment..."
+                                    />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -54,13 +71,17 @@
                         <b-card-footer class="m-10">
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #1</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #2</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #2</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
@@ -75,29 +96,43 @@
                         <b-card-text class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col align="center" cols="1">
-                                    <expander v-model="showDiagnostic" />
-                                    Diagnostic
+                                    <expander v-model="showDiagnostic" />Diagnostic
                                 </b-col>
                                 <b-col cols="2">
-                                    Associated with diagnosis (1 evidence)<br>
-                                    Not associated with diagnosis (1 evidence)<br>
-                                    Other (no evidence)<br>
+                                    Associated with diagnosis (1 evidence)
+                                    <br />Not associated with diagnosis (1 evidence)
+                                    <br />Other (no evidence)
+                                    <br />
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-input id="prognosticOutcome" readonly /></p>
-                                    <b-input id="prognosticOutcome" readonly />
+                                    <b-row class="p-2">
+                                        <b-input id="diagnosticOutcome" readonly />
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-input id="diagnosticOutcome" readonly />
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Good outcome</option>
-                                        <option>Intermediate</option>
-                                        <option>Poor outcome</option>
-                                        <option>Unclear</option>
-                                        <option>Context-dependent</option>
-                                    </b-form-select></p>
-                                    <b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Tier-level</option>
-                                    </b-form-select>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select>
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Tier-level</option>
+                                        </b-form-select>
+                                    </b-row>
                                 </b-col>
                                 <b-col align="center" cols="1">
                                     <p>Review status</p>
@@ -106,7 +141,11 @@
                                     <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-textarea
+                                        class="summary-box"
+                                        rows="3"
+                                        placeholder="Comment..."
+                                    />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -117,13 +156,17 @@
                         <b-card-footer class="m-10">
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #1</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #2</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #2</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
@@ -138,55 +181,123 @@
                         <b-card-text class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col align="center" cols="1">
-                                    <expander v-model="showPredictiveTherapeutic" />
-                                    Predictive/Therapeutic
+                                    <expander v-model="showPredictive" />
+                                    Predictive /<br />Therapeutic
                                 </b-col>
                                 <b-col cols="2">
-                                    Associated with diagnosis (1 evidence)<br>
-                                    Not associated with diagnosis (1 evidence)<br>
-                                    Other (no evidence)<br>
+                                    <b-row class="p-2" align-v="start">Drug 1 (1 evidence)</b-row>
+                                    <b-row class="p-2">Drug 2 (3 evidences)</b-row>
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-input id="prognosticOutcome" readonly /></p>
-                                    <b-input id="prognosticOutcome" readonly />
+                                    <b-row class="p-2">
+                                        <b-input id="predictiveOutcome" readonly />
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-input id="predictiveOutcome" readonly />
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-input id="predictiveOutcome" readonly />
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-input id="predictiveOutcome" readonly />
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="2">
-                                    <p><b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Good outcome</option>
-                                        <option>Intermediate</option>
-                                        <option>Poor outcome</option>
-                                        <option>Unclear</option>
-                                        <option>Context-dependent</option>
-                                    </b-form-select></p>
-                                    <b-form-select class="form-control" id="exampleFormControlSelect1">
-                                        <option>Tier-level</option>
-                                    </b-form-select>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select>
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Tier-level</option>
+                                        </b-form-select>
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Good outcome</option>
+                                            <option>Intermediate</option>
+                                            <option>Poor outcome</option>
+                                            <option>Unclear</option>
+                                            <option>Context-dependent</option>
+                                        </b-form-select>
+                                    </b-row>
+                                    <b-row class="p-2">
+                                        <b-form-select
+                                            class="form-control"
+                                            id="exampleFormControlSelect1"
+                                        >
+                                            <option>Tier-level</option>
+                                        </b-form-select>
+                                    </b-row>
                                 </b-col>
-                                <b-col align="center" cols="1">
-                                    <p>Review status</p>
-                                    <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                <b-col cols="1" class="align-middle">
+                                    <b-row class="justify-content-center">
+                                        Review status
+                                    </b-row>
+                                    <b-row class="justify-content-center">
+                                        <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                    </b-row>
+                                    <b-row class="justify-content-center">
+                                        Review status
+                                    </b-row>
+                                    <b-row class="justify-content-center">
+                                        <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-row class="p-3">
+                                        <b-textarea
+                                            class="summary-box"
+                                            rows="3"
+                                            placeholder="Comment..."
+                                        />
+                                    </b-row>
+                                    <b-row class="p-3">
+                                        <b-textarea
+                                            class="summary-box"
+                                            rows="3"
+                                            placeholder="Comment..."
+                                        />
+                                    </b-row>
                                 </b-col>
                             </b-row>
                         </b-card-text>
                     </div>
                 </transition>
                 <transition name="slide-fade">
-                    <div v-if="showPredictiveTherapeutic">
+                    <div v-if="showPredictive">
                         <b-card-footer class="m-10">
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #1</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
                             <b-row>
                                 <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2"><a href="#" alt="Link to evidence">Evidence #2</a></b-col>
+                                <b-col cols="2">
+                                    <a href="#" alt="Link to evidence">Evidence #2</a>
+                                </b-col>
                                 <b-col cols="2">PMID: 789101</b-col>
                                 <b-col cols="6">Public comment from evidence...</b-col>
                             </b-row>
@@ -194,7 +305,7 @@
                     </div>
                 </transition>
             </b-card-body>
-        </b-card>   
+        </b-card>
     </div>
 </template>
 
@@ -203,10 +314,15 @@
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import { BIcon, BIconSquare, BIconCheckSquare, BIconXSquare } from 'bootstrap-vue'
-import ulog from 'ulog';
+import {
+    BIcon,
+    BIconSquare,
+    BIconCheckSquare,
+    BIconXSquare,
+} from "bootstrap-vue";
+import ulog from "ulog";
 
-const log = ulog('VariantDisease');
+const log = ulog("VariantDisease");
 
 export default {
     name: "VariantDisease",
@@ -214,10 +330,10 @@ export default {
         BIcon,
         BIconSquare,
         BIconCheckSquare,
-        BIconXSquare
+        BIconXSquare,
     },
     props: {
-        variant: { type: Object, required: false }
+        variant: { type: Object, required: false },
     },
     data() {
         return {
@@ -230,7 +346,7 @@ export default {
             showDisease: true,
             showPrognostic: false,
             showDiagnostic: false,
-            showPredictiveTherapeutic: false
+            showPredictive: false,
         };
     },
     created() {
@@ -240,12 +356,8 @@ export default {
             }
         };
     },
-    computed: {
-
-    },
-    methods: {
-
-    }
+    computed: {},
+    methods: {},
 };
 </script>
 
