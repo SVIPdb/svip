@@ -21,18 +21,15 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-input id="prognosticOutcome" readonly />
+                                        <b-input v-model="prognosticPredicted" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input id="prognosticOutcome" readonly />
+                                        <b-input readonly />
                                     </b-row>
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select v-model="prognosticSelected" class="form-control">
                                             <option>Good outcome</option>
                                             <option>Intermediate</option>
                                             <option>Poor outcome</option>
@@ -41,22 +38,25 @@
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Tier-level</option>
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
                                 <b-col align="center" cols="1">
-                                    <p>Review status</p>
-                                    <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                    <b-row class="justify-content-center">
+                                        Review status
+                                    </b-row>
+                                    <b-row class="justify-content-center">
+                                        <!-- Ivo : service to get the others statuses -->
+                                        <b-icon v-if="prognosticSelected == prognosticPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon v-if="prognosticSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="prognosticSelected != prognosticPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="4">
                                     <b-textarea
+                                        :disabled="prognosticSelected == prognosticPredicted"
                                         class="summary-box"
                                         rows="3"
                                         placeholder="Comment..."
@@ -114,10 +114,7 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Good outcome</option>
                                             <option>Intermediate</option>
                                             <option>Poor outcome</option>
@@ -126,19 +123,20 @@
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Tier-level</option>
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
                                 <b-col align="center" cols="1">
-                                    <p>Review status</p>
-                                    <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                                    <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                    <b-row class="justify-content-center">
+                                        Review status
+                                    </b-row>
+                                    <b-row class="justify-content-center">
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                    </b-row>
                                 </b-col>
                                 <b-col cols="4">
                                     <b-textarea
@@ -204,10 +202,7 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Good outcome</option>
                                             <option>Intermediate</option>
                                             <option>Poor outcome</option>
@@ -216,18 +211,12 @@
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Tier-level</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Good outcome</option>
                                             <option>Intermediate</option>
                                             <option>Poor outcome</option>
@@ -236,10 +225,7 @@
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select
-                                            class="form-control"
-                                            id="exampleFormControlSelect1"
-                                        >
+                                        <b-form-select class="form-control">
                                             <option>Tier-level</option>
                                         </b-form-select>
                                     </b-row>
@@ -249,17 +235,17 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                                        <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                                        <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
@@ -347,6 +333,8 @@ export default {
             showPrognostic: false,
             showDiagnostic: false,
             showPredictive: false,
+            prognosticPredicted: "Unclear",
+            prognosticSelected: ""
         };
     },
     created() {

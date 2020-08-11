@@ -16,9 +16,11 @@
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col align="left" cols="2"><b>Your comment :</b></b-col>
-                                <b-col align="left" cols="8">I don't agree with this summary...</b-col>
+                                <b-col align="left" cols="8">
+                                    Nam sole orto magnitudine angusti gurgitis sed profundi a transitu arcebantur et dum piscatorios quaerunt lenunculos vel innare temere contextis cratibus parant, effusae legiones, quae hiemabant tunc apud Siden, isdem impetu occurrere veloci. Asignis prope ripam locatis ad manus comminus conserendas denseta scutorum conpage semet scientissime praestruebant, ausos quoque aliquos fiducia nandi vel cavatis arborum truncis amnem permeare latenter facillime trucidarunt.
+                                </b-col>
                                 <b-col align="right" cols="2">
-                                    <b-button variant="success" class="centered-icons" @click="saveSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                    <b-button variant="success" class="centered-icons" @click="saveSummary" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
                                         Comment Summary
                                     </b-button>
                                 </b-col>
@@ -70,7 +72,7 @@ export default {
     },
     methods: {
         saveSummary() {
-            if (!this.variant.svip_data) {
+            /*if (!this.variant.svip_data) {
                 return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summary })
                     .then((response) => {
                         this.variant.svip_data = response.data;
@@ -81,17 +83,7 @@ export default {
                         log.warn(err);
                         this.$snotify.error("Failed to update summary");
                     })
-            }
-
-            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summary })
-                .then((response) => {
-                    this.summary = response.data.summary;
-                    this.$snotify.success("Summary updated!");
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to update summary");
-                })
+            }*/
         }
     }
 };

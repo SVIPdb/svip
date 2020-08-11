@@ -9,7 +9,7 @@
         <!-- -->
         <VariantDisease />
 
-        <b-button class="align-self-end">
+        <b-button class="btn pull-right">
             Submit review
         </b-button>
     </div>
