@@ -47,6 +47,14 @@
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{title}}
+
+                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" :items="[
+                        { label: '0 review', variant: 'light' },
+                        { label: '1 review', variant: 'danger' },
+                        { label: '2 reviews', variant: 'warning' },
+                        { label: '3 reviews', variant: 'success' },
+                        { label: 'All', value: 'all', variant: 'info' }
+                    ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
@@ -172,8 +180,8 @@
                     </p>
                 </template>
 
-                <template v-slot:cell(status)="data">
-                    <b-badge :variant="setBadgeClass(data.value)">{{data.value}}</b-badge>
+                <template v-slot:cell(status)>
+                    <!-- ICI -->
                 </template>
 
                 <template v-slot:cell(reviewed)="data">

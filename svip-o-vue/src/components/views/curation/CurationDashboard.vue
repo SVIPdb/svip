@@ -8,6 +8,7 @@
                 :items="on_request.items" :fields="review.fields" :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
+                defaultSortBy="all"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
                 cardCustomClass
