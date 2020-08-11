@@ -49,9 +49,9 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="prognosticSelected == prognosticPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon v-if="prognosticSelected == prognosticPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
                                         <b-icon v-if="prognosticSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="prognosticSelected != prognosticPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon v-else-if="prognosticSelected != prognosticPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
@@ -128,9 +128,9 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
@@ -230,9 +230,9 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         Review status
@@ -240,7 +240,7 @@
                                     <b-row class="justify-content-center">
                                         <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square"></b-icon>
+                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
@@ -303,12 +303,7 @@
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import {
-    BIcon,
-    BIconSquare,
-    BIconCheckSquare,
-    BIconXSquare,
-} from "bootstrap-vue";
+import {BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill} from "bootstrap-vue";
 import ulog from "ulog";
 
 const log = ulog("VariantDisease");
@@ -318,8 +313,8 @@ export default {
     components: {
         BIcon,
         BIconSquare,
-        BIconCheckSquare,
-        BIconXSquare,
+        BIconCheckSquareFill,
+        BIconXSquareFill,
     },
     props: {
         variant: { type: Object, required: false },
