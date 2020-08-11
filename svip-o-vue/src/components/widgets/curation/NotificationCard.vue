@@ -181,7 +181,9 @@
                 </template>
 
                 <template v-slot:cell(status)>
-                    <!-- ICI -->
+                    <b-icon style="color:blue;" class="h5 mb-2 m-1" icon="check-square"></b-icon>
+                    <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
+                    <b-icon style="color:red;" class="h5 mb-2 m-1" icon="x-square"></b-icon>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
@@ -243,13 +245,20 @@
  * @group Curation
  * This Notification card allows to display a card which contains a table filled with samples waiting to be curated or reviewed
  */
+/* eslint-disable */
 import { abbreviatedName } from "@/utils";
 import { mapGetters } from "vuex";
 import FilterButtons from "@/components/widgets/curation/FilterButtons";
+import {BIcon, BIconSquare, BIconCheckSquare, BIconXSquare} from "bootstrap-vue";
 
 export default {
     name: "NotificationCard",
-    components: {FilterButtons},
+    components: {
+        FilterButtons,
+        BIcon,
+        BIconSquare,
+        BIconCheckSquare,
+        BIconXSquare,},
     props: {
         // The items of the table
         items: {
