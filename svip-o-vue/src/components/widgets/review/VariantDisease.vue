@@ -63,22 +63,14 @@
                 </transition>
                 <transition name="slide-fade">
                     <div v-if="showPrognostic">
-                        <b-card-footer class="m-10">
-                            <b-row>
-                                <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2">
+                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                            <b-row align-v="center">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col cols="2">PMID: 789101</b-col>
-                                <b-col cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2">
-                                    <a href="#" alt="Link to evidence">Evidence #2</a>
-                                </b-col>
-                                <b-col cols="2">PMID: 789101</b-col>
-                                <b-col cols="6">Public comment from evidence...</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
+                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
                         </b-card-footer>
                     </div>
@@ -146,22 +138,22 @@
                 </transition>
                 <transition name="slide-fade">
                     <div v-if="showDiagnostic">
-                        <b-card-footer class="m-10">
-                            <b-row>
-                                <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2">
+                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                            <b-row align-v="center">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col cols="2">PMID: 789101</b-col>
-                                <b-col cols="6">Public comment from evidence...</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
+                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
-                            <b-row>
-                                <b-col cols="2">Good outcome</b-col>
-                                <b-col cols="2">
-                                    <a href="#" alt="Link to evidence">Evidence #2</a>
+                            <b-row align-v="center">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
+                                    <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col cols="2">PMID: 789101</b-col>
-                                <b-col cols="6">Public comment from evidence...</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
+                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
                         </b-card-footer>
                     </div>
@@ -342,6 +334,7 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
+        this.prognosticSelected = this.prognosticPredicted;
     },
     computed: {},
     methods: {},
