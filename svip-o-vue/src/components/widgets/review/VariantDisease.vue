@@ -43,7 +43,7 @@
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
-                                <b-col align="center" cols="1">
+                                <b-col cols="1" align="center">
                                     <b-row class="justify-content-center">
                                         Review status
                                     </b-row>
@@ -128,7 +128,7 @@
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
-                                <b-col align="center" cols="1">
+                                <b-col cols="1" align="center">
                                     <b-row class="justify-content-center">
                                         Review status
                                     </b-row>
@@ -230,7 +230,7 @@
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
-                                <b-col cols="1" class="align-middle">
+                                <b-col cols="1" align="center">
                                     <b-row class="justify-content-center">
                                         Review status
                                     </b-row>
