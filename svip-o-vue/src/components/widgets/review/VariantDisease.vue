@@ -177,9 +177,9 @@
                                     <expander v-model="showPredictive" />
                                     Predictive /<br />Therapeutic
                                 </b-col>
-                                <b-col align-self="stretch" cols="2">
-                                    <b-row class="p-2">Drug 1 (1 evidence)</b-row>
-                                    <b-row class="p-2">Drug 2 (3 evidences)</b-row>
+                                <b-col cols="2">
+                                    <b-row class="pb-5 pt-5 pl-3" align-self="start">Drug 1 (1 evidence)</b-row>
+                                    <b-row class="pb-5 pt-5 pl-3">Drug 2 (3 evidences)</b-row>
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
@@ -238,7 +238,7 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square"></b-icon>
+                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                     </b-row>
@@ -305,6 +305,7 @@ import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import {BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill} from "bootstrap-vue";
 import ulog from "ulog";
+import RowDetailsHeader from '@/components/genes/variants/sources/shared/RowDetailsHeader';
 
 const log = ulog("VariantDisease");
 

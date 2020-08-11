@@ -15,11 +15,11 @@
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
-                                <b-col align="left" cols="2"><b>Your comment :</b></b-col>
-                                <b-col align="left" cols="8">
+                                <b-col md="auto" align="left"><b>Your comment :</b></b-col>
+                                <b-col align="left">
                                     Nam sole orto magnitudine angusti gurgitis sed profundi a transitu arcebantur et dum piscatorios quaerunt lenunculos vel innare temere contextis cratibus parant, effusae legiones, quae hiemabant tunc apud Siden, isdem impetu occurrere veloci. Asignis prope ripam locatis ad manus comminus conserendas denseta scutorum conpage semet scientissime praestruebant, ausos quoque aliquos fiducia nandi vel cavatis arborum truncis amnem permeare latenter facillime trucidarunt.
                                 </b-col>
-                                <b-col align="right" cols="2">
+                                <b-col md="auto" align="right">
                                     <b-button variant="success" class="centered-icons" @click="saveSummary" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
                                         Comment Summary
                                     </b-button>
