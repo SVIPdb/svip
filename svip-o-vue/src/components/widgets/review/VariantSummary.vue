@@ -15,13 +15,19 @@
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
-                                <b-col md="auto" align="left"><b>Your comment :</b></b-col>
-                                <b-col align="left">
-                                    Nam sole orto magnitudine angusti gurgitis sed profundi a transitu arcebantur et dum piscatorios quaerunt lenunculos vel innare temere contextis cratibus parant, effusae legiones, quae hiemabant tunc apud Siden, isdem impetu occurrere veloci. Asignis prope ripam locatis ad manus comminus conserendas denseta scutorum conpage semet scientissime praestruebant, ausos quoque aliquos fiducia nandi vel cavatis arborum truncis amnem permeare latenter facillime trucidarunt.
+                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">Your comment :</b-col>
+                                <b-col v-if="!isEditMode && summaryComment !== ''" class="text-justify">
+                                    {{ summaryComment }}
                                 </b-col>
-                                <b-col md="auto" align="right">
-                                    <b-button variant="success" class="centered-icons" @click="saveSummary" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
-                                        Comment Summary
+                                <b-col v-if="isEditMode">
+                                    <b-textarea class="summary-box" v-model="summaryComment" rows="3" />
+                                </b-col>
+                                <b-col md="auto">
+                                    <b-button variant="success" class="centered-icons" @click="commentSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                        {{ commentLabel }}
+                                    </b-button>
+                                    <b-button v-if="isEditMode" variant="danger" class="centered-icons mt-2" @click="cancelCommentSummary" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                        Delete comment
                                     </b-button>
                                 </b-col>
                             </b-row>
@@ -57,7 +63,10 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: false,
+            showSummary: true,
+            isEditMode: false,
+            summaryComment: "",
+            commentLabel: "Comment summary"
         };
     },
     created() {
@@ -84,6 +93,24 @@ export default {
                         this.$snotify.error("Failed to update summary");
                     })
             }*/
+        },
+        commentSummary() {
+            this.isEditMode = true;
+            if(this.commentLabel === "Post comment") {
+                console.log("API call to save summary comment: " + this.summaryComment);
+                this.$snotify.success("Summary comment saved!");
+
+                this.commentLabel = "Modify comment";
+                this.isEditMode = false;
+                return;
+            }
+            this.commentLabel = "Post comment";
+        },
+        cancelCommentSummary() {
+            this.$snotify.error("Summary comment deleted");
+            this.commentLabel = "Comment summary";
+            this.summaryComment = ""; // Ivo : replace by old value
+            this.isEditMode = false;
         }
     }
 };
