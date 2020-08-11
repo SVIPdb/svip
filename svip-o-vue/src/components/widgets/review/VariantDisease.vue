@@ -177,8 +177,8 @@
                                     <expander v-model="showPredictive" />
                                     Predictive /<br />Therapeutic
                                 </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2" align-v="start">Drug 1 (1 evidence)</b-row>
+                                <b-col align-self="stretch" cols="2">
+                                    <b-row class="p-2">Drug 1 (1 evidence)</b-row>
                                     <b-row class="p-2">Drug 2 (3 evidences)</b-row>
                                 </b-col>
                                 <b-col cols="2">
@@ -267,27 +267,27 @@
                     <div v-if="showPredictive">
                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
                             <b-row align-v="center">
-                                <b-col class="border p-2" cols="2">Good outcome</b-col>
-                                <b-col class="border p-2" cols="2">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col class="border p-2" cols="2">PMID: 789101</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
                             <b-row align-v="center">
-                                <b-col class="border p-2" cols="2">Good outcome</b-col>
-                                <b-col class="border p-2" cols="2">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col class="border p-2" cols="2">PMID: 789101</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
                             <b-row align-v="center">
-                                <b-col class="border p-2" cols="2">Good outcome</b-col>
-                                <b-col class="border p-2" cols="2">
+                                <b-col class="border p-2">Good outcome</b-col>
+                                <b-col class="border p-2">
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
-                                <b-col class="border p-2" cols="2">PMID: 789101</b-col>
+                                <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
                             </b-row>
                         </b-card-footer>
