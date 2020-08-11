@@ -181,9 +181,9 @@
                 </template>
 
                 <template v-slot:cell(status)>
-                    <b-icon style="color:blue;" class="h5 mb-2 m-1" icon="check-square"></b-icon>
-                    <b-icon class="h5 mb-2 m-1" icon="square"></b-icon>
-                    <b-icon style="color:red;" class="h5 mb-2 m-1" icon="x-square"></b-icon>
+                    <b-icon style="color:blue;" class="h5 m-1" icon="check-square-fill"></b-icon>
+                    <b-icon class="h5 m-1" icon="square"></b-icon>
+                    <b-icon style="color:red;" class="h5 m-1" icon="x-square-fill"></b-icon>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
@@ -249,7 +249,7 @@
 import { abbreviatedName } from "@/utils";
 import { mapGetters } from "vuex";
 import FilterButtons from "@/components/widgets/curation/FilterButtons";
-import {BIcon, BIconSquare, BIconCheckSquare, BIconXSquare} from "bootstrap-vue";
+import { BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill } from 'bootstrap-vue';
 
 export default {
     name: "NotificationCard",
@@ -257,8 +257,8 @@ export default {
         FilterButtons,
         BIcon,
         BIconSquare,
-        BIconCheckSquare,
-        BIconXSquare,},
+        BIconCheckSquareFill,
+        BIconXSquareFill,},
     props: {
         // The items of the table
         items: {
