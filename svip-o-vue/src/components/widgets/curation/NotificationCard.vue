@@ -338,6 +338,7 @@ export default {
             filter: null,
             myFilter: "all",
             statusFilter: "all",
+            statusReviewFilter: "all",
             // Days left limits (Should be reviewed!)
             daysLeft: {
                 min: 2,
@@ -409,6 +410,9 @@ export default {
         setStatusFilter(filter) {
             this.statusFilter = filter;
         },
+        setStatusReviewFilter(filter) {
+            this.statusReviewFilter = filter;
+        },
         selectVariant() { // (checked, element)
             // console.log(`Checked is ${checked} and ID is ${element.id}`);
         }
@@ -430,6 +434,13 @@ export default {
             }
             else {
                 return items;
+            }
+        },
+        filteredReviewItems() {
+            let items = this.items;
+
+            if (this.statusReviewFilter !== "all") {
+                items = items.filter(element => element.status === this.statusFilter);
             }
         },
         myCurations() {
