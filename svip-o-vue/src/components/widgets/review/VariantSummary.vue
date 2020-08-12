@@ -23,10 +23,10 @@
                                     <b-textarea class="summary-box" v-model="summaryComment" rows="3" />
                                 </b-col>
                                 <b-col md="auto">
-                                    <b-button variant="success" class="centered-icons" @click="commentSummary"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                    <b-button variant="success" class="centered-icons" @click="saveSummaryComment">
                                         {{ commentLabel }}
                                     </b-button>
-                                    <b-button v-if="isEditMode" variant="danger" class="centered-icons mt-2" @click="cancelCommentSummary" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                    <b-button v-if="isEditMode" variant="danger" class="centered-icons mt-2" @click="deleteSummaryComment" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
                                         Delete comment
                                     </b-button>
                                 </b-col>
@@ -94,22 +94,22 @@ export default {
                     })
             }*/
         },
-        commentSummary() {
+        saveSummaryComment() {
             this.isEditMode = true;
-            if(this.commentLabel === "Post comment") {
+            if(this.commentLabel === "Save comment") {
                 console.log("API call to save summary comment: " + this.summaryComment);
-                this.$snotify.success("Summary comment saved!");
+                this.$snotify.success("Summary comment saved");
 
                 this.commentLabel = "Modify comment";
                 this.isEditMode = false;
                 return;
             }
-            this.commentLabel = "Post comment";
+            this.commentLabel = "Save comment";
         },
-        cancelCommentSummary() {
-            this.$snotify.error("Summary comment deleted");
+        deleteSummaryComment() {
+            this.$snotify.success("Summary comment deleted");
             this.commentLabel = "Comment summary";
-            this.summaryComment = ""; // Ivo : replace by old value
+            this.summaryComment = "";
             this.isEditMode = false;
         }
     }

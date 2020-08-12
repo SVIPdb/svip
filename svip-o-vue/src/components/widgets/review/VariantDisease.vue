@@ -21,25 +21,36 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-input v-model="prognosticPredicted" readonly />
+                                        <b-input v-model="prognosticOutcomePredicted" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input readonly />
+                                        <b-input v-model="prognosticTrustPredicted" readonly />
                                     </b-row>
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select v-model="prognosticSelected" class="form-control">
+                                        <b-form-select v-model="prognosticOutcomeSelected" class="form-control">
                                             <option>Good outcome</option>
-                                            <option>Intermediate</option>
                                             <option>Poor outcome</option>
+                                            <option>Intermediate</option>
                                             <option>Unclear</option>
                                             <option>Context-dependent</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
-                                            <option>Tier-level</option>
+                                        <b-form-select v-model="prognosticTrustSelected" class="form-control">
+                                            <option>Tier IA: Included in Professional Guidelines</option>
+                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
+                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
+                                            <option>Tier IID: Clinical trial</option>
+                                            <option>Tier IID: Pre-clinical study</option>
+                                            <option>Tier IID: Population study</option>
+                                            <option>Tier IID: Small published study</option>
+                                            <option>Tier IID: Case report</option>
+                                            <option>Tier III: No convincing published evidence of drugs effect</option>
+                                            <option>Tier III: Author statement</option>
+                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
+                                            <option>Other criteria</option>
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
@@ -49,13 +60,15 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="prognosticSelected == prognosticPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="prognosticSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="prognosticSelected != prognosticPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon v-if="prognosticOutcomeSelected == prognosticOutcomePredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="prognosticOutcomeSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="prognosticOutcomeSelected != prognosticOutcomePredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea :disabled="prognosticSelected == prognosticPredicted" class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-textarea :disabled="prognosticOutcomeSelected == prognosticOutcomePredicted" class="summary-box" rows="3" placeholder="Comment..." />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -67,6 +80,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
+                                    <!-- Ivo : replace ALL <a> by b-link -->
                                     <a href="#" alt="Link to evidence">Evidence #1</a>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
@@ -93,25 +107,36 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-input id="diagnosticOutcome" readonly />
+                                        <b-input v-model="diagnosticOutcomePredicted" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input id="diagnosticOutcome" readonly />
+                                        <b-input v-model="diagnosticTrustPredicted" readonly />
                                     </b-row>
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
+                                        <b-form-select v-model="diagnosticOutcomeSelected" class="form-control">
                                             <option>Good outcome</option>
-                                            <option>Intermediate</option>
                                             <option>Poor outcome</option>
+                                            <option>Intermediate</option>
                                             <option>Unclear</option>
                                             <option>Context-dependent</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
-                                            <option>Tier-level</option>
+                                        <b-form-select v-model="diagnosticTrustSelected" class="form-control">
+                                            <option>Tier IA: Included in Professional Guidelines</option>
+                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
+                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
+                                            <option>Tier IID: Clinical trial</option>
+                                            <option>Tier IID: Pre-clinical study</option>
+                                            <option>Tier IID: Population study</option>
+                                            <option>Tier IID: Small published study</option>
+                                            <option>Tier IID: Case report</option>
+                                            <option>Tier III: No convincing published evidence of drugs effect</option>
+                                            <option>Tier III: Author statement</option>
+                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
+                                            <option>Other criteria</option>
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
@@ -120,17 +145,16 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <!-- Ivo : service to get the others statuses -->
+                                        <b-icon v-if="diagnosticOutcomeSelected == diagnosticOutcomePredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="diagnosticOutcomeSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="diagnosticOutcomeSelected != diagnosticOutcomePredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea
-                                        class="summary-box"
-                                        rows="3"
-                                        placeholder="Comment..."
-                                    />
+                                    <b-textarea :disabled="diagnosticOutcomeSelected == diagnosticOutcomePredicted" class="summary-box" rows="3" placeholder="Comment..." />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -175,45 +199,67 @@
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-input id="predictiveOutcome" readonly />
+                                        <b-input v-model="predictiveOutcomePredictedDrug1" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input id="predictiveOutcome" readonly />
+                                        <b-input v-model="predictiveTrustPredictedDrug1" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input id="predictiveOutcome" readonly />
+                                        <b-input v-model="predictiveOutcomePredictedDrug2" readonly />
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-input id="predictiveOutcome" readonly />
+                                        <b-input v-model="predictiveTrustPredictedDrug2" readonly />
                                     </b-row>
                                 </b-col>
                                 <b-col cols="2">
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
+                                        <b-form-select v-model="predictiveOutcomeSelectedDrug1" class="form-control">
                                             <option>Good outcome</option>
-                                            <option>Intermediate</option>
                                             <option>Poor outcome</option>
+                                            <option>Intermediate</option>
                                             <option>Unclear</option>
                                             <option>Context-dependent</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
-                                            <option>Tier-level</option>
+                                        <b-form-select v-model="predictiveTrustSelectedDrug1" class="form-control">
+                                            <option>Tier IA: Included in Professional Guidelines</option>
+                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
+                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
+                                            <option>Tier IID: Clinical trial</option>
+                                            <option>Tier IID: Pre-clinical study</option>
+                                            <option>Tier IID: Population study</option>
+                                            <option>Tier IID: Small published study</option>
+                                            <option>Tier IID: Case report</option>
+                                            <option>Tier III: No convincing published evidence of drugs effect</option>
+                                            <option>Tier III: Author statement</option>
+                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
+                                            <option>Other criteria</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
+                                        <b-form-select v-model="predictiveOutcomeSelectedDrug2" class="form-control">
                                             <option>Good outcome</option>
-                                            <option>Intermediate</option>
                                             <option>Poor outcome</option>
+                                            <option>Intermediate</option>
                                             <option>Unclear</option>
                                             <option>Context-dependent</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
-                                        <b-form-select class="form-control">
-                                            <option>Tier-level</option>
+                                        <b-form-select v-model="predictiveTrustSelectedDrug2" class="form-control">
+                                            <option>Tier IA: Included in Professional Guidelines</option>
+                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
+                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
+                                            <option>Tier IID: Clinical trial</option>
+                                            <option>Tier IID: Pre-clinical study</option>
+                                            <option>Tier IID: Population study</option>
+                                            <option>Tier IID: Small published study</option>
+                                            <option>Tier IID: Case report</option>
+                                            <option>Tier III: No convincing published evidence of drugs effect</option>
+                                            <option>Tier III: Author statement</option>
+                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
+                                            <option>Other criteria</option>
                                         </b-form-select>
                                     </b-row>
                                 </b-col>
@@ -222,33 +268,31 @@
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <!-- Ivo : service to get the others statuses -->
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 == predictiveOutcomePredictedDrug1" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug1 != predictiveOutcomePredictedDrug1" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
-                                        <b-icon style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <!-- Ivo : service to get the others statuses -->
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 == predictiveOutcomePredictedDrug2" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug2 != predictiveOutcomePredictedDrug2" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
                                     <b-row class="p-3">
-                                        <b-textarea
-                                            class="summary-box"
-                                            rows="3"
-                                            placeholder="Comment..."
-                                        />
+                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug1 == predictiveOutcomePredictedDrug1" class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-row>
                                     <b-row class="p-3">
-                                        <b-textarea
-                                            class="summary-box"
-                                            rows="3"
-                                            placeholder="Comment..."
-                                        />
+                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug2 == predictiveOutcomePredictedDrug2" class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-row>
                                 </b-col>
                             </b-row>
@@ -320,12 +364,29 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
+            
             showDisease: true,
             showPrognostic: false,
             showDiagnostic: false,
             showPredictive: false,
-            prognosticPredicted: "Unclear",
-            prognosticSelected: ""
+
+            prognosticOutcomePredicted: "Unclear",
+            prognosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
+            diagnosticOutcomePredicted: "Poor outcome",
+            diagnosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
+            predictiveOutcomePredictedDrug1: "Good outcome",
+            predictiveTrustPredictedDrug1: "Tier IID: Case report",
+            predictiveOutcomePredictedDrug2: "Poor outcome",
+            predictiveTrustPredictedDrug2: "Tier III: Author statement",
+
+            prognosticOutcomeSelected: "Unclear",
+            prognosticTrustSelected: "Tier IA: Included in Professional Guidelines",
+            diagnosticOutcomeSelected: "Poor outcome",
+            diagnosticTrustSelected: "Tier IA: Included in Professional Guidelines",
+            predictiveOutcomeSelectedDrug1: "Good outcome",
+            predictiveTrustSelectedDrug1: "Tier IID: Case report",
+            predictiveOutcomeSelectedDrug2: "Poor outcome",
+            predictiveTrustSelectedDrug2: "Tier III: Author statement"
         };
     },
     created() {
@@ -334,7 +395,7 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        this.prognosticSelected = this.prognosticPredicted;
+        this.prognosticOutcomeSelected = this.prognosticOutcomePredicted;
     },
     computed: {},
     methods: {},
