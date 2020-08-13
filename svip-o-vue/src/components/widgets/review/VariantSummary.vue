@@ -71,7 +71,7 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: true,
+            showSummary: false,
             isEditMode: false,
             summaryComment: "",
         };
