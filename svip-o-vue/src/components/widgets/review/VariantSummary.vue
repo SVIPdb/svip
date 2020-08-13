@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-card class="shadow-sm mb-3" align="left" no-body>
+        <b-card class="shadow-sm mb-3" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
@@ -20,13 +20,13 @@
                                     {{ summaryComment }}
                                 </b-col>
                                 <b-col v-if="isEditMode">
-                                    <b-textarea class="summary-box" v-model="summaryComment" rows="3" />
+                                    <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
                                 </b-col>
-                                <b-col md="auto">
-                                    <b-button variant="success" class="centered-icons" @click="saveSummaryComment">
+                                <b-col md="auto" class="float-right">
+                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === '' && commentLabel === 'Save comment'" variant="success" class="centered-icons">
                                         {{ commentLabel }}
                                     </b-button>
-                                    <b-button v-if="isEditMode" variant="danger" class="centered-icons mt-2" @click="deleteSummaryComment" href="#" target="_blank"><!-- Ivo : Ouvrir nouvel onglet pour taper commentaire -->
+                                    <b-button v-if="isEditMode" @click="deleteSummaryComment" variant="danger" class="mt-2">
                                         Delete comment
                                     </b-button>
                                 </b-col>
@@ -80,37 +80,21 @@ export default {
 
     },
     methods: {
-        saveSummary() {
-            /*if (!this.variant.svip_data) {
-                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summary })
-                    .then((response) => {
-                        this.variant.svip_data = response.data;
-                        this.summary = response.data.summary;
-                        this.$snotify.success("Summary updated! (SVIP variant created, too.)");
-                    })
-                    .catch((err) => {
-                        log.warn(err);
-                        this.$snotify.error("Failed to update summary");
-                    })
-            }*/
-        },
         saveSummaryComment() {
             this.isEditMode = true;
             if(this.commentLabel === "Save comment") {
-                console.log("API call to save summary comment: " + this.summaryComment);
-                this.$snotify.success("Summary comment saved");
-
                 this.commentLabel = "Modify comment";
                 this.isEditMode = false;
+                this.$snotify.success("Your comment has been saved");
                 return;
             }
             this.commentLabel = "Save comment";
         },
         deleteSummaryComment() {
-            this.$snotify.success("Summary comment deleted");
             this.commentLabel = "Comment summary";
             this.summaryComment = "";
             this.isEditMode = false;
+            this.$snotify.success("Your comment has been deleted");
         }
     }
 };

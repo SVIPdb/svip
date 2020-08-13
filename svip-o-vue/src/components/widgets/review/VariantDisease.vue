@@ -116,11 +116,9 @@
                                 <b-col cols="2">
                                     <b-row class="p-2">
                                         <b-form-select v-model="diagnosticOutcomeSelected" class="form-control">
-                                            <option>Good outcome</option>
-                                            <option>Poor outcome</option>
-                                            <option>Intermediate</option>
-                                            <option>Unclear</option>
-                                            <option>Context-dependent</option>
+                                            <option>Associated with diagnosis</option>
+                                            <option>Not associated with diagnosis</option>
+                                            <option>Other</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
@@ -194,7 +192,7 @@
                                     Predictive /<br />Therapeutic
                                 </b-col>
                                 <b-col cols="2">
-                                    <b-row class="pb-5 pt-5 pl-3" align-self="start">Drug 1 (1 evidence)</b-row>
+                                    <b-row class="pb-5 pt-5 pl-3">Drug 1 (1 evidence)</b-row>
                                     <b-row class="pb-5 pt-5 pl-3">Drug 2 (3 evidences)</b-row>
                                 </b-col>
                                 <b-col cols="2">
@@ -204,7 +202,7 @@
                                     <b-row class="p-2">
                                         <b-input v-model="predictiveTrustPredictedDrug1" readonly />
                                     </b-row>
-                                    <b-row class="p-2">
+                                    <b-row class="p-2 pt-4">
                                         <b-input v-model="predictiveOutcomePredictedDrug2" readonly />
                                     </b-row>
                                     <b-row class="p-2">
@@ -214,11 +212,13 @@
                                 <b-col cols="2">
                                     <b-row class="p-2">
                                         <b-form-select v-model="predictiveOutcomeSelectedDrug1" class="form-control">
-                                            <option>Good outcome</option>
-                                            <option>Poor outcome</option>
-                                            <option>Intermediate</option>
-                                            <option>Unclear</option>
-                                            <option>Context-dependent</option>
+                                            <option>Sensitive (in vitro)</option>
+                                            <option>Responsive</option>
+                                            <option>Resistant (in vitro)</option>
+                                            <option>Reduced sensivity</option>
+                                            <option>Not responsive</option>
+                                            <option>Adverse response</option>
+                                            <option>Other</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
@@ -237,13 +237,15 @@
                                             <option>Other criteria</option>
                                         </b-form-select>
                                     </b-row>
-                                    <b-row class="p-2">
+                                    <b-row class="p-2 pt-4">
                                         <b-form-select v-model="predictiveOutcomeSelectedDrug2" class="form-control">
-                                            <option>Good outcome</option>
-                                            <option>Poor outcome</option>
-                                            <option>Intermediate</option>
-                                            <option>Unclear</option>
-                                            <option>Context-dependent</option>
+                                            <option>Sensitive (in vitro)</option>
+                                            <option>Responsive</option>
+                                            <option>Resistant (in vitro)</option>
+                                            <option>Reduced sensivity</option>
+                                            <option>Not responsive</option>
+                                            <option>Adverse response</option>
+                                            <option>Other</option>
                                         </b-form-select>
                                     </b-row>
                                     <b-row class="p-2">
@@ -275,7 +277,7 @@
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
-                                    <b-row class="justify-content-center">
+                                    <b-row class="pt-5 justify-content-center">
                                         Review status
                                     </b-row>
                                     <b-row class="justify-content-center">
@@ -288,7 +290,7 @@
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-row class="p-3">
+                                    <b-row class="p-3 pb-4">
                                         <b-textarea :disabled="predictiveOutcomeSelectedDrug1 == predictiveOutcomePredictedDrug1" class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-row>
                                     <b-row class="p-3">
@@ -370,22 +372,23 @@ export default {
             showDiagnostic: false,
             showPredictive: false,
 
+            // Ivo : Fake data... Need a service to get evidences to generate predictive fields and to get other reviews status
             prognosticOutcomePredicted: "Unclear",
             prognosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
-            diagnosticOutcomePredicted: "Poor outcome",
+            diagnosticOutcomePredicted: "Associated with diagnosis",
             diagnosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
-            predictiveOutcomePredictedDrug1: "Good outcome",
+            predictiveOutcomePredictedDrug1: "Responsive",
             predictiveTrustPredictedDrug1: "Tier IID: Case report",
-            predictiveOutcomePredictedDrug2: "Poor outcome",
+            predictiveOutcomePredictedDrug2: "Other",
             predictiveTrustPredictedDrug2: "Tier III: Author statement",
 
             prognosticOutcomeSelected: "Unclear",
             prognosticTrustSelected: "Tier IA: Included in Professional Guidelines",
-            diagnosticOutcomeSelected: "Poor outcome",
+            diagnosticOutcomeSelected: "Associated with diagnosis",
             diagnosticTrustSelected: "Tier IA: Included in Professional Guidelines",
-            predictiveOutcomeSelectedDrug1: "Good outcome",
+            predictiveOutcomeSelectedDrug1: "Responsive",
             predictiveTrustSelectedDrug1: "Tier IID: Case report",
-            predictiveOutcomeSelectedDrug2: "Poor outcome",
+            predictiveOutcomeSelectedDrug2: "Other",
             predictiveTrustSelectedDrug2: "Tier III: Author statement"
         };
     },
