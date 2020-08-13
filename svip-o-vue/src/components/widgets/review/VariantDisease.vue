@@ -60,15 +60,15 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="prognosticOutcomeSelected == prognosticOutcomePredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="prognosticOutcomeSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="prognosticOutcomeSelected != prognosticOutcomePredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon v-if="prognosticOutcomeSelected === prognosticOutcomePredicted && prognosticTrustSelected === prognosticTrustPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="prognosticOutcomeSelected === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="prognosticOutcomeSelected !== prognosticOutcomePredicted || prognosticTrustSelected !== prognosticTrustPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea :disabled="prognosticOutcomeSelected == prognosticOutcomePredicted" class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-textarea :disabled="prognosticOutcomeSelected === prognosticOutcomePredicted && prognosticTrustSelected === prognosticTrustPredicted" class="summary-box" rows="3" placeholder="Comment..." />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -144,15 +144,15 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="diagnosticOutcomeSelected == diagnosticOutcomePredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="diagnosticOutcomeSelected == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="diagnosticOutcomeSelected != diagnosticOutcomePredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon v-if="diagnosticOutcomeSelected === diagnosticOutcomePredicted && diagnosticTrustSelected === diagnosticTrustPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="diagnosticOutcomeSelected === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="diagnosticOutcomeSelected !== diagnosticOutcomePredicted || diagnosticTrustSelected !== diagnosticTrustPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
-                                    <b-textarea :disabled="diagnosticOutcomeSelected == diagnosticOutcomePredicted" class="summary-box" rows="3" placeholder="Comment..." />
+                                    <b-textarea :disabled="diagnosticOutcomeSelected === diagnosticOutcomePredicted && diagnosticTrustSelected === diagnosticTrustPredicted" class="summary-box" rows="3" placeholder="Comment..." />
                                 </b-col>
                             </b-row>
                         </b-card-text>
@@ -271,9 +271,9 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 == predictiveOutcomePredictedDrug1" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug1 != predictiveOutcomePredictedDrug1" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 === predictiveOutcomePredictedDrug1 && predictiveTrustSelectedDrug1 === predictiveTrustPredictedDrug1" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug1 !== predictiveOutcomePredictedDrug1 || predictiveTrustSelectedDrug1 !== predictiveTrustPredictedDrug1" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
@@ -282,19 +282,19 @@
                                     </b-row>
                                     <b-row class="justify-content-center">
                                         <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 == predictiveOutcomePredictedDrug2" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 == ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug2 != predictiveOutcomePredictedDrug2" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 === predictiveOutcomePredictedDrug2 && predictiveTrustSelectedDrug2 === predictiveTrustPredictedDrug2" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
+                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
+                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug2 !== predictiveOutcomePredictedDrug2 || predictiveTrustSelectedDrug2 !== predictiveTrustPredictedDrug2" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                         <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
                                     </b-row>
                                 </b-col>
                                 <b-col cols="4">
                                     <b-row class="p-3 pb-4">
-                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug1 == predictiveOutcomePredictedDrug1" class="summary-box" rows="3" placeholder="Comment..." />
+                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug1 === predictiveOutcomePredictedDrug1 && predictiveTrustSelectedDrug1 === predictiveTrustPredictedDrug1" class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-row>
                                     <b-row class="p-3">
-                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug2 == predictiveOutcomePredictedDrug2" class="summary-box" rows="3" placeholder="Comment..." />
+                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug2 === predictiveOutcomePredictedDrug2 && predictiveTrustSelectedDrug2 === predictiveTrustPredictedDrug2" class="summary-box" rows="3" placeholder="Comment..." />
                                     </b-row>
                                 </b-col>
                             </b-row>
