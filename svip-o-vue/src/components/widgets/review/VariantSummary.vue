@@ -23,14 +23,18 @@
                                     <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
                                 </b-col>
                                 <b-col v-if="!isEditMode">
-                                    <b-button @click="isEditMode = true" variant="success" class="float-right centered-icons">
+                                    <b-button v-if="summaryComment === ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
                                         Comment summary
+                                    </b-button>
+                                    <b-button v-if="summaryComment !== ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
+                                        Modify comment
                                     </b-button>
                                 </b-col>
                                 <b-col v-if="isEditMode" md="auto">
-                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === '' && commentLabel === 'Save comment'" variant="success" class="centered-icons">
-                                        Save comment                                 </b-button>
-                                    <b-button @click="deleteSummaryComment" variant="danger" class="mt-2">
+                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === ''" variant="success" class="centered-icons">
+                                        Save comment
+                                    </b-button>
+                                    <b-button @click="deleteSummaryComment" variant="danger" class="centered-icons mt-2">
                                         Delete comment
                                     </b-button>
                                 </b-col>
@@ -39,7 +43,7 @@
                     </div>
                 </transition>
             </b-card-body>
-        </b-card>   
+        </b-card>
     </div>
 </template>
 
@@ -70,7 +74,6 @@ export default {
             showSummary: true,
             isEditMode: false,
             summaryComment: "",
-            commentLabel: "Comment summary"
         };
     },
     created() {
@@ -85,17 +88,10 @@ export default {
     },
     methods: {
         saveSummaryComment() {
-            this.isEditMode = true;
-            if(this.commentLabel === "Save comment") {
-                this.commentLabel = "Modify comment";
-                this.isEditMode = false;
-                this.$snotify.success("Your comment has been saved");
-                return;
-            }
-            this.commentLabel = "Save comment";
+            this.isEditMode = false;
+            this.$snotify.success("Your comment has been saved");
         },
         deleteSummaryComment() {
-            this.commentLabel = "Comment summary";
             this.summaryComment = "";
             this.isEditMode = false;
             this.$snotify.success("Your comment has been deleted");
