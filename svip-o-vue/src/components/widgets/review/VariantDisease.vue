@@ -80,8 +80,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <!-- Ivo : replace ALL <a> by b-link -->
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -164,7 +163,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -172,7 +171,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -307,7 +306,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -315,7 +314,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -323,7 +322,7 @@
                             <b-row align-v="center">
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
-                                    <a href="#" alt="Link to evidence">Evidence #1</a>
+                                    <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
@@ -389,7 +388,9 @@ export default {
             predictiveOutcomeSelectedDrug1: "Responsive",
             predictiveTrustSelectedDrug1: "Tier IID: Case report",
             predictiveOutcomeSelectedDrug2: "Other",
-            predictiveTrustSelectedDrug2: "Tier III: Author statement"
+            predictiveTrustSelectedDrug2: "Tier III: Author statement",
+
+            prognosticComment: ""
         };
     },
     created() {
