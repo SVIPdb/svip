@@ -22,11 +22,15 @@
                                 <b-col v-if="isEditMode">
                                     <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
                                 </b-col>
-                                <b-col md="auto" class="float-right">
-                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === '' && commentLabel === 'Save comment'" variant="success" class="centered-icons">
-                                        {{ commentLabel }}
+                                <b-col v-if="!isEditMode">
+                                    <b-button @click="isEditMode = true" variant="success" class="float-right centered-icons">
+                                        Comment summary
                                     </b-button>
-                                    <b-button v-if="isEditMode" @click="deleteSummaryComment" variant="danger" class="mt-2">
+                                </b-col>
+                                <b-col v-if="isEditMode" md="auto">
+                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === '' && commentLabel === 'Save comment'" variant="success" class="centered-icons">
+                                        Save comment                                 </b-button>
+                                    <b-button @click="deleteSummaryComment" variant="danger" class="mt-2">
                                         Delete comment
                                     </b-button>
                                 </b-col>
@@ -63,7 +67,7 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: false,
+            showSummary: true,
             isEditMode: false,
             summaryComment: "",
             commentLabel: "Comment summary"
