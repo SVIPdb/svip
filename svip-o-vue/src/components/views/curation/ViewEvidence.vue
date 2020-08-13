@@ -27,7 +27,6 @@
                     <VariomesAbstract
                         :variomes="variomes"
                         citable
-                        @showmenu="handleRightClick"
                         style="margin-bottom: 1.5em;"
                     />
 
@@ -145,30 +144,6 @@
                                     </li>
                                 </ul>
 
-                                <div class="d-flex align-items-center">
-                                    <b-link
-                                        id="delete-btn"
-                                        class="text-danger"
-                                        :disabled="!form.id || form.status === 'submitted'"
-                                        @click="onDelete()"
-                                    >
-                                        <icon class="mr-1" name="trash" />Delete
-                                    </b-link>
-                                    <b-button
-                                        class="ml-auto"
-                                        variant="outline-success"
-                                        @click="onSubmitDraft"
-                                        :disabled="form.status === 'submitted'"
-                                    >{{is_saved ? "Update" : "Save"}} Draft</b-button>
-                                </div>
-
-                                <b-button
-                                    class="mt-3"
-                                    block
-                                    variant="success"
-                                    :disabled="form.status === 'submitted'"
-                                    @click="onSubmit"
-                                >Save Evidence</b-button>
                             </b-collapse>
                         </b-card-body>
                     </b-card>
@@ -314,42 +289,6 @@ export default {
         checkInRole,
         pubmedURL,
 
-        handleRightClick({ event, selection }) {
-            this.selection = selection;
-            if (this.selection.length > 0) {
-                this.$refs.vueSimpleContextMenu.showMenu(event);
-            }
-        },
-        optionClicked(event) {
-            if (event.option.slug === "copy") {
-                this.$copyText(this.selection).then(
-                    () => {
-                        this.$snotify.info("Copied text");
-                    },
-                    () => {
-                        this.$snotify.warn("Couldn't copy it");
-                    }
-                );
-            } else if (event.option.slug === "annotate") {
-                if (this.isViewOnly) {
-                    this.$snotify.warning("Can't alter a submitted entry");
-                    return;
-                }
-
-                this.$snotify.info("Added selection to annotations", {
-                    position: "centerBottom"
-                });
-                this.form.annotations.push(this.selection);
-            }
-        },
-
-        evidenceTypeChanged() {
-            // when the type of evidence changes, we clear its dependent fields
-            // (otherwise, they might still hold values despite not appearing to due their options changing)
-            this.form.drugs = [];
-            this.form.effect = null;
-            this.form.tier_criteria = null;
-        },
         loadVariomeData() {
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
             HTTP.get(`variomes_single_ref`, {
@@ -369,14 +308,6 @@ export default {
                             "Couldn't retrieve publication info, try again later."
                     };
                 });
-        },
-        removeAnnotation(index) {
-            if (this.isViewOnly) {
-                this.$snotify.warning("Can't alter a submitted entry");
-                return;
-            }
-
-            this.form.annotations.splice(index, 1);
         },
         load() {
             // optionally loads curation entry data from the server; always kicks off loading variome data
@@ -416,170 +347,6 @@ export default {
                     });
             }
         },
-        rehydrate(data) {
-            // given some fetched data, populates all our local fields with the server's data for this entry
-            // populate form + hidden fields with results
-
-            // some of the fields have to be specially handled, so we remove them from the server's payload
-            const {
-                variant,
-                formatted_variants,
-                last_modified,
-                tier_level,
-                tier_level_criteria,
-                annotations,
-                references,
-                ...rest
-            } = data;
-
-            // repopulating variants is annoying since they're split up between the 'main' variant
-            // and the extra variants in the "add variants" box.
-            // we'll go with the convention that the first one is the 'main' variant and the rest, if any, are the
-            // extra variants
-            const extra_variants = formatted_variants;
-            this.variant.id = variant.id;
-
-            // repopulate the form, which will bind the elements in the page
-            this.form = {
-                ...rest,
-                extra_variants: extra_variants,
-                tier_criteria: tier_level
-                    ? `${tier_level_criteria} (${tier_level})`
-                    : tier_level_criteria,
-                annotations: annotations || [],
-                last_modified: dayjs(last_modified).format("DD.MM.YYYY, h:mm a")
-            };
-
-            // also populate source and ID, which we need to populate the publication info
-            [this.source, this.reference] = references.trim().split(":");
-        },
-        async submit(isDraft) {
-            // manually validate all the fields before we go any further
-            if (!isDraft) {
-                // use the validation observer to validate every provider at once
-                // this will update the UI with 'this is required' as well
-                const isValid = await this.$refs.observer.validate();
-
-                if (!isValid) {
-                    return;
-                }
-            }
-
-            // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
-            const matched = tier_criteria_parser.exec(this.form.tier_criteria);
-            const { tier_level, tier_level_criteria } = matched
-                ? matched.groups
-                : {
-                    tier_level: null,
-                    tier_level_criteria: this.form.tier_criteria
-                };
-
-            const payload = {
-                disease: this.form.disease, // this.form.disease.id,
-                variant: this.variant.id,
-                extra_variants: this.form.extra_variants
-                    ? this.form.extra_variants.map(x => x.id)
-                    : [], // selected plus the other ones
-
-                type_of_evidence: this.form.type_of_evidence,
-                drugs: this.form.drugs || [],
-                interactions: this.form.interactions || [],
-                effect: this.form.effect,
-                tier_level_criteria: tier_level_criteria,
-                tier_level: tier_level,
-                mutation_origin: this.form.mutation_origin,
-                associated_mendelian_diseases: this.form.associated_mendelian_diseases,
-                summary: this.form.summary,
-                support: this.form.support,
-                comment: this.form.comment,
-                annotations: this.form.annotations,
-
-                references: `${this.source}:${this.reference}`,
-                status: isDraft ? "draft" : "saved"
-            };
-
-            // if they've previously submitted, make it an update
-            // if this is a new submission, make it a post
-            (this.is_saved
-                ? HTTP.put(`/curation_entries/${this.form.id}`, payload)
-                : HTTP.post(`/curation_entries/`, payload)
-            )
-                .then(result => {
-                    this.$snotify.success(
-                        `${isDraft ? "Draft" : "Entry"} ${
-                            this.is_saved ? "updated" : "saved"
-                        }!`
-                    );
-
-                    // refresh curation lists on other pages
-                    this.channel.postMessage(`Refreshed ID ${result.data.id}`);
-
-                    // it takes a while for a navigation change (below) to update the UI, so we'll prematurely
-                    // update it here with the server's response (and then overwrite it when the nav change comes
-                    // through, but that's fine)
-                    this.rehydrate(result.data);
-
-                    // if we were adding a new entry, redirect to the page for this new entry
-                    // otherwise, we're presumbaly already on the right page
-                    if (this.$route.params.action === "add") {
-                        this.$router.replace({
-                            name: "add-evidence",
-                            params: {
-                                ...this.$route.params,
-                                action: result.data.id
-                            }
-                        });
-                    }
-                })
-                .catch((err) => {
-                    if (err.response) {
-                        if (err.response.status == 403) {
-                            this.$snotify.error(
-                                "Submitted entries can't be changed!"
-                            );
-                            return;
-                        }
-                        if (err.response.status == 400) {
-                            const failedKeys = Object.keys(
-                                err.response.data
-                            ).join(", ");
-                            this.$snotify.error(
-                                `Validation failed for these fields: ${failedKeys}`
-                            );
-                            return;
-                        }
-                    }
-
-                    // TODO: deal with the server's error response in err.response.data
-                    //  to bind error messages to form elements.
-                    log.warn("Error when saving: ", err);
-                });
-        },
-        onSubmitDraft() {
-            this.submit(true);
-        },
-        onSubmit() {
-            this.submit(false);
-        },
-        onDelete() {
-            if (confirm("Are you sure that you want to delete this entry?")) {
-                HTTP.delete(`/curation_entries/${this.form.id}`).then(
-                    result => {
-                        // refresh curation lists on other pages
-                        this.channel.postMessage(
-                            `Deleted ID ${result.data.id}`
-                        );
-
-                        this.$snotify.info("Entry deleted");
-                        this.form.id = null;
-                        this.pageError = {
-                            title: "Entry Deleted",
-                            message: "You may now close this window/tab."
-                        };
-                    }
-                );
-            }
-        }
     },
     computed: {
         ...mapGetters({
@@ -626,29 +393,9 @@ export default {
                 }
             ].filter(x => x);
         },
-        effects() {
-            // return this.form.type_of_evidence != null
-            //     ? Object.keys(this.inputs[this.filterLabel][this.form.type_of_evidence])
-            //     : [];
-            return this.form.type_of_evidence &&
-                effect_set[this.form.type_of_evidence]
-                ? Object.keys(effect_set[this.form.type_of_evidence])
-                : [];
-        },
-        tier_criteria() {
-            return this.form.type_of_evidence && this.form.effect
-                ? effect_set[this.form.type_of_evidence][this.form.effect]
-                : [];
-        },
         disease_id() {
             return parseInt(this.$route.params.disease_id);
         },
-        is_saved() {
-            return this.form.id != null;
-        },
-        isViewOnly() {
-            return this.form.id && this.form.status === "submitted";
-        }
     },
     mounted() {
         this.load();

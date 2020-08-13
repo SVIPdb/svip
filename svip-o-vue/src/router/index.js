@@ -155,8 +155,9 @@ const router = new Router({
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
         },
-        {
-            path: "/curation/gene/:gene_id/variant/:variant_id/evidence",
+        /*{
+            // Ivo : Not working because of redirection
+            path: "/curation/gene/:gene_id/variant/:variant_id/evidence/:evidence_id",
             name: "view-evidence",
             component: ViewEvidence,
             // beforeEnter: remapGeneSymbol,
@@ -164,7 +165,7 @@ const router = new Router({
                 title: 'SVIP-O: View Evidence',
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
-        },
+        },*/
         {
             path: "/debug",
             name: "debug",
