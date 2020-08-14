@@ -17,6 +17,7 @@ import CurationDashboard from "@/components/views/curation/CurationDashboard";
 import AnnotateVariant from "@/components/views/curation/AnnotateVariant";
 import AnnotateReview from "@/components/views/review/AnnotateReview";
 import AddEvidence from "@/components/views/curation/AddEvidence";
+import ViewEvidence from "@/components/views/curation/viewEvidence";
 import DebugPage from "@/components/views/DebugPage";
 import PageNotFound from "@/components/views/PageNotFound";
 */
@@ -35,6 +36,7 @@ const CurationDashboard = () => import("@/components/views/curation/CurationDash
 const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
 const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
+const ViewEvidence = () => import("@/components/views/curation/ViewEvidence");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
 
@@ -147,14 +149,25 @@ const router = new Router({
         },
         {
             path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
-            name: "add-evidence",
-            component: AddEvidence,
+            name: "view-evidence", // Ivo : Original - name: "add-evidence",
+            component: ViewEvidence, // Ivo : Original - component: AddEvidence,
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Edit Curation',
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
         },
+        /*{
+            // Ivo : Not working because of redirection
+            path: "/curation/gene/:gene_id/variant/:variant_id/evidence/:evidence_id",
+            name: "view-evidence",
+            component: ViewEvidence,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: View Evidence',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
+        },*/
         {
             path: "/review/gene/:gene_id/variant/:variant_id",
             name: "annotate-review",
