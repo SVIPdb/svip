@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <!-- Ivo - suggestion : replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ??? -->
+        <!-- Ivo - replace ':reviewer="true"' by '_reviewer="checkInRole('reviewers')"' ? -->
         <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- Ivo : is it normal that there is no record in review? PS: change :items="review.items" -->
             <!-- ON REQUEST - CARD -->

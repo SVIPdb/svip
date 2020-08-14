@@ -151,6 +151,7 @@
                 />
             </div>
         </b-card-body>
+
         <b-card-body v-if="isReviewer" class="p-0">
             <b-table
                 class="mb-0"
@@ -191,8 +192,7 @@
                         v-for="(reviewer, index) in data.value"
                         v-bind:key="index"
                         v-b-popover.hover.top="reviewer.label"
-                        :name="reviewer.value ? 'check' : 'times'"
-                        :class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"
+
                     ></icon>
                 </template>
 
@@ -258,7 +258,8 @@ export default {
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
-        BIconXSquareFill,},
+        BIconXSquareFill,
+    },
     props: {
         // The items of the table
         items: {
@@ -423,6 +424,9 @@ export default {
         }),
         // We are filtering items based on the two filters (custom and status)
         filteredItems() {
+            console.log(this.statusFilter);
+            console.log(this.items);
+
             let items = this.items;
 
             if (this.statusFilter !== "all") {
