@@ -72,6 +72,7 @@
                                 </b-col>
                             </b-row>
                         </b-card-text>
+                        <hr/>
                     </div>
                 </transition>
                 <transition name="slide-fade">
@@ -155,6 +156,7 @@
                                 </b-col>
                             </b-row>
                         </b-card-text>
+                        <hr/>
                     </div>
                 </transition>
                 <transition name="slide-fade">
