@@ -81,6 +81,7 @@
                                 <b-col class="border p-2">Good outcome</b-col>
                                 <b-col class="border p-2">
                                     <b-link href="#" alt="Link to evidence">Evidence #1</b-link>
+                                    <!-- <router-link :to="`/curation/gene/${data.item.gene_id}/variant/${data.item.variant_id}/evidence/${data.item.evidence_id}`" target="_blank">{{ data.value }}</router-link> -->
                                 </b-col>
                                 <b-col class="border p-2">PMID: 789101</b-col>
                                 <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>

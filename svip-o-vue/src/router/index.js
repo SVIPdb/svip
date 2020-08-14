@@ -149,16 +149,16 @@ const router = new Router({
         },
         {
             path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
-            name: "view-evidence", // Ivo : Original - name: "add-evidence",
-            component: ViewEvidence, // Ivo : Original - component: AddEvidence,
+            name: "add-evidence", // Ivo : replace to see the mockup - name: "add-evidence",
+            component: AddEvidence, // Ivo : replace to see the mockup - component: AddEvidence,
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Edit Curation',
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
         },
-        /*{
-            // Ivo : Not working because of redirection
+        {
+            // Ivo : Not working because of redirection?
             path: "/curation/gene/:gene_id/variant/:variant_id/evidence/:evidence_id",
             name: "view-evidence",
             component: ViewEvidence,
@@ -167,7 +167,7 @@ const router = new Router({
                 title: 'SVIP-O: View Evidence',
                 requiresAuth: true, roles: ['curators', 'reviewers']
             }
-        },*/
+        },
         {
             path: "/review/gene/:gene_id/variant/:variant_id",
             name: "annotate-review",
