@@ -309,43 +309,64 @@ export default {
                     };
                 });
         },
+        rehydrate(data) {
+            // given some fetched data, populates all our local fields with the server's data for this entry
+            // populate form + hidden fields with results
+
+            // some of the fields have to be specially handled, so we remove them from the server's payload
+            const {
+                variant,
+                formatted_variants,
+                last_modified,
+                tier_level,
+                tier_level_criteria,
+                annotations,
+                references,
+                ...rest
+            } = data;
+
+            // repopulating variants is annoying since they're split up between the 'main' variant
+            // and the extra variants in the "add variants" box.
+            // we'll go with the convention that the first one is the 'main' variant and the rest, if any, are the
+            // extra variants
+            const extra_variants = formatted_variants;
+            this.variant.id = variant.id;
+
+            // repopulate the form, which will bind the elements in the page
+            this.form = {
+                ...rest,
+                extra_variants: extra_variants,
+                tier_criteria: tier_level
+                    ? `${tier_level_criteria} (${tier_level})`
+                    : tier_level_criteria,
+                annotations: annotations || [],
+                last_modified: dayjs(last_modified).format("DD.MM.YYYY, h:mm a")
+            };
+
+            // also populate source and ID, which we need to populate the publication info
+            [this.source, this.reference] = references.trim().split(":");
+        },
         load() {
             // optionally loads curation entry data from the server; always kicks off loading variome data
             // 1. for new entries, the citation source and reference will come from the querystring
             // 2. for existing entries, the source and reference come from the entry data
 
-            const { action } = this.$route.params;
+            const { evidence_id } = this.$route.params;
 
-            if (action === "add") {
-                const { source, reference } = this.$route.query;
-
-                if (!source || !reference) {
-                    this.pageError = {
-                        message:
-                            "Required querystring params 'source' and/or 'reference' are missing."
-                    };
-                    return;
-                }
-
-                this.source = source.trim();
-                this.reference = reference.trim();
-                this.loadVariomeData();
-            } else {
-                HTTP.get(`/curation_entries/${action}`)
-                    .then(response => {
-                        this.rehydrate(response.data); // populates source, reference from the response
-                        this.loadVariomeData(); // and finally load the data
-                    })
-                    .catch(err => {
-                        if (err.response && err.response.status === 404) {
-                            // the curation entry doesn't exist, so we redirect to the 404 page
-                            this.$router.push({ name: "not-found" });
-                        } else {
-                            // pass the error on unchanged
-                            throw err;
-                        }
-                    });
-            }
+            HTTP.get(`/curation_entries/${evidence_id}`)
+                .then(response => {
+                    this.rehydrate(response.data); // populates source, reference from the response
+                    this.loadVariomeData(); // and finally load the data
+                })
+                .catch(err => {
+                    if (err.response && err.response.status === 404) {
+                        // the curation entry doesn't exist, so we redirect to the 404 page
+                        this.$router.push({ name: "not-found" });
+                    } else {
+                        // pass the error on unchanged
+                        throw err;
+                    }
+                });
         },
     },
     computed: {
