@@ -289,6 +289,7 @@
                         class="shadow-sm mb-3"
                         :href="duplicateUrl"
                         target="_blank"
+                        v-if="!isViewOnly"
                     >Duplicate</b-button>
 
                     <b-card class="shadow-sm mb-3" header-bg-variant="white" no-body>
@@ -339,30 +340,32 @@
                                     </li>
                                 </ul>
 
-                                <div class="d-flex align-items-center">
-                                    <b-link
-                                        id="delete-btn"
-                                        class="text-danger"
-                                        :disabled="!form.id || form.status === 'submitted'"
-                                        @click="onDelete()"
-                                    >
-                                        <icon class="mr-1" name="trash" />Delete
-                                    </b-link>
-                                    <b-button
-                                        class="ml-auto"
-                                        variant="outline-success"
-                                        @click="onSubmitDraft"
-                                        :disabled="form.status === 'submitted'"
-                                    >{{is_saved ? "Update" : "Save"}} Draft</b-button>
-                                </div>
+                                <div v-if="!isViewOnly">
+                                    <div class="d-flex align-items-center">
+                                        <b-link
+                                            id="delete-btn"
+                                            class="text-danger"
+                                            :disabled="!form.id || form.status === 'submitted'"
+                                            @click="onDelete()"
+                                        >
+                                            <icon class="mr-1" name="trash" />Delete
+                                        </b-link>
+                                        <b-button
+                                            class="ml-auto"
+                                            variant="outline-success"
+                                            @click="onSubmitDraft"
+                                            :disabled="form.status === 'submitted'"
+                                        >{{is_saved ? "Update" : "Save"}} Draft</b-button>
+                                    </div>
 
-                                <b-button
-                                    class="mt-3"
-                                    block
-                                    variant="success"
-                                    :disabled="form.status === 'submitted'"
-                                    @click="onSubmit"
-                                >Save Evidence</b-button>
+                                    <b-button
+                                        class="mt-3"
+                                        block
+                                        variant="success"
+                                        :disabled="form.status === 'submitted'"
+                                        @click="onSubmit"
+                                    >Save Evidence</b-button>
+                                </div>
                             </b-collapse>
                         </b-card-body>
                     </b-card>
@@ -486,6 +489,9 @@ export default {
         DrugSearchBar,
         CuratorVariantInformations,
         ValidationObserver
+    },
+    props: {
+        forceViewOnly: { type: Boolean, default: false }
     },
     data() {
         return {
@@ -902,7 +908,7 @@ export default {
             return this.form.id != null;
         },
         isViewOnly() {
-            return this.form.id && this.form.status === "submitted";
+            return this.form.id && this.form.status === "submitted" || this.forceViewOnly;
         }
     },
     mounted() {
