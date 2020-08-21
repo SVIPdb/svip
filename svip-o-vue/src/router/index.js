@@ -158,6 +158,20 @@ const router = new Router({
             }
         },
         {
+            // example path where AddEvidence is loaded in view-only mode
+            path: "/curation/gene/:gene_id/variant/:variant_id/evidence-static/:action",
+            name: "view-evidence-alt",
+            component: AddEvidence,
+            props: {
+                forceViewOnly: true
+            },
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: View Evidence',
+                requiresAuth: true, roles: ['curators', 'reviewers']
+            }
+        },
+        {
             // Ivo : Not working because of redirection?
             path: "/curation/gene/:gene_id/variant/:variant_id/evidence/:evidence_id",
             name: "view-evidence",
