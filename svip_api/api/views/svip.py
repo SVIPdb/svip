@@ -137,7 +137,22 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     filterset_class = CurationEntryFilter
-    ordering_fields = '__all__'
+    ordering_fields = (
+        "action",
+        "created_on",
+        "disease__name",
+        "drugs",
+        "effect",
+        "last_modified",
+        "owner_name",
+        "references",
+        "status",
+        "tier_level",
+        "tier_level_criteria",
+        "type_of_evidence",
+        "variant__gene__symbol",
+        "variant__name",
+    )
     search_fields = (
         'annotations',
         'variant__description',
