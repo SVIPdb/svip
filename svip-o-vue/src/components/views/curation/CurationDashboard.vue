@@ -5,6 +5,7 @@
             <NotificationCard v-if="REVIEW_ENABLED"
                 :items="on_request.items"
                 :fields="on_request.fields"
+                :error="on_request.error"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
@@ -41,6 +42,7 @@
             <!-- TBC: request queue -->
             <NotificationCard
                 :items="on_request.items" :fields="on_request.fields" :loading="on_request.loading"
+                :error="on_request.error"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
@@ -98,7 +100,8 @@ export default {
             on_request: {
                 loading: false,
                 fields: fields_on_request,
-                items: []
+                items: [],
+                error: null
             },
 
             // TO BE CURATED FAKE DATA
@@ -120,27 +123,35 @@ export default {
     methods: {
         checkInRole,
         fetchRequestedVariants() {
-            this.on_request.loading = true;
-            HTTP.get(`/variants?in_svip=true&inline_svip_data=true&page_size=10000`).then((response) => {
-                this.on_request.loading = false;
+            this.$set(this.on_request, 'loading', true);
+            this.$set(this.on_request, 'error', null);
+            HTTP.get(`/variants?in_svip=true&inline_svip_data=true&page_size=10000`)
+                .then((response) => {
+                    this.on_request.loading = false;
 
-                this.on_request.items = response.data.results.map((entry) => {
-                    const all_curations = flatMap(entry.svip_data.diseases, x => x.curation_entries);
+                    this.on_request.items = response.data.results.map((entry) => {
+                        const all_curations = flatMap(entry.svip_data.diseases, x => x.curation_entries);
 
-                    return {
-                        gene_id: entry.gene.id,
-                        variant_id: entry.id,
-                        'gene_name': entry.gene.symbol,
-                        'variant': entry.name,
-                        'hgvs': entry.hgvs_c,
-                        'disease': entry.svip_data.diseases.map(x => x.name).join(", "),
-                        'status': all_curations.length > 0 ? 'Ongoing' : 'Not assigned',
-                        'deadline': 'n/a',
-                        'requester': 'System',
-                        'curator': uniqBy(all_curations.map(x => ({ id: x.owner, name: x.owner_name })), (x) => x.id)
-                    };
-                });
-            })
+                        return {
+                            gene_id: entry.gene.id,
+                            variant_id: entry.id,
+                            'gene_name': entry.gene.symbol,
+                            'variant': entry.name,
+                            'hgvs': entry.hgvs_c,
+                            'disease': entry.svip_data.diseases.map(x => x.name).join(", "),
+                            'status': all_curations.length > 0 ? 'Ongoing' : 'Not assigned',
+                            'deadline': 'n/a',
+                            'requester': 'System',
+                            'curator': uniqBy(all_curations.map(x => ({ id: x.owner, name: x.owner_name })), (x) => x.id)
+                        };
+                    });
+                })
+                .catch((err) => {
+                    console.warn(err);
+                    this.$set(this.on_request, 'loading', false);
+                    this.$set(this.on_request, 'error', err.message ? err.message : true);
+                    console.log(this.on_request);
+                })
         }
     }
 };

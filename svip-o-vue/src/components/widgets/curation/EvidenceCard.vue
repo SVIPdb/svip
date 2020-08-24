@@ -40,6 +40,7 @@
                 :external-search="filter"
                 :apiUrl="apiUrl"
                 :postMapper="colorCurationRows"
+                :responsive="true"
             >
                 <template v-slot:cell(submit_box)="data">
                     <input type="checkbox" v-if="data.item.status === 'draft' || data.item.status === 'saved'"
