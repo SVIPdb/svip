@@ -152,7 +152,7 @@ const NoSVIPInfo = {
     name: 'NoSVIPInfo',
     render: function(h) {
         h();
-        
+
         return (
             <div class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center" style="font-size: 150%;">
                 <icon name="question-circle" scale="1.5" style="margin-right: 10px;"/>
@@ -222,9 +222,11 @@ export default {
             }
         },
         splitCurationEntries(row) {
+            const annotated_entries = row.item.curation_entries.map(x => ({...x, _showDetails: false}));
+
             return {
-                finalized: row.item.curation_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
-                pending: row.item.curation_entries.filter(x => x.status !== 'reviewed')
+                finalized: annotated_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
+                pending: annotated_entries.filter(x => x.status !== 'reviewed')
             };
         },
         titleCase

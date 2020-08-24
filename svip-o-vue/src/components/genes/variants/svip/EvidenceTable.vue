@@ -1,8 +1,8 @@
 <template>
     <b-card-text>
-        <b-table :fields="fields" responsive :items="entries" show-empty small class="align-rows-center">
-            <template v-slot:cell(display)="row2">
-                <row-expander v-access="'curators'" :row="row2"/>
+        <b-table :fields="fields" :responsive="true" :items="entries" show-empty small class="align-rows-center">
+            <template v-slot:cell(display)="row">
+                <row-expander v-access="'curators'" :row="row"/>
             </template>
 
             <template v-slot:cell(warning)="row">
