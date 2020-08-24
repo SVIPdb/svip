@@ -9,3 +9,4 @@ export const releaseName = process.env.VUE_APP_RELEASE_NAME;
 // --- feature flags
 // -----------------------------------------------------------
 export const commentsEnabled = true;
+export const showHarvestRuns = process.env.VUE_APP_DEBUG || false;
