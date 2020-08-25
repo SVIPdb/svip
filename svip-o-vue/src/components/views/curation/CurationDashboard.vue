@@ -147,10 +147,8 @@ export default {
                     });
                 })
                 .catch((err) => {
-                    console.warn(err);
                     this.$set(this.on_request, 'loading', false);
                     this.$set(this.on_request, 'error', err.message ? err.message : true);
-                    console.log(this.on_request);
                 })
         }
     }
