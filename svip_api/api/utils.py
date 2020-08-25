@@ -43,7 +43,7 @@ def format_variant(x, search_term=None, isnt_dict=False):
             'hgvs_p': x.hgvs_p,
             'hgvs_g': x.hgvs_g,
             'id': x.id,
-            'gene': x.gene,
+            'gene': x.gene.id,
             'description': x.description,
             'sources': x.sources,
         }
