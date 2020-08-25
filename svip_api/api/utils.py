@@ -27,14 +27,26 @@ def field_is_empty(data, field, is_array=False):
     return field not in data or data[field] in (None, '') or data[field].strip() == ''
 
 
-def format_variant(x, search_term=None):
+def format_variant(x, search_term=None, isnt_dict=False):
     """
     Produces a terse version of the variant for returning from the autocomplete endpoint; suitable for binding to the
     UI's SearchBar component.
     :param x: the variant to format
     :param search_term: the original search term, so we can figure out which field of the variant matched to display it
+    :param isnt_dict: if true, extracts the contents of x as attributes into a dict
     :return: a terse representation of said variant
     """
+
+    if isnt_dict:
+        x = {
+            'hgvs_c': x.hgvs_c,
+            'hgvs_p': x.hgvs_p,
+            'hgvs_g': x.hgvs_g,
+            'id': x.id,
+            'gene': x.gene,
+            'description': x.description,
+            'sources': x.sources,
+        }
 
     target_hgvs = x['hgvs_c']
 

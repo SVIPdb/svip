@@ -242,7 +242,9 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_formatted_variants(obj):
-        return [format_variant(x) for x in obj.extra_variants.all().order_by('id')]
+        return [
+            format_variant(x, isnt_dict=True) for x in obj.extra_variants.all()
+        ]
 
     @staticmethod
     def _remap_multifields(validated_data):
