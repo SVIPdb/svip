@@ -47,6 +47,8 @@ CSRF_TRUSTED_ORIGINS = [
 # allows django to detect that we're running behind a secure proxy (e.g., nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# allows django to use nginx's x-forwarded-host field to set its hostname
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
