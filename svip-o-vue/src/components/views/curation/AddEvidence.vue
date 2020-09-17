@@ -58,6 +58,22 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.extra_variants"
+                                        label="Additional variants"
+                                        sublabel="Optional; used in case of a combination"
+                                        inner-id="variants-combination"
+                                    >
+                                        <SearchBar
+                                            id="variants-combination"
+                                            variants-only hide-svip-toggle
+                                            multiple
+                                            v-model="form.extra_variants"
+                                            :disabled="isViewOnly"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.type_of_evidence"
                                         label="For which type of evidence?"
                                         inner-id="evidence"
@@ -69,15 +85,15 @@
                                             v-model="form.type_of_evidence"
                                             @change="evidenceTypeChanged"
                                             :disabled="isViewOnly"
-                                            :state="checkValidity(props)"
+                                            :state="checkValidity(props, false)"
                                         >
                                             <optgroup
-                                                v-for="(label,index) in Object.keys(inputs)"
+                                                v-for="(group, index) in evidence_types.groups"
                                                 :key="index"
-                                                :label="label"
+                                                :label="group.name"
                                             >
                                                 <option
-                                                    v-for="(option,n) in Object.keys(inputs[label])"
+                                                    v-for="(option,n) in Object.keys(group.options)"
                                                     :key="n"
                                                     :value="option"
                                                 >{{ option }}</option>
@@ -441,10 +457,11 @@
 import { mapGetters } from "vuex";
 import BroadcastChannel from "broadcast-channel";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
-import inputs from "@/data/curation/evidence/options.json";
+import evidence_types from "@/data/curation/evidence/evidence_types.json";
 import store from "@/store";
 import { HTTP } from "@/router/http";
 import { extend, ValidationObserver } from "vee-validate";
+import SearchBar from "@/components/widgets/searchbars/SearchBar";
 import DrugSearchBar from "@/components/widgets/searchbars/DrugSearchBar";
 import ValidatedFormField from "@/components/widgets/curation/ValidatedFormField";
 import { required } from "vee-validate/dist/rules";
@@ -459,13 +476,10 @@ import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearc
 
 const log = ulog('Curation:AddEvidence')
 
-// options.json's top-level organization by separator makes it difficult to index the structure
-// by just what we store in the database, since you also need to know (unstored) the top-level category.
-// here we flatten the internal elements, since they're still indicative of the structure.
-const effect_set = Object.values(inputs).reduce(
-    (acc, x) => Object.assign(acc, x),
-    {}
-);
+// create a lookup for effects and tier criteria based on the evidence type
+const evidence_attrs = Object.values(evidence_types.groups)
+    .reduce((acc, x) => acc.concat(x.options), [])
+    .reduce((acc, x) => Object.assign(acc, x), {});
 
 // used to extract tier_level and tier_level_criteria (fields in the model) from the combined string tier_criteria
 const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
@@ -483,13 +497,14 @@ export default {
         DiseaseSearchBar,
         EvidenceHistory,
         ValidatedFormField,
+        SearchBar,
         DrugSearchBar,
         CuratorVariantInformations,
         ValidationObserver
     },
     data() {
         return {
-            inputs,
+            evidence_types,
             // if non-null, displays pageError instead of the contents of the page; use this for fatal errors
             pageError: null,
             options: [
@@ -708,7 +723,7 @@ export default {
                 disease: this.form.disease, // this.form.disease.id,
                 variant: this.variant.id,
                 extra_variants: this.form.extra_variants
-                    ? this.form.extra_variants.map(x => x.id)
+                    ? this.form.extra_variants.map(x => x.id.split("_")[1])
                     : [], // selected plus the other ones
 
                 type_of_evidence: this.form.type_of_evidence,
@@ -763,13 +778,13 @@ export default {
                 })
                 .catch((err) => {
                     if (err.response) {
-                        if (err.response.status == 403) {
+                        if (err.response.status === 403) {
                             this.$snotify.error(
                                 "Submitted entries can't be changed!"
                             );
                             return;
                         }
-                        if (err.response.status == 400) {
+                        if (err.response.status === 400) {
                             const failedKeys = Object.keys(
                                 err.response.data
                             ).join(", ");
@@ -882,17 +897,13 @@ export default {
             ].filter(x => x);
         },
         effects() {
-            // return this.form.type_of_evidence != null
-            //     ? Object.keys(this.inputs[this.filterLabel][this.form.type_of_evidence])
-            //     : [];
-            return this.form.type_of_evidence &&
-                effect_set[this.form.type_of_evidence]
-                ? Object.keys(effect_set[this.form.type_of_evidence])
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].effect
                 : [];
         },
         tier_criteria() {
-            return this.form.type_of_evidence && this.form.effect
-                ? effect_set[this.form.type_of_evidence][this.form.effect]
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].tier_criteria
                 : [];
         },
         disease_id() {

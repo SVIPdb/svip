@@ -20,6 +20,11 @@ export default {
         required: { type: Boolean, default: false },
         modeled: { }
     },
+    watch: {
+        modeled(newValue) {
+            this.validate();
+        }
+    },
     methods: {
         hasProvider() {
             return !!this.$refs.provider;
