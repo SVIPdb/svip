@@ -112,6 +112,14 @@ class CurationEntryFilter(django_filters.FilterSet):
             'status_ne'
         )
 
+def lookup_disease_for_id(x):
+    if not x:
+        return "(none)"
+
+    try:
+        return Disease.objects.get(id=x).name
+    except Disease.DoesNotExist:
+        return "(unknown: %s)" % str(x)
 
 def remap_curation_history_fields(field, value):
     """
@@ -122,7 +130,7 @@ def remap_curation_history_fields(field, value):
     :return: if a remap for the field exists the readable value, else the original value
     """
     CURATION_DELTA_MAPS = {
-        'disease': lambda x: Disease.objects.get(id=x).name
+        'disease': lookup_disease_for_id
     }
 
     return CURATION_DELTA_MAPS[field](value) if field in CURATION_DELTA_MAPS else value
