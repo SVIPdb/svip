@@ -10,10 +10,9 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Variant,
     Disease
 )
-from api.permissions import IsCurationPermitted, authed_curation_set, IsSampleViewer
+from api.permissions import IsCurationPermitted, IsSampleViewer
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
@@ -34,11 +33,32 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
     serializer_class = VariantInSVIPSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
     def get_queryset(self):
         if 'variant_pk' in self.kwargs:
             q = VariantInSVIP.objects.filter(variant_id=self.kwargs['variant_pk'])
         else:
-            q = VariantInSVIP.objects.all().prefetch_related('diseaseinsvip_set', 'diseaseinsvip_set__sample_set')
+            q = VariantInSVIP.objects.all()
+
+        q = (q
+            .select_related('variant')
+            .prefetch_related(
+                Prefetch('diseaseinsvip_set', queryset=(
+                        DiseaseInSVIP.objects
+                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                            .prefetch_related(
+                                'sample_set'
+                            )
+                    )
+                ),
+                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+            )
+        )
+
+        print("get_queryset in VariantInSVIPViewSet used (%s, qs: %s)" % (str(self), id(q)))
 
         return q
 
@@ -77,10 +97,16 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
         return {'request': self.request}
 
     def get_queryset(self):
+        print("get_queryset in DiseaseInSVIPViewSet used (%s)" % str(self))
+
         if 'svip_variant_pk' in self.kwargs:
             q = DiseaseInSVIP.objects.filter(svip_variant_id=self.kwargs['svip_variant_pk'])
         else:
             q = DiseaseInSVIP.objects.all()
+
+        # add in joined fields
+        q = q.prefetch_related('sample_set')
+
         return q
 
 
@@ -184,6 +210,8 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def _nice_username(obj):
+        if not obj:
+            return "N/A"
         fullname = ("%s %s" % (obj.first_name, obj.last_name)).strip()
         return fullname if fullname else obj.username
 
@@ -217,22 +245,17 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         })
 
     def get_queryset(self):
-        user = self.request.user
-        result = authed_curation_set(user)
-
         # pre-select variant and gene data to prevent thousands of queries
-        result = (
-            result
-                .select_related('owner')
+        return (
+            CurationEntry.objects.authed_curation_set(self.request.user)
+                .select_related('owner', 'variant', 'variant__gene')
                 .prefetch_related(
-                    'variant',
-                    Prefetch('extra_variants', queryset=Variant.objects.all().only('id', 'gene_id', 'hgvs_c', 'sources', 'description')),
+                    'extra_variants',
                     'extra_variants__gene',
                     'disease'
                 )
+                .order_by('created_on')
         )
-
-        return result.order_by('created_on')
 
 
 # ================================================================================================================

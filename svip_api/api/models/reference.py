@@ -2,6 +2,10 @@ from django.db import models
 from django.utils.timezone import now
 
 
+class DrugManager(models.Manager):
+    def get_by_natural_key(self, common_name, user_created):
+        return self.get(common_name=common_name, user_created=user_created)
+
 class Drug(models.Model):
     common_name = models.TextField()
     medicine_name = models.TextField(null=True)
@@ -12,7 +16,17 @@ class Drug(models.Model):
 
     user_created = models.BooleanField(default=False)
     created_on = models.DateTimeField(default=now, null=True)
+    objects = DrugManager()
 
+    def natural_key(self):
+        return self.common_name, self.user_created
+
+    class Meta:
+        unique_together = ('common_name', 'user_created')
+
+class DiseaseManager(models.Manager):
+    def get_by_natural_key(self, name, user_created, localization):
+        return self.get(name=name, user_created=user_created, localization=localization)
 
 class Disease(models.Model):
     localization = models.TextField(null=True)
@@ -26,6 +40,11 @@ class Disease(models.Model):
 
     user_created = models.BooleanField(default=False)
     created_on = models.DateTimeField(default=now, null=True)
+
+    objects = DiseaseManager()
+
+    def natural_key(self):
+        return self.name, self.user_created, self.localization
 
     def __str__(self):
         return "%s (id: %d)" % (self.name, self.id)

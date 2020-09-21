@@ -1,15 +1,13 @@
 import itertools
-from enum import Enum
 
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
-from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db.models import Count, F, Value, Func, Sum, IntegerField
 from django.db.models.functions import Coalesce, Cast
-
+from django_db_cascade.deletions import DB_CASCADE
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
-from django_db_cascade.deletions import DB_CASCADE
 
 from api.utils import dictfetchall
 
@@ -35,6 +33,9 @@ class Source(models.Model):
     def __str__(self):
         return "%s (%s, id: %s)" % (self.display_name, self.name, self.id)
 
+class GeneManager(models.Manager):
+    def get_by_natural_key(self, symbol):
+        return self.get(symbol=symbol)
 
 class Gene(models.Model):
     entrez_id = models.BigIntegerField(unique=True, db_index=True)
@@ -52,9 +53,17 @@ class Gene(models.Model):
     # sources = ArrayField(
     #     base_field=ForeignKey(to=Source, to_field='name', on_delete=DB_CASCADE), default=list)
 
+    objects = GeneManager()
+
+    def natural_key(self):
+        return (self.symbol,)
+
     def __str__(self):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
+class VariantManager(models.Manager):
+    def get_by_natural_key(self, description, hgvs_g):
+        return self.get(description=description, hgvs_g=hgvs_g)
 
 class Variant(models.Model):
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
@@ -95,6 +104,8 @@ class Variant(models.Model):
     # stores errors, exceptions encountered while crawling
     crawl_status = JSONField(null=True)
 
+    objects = VariantManager()
+
     def __str__(self):
         # return "%s %s" % (self.gene.symbol, self.name)
         return self.description
@@ -105,8 +116,8 @@ class Variant(models.Model):
     def in_svip(self):
         return self.variantinsvip_set.count() > 0
 
-    def svip_data(self):
-        return self.variantinsvip_set.first()
+    def natural_key(self):
+        return self.description, self.hgvs_g
 
     class Meta:
         indexes = [

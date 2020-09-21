@@ -2,24 +2,16 @@
 Serializers for SVIP-specific models.
 """
 import datetime
-from itertools import chain
-from pprint import pprint
 
-from django.db.models import Count, Q, F, Value
-from django.db.models.functions import Concat
+from django.contrib.auth import get_user_model
+from django.db.models import Count, Q, F
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from rest_framework import serializers
-from rest_framework.reverse import reverse
-from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug
 from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS
-
-from django.contrib.auth import get_user_model
-
-from api.permissions import IsCurationPermitted, authed_curation_set
 from api.serializers import SimpleVariantSerializer
 from api.serializers.reference import DiseaseSerializer
 from api.shared import pathogenic, clinical_significance
@@ -29,41 +21,14 @@ User = get_user_model()
 
 
 # ================================================================================================================
-# === Variant Aggregation
-# ================================================================================================================
-
-class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
-    diseases = serializers.SerializerMethodField()
-
-    def get_diseases(self, obj):
-        qset = (
-            obj.diseaseinsvip_set
-                .select_related('disease')
-                .prefetch_related('sample_set', 'disease__curationentry_set')
-                .all()
-        )
-        return [
-            DiseaseInSVIPSerializer(x, context={'request': self.context['request']}).data
-            for x in qset
-        ]
-
-    class Meta:
-        model = VariantInSVIP
-        fields = (
-            'url',
-            'id',
-            'variant',
-            'summary',
-            'tissue_counts',
-            'diseases'
-        )
-
-
-# ================================================================================================================
 # === Disease Aggregation
 # ================================================================================================================
 
 class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
+    def __init__(self, *args, **kwargs):
+        self._curation_cache = {}
+        super().__init__(*args, **kwargs)
+
     parent_lookup_kwargs = {
         'variant_in_svip_pk': 'svip_variant__pk',
         'pk': 'pk',
@@ -120,24 +85,17 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     @staticmethod
     def get_gender_balance(obj):
-        result = dict(
-            (x['gender'].lower(), x['count'])
-                for x in obj.sample_set.values('gender').annotate(count=Count('gender'))
-        )
-
-        # ensure each gender is represented
-        if 'male' not in result:
-            result['male'] = 0
-        if 'female' not in result:
-            result['female'] = 0
-
-        return result
+        return {
+            "male": sum(1 for x in obj.sample_set.all() if x.gender == 'male'),
+            "female": sum(1 for x in obj.sample_set.all() if x.gender == 'female')
+        }
 
     @staticmethod
     def get_age_distribution(obj):
         # produce the age brackets merged with the number of age entries that match each bracket
         curYear = datetime.datetime.now().year
-        ages = [curYear - int(x[0]) for x in obj.sample_set.values_list('year_of_birth')]
+        ages = [curYear - int(x.year_of_birth) for x in obj.sample_set.all()]
+
         return dict(
             (bracket, sum(1 for x in ages if bracket_pred(x)))
                 for bracket, bracket_pred in DiseaseInSVIPSerializer.age_brackets.items()
@@ -148,33 +106,39 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         if not user.has_perm('api.view_sample'):
             return []
 
-        return [
-            SampleSerializer(x).data
-            for x in obj.sample_set.all()
-        ]
+        return SampleSerializer(obj.sample_set, many=True, read_only=True).data
 
     @cached_property
     def _authed_curation_set(self):
-        return authed_curation_set(self.context['request'].user)
+        return CurationEntry.objects.authed_curation_set(self.context['request'].user)
 
     def _curation_entries(self, obj):
         # authed_set = CurationEntry.objects.all()
 
         # in addition to getting curation entries we can view, filter them down to the current disease
-        return self._authed_curation_set.filter(
-            Q(extra_variants=obj.svip_variant.variant) | Q(variant=obj.svip_variant.variant),
-            Q(disease=obj.disease)
-        )
+        if str(obj) not in self._curation_cache:
+            # self._curation_cache[str(obj)] = [
+            #     x for x in self._authed_curation_set.all()
+            #     if (
+            #         (obj.svip_variant.variant in x.extra_variants.all() or x.variant == obj.svip_variant.variant)
+            #         and obj.disease == x.disease
+            #     )
+            # ]
+            self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
+                Q(extra_variants=obj.svip_variant.variant) | Q(variant=obj.svip_variant.variant),
+                Q(disease=obj.disease)
+            ).select_related('disease', 'variant', 'variant__gene').prefetch_related('extra_variants').all())
+
+        return self._curation_cache[str(obj)]
 
     @staticmethod
     def get_sample_count(obj):
         return obj.sample_set.count()
 
     def get_curation_entries(self, obj):
-        return [
-            CurationEntrySerializer(x, context={'request': self.context['request']}).data
-            for x in self._curation_entries(obj)
-        ]
+        return CurationEntrySerializer(
+            self._curation_entries(obj), many=True, context={'request': self.context['request']}
+        ).data
 
     @staticmethod
     def get_sample_diseases_count(obj):
@@ -211,6 +175,25 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
             # 'samples',
             'curation_entries'
+        )
+
+
+# ================================================================================================================
+# === Variant Aggregation
+# ================================================================================================================
+
+class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
+    diseases = DiseaseInSVIPSerializer(many=True, read_only=True, source='diseaseinsvip_set')
+
+    class Meta:
+        model = VariantInSVIP
+        fields = (
+            'url',
+            'id',
+            'variant',
+            'summary',
+            'tissue_counts',
+            'diseases'
         )
 
 
@@ -275,13 +258,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         self._remap_multifields(validated_data)
         self.ensure_drugs_exist(validated_data)
         return super().update(instance, validated_data)
-
-    # def save(self, **kwargs):
-    #     # force owner to be the current user
-    #     # FIXME: we should include a caveat for superusers
-    #     # TODO: use stricter validation if the status isn't 'draft'
-    #     kwargs["owner"] = self.fields["owner"].get_default()
-    #     return super().save(**kwargs)
 
     def validate(self, data):
         if data['status'] != 'draft':

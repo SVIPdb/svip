@@ -1,24 +1,23 @@
 from collections import OrderedDict
 from enum import Enum
+from itertools import chain
 
-from django.contrib.postgres.aggregates import ArrayAgg, JSONBAgg
-from django.db import models, ProgrammingError, connection
+from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, F, Value, Func, Subquery, OuterRef, Q
+from django.db import models, connection
 from django.db.models.base import ModelBase
-from django.db.models.functions import Coalesce, Concat
-
 # makes deletes of related objects cascade on the sql server
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.timezone import now
-from django_db_cascade.fields import ForeignKey
 from django_db_cascade.deletions import DB_CASCADE
+from django_db_cascade.fields import ForeignKey
+from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
+from api.permissions import ALLOW_ANY_CURATOR, PUBLIC_VISIBLE_STATUSES
 from api.utils import dictfetchall
-from django.conf import settings
-
-from simple_history.models import HistoricalRecords
 
 
 class SVIPTableBase(ModelBase):
@@ -58,6 +57,22 @@ class SVIPReviewStatuses(Enum):
 # === Variant Aggregation
 # ================================================================================================================
 
+class VariantInSVIPManager(models.Manager):
+    def prune_orphans(self):
+        """
+        Removes entries that have no derivative data.
+
+        In this case, 'orphaned' entries are VariantInSVIP entries which have no summary and for which no
+        DiseaseInSVIP exists.
+
+        :return: the number of removed entries
+        """
+
+        return self.get_queryset().filter(
+            summary__isnull=True,
+            diseaseinsvip__isnull=True
+        ).delete()
+
 class VariantInSVIP(models.Model):
     """
     Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
@@ -68,11 +83,13 @@ class VariantInSVIP(models.Model):
     to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
-    variant = ForeignKey(to=Variant, on_delete=DB_CASCADE)
+    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
+
+    objects = VariantInSVIPManager()
 
     history = HistoricalRecords(cascade_delete_history=True)
 
@@ -102,23 +119,43 @@ class VariantInSVIP(models.Model):
         verbose_name = "Variant in SVIP"
         verbose_name_plural = "Variants in SVIP"
 
+
 # ================================================================================================================
 # === Disease Aggregation
 # ================================================================================================================
 
+class DiseaseInSVIPManager(models.Manager):
+    def prune_orphans(self):
+        """
+        Removes entries that have no derivative data
+        :return: the number of removed entries
+        """
+
+        return self.get_queryset().filter(
+            disease__isnull=False, # we have to preserve null diseases, since they're never explicitly referenced
+            sample__isnull=True
+        ).exclude(
+            disease__in=CurationEntry.objects.values('disease')
+        ).delete()
+
 class DiseaseInSVIP(SVIPModel):
     svip_variant = ForeignKey(to=VariantInSVIP, on_delete=DB_CASCADE)
-    disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
+    # a null disease means that the samples or curation entries associated with this variant belong to an
+    # unknown or unspecified disease.
+    disease = ForeignKey(to=Disease, null=True, on_delete=DB_CASCADE)
 
     status = models.TextField(default="Loaded")
     score = models.IntegerField(default=0)
 
+    objects = DiseaseInSVIPManager()
+
     def name(self):
-        return self.disease.name
+        return self.disease.name if self.disease else "Unspecified"
 
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
         verbose_name_plural = "Diseases in SVIP"
+        unique_together = ('svip_variant', 'disease')
 
 
 # ================================================================================================================
@@ -161,6 +198,43 @@ class CurationRequest(SVIPModel):
     #    -> finalized (all reviews for all entries completed)
 
 
+class CurationEntryManager(models.Manager):
+    def authed_curation_set(self, user):
+        """
+        Returns a QuerySet of CurationEntry instances that this user should be able to view
+        :param user: the user against which to evaluate CurationEntry permissions
+        :return: a QuerySet of CurationEntries visible to the given user
+        """
+        qset = self.get_queryset()
+        result = None
+
+        if user.is_authenticated:
+            groups = [x.name for x in user.groups.all()]
+            if user.is_superuser:
+                # superusers can see everything
+                result = qset.all()
+            if 'curators' in groups:
+                # curators see only their own entries if ALLOW_ANY_CURATOR is false
+                # if it's true, they can see any curation entry
+                result = qset.filter(
+                    owner=user) if not ALLOW_ANY_CURATOR else qset.all()
+            elif 'reviewers' in groups:
+                # FIXME: should reviewers see all entries, or just the ones they've been assigned?
+                result = qset.filter(status__in=('reviewed', 'submitted', 'unreviewed'))
+
+        if not result:
+            # unauthenticated users and other users who don't have specific roles just see the default set
+            result = qset.filter(status__in=PUBLIC_VISIBLE_STATUSES)
+
+        result = (
+            result
+                .select_related('disease', 'variant', 'variant__gene')
+                .prefetch_related('extra_variants')
+        )
+
+        return result
+
+
 class CurationEntry(SVIPModel):
     """
     Represents a curation entry generated by a curator.
@@ -200,18 +274,59 @@ class CurationEntry(SVIPModel):
     request = ForeignKey(to=CurationRequest, on_delete=DB_CASCADE, null=True, blank=True)
 
     # FIXME: should we also track the review status's in the entry's history? is that even possible?
+    #  it might be: https://django-simple-history.readthedocs.io/en/latest/historical_model.html#adding-additional-fields-to-historical-models
     history = HistoricalRecords(
         excluded_fields=('created_on', 'last_modified'),
         cascade_delete_history=True
     )
 
+    objects = CurationEntryManager()
+
     def owner_name(self):
+        if not self.owner:
+            return "N/A"
         fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
+
+    def ensure_svip_provenance(self):
+        """
+        Ensures that a VariantInSVIP exists for the variants/extra variants mentioned
+        in this entry, and that a DiseaseInSVIP exists for the variant+disease. This
+        includes the case in which the disease is null, in which case an "Unspecified"
+        disease is associated with the VariantInSVIP.
+        :return: a list of dicts of created objects, [{svip: (entry, created), diseaseinsvip: (entry,created)}, ...]
+        """
+
+        created_entries = []
+
+        for variant in chain([self.variant], self.extra_variants.all()):
+            # first, see if a SVIPVariant exists
+            svip_variant, svip_created = VariantInSVIP.objects.get_or_create(
+                variant=variant
+            )
+
+            disease_in_svip, disease_created = DiseaseInSVIP.objects.get_or_create(
+                svip_variant=svip_variant,
+                disease=self.disease
+            )
+
+            created_entries.append({
+                'variant': variant,
+                'svip': (svip_variant, svip_created),
+                'diseaseinsvip': (disease_in_svip, disease_created),
+            })
+
+        return created_entries
+
 
     class Meta:
         verbose_name = "Curation Entry"
         verbose_name_plural = "Curation Entries"
+
+# whenever a curation entry is created, ensure its provenance
+@receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
+def curation_saved(sender, instance, **kwargs):
+    instance.ensure_svip_provenance()
 
 
 class VariantCuration(SVIPModel):

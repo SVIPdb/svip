@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 
 def _nice_username(obj):
+    if not obj:
+        return "N/A"
     fullname = ("%s %s" % (obj.first_name, obj.last_name)).strip()
     return fullname if fullname else obj.username
 

@@ -1,3 +1,5 @@
+from rest_framework.fields import SerializerMethodField
+
 from api.models import Variant
 from api.serializers.genomic import VariantSerializer, VariantInSourceSerializer, GeneSerializer
 from api.serializers.svip import VariantInSVIPSerializer
@@ -7,7 +9,22 @@ class FullVariantSerializer(VariantSerializer):
     # sources_set = VariantInSourceSerializer(many=True)
     variantinsource_set = VariantInSourceSerializer(many=True, read_only=True)
 
-    svip_data = VariantInSVIPSerializer()
+    # svip_data = VariantInSVIPSerializer()
+    svip_data = SerializerMethodField()
+
+    def get_svip_data(self, obj):
+        qset = obj.variantinsvip_set.prefetch_related(
+            # 'diseaseinsvip_set',
+            'diseaseinsvip_set__sample_set',
+            'diseaseinsvip_set__disease'
+        )
+
+        if not qset or len(qset) <= 0:
+            return None
+
+        return VariantInSVIPSerializer(
+            qset[0], many=False, context={'request': self.context['request']}
+        ).data
 
     def __init__(self, *args, **kwargs):
         super(FullVariantSerializer, self).__init__(*args, **kwargs)
@@ -23,8 +40,20 @@ class FullVariantSerializer(VariantSerializer):
 
 class OnlySVIPVariantSerializer(VariantSerializer):
     # sources_set = VariantInSourceSerializer(many=True)
-    svip_data = VariantInSVIPSerializer()
+    # svip_data = VariantInSVIPSerializer(many=True)
+    svip_data = SerializerMethodField()
     gene = GeneSerializer()
+
+    def get_svip_data(self, obj):
+        qset = obj.variantinsvip_set.prefetch_related(
+            # 'diseaseinsvip_set',
+            'diseaseinsvip_set__sample_set',
+            'diseaseinsvip_set__disease'
+        )
+
+        return VariantInSVIPSerializer(
+            qset[0], many=False, context={'request': self.context['request']}
+        ).data
 
     def __init__(self, *args, **kwargs):
         super(OnlySVIPVariantSerializer, self).__init__(*args, **kwargs)

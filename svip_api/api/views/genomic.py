@@ -1,39 +1,25 @@
-from functools import reduce
-
 import django_filters
-from django import forms
-from django.db import models
-from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db.models import Count, Q, Value
-from django.db.models.functions import Concat
+from django.db.models import Q, Prefetch
 from django.http import JsonResponse
-from django.shortcuts import render
-
-# Create your views here.
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets, permissions, filters
 from django_filters import rest_framework as df_filters
+# Create your views here.
+from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from api.models import (
     Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
-    CollapsedAssociation
+    CollapsedAssociation, DiseaseInSVIP
 )
 from api.serializers import (
     SourceSerializer, GeneSerializer,
     VariantSerializer, AssociationSerializer,
     PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer,
-    VariantInSourceSerializer, VariantInSVIPSerializer,
-    CollapsedAssociationSerializer
+    VariantInSourceSerializer, CollapsedAssociationSerializer, SimpleVariantSerializer
 )
-
-
 # svip data endpoints
 from api.serializers.genomic_svip import OnlySVIPVariantSerializer
 from api.shared import pathogenic, clinical_significance
-from references.prot_to_hgvs import three_to_one
 
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -90,20 +76,36 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
+        print("get_queryset in VariantViewSet used (%s)" % str(self))
+
         if 'gene_pk' in self.kwargs:
             q = Variant.objects.filter(gene_id=self.kwargs['gene_pk'])
         else:
             q = Variant.objects.all()
 
         # attempting to reduce the number of queries
-        return (
-            q.select_related('gene')
-                .prefetch_related('variantinsvip_set', 'variantinsvip_set__diseaseinsvip_set')
-                .order_by('name')
-        )
+        q = q.select_related('gene')
+
+        # if they want inline svip data, be sure to prefetch it and all its dependencies
+        if self.request.GET.get('inline_svip_data') == 'true' or self.action  == 'retrieve':
+            q = q.prefetch_related(
+                Prefetch(
+                    'variantinsvip_set__diseaseinsvip_set', queryset=(
+                        DiseaseInSVIP.objects
+                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                            .prefetch_related(
+                                'sample_set'
+                            )
+                    )
+                )
+            )
+
+        return q.order_by('name')
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.request.GET.get('simple') == 'true':
+            return SimpleVariantSerializer
+        elif self.action == 'retrieve':
             return FullVariantSerializer
         elif self.request.GET.get('inline_svip_data') == 'true':
             return OnlySVIPVariantSerializer
@@ -146,14 +148,14 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         """
         from api.models import Disease
         from api.serializers.reference import DiseaseSerializer
-        from api.permissions import authed_curation_set
+        from api.models import CurationEntry
 
         variant = Variant.objects.get(id=pk)
         disease_id = request.GET.get('disease_id', None)
 
         # first, get curation entries that we should be able to view based on our access privileges
         # returns curation entries in which either the main variant or one of the extra variants is this variant
-        authed_set = authed_curation_set(request.user)
+        authed_set = CurationEntry.objects.authed_curation_set(request.user)
         curation_entries = authed_set.filter(Q(extra_variants=variant) | Q(variant=variant))
 
         def summarize_disease(ce_entries, target_disease):
