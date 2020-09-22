@@ -144,10 +144,9 @@ const router = new Router({
             }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
+            path: "/curation/entry/:action",
             name: "add-evidence",
             component: AddEvidence,
-            // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Edit Curation',
                 requiresAuth: true, roles: ['curators', 'reviewers']

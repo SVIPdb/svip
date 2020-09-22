@@ -38,6 +38,9 @@
                     Add Variant
                 </template>
             </b-table>
+            <div v-else class="m-2">
+                <b-spinner small />
+            </div>
         </b-card-body>
     </b-card>
 </template>
@@ -51,7 +54,6 @@ export default {
     name: "CuratorVariantInformations",
     props: {
         variant: {
-            type: Object,
             required: true
         },
         disease_id: {
@@ -100,9 +102,14 @@ export default {
                 : fields;
         },
         variantInfoUrl() {
+            if (!this.variant) {
+                return null;
+            }
+
             return `/variants/${this.variant.id}/curation_summary${ this.disease_id ? `?disease_id=${this.disease_id}` : ''}`;
         },
         var_position() {
+            if (!this.variant) { return null; }
             return var_to_position(this.variant);
         },
         allVariants() {

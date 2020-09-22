@@ -14,7 +14,7 @@
             </b-col>
         </b-row>
         <div v-else>
-            <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
+            <CuratorVariantInformations :variant="fullVariant" />
 
             <b-row>
                 <b-col sm="9">
@@ -42,6 +42,23 @@
                                 <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="variant"
+                                        label="Variant"
+                                        inner-id="variant"
+                                        required
+                                    >
+                                        <SearchBar
+                                            id="variant"
+                                            v-model="variant"
+                                            hide-svip-toggle
+                                            variants-only
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.disease"
                                         label="Disease"
                                         sublabel="Type in a value and press 'enter' to create a new entry. User-created entries are in italics."
@@ -60,7 +77,7 @@
                                         v-slot="props"
                                         :modeled="form.extra_variants"
                                         label="Additional variants"
-                                        sublabel="Optional; used in case of a combination"
+                                        sublabel="Used in case of a variant combination (optional)"
                                         inner-id="variants-combination"
                                     >
                                         <SearchBar
@@ -504,6 +521,8 @@ export default {
     },
     data() {
         return {
+            variant: null, // the variant associated with the current curation entry
+
             evidence_types,
             // if non-null, displays pageError instead of the contents of the page; use this for fatal errors
             pageError: null,
@@ -539,7 +558,6 @@ export default {
 
                 // these fields are bound to form elements and populated on load
                 disease: null,
-                variant: null,
                 extra_variants: [],
                 type_of_evidence: null,
                 drugs: [],
@@ -631,7 +649,7 @@ export default {
             const { action } = this.$route.params;
 
             if (action === "add") {
-                const { source, reference } = this.$route.query;
+                const { source, reference, variant_id, disease_id } = this.$route.query;
 
                 if (!source || !reference) {
                     this.pageError = {
@@ -643,7 +661,21 @@ export default {
 
                 this.source = source.trim();
                 this.reference = reference.trim();
-                this.loadVariomeData();
+
+                // FIXME: we should also load the variant when adding a new entry
+                HTTP.get(`/variants/${variant_id}?simple=true`)
+                    .then((response) => {
+                        const variant = response.data;
+                        this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+
+                        // depends on this.variant being set, so we'll load it once we succeed
+                        this.loadVariomeData();
+                    })
+                    .catch((err) => {
+                        this.pageError = {
+                            message: err.toString()
+                        };
+                    });
             } else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
@@ -677,12 +709,8 @@ export default {
                 ...rest
             } = data;
 
-            // repopulating variants is annoying since they're split up between the 'main' variant
-            // and the extra variants in the "add variants" box.
-            // we'll go with the convention that the first one is the 'main' variant and the rest, if any, are the
-            // extra variants
             const extra_variants = formatted_variants;
-            this.variant.id = variant.id;
+            this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
 
             // repopulate the form, which will bind the elements in the page
             this.form = {
@@ -699,6 +727,11 @@ export default {
             [this.source, this.reference] = references.trim().split(":");
         },
         async submit(isDraft) {
+            // always validate 'variant', even if it's a draft, since it's critical
+            if (!this.variant) {
+                this.$snotify.error("Variant must be specified to save")
+                return;
+            }
             // manually validate all the fields before we go any further
             if (!isDraft) {
                 // use the validation observer to validate every provider at once
@@ -721,9 +754,9 @@ export default {
 
             const payload = {
                 disease: this.form.disease, // this.form.disease.id,
-                variant: this.variant.id,
+                variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
-                    ? this.form.extra_variants.map(x => x.id.split("_")[1])
+                    ? this.form.extra_variants.map(x => x.id.toString().includes('_') ? x.id.split("_")[1] : x.id)
                     : [], // selected plus the other ones
 
                 type_of_evidence: this.form.type_of_evidence,
@@ -793,6 +826,9 @@ export default {
                             );
                             return;
                         }
+                        if (err.response.status >= 500) {
+                            this.$snotify.error("Server error occurred while saving");
+                        }
                     }
 
                     // TODO: deal with the server's error response in err.response.data
@@ -834,10 +870,31 @@ export default {
             this.$refs["history-modal"].show();
         }
     },
+    asyncComputed: {
+        fullVariant() {
+            if (!this.variant) {
+                return null;
+            }
+
+            if (this.variant.description) {
+                return this.variant;
+            }
+
+            const variant_id = this.variant.id.toString().includes("_") ? this.variant.id.split("_")[1] : this.variant.id;
+
+            return HTTP.get(`/variants/${variant_id}?simple=true`)
+                .then((response) => {
+                    const variant = response.data;
+                    return {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+                })
+                .catch((err) => {
+                    this.pageError = {
+                        message: err.toString()
+                    };
+                });
+        }
+    },
     computed: {
-        ...mapGetters({
-            variant: "variant"
-        }),
         duplicateUrl() {
             const [source, reference] = this.form.references
                 ? this.form.references.split(":")
@@ -856,7 +913,9 @@ export default {
             }).href;
         },
         keywordSet() {
-            if (!this.variomes) return [];
+            if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
+                return []
+            }
 
             const { gene, variant, disease } = {
                 gene: this.variomes.normalized_query.genes[0].preferred_term,
@@ -906,9 +965,6 @@ export default {
                 ? evidence_attrs[this.form.type_of_evidence].tier_criteria
                 : [];
         },
-        disease_id() {
-            return parseInt(this.$route.params.disease_id);
-        },
         is_saved() {
             return this.form.id != null;
         },
@@ -921,20 +977,6 @@ export default {
     },
     watch: {
         $route: "load"
-    },
-    beforeRouteEnter(to, from, next) {
-        store
-            .dispatch("getGeneVariant", { variant_id: to.params.variant_id })
-            .then(() => {
-                next();
-            });
-    },
-    beforeRouteUpdate(to, from, next) {
-        store
-            .dispatch("getGeneVariant", { variant_id: to.params.variant_id })
-            .then(() => {
-                next();
-            });
     }
 };
 </script>
