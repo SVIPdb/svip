@@ -57,8 +57,6 @@ class QueryView(viewsets.ViewSet):
 
             final_vq = vq.distinct()[:MAX_VARIANTS]
 
-            print("Variant query: %s" % final_vq.query)
-
             normalized_search = search_term.lower()
             v_resp = list(format_variant(x, normalized_search) for x in final_vq)
 
