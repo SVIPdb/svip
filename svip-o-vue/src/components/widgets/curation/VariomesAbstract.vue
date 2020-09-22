@@ -19,7 +19,7 @@
                 <b>Abstract</b>
                 <p class="text-justify" v-html="pubData.abstract_highlight" />
                 <small>
-                    PMID:
+                    Source:
                     <b-link v-bind="pubmedURL(pubData.id)">{{pubData.id}}</b-link>
                 </small>
             </b-container>
