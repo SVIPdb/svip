@@ -84,7 +84,11 @@ export default {
         /**
          * Search string applied to the table; supersedes the inline search box.
          */
-        externalSearch: { type: String, default: null }
+        externalSearch: { type: String, default: null },
+        /**
+         * Extra filters applied to the request
+         */
+        extraFilters: { type: Object, required: false }
     },
     data() {
         return {
@@ -101,7 +105,7 @@ export default {
         packedFilters() {
             return {
                 __search: this.search,
-                ...this.filters
+                ...this.filters, ...(this.extraFilters || {})
             };
         },
         slotsUsed () {
