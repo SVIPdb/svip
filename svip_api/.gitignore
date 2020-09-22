@@ -82,3 +82,6 @@ celerybeat-schedule
 
 # produced by django's collectstatic command
 /static
+
+# notebooks that aren't ready to be shared yet
+/notebooks

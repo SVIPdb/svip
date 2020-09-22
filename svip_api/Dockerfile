@@ -4,6 +4,10 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y postgresql-client
 
+# copy in base requirements since they're always used, allowing us to cache them
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt --src /usr/local/src
+
 ARG requirefile=requirements.dev.txt
 
 COPY requirements.* ./

@@ -1,17 +1,13 @@
-import jwt
-
+from django.conf import settings
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
-
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
-
 from rest_framework_simplejwt.serializers import TokenObtainSlidingSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenObtainSlidingView
-from rest_framework_simplejwt.settings import api_settings
+
 
 # for regular, non-sliding tokens
 
@@ -85,9 +81,10 @@ class TokenInvalidate(generics.GenericAPIView):
         results.append('cleared sessionid')
 
         # attempt to clear the JWT_AUTH_COOKIE if it exists
-        if hasattr(api_settings, 'JWT_AUTH_COOKIE') and api_settings.JWT_AUTH_COOKIE:
-            response.delete_cookie(api_settings.JWT_AUTH_COOKIE)
-            results.append('cleared ' + api_settings.JWT_AUTH_COOKIE)
+        jwt_cookie = settings.SIMPLE_JWT.get('JWT_AUTH_COOKIE')
+        if jwt_cookie:
+            response.delete_cookie(jwt_cookie)
+            results.append('cleared ' + jwt_cookie)
 
         response.data = {'results': results}
         return response

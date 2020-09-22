@@ -1,3 +1,6 @@
--r requirements.txt
+# -r requirements.txt
 
-# add production-only dependencies here
+# add dev-only dependencies here
+blinker==1.4
+git+https://github.com/falquaddoomi/nplusone.git@24632de42d8c309d7181c02f1a93684ffc96567e#egg=nplusone-TrialSpark
+structlog==20.1.0

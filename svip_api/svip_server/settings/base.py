@@ -172,6 +172,10 @@ USE_TZ = True
 STATIC_URL = '/api/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../static')
 
+# colorizes test output
+TEST_RUNNER="redgreenunittest.django.runner.RedGreenDiscoverRunner"
+
+
 # django-rest-framework config
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.StandardResultsSetPagination',
@@ -179,7 +183,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
