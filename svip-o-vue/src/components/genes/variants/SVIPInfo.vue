@@ -86,7 +86,7 @@
                 <template v-slot:row-details="row">
                     <div class="row-details">
                         <pass :entries="splitCurationEntries(row)">
-                            <b-card no-body slot-scope="{ entries }">
+                            <b-card no-body slot-scope="{ entries }" class="shadow mb-2">
                                 <b-tabs
                                     v-model="svip_entry_tabs[row.item.name]" card
                                     :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
