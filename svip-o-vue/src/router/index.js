@@ -171,7 +171,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.name && np_manager) {
         // Start the route progress bar.
-        np_manager.start()
+        np_manager.start(`transition: ${to.name}`);
     }
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -205,9 +205,13 @@ router.beforeEach((to, from, next) => {
     }
 });
 
-router.afterEach(() => {
-    // Complete the animation of the route progress bar.
-    np_manager && np_manager.done()
+router.afterEach((to, from) => {
+    if (from && from.name) {
+        // only complete entries that have a matching navigation start
+        // (coming in from another site will cause router.afterEach to fire, but without a preceding router.beforeEach)
+        np_manager && np_manager.done(`transition complete`);
+    }
+
 })
 
 export default router;

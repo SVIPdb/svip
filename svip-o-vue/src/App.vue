@@ -15,6 +15,7 @@ import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
 import '@/components/widgets/StyledLabels';
 import * as NProgress from "nprogress";
+import ProgressManager from '@/support/progress';
 
 export let np_manager = null;
 
@@ -28,7 +29,7 @@ export default {
     },
     mounted() {
         if (!np_manager) {
-            np_manager = NProgress.configure({ parent: '.ajax-loader-bar' });
+            np_manager = ProgressManager({ parent: '.ajax-loader-bar' });
         }
     },
     watch: {
