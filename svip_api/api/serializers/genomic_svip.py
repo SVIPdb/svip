@@ -13,17 +13,11 @@ class FullVariantSerializer(VariantSerializer):
     svip_data = SerializerMethodField()
 
     def get_svip_data(self, obj):
-        qset = obj.variantinsvip_set.prefetch_related(
-            # 'diseaseinsvip_set',
-            'diseaseinsvip_set__sample_set',
-            'diseaseinsvip_set__disease'
-        )
-
-        if not qset or len(qset) <= 0:
+        if not obj.variantinsvip:
             return None
 
         return VariantInSVIPSerializer(
-            qset[0], many=False, context={'request': self.context['request']}
+            obj.variantinsvip, many=False, context={'request': self.context['request']}
         ).data
 
     def __init__(self, *args, **kwargs):
@@ -45,14 +39,11 @@ class OnlySVIPVariantSerializer(VariantSerializer):
     gene = GeneSerializer()
 
     def get_svip_data(self, obj):
-        qset = obj.variantinsvip_set.prefetch_related(
-            # 'diseaseinsvip_set',
-            'diseaseinsvip_set__sample_set',
-            'diseaseinsvip_set__disease'
-        )
+        if not obj.variantinsvip:
+            return None
 
         return VariantInSVIPSerializer(
-            qset[0], many=False, context={'request': self.context['request']}
+            obj.variantinsvip, many=False, context={'request': self.context['request']}
         ).data
 
     def __init__(self, *args, **kwargs):

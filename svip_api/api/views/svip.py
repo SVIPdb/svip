@@ -236,6 +236,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             'references': {
                 x['references']: x['recs'] for x in (
                     CurationEntry.objects
+                        .select_related('variant', 'variant__gene')
                         .values('references')
                         .annotate(recs=ArrayAgg(json_build_fields(
                             id='id', variant_id='variant__id', gene_id='variant__gene__id'
@@ -248,7 +249,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # pre-select variant and gene data to prevent thousands of queries
         return (
             CurationEntry.objects.authed_curation_set(self.request.user)
-                .select_related('owner', 'variant', 'variant__gene')
+                .select_related('owner', 'variant', 'variant__gene', 'disease')
                 .prefetch_related(
                     'extra_variants',
                     'extra_variants__gene',

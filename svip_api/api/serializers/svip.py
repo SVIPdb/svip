@@ -110,7 +110,10 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     @cached_property
     def _authed_curation_set(self):
-        return CurationEntry.objects.authed_curation_set(self.context['request'].user)
+        return (
+            CurationEntry.objects
+                .authed_curation_set(self.context['request'].user)
+        )
 
     def _curation_entries(self, obj):
         # authed_set = CurationEntry.objects.all()

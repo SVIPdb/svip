@@ -88,14 +88,19 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
 
         # if they want inline svip data, be sure to prefetch it and all its dependencies
         if self.request.GET.get('inline_svip_data') == 'true' or self.action  == 'retrieve':
-            q = q.prefetch_related(
-                Prefetch(
-                    'variantinsvip_set__diseaseinsvip_set', queryset=(
-                        DiseaseInSVIP.objects
-                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                            .prefetch_related(
-                                'sample_set'
-                            )
+            q = (q
+                .select_related('variantinsvip')
+                .prefetch_related(
+                    Prefetch(
+                        'variantinsvip__diseaseinsvip_set', queryset=(
+                            DiseaseInSVIP.objects
+                                .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                                .prefetch_related(
+                                    'sample_set',
+                                    'disease__curationentry_set',
+                                    'disease__curationentry_set__owner'
+                                )
+                        )
                     )
                 )
             )

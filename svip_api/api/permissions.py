@@ -70,7 +70,7 @@ class IsCurationPermitted(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not request.user or not request.user.is_authenticated:
             # for unauthenticated users, we can only return entries that are in the list of public-visible statuses
-            return obj.status in IsCurationPermitted.PUBLIC_VISIBLE_STATUSES
+            return obj.status in PUBLIC_VISIBLE_STATUSES
 
         return IsCurationPermitted.is_user_allowed(
             user=request.user,

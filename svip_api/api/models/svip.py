@@ -208,16 +208,22 @@ class CurationEntryManager(models.Manager):
         qset = self.get_queryset()
         result = None
 
+        # qset = (
+        #     qset
+        #         .select_related('disease', 'variant', 'variant__gene', 'owner')
+        #         .prefetch_related('extra_variants')
+        # )
+
         if user.is_authenticated:
             groups = [x.name for x in user.groups.all()]
+
             if user.is_superuser:
                 # superusers can see everything
                 result = qset.all()
             if 'curators' in groups:
                 # curators see only their own entries if ALLOW_ANY_CURATOR is false
                 # if it's true, they can see any curation entry
-                result = qset.filter(
-                    owner=user) if not ALLOW_ANY_CURATOR else qset.all()
+                result = qset.filter(owner=user) if not ALLOW_ANY_CURATOR else qset.all()
             elif 'reviewers' in groups:
                 # FIXME: should reviewers see all entries, or just the ones they've been assigned?
                 result = qset.filter(status__in=('reviewed', 'submitted', 'unreviewed'))
