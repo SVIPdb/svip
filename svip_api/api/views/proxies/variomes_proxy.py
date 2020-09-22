@@ -16,7 +16,7 @@ cached_sess = CacheControl(
 @gzip_page
 def variomes_single_ref(request):
     # proxy requests to variomes server
-    response = cached_sess.get('http://candy.hesge.ch/Variomes/api/fetchLit.jsp', params=request.GET)
+    response = cached_sess.get('https://candy.hesge.ch/Variomes/api/fetchLit.jsp', params=request.GET)
 
     if response.status_code != 200:
         return HttpResponse(response.content, status=response.status_code)
@@ -27,7 +27,7 @@ def variomes_single_ref(request):
 @gzip_page
 def variomes_search(request):
     # proxy requests to variomes server
-    response = cached_sess.get('http://candy.hesge.ch/Variomes/api/rankLit.jsp', params=request.GET)
+    response = cached_sess.get('https://candy.hesge.ch/Variomes/api/rankLit.jsp', params=request.GET)
 
     if response.status_code != 200:
         return HttpResponse(response.content, status=response.status_code)
