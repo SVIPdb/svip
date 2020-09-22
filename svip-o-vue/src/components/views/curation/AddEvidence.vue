@@ -320,7 +320,7 @@
                         size="lg"
                         block
                         class="shadow-sm mb-3"
-                        :href="duplicateUrl"
+                        @click="duplicateEntry"
                         target="_blank"
                     >Duplicate</b-button>
 
@@ -648,8 +648,8 @@ export default {
 
             const { action } = this.$route.params;
 
-            if (action === "add") {
-                const { source, reference, variant_id, disease_id } = this.$route.query;
+            if (action === "add" || action === "duplicate") {
+                const { source, reference, variant_id, disease_id, payload } = this.$route.query;
 
                 if (!source || !reference) {
                     this.pageError = {
@@ -670,13 +670,29 @@ export default {
 
                         // depends on this.variant being set, so we'll load it once we succeed
                         this.loadVariomeData();
+
+                        // and finally load the form data
+                        if (action === "duplicate" && payload) {
+                            const parsedPayload = JSON.parse(payload);
+                            parsedPayload.variant = variant;
+                            this.rehydrate(parsedPayload);
+
+                            // clear the params from the header after a bit
+                            this.$router.replace({
+                                name: "add-evidence",
+                                params: {
+                                    ...this.$route.params
+                                }
+                            });
+                        }
                     })
                     .catch((err) => {
                         this.pageError = {
                             message: err.toString()
                         };
                     });
-            } else {
+            }
+            else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
                         this.rehydrate(response.data); // populates source, reference from the response
@@ -726,23 +742,7 @@ export default {
             // also populate source and ID, which we need to populate the publication info
             [this.source, this.reference] = references.trim().split(":");
         },
-        async submit(isDraft) {
-            // always validate 'variant', even if it's a draft, since it's critical
-            if (!this.variant) {
-                this.$snotify.error("Variant must be specified to save")
-                return;
-            }
-            // manually validate all the fields before we go any further
-            if (!isDraft) {
-                // use the validation observer to validate every provider at once
-                // this will update the UI with 'this is required' as well
-                const isValid = await this.$refs.observer.validate();
-
-                if (!isValid) {
-                    return;
-                }
-            }
-
+        getPayload() {
             // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
             const matched = tier_criteria_parser.exec(this.form.tier_criteria);
             const { tier_level, tier_level_criteria } = matched
@@ -752,7 +752,7 @@ export default {
                     tier_level_criteria: this.form.tier_criteria
                 };
 
-            const payload = {
+            return {
                 disease: this.form.disease, // this.form.disease.id,
                 variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
@@ -772,9 +772,28 @@ export default {
                 comment: this.form.comment,
                 annotations: this.form.annotations,
 
-                references: `${this.source}:${this.reference}`,
-                status: isDraft ? "draft" : "saved"
+                references: `${this.source}:${this.reference}`
             };
+        },
+        async submit(isDraft) {
+            // always validate 'variant', even if it's a draft, since it's critical
+            if (!this.variant) {
+                this.$snotify.error("Variant must be specified to save")
+                return;
+            }
+            // manually validate all the fields before we go any further
+            if (!isDraft) {
+                // use the validation observer to validate every provider at once
+                // this will update the UI with 'this is required' as well
+                const isValid = await this.$refs.observer.validate();
+
+                if (!isValid) {
+                    return;
+                }
+            }
+
+            const payload = this.getPayload();
+            payload.status = isDraft ? "draft" : "saved";
 
             // if they've previously submitted, make it an update
             // if this is a new submission, make it a post
@@ -836,6 +855,27 @@ export default {
                     log.warn("Error when saving: ", err);
                 });
         },
+        duplicateEntry() {
+            const [source, reference] = this.form.references
+                ? this.form.references.split(":")
+                : [this.source, this.reference];
+
+            const targetUrl = this.$router.resolve({
+                name: "add-evidence",
+                params: {
+                    ...this.$route.params,
+                    action: "duplicate"
+                },
+                query: {
+                    source,
+                    reference,
+                    variant_id: this.variant.id,
+                    payload: JSON.stringify(this.getPayload())
+                }
+            }).href;
+
+            window.open(targetUrl, '_blank');
+        },
         onSubmitDraft() {
             this.submit(true);
         },
@@ -888,30 +928,11 @@ export default {
                     return {...variant, label: `${variant.description} (${variant.hgvs_c})` };
                 })
                 .catch((err) => {
-                    this.pageError = {
-                        message: err.toString()
-                    };
+                    this.$snotify.error(err.toString());
                 });
         }
     },
     computed: {
-        duplicateUrl() {
-            const [source, reference] = this.form.references
-                ? this.form.references.split(":")
-                : [this.source, this.reference];
-
-            return this.$router.resolve({
-                name: "add-evidence",
-                params: {
-                    ...this.$route.params,
-                    action: "add"
-                },
-                query: {
-                    source,
-                    reference
-                }
-            }).href;
-        },
         keywordSet() {
             if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
                 return []
@@ -976,7 +997,7 @@ export default {
         this.load();
     },
     watch: {
-        $route: "load"
+        // $route: "load"
     }
 };
 </script>
