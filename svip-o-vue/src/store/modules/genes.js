@@ -1,5 +1,4 @@
 import { HTTP } from "@/router/http";
-import vueInstance from '@/main';
 import { MultiGeneError } from "@/exceptions";
 import ulog from 'ulog';
 

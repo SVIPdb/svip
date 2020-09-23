@@ -21,7 +21,7 @@ export default {
         modeled: { }
     },
     watch: {
-        modeled(newValue) {
+        modeled() {
             this.validate();
         }
     },

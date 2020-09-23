@@ -475,16 +475,6 @@ export default {
             }
         },
         editEntryURL(entry) {
-            // FIXME: presumes again that the first variant is the 'main' one; do we want to assume that, or split it
-            //  into a seprate field?
-            // FIXME: alternatively, should curation entries have a 'main' variant at all, or should we restructure the
-            //  URL to remove the gene, variant, disease refererences?
-
-            const [gene_id, variant_id] = [
-                entry.variant.gene.id,
-                entry.variant.id
-            ];
-
             return `/curation/entry/${entry.id}`;
         },
         deleteEntry(entry_id) {

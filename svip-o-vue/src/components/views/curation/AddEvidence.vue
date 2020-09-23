@@ -471,11 +471,9 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import BroadcastChannel from "broadcast-channel";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
 import evidence_types from "@/data/curation/evidence/evidence_types.json";
-import store from "@/store";
 import { HTTP } from "@/router/http";
 import { extend, ValidationObserver } from "vee-validate";
 import SearchBar from "@/components/widgets/searchbars/SearchBar";
@@ -650,7 +648,7 @@ export default {
             const { action } = this.$route.params;
 
             if (action === "add" || action === "duplicate") {
-                const { source, reference, variant_id, disease_id, payload } = this.$route.query;
+                const { source, reference, variant_id, payload } = this.$route.query;
 
                 if (!source || !reference) {
                     this.pageError = {

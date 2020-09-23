@@ -2,6 +2,10 @@ import Vue from "vue";
 import Router from "vue-router";
 import store from '@/store';
 import { TokenErrors } from "@/store/modules/users";
+import { checkInRole } from "@/directives/access";
+import { np_manager } from '@/App';
+
+import ulog from 'ulog';
 
 /*
 import Home from "@/components/views/Home";
@@ -35,11 +39,6 @@ const AnnotateVariant = () => import("@/components/views/curation/AnnotateVarian
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
-
-import { checkInRole } from "@/directives/access";
-import { np_manager } from '@/App';
-
-import ulog from 'ulog';
 
 const log = ulog('Router:index');
 

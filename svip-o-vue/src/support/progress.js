@@ -1,6 +1,7 @@
 import * as NProgress from "nprogress";
 
 import ulog from 'ulog';
+
 const log = ulog('Support:progress');
 
 // the duration between one request ending and another starting which should be considered part of the same session

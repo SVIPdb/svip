@@ -14,7 +14,6 @@
 import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
 import '@/components/widgets/StyledLabels';
-import * as NProgress from "nprogress";
 import ProgressManager from '@/support/progress';
 
 export let np_manager = null;

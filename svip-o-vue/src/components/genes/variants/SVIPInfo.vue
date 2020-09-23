@@ -138,12 +138,11 @@
 <script>
 import { mapGetters } from "vuex";
 import store from "@/store";
-import { titleCase } from "@/utils";
+import { abbreviatedName, titleCase } from "@/utils";
 import { checkInRole } from "@/directives/access";
 
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderPlot from "@/components/plots/genderPlot";
-import { abbreviatedName } from "@/utils";
 import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
