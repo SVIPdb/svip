@@ -19,7 +19,24 @@ are compatible with each other at that point in their respective commit historie
 also add tags to the coordinating repo (and probably the sub-repos as well) when we
 perform official releases.
 
+# Prerequisites
+
+You're encouraged to use [Docker](https://www.docker.com/products/docker-desktop) and
+[docker-compose](https://docs.docker.com/compose/install/) to run the project; be sure to
+have these preinstalled.
+
+You must also have [Git LFS](https://git-lfs.github.com/) installed in order to download
+the default database dumps.
+
 # Initial Setup
+
+To clone the project and its submodules, you can run the following:
+
+```
+git clone --recursive git@github.com:SVIPdb/coordinator.git svip && \
+cd svip && \
+git submodule update
+```
 
 To initially start the database server, API, and frontend:
 
