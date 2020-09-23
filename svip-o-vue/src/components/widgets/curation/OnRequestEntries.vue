@@ -101,8 +101,6 @@ export default {
                         return acc;
                     }, {});
 
-                    console.log(entries_by_var);
-
                     this.loading = false;
 
                     this.items = Object.values(entries_by_var).map(({ variant, diseases, all_curations }) => {
@@ -125,7 +123,6 @@ export default {
                 })
                 .catch((err) => {
                     this.loading = false;
-                    console.warn(err);
                     this.error = err.message ? err.message : true;
                 })
         }
