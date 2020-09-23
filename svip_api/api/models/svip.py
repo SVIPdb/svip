@@ -16,7 +16,7 @@ from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
-from api.permissions import ALLOW_ANY_CURATOR, PUBLIC_VISIBLE_STATUSES
+from api.permissions import ALLOW_ANY_CURATOR, PUBLIC_VISIBLE_STATUSES, CURATOR_ALLOWED_ROLES
 from api.utils import dictfetchall
 
 
@@ -220,7 +220,7 @@ class CurationEntryManager(models.Manager):
             if user.is_superuser:
                 # superusers can see everything
                 result = qset.all()
-            if 'curators' in groups:
+            if any(x in groups for x in CURATOR_ALLOWED_ROLES):
                 # curators see only their own entries if ALLOW_ANY_CURATOR is false
                 # if it's true, they can see any curation entry
                 result = qset.filter(owner=user) if not ALLOW_ANY_CURATOR else qset.all()

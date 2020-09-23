@@ -12,6 +12,8 @@ ALLOW_ANY_CURATOR = True
 # curation with these statuses are visible by the public
 PUBLIC_VISIBLE_STATUSES = ('reviewed', 'unreviewed')
 
+CURATOR_ALLOWED_ROLES = ('curators', 'clinicians')
+
 class IsCurationPermitted(BasePermission):
     """
     Curation entries are visible by everyone *if* they're reviewed. They're editable by nobody except the curator
@@ -34,7 +36,7 @@ class IsCurationPermitted(BasePermission):
         if user.is_superuser:
             return True
 
-        if user.groups.filter(name='curators'):
+        if user.groups.filter(name__in=CURATOR_ALLOWED_ROLES):
             if not is_reading:
                 # curators can only edit their own drafts or saved entries
                 # submitted and reviwed entries are always static to curators
@@ -62,7 +64,7 @@ class IsCurationPermitted(BasePermission):
             return True
 
         # only curators can write to curation entries
-        if not request.user.groups.filter(name='curators') and request.method not in SAFE_METHODS:
+        if not request.user.groups.filter(name__in=CURATOR_ALLOWED_ROLES) and request.method not in SAFE_METHODS:
             return False
 
         return super().has_permission(request, view)
