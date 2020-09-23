@@ -20,7 +20,7 @@
 
                 <div v-if="loadingStats === 'error'" class="section stats row justify-content-md-center">
                     <div class="text-center text-muted font-italic">
-                        <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                        <icon name="exclamation-triangle" scale="3" class="blinking" style="vertical-align: text-bottom; margin-bottom: 5px; color: #e7c28b;" /><br />
                         The SVIP API is not available.<br />
                         Please check your connection and then <a href="mailto:feedback@svip.ch">contact us</a>.
                     </div>

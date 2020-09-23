@@ -18,14 +18,14 @@ export var HTTP = axios.create({baseURL: serverURL, withCredentials: USING_JWT_C
 // (e.g., if we havemultiple failing auth requests)
 const debouncedAuthWarn = debounce((x) => {
     vueInstance.$snotify.warning(x);
-});
+}, 300);
 
 createAuthRefreshInterceptor(
     HTTP,
     (failedRequest) => {
         const jwtRefresh = store.state.users.currentRefreshJWT;
 
-        // console.log("Request failed, attempting refresh w/token: ", jwtRefresh);
+        log.debug("Request failed, attempting refresh w/token: ", jwtRefresh);
 
         return HTTProot.post(`token/refresh/`, {refresh: jwtRefresh}).then(response => {
             // replace the existing token with the new one if we succeed
@@ -41,13 +41,17 @@ createAuthRefreshInterceptor(
             log.warn(err);
 
             debouncedAuthWarn(`Authentication expired!`);
-            router.push({name: 'login',
-                params: {
-                    default_error_msg: "Refresh token expired, please log in again",
-                    nextRoute: router.currentRoute.path
-                }
-            });
-            return true;
+            if (router.currentRoute.name !== 'login') {
+                router.push({
+                    name: 'login',
+                    params: {
+                        default_error_msg: "Refresh token expired, please log in again",
+                        nextRoute: router.currentRoute.path
+                    }
+                });
+            }
+
+            return Promise.reject();
         });
     }, {statusCodes: [401, 403]});
 

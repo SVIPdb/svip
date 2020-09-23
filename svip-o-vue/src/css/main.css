@@ -232,3 +232,17 @@ input.vs__search::placeholder {
 #viewport {
     touch-action: none;
 }
+
+/* animations */
+.blinking {
+    animation: blink-animation 1s infinite;
+    -webkit-animation: blink-animation 1s infinite;
+}
+@keyframes blink-animation {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+}
+@-webkit-keyframes blink-animation {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+}
