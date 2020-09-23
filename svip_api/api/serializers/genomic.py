@@ -77,12 +77,23 @@ class SimpleVariantSerializer(serializers.HyperlinkedModelSerializer):
         from api.utils import to_dict
 
         try:
-            if 'id' in data:
-                data = data['id']
-            if '_' in data:
-                data = data.split("_")[1]
+            # we might get data in any of the following forms:
+            # 1. an integer identifying the variant
+            # 2. {id: <variant id:int>}
+            # 3. {id: "v_<variant id:int>" }
 
-            return to_dict(Variant.objects.get(id=int(data)))
+            try:
+                numeric_id = int(data)
+            except TypeError:
+                if 'id' in data:
+                    data = data['id']
+
+                if '_' in str(data):
+                    data = data.split("_")[1]
+
+                numeric_id = int(data)
+
+            return to_dict(Variant.objects.get(id=numeric_id))
         except ValueError:
             return super().to_internal_value(data)
 
