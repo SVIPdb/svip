@@ -13,7 +13,7 @@ class FullVariantSerializer(VariantSerializer):
     svip_data = SerializerMethodField()
 
     def get_svip_data(self, obj):
-        if not obj.variantinsvip:
+        if not hasattr(obj, 'variantinsvip') or not obj.variantinsvip:
             return None
 
         return VariantInSVIPSerializer(
@@ -39,7 +39,7 @@ class OnlySVIPVariantSerializer(VariantSerializer):
     gene = GeneSerializer()
 
     def get_svip_data(self, obj):
-        if not obj.variantinsvip:
+        if not hasattr(obj, 'variantinsvip') or not obj.variantinsvip:
             return None
 
         return VariantInSVIPSerializer(

@@ -114,7 +114,7 @@ class Variant(models.Model):
         return self.gene.symbol
 
     def in_svip(self):
-        return self.variantinsvip is not None
+        return hasattr(self, 'variantinsvip') and self.variantinsvip is not None
 
     def natural_key(self):
         return self.description, self.hgvs_g
