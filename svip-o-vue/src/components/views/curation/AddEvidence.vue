@@ -435,7 +435,7 @@
                                         name="exclamation-triangle"
                                         scale="1.5"
                                         style="vertical-align: text-bottom; margin-right: 5px;"
-                                    />An error occurred while retrieving this PMID
+                                    />An error occurred while retrieving this reference
                                 </div>
                                 <div v-else class="text-center">
                                     <b-spinner label="Spinning" variant="primary" />loading...
@@ -619,7 +619,8 @@ export default {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.form.disease && this.form.disease.name
+                    disease: this.form.disease && this.form.disease.name,
+                    collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : undefined
                 }
             })
                 .then(response => {
@@ -946,30 +947,30 @@ export default {
             const counts = this.variomes.publications[0].details.query_details;
 
             return [
-                {
+                gene && counts.query_gene_count && {
                     class: "bg-gene",
                     url: `?term=${gene}[Title/Abstract]`,
                     label: gene,
                     count: counts.query_gene_count.all
                 },
-                {
+                variant && counts.query_variant_count && {
                     class: "bg-variant",
                     url: `?term=${variant}[Title/Abstract]`,
                     label: variant,
                     count: counts.query_variant_count.all
                 },
-                disease && {
+                disease && counts.query_disease_count && {
                     class: "bg-disease",
                     url: `?term=${disease}[Title/Abstract]`,
                     label: disease,
                     count: counts.query_disease_count.all
                 },
-                disease && {
+                gene && variant && disease && {
                     class: "bg-primary",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
                     label: `${gene} + ${variant} + ${disease}`
                 },
-                {
+                gene && variant && {
                     class: "bg-info",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
                     label: `${gene} + ${variant}`

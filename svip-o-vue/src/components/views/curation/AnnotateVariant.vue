@@ -163,7 +163,7 @@ export default {
                     action: 'add'
                 },
                 query: {
-                    source: this.source,
+                    source: this.reference && this.reference.includes("PMC") ? "PMC" : "PMID",
                     reference: this.reference,
                     variant_id: this.$route.params.variant_id,
                     disease_id: this.$route.params.disease_id
