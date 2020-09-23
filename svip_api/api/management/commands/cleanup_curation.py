@@ -89,3 +89,48 @@ class Command(BaseCommand):
                 entry.save()
 
             self.stdout.write(self.style.SUCCESS("Updated entries containing 'Double Mutant': %d" % len(double_entries)))
+
+
+            # ---------------------------------------------------------------------------------
+            # --- migrate some effects whose verbiage was slightly different in older entries
+            # ---------------------------------------------------------------------------------
+
+            # remaining issues:
+            # Excluded                  Missing evidence        6
+            # In vitro assay            Likely pathogenic       1
+            # In vitro assay            Pathogenic             10
+            # In vivo assay             Pathogenic              7
+
+            # syntax: [ ( { <match fields> }, { <update fields> } ), ... ]
+            remaps = [
+                (
+                    {'type_of_evidence': 'Predictive / Therapeutic', 'effect': 'Non responsive'},
+                    {'effect': 'Not responsive'}
+                ),
+                (
+                    {'type_of_evidence': 'Predictive / Therapeutic', 'effect': 'Resistant'},
+                    {'effect': 'Resistant (in vitro)'}
+                ),
+                (
+                    {'type_of_evidence': 'Predictive / Therapeutic', 'effect': 'Sensitive'},
+                    {'effect': 'Sensitive (in vitro)'}
+                ),
+                (
+                    {'type_of_evidence': 'Diagnostic', 'effect': 'Positive'},
+                    {'effect': 'Associated with diagnosis'}
+                ),
+                (
+                    {'type_of_evidence': 'Prognostic', 'effect': 'Better outcome'},
+                    {'effect': 'Good outcome'}
+                ),
+                (
+                    {'type_of_evidence': 'Prognostic', 'effect': 'Unfavorable'},
+                    {'effect': 'Poor outcome'}
+                ),
+            ]
+
+            for (match, replace) in remaps:
+                result = CurationEntry.objects.filter(**match).update(**replace)
+                self.stdout.write(self.style.SUCCESS(
+                    "Updated entries from '%s' to '%s': %s" % (match, replace, result)
+                ))
