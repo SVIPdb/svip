@@ -51,6 +51,7 @@ services:
       - "8085:8085"
     depends_on:
       - db
+      - redis
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_USER
@@ -83,3 +84,6 @@ services:
       - 'VUE_APP_API_URL=http://localhost:8085/api/v1/'
     depends_on:
       - api
+
+  redis:
+    image: "redis:alpine"
