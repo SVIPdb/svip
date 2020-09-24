@@ -127,6 +127,10 @@ class Command(BaseCommand):
             action='store_true',
             help="If specified, creates non-existent users referenced by curation entries",
         )
+        parser.add_argument(
+            '--genes', type=str,
+            help='comma-delimited list of genes to export', default=None
+        )
 
     def handle(self, *args, **options):
         if options['direction'] == 'import':
@@ -139,7 +143,13 @@ class Command(BaseCommand):
             with smart_open(options['target_file'], 'r') as fp:
                 entries = json.load(fp)
 
+                gene_list = options['genes'].split(",") if options['genes'] else None
+
                 for entry in entries:
+                    # skip entries not mentioned in the gene list
+                    if gene_list and entry['variant']['gene__symbol'] not in gene_list:
+                        continue
+
                     create_entry_from_fields(entry)
 
                 self.stdout.write(self.style.SUCCESS('Read %d entries from source file' % len(entries)))
@@ -152,9 +162,16 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             with smart_open(options['target_file'], 'w') as fp:
+                qset = CurationEntry.objects.select_related('variant', 'variant__gene', 'disease')
+
+                if options['genes']:
+                    qset = (qset.objects
+                        .filter(variant__gene__symbol__in=options['genes'].split(","))
+                    )
+
                 entries = [
                     map_entry_to_fields(x)
-                    for x in CurationEntry.objects.all().select_related('variant', 'disease')
+                    for x in qset
                 ]
                 fp.write(json.dumps(entries, cls=DjangoJSONEncoder))
 
