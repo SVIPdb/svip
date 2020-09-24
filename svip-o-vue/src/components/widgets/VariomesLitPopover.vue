@@ -24,6 +24,9 @@
                         Couldn't retrieve publication info, try again later.
                     </div>
                 </div>
+                <span v-else-if="!parsedPMID">
+                    <b>external link to:</b> {{ pubmeta.url }}
+                </span>
 				<span v-else class="variomes-loading">
                     <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> loading...
 				</span>
@@ -73,11 +76,11 @@ export default {
     computed: {
         parsedPMID() {
             const target = ((this.pmid) ? this.pmid : this.pubmeta.pmid);
-            return target && target.replace("PMID:", "");
+            return target && target.replace("PMID:", "").replace("PMC:","");
         },
         url() {
             if (!this.parsedPMID) {
-                return null;
+                return this.pubmeta && this.pubmeta.url;
             }
 
             if (this.parsedPMID.includes("PMC")) {
@@ -135,10 +138,8 @@ export default {
                 return;
 
             if (!this.parsedPMID) {
-                // we can't do anything if there's no ID
-                log.warn("updateCitation() called with empty parsedPMID: ", this.pmid, " => ", this.parsedPMID);
-                this.variomes = true;
-                this.error = {error: "Couldn't retrieve publication info."};
+                // if there's no parsedPMID, it's likely an external link; don't show a tooltip
+                this.variomes = null;
                 return;
             }
 
