@@ -58,8 +58,6 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             )
         )
 
-        print("get_queryset in VariantInSVIPViewSet used (%s, qs: %s)" % (str(self), id(q)))
-
         return q
 
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
@@ -97,8 +95,6 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
         return {'request': self.request}
 
     def get_queryset(self):
-        print("get_queryset in DiseaseInSVIPViewSet used (%s)" % str(self))
-
         if 'svip_variant_pk' in self.kwargs:
             q = DiseaseInSVIP.objects.filter(svip_variant_id=self.kwargs['svip_variant_pk'])
         else:

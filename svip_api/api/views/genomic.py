@@ -76,8 +76,6 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        print("get_queryset in VariantViewSet used (%s)" % str(self))
-
         if 'gene_pk' in self.kwargs:
             q = Variant.objects.filter(gene_id=self.kwargs['gene_pk'])
         else:
