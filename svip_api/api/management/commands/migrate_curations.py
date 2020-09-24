@@ -56,7 +56,7 @@ def map_entry_to_fields(entry):
                 "dbsnp_ids": entry.variant.dbsnp_ids
             },
             'extra_variants': [
-                {"gene__symbol": x.gene.symbol, "name": x.name}
+                {"gene__symbol": x.gene.symbol, "name": x.name, "hgvs_c": x.hgvs_c}
                 for x in entry.extra_variants.all()
             ]
         }
