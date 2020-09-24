@@ -165,9 +165,7 @@ class Command(BaseCommand):
                 qset = CurationEntry.objects.select_related('variant', 'variant__gene', 'disease')
 
                 if options['genes']:
-                    qset = (qset.objects
-                        .filter(variant__gene__symbol__in=options['genes'].split(","))
-                    )
+                    qset = qset.filter(variant__gene__symbol__in=options['genes'].split(","))
 
                 entries = [
                     map_entry_to_fields(x)
