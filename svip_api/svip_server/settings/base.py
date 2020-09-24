@@ -130,12 +130,24 @@ DATABASES = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'default_cache_tbl',
+        # below is the db cache backend, currently commented out in favor of redis
+        # 'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        # 'LOCATION': 'default_cache_tbl',
+        # 'TIMEOUT': 300*60*24*15,  # 15 days
+        # 'MAX_ENTRIES': 5000,
+
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
         'TIMEOUT': 300*60*24*15,  # 15 days
         'MAX_ENTRIES': 5000,
     }
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 DB_CONNECTION_URL = ("postgresql://%(USER)s:%(PASSWORD)s@%(HOST)s:%(PORT)s/%(NAME)s" % DATABASES['default'])
 
