@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
     'svip.nexus.ethz.ch',
-    'svip.ch',
+    'svip.ch', 'www.svip.ch',
     'svip.sib.swiss', 'svip-public.sib.swiss'
 ]
 
@@ -40,7 +40,7 @@ CSRF_TRUSTED_ORIGINS = [
     'localhost:8080',
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
-    'svip.ch',
+    'svip.ch', 'www.svip.ch',
     'svip.sib.swiss', 'svip-public.sib.swiss'
 ]
 
