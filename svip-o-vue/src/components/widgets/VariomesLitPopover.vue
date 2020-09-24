@@ -130,6 +130,8 @@ export default {
             // close all other popovers before showing this one
             this.$root.$emit('bv::hide::popover');
 
+            this.error = null;
+
             // if it's already loaded, return immediately
             // (note that we need to check if the ids match because elements in a bootstrap-vue table are
             // retained when you change pages, causing their data to be shared between corresponding elements
@@ -143,7 +145,6 @@ export default {
                 return;
             }
 
-            this.error = null;
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.parsedPMID,
