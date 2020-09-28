@@ -13,6 +13,9 @@ case $(hostname) in
   "svip.nexus.ethz.ch")
     SITE_COMPOSE="-f compose_configs/sites/svip.yml"
     ;;
+  "svip-sensa-sec.novalocal")
+    SITE_COMPOSE="-f compose_configs/sites/sib-svip-private.yml"
+    ;;
   *)
     SITE_COMPOSE=""
 esac

@@ -1,0 +1,15 @@
+version: '3.5'
+
+# puts all images for the project into a local repository
+
+services:
+  nginx:
+    image: localhost:5000/nginx
+  api:
+    image: localhost:5000/api
+  frontend:
+    image: localhost:5000/frontend
+  db:
+    image: localhost:5000/db
+  redis:
+    image: localhost:5000/redis
