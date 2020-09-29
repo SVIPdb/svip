@@ -67,7 +67,10 @@ export default {
     },
     computed: {
         pubData() {
-            return (this.variomes && this.variomes.publications && this.variomes.publications.length > 0 )
+            return (
+                this.variomes && this.variomes.publications && this.variomes.publications.length > 0 &&
+                !this.variomes.publications[0].error
+            )
                 ? this.variomes.publications[0]
                 : null;
         },

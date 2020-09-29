@@ -101,6 +101,7 @@ export default {
                 && !this.error
                 && this.variomes.publications
                 && this.variomes.publications.length > 0
+                && !this.variomes.publications[0].error
                 && this.single_publication.id === this.parsedPMID
             );
         },
