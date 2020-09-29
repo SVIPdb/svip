@@ -273,4 +273,17 @@ export default {
     border-bottom: dotted 1px #555;
     padding-bottom: 2px;
 }
+
+.gene {
+    color: #e3639f;
+    font-weight: bold;
+}
+.variant {
+    color: #4b7bef;
+    font-weight: bold;
+}
+.disease {
+    color: #3d811e;
+    font-weight: bold;
+}
 </style>
