@@ -133,7 +133,7 @@ CACHES = {
         # below is the db cache backend, currently commented out in favor of redis
         # 'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         # 'LOCATION': 'default_cache_tbl',
-        # 'TIMEOUT': 300*60*24*15,  # 15 days
+        # 'TIMEOUT': 60*60*24*15,  # 15 days
         # 'MAX_ENTRIES': 5000,
 
         "BACKEND": "django_redis.cache.RedisCache",
@@ -141,7 +141,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
-        'TIMEOUT': 300*60*24*15,  # 15 days
+        'TIMEOUT': 60*60*24*15,  # 15 days
         'MAX_ENTRIES': 5000,
     }
 }
