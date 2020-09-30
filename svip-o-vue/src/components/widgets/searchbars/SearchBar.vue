@@ -143,7 +143,8 @@ export default {
     computed: {
         showOnlySVIP: {
             get() {
-                return this.hideSvipToggle || store.state.genes.showOnlySVIP;
+                if (this.hideSvipToggle) { return false; }
+                return store.state.genes.showOnlySVIP;
             },
             set(value) {
                 store.dispatch("toggleShowSVIP", {showOnlySVIP: value}).then(() => {
