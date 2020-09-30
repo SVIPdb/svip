@@ -25,6 +25,9 @@ server {
   ssl_ciphers HIGH:!aNULL:!MD5;
   ssl_prefer_server_ciphers on;
 
+  # enables HSTS for 1 year (31536000 seconds)
+  add_header Strict-Transport-Security "max-age=300; includeSubdomains;";
+
   #  API routes
   include shared.conf;
 }
@@ -44,6 +47,9 @@ server {
   ssl_session_timeout  10m;
   ssl_ciphers HIGH:!aNULL:!MD5;
   ssl_prefer_server_ciphers on;
+
+  # enables HSTS for 1 year (31536000 seconds)
+  add_header Strict-Transport-Security "max-age=500; includeSubdomains;";
 
   #  API routes
   include shared.conf;
