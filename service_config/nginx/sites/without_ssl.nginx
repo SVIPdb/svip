@@ -1,0 +1,17 @@
+upstream svip_api {
+  server api:8085 fail_timeout=10;
+}
+
+server {
+    listen         80 default_server;
+    listen         [::]:80 default_server;
+
+    root           /usr/share/nginx/html;
+    index          index.html;
+
+    # enables HSTS for 1 year (31536000 seconds)
+    # add_header Strict-Transport-Security "max-age=300; includeSubdomains;";
+
+    #  API routes
+    include shared.conf;
+}
