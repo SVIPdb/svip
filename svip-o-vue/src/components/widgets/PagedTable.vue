@@ -28,7 +28,9 @@
             </div>
         </div>
 
-        <b-table :class="$attrs.responsive && 'mb-0'" ref="table" v-bind="$attrs" :items="provider" :current-page="currentPage" :per-page="perPage" :filter="packedFilters">
+        <b-table :class="$attrs.responsive && 'mb-0'" ref="table" v-bind="$attrs" :items="provider"
+            :current-page="currentPage" :per-page="perPage" :filter="packedFilters"
+        >
             <slot v-for="(_, name) in $slots" :name="name" :slot="name" />
             <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
                 <slot :name="name" v-bind="slotData" />
@@ -115,6 +117,11 @@ export default {
     watch: {
         externalSearch(value) {
             this.search = value;
+        },
+        packedFilters(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
         }
     },
     methods: {
