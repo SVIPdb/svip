@@ -286,6 +286,18 @@ export default {
             // console.log(`Checked is ${checked} and ID is ${element.id}`);
         }
     },
+    watch: {
+        myFilter(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
+        },
+        statusFilter(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
+        }
+    },
     computed: {
         ...mapGetters({
             user: "currentUser"
