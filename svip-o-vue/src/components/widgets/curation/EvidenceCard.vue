@@ -89,12 +89,11 @@
                 </template>
 
                 <template v-slot:cell(references)="data">
-                    <VariomesLitPopover v-if="isDashboard" :pubmeta="{ pmid: data.value }"
-                        :variant="data.item.variant.name"
-                        :gene="data.item.variant.gene.symbol"
+                    <VariomesLitPopover :pubmeta="{ pmid: data.value }"
+                        :variant="data.item.variant && data.item.variant.name"
+                        :gene="data.item.variant && data.item.variant.gene.symbol"
                         :disease="data.item.disease && data.item.disease.name"
                     />
-                    <VariomesLitPopover v-else :pubmeta="{ pmid: data.value }" v-bind="variomesParams" />
                 </template>
 
                 <template v-slot:cell(created_on)="data">
