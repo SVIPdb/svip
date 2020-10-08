@@ -99,6 +99,7 @@ export default {
 
 .ajax-loader-bar {
     position: absolute !important;
+    pointer-events: none;
     left: 0;
     bottom: -40px;
     right: 0;
