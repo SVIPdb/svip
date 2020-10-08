@@ -76,7 +76,7 @@ export default {
     computed: {
         parsedPMID() {
             const target = ((this.pmid) ? this.pmid : this.pubmeta.pmid);
-            return target && target.replace("PMID:", "").replace("PMC:","");
+            return target && target.replace("PMID:", "").replace("PMC:","").trim();
         },
         url() {
             if (!this.parsedPMID) {
