@@ -674,6 +674,7 @@ export default {
                         if (action === "duplicate" && payload) {
                             const parsedPayload = JSON.parse(payload);
                             parsedPayload.variant = variant;
+                            console.log("Payload: ", parsedPayload);
                             this.rehydrate(parsedPayload);
 
                             // clear the params from the header after a bit
@@ -741,7 +742,7 @@ export default {
             // also populate source and ID, which we need to populate the publication info
             [this.source, this.reference] = references.trim().split(":");
         },
-        getPayload() {
+        getPayload(duplicating=false) {
             // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
             const matched = tier_criteria_parser.exec(this.form.tier_criteria);
             const { tier_level, tier_level_criteria } = matched
@@ -751,13 +752,12 @@ export default {
                     tier_level_criteria: this.form.tier_criteria
                 };
 
-            return {
+            const payload = {
                 disease: this.form.disease, // this.form.disease.id,
                 variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
                     ? this.form.extra_variants.map(x => x.id.toString().includes('_') ? x.id.split("_")[1] : x.id)
                     : [], // selected plus the other ones
-
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: this.form.drugs || [],
                 interactions: this.form.interactions || [],
@@ -773,6 +773,12 @@ export default {
 
                 references: `${this.source}:${this.reference}`
             };
+
+            if (duplicating) {
+                payload.formatted_variants = this.form.extra_variants
+            }
+
+            return payload;
         },
         async submit(isDraft) {
             // always validate 'variant', even if it's a draft, since it's critical
@@ -869,7 +875,7 @@ export default {
                     source,
                     reference,
                     variant_id: this.variant.id,
-                    payload: JSON.stringify(this.getPayload())
+                    payload: JSON.stringify(this.getPayload(true))
                 }
             }).href;
 
