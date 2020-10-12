@@ -674,7 +674,6 @@ export default {
                         if (action === "duplicate" && payload) {
                             const parsedPayload = JSON.parse(payload);
                             parsedPayload.variant = variant;
-                            console.log("Payload: ", parsedPayload);
                             this.rehydrate(parsedPayload);
 
                             // clear the params from the header after a bit

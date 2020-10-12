@@ -34,7 +34,11 @@ export default {
     watch: {
         '$route': {
             handler: (to) => {
-                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title || 'SVIP-O'
+                // page title logic:
+                // if 'to' is not falsey, check if its 'title' attribute is a function; if it is, invoke it
+                // if 'title' is not a function, but isn't falsey, just use the 'title' attribute as-is
+                // if 'to' or to.title's resolved value is falsey, default to the string 'SVIP-O'
+                document.title = (to && (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title) || 'SVIP-O'
             },
             immediate: true
         }
