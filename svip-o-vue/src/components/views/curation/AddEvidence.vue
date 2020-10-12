@@ -157,6 +157,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.effect"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Effect of the variant"
                                         inner-id="effect"
                                         required
@@ -190,6 +191,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.mutation_origin"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Origin of the mutation"
                                         inner-id="mutation_origin"
                                     >
@@ -220,6 +222,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.support"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Support"
                                         inner-id="support"
                                         required
@@ -257,6 +260,7 @@
                                         label="Personal comment"
                                         sublabel="(viewable by you and other curators)"
                                         inner-id="comment"
+                                        :required="form.type_of_evidence === 'Excluded'"
                                     >
                                         <b-form-textarea
                                             id="comment"

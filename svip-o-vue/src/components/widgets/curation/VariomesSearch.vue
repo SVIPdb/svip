@@ -126,16 +126,7 @@
                                 </template>
                                 <template>
                                 This reference is already in use by:
-                                <div class="mt-1 text-left">
-                                    <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                        v-for="x in used_ref" :key="x.id"
-                                        @click="() => { $root.$emit('bv::hide::popover') }"
-                                        :to="`/curation/entry/${x.id}`"
-                                        target="_blank"
-                                    >
-                                        Entry #{{ x.id }}
-                                    </b-button>
-                                </div>
+                                <EntriesInUse :annotation-used="used_ref" />
                                 </template>
                             </b-popover>
                         </span>
@@ -214,10 +205,12 @@ import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import TransitionExpand from "@/components/widgets/TransitionExpand";
+import EntriesInUse from "@/components/widgets/curation/AnnotationsInUse";
 
 export default {
     name: "VariomesSearch",
     components: {
+        EntriesInUse,
         VariomesLitPopover,
         TransitionExpand
     },

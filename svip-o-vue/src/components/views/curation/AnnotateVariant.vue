@@ -50,15 +50,7 @@
                                         <template>
                                             This reference has already been used in other entries:
 
-                                            <div class="mt-1 text-left">
-                                                <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                    v-for="x in annotationUsed" :key="x.id"
-                                                    :to="`/curation/entry/${x.id}`"
-                                                    target="_blank"
-                                                >
-                                                    Entry #{{ x.id }}
-                                                </b-button>
-                                            </div>
+                                            <EntriesInUse :annotation-used="annotationUsed" />
                                         </template>
                                     </MessageWithIcon>
                                 </transition>
@@ -101,12 +93,14 @@ import VariantSummary from "@/components/widgets/curation/VariantSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 import MessageWithIcon from "@/components/widgets/MessageWithIcon";
+import EntriesInUse from "@/components/widgets/curation/AnnotationsInUse";
 
 const log = ulog('Curation:AnnotateVariant');
 
 export default {
     name: "AnnotateVariant",
     components: {
+        EntriesInUse,
         MessageWithIcon,
         VariantSummary,
         VariomesSearch, VariomesAbstract,

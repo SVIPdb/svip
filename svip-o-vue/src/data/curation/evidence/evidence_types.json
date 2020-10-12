@@ -160,6 +160,15 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "CURATOR REFERENCE",
+            "options": {
+                "Excluded": {
+                    "effect": [],
+                    "tier_criteria": []
+                }
+            }
         }
     ]
 }
