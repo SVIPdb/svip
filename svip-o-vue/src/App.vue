@@ -38,7 +38,12 @@ export default {
                 // if 'to' is not falsey, check if its 'title' attribute is a function; if it is, invoke it
                 // if 'title' is not a function, but isn't falsey, just use the 'title' attribute as-is
                 // if 'to' or to.title's resolved value is falsey, default to the string 'SVIP-O'
-                document.title = (to && (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title) || 'SVIP-O'
+                if (!to || !to.meta || !to.meta.title) {
+                    document.title = 'SVIP-O';
+                    return;
+                }
+
+                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title;
             },
             immediate: true
         }
