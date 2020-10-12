@@ -1,0 +1,36 @@
+- hosts: localhost
+  connection: local
+  any_errors_fatal: true
+  tasks:
+    - name: check if linting succeeds
+      shell: npm run lint
+      args:
+        chdir: "../svip-o-vue"
+
+- hosts: public test
+  tasks:
+    - name: update coordinator repo
+      git:
+        repo: 'git@github.com:SVIPdb/coordinator.git'
+        dest: "{{ svip_dir }}"
+        clone: no
+        update: yes
+    
+    - name: update submodules
+      shell: git submodule foreach git fetch && git submodule update
+      args:
+        chdir: "{{ svip_dir }}"
+    
+    - name: rebuild site
+      shell: ./dc_host.sh up --build -d
+      args:
+        chdir: "{{ svip_dir }}"
+
+    - name: show git logs
+      shell: git log -n 1
+      args:
+        chdir: "{{ svip_dir }}"
+      register: ps
+
+    - debug: var=ps.stdout_lines
+  
