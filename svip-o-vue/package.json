@@ -50,6 +50,7 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
     "git-revision-webpack-plugin": "^3.0.6",
+    "identity-obj-proxy": "^3.0.0",
     "mutationobserver-shim": "^0.3.3",
     "popper.js": "^1.16.0",
     "portal-vue": "^2.1.6",
