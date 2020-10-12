@@ -235,7 +235,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
                         .select_related('variant', 'variant__gene')
                         .values('references')
                         .annotate(recs=ArrayAgg(json_build_fields(
-                            id='id', variant_id='variant__id', gene_id='variant__gene__id'
+                            id='id', variant_id='variant__id', gene_id='variant__gene__id', etype='type_of_evidence'
                         )))
                 )
             }

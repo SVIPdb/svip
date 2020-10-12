@@ -273,10 +273,10 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 # 'disease',
                 'variant',
                 'type_of_evidence',
-                'effect',
+                # 'effect',
                 # 'tier_level_criteria', # only required if type_of_evidence != 'Excluded'
                 # 'mutation_origin', # no longer requireds
-                'support',
+                # 'support',
             )
 
             empty_fields = [k for k in non_empty_fields if k not in data or data[k] in ('', None)]
@@ -292,16 +292,33 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                     'drug': "Field 'drug' cannot be null or empty if type_of_evidence is 'Predictive / Therapeutic'"
                 })
 
-            if data['type_of_evidence'] != "Excluded" and field_is_empty(data, 'tier_level_criteria'):
-                errors.update({
-                    'type_of_evidence': "Field 'type_of_evidence' cannot be null or empty if type_of_evidence is not 'Excluded'"
-                })
+            # when the type of evidence is 'Excluded', most fields become optional, but 'summary' and 'comment'
+            # become required. the following lists specify which fields must be filled in if it's not excluded
+            # and which must be filled in if it *is* excluded.
 
-            if data['type_of_evidence'] == "Excluded" and field_is_empty(data, 'summary'):
-                errors.update({
-                    'summary': "Field 'summary' cannot be null or empty if type_of_evidence is 'Excluded'"
-                })
+            empty_fields_if_excluded = (
+                'tier_level_criteria',
+                'effect',
+                'support'
+            )
+            non_empty_fields_if_excluded = (
+                'summary',
+                'comment'
+            )
 
+            if data['type_of_evidence'] != "Excluded":
+                for field_name in empty_fields_if_excluded:
+                    if field_is_empty(data, field_name):
+                        errors.update({
+                            'type_of_evidence': "Field '%s' cannot be null or empty if type_of_evidence is not 'Excluded'" % field_name
+                        })
+
+            elif data['type_of_evidence'] == "Excluded":
+                for field_name in non_empty_fields_if_excluded:
+                    if field_is_empty(data, field_name):
+                        errors.update({
+                            'summary': "Field '%s' cannot be null or empty if type_of_evidence is 'Excluded'" % field_name
+                        })
 
             if len(errors) > 0:
                 raise serializers.ValidationError(errors)
