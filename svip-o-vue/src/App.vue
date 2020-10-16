@@ -14,7 +14,7 @@
 import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
 import '@/components/widgets/StyledLabels';
-import * as NProgress from "nprogress";
+import ProgressManager from '@/support/progress';
 
 export let np_manager = null;
 
@@ -28,13 +28,22 @@ export default {
     },
     mounted() {
         if (!np_manager) {
-            np_manager = NProgress.configure({ parent: '.ajax-loader-bar' });
+            np_manager = ProgressManager({ parent: '.ajax-loader-bar' });
         }
     },
     watch: {
         '$route': {
             handler: (to) => {
-                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title || 'SVIP-O'
+                // page title logic:
+                // if 'to' is not falsey, check if its 'title' attribute is a function; if it is, invoke it
+                // if 'title' is not a function, but isn't falsey, just use the 'title' attribute as-is
+                // if 'to' or to.title's resolved value is falsey, default to the string 'SVIP-O'
+                if (!to || !to.meta || !to.meta.title) {
+                    document.title = 'SVIP-O';
+                    return;
+                }
+
+                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title;
             },
             immediate: true
         }

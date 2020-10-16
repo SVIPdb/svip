@@ -50,15 +50,7 @@
                                         <template>
                                             This reference has already been used in other entries:
 
-                                            <div class="mt-1 text-left">
-                                                <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                    v-for="x in annotationUsed" :key="x.id"
-                                                    :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                                    target="_blank"
-                                                >
-                                                    Entry #{{ x.id }}
-                                                </b-button>
-                                            </div>
+                                            <EntriesInUse :annotation-used="annotationUsed" />
                                         </template>
                                     </MessageWithIcon>
                                 </transition>
@@ -101,12 +93,14 @@ import VariantSummary from "@/components/widgets/curation/VariantSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 import MessageWithIcon from "@/components/widgets/MessageWithIcon";
+import EntriesInUse from "@/components/widgets/curation/AnnotationsInUse";
 
 const log = ulog('Curation:AnnotateVariant');
 
 export default {
     name: "AnnotateVariant",
     components: {
+        EntriesInUse,
         MessageWithIcon,
         VariantSummary,
         VariomesSearch, VariomesAbstract,
@@ -160,12 +154,14 @@ export default {
             let route = this.$router.resolve({
                 name: "add-evidence",
                 params: {
-                    gene_id: this.$route.params.gene_id,
-                    variant_id: this.$route.params.variant_id,
-                    disease_id: this.$route.params.disease_id,
                     action: 'add'
                 },
-                query: { source: this.source, reference: this.reference }
+                query: {
+                    source: this.reference && this.reference.includes("PMC") ? "PMC" : "PMID",
+                    reference: this.reference,
+                    variant_id: this.$route.params.variant_id,
+                    disease_id: this.$route.params.disease_id
+                }
             });
             window.open(route.href, "_blank");
         },
@@ -181,7 +177,8 @@ export default {
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
-                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`
+                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
+                    collection: this.reference.includes("PMC") ? 'pmc' : undefined
                 }
             })
                 .then(response => {
@@ -269,5 +266,18 @@ export default {
 .dotted-line {
     border-bottom: dotted 1px #555;
     padding-bottom: 2px;
+}
+
+.gene {
+    color: #e3639f;
+    font-weight: bold;
+}
+.variant {
+    color: #4b7bef;
+    font-weight: bold;
+}
+.disease {
+    color: #3d811e;
+    font-weight: bold;
 }
 </style>

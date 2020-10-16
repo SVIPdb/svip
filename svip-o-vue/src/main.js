@@ -12,6 +12,7 @@ import Snotify, { SnotifyPosition } from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
 import '@/plugins/vue-awesome'
+import AsyncComputed from 'vue-async-computed'
 
 import '@/css/nprogress-custom.css';
 
@@ -24,6 +25,9 @@ import RowExpander from "@/components/widgets/RowExpander";
 import Expander from "@/components/widgets/Expander";
 
 import store from "./store";
+
+// enables the asyncComputed key, allowing computed properties to return promises
+Vue.use(AsyncComputed);
 
 Vue.config.productionTip = false;
 

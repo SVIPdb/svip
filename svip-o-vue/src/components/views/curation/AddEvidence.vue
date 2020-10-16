@@ -14,7 +14,7 @@
             </b-col>
         </b-row>
         <div v-else>
-            <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
+            <CuratorVariantInformations :variant="fullVariant" />
 
             <b-row>
                 <b-col sm="9">
@@ -42,6 +42,23 @@
                                 <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="variant"
+                                        label="Variant"
+                                        inner-id="variant"
+                                        required
+                                    >
+                                        <SearchBar
+                                            id="variant"
+                                            v-model="variant"
+                                            hide-svip-toggle
+                                            variants-only
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.disease"
                                         label="Disease"
                                         sublabel="Type in a value and press 'enter' to create a new entry. User-created entries are in italics."
@@ -58,6 +75,22 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.extra_variants"
+                                        label="Additional variants"
+                                        sublabel="Used in case of a variant combination (optional)"
+                                        inner-id="variants-combination"
+                                    >
+                                        <SearchBar
+                                            id="variants-combination"
+                                            variants-only hide-svip-toggle
+                                            multiple
+                                            v-model="form.extra_variants"
+                                            :disabled="isViewOnly"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.type_of_evidence"
                                         label="For which type of evidence?"
                                         inner-id="evidence"
@@ -69,15 +102,15 @@
                                             v-model="form.type_of_evidence"
                                             @change="evidenceTypeChanged"
                                             :disabled="isViewOnly"
-                                            :state="checkValidity(props)"
+                                            :state="checkValidity(props, false)"
                                         >
                                             <optgroup
-                                                v-for="(label,index) in Object.keys(inputs)"
+                                                v-for="(group, index) in evidence_types.groups"
                                                 :key="index"
-                                                :label="label"
+                                                :label="group.name"
                                             >
                                                 <option
-                                                    v-for="(option,n) in Object.keys(inputs[label])"
+                                                    v-for="(option,n) in Object.keys(group.options)"
                                                     :key="n"
                                                     :value="option"
                                                 >{{ option }}</option>
@@ -124,6 +157,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.effect"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Effect of the variant"
                                         inner-id="effect"
                                         required
@@ -157,6 +191,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.mutation_origin"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Origin of the mutation"
                                         inner-id="mutation_origin"
                                     >
@@ -187,6 +222,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.support"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Support"
                                         inner-id="support"
                                         required
@@ -224,6 +260,7 @@
                                         label="Personal comment"
                                         sublabel="(viewable by you and other curators)"
                                         inner-id="comment"
+                                        :required="form.type_of_evidence === 'Excluded'"
                                     >
                                         <b-form-textarea
                                             id="comment"
@@ -287,7 +324,7 @@
                         size="lg"
                         block
                         class="shadow-sm mb-3"
-                        :href="duplicateUrl"
+                        @click="duplicateEntry"
                         target="_blank"
                         v-if="!isViewOnly"
                     >Duplicate</b-button>
@@ -405,7 +442,7 @@
                                         name="exclamation-triangle"
                                         scale="1.5"
                                         style="vertical-align: text-bottom; margin-right: 5px;"
-                                    />An error occurred while retrieving this PMID
+                                    />An error occurred while retrieving this reference
                                 </div>
                                 <div v-else class="text-center">
                                     <b-spinner label="Spinning" variant="primary" />loading...
@@ -441,13 +478,12 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import BroadcastChannel from "broadcast-channel";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
-import inputs from "@/data/curation/evidence/options.json";
-import store from "@/store";
+import evidence_types from "@/data/curation/evidence/evidence_types.json";
 import { HTTP } from "@/router/http";
 import { extend, ValidationObserver } from "vee-validate";
+import SearchBar from "@/components/widgets/searchbars/SearchBar";
 import DrugSearchBar from "@/components/widgets/searchbars/DrugSearchBar";
 import ValidatedFormField from "@/components/widgets/curation/ValidatedFormField";
 import { required } from "vee-validate/dist/rules";
@@ -462,13 +498,10 @@ import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearc
 
 const log = ulog('Curation:AddEvidence')
 
-// options.json's top-level organization by separator makes it difficult to index the structure
-// by just what we store in the database, since you also need to know (unstored) the top-level category.
-// here we flatten the internal elements, since they're still indicative of the structure.
-const effect_set = Object.values(inputs).reduce(
-    (acc, x) => Object.assign(acc, x),
-    {}
-);
+// create a lookup for effects and tier criteria based on the evidence type
+const evidence_attrs = Object.values(evidence_types.groups)
+    .reduce((acc, x) => acc.concat(x.options), [])
+    .reduce((acc, x) => Object.assign(acc, x), {});
 
 // used to extract tier_level and tier_level_criteria (fields in the model) from the combined string tier_criteria
 const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
@@ -486,6 +519,7 @@ export default {
         DiseaseSearchBar,
         EvidenceHistory,
         ValidatedFormField,
+        SearchBar,
         DrugSearchBar,
         CuratorVariantInformations,
         ValidationObserver
@@ -495,7 +529,9 @@ export default {
     },
     data() {
         return {
-            inputs,
+            variant: null, // the variant associated with the current curation entry
+
+            evidence_types,
             // if non-null, displays pageError instead of the contents of the page; use this for fatal errors
             pageError: null,
             options: [
@@ -530,7 +566,6 @@ export default {
 
                 // these fields are bound to form elements and populated on load
                 disease: null,
-                variant: null,
                 extra_variants: [],
                 type_of_evidence: null,
                 drugs: [],
@@ -592,7 +627,8 @@ export default {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.form.disease && this.form.disease.name
+                    disease: this.form.disease && this.form.disease.name,
+                    collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : undefined
                 }
             })
                 .then(response => {
@@ -621,8 +657,8 @@ export default {
 
             const { action } = this.$route.params;
 
-            if (action === "add") {
-                const { source, reference } = this.$route.query;
+            if (action === "add" || action === "duplicate") {
+                const { source, reference, variant_id, payload } = this.$route.query;
 
                 if (!source || !reference) {
                     this.pageError = {
@@ -634,8 +670,38 @@ export default {
 
                 this.source = source.trim();
                 this.reference = reference.trim();
-                this.loadVariomeData();
-            } else {
+
+                // FIXME: we should also load the variant when adding a new entry
+                HTTP.get(`/variants/${variant_id}?simple=true`)
+                    .then((response) => {
+                        const variant = response.data;
+                        this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+
+                        // depends on this.variant being set, so we'll load it once we succeed
+                        this.loadVariomeData();
+
+                        // and finally load the form data
+                        if (action === "duplicate" && payload) {
+                            const parsedPayload = JSON.parse(payload);
+                            parsedPayload.variant = variant;
+                            this.rehydrate(parsedPayload);
+
+                            // clear the params from the header after a bit
+                            this.$router.replace({
+                                name: "add-evidence",
+                                params: {
+                                    ...this.$route.params
+                                }
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        this.pageError = {
+                            message: err.toString()
+                        };
+                    });
+            }
+            else {
                 HTTP.get(`/curation_entries/${action}`)
                     .then(response => {
                         this.rehydrate(response.data); // populates source, reference from the response
@@ -668,12 +734,8 @@ export default {
                 ...rest
             } = data;
 
-            // repopulating variants is annoying since they're split up between the 'main' variant
-            // and the extra variants in the "add variants" box.
-            // we'll go with the convention that the first one is the 'main' variant and the rest, if any, are the
-            // extra variants
             const extra_variants = formatted_variants;
-            this.variant.id = variant.id;
+            this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
 
             // repopulate the form, which will bind the elements in the page
             this.form = {
@@ -689,18 +751,7 @@ export default {
             // also populate source and ID, which we need to populate the publication info
             [this.source, this.reference] = references.trim().split(":");
         },
-        async submit(isDraft) {
-            // manually validate all the fields before we go any further
-            if (!isDraft) {
-                // use the validation observer to validate every provider at once
-                // this will update the UI with 'this is required' as well
-                const isValid = await this.$refs.observer.validate();
-
-                if (!isValid) {
-                    return;
-                }
-            }
-
+        getPayload(duplicating=false) {
             // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
             const matched = tier_criteria_parser.exec(this.form.tier_criteria);
             const { tier_level, tier_level_criteria } = matched
@@ -712,11 +763,10 @@ export default {
 
             const payload = {
                 disease: this.form.disease, // this.form.disease.id,
-                variant: this.variant.id,
+                variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
-                    ? this.form.extra_variants.map(x => x.id)
+                    ? this.form.extra_variants.map(x => x.id.toString().includes('_') ? x.id.split("_")[1] : x.id)
                     : [], // selected plus the other ones
-
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: this.form.drugs || [],
                 interactions: this.form.interactions || [],
@@ -730,9 +780,34 @@ export default {
                 comment: this.form.comment,
                 annotations: this.form.annotations,
 
-                references: `${this.source}:${this.reference}`,
-                status: isDraft ? "draft" : "saved"
+                references: `${this.source}:${this.reference}`
             };
+
+            if (duplicating) {
+                payload.formatted_variants = this.form.extra_variants
+            }
+
+            return payload;
+        },
+        async submit(isDraft) {
+            // always validate 'variant', even if it's a draft, since it's critical
+            if (!this.variant) {
+                this.$snotify.error("Variant must be specified to save")
+                return;
+            }
+            // manually validate all the fields before we go any further
+            if (!isDraft) {
+                // use the validation observer to validate every provider at once
+                // this will update the UI with 'this is required' as well
+                const isValid = await this.$refs.observer.validate();
+
+                if (!isValid) {
+                    return;
+                }
+            }
+
+            const payload = this.getPayload();
+            payload.status = isDraft ? "draft" : "saved";
 
             // if they've previously submitted, make it an update
             // if this is a new submission, make it a post
@@ -769,13 +844,13 @@ export default {
                 })
                 .catch((err) => {
                     if (err.response) {
-                        if (err.response.status == 403) {
+                        if (err.response.status === 403) {
                             this.$snotify.error(
                                 "Submitted entries can't be changed!"
                             );
                             return;
                         }
-                        if (err.response.status == 400) {
+                        if (err.response.status === 400) {
                             const failedKeys = Object.keys(
                                 err.response.data
                             ).join(", ");
@@ -784,12 +859,36 @@ export default {
                             );
                             return;
                         }
+                        if (err.response.status >= 500) {
+                            this.$snotify.error("Server error occurred while saving");
+                        }
                     }
 
                     // TODO: deal with the server's error response in err.response.data
                     //  to bind error messages to form elements.
                     log.warn("Error when saving: ", err);
                 });
+        },
+        duplicateEntry() {
+            const [source, reference] = this.form.references
+                ? this.form.references.split(":")
+                : [this.source, this.reference];
+
+            const targetUrl = this.$router.resolve({
+                name: "add-evidence",
+                params: {
+                    ...this.$route.params,
+                    action: "duplicate"
+                },
+                query: {
+                    source,
+                    reference,
+                    variant_id: this.variant.id,
+                    payload: JSON.stringify(this.getPayload(true))
+                }
+            }).href;
+
+            window.open(targetUrl, '_blank');
         },
         onSubmitDraft() {
             this.submit(true);
@@ -825,29 +924,33 @@ export default {
             this.$refs["history-modal"].show();
         }
     },
-    computed: {
-        ...mapGetters({
-            variant: "variant"
-        }),
-        duplicateUrl() {
-            const [source, reference] = this.form.references
-                ? this.form.references.split(":")
-                : [this.source, this.reference];
+    asyncComputed: {
+        fullVariant() {
+            if (!this.variant) {
+                return null;
+            }
 
-            return this.$router.resolve({
-                name: "add-evidence",
-                params: {
-                    ...this.$route.params,
-                    action: "add"
-                },
-                query: {
-                    source,
-                    reference
-                }
-            }).href;
-        },
+            if (this.variant.description) {
+                return this.variant;
+            }
+
+            const variant_id = this.variant.id.toString().includes("_") ? this.variant.id.split("_")[1] : this.variant.id;
+
+            return HTTP.get(`/variants/${variant_id}?simple=true`)
+                .then((response) => {
+                    const variant = response.data;
+                    return {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+                })
+                .catch((err) => {
+                    this.$snotify.error(err.toString());
+                });
+        }
+    },
+    computed: {
         keywordSet() {
-            if (!this.variomes) return [];
+            if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
+                return []
+            }
 
             const { gene, variant, disease } = {
                 gene: this.variomes.normalized_query.genes[0].preferred_term,
@@ -857,30 +960,30 @@ export default {
             const counts = this.variomes.publications[0].details.query_details;
 
             return [
-                {
+                gene && counts.query_gene_count && {
                     class: "bg-gene",
                     url: `?term=${gene}[Title/Abstract]`,
                     label: gene,
                     count: counts.query_gene_count.all
                 },
-                {
+                variant && counts.query_variant_count && {
                     class: "bg-variant",
                     url: `?term=${variant}[Title/Abstract]`,
                     label: variant,
                     count: counts.query_variant_count.all
                 },
-                disease && {
+                disease && counts.query_disease_count && {
                     class: "bg-disease",
                     url: `?term=${disease}[Title/Abstract]`,
                     label: disease,
                     count: counts.query_disease_count.all
                 },
-                disease && {
+                gene && variant && disease && {
                     class: "bg-primary",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
                     label: `${gene} + ${variant} + ${disease}`
                 },
-                {
+                gene && variant && {
                     class: "bg-info",
                     url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
                     label: `${gene} + ${variant}`
@@ -888,21 +991,14 @@ export default {
             ].filter(x => x);
         },
         effects() {
-            // return this.form.type_of_evidence != null
-            //     ? Object.keys(this.inputs[this.filterLabel][this.form.type_of_evidence])
-            //     : [];
-            return this.form.type_of_evidence &&
-                effect_set[this.form.type_of_evidence]
-                ? Object.keys(effect_set[this.form.type_of_evidence])
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].effect
                 : [];
         },
         tier_criteria() {
-            return this.form.type_of_evidence && this.form.effect
-                ? effect_set[this.form.type_of_evidence][this.form.effect]
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].tier_criteria
                 : [];
-        },
-        disease_id() {
-            return parseInt(this.$route.params.disease_id);
         },
         is_saved() {
             return this.form.id != null;
@@ -915,21 +1011,7 @@ export default {
         this.load();
     },
     watch: {
-        $route: "load"
-    },
-    beforeRouteEnter(to, from, next) {
-        store
-            .dispatch("getGeneVariant", { variant_id: to.params.variant_id })
-            .then(() => {
-                next();
-            });
-    },
-    beforeRouteUpdate(to, from, next) {
-        store
-            .dispatch("getGeneVariant", { variant_id: to.params.variant_id })
-            .then(() => {
-                next();
-            });
+        // $route: "load"
     }
 };
 </script>

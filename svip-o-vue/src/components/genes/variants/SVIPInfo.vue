@@ -86,7 +86,7 @@
                 <template v-slot:row-details="row">
                     <div class="row-details">
                         <pass :entries="splitCurationEntries(row)">
-                            <b-card no-body slot-scope="{ entries }">
+                            <b-card no-body slot-scope="{ entries }" class="shadow mb-2">
                                 <b-tabs
                                     v-model="svip_entry_tabs[row.item.name]" card
                                     :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
@@ -138,12 +138,11 @@
 <script>
 import { mapGetters } from "vuex";
 import store from "@/store";
-import { titleCase } from "@/utils";
+import { abbreviatedName, titleCase } from "@/utils";
 import { checkInRole } from "@/directives/access";
 
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderPlot from "@/components/plots/genderPlot";
-import { abbreviatedName } from "@/utils";
 import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
@@ -152,7 +151,7 @@ const NoSVIPInfo = {
     name: 'NoSVIPInfo',
     render: function(h) {
         h();
-        
+
         return (
             <div class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center" style="font-size: 150%;">
                 <icon name="question-circle" scale="1.5" style="margin-right: 10px;"/>
@@ -222,9 +221,11 @@ export default {
             }
         },
         splitCurationEntries(row) {
+            const annotated_entries = row.item.curation_entries.map(x => ({...x, _showDetails: false}));
+
             return {
-                finalized: row.item.curation_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
-                pending: row.item.curation_entries.filter(x => x.status !== 'reviewed')
+                finalized: annotated_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
+                pending: annotated_entries.filter(x => x.status !== 'reviewed')
             };
         },
         titleCase

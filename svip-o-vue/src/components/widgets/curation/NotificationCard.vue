@@ -68,14 +68,14 @@
         </b-card-header>
 
         <b-card-body v-if="isCurator" class="p-0">
-            <b-table
+            <b-table v-if="!error"
                 class="mb-0"
                 :items="filteredItems" :fields="fields"
                 :filter="filter"
                 :sort-by.sync="sortBy" :sort-desc="true"
                 :busy="loading"
                 :per-page="perPage" :current-page="currentPage"
-                show-empty small hover
+                show-empty small hover :responsive="true"
             >
                 <template v-slot:cell(gene_name)="data">
                     <b><router-link :to="`/gene/${data.item.gene_id}`" target="_blank">{{ data.value }}</router-link></b>
@@ -139,6 +139,10 @@
                     </div>
                 </template>
             </b-table>
+            <div v-else class="text-center text-muted font-italic m-3">
+                <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                Loading this list failed, please try again later
+            </div>
 
             <div v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
                 <slot name="extra_commands" />
@@ -279,6 +283,9 @@ export default {
         loading: {
             type: Boolean, default: false
         },
+        error: {
+            type: String, default: null
+        },
         // The title of the card
         title: {
             type: String,
@@ -417,6 +424,18 @@ export default {
         },
         selectVariant() { // (checked, element)
             // console.log(`Checked is ${checked} and ID is ${element.id}`);
+        }
+    },
+    watch: {
+        myFilter(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
+        },
+        statusFilter(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
         }
     },
     computed: {

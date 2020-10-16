@@ -27,6 +27,14 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
+
+            <b-col class="my-1 pager-search" md="2">
+                <b-select v-model="filterCollection">
+                    <b-select-option :value="null">---</b-select-option>
+                    <b-select-option :value="'medline'">medline</b-select-option>
+                    <b-select-option :value="'pmc'">PMC</b-select-option>
+                </b-select>
+            </b-col>
         </b-row>
 
         <b-collapse :visible="isSearchParamsVisible">
@@ -118,16 +126,7 @@
                                 </template>
                                 <template>
                                 This reference is already in use by:
-                                <div class="mt-1 text-left">
-                                    <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                        v-for="x in used_ref" :key="x.id"
-                                        @click="() => { $root.$emit('bv::hide::popover') }"
-                                        :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                        target="_blank"
-                                    >
-                                        Entry #{{ x.id }}
-                                    </b-button>
-                                </div>
+                                <EntriesInUse :annotation-used="used_ref" />
                                 </template>
                             </b-popover>
                         </span>
@@ -135,24 +134,30 @@
                 </template>
 
                 <template v-slot:cell(authors)="data">{{ data.value && data.value.join(", ") }}</template>
-                <template v-slot:cell(publication_types)="data">{{ data.value && data.value.join(", ") }}</template>
+                <template v-slot:cell(publication_types)="data">
+                    <b class="mb-1 d-block">{{ data.item.collection }}</b>
+                    {{ data.value && data.value.join(", ") }}<br />
+                </template>
                 <template v-slot:cell(score)="data">
                     <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
                     <b-tooltip :target="() => $refs[data.item.id]">
-                        <ul class="p-0 m-0">
-                            <li class="d-flex justify-content-between align-items-center gene">
-                                {{preferredTerms.gene}}
-                                <span class="text-white pl-1">{{data.item.details.query_details.query_gene_count.all}}</span>
-                            </li>
-                            <li class="d-flex justify-content-between align-items-center variant">
-                                {{preferredTerms.variant}}
-                                <span class="text-white pl-1">{{data.item.details.query_details.query_variant_count.all}}</span>
-                            </li>
-                            <li v-if="preferredTerms.disease !== 'none'" class="d-flex justify-content-between align-items-center disease">
-                                {{preferredTerms.disease}}
-                                <span class="text-white pl-1">{{data.item.details.query_details.query_disease_count.all}}</span>
-                            </li>
-                        </ul>
+                        <pass :querydetails="data.item.details.query_details">
+                            <ul slot-scope="{ querydetails }" v-if="querydetails" class="p-0 m-0">
+                                <li v-if="querydetails.query_gene_count" class="d-flex justify-content-between align-items-center gene">
+                                    {{preferredTerms.gene}}
+                                    <span class="text-white pl-1">{{querydetails.query_gene_count.all}}</span>
+                                </li>
+                                <li v-if="querydetails.query_variant_count" class="d-flex justify-content-between align-items-center variant">
+                                    {{preferredTerms.variant}}
+                                    <span class="text-white pl-1">{{querydetails.query_variant_count.all}}</span>
+                                </li>
+                                <li v-if="preferredTerms.disease && preferredTerms.disease !== 'none' && querydetails.query_disease_count" class="d-flex justify-content-between align-items-center disease">
+                                    {{preferredTerms.disease}}
+                                    <span class="text-white pl-1">{{querydetails.query_disease_count.all}}</span>
+                                </li>
+                            </ul>
+                            <span v-else>count data unavailable</span>
+                        </pass>
                     </b-tooltip>
                 </template>
 
@@ -200,10 +205,12 @@ import fieldsTextMining from "@/data/curation/text_mining/fields.json";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import TransitionExpand from "@/components/widgets/TransitionExpand";
+import EntriesInUse from "@/components/widgets/curation/AnnotationsInUse";
 
 export default {
     name: "VariomesSearch",
     components: {
+        EntriesInUse,
         VariomesLitPopover,
         TransitionExpand
     },
@@ -216,6 +223,8 @@ export default {
         return {
             fieldsTextMining,
             source: "PMID",
+            collections: ["pmc","medline"],
+            filterCollection: null,
             reference: null,
             variomes: [],
             loadingVariomes: true,
@@ -241,8 +250,12 @@ export default {
             if (!this.variomes || !this.variomes.publications)
                 return [];
 
-            // FIXME: deal with things other than medline pubs soonish
-            return this.variomes.publications.medline;
+            if (this.filterCollection) {
+                return this.variomes.publications[this.filterCollection];
+            }
+
+            // concatenates and returns all subkeys of 'publications', e.g. 'medline', 'pmc'
+            return Object.values(this.variomes.publications).reduce((acc, x) => acc.concat(x), []);
         },
         preferredTerms() {
             if (!this.variomes || !this.variomes.normalized_query)
@@ -295,7 +308,8 @@ export default {
             HTTP.get(`variomes_search`, {
                 params: {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.disease && this.disease.name
+                    disease: this.disease && this.disease.name,
+                    collection: this.collections.join(",")
                 }
             })
                 .then(response => {
@@ -355,4 +369,8 @@ export default {
     flex: 1 0;
     margin-right: 5px;
 }
+
+.gene {color: #e3639f;font-weight: bold;}
+.variant {color: #4b7bef;font-weight: bold;}
+.disease {color: #3d811e;font-weight: bold;}
 </style>

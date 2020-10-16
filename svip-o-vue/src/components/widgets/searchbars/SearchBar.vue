@@ -32,7 +32,7 @@
             </template>
         </v-select>
 
-        <div style="padding: 10px;">
+        <div v-if="!hideSvipToggle" style="padding: 10px;">
             <b-checkbox v-model="showOnlySVIP">
                 <span id="show-svip-vars">show only SVIP variants</span>
             </b-checkbox>
@@ -99,6 +99,7 @@ export default {
         multiple: {type: Boolean, required: false, default: false},
         disabled: {type: Boolean, required: false, default: false},
         preOptions: {type: Array, required: false, default: null},
+        hideSvipToggle: { type: Boolean, default: false },
         value: { }
     },
     data() {
@@ -142,6 +143,7 @@ export default {
     computed: {
         showOnlySVIP: {
             get() {
+                if (this.hideSvipToggle) { return false; }
                 return store.state.genes.showOnlySVIP;
             },
             set(value) {

@@ -13,6 +13,18 @@
                         <b-button size="sm" :variant="filterCurator ? 'primary' : 'light'" @click="filterCurator = true">My Curations</b-button>
                         <b-button size="sm" :variant="!filterCurator ? 'primary' : 'light'" @click="filterCurator = false">All Curations</b-button>
                     </b-button-group>
+
+                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" default-variant="light"
+                        selected-variant="primary"
+                        :items="[
+                            { label: 'Draft', value: 'draft' },
+                            { label: 'Saved', value: 'saved' },
+                            { label: 'Submitted', value: 'submitted' },
+                            { label: 'Unreviewed', value: 'unreviewed' },
+                            { label: 'Reviewed', value: 'reviewed' },
+                            { label: 'All', value: 'all' }
+                        ]"
+                    />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
@@ -40,6 +52,8 @@
                 :external-search="filter"
                 :apiUrl="apiUrl"
                 :postMapper="colorCurationRows"
+                :extraFilters="statusFilter !== 'all' ? { status: statusFilter } : null"
+                :responsive="true"
             >
                 <template v-slot:cell(submit_box)="data">
                     <input type="checkbox" v-if="data.item.status === 'draft' || data.item.status === 'saved'"
@@ -56,16 +70,15 @@
                     <router-link :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`">{{ data.item.variant.name }}</router-link>
                 </template>
 
-                <!--
-                <template v-slot:cell(disease__name)="data">
-                    <router-link
-                        :to="`/curation/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}/disease/${data.item.disease.id}`"
-                        target="_blank"
-                    >
-                    {{ data.item.disease.name }}
-                    </router-link>
+                <template v-slot:cell(extra_variants)="data">
+                    <span v-if="data.value">
+                        <span v-for="(variant, idx) in data.value" :key="variant.id">
+                            <span v-if="idx > 0">, </span>
+                            <router-link :to="`/gene/${variant.gene.id}/variant/${variant.id}`" target="_blank">{{ variant.description }}</router-link>
+                        </span>
+                    </span>
                 </template>
-                -->
+
                 <template v-slot:cell(created_on)="data">{{ simpleDateTime(data.value).date }}</template>
 
                 <template v-slot:cell(status)="data">
@@ -76,12 +89,11 @@
                 </template>
 
                 <template v-slot:cell(references)="data">
-                    <VariomesLitPopover v-if="isDashboard" :pubmeta="{ pmid: data.value }"
-                        :variant="data.item.variant.name"
-                        :gene="data.item.variant.gene.symbol"
+                    <VariomesLitPopover :pubmeta="{ pmid: data.value }"
+                        :variant="data.item.variant && data.item.variant.name"
+                        :gene="data.item.variant && data.item.variant.gene.symbol"
                         :disease="data.item.disease && data.item.disease.name"
                     />
-                    <VariomesLitPopover v-else :pubmeta="{ pmid: data.value }" v-bind="variomesParams" />
                 </template>
 
                 <template v-slot:cell(created_on)="data">
@@ -177,6 +189,7 @@ import EvidenceHistory from "@/components/widgets/curation/EvidenceHistory";
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs';
 import ulog from 'ulog';
+import FilterButtons from "@/components/widgets/curation/FilterButtons";
 
 const log = ulog('Curation:EvidenceCard');
 
@@ -236,6 +249,11 @@ const full_fields = [
     {
         key: "tier_level",
         label: "Tier level",
+        sortable: true
+    },
+    {
+        key: "extra_variants",
+        label: "Other Variants",
         sortable: true
     },
     {
@@ -319,7 +337,7 @@ const dashboard_fields = [
 
 export default {
     name: "EvidenceCard",
-    components: { EvidenceHistory, VariomesLitPopover, PagedTable, DateTimeField },
+    components: { EvidenceHistory, VariomesLitPopover, PagedTable, DateTimeField, FilterButtons },
     props: {
         variant: { type: Object, required: false },
         disease_id: { type: Number, required: false },
@@ -332,7 +350,8 @@ export default {
         hasHeader: { type: Boolean, default: false },
         headerTitle: { type: String, required: false, default: "Curation Entries" },
         cardHeaderBg: { type: String, required: false, default: "light" },
-        cardTitleVariant: { type: String, required: false, default: "primary" }
+        cardTitleVariant: { type: String, required: false, default: "primary" },
+        cardFilterOption: { type: Boolean, default: true },
     },
     data() {
         return {
@@ -340,7 +359,8 @@ export default {
             filterCurator: false,
             history_entry_id: null,
             filter: null,
-            selected: {}
+            selected: {},
+            statusFilter: 'all'
         };
     },
     created() {
@@ -454,17 +474,7 @@ export default {
             }
         },
         editEntryURL(entry) {
-            // FIXME: presumes again that the first variant is the 'main' one; do we want to assume that, or split it
-            //  into a seprate field?
-            // FIXME: alternatively, should curation entries have a 'main' variant at all, or should we restructure the
-            //  URL to remove the gene, variant, disease refererences?
-
-            const [gene_id, variant_id] = [
-                entry.variant.gene.id,
-                entry.variant.id
-            ];
-
-            return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry.id}`;
+            return `/curation/entry/${entry.id}`;
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {

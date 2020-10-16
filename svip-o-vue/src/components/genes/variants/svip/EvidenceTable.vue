@@ -1,12 +1,15 @@
 <template>
     <b-card-text>
-        <b-table :fields="fields" responsive :items="entries" show-empty small class="align-rows-center">
-            <template v-slot:cell(display)="row2">
-                <row-expander v-access="'curators'" :row="row2"/>
+        <b-table :fields="fields" :responsive="true" :items="entries" show-empty small class="align-rows-center">
+            <template v-slot:cell(display)="row">
+                <row-expander v-access="'curators'" :row="row"/>
             </template>
 
             <template v-slot:cell(warning)="row">
-                <div v-b-tooltip.right="'this entry is unreviewed'" class="d-flex justify-content-center align-items-center" style="font-size: 30px;">
+                <div v-if="row.item.status === 'unreviewed'"
+                    v-b-tooltip.right="'this entry is unreviewed'"
+                    class="d-flex justify-content-center align-items-center" style="font-size: 30px;"
+                >
                     <icon name="exclamation-triangle" color="#cfb578" style="margin-top: 5px;" />
                 </div>
             </template>
@@ -61,7 +64,7 @@ export default {
         return {
             fields: [
                 {key: "display", label: "", sortable: false},
-                {key:"warning", label:"", sortable: false},
+                {key: "warning", label: "", sortable: false},
                 {key: "type_of_evidence", label: "Evidence Type", sortable: true},
                 {key: "effect", label: "Effect", sortable: true},
                 {key: "drugs", label: "Drugs", sortable: true, formatter: (x) => x.join(", ")},

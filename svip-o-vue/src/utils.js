@@ -147,7 +147,10 @@ export function pubmedURL(query) {
     // given query, produces a props set that configures a pubmed link to open in a new tab
     // (this props set should be merged into the component using v-bind, e.g. v-bind="pmSearchURL('BRAF')")
     return {
-        href: `https://www.ncbi.nlm.nih.gov/pubmed/${query}`,
+        href: query && query.includes("PMC")
+            ? `http://www.ncbi.nlm.nih.gov/pmc/articles/${query}`
+            : `https://www.ncbi.nlm.nih.gov/pubmed/${query}`
+        ,
         target: "_blank"
     };
 }

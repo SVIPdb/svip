@@ -80,8 +80,8 @@ export default {
         logout() {
             store.dispatch("logout").then(() => {
                 this.$snotify.success("Logged out");
-                this.$router.push("/");
-                // Vue.prototype.$keycloak.logoutFn();
+                // refresh the current page
+                this.$router.go();
             });
         }
     }
@@ -99,6 +99,7 @@ export default {
 
 .ajax-loader-bar {
     position: absolute !important;
+    pointer-events: none;
     left: 0;
     bottom: -40px;
     right: 0;

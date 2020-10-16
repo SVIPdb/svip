@@ -1,12 +1,15 @@
 module.exports = {
     root: true,
+
     env: {
         node: true
     },
+
     'extends': [
         'plugin:vue/essential',
         'eslint:recommended'
     ],
+
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -18,10 +21,24 @@ module.exports = {
             "invalid-first-character-of-tag-name": false
         }] // fixes erroneous detection of a start-of-tag sequence from < occurring inside of js expressions
     },
+
     parserOptions: {
         parser: 'babel-eslint'
     },
+
     globals: {
         "_": true
-    }
+    },
+
+    overrides: [
+        {
+            files: [
+                '**/__tests__/*.{j,t}s?(x)',
+                '**/tests/unit/**/*.spec.{j,t}s?(x)'
+            ],
+            env: {
+                jest: true
+            }
+        }
+    ]
 };

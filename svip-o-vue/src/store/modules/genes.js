@@ -1,5 +1,4 @@
 import { HTTP } from "@/router/http";
-import vueInstance from '@/main';
 import { MultiGeneError } from "@/exceptions";
 import ulog from 'ulog';
 
@@ -69,7 +68,7 @@ const actions = {
             });
         }).catch((err) => {
             log.warn(err);
-            vueInstance.$snotify.error('Failed to retrieve site statistics');
+            // vueInstance.$snotify.error('Failed to retrieve site statistics');
             commit('SET_SITE_STATS_LOADING', {status: 'error'});
         });
     },

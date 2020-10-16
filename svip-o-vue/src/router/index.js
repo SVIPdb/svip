@@ -2,6 +2,10 @@ import Vue from "vue";
 import Router from "vue-router";
 import store from '@/store';
 import { TokenErrors } from "@/store/modules/users";
+import { checkInRole } from "@/directives/access";
+import { np_manager } from '@/App';
+
+import ulog from 'ulog';
 
 /*
 import Home from "@/components/views/Home";
@@ -39,11 +43,6 @@ const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const ViewEvidence = () => import("@/components/views/curation/ViewEvidence");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
-
-import { checkInRole } from "@/directives/access";
-import { np_manager } from '@/App';
-
-import ulog from 'ulog';
 
 const log = ulog('Router:index');
 
@@ -148,10 +147,9 @@ const router = new Router({
             }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/entry/:action",
-            name: "add-evidence", // Ivo : replace to see the mockup - name: "add-evidence",
-            component: AddEvidence, // Ivo : replace to see the mockup - component: AddEvidence,
-            // beforeEnter: remapGeneSymbol,
+            path: "/curation/entry/:action",
+            name: "add-evidence",
+            component: AddEvidence,
             meta: {
                 title: 'SVIP-O: Edit Curation',
                 requiresAuth: true, roles: ['curators', 'reviewers']
@@ -210,7 +208,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.name && np_manager) {
         // Start the route progress bar.
-        np_manager.start()
+        np_manager.start(`transition: ${to.name}`);
     }
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -244,9 +242,13 @@ router.beforeEach((to, from, next) => {
     }
 });
 
-router.afterEach(() => {
-    // Complete the animation of the route progress bar.
-    np_manager && np_manager.done()
+router.afterEach((to, from) => {
+    if (from && from.name) {
+        // only complete entries that have a matching navigation start
+        // (coming in from another site will cause router.afterEach to fire, but without a preceding router.beforeEach)
+        np_manager && np_manager.done(`transition complete`);
+    }
+
 })
 
 export default router;

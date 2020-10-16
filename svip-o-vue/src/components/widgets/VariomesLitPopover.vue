@@ -11,14 +11,22 @@
         >
 			<template>
 				<div v-if="variomes && variomesIsValid"
-                    :class="['variomes-popover', (variomes && single_publication && single_publication.abstract_highlight.length < 30) ? 'short-abstract' : null]">
+                    :class="['variomes-popover', isShortAbstract ? 'short-abstract' : null]">
 					<h6 class="title" v-html="single_publication.title_highlight"></h6>
 					<div class="authors">{{ formatAuthors(single_publication.authors) }}. {{ single_publication.journal }} ({{ single_publication.date }})</div>
 					<div class="abstract" v-html="single_publication.abstract_highlight"></div>
 
 					<div class="abstract-fader"></div>
 				</div>
-				<div v-else-if="variomes && error">{{ error }}</div>
+				<div v-else-if="variomes && error" class="d-flex align-items-center">
+                    <icon name="exclamation-triangle" scale="2" style="color: #c6af89;" />
+                    <div class="ml-2">
+                        Couldn't retrieve publication info, try again later.
+                    </div>
+                </div>
+                <span v-else-if="!parsedPMID">
+                    <b>external link to:</b> {{ pubmeta.url }}
+                </span>
 				<span v-else class="variomes-loading">
                     <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> loading...
 				</span>
@@ -68,11 +76,15 @@ export default {
     computed: {
         parsedPMID() {
             const target = ((this.pmid) ? this.pmid : this.pubmeta.pmid);
-            return target && target.replace("PMID:", "");
+            return target && target.replace("PMID:", "").replace("PMC:","").trim();
         },
         url() {
             if (!this.parsedPMID) {
-                return null;
+                return this.pubmeta && this.pubmeta.url;
+            }
+
+            if (this.parsedPMID.includes("PMC")) {
+                return `http://www.ncbi.nlm.nih.gov/pmc/articles/${this.parsedPMID}`;
             }
 
             return `http://www.ncbi.nlm.nih.gov/pubmed/${this.parsedPMID}`;
@@ -89,15 +101,26 @@ export default {
                 && !this.error
                 && this.variomes.publications
                 && this.variomes.publications.length > 0
+                && !this.variomes.publications[0].error
                 && this.single_publication.id === this.parsedPMID
             );
         },
         single_publication() {
             return this.variomes && this.variomes.publications && this.variomes.publications[0];
+        },
+        isShortAbstract() {
+            return (
+                this.variomes &&
+                this.single_publication &&
+                this.single_publication.abstract_highlight !== undefined &&
+                this.single_publication.abstract_highlight.length < 30
+            );
         }
     },
     methods: {
         formatAuthors(authors) {
+            if (!authors) { return null; }
+
             if (authors.length > 5) {
                 return authors.slice(0, 3).concat("et al").join(", ");
             }
@@ -108,6 +131,8 @@ export default {
             // close all other popovers before showing this one
             this.$root.$emit('bv::hide::popover');
 
+            this.error = null;
+
             // if it's already loaded, return immediately
             // (note that we need to check if the ids match because elements in a bootstrap-vue table are
             // retained when you change pages, causing their data to be shared between corresponding elements
@@ -115,19 +140,31 @@ export default {
             if (this.variomesIsValid)
                 return;
 
-            this.error = null;
+            if (!this.parsedPMID) {
+                // if there's no parsedPMID, it's likely an external link; don't show a tooltip
+                this.variomes = null;
+                return;
+            }
+
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.parsedPMID,
                     genvars: `${this.gene} (${this.variant})`,
-                    disease: this.disease
+                    disease: this.disease,
+                    collection: (this.parsedPMID && this.parsedPMID.includes("PMC")) ? 'pmc' : undefined
                 }
             })
                 .then(response => {
                     this.variomes = response.data;
+
+                    if (response.data && response.data.errors && Object.keys(response.data.errors).length > 0) {
+                        // log.warn("Errors: ", JSON.stringify(response.data.errors));
+                        this.error = {error: "Couldn't retrieve publication info, try again later."};
+                    }
                 })
                 .catch((err) => {
                     log.warn(err);
+                    this.variomes = true;
                     this.error = {error: "Couldn't retrieve publication info, try again later."};
                 });
         },

@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" v-if="showHarvestRuns">
             <div class="col-md-10 offset-1">
                 <h2 class="section-header">Harvest Runs</h2>
 
@@ -98,6 +98,7 @@ import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
 import { HTTP } from '@/router/http';
 import SourceIcon from "@/components/widgets/SourceIcon";
 import { combinedDateTime } from "@/utils";
+import { showHarvestRuns } from "@/app_config";
 
 dayjs.extend(RelativeTime);
 
@@ -151,6 +152,9 @@ export default {
         });
     },
     computed: {
+        showHarvestRuns() {
+            return showHarvestRuns;
+        },
         genes_variants_fields() {
             if (!this.genes.data)
                 return null;
