@@ -19,6 +19,8 @@
         <div v-if="checkInRole('curators')">
             <!-- TBC: request queue -->
             <OnRequestEntries
+                :isCurator="checkInRole('curators')"
+                :isReviewer="checkInRole('reviewers')"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
@@ -75,7 +77,7 @@ export default {
             // Ivo - orignial : REVIEW_ENABLED: false,
             REVIEW_ENABLED: true, // temporary flag to hide review-related bits of the UI until they're ready
 
-            // ON REQUEST FAKE DATA
+            // ON REQUEST
             on_request: {
                 loading: false,
                 fields: fields_on_request,
