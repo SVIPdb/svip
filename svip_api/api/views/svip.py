@@ -129,6 +129,8 @@ class CurationEntryFilter(django_filters.FilterSet):
             'owner',
             'disease',
             'variant',
+            'variant__name',
+            'variant__gene__symbol',
             'extra_variants',
             'status',
             'status_ne'
