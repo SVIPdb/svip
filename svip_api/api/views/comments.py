@@ -8,6 +8,8 @@ from api import permissions
 from api.models.comments import VariantComment
 from api.serializers.comments import VariantCommentSerializer
 
+from svip_server.utils import DisabledHTMLFilterBackend
+
 
 # these tags will exist by default
 DEEFAULT_TAGS = (
@@ -23,7 +25,7 @@ class VariantCommentViewSet(ModelViewSet):
     serializer_class = VariantCommentSerializer
     permission_classes = (drf_permissions.IsAuthenticated, permissions.IsOwnerOrReadOnly)
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_backends = (DisabledHTMLFilterBackend,)
     filter_fields = (
         'variant',
     )
