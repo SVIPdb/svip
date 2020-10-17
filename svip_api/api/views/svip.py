@@ -24,6 +24,8 @@ from api.utils import json_build_fields
 # ================================================================================================================
 # === Variant Aggregation
 # ================================================================================================================
+from svip_server.utils import DisabledHTMLFilterBackend
+
 
 class VariantInSVIPViewSet(viewsets.ModelViewSet):
     """
@@ -167,7 +169,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     serializer_class = CurationEntrySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (DisabledHTMLFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     filterset_class = CurationEntryFilter
     ordering_fields = (
         "action",
