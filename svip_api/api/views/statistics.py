@@ -7,7 +7,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
-from api.models import Gene, Source, VariantInSource, Phenotype, Variant, HarvestRun
+from api.models import Gene, Source, VariantInSource, Phenotype, Variant, HarvestRun, CurationEntry
 from api.serializers.harvesting import HarvestRunSerializer
 
 
@@ -32,7 +32,8 @@ class Statistics(ViewSet):
             'svip_genes': Gene.objects.filter(variant__variantinsvip__isnull=False).distinct().count(),
             'variants': Variant.objects.count(),
             'svip_variants': Variant.objects.filter(variantinsvip__isnull=False).distinct().count(),
-            'phenotypes': Phenotype.objects.count()
+            # 'phenotypes': Phenotype.objects.count(),
+            'svip_curations': CurationEntry.objects.count()
         })
 
     @action(detail=False)
