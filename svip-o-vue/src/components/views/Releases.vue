@@ -45,6 +45,7 @@
 import v020_commits from '@/data/releases/v020_commits.js';
 import v030_commits from '@/data/releases/v030_commits.js';
 import v090_commits from '@/data/releases/v090_commits.js';
+import v100_commits from '@/data/releases/v100_commits.js';
 import dayjs from "dayjs";
 import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
 dayjs.extend(RelativeTime);
@@ -54,6 +55,16 @@ export default {
     data() {
         return {
             releases: {
+                "1.0.0": {
+                    name: 'Beta Aleph',
+                    summary: 'Released on 10.20.2020, this is the first feature-complete public release.',
+                    changes: [
+                        'Finalized curation interface',
+                        'Added 273 SVIP-curated entries for selected variants in TP53, CTNNB1, NRAS',
+                        'Lots of bugfixes and other improvements'
+                    ],
+                    significant: true, full: false, changelog: v100_commits
+                },
                 "0.9.0": {
                     name: 'Alpha Zett',
                     summary: 'Released on 01.06.2020, this release includes a lot of small polishes in anticipation of the public release.',
