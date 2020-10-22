@@ -39,7 +39,7 @@
                             <span v-else>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</span>
                         </h3>
                         <div class="text-muted">{{ nbVariantsSVIP }} with SVIP data</div>
-                        <div class="text-muted">{{ nbSvipCurations }} with curation entries</div>
+                        <div class="text-muted">{{ nbSvipCurations }} curation entries</div>
                     </div>
                 </div>
             </div>
