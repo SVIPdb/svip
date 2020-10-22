@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.models import Phenotype, Variant, Gene
+from api.models import Phenotype, Variant, Gene, CurationEntry
 from api.utils import format_variant
 from references.prot_to_hgvs import three_to_one_icase
 
@@ -106,5 +106,6 @@ class QueryView(viewsets.ViewSet):
             'svip_genes': Gene.objects.filter(variant__variantinsvip__isnull=False).distinct().count(),
             'variants': Variant.objects.count(),
             'svip_variants': Variant.objects.filter(variantinsvip__isnull=False).distinct().count(),
-            'phenotypes': Phenotype.objects.count()
+            # 'phenotypes': Phenotype.objects.count(),
+            'svip_curations': CurationEntry.objects.count()
         })
