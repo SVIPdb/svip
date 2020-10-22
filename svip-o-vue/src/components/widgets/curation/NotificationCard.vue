@@ -6,6 +6,7 @@
             :header-bg-variant="cardHeaderBg"
             :header-text-variant="cardTitleVariant"
             :class="cardCustomClass ? customClass : ''"
+            :style="customBgColor && `background-color: ${customBgColor} !important`"
         >
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
@@ -43,6 +44,7 @@
             :header-bg-variant="cardHeaderBg"
             :header-text-variant="cardTitleVariant"
             :class="cardCustomClass ? customClass : ''"
+            :style="customBgColor && `background-color: ${customBgColor} !important`"
         >
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
@@ -305,6 +307,10 @@ export default {
             type: String,
             required: false,
             default: "light"
+        },
+        // Overrides cardHeaderBg
+        customBgColor: {
+            type: String, required: false
         },
         // Override the card title class
         cardTitleVariant: {

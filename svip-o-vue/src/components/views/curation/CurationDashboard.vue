@@ -9,8 +9,8 @@
                 :error="on_request.error"
                 defaultSortBy="days_left"
                 cardHeaderBg="secondary"
+                customBgColor="#1f608f"
                 cardTitleVariant="white"
-                cardCustomClass
                 cardFilterOption
             />
         </div>
