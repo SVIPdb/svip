@@ -19,7 +19,7 @@ const state = {
     nbVariantsSVIP: 0,
     sources: [],
     phenotypes: [],
-    nbPhenotypes: 0,
+    nbSvipCurations: 0,
     associations: [],
     nbGeneVariants: 0,
     loadingStats: false,
@@ -41,7 +41,7 @@ const getters = {
     nbVariants: state => state.nbVariants,
     nbVariantsSVIP: state => state.nbVariantsSVIP,
     phenotypes: state => state.phenotypes,
-    nbPhenotypes: state => state.phenotypes.length,
+    nbSvipCurations: state => state.nbSvipCurations,
     geneVariants: state => state.geneVariants,
     nbGeneVariants: state => state.nbGeneVariants,
     loadingStats: state => state.loadingStats,
@@ -64,7 +64,7 @@ const actions = {
                 nbGenesSVIP: stats.svip_genes,
                 nbVariants: stats.variants,
                 nbVariantsSVIP: stats.svip_variants,
-                nbPhenotypes: stats.phenotypes
+                nbSvipCurations: stats.svip_curations
             });
         }).catch((err) => {
             log.warn(err);
@@ -174,13 +174,13 @@ const mutations = {
         state.loadingStats = params.status;
     },
 
-    SET_SITE_STATS(state, {nbGenes, nbGenesSVIP, nbVariants, nbVariantsSVIP, nbPhenotypes}) {
+    SET_SITE_STATS(state, {nbGenes, nbGenesSVIP, nbVariants, nbVariantsSVIP, nbSvipCurations}) {
         state.loadingStats = false;
         state.nbGenes = nbGenes;
         state.nbGenesSVIP = nbGenesSVIP;
         state.nbVariants = nbVariants;
         state.nbVariantsSVIP = nbVariantsSVIP;
-        state.nbPhenotypes = nbPhenotypes;
+        state.nbSvipCurations = nbSvipCurations;
     },
 
     SET_GENES(state, params) {

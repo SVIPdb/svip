@@ -38,7 +38,8 @@
                             <b-spinner v-if="loadingStats === true" />
                             <span v-else>{{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : ''}}</span>
                         </h3>
-                        <span class="text-muted">{{ nbVariantsSVIP }} with SVIP data</span>
+                        <div class="text-muted">{{ nbVariantsSVIP }} with SVIP data</div>
+                        <div class="text-muted">{{ nbSvipCurations }} with curation entries</div>
                     </div>
                 </div>
             </div>
@@ -86,7 +87,7 @@ export default {
             nbGenesSVIP: "nbGenesSVIP",
             nbVariants: "nbVariants",
             nbVariantsSVIP: "nbVariantsSVIP",
-            nbPhenotypes: "nbPhenotypes"
+            nbSvipCurations: "nbSvipCurations"
         })
     },
     created() {
