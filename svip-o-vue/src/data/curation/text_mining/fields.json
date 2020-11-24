@@ -1,0 +1,46 @@
+[
+    {
+        "key": "expando",
+        "label": ""
+    },
+    {
+        "key": "score",
+        "label": "Score",
+        "sortable": true
+    },
+    {
+        "key": "id",
+        "label": "ID",
+        "sortable": true
+    },
+    {
+        "key": "title_highlight",
+        "label": "Title",
+        "sortable": true
+    },
+    {
+        "key": "authors",
+        "label": "Authors",
+        "sortable": true
+    },
+    {
+        "key": "date",
+        "label": "Date",
+        "sortable": true
+    },
+    {
+        "key": "journal",
+        "label": "Journal",
+        "sortable": true
+    },
+    {
+        "key": "publication_types",
+        "label": "Publication types",
+        "sortable": true
+    },
+    {
+        "key": "action",
+        "label": "Action",
+        "sortable": false
+    }
+]

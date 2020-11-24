@@ -1,0 +1,32 @@
+[
+    {
+        "key": "gene_name",
+        "label": "Gene name",
+        "sortable": true
+    },
+    {
+        "key": "variant",
+        "label": "Variant",
+        "sortable": true
+    },
+    {
+        "key": "hgvs",
+        "label": "HGVS.c",
+        "sortable": false
+    },
+    {
+        "key": "disease",
+        "label": "Disease",
+        "sortable": true
+    },
+    {
+        "key": "curator",
+        "label": "Curator",
+        "sortable": true
+    },
+    {
+        "key": "action",
+        "label": "Action",
+        "sortable": false
+    }
+]

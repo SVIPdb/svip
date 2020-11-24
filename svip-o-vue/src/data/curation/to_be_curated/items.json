@@ -1,0 +1,42 @@
+[
+    {
+        "gene_name": "BRAF",
+        "variant": "G596R",
+        "hgvs": "NM_004333.4:c.1786G>C",
+        "disease": "Colorectal cancer",
+        "curated": "Complete",
+        "deadline": "16.08.2019",
+        "curator": "Curator1",
+        "days_left": 0
+    },
+    {
+        "gene_name": "EGFR",
+        "variant": "L858R",
+        "hgvs": "NM_005228.4:c.2573T>G",
+        "disease": "Lung adenocarcinoma",
+        "curated": "Ongoing",
+        "deadline": "30.08.2019",
+        "curator": "Curator2",
+        "days_left": 14
+    },
+    {
+        "gene_name": "BRAF",
+        "variant": "V600E",
+        "hgvs": "NM_004333.4:c.1799T>A",
+        "disease": "Colorectal cancer",
+        "curated": "Ongoing",
+        "deadline": "05.09.2019",
+        "curator": "Curator1",
+        "days_left": 20
+    },
+    {
+        "gene_name": "EGFR",
+        "variant": "R451C",
+        "hgvs": "NM_001346898.1:c.1351C>T",
+        "disease": "Colorectal cancer",
+        "curated": "Not assigned",
+        "deadline": "10.09.2019",
+        "curator": null,
+        "days_left": 25
+    }
+]

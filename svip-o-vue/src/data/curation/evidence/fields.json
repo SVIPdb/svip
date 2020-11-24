@@ -1,0 +1,47 @@
+[
+    {
+        "key": "status",
+        "label": "Status",
+        "sortable": true
+    },
+    {
+        "key": "references",
+        "label": "Reference",
+        "sortable": true
+    },
+    {
+        "key": "type_of_evidence",
+        "label": "Type of evidence",
+        "sortable": true
+    },
+    {
+        "key": "drug",
+        "label": "Drug",
+        "sortable": true
+    },
+    {
+        "key": "effect",
+        "label": "Effect",
+        "sortable": true
+    },
+    {
+        "key": "tier_level_criteria",
+        "label": "Tier criteria",
+        "sortable": false
+    },
+    {
+        "key": "tier_level",
+        "label": "Tier criteria",
+        "sortable": true
+    },
+    {
+        "key": "owner_name",
+        "label": "Curator",
+        "sortable": true
+    },
+    {
+        "key": "created_on",
+        "label": "Date of curation",
+        "sortable": true
+    }
+]

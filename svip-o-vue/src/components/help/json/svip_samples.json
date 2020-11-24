@@ -1,0 +1,170 @@
+[
+    {
+        "Field": "Disease",
+        "Short description": "Disease name according to ICD-O",
+        "Example": "Lung adenocarcinoma",
+        "Complete description": "Disease name according to International Classification of Disease for Oncology (ICD-O3)",
+        "Reference": null
+    },
+    {
+        "Field": "Sample ID",
+        "Short description": "SVIP sample identifier",
+        "Example": "",
+        "Complete description": "SVIP sample identifier",
+        "Reference": null
+    },
+    {
+        "Field": "Year of birth",
+        "Short description": "Year of birth of the patient",
+        "Example": "1952",
+        "Complete description": "Year of birth of the patient",
+        "Reference": null
+    },
+    {
+        "Field": "Gender",
+        "Short description": "Gender of the patient",
+        "Example": "Female",
+        "Complete description": "Gender of the patient",
+        "Reference": null
+    },
+    {
+        "Field": "Institution",
+        "Short description": "Institution that provided the sample and variant information.",
+        "Example": "HUG",
+        "Complete description": "Institution that provided the sample and variant information.",
+        "Reference": null
+    },
+    {
+        "Field": "Department",
+        "Short description": "Department of the institution.",
+        "Example": "Service de Pathologie",
+        "Complete description": "Department of the institution.",
+        "Reference": null
+    },
+    {
+        "Field": "Contact",
+        "Short description": "Contact in the insitution.",
+        "Example": "",
+        "Complete description": "Contact in the insitution.",
+        "Reference": null
+    },
+    {
+        "Field": "Provider annotation",
+        "Short description": "Interpretation originally given by the data provider.",
+        "Example": "Pathogenic",
+        "Complete description": "Interpretation originally given by the data provider.",
+        "Reference": null
+    },
+    {
+        "Field": "Tumor sample",
+        "Short description": "Tumor sample origin",
+        "Example": "Lung",
+        "Complete description": "Tissue of origin of the tumor sample: lung, blood, eye...",
+        "Reference": null
+    },
+    {
+        "Field": "Tumor purity",
+        "Short description": "Percentage of cancer cells in the sample (solid tumors only)",
+        "Example": "80%",
+        "Complete description": "Percentage of cancer cells in the sample (solid tumors only)",
+        "Reference": null
+    },
+    {
+        "Field": "TNM stage",
+        "Short description": "Classification of the anatomical extent of spread in solid tumor cancer.",
+        "Example": "T1N1M0",
+        "Complete description": "The TNM system classifies the amount and spread of cancer in a patient’s body (solid tumors only). T describes the size of the tumor and any spread of cancer into nearby tissue; N describes spread of cancer to nearby lymph nodes; and M describes metastasis (spread of cancer to other parts of the body).",
+        "Reference": null
+    },
+    {
+        "Field": "Sample type",
+        "Short description": "Morphological type of sample collection",
+        "Example": "Primary tumor",
+        "Complete description": "Morphological type of sample collection: primary tumor, metastasis, NA (for hematology)",
+        "Reference": null
+    },
+    {
+        "Field": "Sample site",
+        "Short description": "Source of the sample",
+        "Example": "Biopsy",
+        "Complete description": "Source of the tumor sample: biopsy, bone marrow, blood, CSF, plasma, serum, PBMC, circulating free DNA...",
+        "Reference": null
+    },
+    {
+        "Field": "Specimen type",
+        "Short description": "Type of the analyzed specimen",
+        "Example": "FFPE",
+        "Complete description": "Type of the analyzed specimen. Sample condition can be: fresh, fresh frozen, FFPE...",
+        "Reference": null
+    },
+    {
+        "Field": "Tumor AF",
+        "Short description": "Tumor allele frequency",
+        "Example": "90%",
+        "Complete description": "Variant allele frequency in the tumor sample",
+        "Reference": null
+    },
+    {
+        "Field": "Sequencing panel",
+        "Short description": "Name and version of the gene panel",
+        "Example": "HotSpot 2.0",
+        "Complete description": "Name and version (if applicable) of the gene panel used for sequencing.",
+        "Reference": null
+    },
+    {
+        "Field": "Platform",
+        "Short description": "Sequencing platform used",
+        "Example": "IonTorrent Proton",
+        "Complete description": "Name of the sequencing platform: Ion Torrent PGM, Ion Torrent Proton, ion Torrent S5, Illumina MiSeq, Illumina NextSeq, Illumina HiSeq2500, Illumina HiSeq 4000...",
+        "Reference": null
+    },
+    {
+        "Field": "Sequencing date",
+        "Short description": "Date of sequencing",
+        "Example": "",
+        "Complete description": "Date of the sequencing",
+        "Reference": null
+    },
+    {
+        "Field": "Coverage",
+        "Short description": "Overall coverage",
+        "Example": "",
+        "Complete description": "Overall coverage",
+        "Reference": null
+    },
+    {
+        "Field": "Calling strategy",
+        "Short description": "(not sure what to put here)",
+        "Example": "",
+        "Complete description": "",
+        "Reference": null
+    },
+    {
+        "Field": "Caller",
+        "Short description": "Calling software name",
+        "Example": "MuTect",
+        "Complete description": "Name of the software used for the calling: MuTect, VarScan2,...",
+        "Reference": null
+    },
+    {
+        "Field": "Aligner",
+        "Short description": "Aligning software name",
+        "Example": "Bowtie2",
+        "Complete description": "Name of the software used for the alignment: STAR, Bowtie2, Bwa mem...",
+        "Reference": null
+    },
+    {
+        "Field": "Software",
+        "Short description": "Data analysis software",
+        "Example": "MiSeq Reporter",
+        "Complete description": "Name of the software used for the original data analysis: Ion Reporter, TorrentSuite, MiSeq Reporter, BaseSpace, GenSearch NGS, in house...",
+        "Reference": null
+    },
+    {
+        "Field": "Software version",
+        "Short description": "Version of the analysis software",
+        "Example": "2",
+        "Complete description": "Version of the software used of the original data analysis.",
+        "Reference": null
+    }
+]

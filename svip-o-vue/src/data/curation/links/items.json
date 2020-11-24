@@ -1,0 +1,22 @@
+[
+    {
+        "source": "Uniprot",
+        "link": "http://www.uniprot.org"
+    },
+    {
+        "source": "MCG Biomarkers",
+        "link": "https://www.cancergenomeinterpreter.org/biomarkers"
+    },
+    {
+        "source": "Varsome",
+        "link": "https://varsome.org"
+    },
+    {
+        "source": "DoCM",
+        "link": "http://www.docm.info"
+    },
+    {
+        "source": "Mycancergenome",
+        "link": "http://www.mycancergenome.org"
+    }
+]
