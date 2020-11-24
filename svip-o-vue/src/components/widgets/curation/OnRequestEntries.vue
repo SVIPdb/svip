@@ -120,6 +120,8 @@ export default {
                             })), (x) => x.id)
                         };
                     });
+
+                    this.$emit('itemsloaded', this.items);
                 })
                 .catch((err) => {
                     this.loading = false;

@@ -1,52 +1,33 @@
 <template>
     <div class="container-fluid">
-        <div v-if="checkInRole('reviewers')">
+        <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
             <NotificationCard v-if="REVIEW_ENABLED"
-                :items="on_request.items"
-                :fields="on_request.fields"
+                :items="on_request.items" :fields="review.fields" :loading="review.loading"
+                :isReviewer="true"
+                title="REVIEWS"
                 :error="on_request.error"
                 defaultSortBy="days_left"
-                title="ON REQUEST"
                 cardHeaderBg="secondary"
+                customBgColor="#1f608f"
                 cardTitleVariant="white"
-                cardCustomClass
                 cardFilterOption
             />
-            <!-- TO BE CURATED - CARD -->
-            <NotificationCard v-if="REVIEW_ENABLED"
-                :items="to_be_curated"
-                :fields="fields_to_be_curated"
-                defaultSortBy="days_left"
-                title="TO BE CURATED"
-                cardFilterOption
-            />
-            <!-- UNDER REVISION - CARD -->
-            <NotificationCard v-if="REVIEW_ENABLED"
-                :items="to_be_discussed"
-                :fields="fields_to_be_discussed"
-                defaultSortBy="days_left"
-                title="TO BE DISCUSSED"
-            />
-            <!-- NON SVIP VARIANTS - CARD -->
-            <!--
-            <NotificationCard
-                :items="nonsvip_variants"
-                :fields="fields_nonsvip_variants"
-                title="NON SVIP VARIANTS"
-            />
-            -->
         </div>
 
-        <div v-else-if="checkInRole('curators')">
+        <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
+        <div v-if="checkInRole('curators')">
             <!-- TBC: request queue -->
             <OnRequestEntries
+                :isCurator="checkInRole('curators')"
+                :isReviewer="checkInRole('reviewers')"
                 defaultSortBy="days_left"
                 title="ON REQUEST"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
                 cardCustomClass
                 cardFilterOption
+                @itemsloaded="onRequestItemsLoaded"
             />
 
             <EvidenceCard has-header include-gene-var
@@ -69,6 +50,10 @@
 import NotificationCard from "@/components/widgets/curation/NotificationCard";
 import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
+// Manual import of fake data (FIXME: API)
+import fields_on_request from "@/data/curation/on_request/fields.js";
+// Manual import of fake data (FIXME: API)
+import fields_review from "@/data/review/fields.js";
 
 import to_be_curated from "@/data/curation/to_be_curated/items.json";
 import fields_to_be_curated from "@/data/curation/to_be_curated/fields.json";
@@ -89,7 +74,22 @@ export default {
     },
     data() {
         return {
-            REVIEW_ENABLED: false, // temporary flag to hide review-related bits of the UI until they're ready
+            // Ivo - orignial : REVIEW_ENABLED: false,
+            REVIEW_ENABLED: true, // temporary flag to hide review-related bits of the UI until they're ready
+
+            // ON REQUEST
+            on_request: {
+                loading: false,
+                fields: fields_on_request,
+                items: []
+            },
+
+            // REVIEW FAKE DATA
+            review: {
+                loading: false,
+                fields: fields_review,
+                items: []
+            },
 
             // TO BE CURATED FAKE DATA
             to_be_curated, // data
@@ -105,7 +105,11 @@ export default {
         };
     },
     methods: {
-        checkInRole
+        checkInRole,
+        onRequestItemsLoaded(items) {
+            this.on_request.items = items;
+            this.on_request.loading = false;
+        }
     }
 };
 </script>
