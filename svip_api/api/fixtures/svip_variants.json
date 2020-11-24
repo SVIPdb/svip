@@ -1,0 +1,129 @@
+[
+  {
+    "gene_name": "BRAF",
+    "variant_name": "V600E",
+    "HGVScoding": "NM_004333.4:c.1799T>A",
+    "HGVSprotein": "NP_004324.2:p.Val600Glu",
+    "position": "GrCh37:chr7:140453136",
+    "dbSNP": "rs113488022",
+    "diseases": [
+      {
+        "name": "Malignant melanoma of skin",
+        "SVIP_status": "Curated",
+        "score": 3
+      },
+      {
+        "name": "Neoplasm of thyroid gland",
+        "SVIP_status": "Reviewed",
+        "score": 4
+      }
+    ]
+  },
+  {
+    "gene_name": "BRAF",
+    "variant_name": "G596R",
+    "HGVScoding": "NM_004333.4:c.1786G>C",
+    "HGVSprotein": "NP_004324.2:p.Gly596Arg",
+    "position": "GrCh37:chr7:140453149",
+    "dbSNP": "rs121913361",
+    "diseases": [
+      {
+        "name": "Adenocarcinoma of colorectum",
+        "SVIP_status": "Curated",
+        "score": 2
+      }
+    ]
+  },
+  {
+    "gene_name": "BRAF",
+    "variant_name": "K601E",
+    "HGVScoding": "NM_004333.4:c.1801A>G",
+    "HGVSprotein": "NP_004324.2:p.Lys601Glu",
+    "position": "GrCh37:chr7:140453134",
+    "dbSNP": "rs121913364",
+    "diseases": [
+      {
+        "name": "Malignant melanoma of skin",
+        "SVIP_status": "Curated",
+        "score": 2
+      }
+    ]
+  },
+
+  {
+    "gene_name": "EGFR",
+    "variant_name": "L858R",
+    "HGVScoding": "NM_005228.4:c.2573T>G",
+    "HGVSprotein": "NP_005219.2:p.Leu858Arg",
+    "position": "GrCh37:chr7:55259515",
+    "dbSNP": "rs121434568",
+    "diseases": [
+      {
+        "name": "Non-small cell lung cancer",
+        "SVIP_status": "Curated",
+        "score": 3
+      },
+      {
+        "name": "Adenocarcinoma of lung",
+        "SVIP_status": "Reviewed",
+        "score": 4
+      }
+    ]
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "S768I",
+    "HGVScoding": "NM_005228.4:c.2303G>T",
+    "HGVSprotein": "NP_005219.2:p.Ser768Ile",
+    "position": "GrCh37:chr7:55249005",
+    "dbSNP": "rs121913465",
+    "diseases": [
+      {
+        "name": "Non-small cell lung cancer",
+        "SVIP_status": "Curated",
+        "score": 2
+      },
+      {
+        "name": "Adenocarcinoma of lung",
+        "SVIP_status": "Reviewed",
+        "score": 3
+      }
+    ]
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "T790M",
+    "HGVScoding": "NM_005228.4:c.2369C>T",
+    "HGVSprotein": "NP_005219.2:p.Thr790Met",
+    "position": "GrCh37:chr7:55249071",
+    "dbSNP": "rs121434569",
+    "diseases": [
+      {
+        "name": "Non-small cell lung cancer",
+        "SVIP_status": "Curated",
+        "score": 3
+      },
+      {
+        "name": "Adenocarcinoma of lung",
+        "SVIP_status": "Curated",
+        "score": 3
+      }
+    ]
+  },
+
+  {
+    "gene_name": "ALK",
+    "variant_name": "G740R",
+    "HGVScoding": "NM_004304.4:c.2218G>A",
+    "HGVSprotein": "NP_004295.2:p.Gly740Arg",
+    "position": "GRCh37:chr2:29462683",
+    "dbSNP": "rs766541301",
+    "diseases": [
+      {
+        "name": "Adenocarcinoma of prostate",
+        "SVIP_status": "Curated",
+        "score": 3
+      }
+    ]
+  }
+]

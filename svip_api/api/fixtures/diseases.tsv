@@ -1,0 +1,56 @@
+localization	abbreviation	name	topo_code	morpho_code	snomed_code	snomed_name	details
+LUNG	NSCLC	Non-small cell lung cancer	C34.9	8046/3	254637007	Non-small cell lung cancer (disorder)	non-small cell carcinoma
+LUNG	LSCC	Squamous cell carcinoma of lung	C34.9	8070/3	254634000	Squamous cell carcinoma of lung (disorder)	squamous cell carcinoma
+LUNG		Adenocarcinoma of lung	C34.9	8140/3	254626006	Adenocarcinoma of lung (disorder)	adenocarcinoma
+LUNG	LCC	Large cell carcinoma of lung	C34.9	8012/3	254629004	Large cell carcinoma of lung (disorder)	large cell carcinoma
+LUNG	SCLC	Small cell carcinoma of lung	C34.9	8041/3	254632001	Small cell carcinoma of lung (disorder)	small cell carcinoma
+SKIN		Malignant melanoma of skin	C44.9	8720/3	93655004	Malignant melanoma of skin (disorder)	skin melanoma
+SKIN		Superficial spreading malignant melanoma of skin	C44.9	8743/3	254730000	Superficial spreading malignant melanoma of skin (disorder)	superficial spreading melanoma
+SKIN		Nodular malignant melanoma of skin	C44.9	8721/3	254731001	Nodular malignant melanoma of skin (disorder)	nodular melanoma
+SKIN		Acral lentiginous malignant melanoma of skin	C44.9	8744/3	254732008	Acral lentiginous malignant melanoma of skin (disorder)	acral-lentiginous melanoma
+SKIN		Lentigo maligna melanoma	C44.9	8742/3	302837001	Lentigo maligna melanoma (disorder)	lentigo maligna melanoma
+BREAST		Carcinoma of breast	C50.9	8010/3	254838004	Carcinoma of breast (disorder)	carcinoma
+BREAST		Infiltrating duct carcinoma of breast	C50.9	8230/2	408643008	Infiltrating duct carcinoma of breast (disorder)	invasive ductal carcinoma in situ
+BREAST		Lobular carcinoma of breast	C50.9	8520/3	278054005	Lobular carcinoma of breast (disorder)	lobular carcinoma
+COLORECTUM		Adenocarcinoma of colorectum	"C18.9, C19.9, C20.9"	8140/3	781382000	Malignant neoplasm of colon and/or rectum (disorder)	colorectal adenocarcinoma
+COLON		Adenocarcinoma of colorectum	C18.9	8140/3	1701000119104	Primary adenocarcinoma of colon (disorder)	adenocarcinoma of colon
+RECTO SIGMOID JUNCTION		Adenocarcinoma of colorectum	C19.9	8140/3	425178004	Adenocarcinoma of rectosigmoid junction (disorder)	adenocarcinoma of the recto sigmoid junction
+RECTUM		Adenocarcinoma of colorectum	C20.9	8140/3	254582000	Adenocarcinoma of rectum (disorder)	adenocarcinoma of rectum
+KIDNEY	KTCC	Transitional cell carcinoma of kidney	C64.9	8120/3	408642003	Transitional cell carcinoma of kidney (disorder)	transitional cell carcinoma
+KIDNEY	RCC	Renal cell carcinoma	C64.9	8312/3	702391001	Renal cell carcinoma (disorder)	renal cell carcinoma
+KIDNEY		Nephroblastoma	C64.9	8960/3	302849000	Nephroblastoma (disorder)	Wilms tumor
+PROSTATE		Adenocarcinoma of prostate	C61.9	8140/3	399490008	Adenocarcinoma of prostate (disorder)	adenocarcinoma
+PROSTATE		Leiomyosarcoma of prostate	C61.9	8890/3	443719001	Leiomyosarcoma (disorder)	leiomyosarcoma
+PROSTATE		Primary rhabdomyosarcoma of male genital organ	C61.9	8900/3	721574009	Primary rhabdomyosarcoma of male genital organ (disorder)	rhabdomyosarcoma
+PROSTATE		Prostatic intraepithelial neoplasia	C61.9	8148/_	254901000	Prostatic intraepithelial neoplasia (disorder)	prostatic intraepithelial neoplasia
+LYMPHOMA	NHL	Non-Hodgkin's lymphoma	C77.9	9591/3	118601006	Non-Hodgkin's lymphoma (disorder)	non Hodgkin's lymphoma
+LYMPHOMA	HL	Hodgkin's lymphoma	C77.9	9650/3	118599009	Hodgkin's disease (disorder)	Hodgkin lymphoma
+LEUKEMIA	AML	"Acute myeloid leukemia, disease"	C42._	9861/3	91861009	"Acute myeloid leukemia, disease (disorder)"	acute myeloid leukemia
+LEUKEMIA	ALL	"Acute lymphoid leukemia, disease"	C42._	9835/3	91857003	"Acute lymphoid leukemia, disease (disorder)"	acute lymphoid leukemia
+LEUKEMIA	CML	"Chronic myeloid leukemia, disease"	C42._	9863/3	92818009	"Chronic myeloid leukemia, disease (disorder)"	chronic myeloid leukemia
+LEUKEMIA	CLL	"Chronic lymphoid leukemia, disease"	C42._	9823/3	92814006	"Chronic lymphoid leukemia, disease (disorder)"	chronic lymphoid leukemia
+BLADDER	BTCC	Transitional cell carcinoma of bladder	C67.9	8120/3	255109008	Transitional cell carcinoma of bladder (disorder)	transitional cell carcinoma
+BLADDER	BSCC	Squamous cell carcinoma of bladder	C67.9	8070/3	255111004	Squamous cell carcinoma of bladder (disorder)	squamous cell carcinoma
+BLADDER		Adenocarcinoma of bladder	C67.9	8140/3	255110003	Adenocarcinoma of bladder (disorder)	adenocarcinoma
+BLADDER		Carcinosarcoma of bladder	C67.9	8980/3			carcinosarcoma
+STOMACH	GIST	Gastrointestinal stromal tumor	C16.9	8936/3	420120006	Gastrointestinal stromal tumor (disorder)	gastrointestinal stromal tumor 
+STOMACH		Adenocarcinoma of stomach	C16.9	8140/3	408647009	Adenocarcinoma of stomach (disorder)	adenocarcinoma
+SMALL INTESTINE	GIST	Gastrointestinal stromal tumor	C17.9	8936/3	420120006	Gastrointestinal stromal tumor (disorder)	gastrointestinal stromal tumor 
+SMALL INTESTINE		Adenocarcinoma of small intestine	C17.9	8140/3	424440001	Adenocarcinoma of small intestine (disorder)	adenocarcinoma
+ESOPHAGUS		Adenocarcinoma of esophagus	C15.9	8140/3	276803003	Adenocarcinoma of esophagus (disorder)	adenocarcinoma
+ESOPHAGUS	ESCC	Squamous cell carcinoma of esophagus	C15.9	8070/3	276804009	Squamous cell carcinoma of esophagus (disorder)	squamous cell carcinoma
+PITUITARY		Pituitary carcinoma	C75.1	8272/3	254955001	Pituitary carcinoma (disorder)	carcinoma
+THYROID		Neoplasm of thyroid gland	C73.9	8260/3	127018007	Neoplasm of thyroid gland (disorder)	papillary adenocarcinoma
+ENDOMETRIUM		Neoplasm of endometrium	C54.1	8000/1	123844007	Neoplasm of endometrium (disorder)	adenocarcinoma
+CERVIX	SIL	Squamous cell carcinoma in situ of uterine cervix	C53.9	8077/_	406103009	Squamous cell carcinoma in situ of uterine cervix (disorder)	squamous intraepithelial lesion
+PLACENTA		Choriocarcinoma of placenta	C58.9	9100/3	448401007	Choriocarcinoma of placenta (disorder)	choriocarcinoma
+OVARY		Neoplasm of ovary	C56.9	8000/1	123843001	Neoplasm of ovary (disorder)	adenocarcinoma
+PANCREAS		Adenocarcinoma of pancreas	C25.9	8140/3	700423003	Adenocarcinoma of pancreas (disorder)	pancreatic adenocarcinoma
+LIVER		Neoplasm of liver	C22.0	8000/1	126851005	Neoplasm of liver (disorder)	hepatoma
+TESTIS		Seminoma of testis	C62.9	9061/3	255107005	Seminoma of testis (disorder)	seminoma (germinal)
+TESTIS		Non-seminomatous germ cell neoplasm of testis	C62.9	9065/3	107691000119101	Non-seminomatous germ cell neoplasm of testis (disorder)	non-seminoma (germinal)
+BRAIN		Neoplasm of brain	C71.9	8000/1	126952004	Neoplasm of brain (disorder)	adenocarcinoma
+HEAD AND NECK	HNSCC	Head and neck squamous cell carcinoma		8070/3	255055008	Neoplasm of head AND/OR neck (disorder)	squamous cell carcinoma
+"LIP, TONGUE, GUM"		Head and neck squamous cell carcinoma	"C01, C02, C03, C04, C05, C06, C07, C08, C09"	8070/3	255055008	Neoplasm of head AND/OR neck (disorder)	squamous cell carcinoma
+PHARYNX		Head and neck squamous cell carcinoma	"C10, C11, C12, C13, C14"	8070/3	255055008	Neoplasm of head AND/OR neck (disorder)	squamous cell carcinoma
+"NASAL, SINUS, LARYNX"		Head and neck squamous cell carcinoma	"C30, C31, C32"	8070/3	255055008	Neoplasm of head AND/OR neck (disorder)	squamous cell carcinoma

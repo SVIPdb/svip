@@ -1,0 +1,18 @@
+{
+  "settings": {
+    "clear_curation": false,
+    "delete_users": true
+  },
+  "users": [
+    {
+      "first_name":  "Livia", "last_name":  "Famiglietti",
+      "username": "livia_famiglietti",
+      "password": "xxyyzz"
+    },
+    {
+      "first_name":  "Anne", "last_name":  "Estreicher",
+      "username": "anne_estreicher",
+      "password": "xxyyzz"
+    }
+  ]
+}

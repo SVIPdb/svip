@@ -1,0 +1,362 @@
+[
+  {
+    "gene_name": "APC",
+    "variant_name": "R876*",
+    "HGVScoding": "ENST00000457016:c.2626C>T",
+    "HGVSprotein": "p.R876*",
+    "position": "GrCh37:chr5:112173917",
+    "diseases": []
+  },
+  {
+    "gene_name": "BRAF",
+    "variant_name": "V600E",
+    "HGVScoding": "ENST00000288602:c.1799T>A",
+    "HGVSprotein": "p.V600E",
+    "position": "GrCh37:chr7:140453136",
+    "diseases": []
+  },
+  {
+    "gene_name": "BRAF",
+    "variant_name": "V600E",
+    "HGVScoding": "ENST00000288602:c.1799_1800TG>AA",
+    "HGVSprotein": "p.V600E",
+    "position": "GrCh37:chr7:140453135",
+    "diseases": []
+  },
+  {
+    "gene_name": "CDKN2A",
+    "variant_name": "R80*",
+    "HGVScoding": "ENST00000304494:c.237_238CC>TT",
+    "HGVSprotein": "p.R80*",
+    "position": "GrCh37:chr9:21971120",
+    "diseases": []
+  },
+  {
+    "gene_name": "CDKN2A",
+    "variant_name": "R80*",
+    "HGVScoding": "ENST00000304494:c.238C>T",
+    "HGVSprotein": "p.R80*",
+    "position": "GrCh37:chr9:21971120",
+    "diseases": []
+  },
+  {
+    "gene_name": "CTNNB1",
+    "variant_name": "S45F",
+    "HGVScoding": "ENST00000349496:c.134C>T",
+    "HGVSprotein": "p.S45F",
+    "position": "GrCh37:chr3:41266137",
+    "diseases": []
+  },
+  {
+    "gene_name": "CTNNB1",
+    "variant_name": "T41A",
+    "HGVScoding": "ENST00000349496:c.121A>G",
+    "HGVSprotein": "p.T41A",
+    "position": "GrCh37:chr3:41266124",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "A289V",
+    "HGVScoding": "ENST00000275493:c.866C>T",
+    "HGVSprotein": "p.A289V",
+    "position": "GrCh37:chr7:55221822",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "E746_A750del",
+    "HGVScoding": "ENST00000275493:c.2232_2249>AAA",
+    "HGVSprotein": "p.E746_A750del",
+    "position": "GrCh37:chr7:55242462",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "L858R",
+    "HGVScoding": "ENST00000275493:c.2572_2573CT>AG",
+    "HGVSprotein": "p.L858R",
+    "position": "GrCh37:chr7:55259514",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "L858R",
+    "HGVScoding": "ENST00000275493:c.2573T>G",
+    "HGVSprotein": "p.L858R",
+    "position": "GrCh37:chr7:55259515",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "L858R",
+    "HGVScoding": "ENST00000275493:c.2573_2574TG>GA",
+    "HGVSprotein": "p.L858R",
+    "position": "GrCh37:chr7:55259515",
+    "diseases": []
+  },
+  {
+    "gene_name": "EGFR",
+    "variant_name": "L858R",
+    "HGVScoding": "ENST00000275493:c.2573_2574TG>GT",
+    "HGVSprotein": "p.L858R",
+    "position": "GrCh37:chr7:55259515",
+    "diseases": []
+  },
+  {
+    "gene_name": "IDH1",
+    "variant_name": "R132C",
+    "HGVScoding": "ENST00000345146:c.394C>T",
+    "HGVSprotein": "p.R132C",
+    "position": "GrCh37:chr2:209113113",
+    "diseases": []
+  },
+  {
+    "gene_name": "IDH1",
+    "variant_name": "R132H",
+    "HGVScoding": "ENST00000345146:c.395G>A",
+    "HGVSprotein": "p.R132H",
+    "position": "GrCh37:chr2:209113112",
+    "diseases": []
+  },
+  {
+    "gene_name": "IDH1",
+    "variant_name": "R132H",
+    "HGVScoding": "ENST00000345146:c.395_396GT>AC",
+    "HGVSprotein": "p.R132H",
+    "position": "GrCh37:chr2:209113111",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12C",
+    "HGVScoding": "ENST00000311936:c.33_34TG>CT",
+    "HGVSprotein": "p.G12C",
+    "position": "GrCh37:chr12:25398285",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12C",
+    "HGVScoding": "ENST00000311936:c.34G>T",
+    "HGVSprotein": "p.G12C",
+    "position": "GrCh37:chr12:25398285",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12C",
+    "HGVScoding": "ENST00000311936:c.34_36GGT>TGC",
+    "HGVSprotein": "p.G12C",
+    "position": "GrCh37:chr12:25398283",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12D",
+    "HGVScoding": "ENST00000311936:c.35G>A",
+    "HGVSprotein": "p.G12D",
+    "position": "GrCh37:chr12:25398284",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12D",
+    "HGVScoding": "ENST00000311936:c.35_36GT>AC",
+    "HGVSprotein": "p.G12D",
+    "position": "GrCh37:chr12:25398283",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12V",
+    "HGVScoding": "ENST00000311936:c.34_35GG>GT",
+    "HGVSprotein": "p.G12V",
+    "position": "GrCh37:chr12:25398284",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12V",
+    "HGVScoding": "ENST00000311936:c.35G>T",
+    "HGVSprotein": "p.G12V",
+    "position": "GrCh37:chr12:25398284",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12V",
+    "HGVScoding": "ENST00000311936:c.35_36GT>TC",
+    "HGVSprotein": "p.G12V",
+    "position": "GrCh37:chr12:25398283",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G12V",
+    "HGVScoding": "ENST00000311936:c.35_36GT>TG",
+    "HGVSprotein": "p.G12V",
+    "position": "GrCh37:chr12:25398283",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G13D",
+    "HGVScoding": "ENST00000311936:c.38G>A",
+    "HGVSprotein": "p.G13D",
+    "position": "GrCh37:chr12:25398281",
+    "diseases": []
+  },
+  {
+    "gene_name": "KRAS",
+    "variant_name": "G13D",
+    "HGVScoding": "ENST00000311936:c.38_39GC>AT",
+    "HGVSprotein": "p.G13D",
+    "position": "GrCh37:chr12:25398280",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61K",
+    "HGVScoding": "ENST00000369535:c.180_181AC>TA",
+    "HGVSprotein": "p.Q61K",
+    "position": "GrCh37:chr1:115256530",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61K",
+    "HGVScoding": "ENST00000369535:c.181C>A",
+    "HGVSprotein": "p.Q61K",
+    "position": "GrCh37:chr1:115256530",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61K",
+    "HGVScoding": "ENST00000369535:c.181_183CAA>AAG",
+    "HGVSprotein": "p.Q61K",
+    "position": "GrCh37:chr1:115256528",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61R",
+    "HGVScoding": "ENST00000369535:c.181_182CA>AG",
+    "HGVSprotein": "p.Q61R",
+    "position": "GrCh37:chr1:115256529",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61R",
+    "HGVScoding": "ENST00000369535:c.182A>G",
+    "HGVSprotein": "p.Q61R",
+    "position": "GrCh37:chr1:115256529",
+    "diseases": []
+  },
+  {
+    "gene_name": "NRAS",
+    "variant_name": "Q61R",
+    "HGVScoding": "ENST00000369535:c.182_183AA>GG",
+    "HGVSprotein": "p.Q61R",
+    "position": "GrCh37:chr1:115256528",
+    "diseases": []
+  },
+  {
+    "gene_name": "PIK3CA",
+    "variant_name": "E542K",
+    "HGVScoding": "NM_006218.1:c.1624G>A",
+    "HGVSprotein": "p.E542K",
+    "position": "GrCh37:chr3:178936082",
+    "diseases": []
+  },
+  {
+    "gene_name": "PIK3CA",
+    "variant_name": "E545K",
+    "HGVScoding": "NM_006218.1:c.1633G>A",
+    "HGVSprotein": "p.E545K",
+    "position": "GrCh37:chr3:178936091",
+    "diseases": []
+  },
+  {
+    "gene_name": "PIK3CA",
+    "variant_name": "H1047R",
+    "HGVScoding": "NM_006218.1:c.3140A>G",
+    "HGVSprotein": "p.H1047R",
+    "position": "GrCh37:chr3:178952085",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "G245S",
+    "HGVScoding": "ENST00000269305:c.733G>A",
+    "HGVSprotein": "p.G245S",
+    "position": "GrCh37:chr17:7577548",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R175H",
+    "HGVScoding": "ENST00000269305:c.524G>A",
+    "HGVSprotein": "p.R175H",
+    "position": "GrCh37:chr17:7578406",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R213*",
+    "HGVScoding": "ENST00000269305:c.637C>T",
+    "HGVSprotein": "p.R213*",
+    "position": "GrCh37:chr17:7578212",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R248Q",
+    "HGVScoding": "ENST00000269305:c.743G>A",
+    "HGVSprotein": "p.R248Q",
+    "position": "GrCh37:chr17:7577538",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R248Q",
+    "HGVScoding": "ENST00000269305:c.743_744GG>AA",
+    "HGVSprotein": "p.R248Q",
+    "position": "GrCh37:chr17:7577537",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R248W",
+    "HGVScoding": "ENST00000269305:c.741_742CC>TT",
+    "HGVSprotein": "p.R248W",
+    "position": "GrCh37:chr17:7577539",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R248W",
+    "HGVScoding": "ENST00000269305:c.742C>T",
+    "HGVSprotein": "p.R248W",
+    "position": "GrCh37:chr17:7577539",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R273C",
+    "HGVScoding": "ENST00000269305:c.817C>T",
+    "HGVSprotein": "p.R273C",
+    "position": "GrCh37:chr17:7577121",
+    "diseases": []
+  },
+  {
+    "gene_name": "TP53",
+    "variant_name": "R273H",
+    "HGVScoding": "ENST00000269305:c.818G>A",
+    "HGVSprotein": "p.R273H",
+    "position": "GrCh37:chr17:7577120",
+    "diseases": []
+  }
+]

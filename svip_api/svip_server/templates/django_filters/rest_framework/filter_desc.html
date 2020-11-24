@@ -1,0 +1,7 @@
+{% load i18n %}
+<h2>{% trans "Field filters" %}</h2>
+<div>
+  {% for field, type in filter_desc %}
+    <div><b>{{ field }}:</b> {{ type }}</div>
+  {% endfor %}
+</div>
