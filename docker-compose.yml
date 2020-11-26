@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 volumes:
   svip_pgdata:
@@ -6,24 +6,25 @@ volumes:
   seqrepo:
   web_built:
   api_static:
-    
+
 services:
   nginx:
     build:
       context: ./service_config/nginx
       dockerfile: Dockerfile
     volumes:
-      - '${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro'
-      - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro'
-      - 'web_built:/usr/share/nginx/html:ro'
-      - 'api_static:/usr/share/api_static:ro'
+      - "${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro"
+      - "${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro"
+      - "web_built:/usr/share/nginx/html:ro"
+      - "api_static:/usr/share/api_static:ro"
     depends_on:
       - api
       - frontend
 
   db:
     image: "postgres:11.1"
-    shm_size: '2gb'
+    hostname: db
+    shm_size: "2gb"
     restart: always
     command: -c 'max_wal_size=2GB'
     ports:
@@ -54,6 +55,7 @@ services:
       - redis
     environment:
       - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
@@ -71,17 +73,17 @@ services:
       - web_built:/web
       - ./svip-o-vue:/app:delegated
       # allows the module's git repo to be accessed in the container, which
-      # lets GitRevisionPlugin tag each build with its commit hash, branch, etc. 
+      # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
       - .git/modules/svip-o-vue:/.git/modules/svip-o-vue:delegated,ro
     # # starts react in hot-reload mode
     # # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
     # command: sh -c "npm run serve"
     command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
-    restart: 'no'
+    restart: "no"
     ports:
-      - '3000:8080'
+      - "3000:8080"
     environment:
-      - 'VUE_APP_API_URL=http://localhost:8085/api/v1/'
+      - "VUE_APP_API_URL=http://localhost:8085/api/v1/"
     depends_on:
       - api
 
