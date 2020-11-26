@@ -17,11 +17,11 @@ labels: Bug, API
 
 <!-- If possible, please provide the URL of the page here that exhibits the problematic behavior -->
 
-### What is the current *bug* behavior?
+### Current *bug* behavior
 
 <!-- What actually happens -->
 
-### What is the expected *correct* behavior?
+### Expected *correct* behavior
 
 <!-- What you should see instead -->
 
