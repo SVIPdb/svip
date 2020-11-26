@@ -4,6 +4,7 @@
 .venv
 __pycache__
 /.ipynb_checkpoints
+.vscode
 /svip_db_backups/**/*.dump
 /svip_db_backups/**/*.sql
 
@@ -12,4 +13,5 @@ __pycache__
 /docs
 /resources
 /scratch
+
 
