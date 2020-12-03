@@ -33,7 +33,7 @@ the default database dumps.
 To clone the project and its submodules, you can run the following:
 
 ```
-git clone git@github.com:SVIPdb/coordinator.git svip && \
+git clone git@github.com:SVIPdb/coordinator.git svip
 ```
 
 To initially start the database server, API, and frontend:
