@@ -7,11 +7,14 @@ __pycache__
 .vscode
 /svip_db_backups/**/*.dump
 /svip_db_backups/**/*.sql
+TODO.md
+*.swp
 
 # stuff we don't want to commit quite yet
 /sensitive
 /docs
 /resources
 /scratch
+
 
 
