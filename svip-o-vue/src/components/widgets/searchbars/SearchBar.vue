@@ -200,7 +200,10 @@ export default {
             return HTTP.get("query", {
                 params: {q: search, in_svip: vm.showOnlySVIP, variants_only: vm.variantsOnly ? 'true' : 'false'}
             }).then(res => {
-                vm.raw_options = res.data;
+                // only take the response if it matches the query (timeing problem especially through proxy)
+                if (res.config.params.q === vm.query) {
+                    vm.raw_options = res.data;
+                }
                 loading(false);
             }).catch((err) => {
                 vm.$snotify.error("An error occurred while searching");
