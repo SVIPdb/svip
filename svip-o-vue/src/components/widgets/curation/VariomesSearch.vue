@@ -276,11 +276,13 @@ export default {
         pub_diseases() {
             const disease_map = this.combinedPubs.reduce((diseases, pub) => {
                 // record each disease and the number of publications that feature it
-                const disease_names = pub.details.facet_details.diseases.map(x => x.preferred_term);
-                disease_names.forEach(x => {
-                    if (diseases[x] !== undefined) { diseases[x] += 1; }
-                    else { diseases[x] = 1; }
-                });
+                if (pub.details.facet_details.diseases) {
+                    const disease_names = pub.details.facet_details.diseases.map(x => x.preferred_term);
+                    disease_names.forEach(x => {
+                        if (diseases[x] !== undefined) { diseases[x] += 1; }
+                        else { diseases[x] = 1; }
+                    });
+                }
                 return diseases;
             }, {});
 
