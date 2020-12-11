@@ -9,6 +9,7 @@ volumes:
 
 services:
   nginx:
+    container_name: svip_nginx
     build:
       context: ./service_config/nginx
       dockerfile: Dockerfile
@@ -22,6 +23,7 @@ services:
       - frontend
 
   db:
+    container_name: svip_db
     image: "postgres:11.1"
     hostname: db
     shm_size: "2gb"
@@ -42,6 +44,7 @@ services:
       - PGDB=${POSTGRES_DB}
 
   api:
+    container_name: svip_api
     # image: "svip_api:latest"
     build: ./svip_api
     # restart: always
@@ -66,6 +69,7 @@ services:
       - USE_DEV_SERVER=true
 
   frontend:
+    container_name: svip_frontend
     build:
       context: ./svip-o-vue
       dockerfile: Dockerfile
@@ -88,4 +92,5 @@ services:
       - api
 
   redis:
+    container_name: svip_redis
     image: "redis:alpine"
