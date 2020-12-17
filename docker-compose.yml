@@ -76,12 +76,9 @@ services:
     volumes:
       - web_built:/web
       - ./svip-o-vue:/app:delegated
-      # allows the module's git repo to be accessed in the container, which
+      # allows the root git repo to be accessed in the container, which
       # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
-      - .git/modules/svip-o-vue:/.git/modules/svip-o-vue:delegated,ro
-    # # starts react in hot-reload mode
-    # # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
-    # command: sh -c "npm run serve"
+      - .git:/app/.git:delegated,ro
     command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
     restart: "no"
     ports:
