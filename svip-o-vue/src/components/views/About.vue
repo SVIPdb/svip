@@ -8,6 +8,7 @@
                 <b-nav-item @click="scrollIntoView" href="#team">Team</b-nav-item>
                 <b-nav-item @click="scrollIntoView" href="#contact">Contact</b-nav-item>
                 <b-nav-item @click="scrollIntoView" href="#events">Events</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#disclaimer">Disclaimer &amp; License</b-nav-item>
                 <b-nav-item @click="scrollIntoView" href="#references">References</b-nav-item>
             </b-nav>
         </div>
@@ -401,6 +402,49 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Disclaimer and License newly added -->
+                <section id="disclaimer" class="content-section-light">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h1>Disclaimer &amp; License</h1>
+                                <p class="lead">
+                                The Swiss Variant Interpretation Platform for Oncology (SVIP-O) accessible at <a href="https://www.svip.ch">www.svip.ch</a> has
+                                been developed as part of the national Swiss Personalized Health Network (SPHN) initiative by
+                                the Clinical Bioinformatics Group of the SIB Swiss Institute of Bioinformatics ("SIB"), the
+                                ETH of Zurich ("ETHZ") and the University of Applied Sciences Western Switzerland ("HES-SO")
+                                (together "We").
+                                </p>
+                                <h3>Disclaimer</h3>
+                                <div class="text-justify">
+                                    <p>We make no warranties or representations, express or implied, with respect to any of the
+                                    content on the SVIP-O, including as to the present accuracy, completeness, timeliness, adequacy,
+                                    or usefulness of any of the SVIP-O. We bear no responsibility for the consequences of any temporary
+                                    or permanent discontinuity of the SVIP-O website. <br>
+                                    All information on the annotated somatic variants available on SVIP-O is not intended to be a
+                                    substitute for professional medical advice or diagnosis, it is solely to be used for academic
+                                    and research purposes.
+                                    </p>
+                                </div>
+                                <h3>Copyright and license</h3>
+                                <div class="text-justify">
+                                    <p>Unless otherwise stated, each annotated somatic variant available on <a href="https://www.svip.ch">www.svip.ch</a>
+                                    is licensed under a
+                                    <a href="https://creativecommons.org/licenses/by/4.0/deed.en">Creative Commons Attribution 4.0 International Public License (CC-BY 4.0)</a>.
+                                    This license allows you to
+                                    copy, modify and distribute such content in any medium format and to remix the content for any purpose,
+                                    even commercially. You are only obligated to give appropriate credit (attribution) and indicate if you
+                                    have made any changes, including translations. <br>
+                                    The source code of the Swiss Variant Interpretation Plaftorm for Oncology software is licensed under
+                                    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0-or-later</a> and available via <a href="https://github.com/SVIPdb">GitHub</a>. <br>
+                                    For more information or any inquiries about this section, please reach out to legal@sib.swiss.
+                                    </p>
                                 </div>
                             </div>
                         </div>

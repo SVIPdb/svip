@@ -6,7 +6,16 @@
                 <div class="col-lg-3 col-sm-12 text-center version-info">
                     <div class="align-bottom">
                         <a :href="serverURL" target="_blank">SVIPdb</a> v{{appVersion}} ({{releaseName}})
-
+                        <div class="feedback">
+                            <anchor-router-link
+                                :to="{name: 'about', hash: '#disclaimer'}"
+                                :scrollOptions="{
+                                    container: 'body',
+                                    duration: 700,
+                                    easing: 'ease'}">
+                                Disclaimer &amp; License
+                            </anchor-router-link>
+                        </div>
                         <div class="feedback">
                             Questions or Comments:<br/>
                             <a href="mailto:feedback@svip.ch">feedback@svip.ch</a>
@@ -44,9 +53,13 @@
 
 <script>
 import { appVersion, releaseName, serverURL } from "../../app_config";
+import AnchorRouterLink from 'vue-anchor-router-link'
 
 export default {
     name: "navFooter",
+    components: {
+        AnchorRouterLink
+    },
     data() {
         return {
             serverURL, appVersion, releaseName
