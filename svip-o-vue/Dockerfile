@@ -11,6 +11,3 @@ RUN npm install
 VOLUME /app/node_modules/
 
 COPY . ./
-
-# create a symlink to /app in /svip-o-vue to mirror the host's paths
-RUN ln -s /app /svip-o-vue

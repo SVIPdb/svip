@@ -1,6 +1,10 @@
-# SVIP
+# Swiss Variant Interpretation Platform (SVIPdb)
 
-## Main components:
+## Introduction
+
+The Swiss Variant Interpretation Platform (SVIPdb) is a framework to collect, curate, review, and share variant annotations. It is the software developed as part of the [SPHN](https://sphn.ch/) infrastructure development project [Swiss Variant Interpretation Platform for Oncology](https://svip.ch/) (SVIP). We distinguish between the tool and the service by their acronyms SVIPdb and SVIP, respectively.
+
+## Main components
 
 This top-level project coordinates three sub-projects that compose SVIP:
 1. **[g2p-aggregator](https://gitlab.ethz.ch/svip/g2p-aggregator):** contains the pipeline (in `g2p-aggregator/harvester`) that populates the variant database,
