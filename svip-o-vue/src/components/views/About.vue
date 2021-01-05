@@ -443,7 +443,7 @@
                                     have made any changes, including translations. <br>
                                     The source code of the Swiss Variant Interpretation Plaftorm for Oncology software is licensed under
                                     <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0-or-later</a> and available via <a href="https://github.com/SVIPdb">GitHub</a>. <br>
-                                    For more information or any inquiries about this section, please reach out to legal@sib.swiss.
+                                    For more information or any inquiries about this section, please reach out to <a href="mailto:legal@sib.swiss">legal@sib.swiss</a>.
                                     </p>
                                 </div>
                             </div>
