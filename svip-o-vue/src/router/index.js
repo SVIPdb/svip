@@ -10,7 +10,9 @@ import ulog from 'ulog';
 // lazy-load routes rather than directly importing them
 const Home = () => import("@/components/views/Home");
 const Releases = () => import("@/components/views/Releases");
-const About = () => import("@/components/views/About");
+// Preload about to successfully scroll to the disclaimer section from home page
+import About from '@/components/views/About'
+// const About = () => import("@/components/views/About");
 const Help = () => import("@/components/views/Help");
 const ViewGene = () => import("@/components/views/ViewGene");
 const ViewVariant = () => import("@/components/views/ViewVariant");
@@ -196,10 +198,12 @@ router.beforeEach((to, from, next) => {
             }
             else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
                 log.warn("Roles check failed!");
-                next({ name: 'login', params: {
-                    default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
-                    nextRoute: to.path
-                }});
+                next({
+                    name: 'login', params: {
+                        default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
+                        nextRoute: to.path
+                    }
+                });
             }
             else {
                 next();
