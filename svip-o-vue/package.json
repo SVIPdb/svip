@@ -11,7 +11,7 @@
     "build-external": "vue-cli-service build --mode external"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-auth-refresh": "^1.0.7",
     "bootstrap-vue": "^2.15.0",
     "broadcast-channel": "^2.3.4",
