@@ -69,11 +69,6 @@ export default {
     name: "navHeader",
     computed: {
         loginDisabled() {
-            if (loginDisabled) {
-                console.log('loginDisabled', typeof(loginDisabled))
-            } else {
-                console.log('login not Disabled')
-            }
             return loginDisabled;
         },
         ...mapGetters({
