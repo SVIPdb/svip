@@ -36,7 +36,8 @@
     "vue-simple-context-menu": "^3.1.10",
     "vue-snotify": "^3.2.1",
     "vuejs-datepicker": "^1.6.2",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "yn": "^4.0.0"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.7.0",

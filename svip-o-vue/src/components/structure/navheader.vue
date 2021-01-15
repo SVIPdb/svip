@@ -28,7 +28,7 @@
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->
-            <b-navbar-nav class="ml-auto">
+            <b-navbar-nav v-if="!loginDisabled" class="ml-auto">
                 <b-navbar-nav v-if="user" right>
                     <b-nav-text class="login-name">
                         logged in as
@@ -63,10 +63,19 @@
 <script>
 import { mapGetters } from "vuex";
 import store from "@/store";
+import { loginDisabled } from "@/app_config";
 
 export default {
     name: "navHeader",
     computed: {
+        loginDisabled() {
+            if (loginDisabled) {
+                console.log('loginDisabled', typeof(loginDisabled))
+            } else {
+                console.log('login not Disabled')
+            }
+            return loginDisabled;
+        },
         ...mapGetters({
             user: "currentUser"
         }),
