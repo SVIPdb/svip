@@ -1,26 +1,28 @@
 <template>
-    <div>
+    <div style="width: 100%;">
         <div ref="bodytext"> <!-- :style="`height: 20rem; overflow-y:scroll; resize: vertical;`" -->
-            <b-container
-                fluid
-                class="evidence"
-                v-if="variomes && pubData && !variomes.error"
-                @mouseup="citable && getSelectionText()"
-                @contextmenu="citable && handleRightClick($event)"
-                style="height: 600px;"
-            >
-                <pmca-element ref="pmcaElem" style="width: 100%;" />
-            </b-container>
-            <div
-                v-else-if="variomes && (variomes.error || !pubData)"
-                class="text-center text-muted font-italic"
-            >
-                <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
-                We couldn't load the abstract due to a technical issue
-            </div>
-            <div v-else class="text-center">
-                <b-spinner label="Spinning" variant="primary" /> Loading
-            </div>
+            <b-overlay :show="loading" rounded="sm">
+                <b-container
+                    fluid
+                    class="evidence"
+                    v-if="variomes && pubData && !variomes.error"
+                    @mouseup="citable && getSelectionText()"
+                    @contextmenu="citable && handleRightClick($event)"
+                    style="height: 600px;"
+                >
+                    <pmca-element ref="pmcaElem" style="width: 100%;" />
+                </b-container>
+                <div
+                    v-else-if="variomes && (variomes.error || !pubData)"
+                    class="text-center text-muted font-italic"
+                >
+                    <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                    We couldn't load the abstract due to a technical issue
+                </div>
+                <div v-else class="text-center">
+                    <b-spinner label="Spinning" variant="primary" /> Loading
+                </div>
+            </b-overlay>
         </div>
 
         <div v-if="variomes && pubData && !variomes.error" class="ml-3 pt-1 border-top">
@@ -55,7 +57,8 @@ export default {
     data() {
         return {
             selection: null,
-            tries: 0
+            tries: 0,
+            loading: false
         }
     },
     mounted() {
@@ -97,7 +100,11 @@ export default {
         },
         loadPMC(pmcid) {
             if (this.$refs.pmcaElem && this.$refs.pmcaElem.fillViewerWithIdAndOptions) {
-                this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpcandy"});
+                this.loading = true;
+                this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpcandy"}).finally(() => {
+                    console.log("done loading!");
+                    this.loading = false;
+                });
             }
             else {
                 if (this.tries < 3) {

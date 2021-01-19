@@ -263,7 +263,8 @@ class PmcaElement extends PolymerElement {
     var lb = this.root.querySelector("list-browser");
     var af = this.root.querySelector("checkbox-group");
     var me = this;
-    promise.then(function (annotatedPubli) {
+
+    return promise.then(function (annotatedPubli) {
       var nohighlight = annotatedPubli.PMC_set && annotatedPubli.PMC_set == "author_manuscripts";
       pv.nohighlight = nohighlight;
       pv.publi = annotatedPubli;
