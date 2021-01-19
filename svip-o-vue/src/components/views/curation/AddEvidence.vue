@@ -16,15 +16,24 @@
         <div v-else>
             <CuratorVariantInformations :variant="fullVariant" />
 
+            <b-row v-if="isVariomesPMC">
+                <VariomesFullText v-if="isVariomesPMC"
+                    :variomes="variomes"
+                    citable
+                    @showmenu="handleRightClick"
+                    style="margin-bottom: 1.5em;"
+                />
+            </b-row>
+
             <b-row>
                 <b-col sm="9">
                     <!--
                     ===========================================================================================================
-                    === ABSTRACT DISPLAY
+                    === ABSTRACT DISPLAY (or fulltext if it's a PMC)
                     ===========================================================================================================
                     -->
 
-                    <VariomesAbstract
+                    <VariomesAbstract v-if="!isVariomesPMC"
                         :variomes="variomes"
                         citable
                         @showmenu="handleRightClick"
@@ -495,6 +504,7 @@ import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import { pubmedURL } from "@/utils";
 import ulog from 'ulog';
 import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearchBar";
+import VariomesFullText from "@/components/widgets/curation/VariomesFullText";
 
 const log = ulog('Curation:AddEvidence')
 
@@ -514,6 +524,7 @@ extend("required", {
 export default {
     name: "AddEvidence",
     components: {
+        VariomesFullText,
         InteractorSearchBar,
         VariomesAbstract,
         DiseaseSearchBar,
@@ -1005,6 +1016,11 @@ export default {
         },
         isViewOnly() {
             return this.form.id && this.form.status === "submitted" || this.forceViewOnly;
+        },
+        isVariomesPMC() {
+            return (
+                this.variomes && this.variomes.publications && this.variomes.publications[0].collection === 'pmc'
+            )
         }
     },
     mounted() {
