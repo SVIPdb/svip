@@ -51,6 +51,11 @@ Vue.component("pass", {
 Vue.component("row-expander", RowExpander);
 Vue.component("expander", Expander);
 
+// ignores the pmca-element defined  in src/support/pmca/pmca-element.js, which is used in the VariomesFullText component
+// refer to https://v3.vuejs.org/guide/migration/custom-elements-interop.html#overview for changes we'll need to make
+// when we move to vue v3
+Vue.config.ignoredElements = ['pmca-element'];
+
 export default new Vue({
     el: "#app",
     router,
