@@ -19,7 +19,7 @@ admin.site.register(DiseaseInSVIP)
 @admin.register(CurationEntry)
 class CurationEntryAdmin(SimpleHistoryAdmin):
     search_fields = (
-        'disease__name',
+        'disease__icd_o_morpho__term',
         'variant__description',
         'type_of_evidence',
         'drugs',

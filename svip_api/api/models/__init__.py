@@ -14,3 +14,13 @@ from .comments import (
 from .harvesting import (
     HarvestRun
 )
+from .icdo import (
+    IcdOMorpho,
+    IcdOMorphoBehavior,
+    IcdOMorphoLevel,
+    IcdOMorphoVersion,
+    IcdOTopo,
+    IcdOTopoApiDisease,
+    IcdOTopoLevel,
+    IcdOTopoVersion
+)

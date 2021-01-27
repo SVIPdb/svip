@@ -147,8 +147,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def get_sample_diseases_count(obj):
         return (
             obj.sample_set
-                .values(name=F('disease_in_svip__disease__name'))
-                .annotate(count=Count('disease_in_svip__disease__name'))
+                .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
+                .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
                 .distinct().order_by('-count')
         )
 

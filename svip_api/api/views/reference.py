@@ -23,4 +23,4 @@ class DiseaseViewSet(viewsets.ReadOnlyModelViewSet):
     """
     # pagination_class = None  # disables pagination for this viewset
     serializer_class = DiseaseSerializer
-    queryset = Disease.objects.all().order_by('name')
+    queryset = Disease.objects.all().order_by('icd_o_morpho__term')
