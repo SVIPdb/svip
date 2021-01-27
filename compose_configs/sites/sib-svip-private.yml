@@ -1,12 +1,21 @@
-version: '3.5'
+version: "3.5"
 
 services:
+  api:
+    build:
+      args:
+        http_proxy: http://172.17.0.1:18184
+        https_proxy: http://172.17.0.1:18184
   nginx:
     ports:
-      - '80:80'
+      - "80:80"
     volumes:
-      - '${PWD}/service_config/nginx/sites/without_ssl.nginx:/etc/nginx/conf.d/svip.nginx:ro'
+      - "${PWD}/service_config/nginx/sites/without_ssl.nginx:/etc/nginx/conf.d/svip.nginx:ro"
 
   frontend:
+    build:
+      args:
+        http_proxy: http://172.17.0.1:18184
+        https_proxy: http://172.17.0.1:18184
     environment:
-      - 'VUE_APP_API_URL=https://svip.sensa.sib.swiss/api/v1/'
+      - "VUE_APP_API_URL=https://svip.sensa.sib.swiss/api/v1/"
