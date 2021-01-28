@@ -75,7 +75,6 @@
                                     >
                                         <DiseaseSearchBar
                                             id="disease"
-                                            allow-create
                                             v-model="form.disease"
                                             :disabled="isViewOnly"
                                             :state="checkValidity(props, true)"
