@@ -68,9 +68,9 @@ export default {
         if (pmcaElem) {
             this.loadPMC(this.pubData.id);
         }
-        else {
-            console.warn("PMCA elem doesn't exist at mount!")
-        }
+        // else {
+        //     console.warn("PMCA elem doesn't exist at mount!")
+        // }
     },
     computed: {
         pubData() {
@@ -102,13 +102,13 @@ export default {
             if (this.$refs.pmcaElem && this.$refs.pmcaElem.fillViewerWithIdAndOptions) {
                 this.loading = true;
                 this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpcandy"}).finally(() => {
-                    console.log("done loading!");
+                    // console.log("done loading!");
                     this.loading = false;
                 });
             }
             else {
                 if (this.tries < 3) {
-                    console.warn(`Unable to load PMCID ${pmcid} due to the viewer not existing, trying again in 300ms... (remaining tries: ${3 - this.tries}`);
+                    // console.warn(`Unable to load PMCID ${pmcid} due to the viewer not existing, trying again in 300ms... (remaining tries: ${3 - this.tries}`);
                     this.tries += 1;
                     setTimeout(() => {
                         this.loadPMC(pmcid);
