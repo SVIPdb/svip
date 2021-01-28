@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 CurationEntry.objects
                     .filter(
                         Q(comment='REMOVE DISEASE') |
-                        Q(disease__name="Acral lentiginous malignant melanoma of skin")
+                        Q(disease__icd_o_morpho__term="Acral lentiginous malignant melanoma of skin")
                     )
                     .update(disease=None, comment=None)
             )

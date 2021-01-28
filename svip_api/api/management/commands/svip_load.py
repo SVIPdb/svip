@@ -237,7 +237,7 @@ def create_svip_samples(source):
             try:
                 candidate = Sample(
                     disease_in_svip=DiseaseInSVIP.objects.get(
-                        disease__name__iexact=sample['disease'],
+                        disease__icd_o_morpho__term__iexact=sample['disease'],
                         svip_variant__variant__gene__symbol=sample['gene'],
                         svip_variant__variant__name=sample['variant'],
                         svip_variant__variant__hgvs_c__endswith=sample['cds']
@@ -353,7 +353,7 @@ def synthesize_samples(num_samples_per_variant=10):
             }
             disease_tissues = [
                 {'disease': x['name'], 'tissue': tissues[x['name']]}
-                for x in svip_var.diseaseinsvip_set.values(name=F('disease__name'))
+                for x in svip_var.diseaseinsvip_set.values(name=F('disease__icd_o_morpho__term'))
             ]
 
         # for sex-specific diseases, we should only use one sex
@@ -383,7 +383,7 @@ def synthesize_samples(num_samples_per_variant=10):
             disease, tissue = [x.replace('_', ' ').title() for x in random.choice(disease_tissues).values()]
 
             candidate = Sample(**{
-                'disease_in_svip': DiseaseInSVIP.objects.get(svip_variant=svip_var, disease__name__iexact=disease),
+                'disease_in_svip': DiseaseInSVIP.objects.get(svip_variant=svip_var, disease__icd_o_morpho__term__iexact=disease),
                 'sample_id': str(sample_id),
                 'year_of_birth': str(random.randint(1935, 1988)),
                 'gender': random.choice(('Male', 'Female')) if disease not in sex_specific else sex_specific[disease],

@@ -21,11 +21,12 @@ class DiseaseSerializer(serializers.ModelSerializer):
                 return to_dict(Disease.objects.get(id=int(data['id'])))
             elif 'name' in data:
                 # see if it belongs to an existing disease
-                # if it doesn't, just create it and mark it as user-created
-                candidate, created = Disease.objects.get_or_create(name=data['name'], defaults={
-                    'user_created': True
-                })
-                return to_dict(candidate)
+                # if it doesn't, we'll just have to bail
+                try:
+                    candidate = Disease.objects.get(name=data['name'])
+                    return to_dict(candidate)
+                except Disease.DoesNotExist:
+                    raise ValueError()
 
         except ValueError:
             return super().to_internal_value(data)
@@ -45,4 +46,15 @@ class DiseaseSerializer(serializers.ModelSerializer):
             'user_created',
             'created_on',
         )
-        read_only_fields = ('created_on',)
+        read_only_fields = (
+            'localization',
+            'abbreviation',
+            'name',
+            'topo_code',
+            'morpho_code',
+            'snomed_code',
+            'snomed_name',
+            'details',
+            'user_created',
+            'created_on',
+        )
