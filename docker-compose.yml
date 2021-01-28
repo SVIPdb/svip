@@ -48,6 +48,7 @@ services:
     # image: "svip_api:latest"
     build: ./svip_api
     # restart: always
+    hostname: api
     volumes:
       - ./svip_api:/app
       - api_static:/var/staticfiles
