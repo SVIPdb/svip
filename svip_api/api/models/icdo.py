@@ -65,7 +65,7 @@ class IcdOTopo(models.Model):
 
 
 class IcdOTopoApiDisease(models.Model):
-    api_disease = models.OneToOneField(Disease, models.DO_NOTHING, primary_key=True)
+    api_disease = models.ForeignKey(Disease, models.DO_NOTHING)
     icd_o_topo = models.ForeignKey(IcdOTopo, models.DO_NOTHING)
 
     class Meta:
