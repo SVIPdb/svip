@@ -1,6 +1,6 @@
 ---
 name: API Feature Report
-about: You want to report a bug in the API.
+about: You want to request a feature for the API.
 title: "[TITLE]"
 labels: Feature, API
 ---
