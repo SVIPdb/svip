@@ -1,10 +1,11 @@
 from collections import OrderedDict
 from enum import Enum
 from itertools import chain
+from pprint import pprint
 
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db import models, connection
+from django.db import connection, models
 from django.db.models.base import ModelBase
 # makes deletes of related objects cascade on the sql server
 from django.db.models.signals import post_save
@@ -16,7 +17,8 @@ from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
-from api.permissions import ALLOW_ANY_CURATOR, PUBLIC_VISIBLE_STATUSES, CURATOR_ALLOWED_ROLES
+from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
+                             PUBLIC_VISIBLE_STATUSES)
 from api.utils import dictfetchall
 
 
@@ -94,7 +96,9 @@ class VariantInSVIP(models.Model):
     history = HistoricalRecords(cascade_delete_history=True)
 
     def tissue_counts(self):
+        print('--tissue_counts--')
         # FIXME: figure out how to do this with the ORM someday
+        # TODO: check if correct
         with connection.cursor() as cursor:
             cursor.execute("""
             select
@@ -102,14 +106,15 @@ class VariantInSVIP(models.Model):
                 sum(Q.cnt)::integer as count,
                 jsonb_agg(json_build_object('name', Q.disease, 'count', Q.cnt)) as diseases
             from (
-              select sample_tissue, ad.name as disease, count(*) as cnt
-              from svip_sample sv
-              inner join svip_diseaseinsvip d on d.id=sv.disease_in_svip_id
-              inner join api_disease ad on ad.id=d.disease_id
-              inner join api_variantinsvip av on d.svip_variant_id = av.id
-              where svip_variant_id=%s
-              group by sample_tissue, disease
-            ) as Q
+                select sample_tissue, m.term as disease, count(*) as cnt
+                from svip_sample sv
+                inner join svip_diseaseinsvip d on d.id=sv.disease_in_svip_id
+                inner join api_disease ad on ad.id=d.disease_id
+                inner join api_variantinsvip av on d.svip_variant_id = av.id
+                inner join icd_o_morpho m on ad.id = m.id
+                where svip_variant_id=%s
+                group by sample_tissue, term
+                ) as Q
             group by Q.sample_tissue
             """, [self.id])
 
@@ -150,7 +155,7 @@ class DiseaseInSVIP(SVIPModel):
     objects = DiseaseInSVIPManager()
 
     def name(self):
-        return self.disease.name if self.disease else "Unspecified"
+        return self.disease.name() if self.disease else "Unspecified"
 
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
