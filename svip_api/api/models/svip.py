@@ -96,7 +96,6 @@ class VariantInSVIP(models.Model):
     history = HistoricalRecords(cascade_delete_history=True)
 
     def tissue_counts(self):
-        print('--tissue_counts--')
         # FIXME: figure out how to do this with the ORM someday
         # TODO: check if correct
         with connection.cursor() as cursor:
