@@ -68,6 +68,8 @@ services:
       - DJANGO_SU_PASSWORD
       - SOCIBP_BASE_URL
       - USE_DEV_SERVER=true
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
 
   frontend:
     container_name: svip_frontend
