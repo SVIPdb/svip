@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
 
+from api.utils import model_field_null
+
 
 class DrugManager(models.Manager):
     def get_by_natural_key(self, common_name, user_created):
@@ -30,7 +32,7 @@ class DiseaseManager(models.Manager):
 
     def get_queryset(self):
         # we'll always need at least icd_o_morpho, so select it ahead of time
-        return super(DiseaseManager, self).get_queryset().select_related('icd_o_morpho').filter(icd_o_morpho__isnull=False)
+        return super(DiseaseManager, self).get_queryset().select_related('icd_o_morpho')
 
 class Disease(models.Model):
     created_on = models.DateTimeField(blank=True, null=True)
@@ -44,29 +46,38 @@ class Disease(models.Model):
         return self.icd_o_morpho.term, False, 'n/a'
 
     def __str__(self):
+        if model_field_null(self, 'icd_o_morpho'):
+            return "%s (id: %d)" % ("*unknown*", self.id)
+
         return "%s (id: %d)" % (self.icd_o_morpho.term, self.id)
 
     # add in a bunch of stub model methods that allow the serializer to keep returning the old disease format in the API
 
     def localization(self):
-        return ", ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_term', flat=True))
-
-    def abbreviation(self):
-        if not self.icd_o_morpho:
+        if model_field_null(self, 'icdotopoapidisease_set'):
             return None
 
+        return "; ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_term', flat=True))
+
+    def abbreviation(self):
         return None
 
     def name(self):
-        if not self.icd_o_morpho:
+        if model_field_null(self, 'icd_o_morpho'):
             return None
 
         return self.icd_o_morpho.term
 
     def topo_code(self):
-        return ", ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True))
+        if model_field_null(self, 'icdotopoapidisease_set'):
+            return None
+
+        return "; ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True))
 
     def morpho_code(self):
+        if model_field_null(self, 'icd_o_morpho'):
+            return None
+
         return self.icd_o_morpho.cell_type_code
 
     def snomed_code(self):

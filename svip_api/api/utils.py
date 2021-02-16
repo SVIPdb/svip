@@ -26,6 +26,12 @@ def field_is_empty(data, field, is_array=False):
         return field not in data or data[field] is None or len(data[field]) == 0
     return field not in data or data[field] in (None, '') or data[field].strip() == ''
 
+def model_field_null(obj, field_name):
+    """
+    If relation 'field_name' doesn't exist in obj, returns True, else returns False if obj.field_name is truthy.
+    """
+    return not hasattr(obj, field_name) or not getattr(obj, field_name)
+
 
 def format_variant(x, search_term=None, isnt_dict=False):
     """
