@@ -35,13 +35,15 @@ services:
       - "svip_pgdata:/var/lib/postgresql/data"
       - ./svip_db_backups:/backups
       - ./service_config/postgres:/docker-entrypoint-initdb.d
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - PGUSER=${POSTGRES_USER}
-      - PGPASSWORD=${POSTGRES_PASSWORD}
-      - PGDB=${POSTGRES_DB}
+    # environment:
+    #   - POSTGRES_USER
+    #   - POSTGRES_PASSWORD
+    #   - POSTGRES_DB
+    #   - PGUSER=${POSTGRES_USER}
+    #   - PGPASSWORD=${POSTGRES_PASSWORD}
+    #   - PGDB=${POSTGRES_DB}
+    env_file:
+      - .env
 
   api:
     container_name: svip_api
@@ -57,19 +59,21 @@ services:
     depends_on:
       - db
       - redis
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - DJANGO_SU_NAME
-      - DJANGO_SU_EMAIL
-      - DJANGO_SU_PASSWORD
-      - SOCIBP_BASE_URL
-      - USE_DEV_SERVER=true
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
+    # environment:
+    #   - POSTGRES_HOST=db
+    #   - POSTGRES_PORT=5432
+    #   - POSTGRES_USER
+    #   - POSTGRES_PASSWORD
+    #   - POSTGRES_DB
+    #   - DJANGO_SU_NAME
+    #   - DJANGO_SU_EMAIL
+    #   - DJANGO_SU_PASSWORD
+    #   - SOCIBP_BASE_URL
+    #   - USE_DEV_SERVER=true
+    #   - REDIS_HOST=${REDIS_HOST}
+    #   - REDIS_PORT=${REDIS_PORT}
+    env_file:
+      - .env
 
   frontend:
     container_name: svip_frontend
@@ -88,11 +92,11 @@ services:
       - "3000:8080"
     environment:
       - "VUE_APP_API_URL=http://localhost:8085/api/v1/"
-    env_file:
-      - .env
     depends_on:
       - api
 
   redis:
     container_name: svip_redis
     image: "redis:alpine"
+    env_file:
+      - .env
