@@ -13,6 +13,5 @@ services:
     volumes:
       - api_static:/app/static
     environment:
-      # - POSTGRES_DB=svip_api
       - USE_DEV_SERVER=
       - DJANGO_SETTINGS_MODULE=svip_server.settings.production
