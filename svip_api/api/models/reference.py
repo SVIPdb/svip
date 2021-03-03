@@ -69,6 +69,14 @@ class Disease(models.Model):
         if model_field_null(self, 'icd_o_morpho'):
             return None
 
+        topo_terms = (
+            None if model_field_null(self, 'icdotopoapidisease_set')
+            else self.icdotopoapidisease_set.values_list('icd_o_topo__topo_term', flat=True)
+        )
+
+        if topo_terms:
+            return "%s (%s)" % (self.icd_o_morpho.term, ", ".join(topo_terms))
+
         return self.icd_o_morpho.term
 
     @property
