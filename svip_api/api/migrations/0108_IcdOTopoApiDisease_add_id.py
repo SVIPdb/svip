@@ -12,8 +12,17 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
+            -- remove the existing compound PK (which django can't use as a PK) and replace it with an index
+            alter table icd_o_topo_api_disease drop constraint if exists icd_o_topo_api_disease_pk;
+            create index icd_o_topo_api_disease_idx on icd_o_topo_api_disease (api_disease_id, icd_o_topo_id);
+            -- add an ordinary serial id column that django can use as a PK
             alter table icd_o_topo_api_disease add id serial;
             alter table icd_o_topo_api_disease add constraint icd_o_topo_api_disease_pk_2 primary key (id);
             """,
-            reverse_sql="""alter table icd_o_topo_api_disease drop column id""")
+            reverse_sql="""
+            -- remove the changes we made (the new id column, the old index) and reintroduce the compound PK
+            alter table icd_o_topo_api_disease drop column id;
+            drop index if exists icd_o_topo_api_disease_idx;
+            alter table icd_o_topo_api_disease add constraint icd_o_topo_api_disease_pk primary key (api_disease_id, icd_o_topo_id);
+            """)
     ]
