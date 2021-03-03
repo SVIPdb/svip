@@ -53,41 +53,58 @@ class Disease(models.Model):
 
     # add in a bunch of stub model methods that allow the serializer to keep returning the old disease format in the API
 
+    @property
     def localization(self):
         if model_field_null(self, 'icdotopoapidisease_set'):
             return None
 
         return "; ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_term', flat=True))
 
+    @property
     def abbreviation(self):
         return None
 
+    @property
     def name(self):
         if model_field_null(self, 'icd_o_morpho'):
             return None
 
+        topo_terms = (
+            None if model_field_null(self, 'icdotopoapidisease_set')
+            else self.icdotopoapidisease_set.values_list('icd_o_topo__topo_term', flat=True)
+        )
+
+        if topo_terms:
+            return "%s (%s)" % (self.icd_o_morpho.term, ", ".join(topo_terms))
+
         return self.icd_o_morpho.term
 
-    def topo_code(self):
+    @property
+    def topo_codes(self):
         if model_field_null(self, 'icdotopoapidisease_set'):
             return None
 
-        return "; ".join(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True))
+        return self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True)
 
+    @property
     def morpho_code(self):
         if model_field_null(self, 'icd_o_morpho'):
             return None
 
         return self.icd_o_morpho.cell_type_code
 
+    @property
     def snomed_code(self):
         return None
 
+    @property
     def snomed_name(self):
         return None
 
+    @property
     def details(self):
         return None
 
+    @property
     def user_created(self):
         return False

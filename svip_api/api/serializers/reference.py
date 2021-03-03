@@ -19,14 +19,6 @@ class DiseaseSerializer(serializers.ModelSerializer):
             # now we get an object from the frontend, which has at least 'name' in it
             if 'id' in data:
                 return to_dict(Disease.objects.get(id=int(data['id'])))
-            elif 'name' in data:
-                # see if it belongs to an existing disease
-                # if it doesn't, we'll just have to bail
-                try:
-                    candidate = Disease.objects.get(name=data['name'])
-                    return to_dict(candidate)
-                except Disease.DoesNotExist:
-                    raise ValueError()
 
         except ValueError:
             return super().to_internal_value(data)
@@ -38,7 +30,7 @@ class DiseaseSerializer(serializers.ModelSerializer):
             'localization',
             'abbreviation',
             'name',
-            'topo_code',
+            'topo_codes',
             'morpho_code',
             'snomed_code',
             'snomed_name',
@@ -50,7 +42,7 @@ class DiseaseSerializer(serializers.ModelSerializer):
             'localization',
             'abbreviation',
             'name',
-            'topo_code',
+            'topo_codes',
             'morpho_code',
             'snomed_code',
             'snomed_name',
