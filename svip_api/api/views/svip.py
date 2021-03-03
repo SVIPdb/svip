@@ -72,7 +72,7 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
     search_fields = (
         'variant__gene__symbol',
         'variant__name',
-        'disease__name'
+        'disease__icd_o_morpho__term'
     )
 
     @action(detail=True)
@@ -174,7 +174,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     ordering_fields = (
         "action",
         "created_on",
-        "disease__name",
+        "disease__icd_o_morpho__term",
         "drugs",
         "effect",
         "last_modified",
@@ -190,7 +190,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     search_fields = (
         'annotations',
         'variant__description',
-        'disease__name',
+        'disease__icd_o_morpho__term',
         'comment',
         'drugs',
         'interactions',

@@ -85,3 +85,7 @@ celerybeat-schedule
 
 # notebooks that aren't ready to be shared yet
 /notebooks
+
+Pipfile
+
+.env*

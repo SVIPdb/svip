@@ -28,20 +28,22 @@ SECRET_KEY = 'ceqqi+r54k4btz4v_3#kl3_%xpbxopm9fag@vq-6q72-v!^lg$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost', '127.0.0.1', '0.0.0.0',
+    'localhost', '127.0.0.1', '0.0.0.0', 'api',
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
     'svip.nexus.ethz.ch',
     'svip.ch', 'www.svip.ch',
-    'svip.sib.swiss', 'svip-public.sib.swiss'
+    'svip.sib.swiss', 'svip-public.sib.swiss',
+    'svip.sensa.sib.swiss', 'svip.sensa.sib.swiss'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'localhost:8080',
+    'localhost:8080', 'api:8080',
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
     'svip.ch', 'www.svip.ch',
-    'svip.sib.swiss', 'svip-public.sib.swiss'
+    'svip.sib.swiss', 'svip-public.sib.swiss',
+    'svip.sensa.sib.swiss', 'svip.sensa.sib.swiss'
 ]
 
 # allows django to detect that we're running behind a secure proxy (e.g., nginx)
@@ -137,7 +139,7 @@ CACHES = {
         # 'MAX_ENTRIES': 5000,
 
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
@@ -149,7 +151,8 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-DB_CONNECTION_URL = ("postgresql://%(USER)s:%(PASSWORD)s@%(HOST)s:%(PORT)s/%(NAME)s" % DATABASES['default'])
+DB_CONNECTION_URL = (
+    "postgresql://%(USER)s:%(PASSWORD)s@%(HOST)s:%(PORT)s/%(NAME)s" % DATABASES['default'])
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -185,7 +188,7 @@ STATIC_URL = '/api/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../static')
 
 # colorizes test output
-TEST_RUNNER="redgreenunittest.django.runner.RedGreenDiscoverRunner"
+TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
 
 
 # django-rest-framework config

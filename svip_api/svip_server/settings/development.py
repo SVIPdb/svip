@@ -43,7 +43,7 @@ LOGGING = {
     'loggers': {
         'nplusone': {
             'handlers': ['console'],
-            'level': 'WARN',
+            'level': 'DEBUG',
         },
     },
 }

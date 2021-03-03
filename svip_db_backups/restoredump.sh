@@ -27,4 +27,4 @@ if [ $? -ne 0 ]; then
   fi
 fi
 
-createdb ${TARGET_DB}; time pg_restore -j 16 -F c -d ${TARGET_DB} $1
+createdb -U postgres ${TARGET_DB}; time pg_restore -U postgres -j 16 -F c -d ${TARGET_DB} $1

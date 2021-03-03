@@ -9,6 +9,7 @@ __pycache__
 /svip_db_backups/**/*.sql
 TODO.md
 *.swp
+.DS_Store
 
 # stuff we don't want to commit quite yet
 /sensitive

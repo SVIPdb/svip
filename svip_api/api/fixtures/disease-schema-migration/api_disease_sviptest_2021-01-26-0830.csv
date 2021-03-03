@@ -1,0 +1,72 @@
+id,name,abbreviation,details,localization,morpho_code,snomed_code,snomed_name,topo_code,created_on,user_created
+1,Non-small cell lung cancer,NSCLC,non-small cell carcinoma,LUNG,8046/3,254637007,Non-small cell lung cancer (disorder),C34.9,2020-07-14 22:07:45.959574+00,f
+2,Squamous cell carcinoma of lung,LSCC,squamous cell carcinoma,LUNG,8070/3,254634000,Squamous cell carcinoma of lung (disorder),C34.9,2020-07-14 22:07:45.959574+00,f
+3,Adenocarcinoma of lung,"",adenocarcinoma,LUNG,8140/3,254626006,Adenocarcinoma of lung (disorder),C34.9,2020-07-14 22:07:45.959574+00,f
+4,Large cell carcinoma of lung,LCC,large cell carcinoma,LUNG,8012/3,254629004,Large cell carcinoma of lung (disorder),C34.9,2020-07-14 22:07:45.959574+00,f
+5,Small cell carcinoma of lung,SCLC,small cell carcinoma,LUNG,8041/3,254632001,Small cell carcinoma of lung (disorder),C34.9,2020-07-14 22:07:45.959574+00,f
+6,Malignant melanoma of skin,"",skin melanoma,SKIN,8720/3,93655004,Malignant melanoma of skin (disorder),C44.9,2020-07-14 22:07:45.959574+00,f
+7,Superficial spreading malignant melanoma of skin,"",superficial spreading melanoma,SKIN,8743/3,254730000,Superficial spreading malignant melanoma of skin (disorder),C44.9,2020-07-14 22:07:45.959574+00,f
+8,Nodular malignant melanoma of skin,"",nodular melanoma,SKIN,8721/3,254731001,Nodular malignant melanoma of skin (disorder),C44.9,2020-07-14 22:07:45.959574+00,f
+9,Acral lentiginous malignant melanoma of skin,"",acral-lentiginous melanoma,SKIN,8744/3,254732008,Acral lentiginous malignant melanoma of skin (disorder),C44.9,2020-07-14 22:07:45.959574+00,f
+10,Lentigo maligna melanoma,"",lentigo maligna melanoma,SKIN,8742/3,302837001,Lentigo maligna melanoma (disorder),C44.9,2020-07-14 22:07:45.959574+00,f
+11,Carcinoma of breast,"",carcinoma,BREAST,8010/3,254838004,Carcinoma of breast (disorder),C50.9,2020-07-14 22:07:45.959574+00,f
+12,Infiltrating duct carcinoma of breast,"",invasive ductal carcinoma in situ,BREAST,8230/2,408643008,Infiltrating duct carcinoma of breast (disorder),C50.9,2020-07-14 22:07:45.959574+00,f
+13,Lobular carcinoma of breast,"",lobular carcinoma,BREAST,8520/3,278054005,Lobular carcinoma of breast (disorder),C50.9,2020-07-14 22:07:45.959574+00,f
+14,Adenocarcinoma of colorectum,"",colorectal adenocarcinoma,COLORECTUM,8140/3,781382000,Malignant neoplasm of colon and/or rectum (disorder),"C18.9, C19.9, C20.9",2020-07-14 22:07:45.959574+00,f
+15,Adenocarcinoma of colorectum,"",adenocarcinoma of colon,COLON,8140/3,1701000119104,Primary adenocarcinoma of colon (disorder),C18.9,2020-07-14 22:07:45.959574+00,f
+16,Adenocarcinoma of colorectum,"",adenocarcinoma of the recto sigmoid junction,RECTO SIGMOID JUNCTION,8140/3,425178004,Adenocarcinoma of rectosigmoid junction (disorder),C19.9,2020-07-14 22:07:45.959574+00,f
+17,Adenocarcinoma of colorectum,"",adenocarcinoma of rectum,RECTUM,8140/3,254582000,Adenocarcinoma of rectum (disorder),C20.9,2020-07-14 22:07:45.959574+00,f
+18,Transitional cell carcinoma of kidney,KTCC,transitional cell carcinoma,KIDNEY,8120/3,408642003,Transitional cell carcinoma of kidney (disorder),C64.9,2020-07-14 22:07:45.959574+00,f
+19,Renal cell carcinoma,RCC,renal cell carcinoma,KIDNEY,8312/3,702391001,Renal cell carcinoma (disorder),C64.9,2020-07-14 22:07:45.959574+00,f
+20,Nephroblastoma,"",Wilms tumor,KIDNEY,8960/3,302849000,Nephroblastoma (disorder),C64.9,2020-07-14 22:07:45.959574+00,f
+21,Adenocarcinoma of prostate,"",adenocarcinoma,PROSTATE,8140/3,399490008,Adenocarcinoma of prostate (disorder),C61.9,2020-07-14 22:07:45.959574+00,f
+22,Leiomyosarcoma of prostate,"",leiomyosarcoma,PROSTATE,8890/3,443719001,Leiomyosarcoma (disorder),C61.9,2020-07-14 22:07:45.959574+00,f
+23,Primary rhabdomyosarcoma of male genital organ,"",rhabdomyosarcoma,PROSTATE,8900/3,721574009,Primary rhabdomyosarcoma of male genital organ (disorder),C61.9,2020-07-14 22:07:45.959574+00,f
+24,Prostatic intraepithelial neoplasia,"",prostatic intraepithelial neoplasia,PROSTATE,8148/_,254901000,Prostatic intraepithelial neoplasia (disorder),C61.9,2020-07-14 22:07:45.959574+00,f
+25,Non-Hodgkin's lymphoma,NHL,non Hodgkin's lymphoma,LYMPHOMA,9591/3,118601006,Non-Hodgkin's lymphoma (disorder),C77.9,2020-07-14 22:07:45.959574+00,f
+26,Hodgkin's lymphoma,HL,Hodgkin lymphoma,LYMPHOMA,9650/3,118599009,Hodgkin's disease (disorder),C77.9,2020-07-14 22:07:45.959574+00,f
+27,"Acute myeloid leukemia, disease",AML,acute myeloid leukemia,LEUKEMIA,9861/3,91861009,"Acute myeloid leukemia, disease (disorder)",C42._,2020-07-14 22:07:45.959574+00,f
+28,"Acute lymphoid leukemia, disease",ALL,acute lymphoid leukemia,LEUKEMIA,9835/3,91857003,"Acute lymphoid leukemia, disease (disorder)",C42._,2020-07-14 22:07:45.959574+00,f
+29,"Chronic myeloid leukemia, disease",CML,chronic myeloid leukemia,LEUKEMIA,9863/3,92818009,"Chronic myeloid leukemia, disease (disorder)",C42._,2020-07-14 22:07:45.959574+00,f
+30,"Chronic lymphoid leukemia, disease",CLL,chronic lymphoid leukemia,LEUKEMIA,9823/3,92814006,"Chronic lymphoid leukemia, disease (disorder)",C42._,2020-07-14 22:07:45.959574+00,f
+31,Transitional cell carcinoma of bladder,BTCC,transitional cell carcinoma,BLADDER,8120/3,255109008,Transitional cell carcinoma of bladder (disorder),C67.9,2020-07-14 22:07:45.959574+00,f
+32,Squamous cell carcinoma of bladder,BSCC,squamous cell carcinoma,BLADDER,8070/3,255111004,Squamous cell carcinoma of bladder (disorder),C67.9,2020-07-14 22:07:45.959574+00,f
+33,Adenocarcinoma of bladder,"",adenocarcinoma,BLADDER,8140/3,255110003,Adenocarcinoma of bladder (disorder),C67.9,2020-07-14 22:07:45.959574+00,f
+34,Carcinosarcoma of bladder,"",carcinosarcoma,BLADDER,8980/3,"","",C67.9,2020-07-14 22:07:45.959574+00,f
+35,Gastrointestinal stromal tumor,GIST,gastrointestinal stromal tumor ,STOMACH,8936/3,420120006,Gastrointestinal stromal tumor (disorder),C16.9,2020-07-14 22:07:45.959574+00,f
+36,Adenocarcinoma of stomach,"",adenocarcinoma,STOMACH,8140/3,408647009,Adenocarcinoma of stomach (disorder),C16.9,2020-07-14 22:07:45.959574+00,f
+37,Gastrointestinal stromal tumor,GIST,gastrointestinal stromal tumor ,SMALL INTESTINE,8936/3,420120006,Gastrointestinal stromal tumor (disorder),C17.9,2020-07-14 22:07:45.959574+00,f
+38,Adenocarcinoma of small intestine,"",adenocarcinoma,SMALL INTESTINE,8140/3,424440001,Adenocarcinoma of small intestine (disorder),C17.9,2020-07-14 22:07:45.959574+00,f
+39,Adenocarcinoma of esophagus,"",adenocarcinoma,ESOPHAGUS,8140/3,276803003,Adenocarcinoma of esophagus (disorder),C15.9,2020-07-14 22:07:45.959574+00,f
+40,Squamous cell carcinoma of esophagus,ESCC,squamous cell carcinoma,ESOPHAGUS,8070/3,276804009,Squamous cell carcinoma of esophagus (disorder),C15.9,2020-07-14 22:07:45.959574+00,f
+41,Pituitary carcinoma,"",carcinoma,PITUITARY,8272/3,254955001,Pituitary carcinoma (disorder),C75.1,2020-07-14 22:07:45.959574+00,f
+42,Neoplasm of thyroid gland,"",papillary adenocarcinoma,THYROID,8260/3,127018007,Neoplasm of thyroid gland (disorder),C73.9,2020-07-14 22:07:45.959574+00,f
+43,Neoplasm of endometrium,"",adenocarcinoma,ENDOMETRIUM,8000/1,123844007,Neoplasm of endometrium (disorder),C54.1,2020-07-14 22:07:45.959574+00,f
+44,Squamous cell carcinoma in situ of uterine cervix,SIL,squamous intraepithelial lesion,CERVIX,8077/_,406103009,Squamous cell carcinoma in situ of uterine cervix (disorder),C53.9,2020-07-14 22:07:45.959574+00,f
+45,Choriocarcinoma of placenta,"",choriocarcinoma,PLACENTA,9100/3,448401007,Choriocarcinoma of placenta (disorder),C58.9,2020-07-14 22:07:45.959574+00,f
+46,Neoplasm of ovary,"",adenocarcinoma,OVARY,8000/1,123843001,Neoplasm of ovary (disorder),C56.9,2020-07-14 22:07:45.959574+00,f
+47,Adenocarcinoma of pancreas,"",pancreatic adenocarcinoma,PANCREAS,8140/3,700423003,Adenocarcinoma of pancreas (disorder),C25.9,2020-07-14 22:07:45.959574+00,f
+48,Neoplasm of liver,"",hepatoma,LIVER,8000/1,126851005,Neoplasm of liver (disorder),C22.0,2020-07-14 22:07:45.959574+00,f
+49,Seminoma of testis,"",seminoma (germinal),TESTIS,9061/3,255107005,Seminoma of testis (disorder),C62.9,2020-07-14 22:07:45.959574+00,f
+50,Non-seminomatous germ cell neoplasm of testis,"",non-seminoma (germinal),TESTIS,9065/3,107691000119101,Non-seminomatous germ cell neoplasm of testis (disorder),C62.9,2020-07-14 22:07:45.959574+00,f
+51,Neoplasm of brain,"",adenocarcinoma,BRAIN,8000/1,126952004,Neoplasm of brain (disorder),C71.9,2020-07-14 22:07:45.959574+00,f
+52,Head and neck squamous cell carcinoma,HNSCC,squamous cell carcinoma,HEAD AND NECK,8070/3,255055008,Neoplasm of head AND/OR neck (disorder),"",2020-07-14 22:07:45.959574+00,f
+53,Head and neck squamous cell carcinoma,"",squamous cell carcinoma,"LIP, TONGUE, GUM",8070/3,255055008,Neoplasm of head AND/OR neck (disorder),"C01, C02, C03, C04, C05, C06, C07, C08, C09",2020-07-14 22:07:45.959574+00,f
+54,Head and neck squamous cell carcinoma,"",squamous cell carcinoma,PHARYNX,8070/3,255055008,Neoplasm of head AND/OR neck (disorder),"C10, C11, C12, C13, C14",2020-07-14 22:07:45.959574+00,f
+55,Head and neck squamous cell carcinoma,"",squamous cell carcinoma,"NASAL, SINUS, LARYNX",8070/3,255055008,Neoplasm of head AND/OR neck (disorder),"C30, C31, C32",2020-07-14 22:07:45.959574+00,f
+56,Aggressive fibromatosis,,,,,,,,2020-07-14 22:21:38.648669+00,t
+57,Adrenal cortical carcinoma,,,,,,,,2020-08-07 15:11:05.303488+00,t
+58,Endometrioid adenocarcinoma,,,,,,,,2020-08-12 16:29:47.83771+00,t
+59,Hepatocellular carcinoma,,,,,,,,2020-08-26 08:48:37.745039+00,t
+60,Liver cell adenoma,,,,,,,,2020-08-26 08:50:17.455856+00,t
+61,Neuroblastoma,,,,,,,,2020-09-04 15:54:44.426366+00,t
+62,Bile Duct Carcinoma,,,,,,,,2020-09-23 13:48:18.894042+00,t
+63,Rhabdomyosarcoma,,,,,,,,2020-09-23 13:48:18.954882+00,t
+64,Ovarian Adenocarcinoma,,,,,,,,2020-09-23 13:48:18.964266+00,t
+65,Ewing’S Sarcoma,,,,,,,,2020-09-23 13:48:18.974797+00,t
+66,Ureter Carcinoma,,,,,,,,2020-09-23 13:48:18.989231+00,t
+67,Epidermoid Carcinoma,,,,,,,,2020-09-23 13:48:18.999453+00,t
+68,Plasma Cell Leukemia,,,,,,,,2020-09-23 13:48:19.015164+00,t
+69,Leiomyosarcoma,,,,,,,,2020-09-23 13:48:19.023998+00,t
+70,Mucinous Adenocarcinoma,,,,,,,,2020-09-23 13:48:19.055082+00,t
+71,Adenomatous polyposis coli,,,,,,,,2021-01-22 09:31:12.407883+00,t

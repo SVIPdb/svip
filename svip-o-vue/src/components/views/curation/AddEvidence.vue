@@ -70,12 +70,10 @@
                                         v-slot="props"
                                         :modeled="form.disease"
                                         label="Disease"
-                                        sublabel="Type in a value and press 'enter' to create a new entry. User-created entries are in italics."
                                         inner-id="disease"
                                     >
                                         <DiseaseSearchBar
                                             id="disease"
-                                            allow-create
                                             v-model="form.disease"
                                             :disabled="isViewOnly"
                                             :state="checkValidity(props, true)"
