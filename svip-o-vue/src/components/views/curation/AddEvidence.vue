@@ -66,6 +66,7 @@
                                         />
                                     </ValidatedFormField>
 
+                                    <!--
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.disease"
@@ -77,6 +78,37 @@
                                             v-model="form.disease"
                                             :disabled="isViewOnly"
                                             :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+                                    -->
+
+                                    <!-- ICDO-O morpho/topo selection -->
+                                    <ValidatedFormField
+                                        v-slot="props"
+                                        :modeled="form.icdo_morpho"
+                                        label="ICD-O Morpho Code"
+                                        inner-id="icdo_morpho"
+                                    >
+                                        <MorphoSearchBar
+                                            id="icdo_morpho"
+                                            v-model="form.icdo_morpho"
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
+                                        :modeled="form.icdo_topo"
+                                        label="ICD-O Topo Codes"
+                                        inner-id="icdo_topo"
+                                    >
+                                        <TopoSearchBar
+                                            id="icdo_topo"
+                                            v-model="form.icdo_topo"
+                                            :disabled="isViewOnly"
+                                            :state="checkValidity(props, true)"
+                                            :multiple="true"
                                         />
                                     </ValidatedFormField>
 
@@ -497,12 +529,14 @@ import { required } from "vee-validate/dist/rules";
 import EvidenceHistory from "@/components/widgets/curation/EvidenceHistory";
 import { checkInRole } from "@/directives/access";
 import dayjs from "dayjs";
-import DiseaseSearchBar from "@/components/widgets/searchbars/DiseaseSearchBar";
+// import DiseaseSearchBar from "@/components/widgets/searchbars/DiseaseSearchBar";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import { pubmedURL } from "@/utils";
 import ulog from 'ulog';
 import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearchBar";
 import VariomesFullText from "@/components/widgets/curation/VariomesFullText";
+import MorphoSearchBar from "@/components/widgets/searchbars/icdo/MorphoSearchBar";
+import TopoSearchBar from "@/components/widgets/searchbars/icdo/TopoSearchBar";
 
 const log = ulog('Curation:AddEvidence')
 
@@ -522,10 +556,12 @@ extend("required", {
 export default {
     name: "AddEvidence",
     components: {
+        TopoSearchBar,
+        MorphoSearchBar,
         VariomesFullText,
         InteractorSearchBar,
         VariomesAbstract,
-        DiseaseSearchBar,
+        // DiseaseSearchBar,
         EvidenceHistory,
         ValidatedFormField,
         SearchBar,
@@ -574,7 +610,9 @@ export default {
                 last_modified: null,
 
                 // these fields are bound to form elements and populated on load
-                disease: null,
+                // disease: null,
+                icdo_morpho: null,
+                icdo_topo: null,
                 extra_variants: [],
                 type_of_evidence: null,
                 drugs: [],
@@ -636,7 +674,7 @@ export default {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    disease: this.form.disease && this.form.disease.name,
+                    disease: this.computedDisease && this.computedDisease.name,
                     collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : undefined
                 }
             })
@@ -771,7 +809,9 @@ export default {
                 };
 
             const payload = {
-                disease: this.form.disease, // this.form.disease.id,
+                // disease: this.form.disease, // this.form.disease.id,
+                icdo_morpho: this.form.icdo_morpho,
+                icdo_topo: this.form.icdo_topo,
                 variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
                     ? this.form.extra_variants.map(x => x.id.toString().includes('_') ? x.id.split("_")[1] : x.id)
@@ -956,6 +996,13 @@ export default {
         }
     },
     computed: {
+        computedDisease() {
+            // a curation entry is now a combination of morpho/topo terms
+
+            return {
+                name: this.form.icdo_morpho && this.form.icdo_morpho.term
+            };
+        },
         keywordSet() {
             if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
                 return []
