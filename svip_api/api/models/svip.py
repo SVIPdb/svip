@@ -1,13 +1,11 @@
 from collections import OrderedDict
 from enum import Enum
 from itertools import chain
-from pprint import pprint
 
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
 from django.db.models.base import ModelBase
-# makes deletes of related objects cascade on the sql server
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
@@ -154,7 +152,7 @@ class DiseaseInSVIP(SVIPModel):
     objects = DiseaseInSVIPManager()
 
     def name(self):
-        return self.disease.name() if self.disease else "Unspecified"
+        return self.disease.name if self.disease else "Unspecified"
 
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
@@ -289,6 +287,18 @@ class CurationEntry(SVIPModel):
         excluded_fields=('created_on', 'last_modified'),
         cascade_delete_history=True
     )
+
+    @property
+    def icdo_morpho(self):
+        if not self.disease:
+            return None
+        return self.disease.icd_o_morpho
+
+    @property
+    def icdo_topo(self):
+        if not self.disease:
+            return None
+        return [x.icd_o_topo for x in self.disease.icdotopoapidisease_set.all()]
 
     objects = CurationEntryManager()
 
