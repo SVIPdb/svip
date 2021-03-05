@@ -3,39 +3,29 @@
         <b-card class="shadow-sm mb-3" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showSummary" />
+                    <expander v-model="showSummary"/>
                     Variant Summary
                 </h6>
 
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
+                            <b-textarea class="summary-box" v-model="summary" rows="3"/>
                         </b-card-text>
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
-                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">Your comment :</b-col>
-                                <b-col v-if="!isEditMode && summaryComment !== ''" class="text-justify">
-                                    {{ summaryComment }}
+                                <b-col cols="10">
+                                    <div v-for="(comment,index) in comments" :key="index">
+                                        <b-alert :show="comment.content !== null" variant="light">
+                                            <b>{{ comment.reviewer }}</b>: <p>{{ comment.content }}</p>
+                                        </b-alert>
+                                    </div>
+
                                 </b-col>
-                                <b-col v-if="isEditMode">
-                                    <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
-                                </b-col>
-                                <b-col v-if="!isEditMode">
-                                    <b-button v-if="summaryComment === ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Comment summary
-                                    </b-button>
-                                    <b-button v-if="summaryComment !== ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Modify comment
-                                    </b-button>
-                                </b-col>
-                                <b-col v-if="isEditMode" md="auto">
-                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === ''" variant="success" class="centered-icons">
-                                        Save comment
-                                    </b-button>
-                                    <b-button @click="deleteSummaryComment" variant="danger" class="centered-icons mt-2">
-                                        Delete comment
+                                <b-col cols="2" align-self="start">
+                                    <b-button variant="success" block class="centered-icons">
+                                        Save modifications
                                     </b-button>
                                 </b-col>
                             </b-row>
@@ -57,12 +47,10 @@ import BroadcastChannel from "broadcast-channel";
 
 export default {
     name: "VariantSummary",
-    components: {
-
-    },
+    components: {},
     props: {
-        variant: { type: Object, required: false },
-        isOpen: { type: Boolean, required: false, default: false }
+        variant: {type: Object, required: false},
+        comments: {type: Array, required: true}
     },
     data() {
         return {
@@ -72,7 +60,7 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: false,
+            showSummary: true,
             isEditMode: false,
             summaryComment: "",
         };
@@ -83,13 +71,11 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        if(this.isOpen){
+        if (this.isOpen) {
             this.showSummary = true;
         }
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
         saveSummaryComment() {
             this.isEditMode = false;
@@ -110,6 +96,7 @@ export default {
     display: flex;
     align-items: center;
 }
+
 .pub-status > .fa-icon {
     margin-right: 0.4rem;
 }
@@ -118,6 +105,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
+
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;
