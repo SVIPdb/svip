@@ -24,7 +24,7 @@
 <script>
 import { HTTP } from "@/router/http";
 import { titleCase } from "@/utils";
-import sortBy from 'lodash/sortBy';
+// import sortBy from 'lodash/sortBy';
 
 export default {
     name: "MorphoSearchBar",
