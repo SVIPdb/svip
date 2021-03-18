@@ -100,6 +100,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.icdo_topo"
+                                        :enabled="!!(form.icdo_morpho)"
                                         label="ICD-O Topo Codes"
                                         inner-id="icdo_topo"
                                     >
