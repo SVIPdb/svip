@@ -84,7 +84,7 @@ class Disease(models.Model):
         if model_field_null(self, 'icdotopoapidisease_set'):
             return None
 
-        return self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True)
+        return list(self.icdotopoapidisease_set.values_list('icd_o_topo__topo_code', flat=True))
 
     @property
     def morpho_code(self):

@@ -256,21 +256,32 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         # identifying every model that refers to a Disease
 
         with transaction.atomic():
-            # if there was previously a disease, check if it's in use and delete it if not
-            collector = NestedObjects(using='default')  # or specific database
-            collector.collect([instance.disease])
+            if not icdo_morpho:
+                # we can't assign a disease if they didn't specify a morpho field
+                instance.disease = None
+                instance.save()
+                return None
 
-            if collector.can_fast_delete():
-                print("Fast-deleting old disease")
-                instance.disease.delete()
-            else:
-                print("Can't fast-delete old disease: %s" % collector.nested())
+            if instance.disease:
+                # if there was previously a disease, check if it's in use and delete it if not
+                collector = NestedObjects(using='default')  # or specific database
+                collector.collect([instance.disease])
+
+                if collector.can_fast_delete():
+                    print("Fast-deleting old disease")
+                    instance.disease.delete()
+                else:
+                    print("Can't fast-delete old disease: %s" % collector.nested())
 
             # build a Q-object that's all the topo entries related to the target Disease ANDed together
             q_objects = Q(icd_o_morpho=icdo_morpho['id'])
 
-            for x in icdo_topo_list:
-                q_objects &= Q(icdotopoapidisease__icd_o_topo__id=x['id'])
+            if icdo_topo_list:
+                for x in icdo_topo_list:
+                    q_objects &= Q(icdotopoapidisease__icd_o_topo__id=x['id'])
+            else:
+                # we need to search for a morpho that has no associated topo codes
+                q_objects &= Q(icdotopoapidisease=None)
 
             # either retrieve an existing disease that matches the description, or create it
             candidate = Disease.objects.filter(q_objects).first()
@@ -279,7 +290,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 candidate = Disease.objects.create(icd_o_morpho=IcdOMorpho.objects.get(id=icdo_morpho['id']))
                 IcdOTopoApiDisease.objects.bulk_create([
                     IcdOTopoApiDisease(api_disease=candidate, icd_o_topo=IcdOTopo.objects.get(id=x['id']))
-                    for x in icdo_topo_list
+                    for x in (icdo_topo_list if icdo_topo_list else [])
                 ])
                 candidate.save()
 
