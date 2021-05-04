@@ -1,4 +1,5 @@
 import requests
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 
 from cachecontrol import CacheControl
@@ -16,7 +17,7 @@ cached_sess = CacheControl(
 @gzip_page
 def variomes_single_ref(request):
     # proxy requests to variomes server
-    response = cached_sess.get('https://candy.hesge.ch/Variomes/api/fetchLit.jsp', params=request.GET)
+    response = cached_sess.get('%s/fetchLit.jsp' % settings.VARIOMES_BASE_URL, params=request.GET, verify=settings.VARIOMES_VERIFY_REQUESTS)
 
     if response.status_code != 200:
         return HttpResponse(response.content, status=response.status_code)
@@ -27,7 +28,7 @@ def variomes_single_ref(request):
 @gzip_page
 def variomes_search(request):
     # proxy requests to variomes server
-    response = cached_sess.get('https://candy.hesge.ch/Variomes/api/rankLit.jsp', params=request.GET)
+    response = cached_sess.get('%s/rankLit.jsp' % settings.VARIOMES_BASE_URL, params=request.GET, verify=settings.VARIOMES_VERIFY_REQUESTS)
 
     if response.status_code != 200:
         return HttpResponse(response.content, status=response.status_code)
