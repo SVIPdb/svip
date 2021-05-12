@@ -38,6 +38,8 @@ To clone the project and its submodules, you can run the following:
 
 ```
 git clone git@github.com:SVIPdb/coordinator.git svip
+cd coordinator
+git submodule update --init --recursive
 ```
 
 To initially start the database server, API, and frontend:
