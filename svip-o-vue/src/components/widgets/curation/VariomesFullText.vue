@@ -101,7 +101,7 @@ export default {
         loadPMC(pmcid) {
             if (this.$refs.pmcaElem && this.$refs.pmcaElem.fillViewerWithIdAndOptions) {
                 this.loading = true;
-                this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpcandy"}).finally(() => {
+                this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpscandy"}).finally(() => {
                     // console.log("done loading!");
                     this.loading = false;
                 });

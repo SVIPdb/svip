@@ -75,6 +75,10 @@ variants_in_sources_router.register(r'collapsed_associations', views.CollapsedAs
 router.register(r'drugs', views.DrugViewSet)
 router.register(r'diseases', views.DiseaseViewSet)
 
+# ICD-O models, for curation
+router.register(r'icdo_morpho', views.IcdOMorphoViewSet)
+router.register(r'icdo_topo', views.IcdOTopoViewSet)
+
 # ------------------------------------------
 # - SVIP-specific endpoints, top-level and nested
 # ------------------------------------------

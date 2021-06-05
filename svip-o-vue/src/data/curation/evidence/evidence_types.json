@@ -32,7 +32,8 @@
                     "effect": [
                         "Good outcome",
                         "Poor outcome",
-                        "Intermediate"
+                        "Intermediate",
+                        "Not associated with prognosis"
                     ],
                     "tier_criteria": [
                         "Included in Professional Guidelines (Tier IA)",

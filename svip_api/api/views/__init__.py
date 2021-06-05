@@ -33,3 +33,8 @@ from .comments import (
 from .statistics import (
     Statistics
 )
+
+from .icdo import (
+    IcdOTopoViewSet,
+    IcdOMorphoViewSet
+)
