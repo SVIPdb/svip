@@ -17,6 +17,7 @@ TODO.md
 /resources
 /scratch
 
-
-
 svip_api/api/views/beacon_v2.py
+
+# support folder containing project organization files
+.0

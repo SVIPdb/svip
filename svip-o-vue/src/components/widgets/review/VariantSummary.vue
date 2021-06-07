@@ -49,11 +49,11 @@
 
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
-// import { HTTP } from "@/router/http";
+import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-// import ulog from 'ulog';
+import ulog from 'ulog';
 
-// const log = ulog('VariantSummary');
+const log = ulog('VariantSummary');
 
 export default {
     name: "VariantSummary",
@@ -75,6 +75,7 @@ export default {
             showSummary: false,
             isEditMode: false,
             summaryComment: "",
+            summaryComments: []
         };
     },
     created() {
@@ -86,14 +87,34 @@ export default {
         if(this.isOpen){
             this.showSummary = true;
         }
+
+        //HTTP.get(`/variants_in_svip/${this.variant.svip_data.id}`)
+        //    .then((result) => {
+        //        console.log(result.data)
+        //    })
+        //    .catch((err) => {
+        //        this.error = err;
+        //        throw err;
+        //    })
+
     },
     computed: {
 
     },
     methods: {
         saveSummaryComment() {
-            this.isEditMode = false;
-            this.$snotify.success("Your comment has been saved");
+            console.log(this.summaryComment);
+            this.summaryComments.push(this.summaryComment);
+            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary_comments: this.summaryComments })
+                .then((response) => {
+                    console.log(`Summary comments of variant: ${response.data.summary_comments}`);
+                    this.isEditMode = false;
+                    this.$snotify.success("Your comment has been saved");
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to update summary");
+                })
         },
         deleteSummaryComment() {
             this.summaryComment = "";

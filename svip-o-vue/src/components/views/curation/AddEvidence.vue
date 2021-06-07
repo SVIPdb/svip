@@ -941,10 +941,10 @@ export default {
             window.open(targetUrl, '_blank');
         },
         onSubmitDraft() {
-            this.submit(true);
+            this.submit(true); // true for 'isDraft'
         },
         onSubmit() {
-            this.submit(false);
+            this.submit(false); // false for 'isDraft'
         },
         onDelete() {
             if (confirm("Are you sure that you want to delete this entry?")) {

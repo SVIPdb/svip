@@ -72,7 +72,8 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
     search_fields = (
         'variant__gene__symbol',
         'variant__name',
-        'disease__icd_o_morpho__term'
+        'disease__icd_o_morpho__term',
+        'summary_comments'
     )
 
     @action(detail=True)

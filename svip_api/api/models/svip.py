@@ -93,6 +93,8 @@ class VariantInSVIP(models.Model):
 
     history = HistoricalRecords(cascade_delete_history=True)
 
+    summary_comments = ArrayField(base_field=models.TextField(), null=True)
+
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
         # TODO: check if correct
