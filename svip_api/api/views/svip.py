@@ -10,13 +10,14 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease
+    Disease,
+    SummaryComment
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
-from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer
+from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer, SummaryCommentSerializer
 from api.support.history import make_history_response
 from api.utils import json_build_fields
 
@@ -292,3 +293,10 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
             q = Sample.objects.all()
 
         return q.order_by('id')
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+class SummaryCommentViewSet(viewsets.ModelViewSet):
+    queryset = SummaryComment.objects.all()
+    serializer_class = SummaryCommentSerializer
