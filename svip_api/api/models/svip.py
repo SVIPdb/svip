@@ -93,7 +93,7 @@ class VariantInSVIP(models.Model):
 
     history = HistoricalRecords(cascade_delete_history=True)
 
-    summary_comments = ArrayField(base_field=models.TextField(), null=True)
+    #summary_comments = ArrayField(base_field=models.TextField(), null=True)
 
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
@@ -122,6 +122,12 @@ class VariantInSVIP(models.Model):
     class Meta:
         verbose_name = "Variant in SVIP"
         verbose_name_plural = "Variants in SVIP"
+
+
+class SummaryComment(models.Model):
+    content = models.TextField(default="")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments")
 
 
 # ================================================================================================================
