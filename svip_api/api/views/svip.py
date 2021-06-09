@@ -6,6 +6,7 @@ from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 
+from api.models.svip import SummaryComment
 from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
