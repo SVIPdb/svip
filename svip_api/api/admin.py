@@ -4,6 +4,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry
 from api.models.svip import SummaryComment
 
+#admin.site.register(SummaryComment)
 
 @admin.register(Variant)
 class VariantAdmin(admin.ModelAdmin):
