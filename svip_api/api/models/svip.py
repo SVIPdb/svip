@@ -126,8 +126,8 @@ class VariantInSVIP(models.Model):
 
 class SummaryComment(models.Model):
     content = models.TextField(default="")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
-    variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments")
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    #variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments")
 
 
 # ================================================================================================================
