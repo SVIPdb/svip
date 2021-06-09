@@ -98,6 +98,8 @@ router.register(r'curation_entries', views.CurationEntryViewSet, basename='curat
 
 router.register(r'comments', views.VariantCommentViewSet, basename='variant_comments')
 
+#router.register(r'summaryComments', views.SummaryCommentViewSet, basename='summaryComment')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(genes_router.urls)),

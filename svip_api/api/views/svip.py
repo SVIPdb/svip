@@ -10,8 +10,7 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease,
-    SummaryComment
+    Disease
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer
 from api.serializers import (
