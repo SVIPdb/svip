@@ -15,7 +15,8 @@ from .svip import (
     VariantInSVIPViewSet,
     DiseaseInSVIPViewSet,
     SampleViewSet,
-    CurationEntryViewSet
+    CurationEntryViewSet,
+    SummaryCommentViewSet
 )
 
 from .reference import (

@@ -4,7 +4,6 @@ from rest_framework_nested import routers as nested_routers
 
 from api import views
 
-
 class OptionalSlashRouter(routers.DefaultRouter):
     def __init__(self, *args, **kwargs):
         super(OptionalSlashRouter, self).__init__(*args, **kwargs)
@@ -98,7 +97,7 @@ router.register(r'curation_entries', views.CurationEntryViewSet, basename='curat
 
 router.register(r'comments', views.VariantCommentViewSet, basename='variant_comments')
 
-#router.register(r'summaryComments', views.SummaryCommentViewSet, basename='summaryComment')
+router.register(r'summaryComments', views.SummaryCommentViewSet, basename='summaryComment')
 
 urlpatterns = [
     path('', include(router.urls)),
