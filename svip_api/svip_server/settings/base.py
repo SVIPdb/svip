@@ -238,3 +238,5 @@ CORS_ALLOW_CREDENTIALS = True
 
 SOCIBP_BASE_URL = os.environ['SOCIBP_BASE_URL']
 SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
+
+VARIOMES_API = 'https://candy.hesge.ch/Variomes/api'

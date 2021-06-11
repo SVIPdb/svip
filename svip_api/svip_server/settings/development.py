@@ -1,9 +1,11 @@
+import socket
 import logging
 
 from .base import *
 
 DEBUG = True
-USE_NPLUSONE = False # if true, annotates all db requests with N+1 checking logic (expensive, not that reliable)
+# if true, annotates all db requests with N+1 checking logic (expensive, not that reliable)
+USE_NPLUSONE = False
 
 INSTALLED_APPS += [
     'debug_toolbar'
@@ -19,7 +21,6 @@ if USE_NPLUSONE:
 
 # django debug toolbar will only be shown for clients from here:
 # (the socket import allows us to show it when django is running inside docker)
-import socket
 
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -47,6 +48,8 @@ LOGGING = {
         },
     },
 }
+
+VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
 
 # LOGGING = {
 #     'version': 1,
