@@ -33,6 +33,7 @@
                     <b-select-option :value="null">---</b-select-option>
                     <b-select-option :value="'medline'">medline</b-select-option>
                     <b-select-option :value="'pmc'">PMC</b-select-option>
+                    <b-select-option :value="'ct'">CT</b-select-option>
                 </b-select>
             </b-col>
         </b-row>
@@ -133,10 +134,10 @@
                     </pass>
                 </template>
 
-                <template v-slot:cell(authors)="data">{{ data.value && data.value.join(", ") }}</template>
+                <template v-slot:cell(authors)="data">{{ data.value && data.value.split('|').join(", ")}}</template>
                 <template v-slot:cell(publication_types)="data">
                     <b class="mb-1 d-block">{{ data.item.collection }}</b>
-                    {{ data.value && data.value.join(", ") }}<br />
+                    {{ data.value && data.value.split('|').join(", ") }}<br />
                 </template>
                 <template v-slot:cell(score)="data">
                     <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>
@@ -189,7 +190,7 @@
                     <icon name="star" style="flex: 0 1;" class="mr-1" />
                     <div class="d-flex align-items-center">
                         For multi-variant search, batch querying, and many other features, see the official interface:
-                        <a class="ml-1" :href="`https://candy.hesge.ch/Variomes/?genvars=${gene.symbol} (${variant.name})`" target="_blank">Variomes</a>
+                        <a class="ml-1" :href="`https://candy.hesge.ch/Variomes/?genvars=${variant.gene.symbol} (${variant.name})`" target="_blank">Variomes</a>
                         <icon class="ml-1" name="external-link-alt" />
                     </div>
                     <icon name="star" style="flex: 0 1;" />
@@ -223,7 +224,7 @@ export default {
         return {
             fieldsTextMining,
             source: "PMID",
-            collections: ["pmc","medline"],
+            collections: ["pmc","medline","ct"],
             filterCollection: null,
             reference: null,
             variomes: [],
@@ -311,7 +312,8 @@ export default {
                 params: {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                     disease: this.disease && this.disease.name,
-                    collection: this.collections.join(",")
+                    collection: this.collections.join(","),
+                    hl_fields: 'title'
                 }
             })
                 .then(response => {

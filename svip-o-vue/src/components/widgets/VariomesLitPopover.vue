@@ -87,6 +87,10 @@ export default {
                 return `http://www.ncbi.nlm.nih.gov/pmc/articles/${this.parsedPMID}`;
             }
 
+            if (this.parsedPMID.includes("NCT")) {
+                return `https://clinicaltrials.gov/ct2/show/${this.parsedPMID}`;
+            }
+
             return `http://www.ncbi.nlm.nih.gov/pubmed/${this.parsedPMID}`;
         },
         title() {
@@ -151,13 +155,14 @@ export default {
                     id: this.parsedPMID,
                     genvars: `${this.gene} (${this.variant})`,
                     disease: this.disease,
-                    collection: (this.parsedPMID && this.parsedPMID.includes("PMC")) ? 'pmc' : undefined
+                    collection: (this.parsedPMID && this.parsedPMID.includes("PMC")) ? 'pmc' : (this.parsedPMID && this.parsedPMID.includes("NCT")) ? 'ct' : undefined,
+                    hl_fields: 'title,abstract'
                 }
             })
                 .then(response => {
                     this.variomes = response.data;
 
-                    if (response.data && response.data.errors && Object.keys(response.data.errors).length > 0) {
+                    if (response.data && response.data.errors && Object.keys(response.data.errors).length > 0 && response.data.errors.level === 'error') {
                         // log.warn("Errors: ", JSON.stringify(response.data.errors));
                         this.error = {error: "Couldn't retrieve publication info, try again later."};
                     }
