@@ -178,7 +178,8 @@ export default {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    collection: this.reference.includes("PMC") ? 'pmc' : undefined
+                    collection: this.reference.includes("PMC") ? 'pmc' : this.reference.includes("NCT") ? 'ct' : undefined,
+                    hl_fields: 'title,abstract'
                 }
             })
                 .then(response => {

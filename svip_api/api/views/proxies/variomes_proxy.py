@@ -19,7 +19,6 @@ def variomes_single_ref(request):
     # proxy requests to variomes server
     api = settings.VARIOMES_API if hasattr(
         settings, 'VARIOMES_API') else 'https://candy.hesge.ch/Variomes/api'
-    print(f"api: {api}")
     response = cached_sess.get(
         f"{api}/fetchLit.jsp", params=request.GET, verify=False)
 
