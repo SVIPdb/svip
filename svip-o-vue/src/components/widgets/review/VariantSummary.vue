@@ -52,6 +52,7 @@
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import ulog from 'ulog';
+import {mapGetters} from "vuex";
 
 const log = ulog('VariantSummary');
 
@@ -75,10 +76,12 @@ export default {
             showSummary: false,
             isEditMode: false,
             summaryComment: "",
-            summaryComments: []
         };
     },
     created() {
+        console.log('Flag')
+        console.log("user:")
+        console.log(this.user.user_id)
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -99,12 +102,34 @@ export default {
 
     },
     computed: {
-
+        ...mapGetters({
+            user: "currentUser"
+        })
     },
     methods: {
         saveSummaryComment() {
-            //console.log(this.summaryComment);
-            this.summaryComments.push(this.summaryComment);
+
+            const summaryCommentJSON = {
+                content: this.summaryComment,
+                owner: this.user.user_id,
+                variant: this.variant.svip_data.id
+            }
+
+            console.log(summaryCommentJSON)
+
+            //// Should allow user to post summary comment if none exists for the moment, otherwise 'patch' it to modify it
+            //HTTP.post(`/variants_in_svip/${this.variant.svip_data.id}/`, summaryCommentJSON)
+            //    .then((response) => {
+            //        //console.log(`Summary comments of variant: ${response.data.summary_comments}`);
+            //        this.isEditMode = false;
+            //        this.$snotify.success("Your comment has been saved");
+            //    })
+            //    .catch((err) => {
+            //        log.warn(err);
+            //        this.$snotify.error("Failed to update summary");
+            //    })
+
+            
             //HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary_comments: this.summaryComments })
             //    .then((response) => {
             //        //console.log(`Summary comments of variant: ${response.data.summary_comments}`);
