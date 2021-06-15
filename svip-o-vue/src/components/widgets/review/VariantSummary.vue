@@ -106,10 +106,6 @@ export default {
     methods: {
         saveSummaryComment() {
 
-            console.log(`user: ${this.user.user_id}`)
-            //console.log(this.variant.id)
-            console.log(this.variant.svip_data.id)
-
             const summaryCommentJSON = {
                 content: this.summaryComment,
                 owner: this.user.user_id,
@@ -118,7 +114,15 @@ export default {
 
             console.log(summaryCommentJSON)
 
-            // Should allow user to post summary comment if none exists for the moment, otherwise 'patch' it to modify it
+            // check whether a summary comment already exists for this variant and this user
+            HTTP.get(`/summary_comments/?variant=${summaryCommentJSON.variant}&owner=${summaryCommentJSON.owner}`).then((response) => {
+                const comment_exists = response.data.results.length > 0;
+                console.log(comment_exists);
+            });
+                
+        },
+
+        postComment() {
             HTTP.post(`/summary_comments/`, summaryCommentJSON)
                 .then((response) => {
                     this.isEditMode = false;
@@ -128,18 +132,11 @@ export default {
                     log.warn(err);
                     this.$snotify.error("Failed to update summary");
                 })
-                //HTTP.patch(`/summary_comments/`, summaryCommentJSON)
-                //    .then((response) => {
-                //        console.log(`Summary comments of variant: ${response.data.summary_comments}`);
-                //        this.isEditMode = false;
-                //        this.$snotify.success("Your comment has been saved");
-                //    })
-                //    .catch((err) => {
-                //        log.warn(err);
-                //        this.$snotify.error("Failed to update summary");
-                //    })
-                
-        },
+        }
+
+        modifyComment() {
+
+        }
 
         deleteSummaryComment() {
             this.summaryComment = "";
