@@ -270,7 +270,9 @@ export default {
         }
     },
     created() {
-        //
+        //HTTP.get(`/summaryComments`).then((response) => {
+        //    console.log(response.data.results)
+        //});
     },
     methods: {
         //

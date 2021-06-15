@@ -97,7 +97,19 @@ router.register(r'curation_entries', views.CurationEntryViewSet, basename='curat
 
 router.register(r'comments', views.VariantCommentViewSet, basename='variant_comments')
 
-router.register(r'summaryComments', views.SummaryCommentViewSet, basename='summaryComment')
+
+
+
+
+
+router.register(r'summary_comments', views.SummaryCommentViewSet, basename='summary_comments')
+#summary_comments_router = nested_routers.NestedSimpleRouter(router, r'summary_comments', lookup='summary_comments')
+#summary_comments_router.register(r'variants', views.SummaryCommentViewSet, basename='variants')
+
+
+
+
+
 
 urlpatterns = [
     path('', include(router.urls)),

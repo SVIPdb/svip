@@ -453,16 +453,24 @@ class SampleSerializer(serializers.ModelSerializer):
 # ================================================================================================================
 
 class SummaryCommentSerializer(serializers.ModelSerializer):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    #kwargs = {
+    #    'variant': 'variant',
+    #}
+    
     class Meta:
         model = SummaryComment
-        fields = ('__all__')
+        fields = ('owner', 'content', 'variant', 'author_name')
         extra_kwargs = {
             "content": {
                 "required": False,
                 "allow_null": True,
             },
             "reviewer": {
-                "required": True,
+                "required": False,
                 "allow_null": False,
             }
         }
