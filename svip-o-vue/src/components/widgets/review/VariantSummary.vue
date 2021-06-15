@@ -79,9 +79,6 @@ export default {
         };
     },
     created() {
-        console.log('Flag')
-        console.log("user:")
-        console.log(this.user.user_id)
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -109,6 +106,10 @@ export default {
     methods: {
         saveSummaryComment() {
 
+            console.log(`user: ${this.user.user_id}`)
+            //console.log(this.variant.id)
+            console.log(this.variant.svip_data.id)
+
             const summaryCommentJSON = {
                 content: this.summaryComment,
                 owner: this.user.user_id,
@@ -117,17 +118,26 @@ export default {
 
             console.log(summaryCommentJSON)
 
-            //// Should allow user to post summary comment if none exists for the moment, otherwise 'patch' it to modify it
-            //HTTP.post(`/variants_in_svip/${this.variant.svip_data.id}/`, summaryCommentJSON)
-            //    .then((response) => {
-            //        //console.log(`Summary comments of variant: ${response.data.summary_comments}`);
-            //        this.isEditMode = false;
-            //        this.$snotify.success("Your comment has been saved");
-            //    })
-            //    .catch((err) => {
-            //        log.warn(err);
-            //        this.$snotify.error("Failed to update summary");
-            //    })
+            // Should allow user to post summary comment if none exists for the moment, otherwise 'patch' it to modify it
+            HTTP.post(`/summary_comments/`, summaryCommentJSON)
+                .then((response) => {
+                    this.isEditMode = false;
+                    this.$snotify.success("Your comment has been saved");
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    //HTTP.patch(`/summary_comments/`, summaryCommentJSON)
+                    //    .then((response) => {
+                    //        console.log(`Summary comments of variant: ${response.data.summary_comments}`);
+                    //        this.isEditMode = false;
+                    //        this.$snotify.success("Your comment has been saved");
+                    //    })
+                    //    .catch((err) => {
+                    //        log.warn(err);
+                    //        this.$snotify.error("Failed to update summary");
+                    //    })
+                    this.$snotify.error("Failed to update summary");
+                })
 
             
             //HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary_comments: this.summaryComments })

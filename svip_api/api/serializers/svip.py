@@ -195,8 +195,7 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'variant',
             'summary',
             'tissue_counts',
-            'diseases',
-            'summary_comments'
+            'diseases'
         )
 
 
@@ -463,7 +462,7 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SummaryComment
-        fields = ('owner', 'content', 'variant', 'author_name')
+        fields = ('owner', 'content', 'variant', 'reviewer')
         extra_kwargs = {
             "content": {
                 "required": False,

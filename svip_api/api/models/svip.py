@@ -80,7 +80,7 @@ class VariantInSVIP(models.Model):
     from the public data.
 
     Also, the SVIP-specific data model is still very much a work-in-progress, so I figure it doesn't make sense
-    to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
+    to devote a lot of time to engineering a normalized data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
     variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
@@ -127,9 +127,10 @@ class VariantInSVIP(models.Model):
 class SummaryComment(models.Model):
     content = models.TextField(default="")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, default=16)
-    variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments", default=278)
+    variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, default=278)
+    #variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments", default=278)
     
-    def author_name(self):
+    def reviewer(self):
         return f"{self.owner.first_name} {self.owner.last_name}"
 
 

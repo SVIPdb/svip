@@ -307,7 +307,7 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
         variant = self.request.query_params.get('variant')
         
         if variant != None:
-            print(f"variant: {variant}")
+            print(f"variant: {variant} ")
             queryset = SummaryComment.objects.filter(variant=variant)
         else:
             print('no variant parameter')
