@@ -304,14 +304,18 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
     serializer_class = SummaryCommentSerializer
     
     def get_queryset(self):
+        print(f"query params: {self.request.query_params} ")
+        
         variant = self.request.query_params.get('variant')
+        owner = self.request.query_params.get('owner')
+        
+        queryset = SummaryComment.objects.all()
         
         if variant != None:
-            print(f"variant: {variant} ")
-            queryset = SummaryComment.objects.filter(variant=variant)
-        else:
-            print('no variant parameter')
-            queryset = SummaryComment.objects.all()
+            queryset = queryset.filter(variant=variant)
+            
+        if owner != None:
+            queryset = queryset.filter(owner=owner)
 
         return queryset
 

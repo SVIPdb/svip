@@ -126,31 +126,21 @@ export default {
                 })
                 .catch((err) => {
                     log.warn(err);
-                    //HTTP.patch(`/summary_comments/`, summaryCommentJSON)
-                    //    .then((response) => {
-                    //        console.log(`Summary comments of variant: ${response.data.summary_comments}`);
-                    //        this.isEditMode = false;
-                    //        this.$snotify.success("Your comment has been saved");
-                    //    })
-                    //    .catch((err) => {
-                    //        log.warn(err);
-                    //        this.$snotify.error("Failed to update summary");
-                    //    })
                     this.$snotify.error("Failed to update summary");
                 })
-
-            
-            //HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary_comments: this.summaryComments })
-            //    .then((response) => {
-            //        //console.log(`Summary comments of variant: ${response.data.summary_comments}`);
-            //        this.isEditMode = false;
-            //        this.$snotify.success("Your comment has been saved");
-            //    })
-            //    .catch((err) => {
-            //        log.warn(err);
-            //        this.$snotify.error("Failed to update summary");
-            //    })
+                //HTTP.patch(`/summary_comments/`, summaryCommentJSON)
+                //    .then((response) => {
+                //        console.log(`Summary comments of variant: ${response.data.summary_comments}`);
+                //        this.isEditMode = false;
+                //        this.$snotify.success("Your comment has been saved");
+                //    })
+                //    .catch((err) => {
+                //        log.warn(err);
+                //        this.$snotify.error("Failed to update summary");
+                //    })
+                
         },
+
         deleteSummaryComment() {
             this.summaryComment = "";
             this.isEditMode = false;
