@@ -319,12 +319,6 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
 
         return queryset
     
-    #@api_view(['PUT'])
-    #def put(self, request):
-    #    queryset = SummaryComment.objects.all()
-    #    return queryset
-
-    
     
     #def get_serializer_context(self):
     #    print('get_serializer_context')

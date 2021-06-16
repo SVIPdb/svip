@@ -46,7 +46,7 @@ import BroadcastChannel from "broadcast-channel";
 // const log = ulog('VariantSummary');
 
 export default {
-    name: "VariantSummary",
+    name: "ModifyVariantSummary",
     components: {},
     props: {
         variant: {type: Object, required: false},

@@ -462,7 +462,7 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SummaryComment
-        fields = ('owner', 'content', 'variant', 'reviewer')
+        fields = ('id', 'owner', 'content', 'variant', 'reviewer')
         extra_kwargs = {
             "content": {
                 "required": False,
