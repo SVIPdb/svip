@@ -87,16 +87,6 @@ export default {
         if(this.isOpen){
             this.showSummary = true;
         }
-
-        //HTTP.get(`/variants_in_svip/${this.variant.svip_data.id}`)
-        //    .then((result) => {
-        //        console.log(result.data)
-        //    })
-        //    .catch((err) => {
-        //        this.error = err;
-        //        throw err;
-        //    })
-
     },
     computed: {
         ...mapGetters({
@@ -109,7 +99,8 @@ export default {
             const summaryCommentJSON = {
                 content: this.summaryComment,
                 owner: this.user.user_id,
-                variant: this.variant.svip_data.id
+                //variant: this.variant.svip_data.id
+                variant: this.variant.id
             }
             console.log(summaryCommentJSON)
 

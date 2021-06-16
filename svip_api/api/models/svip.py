@@ -127,8 +127,8 @@ class VariantInSVIP(models.Model):
 class SummaryComment(models.Model):
     content = models.TextField(default="")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, default=16)
-    variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, default=278)
-    #variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, related_name="summary_comments", default=278)
+    #variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, default=278)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
     
     def reviewer(self):
         return f"{self.owner.first_name} {self.owner.last_name}"
