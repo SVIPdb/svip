@@ -113,17 +113,6 @@ export default {
             }
             console.log(summaryCommentJSON)
 
-            // check whether a summary comment already exists for this variant and this user
-            HTTP.get(`/summary_comments/?variant=${summaryCommentJSON.variant}&owner=${summaryCommentJSON.owner}`).then((response) => {
-                if (response.data.results.length > 0) {
-                    this.postComment(summaryCommentJSON);
-                } else {
-                    this.editComment(summaryCommentJSON);
-                }
-            });
-            
-        },
-        postComment(summaryCommentJSON) {
             HTTP.post(`/summary_comments/`, summaryCommentJSON)
                 .then((response) => {
                     this.isEditMode = false;
@@ -133,18 +122,30 @@ export default {
                     log.warn(err);
                     this.$snotify.error("Failed to update summary");
                 })
+            
         },
-        editComment(summaryCommentJSON) {
-            HTTP.patch(`/summary_comments/`, summaryCommentJSON)
-                .then((response) => {
-                    this.isEditMode = false;
-                    this.$snotify.success("Your comment has been saved");
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to update summary");
-                })
-        },
+        //postComment(summaryCommentJSON) {
+        //    HTTP.post(`/summary_comments/`, summaryCommentJSON)
+        //        .then((response) => {
+        //            this.isEditMode = false;
+        //            this.$snotify.success("Your comment has been saved");
+        //        })
+        //        .catch((err) => {
+        //            log.warn(err);
+        //            this.$snotify.error("Failed to update summary");
+        //        })
+        //},
+        //editComment(summaryCommentJSON) {
+        //    HTTP.patch(`/summary_comments/?variant=${summaryCommentJSON.variant}&owner=${summaryCommentJSON.owner}`, summaryCommentJSON)
+        //        .then((response) => {
+        //            this.isEditMode = false;
+        //            this.$snotify.success("Your comment has been saved");
+        //        })
+        //        .catch((err) => {
+        //            log.warn(err);
+        //            this.$snotify.error("Failed to update summary");
+        //        })
+        //},
         deleteSummaryComment() {
             this.summaryComment = "";
             this.isEditMode = false;

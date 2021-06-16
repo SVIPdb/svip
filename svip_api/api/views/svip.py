@@ -318,6 +318,11 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
+    
+    #@api_view(['PUT'])
+    #def put(self, request):
+    #    queryset = SummaryComment.objects.all()
+    #    return queryset
 
     
     

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
 from django.db.models.base import ModelBase
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django_db_cascade.deletions import DB_CASCADE
@@ -132,6 +132,22 @@ class SummaryComment(models.Model):
     
     def reviewer(self):
         return f"{self.owner.first_name} {self.owner.last_name}"
+
+# Detects whether a summary comment from same user for same variant already exists, then delete it
+@receiver(pre_save, sender=SummaryComment)
+def delete_previous(sender, instance, **kwargs):
+    # detect if a pk already exists for this Summary comment so you know whether it is a new one being created
+    if instance.pk is None:
+        print("instance is being created")
+        same_params = SummaryComment.objects.filter(variant = instance.variant).filter(owner = instance.owner)
+        already_a_comment = len(same_params) > 0
+        print(f"Already a comment for these params: {already_a_comment}")
+        if already_a_comment:
+            for summary_com in same_params:
+                summary_com.delete()
+    else:
+        print("instance already exists")
+    return ""
 
 
 # ================================================================================================================
