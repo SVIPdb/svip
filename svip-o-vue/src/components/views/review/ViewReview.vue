@@ -252,6 +252,13 @@ export default {
             }
         }
     },
+    mounted() {
+        HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then((response) => {
+            const results = response.data.results
+            console.log(results)
+            this.summary.comments = results;
+        });
+    },
     computed: {
         ...mapGetters({
             variant: "variant",
@@ -268,11 +275,6 @@ export default {
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
         }
-    },
-    created() {
-        //HTTP.get(`/summaryComments`).then((response) => {
-        //    console.log(response.data.results)
-        //});
     },
     methods: {
         //
