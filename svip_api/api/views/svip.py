@@ -356,3 +356,7 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
     #        serializer = SummaryCommentSerializer(queryset, many=True)
         
     #    return Response(serializer.data)
+
+#@api_view(['GET'])
+#def delete_summary_comment(request):
+    

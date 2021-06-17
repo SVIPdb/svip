@@ -125,9 +125,11 @@ class VariantInSVIP(models.Model):
 
 
 class SummaryComment(models.Model):
+    """
+    Summary comment posted by reviewer for a given variant
+    """
     content = models.TextField(default="")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, default=16)
-    #variant = models.ForeignKey(VariantInSVIP, on_delete=DB_CASCADE, default=278)
     variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
     
     def reviewer(self):
@@ -442,3 +444,12 @@ class Sample(SVIPModel):
     software_version = models.TextField(verbose_name="Software version")
     platform = models.TextField(verbose_name="Platform")
     contact = models.TextField(verbose_name="Contact")
+
+
+
+# ================================================================================================================
+# === Review
+# ================================================================================================================
+
+class Review(models.Model):
+    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)

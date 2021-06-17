@@ -69,14 +69,17 @@ export default {
         return {
             summary: this.variant.svip_data && this.variant.svip_data.summary,
             history_entry_id: null,
-
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
             showSummary: false,
             isEditMode: false,
             summaryComment: "",
+            serverSummaryComment: null,
         };
+    },
+    mounted() {
+        this.getSummaryComment();
     },
     created() {
         this.channel.onmessage = () => {
@@ -94,8 +97,20 @@ export default {
         })
     },
     methods: {
-        saveSummaryComment() {
+        getSummaryComment() {
+            // get already existing summary comment for this variant and user (if exists)
+            HTTP.get(`/summary_comments/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
+                const results = response.data.results
 
+                if (results.length > 0) {
+                    this.serverSummaryComment = results[0]
+                    this.summaryComment = results[0].content
+                } else {
+                    this.serverSummaryComment = null
+                }
+            });
+        },
+        saveSummaryComment() {
             // Prepare a JSON containing parameters for SummaryComment model
             const summaryCommentJSON = {
                 content: this.summaryComment,
@@ -107,6 +122,7 @@ export default {
             // post new comment (even only editing an existing one will create a new instance and delete the former one)
             HTTP.post(`/summary_comments/`, summaryCommentJSON)
                 .then((response) => {
+                    this.getSummaryComment();
                     this.isEditMode = false;
                     this.$snotify.success("Your comment has been saved");
                 })
@@ -116,32 +132,25 @@ export default {
                 })
             
         },
-        //postComment(summaryCommentJSON) {
-        //    HTTP.post(`/summary_comments/`, summaryCommentJSON)
-        //        .then((response) => {
-        //            this.isEditMode = false;
-        //            this.$snotify.success("Your comment has been saved");
-        //        })
-        //        .catch((err) => {
-        //            log.warn(err);
-        //            this.$snotify.error("Failed to update summary");
-        //        })
-        //},
-        //editComment(summaryCommentJSON) {
-        //    HTTP.patch(`/summary_comments/?variant=${summaryCommentJSON.variant}&owner=${summaryCommentJSON.owner}`, summaryCommentJSON)
-        //        .then((response) => {
-        //            this.isEditMode = false;
-        //            this.$snotify.success("Your comment has been saved");
-        //        })
-        //        .catch((err) => {
-        //            log.warn(err);
-        //            this.$snotify.error("Failed to update summary");
-        //        })
-        //},
         deleteSummaryComment() {
-            this.summaryComment = "";
-            this.isEditMode = false;
-            this.$snotify.success("Your comment has been deleted");
+            // send a delete request only if SummaryComment instance exists in the server
+            if (this.serverSummaryComment !== null) {
+                HTTP.delete(`/summary_comments/${this.serverSummaryComment.id}/`)
+                    .then((response) => {
+                        this.serverSummaryComment = null
+                        this.summaryComment = "";
+                        this.isEditMode = false;
+                        this.$snotify.success("Your comment has been deleted");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary");
+                    })
+            } else {
+                this.summaryComment = "";
+                this.isEditMode = false;
+                this.$snotify.success("Your comment has been deleted");
+            }
         }
     }
 };
