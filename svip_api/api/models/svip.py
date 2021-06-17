@@ -93,7 +93,6 @@ class VariantInSVIP(models.Model):
 
     history = HistoricalRecords(cascade_delete_history=True)
 
-    #summary_comments = ArrayField(base_field=models.TextField(), null=True)
 
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
@@ -118,6 +117,25 @@ class VariantInSVIP(models.Model):
             """, [self.id])
 
             return dictfetchall(cursor)
+
+    def variant_diseases(self):
+    # JSON containing diseases associated with current variant, to support the reviewers
+        curations = CurationEntry.objects.filter(variant = self.variant)
+        diseases_dict = {}
+        for curation in curations:
+            disease_id = curation.disease.id
+            
+            if disease_id not in diseases_dict:
+                disease = {}
+                disease["disease"] = curation.disease.name
+                disease["evidences"] = []
+                #disease["curations"] = disease.
+                diseases_dict[curation.disease.id] = disease
+            
+        diseases_array = []
+        for disease_id in diseases_dict:
+            diseases_array.append(diseases_dict[disease_id])
+        return diseases_array
 
     class Meta:
         verbose_name = "Variant in SVIP"
@@ -367,7 +385,7 @@ class CurationEntry(SVIPModel):
             })
 
         return created_entries
-
+    
 
     class Meta:
         verbose_name = "Curation Entry"
@@ -447,9 +465,15 @@ class Sample(SVIPModel):
 
 
 
-# ================================================================================================================
-# === Review
-# ================================================================================================================
+## ================================================================================================================
+## === Variant Diseases
+## ================================================================================================================
 
-class Review(models.Model):
-    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+#class VariantDiseases(models.Model):
+#    #variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+#    random_var = models.TextField(null = True)
+    
+##    def json_data(self):
+##        #curations = CurationEntry.objects.
+##        return "test"
+    

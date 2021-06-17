@@ -175,13 +175,6 @@ export default {
                                 comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
                             },
                             {
-                                id: 3,
-                                pmid: 3,
-                                effect: "Good outcome",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
                                 id: 4,
                                 pmid: 4,
                                 effect: "Intermediate",
@@ -376,6 +369,9 @@ export default {
 
             showDisease: true,
         };
+    },
+    mounted() {
+        //
     },
     created() {
         this.channel.onmessage = () => {

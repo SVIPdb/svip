@@ -66,6 +66,7 @@ class VariantManager(models.Manager):
         return self.get(description=description, hgvs_g=hgvs_g)
 
 class Variant(models.Model):
+    
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
@@ -124,6 +125,7 @@ class Variant(models.Model):
             models.Index(fields=['gene', 'name']),
             models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
+
 
 
 class VariantInSource(models.Model):
