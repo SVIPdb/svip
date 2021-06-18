@@ -14,6 +14,7 @@
             </b-col>
         </b-row>
         <div v-else>
+        <!--<div v-if="pageError">-->
             <CuratorVariantInformations :variant="fullVariant" />
 
             <b-row v-if="isVariomesPMC">

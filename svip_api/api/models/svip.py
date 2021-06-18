@@ -128,19 +128,47 @@ class VariantInSVIP(models.Model):
             if disease_id not in diseases_dict:
                 disease = {}
                 disease["disease"] = curation.disease.name
-                disease["evidences"] = []
-                #disease["curations"] = disease.
+                disease["evidences"] = []  
+                
+                for type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                    evidence_type_dict = {}
+                    evidence_type_dict["typeOfEvidence"] = type_of_evidence
+                    evidence_type_dict["isOpen"] = False
+                    evidence_type_dict["curations"] = []
+                    evidence_type_dict["curator"] = {"annotatedEffect": "Unclear", "annotatedTier": "Tier IA: Included in Professional Guidelines"}
+                    evidence_type_dict["note"] = ""
+                    
+                    disease["evidences"].append(evidence_type_dict)
+                    
                 diseases_dict[curation.disease.id] = disease
+                
+            #curation_type_of_evidence = curation["type_of_evidence"]
             
-        diseases_array = []
+            for type_of_evidence_dict in diseases_dict[disease_id]["evidences"]:
+                if type_of_evidence_dict["typeOfEvidence"] == curation.type_of_evidence:
+                    curation_dict = {}
+                    curation_dict["id"] = curation.id
+                    curation_dict["pmid"] = curation.references
+                    curation_dict["comment"] = curation.comment
+                    
+                    type_of_evidence_dict["curations"].append(curation_dict)
+                
+        diseases_list = []
         for disease_id in diseases_dict:
-            diseases_array.append(diseases_dict[disease_id])
-        return diseases_array
+            diseases_list.append(diseases_dict[disease_id])
+        return diseases_list
 
     class Meta:
         verbose_name = "Variant in SVIP"
         verbose_name_plural = "Variants in SVIP"
 
+
+class Review(models.Model):
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
+    disease = models.ForeignKey(Disease, on_delete=DB_CASCADE)
+    type_of_evidence = models.TextField(default="")
+    comment = models.TextField(default="")
 
 class SummaryComment(models.Model):
     """

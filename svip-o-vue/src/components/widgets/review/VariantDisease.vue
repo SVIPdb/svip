@@ -37,7 +37,7 @@
                                                                        v-model="evidence.currentReview.annotatedEffect"
                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-diagnostic-outcome>
                                             <select-predictive-therapeutic-outcome
-                                                v-if="evidence.typeOfEvidence === 'Predictive/Therapeutic'"
+                                                v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                 v-model="evidence.currentReview.annotatedEffect"
                                                 @input="onChange(evidence.curator, evidence.currentReview)"></select-predictive-therapeutic-outcome>
                                         </b-row>
@@ -277,7 +277,7 @@ export default {
                     },
                     {
                         isOpen: false,
-                        typeOfEvidence: "Predictive/Therapeutic",
+                        typeOfEvidence: "Predictive / Therapeutic",
                         effectOfVariant: [
                             {
                                 label: "Drug 1",
@@ -317,7 +317,7 @@ export default {
                         note: null
                     },
                     {
-                        typeOfEvidence: "Predictive/Therapeutic",
+                        typeOfEvidence: "Predictive / Therapeutic",
                         effectOfVariant: [
                             {
                                 label: "Drug 2",

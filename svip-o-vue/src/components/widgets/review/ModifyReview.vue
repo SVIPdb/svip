@@ -324,7 +324,8 @@ export default {
                 params: {
                     gene_id: this.$route.params.gene_id,
                     variant_id: this.$route.params.variant_id,
-                    disease_id: this.$route.params.disease_id,
+                    //disease_id: this.$route.params.disease_id,
+                    disease_id: 9,
                     action: 'add'
                 },
                 query: {source: this.source, reference: this.reference}
