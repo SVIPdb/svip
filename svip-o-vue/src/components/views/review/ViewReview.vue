@@ -73,7 +73,7 @@ export default {
                                     reviewer_annotation_outcome: "Intermediate",
                                     reviewer_annotation_trust: "Tier IID: Population study",
                                     comment: null
-                                }
+                                },
                             ],
                             evidence: [
                                 {
