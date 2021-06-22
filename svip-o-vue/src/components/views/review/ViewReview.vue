@@ -52,6 +52,8 @@ export default {
                             ],
                             sib_annotation_outcome: "Intermediate",
                             sib_annotation_trust: "Tier IID: Population study",
+                            //sib_annotation_outcome: "",
+                            //sib_annotation_trust: "",
                             reviews: [
                                 {
                                     reviewer: "John Doe",

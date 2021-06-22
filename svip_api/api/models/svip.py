@@ -15,8 +15,7 @@ from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
-from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
-                             PUBLIC_VISIBLE_STATUSES)
+from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES, PUBLIC_VISIBLE_STATUSES)
 from api.utils import dictfetchall
 
 
@@ -118,9 +117,13 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
-    #def data_for_review(self):
+    #def review_data(self):
+    ## JSON containing data for VariantDisease.vue
+    #    return {}
+
+    #def sib_view_data(self):
     ## JSON containing data for ViewReview.vue
-        
+
 
     def variant_diseases(self):
     # JSON containing data of dieases associated with current variant, VariantDisease.vue
@@ -258,6 +261,8 @@ class CurationEvidence(models.Model):
     """
     association = models.ForeignKey(to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
     type_of_evidence = models.TextField(null=True)
+    annotated_effect = models.TextField(default="")
+    annotated_tier = models.TextField(default="")
     
 
 CURATION_STATUS = OrderedDict((

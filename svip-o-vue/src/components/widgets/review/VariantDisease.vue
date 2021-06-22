@@ -199,6 +199,8 @@ export default {
                         curator: {
                             annotatedEffect: "Unclear",
                             annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            //annotatedEffect: "",
+                            //annotatedTier: ""
                         },
                         currentReview: {
                             annotatedEffect: "Unclear", //Initial value should be the same as curator
