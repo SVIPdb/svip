@@ -225,7 +225,8 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:8000',
     'localhost:8080',
     'svip-dev.nexus.ethz.ch',
-    'svip-test.nexus.ethz.ch'
+    'svip-test.nexus.ethz.ch',
+    'api.svip.ch'
 )
 CORS_ALLOW_CREDENTIALS = True
 
