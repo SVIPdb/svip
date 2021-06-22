@@ -190,7 +190,7 @@ class SummaryComment(models.Model):
 def delete_previous(sender, instance, **kwargs):
     # detect if a pk already exists for this Summary comment so you know whether it is a new one being created
     if instance.pk is None:
-        print("instance is being created")
+        print("summary comment is being created")
         same_params = SummaryComment.objects.filter(variant = instance.variant).filter(owner = instance.owner)
         already_a_comment = len(same_params) > 0
         print(f"Already a comment for these params: {already_a_comment}")
@@ -198,7 +198,7 @@ def delete_previous(sender, instance, **kwargs):
             for summary_com in same_params:
                 summary_com.delete()
     else:
-        print("instance already exists")
+        print("summary comment already exists")
     return ""
 
 
@@ -258,7 +258,7 @@ class CurationEvidence(models.Model):
     """
     association = models.ForeignKey(to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
     type_of_evidence = models.TextField(null=True)
-
+    
 
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
@@ -347,6 +347,8 @@ class CurationEntry(SVIPModel):
     """
     disease = ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
+    curation_evidences = models.ForeignKey(to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
+
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE, related_name="curations")
     extra_variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
@@ -365,8 +367,6 @@ class CurationEntry(SVIPModel):
     references = models.TextField(verbose_name="References", null=True)
 
     annotations = ArrayField(base_field=models.TextField(), null=True)
-
-    curation_evidences = models.ForeignKey(to=CurationEvidence, related_name="curation_entries", null=True, on_delete=models.SET_NULL)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
@@ -434,34 +434,38 @@ class CurationEntry(SVIPModel):
             })
 
         return created_entries
-    
 
     class Meta:
         verbose_name = "Curation Entry"
         verbose_name_plural = "Curation Entries"
 
+
 @receiver(pre_save, sender=CurationEntry)
+# create an association instance when a curation entry is created (unless already linked to one)
 def create_CurationAssociation(sender, instance, **kwargs):
     # detect if a pk already exists for this CurationEntry so you know whether it is a new one being created
-    if (not instance.disease is None):
+    if (not instance.disease is None) or (instance.disease is None):
         associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease = instance.disease)
+        # check that no association already exists for these parameters
         if len(associations) == 0:
             new_curation_association = CurationAssociation(variant = instance.variant, disease = instance.disease)
             new_curation_association.save()
-            
-            instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence))
+            #instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.curation_evidence))
     return ""
 
-@receiver(pre_save, sender=CurationAssociation)
+# create 3 evidence instances when a curation association is created
+@receiver(post_save, sender=CurationAssociation)
 def create_CurationEvidence(sender, instance, **kwargs):
     for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-        CurationEvidence(association = instance, type_of_evidence=evidence).save()
+        new_curation_evidence = CurationEvidence(association=instance, type_of_evidence=evidence)
+        new_curation_evidence.save()
+    return ""
+
 
 # whenever a curation entry is created, ensure its provenance
 @receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
 def curation_saved(sender, instance, **kwargs):
     instance.ensure_svip_provenance()
-
 
 class VariantCuration(SVIPModel):
     """

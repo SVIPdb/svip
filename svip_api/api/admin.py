@@ -6,7 +6,18 @@ from api.models.svip import SummaryComment, CurationAssociation, CurationEvidenc
 
 admin.site.register(SummaryComment)
 admin.site.register(CurationAssociation)
-admin.site.register(CurationEvidence)
+#admin.site.register(CurationEvidence)
+
+class CurationsInlineAdmin(admin.TabularInline):
+    model = CurationEntry
+    # no extra empty rows for in curation entry field of CurationEvidence
+    extra = 0 
+
+@admin.register(CurationEvidence)
+class CurationEvidenceAdmin(admin.ModelAdmin):
+    fields = ['association', 'type_of_evidence']
+    inlines = [CurationsInlineAdmin]
+
 
 @admin.register(Variant)
 class VariantAdmin(admin.ModelAdmin):
