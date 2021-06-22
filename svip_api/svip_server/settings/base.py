@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
     'svip.nexus.ethz.ch',
     'svip.ch', 'www.svip.ch',
     'svip.sib.swiss', 'svip-public.sib.swiss',
-    'svip.sensa.sib.swiss', 'svip.sensa.sib.swiss'
+    'svip.sensa.sib.swiss',
+    'api.svip.ch'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
