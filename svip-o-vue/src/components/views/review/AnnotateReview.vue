@@ -6,7 +6,7 @@
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <VariantDisease />
+        <VariantDisease :variant="variant"/>
 
         <b-button class="float-right">
             Submit review

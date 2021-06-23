@@ -112,6 +112,7 @@ import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPro
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
+//import { mapGetters } from "vuex";
 
 const log = ulog("VariantDisease");
 
@@ -132,6 +133,7 @@ export default {
     },
     data() {
         return {
+            review_test: this.variant.svip_data && this.variant.svip_data.review_data,
             review: {
                 disease: "Aggressive fibromatosis",
                 evidences: [
@@ -387,6 +389,8 @@ export default {
         HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
+
+        console.log("flag")
     },
     computed: {},
     methods: {

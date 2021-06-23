@@ -123,6 +123,22 @@ class VariantInSVIP(models.Model):
         for association in self.variant.curation_associations.all():
             disease = {}
             disease["disease"] = association.disease.name
+            
+            evidences = []
+            for evidence in association.curation_evidences.all():
+                evidence_obj = {}
+                evidence_obj["isOpen"] = False
+                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidences.append(evidence_obj)
+            disease["evidences"] = evidences
+            
+            
+            
+            
+            
+            
+            
+            
             diseases_dict.append(disease)
         return diseases_dict
 
