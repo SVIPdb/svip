@@ -266,8 +266,8 @@ class CurationEvidence(models.Model):
     """
     association = models.ForeignKey(to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
     type_of_evidence = models.TextField(null=True)
-    annotated_effect = models.TextField(default="")
-    annotated_tier = models.TextField(default="")
+    annotated_effect = models.TextField(default="", null=True)
+    annotated_tier = models.TextField(default="", null=True)
     
 
 CURATION_STATUS = OrderedDict((
@@ -454,12 +454,12 @@ class CurationEntry(SVIPModel):
 @receiver(pre_save, sender=CurationEntry)
 # create an association instance when a curation entry is created (unless already linked to one)
 def create_CurationAssociation(sender, instance, **kwargs):
-    # detect if a pk already exists for this CurationEntry so you know whether it is a new one being created
-    if (instance.pk is None) and (not instance.disease is None):
-        associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease = instance.disease)
+    # detect that a disease is indicated for the curation entry being saved
+    if (not instance.disease is None):
+        associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease=instance.disease)
         # check that no association already exists for these parameters
         if len(associations) == 0:
-            new_curation_association = CurationAssociation(variant = instance.variant, disease = instance.disease)
+            new_curation_association = CurationAssociation(variant=instance.variant, disease=instance.disease)
             new_curation_association.save()
             #instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.curation_evidence))
     return ""
@@ -468,7 +468,7 @@ def create_CurationAssociation(sender, instance, **kwargs):
 @receiver(post_save, sender=CurationAssociation)
 def create_CurationEvidence(sender, instance, **kwargs):
     for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-        new_curation_evidence = CurationEvidence(association=instance, type_of_evidence=evidence)
+        new_curation_evidence = CurationEvidence(association=instance, type_of_evidence=evidence, annotated_effect="", annotated_tier="")
         new_curation_evidence.save()
     return ""
 
