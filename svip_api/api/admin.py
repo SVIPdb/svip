@@ -2,9 +2,10 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
 from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry
-from api.models.svip import SummaryComment, CurationAssociation, CurationEvidence
+from api.models.svip import SummaryComment, CurationAssociation, CurationEvidence, CurationReview
 
 admin.site.register(SummaryComment)
+admin.site.register(CurationReview)
 
 @admin.register(CurationAssociation)
 class CurationAssociationAdmin(admin.ModelAdmin):

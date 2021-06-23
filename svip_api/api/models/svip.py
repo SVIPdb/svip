@@ -130,6 +130,17 @@ class VariantInSVIP(models.Model):
                 evidence_obj["isOpen"] = False
                 evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
                 evidence_obj["effectOfVariant"] = []
+                evidence_obj["curator"] = {
+                    "annotatedEffect": evidence.annotated_effect, 
+                    "annotatedTier": evidence.annotated_tier
+                    }
+                evidence_obj["currentReview"] = {
+                    "annotatedEffect": evidence.annotated_effect, 
+                    "annotatedTier": evidence.annotated_tier,
+                    "reviewer": "",
+                    "status": True,
+                    "comment": None
+                }
                 
                 curations = []
                 for curation in evidence.curation_entries.all():
@@ -143,6 +154,10 @@ class VariantInSVIP(models.Model):
                     curations.append(curation_obj)
                 evidence_obj["curations"] = curations
                 
+                reviews = []
+                #for review in evidence.reviews.all():
+                evidence_obj["reviews"] = reviews
+                
                 evidences.append(evidence_obj)
             disease["evidences"] = evidences
               
@@ -153,46 +168,6 @@ class VariantInSVIP(models.Model):
     #def sib_view_data(self):
     ## JSON containing data for ViewReview.vue
 
-
-    #def variant_diseases(self):
-    ## JSON containing data of dieases associated with current variant, VariantDisease.vue
-    #    curations = CurationEntry.objects.filter(variant = self.variant)
-    #    diseases_dict = {}
-    #    for curation in curations:
-    #        disease_id = curation.disease.id
-            
-    #        if disease_id not in diseases_dict:
-    #            disease = {}
-    #            disease["disease"] = curation.disease.name
-    #            disease["evidences"] = []  
-                
-    #            for type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-    #                evidence_type_dict = {}
-    #                evidence_type_dict["typeOfEvidence"] = type_of_evidence
-    #                evidence_type_dict["isOpen"] = False
-    #                evidence_type_dict["curations"] = []
-    #                evidence_type_dict["curator"] = {"annotatedEffect": "Unclear", "annotatedTier": "Tier IA: Included in Professional Guidelines"}
-    #                evidence_type_dict["note"] = ""
-                    
-    #                disease["evidences"].append(evidence_type_dict)
-                    
-    #            diseases_dict[curation.disease.id] = disease
-                
-    #        #curation_type_of_evidence = curation["type_of_evidence"]
-            
-    #        for type_of_evidence_dict in diseases_dict[disease_id]["evidences"]:
-    #            if type_of_evidence_dict["typeOfEvidence"] == curation.type_of_evidence:
-    #                curation_dict = {}
-    #                curation_dict["id"] = curation.id
-    #                curation_dict["pmid"] = curation.references
-    #                curation_dict["comment"] = curation.comment
-                    
-    #                type_of_evidence_dict["curations"].append(curation_dict)
-                
-    #    diseases_list = []
-    #    for disease_id in diseases_dict:
-    #        diseases_list.append(diseases_dict[disease_id])
-    #    return diseases_list
 
     class Meta:
         verbose_name = "Variant in SVIP"
@@ -478,15 +453,15 @@ class CurationEntry(SVIPModel):
 # create an association instance when a curation entry is created (unless already linked to one)
 @receiver(pre_save, sender=CurationEntry)
 def create_CurationAssociation(sender, instance, **kwargs):
-    # detect that a disease is indicated for the curation entry being saved
-    if (not instance.disease is None):
+    # check that a disease is indicated for the curation entry being saved
+    if instance.disease and (instance.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
         associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease=instance.disease)
         
         # check that no association already exists for these parameters
         if len(associations) == 0:
             new_curation_association = CurationAssociation(variant=instance.variant, disease=instance.disease)
             new_curation_association.save()
-            #instance.curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence)
+            instance.curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence)
     return ""
 
 # create 3 evidence instances when a curation association is created
@@ -531,8 +506,8 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
-    curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE)
-    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    curation_evidence = ForeignKey(to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
