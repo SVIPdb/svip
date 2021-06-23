@@ -99,6 +99,9 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
                                     'disease__curationentry_set__owner'
                                 )
                         )
+                    ),
+                    Prefetch(
+                        'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
                     )
                 )
             )
