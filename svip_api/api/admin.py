@@ -5,8 +5,13 @@ from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry
 from api.models.svip import SummaryComment, CurationAssociation, CurationEvidence
 
 admin.site.register(SummaryComment)
-admin.site.register(CurationAssociation)
-#admin.site.register(CurationEvidence)
+
+@admin.register(CurationAssociation)
+class CurationAssociationAdmin(admin.ModelAdmin):
+    list_display = ('variant', 'variant_id', 'disease')
+
+    def variant_id(self, obj):
+        return obj.variant.id
 
 class CurationsInlineAdmin(admin.TabularInline):
     model = CurationEntry

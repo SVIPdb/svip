@@ -117,9 +117,14 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
-    #def review_data(self):
-    ## JSON containing data for VariantDisease.vue
-    #    return {}
+    def review_data(self):
+    # JSON containing data for VariantDisease.vue
+        diseases_dict = []
+        for association in self.variant.curation_associations.all():
+            disease = {}
+            disease["disease"] = association.disease.name
+            disease_dict.append()
+        return diseases_dict
 
     #def sib_view_data(self):
     ## JSON containing data for ViewReview.vue
@@ -254,6 +259,9 @@ class CurationAssociation(models.Model):
     """
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
     disease = models.ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    def variant_id(self):
+        return self.variant
 
 class CurationEvidence(models.Model):
     """
