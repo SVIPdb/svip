@@ -1,14 +1,9 @@
 version: '3.5'
 
-services:
-  local_uta:
-    image: biocommons/uta:uta_20171026
-    restart: always
-    volumes:
-      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
-    ports:
-      - "15032:5432"
+volumes:
+  vep_data:
 
+services:
   harvester:
     build: ./g2p-aggregator/harvester
     working_dir: /app
@@ -26,7 +21,7 @@ services:
       - './g2p-aggregator/data:/data'
       - './outputs:/output'
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
+      - 'vep_data:/opt/data'
     depends_on:
       - db
-      # - api
       - local_uta
