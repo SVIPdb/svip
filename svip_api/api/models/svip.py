@@ -482,13 +482,11 @@ def create_CurationAssociation(sender, instance, **kwargs):
     if (not instance.disease is None):
         associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease=instance.disease)
         
-        print(len(associations))
         # check that no association already exists for these parameters
         if len(associations) == 0:
             new_curation_association = CurationAssociation(variant=instance.variant, disease=instance.disease)
             new_curation_association.save()
-            instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence))
-            instance.save()
+            #instance.curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence)
     return ""
 
 # create 3 evidence instances when a curation association is created
