@@ -57,7 +57,8 @@ class CurationEntryAdmin(SimpleHistoryAdmin):
         'owner__username'
     )
     list_display = (
-        'id', 'status',
+        'id', 
+        'status',
         'variant',
         'type_of_evidence',
         'tier_level',

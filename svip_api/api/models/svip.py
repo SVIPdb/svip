@@ -129,18 +129,26 @@ class VariantInSVIP(models.Model):
                 evidence_obj = {}
                 evidence_obj["isOpen"] = False
                 evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidence_obj["effectOfVariant"] = []
+                
+                curations = []
+                for curation in evidence.curation_entries.all():
+                    curation_obj = {
+                        "id": curation.id,
+                        "pmid": curation.references,
+                        "effect": curation.effect,
+                        "support": curation.support,
+                        "comment": curation.comment
+                    }
+                    curations.append(curation_obj)
+                evidence_obj["curations"] = curations
+                
                 evidences.append(evidence_obj)
             disease["evidences"] = evidences
-            
-            
-            
-            
-            
-            
-            
-            
+              
             diseases_dict.append(disease)
         return diseases_dict
+
 
     #def sib_view_data(self):
     ## JSON containing data for ViewReview.vue
@@ -374,7 +382,7 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
     # link a curation entry to a curation evidence
-    curation_evidences = models.ForeignKey(to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
+    curation_evidence = models.ForeignKey(to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
 
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE, related_name="curations")
@@ -467,17 +475,20 @@ class CurationEntry(SVIPModel):
         verbose_name_plural = "Curation Entries"
 
 
-@receiver(pre_save, sender=CurationEntry)
 # create an association instance when a curation entry is created (unless already linked to one)
+@receiver(pre_save, sender=CurationEntry)
 def create_CurationAssociation(sender, instance, **kwargs):
     # detect that a disease is indicated for the curation entry being saved
     if (not instance.disease is None):
         associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease=instance.disease)
+        
+        print(len(associations))
         # check that no association already exists for these parameters
         if len(associations) == 0:
             new_curation_association = CurationAssociation(variant=instance.variant, disease=instance.disease)
             new_curation_association.save()
-            #instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.curation_evidence))
+            instance(curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence))
+            instance.save()
     return ""
 
 # create 3 evidence instances when a curation association is created
@@ -559,17 +570,3 @@ class Sample(SVIPModel):
     software_version = models.TextField(verbose_name="Software version")
     platform = models.TextField(verbose_name="Platform")
     contact = models.TextField(verbose_name="Contact")
-
-
-
-## ================================================================================================================
-## === Variant Diseases
-## ================================================================================================================
-
-#class VariantDiseases(models.Model):
-#    #variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
-#    random_var = models.TextField(null = True)
-    
-##    def json_data(self):
-##        #curations = CurationEntry.objects.
-##        return "test"

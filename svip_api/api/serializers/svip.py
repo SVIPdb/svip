@@ -197,7 +197,6 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'tissue_counts',
             'diseases',
             'review_data',
-            #'variant_diseases',
         )
 
 
