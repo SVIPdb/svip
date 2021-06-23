@@ -123,52 +123,52 @@ class VariantInSVIP(models.Model):
         for association in self.variant.curation_associations.all():
             disease = {}
             disease["disease"] = association.disease.name
-            disease_dict.append()
+            diseases_dict.append(disease)
         return diseases_dict
 
     #def sib_view_data(self):
     ## JSON containing data for ViewReview.vue
 
 
-    def variant_diseases(self):
-    # JSON containing data of dieases associated with current variant, VariantDisease.vue
-        curations = CurationEntry.objects.filter(variant = self.variant)
-        diseases_dict = {}
-        for curation in curations:
-            disease_id = curation.disease.id
+    #def variant_diseases(self):
+    ## JSON containing data of dieases associated with current variant, VariantDisease.vue
+    #    curations = CurationEntry.objects.filter(variant = self.variant)
+    #    diseases_dict = {}
+    #    for curation in curations:
+    #        disease_id = curation.disease.id
             
-            if disease_id not in diseases_dict:
-                disease = {}
-                disease["disease"] = curation.disease.name
-                disease["evidences"] = []  
+    #        if disease_id not in diseases_dict:
+    #            disease = {}
+    #            disease["disease"] = curation.disease.name
+    #            disease["evidences"] = []  
                 
-                for type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-                    evidence_type_dict = {}
-                    evidence_type_dict["typeOfEvidence"] = type_of_evidence
-                    evidence_type_dict["isOpen"] = False
-                    evidence_type_dict["curations"] = []
-                    evidence_type_dict["curator"] = {"annotatedEffect": "Unclear", "annotatedTier": "Tier IA: Included in Professional Guidelines"}
-                    evidence_type_dict["note"] = ""
+    #            for type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+    #                evidence_type_dict = {}
+    #                evidence_type_dict["typeOfEvidence"] = type_of_evidence
+    #                evidence_type_dict["isOpen"] = False
+    #                evidence_type_dict["curations"] = []
+    #                evidence_type_dict["curator"] = {"annotatedEffect": "Unclear", "annotatedTier": "Tier IA: Included in Professional Guidelines"}
+    #                evidence_type_dict["note"] = ""
                     
-                    disease["evidences"].append(evidence_type_dict)
+    #                disease["evidences"].append(evidence_type_dict)
                     
-                diseases_dict[curation.disease.id] = disease
+    #            diseases_dict[curation.disease.id] = disease
                 
-            #curation_type_of_evidence = curation["type_of_evidence"]
+    #        #curation_type_of_evidence = curation["type_of_evidence"]
             
-            for type_of_evidence_dict in diseases_dict[disease_id]["evidences"]:
-                if type_of_evidence_dict["typeOfEvidence"] == curation.type_of_evidence:
-                    curation_dict = {}
-                    curation_dict["id"] = curation.id
-                    curation_dict["pmid"] = curation.references
-                    curation_dict["comment"] = curation.comment
+    #        for type_of_evidence_dict in diseases_dict[disease_id]["evidences"]:
+    #            if type_of_evidence_dict["typeOfEvidence"] == curation.type_of_evidence:
+    #                curation_dict = {}
+    #                curation_dict["id"] = curation.id
+    #                curation_dict["pmid"] = curation.references
+    #                curation_dict["comment"] = curation.comment
                     
-                    type_of_evidence_dict["curations"].append(curation_dict)
+    #                type_of_evidence_dict["curations"].append(curation_dict)
                 
-        diseases_list = []
-        for disease_id in diseases_dict:
-            diseases_list.append(diseases_dict[disease_id])
-        return diseases_list
+    #    diseases_list = []
+    #    for disease_id in diseases_dict:
+    #        diseases_list.append(diseases_dict[disease_id])
+    #    return diseases_list
 
     class Meta:
         verbose_name = "Variant in SVIP"
@@ -259,9 +259,6 @@ class CurationAssociation(models.Model):
     """
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
     disease = models.ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
-    
-    def variant_id(self):
-        return self.variant
 
 class CurationEvidence(models.Model):
     """
@@ -360,6 +357,7 @@ class CurationEntry(SVIPModel):
     """
     disease = ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # link a curation entry to a curation evidence
     curation_evidences = models.ForeignKey(to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
 
     # variants = models.ManyToManyField(to=Variant)
@@ -457,7 +455,7 @@ class CurationEntry(SVIPModel):
 # create an association instance when a curation entry is created (unless already linked to one)
 def create_CurationAssociation(sender, instance, **kwargs):
     # detect if a pk already exists for this CurationEntry so you know whether it is a new one being created
-    if (not instance.disease is None) or (instance.disease is None):
+    if (instance.pk is None) and (not instance.disease is None):
         associations = CurationAssociation.objects.filter(variant = instance.variant).filter(disease = instance.disease)
         # check that no association already exists for these parameters
         if len(associations) == 0:
