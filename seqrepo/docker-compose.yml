@@ -1,0 +1,11 @@
+version: '3.5'
+
+services:
+  seqrepo:
+    image: biocommons/seqrepo
+    # user: davmeyer:admin
+    environment:
+      SEQREPO_DATA_RELEASE: '2018-11-26'
+    volumes:
+      - /usr/local/share/seqrepo:/usr/local/share/seqrepo
+    # command: sh -c "seqrepo pull -i 2018-11-26 && seqrepo show-status -i 2018-11-26"
