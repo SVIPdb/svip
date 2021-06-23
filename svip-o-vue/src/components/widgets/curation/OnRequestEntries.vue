@@ -81,52 +81,28 @@ export default {
             this.loading = true;
             this.error = null;
 
-            HTTP.get(`/curation_entries?page_size=10000`)
+            HTTP.get(`/curation_requests?page_size=100000`)
                 .then((response) => {
-                    // reduce them to be grouped by variant
-                    const entries_by_var = response.data.results.reduce((acc, x) => {
-                        const key = x.variant.id;
-
-                        if (!acc[key]) {
-                            acc[key] = {
-                                variant: x.variant,
-                                diseases: new Set(),
-                                all_curations: []
-                            };
-                        }
-
-                        acc[key].all_curations.push(x);
-                        acc[key].diseases.add(x.disease ? x.disease.name : 'Unspecified');
-
-                        return acc;
-                    }, {});
-
                     this.loading = false;
-
-                    this.items = Object.values(entries_by_var).map(({ variant, diseases, all_curations }) => {
-                        return {
-                            gene_id: variant.gene.id,
-                            variant_id: variant.id,
-                            'gene_name': variant.gene.symbol,
-                            'variant': variant.name,
-                            'hgvs': variant.hgvs_c,
-                            'disease': Array.from(diseases).join(", "),
-                            'status': all_curations.length > 0 ? 'Ongoing' : 'Not assigned',
-                            'deadline': 'n/a',
-                            'requester': 'System',
-                            'curator': uniqBy(all_curations.map(x => ({
-                                id: x.owner,
-                                name: x.owner_name
-                            })), (x) => x.id)
-                        };
-                    });
+                    this.items = response.data.results.map((x) => ({
+                        gene_id: x.variant && x.variant.gene.id,
+                        variant_id: x.variant && x.variant.id,
+                        'gene_name': x.variant && x.variant.gene.symbol,
+                        'variant': x.variant && x.variant.name,
+                        'hgvs': x.variant && x.variant.hgvs_c,
+                        'disease': x.disease_name,
+                        'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                        'deadline': 'n/a',
+                        'requester': x.submission.requestor,
+                        'curator': []
+                    }));
 
                     this.$emit('itemsloaded', this.items);
                 })
                 .catch((err) => {
                     this.loading = false;
                     this.error = err.message ? err.message : true;
-                })
+                });
         }
     }
 }
