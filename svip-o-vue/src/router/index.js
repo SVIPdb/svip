@@ -23,6 +23,7 @@ const CurationDashboard = () => import("@/components/views/curation/CurationDash
 const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
 const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
+const SubmitVariants = () =>  import("@/components/views/submission/SubmitVariants");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
 
@@ -161,6 +162,17 @@ const router = new Router({
                 requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
             }
         },
+
+        {
+            path: "/submit-variants",
+            name: "submit-variants",
+            component: SubmitVariants,
+            meta: {
+                title: 'SVIP-O: Submit Variants',
+                requiresAuth: true, roles: ['submitters']
+            }
+        },
+
         {
             path: "/debug",
             name: "debug",

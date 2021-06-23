@@ -70,13 +70,16 @@
                         </template>
 
                         <template v-slot:row-details="entry">
-                            <div class="sample-subtable tumor-subtable" style="padding: 0; margin: 0;">
+                            <div v-if="entry.item.status !== 'failure'" class="sample-subtable tumor-subtable" style="padding: 0; margin: 0;">
                                 <b-table-lite
                                     style="background: none; margin: 0;"
                                     :items="entry.item.stats ? harvestGeneList(
                                          entry.item.stats.genes || entry.item.stats
                                     ) : []"
                                 />
+                            </div>
+                            <div v-else class="failure-output">
+                                {{ entry.item.output }}
                             </div>
                         </template>
                     </b-table>
@@ -199,4 +202,15 @@ export default {
     background: #eee;
 }
 .section-header { margin-top: 0.5em; }
+
+.failure-output {
+    max-width: 920px;
+    padding: 10px;
+    box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+    background-color: #efefef;
+
+    overflow-x: scroll;
+    white-space: pre;
+    font-family: monospace;
+}
 </style>

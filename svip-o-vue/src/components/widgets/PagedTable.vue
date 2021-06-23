@@ -142,6 +142,7 @@ export default {
             return HTTP.get(ctx.apiUrl, {params}).then(res => {
                 this.totalRows = res.data.count;
                 this.loading = false;
+                this.$emit('data-loaded', res.data);
                 return this.postMapper ? this.postMapper(res.data.results) : res.data.results;
             }).catch(err => {
                 this.loading = { error: err };

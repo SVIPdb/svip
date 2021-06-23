@@ -3,7 +3,7 @@ from .genomic import (
     VariantInSource, Association, CollapsedAssociation, Phenotype, Evidence, EnvironmentalContext
 )
 from .svip import (
-    VariantInSVIP, DiseaseInSVIP, CurationEntry, Sample
+    VariantInSVIP, DiseaseInSVIP, CurationRequest, CurationEntry, Sample, SubmittedVariant, SubmittedVariantBatch
 )
 from .reference import (
     Drug, Disease

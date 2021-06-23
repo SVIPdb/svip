@@ -21,6 +21,11 @@
                     :to="{ name: 'curation-dashboard' }"
                 >Dashboard
                 </b-nav-item>
+                <b-nav-item
+                    v-if="user && user.groups.indexOf('submitters') != -1"
+                    :to="{ name: 'submit-variants' }"
+                >Submit Variants
+                </b-nav-item>
                 <b-nav-item :to="'/help'">Help</b-nav-item>
                 <b-nav-item :to="'/about'">About</b-nav-item>
                 <b-nav-item :to="'/statistics'">Statistics</b-nav-item>

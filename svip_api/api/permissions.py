@@ -90,6 +90,14 @@ class IsSampleViewer(permissions.BasePermission):
         return request.user.has_perm('api.view_sample')
 
 
+class IsSubmitter(permissions.BasePermission):
+    """
+    Allows only individuals in the 'submitters' group to manipulate variant submissions (view, create, etc.)
+    """
+
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name='submitters').exists()
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Object-level permission to only allow owners of an object to edit it.

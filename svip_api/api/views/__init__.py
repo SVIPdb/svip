@@ -15,7 +15,10 @@ from .svip import (
     VariantInSVIPViewSet,
     DiseaseInSVIPViewSet,
     SampleViewSet,
-    CurationEntryViewSet
+    CurationRequestViewSet,
+    CurationEntryViewSet,
+    SubmittedVariantViewSet,
+    SubmittedVariantBatchViewSet
 )
 
 from .reference import (
