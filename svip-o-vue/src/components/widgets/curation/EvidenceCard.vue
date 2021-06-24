@@ -88,13 +88,6 @@
                   </span>
                 </template>
 
-                <template v-slot:cell(id)="data">
-                  <span class="">
-                    <icon :class="setClass(data.value)" :name="setIcon(data.value)" v-b-tooltip.hover :title="data.value"/>
-                    {{ this.variant.id }}
-                  </span>
-                </template>
-
                 <template v-slot:cell(references)="data">
                     <VariomesLitPopover :pubmeta="{ pmid: data.value }"
                         :variant="data.item.variant && data.item.variant.name"
