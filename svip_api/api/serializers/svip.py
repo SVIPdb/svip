@@ -76,7 +76,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
             return self.reverse(
                 view_name,
-                kwargs={'disease_pk': obj.id, 'variant_in_svip_pk': obj.svip_variant.id},
+                kwargs={'disease_pk': obj.id,
+                        'variant_in_svip_pk': obj.svip_variant.id},
                 request=request, format=format
             )
 
@@ -108,7 +109,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
         return dict(
             (bracket, sum(1 for x in ages if bracket_pred(x)))
-                for bracket, bracket_pred in DiseaseInSVIPSerializer.age_brackets.items()
+            for bracket, bracket_pred in DiseaseInSVIPSerializer.age_brackets.items()
         )
 
     def get_samples(self, obj):
@@ -122,20 +123,23 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def _authed_curation_set(self):
         return (
             CurationEntry.objects
-                .authed_curation_set(self.context['request'].user)
+            .authed_curation_set(self.context['request'].user)
         )
 
     def _curation_entries(self, obj):
         # authed_set = CurationEntry.objects.all()
 
         # attempt to get icd_o_morpho from the entry, or null if the entry has no disease
-        obj_disease_morpho = obj.disease.icd_o_morpho if not model_field_null(obj, 'disease') else None
+        obj_disease_morpho = obj.disease.icd_o_morpho if not model_field_null(
+            obj, 'disease') else None
 
         # in addition to getting curation entries we can view, filter them down to the current disease
         if str(obj) not in self._curation_cache:
             self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
-                Q(extra_variants=obj.svip_variant.variant) | Q(variant=obj.svip_variant.variant),
-                Q(disease__icd_o_morpho__isnull=False, disease__icd_o_morpho=obj_disease_morpho)
+                Q(extra_variants=obj.svip_variant.variant) | Q(
+                    variant=obj.svip_variant.variant),
+                Q(disease__icd_o_morpho__isnull=False,
+                  disease__icd_o_morpho=obj_disease_morpho)
             ).select_related('disease', 'variant', 'variant__gene').prefetch_related('extra_variants').all())
 
         return self._curation_cache[str(obj)]
@@ -153,9 +157,9 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def get_sample_diseases_count(obj):
         return (
             obj.sample_set
-                .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
-                .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
-                .distinct().order_by('-count')
+            .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
+            .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
+            .distinct().order_by('-count')
         )
 
     def get_pathogenic(self, obj):
@@ -192,7 +196,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 # ================================================================================================================
 
 class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
-    diseases = DiseaseInSVIPSerializer(many=True, read_only=True, source='diseaseinsvip_set')
+    diseases = DiseaseInSVIPSerializer(
+        many=True, read_only=True, source='diseaseinsvip_set')
 
     class Meta:
         model = VariantInSVIP
@@ -264,15 +269,18 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
         candidate = Disease.objects.filter(q_objects).first()
 
         if not candidate:
-            candidate = Disease.objects.create(icd_o_morpho=IcdOMorpho.objects.get(id=icdo_morpho['id']))
+            candidate = Disease.objects.create(
+                icd_o_morpho=IcdOMorpho.objects.get(id=icdo_morpho['id']))
             IcdOTopoApiDisease.objects.bulk_create([
-                IcdOTopoApiDisease(api_disease=candidate, icd_o_topo=IcdOTopo.objects.get(id=x['id']))
+                IcdOTopoApiDisease(api_disease=candidate,
+                                   icd_o_topo=IcdOTopo.objects.get(id=x['id']))
                 for x in (icdo_topo_list if icdo_topo_list else [])
             ])
             candidate.save()
 
         setattr(instance, disease_field, candidate)
         instance.save()
+
 
 class CurationEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
@@ -281,14 +289,17 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     #     allow_empty=False, many=True, queryset=Variant.objects.all(),
     #     style={'base_template': 'input.html'}
     # )
-    extra_variants = SimpleVariantSerializer(many=True, style={'base_template': 'input.html'}, required=False)
+    extra_variants = SimpleVariantSerializer(
+        many=True, style={'base_template': 'input.html'}, required=False)
 
-    owner = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
     created_on = serializers.DateTimeField(read_only=True, default=now)
 
     # disease is effectively a passthrough to icd_o_morpho + icd_o_topo, but it's still nice to see it
-    disease = DiseaseSerializer(required=False, allow_null=True, read_only=True)
+    disease = DiseaseSerializer(
+        required=False, allow_null=True, read_only=True)
 
     icdo_morpho = IcdOMorphoSerializer(required=False, allow_null=True)
     icdo_topo = IcdOTopoSerializer(required=False, allow_null=True, many=True)
@@ -310,8 +321,10 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     def _remap_multifields(validated_data):
         # replace references to variant and disease IDs with the actual backing objects
         # note that we presume here that the variant and disease IDs they specify already exist
-        validated_data['variant'] = Variant.objects.get(id=validated_data['variant']['id'])
-        validated_data['extra_variants'] = Variant.objects.filter(id__in=[x['id'] for x in validated_data['extra_variants']])
+        validated_data['variant'] = Variant.objects.get(
+            id=validated_data['variant']['id'])
+        validated_data['extra_variants'] = Variant.objects.filter(
+            id__in=[x['id'] for x in validated_data['extra_variants']])
 
     @staticmethod
     def ensure_drugs_exist(validated_data):
@@ -322,9 +335,9 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             if not Drug.objects.filter(common_name=drug).first():
                 Drug.objects.create(common_name=drug, user_created=True)
 
-
     def create(self, validated_data):
-        icdo_morpho, icdo_topo_list = validated_data.pop('icdo_morpho'), validated_data.pop('icdo_topo')
+        icdo_morpho, icdo_topo_list = validated_data.pop(
+            'icdo_morpho'), validated_data.pop('icdo_topo')
         self._remap_multifields(validated_data)
         self.ensure_drugs_exist(validated_data)
         validated_data["owner"] = self.fields["owner"].get_default()
@@ -335,7 +348,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         return result
 
     def update(self, instance, validated_data):
-        icdo_morpho, icdo_topo_list = validated_data.pop('icdo_morpho'), validated_data.pop('icdo_topo')
+        icdo_morpho, icdo_topo_list = validated_data.pop(
+            'icdo_morpho'), validated_data.pop('icdo_topo')
         validated_data.pop('owner')
         self._remap_multifields(validated_data)
         self.ensure_drugs_exist(validated_data)
@@ -362,7 +376,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 # 'support',
             )
 
-            empty_fields = [k for k in non_empty_fields if k not in data or data[k] in ('', None)]
+            empty_fields = [
+                k for k in non_empty_fields if k not in data or data[k] in ('', None)]
 
             if len(empty_fields) > 0:
                 errors.update(dict(
@@ -442,8 +457,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
         extra_kwargs = {
             # ensure that DRF knows the 'comment' and 'summary' fields aren't required.
-            'comment': { 'required': False, 'allow_blank': True },
-            'summary': { 'required': False, 'allow_blank': True }
+            'comment': {'required': False, 'allow_blank': True},
+            'summary': {'required': False, 'allow_blank': True}
         }
 
 
@@ -452,7 +467,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 # ================================================================================================================
 
 class OwnedModelSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     owner_name = serializers.SerializerMethodField()
 
     @staticmethod
@@ -467,12 +483,15 @@ class OwnedModelSerializer(serializers.ModelSerializer):
         validated_data.pop('owner')
         return super().update(instance, validated_data)
 
+
 class SubmittedVariantBatchSerializer(OwnedModelSerializer):
     vcf_body = serializers.CharField(read_only=True)
     vcf_file = serializers.FileField(write_only=True)
 
-    icdo_morpho = IcdOMorphoSerializer(required=False, allow_null=True, write_only=True)
-    icdo_topo = IcdOTopoSerializer(required=False, allow_null=True, many=True, write_only=True)
+    icdo_morpho = IcdOMorphoSerializer(
+        required=False, allow_null=True, write_only=True)
+    icdo_topo = IcdOTopoSerializer(
+        required=False, allow_null=True, many=True, write_only=True)
 
     canonical_only = serializers.BooleanField(write_only=True)
 
@@ -486,7 +505,8 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
             self.validated_data['vcf_body'] = data
 
             # open the batch
-            batch = SubmittedVariantBatch.objects.create(owner=cur_user, vcf_body=data)
+            batch = SubmittedVariantBatch.objects.create(
+                owner=cur_user, vcf_body=data)
             self.instance = batch
 
             # re-wrap the data string so we can read it with the VCF module
@@ -527,12 +547,13 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
             'owner',
             'owner_name',
             'created_on',
-            'for_curation_request',
-            'requestor',
+            # 'for_curation_request',
+            # 'requestor',
             'icdo_morpho',
             'icdo_topo',
             'canonical_only'
         )
+
 
 class SubmittedVariantSerializer(OwnedModelSerializer):
     description = serializers.SerializerMethodField()
@@ -543,17 +564,21 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
     resulting_variants = serializers.SerializerMethodField()
 
     def create(self, validated_data):
-        icdo_morpho, icdo_topo_list = validated_data.pop('icdo_morpho'), validated_data.pop('icdo_topo')
+        icdo_morpho, icdo_topo_list = validated_data.pop(
+            'icdo_morpho'), validated_data.pop('icdo_topo')
         result = super().create(validated_data)
         # after the instance is created, identify the disease and populate it
-        _assign_disease_by_morpho_topo(result, icdo_morpho, icdo_topo_list, disease_field='curation_disease')
+        _assign_disease_by_morpho_topo(
+            result, icdo_morpho, icdo_topo_list, disease_field='curation_disease')
         return result
 
     def update(self, instance, validated_data):
-        icdo_morpho, icdo_topo_list = validated_data.pop('icdo_morpho'), validated_data.pop('icdo_topo')
+        icdo_morpho, icdo_topo_list = validated_data.pop(
+            'icdo_morpho'), validated_data.pop('icdo_topo')
         result = super().update(instance, validated_data)
         # after the instance is created, identify the disease and populate it
-        _assign_disease_by_morpho_topo(result, icdo_morpho, icdo_topo_list, disease_field='curation_disease')
+        _assign_disease_by_morpho_topo(
+            result, icdo_morpho, icdo_topo_list, disease_field='curation_disease')
         return result
 
     def validate_alt(self, value):
@@ -562,7 +587,8 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
             return value
         # if not, ensure 'alt' is always an array, in keeping with pyVCF's formatting
         return (
-            ("[%s]" % ", ".join([x.strip() if x is not '.' else 'None' for x in value.split(",")]))
+            ("[%s]" % ", ".join(
+                [x.strip() if x is not '.' else 'None' for x in value.split(",")]))
             if value is not None and value is not '.'
             else '[None]'
         )
