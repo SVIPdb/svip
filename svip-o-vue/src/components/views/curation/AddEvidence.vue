@@ -676,7 +676,8 @@ export default {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                     disease: this.computedDisease && this.computedDisease.name,
-                    collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : undefined
+                    collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : (this.reference && this.reference.includes("NCT")) ? 'ct' : undefined,
+                    hl_fields: 'title,abstract'
                 }
             })
                 .then(response => {

@@ -41,10 +41,10 @@ schema_view = get_schema_view(
     openapi.Info(
         title="SVIP API",
         default_version='v1',
-        description="Early version of the SVIP API - https://svip.ch",
+        description="SVIP API Version 1.0 - https://svip.ch",
         # terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="alquaddoomi@nexus.ethz.ch"),
-        license=openapi.License(name="BSD License"),
+        contact=openapi.Contact(email="feedback@svip.ch"),
+        license=openapi.License(name="GPLv3 License"),
     ),
     # validators=['flex', 'ssv'],
     validators=['ssv'],
@@ -57,43 +57,61 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
 
     # jwt auth paths
-    re_path(r'^api/token/$', GroupsTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    re_path(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
-    re_path(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    re_path(r'^api/token/$', GroupsTokenObtainPairView.as_view(),
+            name='token_obtain_pair'),
+    re_path(r'^api/token/refresh/$',
+            TokenRefreshView.as_view(), name='token_refresh'),
+    re_path(r'^api/token/verify/$',
+            TokenVerifyView.as_view(), name='token_verify'),
     # used for clients to retrieve non-sensitive token info if using httponly cookies
     re_path(r'^api/token/info/$', TokenInfo.as_view(), name='token_info'),
-    re_path(r'^api/token/invalidate/$', TokenInvalidate.as_view(), name='token_invalidate'),
+    re_path(r'^api/token/invalidate/$',
+            TokenInvalidate.as_view(), name='token_invalidate'),
 
     # drf routes
     path('api/v1/', include('api.urls')),
-    re_path(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^api/api-auth/', include('rest_framework.urls',
+            namespace='rest_framework')),
 
     # drf-yasg routes
-    re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^api/v1/swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$',
+            schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^api/v1/swagger/$', schema_view.with_ui('swagger',
+            cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^api/v1/redoc/$', schema_view.with_ui('redoc',
+            cache_timeout=0), name='schema-redoc'),
 
     # beacon v1.0.1 route
     re_path(r'^api/v1/beacon/$', beacon101.beacon, name='beacon101'),
-    re_path(r'^api/v1/beacon/query/$', beacon101.beacon_query, name='beacon101_query'),
+    re_path(r'^api/v1/beacon/query/$',
+            beacon101.beacon_query, name='beacon101_query'),
 
     # beacon v1.1.0 route
     re_path(r'^api/v1/beacon/v1.1.0/$', beacon110.beacon, name='beacon110'),
-    re_path(r'^api/v1/beacon/v1.1.0/query/$', beacon110.beacon_query, name='beacon110_query'),
-    re_path(r'^api/v1/beacon/v1.1.0/filtering_terms/$', beacon110.filtering_terms, name='beacon110_filtering_terms'),
+    re_path(r'^api/v1/beacon/v1.1.0/query/$',
+            beacon110.beacon_query, name='beacon110_query'),
+    re_path(r'^api/v1/beacon/v1.1.0/filtering_terms/$',
+            beacon110.filtering_terms, name='beacon110_filtering_terms'),
 
     # proxied routes from external APIs
-    re_path(r'^api/v1/variomes_single_ref', variomes_single_ref, name='variomes_single_ref'),
-    re_path(r'^api/v1/variomes_search', variomes_search, name='variomes_search'),
+    re_path(r'^api/v1/variomes_single_ref',
+            variomes_single_ref, name='variomes_single_ref'),
+    re_path(r'^api/v1/variomes_search',
+            variomes_search, name='variomes_search'),
 
     # swiss-po specific routes
-    re_path(r'^api/v1/swiss_po/get_pdbs/(?P<protein>.+)$', get_pdbs, name='swisspo_get_pdbs'),
-    re_path(r'^api/v1/swiss_po/get_residues/(?P<pdb_id>[^:]+):(?P<chain>[A-Z])$', get_residues, name='swisspo_get_residues'),
-    re_path(r'^api/v1/swiss_po/get_pdb_data/(?P<pdb_path>.+)$', get_pdb_data, name='swisspo_get_pdb_data'),
+    re_path(r'^api/v1/swiss_po/get_pdbs/(?P<protein>.+)$',
+            get_pdbs, name='swisspo_get_pdbs'),
+    re_path(
+        r'^api/v1/swiss_po/get_residues/(?P<pdb_id>[^:]+):(?P<chain>[A-Z])$', get_residues, name='swisspo_get_residues'),
+    re_path(r'^api/v1/swiss_po/get_pdb_data/(?P<pdb_path>.+)$',
+            get_pdb_data, name='swisspo_get_pdb_data'),
 
     # socibp proxying routes
-    re_path(r'^api/v1/socibp/genes', socibp_proxy.get_genes, name='socibp_get_genes'),
-    re_path(r'^api/v1/socibp/stats/(?P<gene>.+)/(?P<change>.+)$', socibp_proxy.get_changed_samples, name='socibp_stats'),
+    re_path(r'^api/v1/socibp/genes', socibp_proxy.get_genes,
+            name='socibp_get_genes'),
+    re_path(r'^api/v1/socibp/stats/(?P<gene>.+)/(?P<change>.+)$',
+            socibp_proxy.get_changed_samples, name='socibp_stats'),
 ]
 
 # serve static files from the dev server

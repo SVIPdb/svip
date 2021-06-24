@@ -1,5 +1,7 @@
 from collections import OrderedDict
+from datetime import datetime
 from enum import Enum
+from io import StringIO
 from itertools import chain
 
 from django.conf import settings
@@ -181,14 +183,15 @@ class CurationRequest(SVIPModel):
     If the request is created by a clinician, it's considered a higher priority than one that the system generates.
     """
 
-    variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
+    submission = models.ForeignKey('SubmittedVariant', on_delete=models.SET_NULL, null=True)
+    variant = models.ForeignKey(to=Variant, on_delete=models.SET_NULL, null=True)
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
 
     # there isn't always a requestor, e.g. in the case where it's system-generated or a curator created it themselves
     # if requestor is null, then this is a lower priority than one that was requested by a clinician
-    requestor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
+    requestor = models.TextField(null=True)
     created_on = models.DateTimeField(default=now, db_index=True)
-    due_by = models.DateTimeField(db_index=True)
+    due_by = models.DateTimeField(db_index=True, null=True)
 
     # TODO: add method that determines the status of the request based on:
     #  1. whether curation entries exist (e.g., someone 'claimed' it)
@@ -198,6 +201,9 @@ class CurationRequest(SVIPModel):
     #    -> claimed (curation entry exists)
     #    -> under review (entries submitted for review)
     #    -> finalized (all reviews for all entries completed)
+
+    class Meta:
+        unique_together = ('submission', 'variant')
 
 
 class CurationEntryManager(models.Manager):
@@ -383,6 +389,125 @@ class CurationReview(SVIPModel):
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     status = models.TextField(verbose_name="Review Status", choices=tuple(REVIEW_STATUS.items()), default='pending', db_index=True)
+
+
+# ================================================================================================================
+# === SVIP Variant Submission
+# ================================================================================================================
+
+class SubmittedVariantBatch(SVIPModel):
+    """
+    A batch of variant descriptions (i.e., SubmittedVariants) submitted for addition into SVIP.
+    Typically these batches of variants will be uploaded as a VCF.
+    """
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    created_on = models.DateTimeField(default=now, db_index=True)
+
+    vcf_body = models.TextField()
+
+    def owner_name(self):
+        if not self.owner:
+            return "N/A"
+        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        return fullname if fullname else self.owner.username
+
+
+class SubmittedVariantManager(models.Manager):
+    VCF_HEADER_TEMPLATE = """##fileformat=VCFv4.0
+    ##fileDate=%(curdate)s
+    ##source=svip_queue
+    #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO
+    """
+
+    def as_vcf(self, as_str=False):
+        """
+        For the given queryset, produces a bare-bones VCF representation.
+
+        as_str: if true, returns a string rather than a file handle
+        """
+
+        fp =  StringIO()
+        fp.write(SubmittedVariantManager.VCF_HEADER_TEMPLATE % {
+            'curdate': datetime.now().strftime("%Y%m%d")
+        })
+        fp.writelines(rec.as_vcf_row() for rec in self.get_queryset())
+
+        if as_str:
+            result = fp.getvalue()
+            fp.close()
+            return result
+        else:
+            fp.seek(0)
+            return fp
+
+
+class SubmittedVariant(SVIPModel):
+    """
+    A description of a variant that, once processed by the SVIP harvester,
+    will become a variant. The metadata for that variant will be retrieved
+    via VEP.
+    """
+
+    SUBMITTED_VAR_STATUS = OrderedDict((
+        ('pending', 'pending'),
+        ('completed', 'completed'),
+        ('error', 'error'),
+    ))
+    SUBMITTED_VAR_CHROMOSOME = tuple((x, x) for x in list(range(1, 23)) + ["X", "Y", "MT"])
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    created_on = models.DateTimeField(default=now, db_index=True)
+
+    chromosome = models.TextField(choices=SUBMITTED_VAR_CHROMOSOME)
+    pos = models.IntegerField()
+    ref = models.TextField()
+    alt = models.TextField()
+
+    canonical_only = models.BooleanField(default=False, help_text='If true, only retain VEP variants marked canonical')
+
+    # an optional batch from which this variant originates
+    batch = ForeignKey(SubmittedVariantBatch, on_delete=models.SET_NULL, null=True)
+
+    status = models.TextField(verbose_name="Processing Status", choices=tuple(SUBMITTED_VAR_STATUS.items()), default='pending', db_index=True)
+    processed_on = models.DateTimeField(db_index=True, null=True)
+    error_msg = models.TextField(null=True)
+
+    # the set of variants that were harvested from VEP for this submission
+    # (there can be more than one, since VEP can return multiple results for a single chrom/pos/ref/alt set)
+    resulting_variants = ArrayField(base_field=models.IntegerField(), null=True)
+
+    for_curation_request = models.BooleanField(default=False,
+        help_text='If true, a curation request should be created when this submission is completed')
+    curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
+        help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
+    requestor = models.TextField(null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+
+    objects = SubmittedVariantManager()
+
+    @property
+    def icdo_morpho(self):
+        if not self.curation_disease:
+            return None
+        return self.curation_disease.icd_o_morpho
+
+    @property
+    def icdo_topo(self):
+        if not self.curation_disease:
+            return None
+        return [x.icd_o_topo for x in self.curation_disease.icdotopoapidisease_set.all()]
+
+    def owner_name(self):
+        if not self.owner:
+            return "N/A"
+        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        return fullname if fullname else self.owner.username
+
+    def as_vcf_row(self):
+        # CHROM  POS  ID  REF  ALT  QUAL  FILTER  INFO
+        # QUAL and INFO are both '.', which indicates an empty field(?)
+        original_alt = ",".join([x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
+        return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
 # ================================================================================================================

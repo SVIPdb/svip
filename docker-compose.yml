@@ -46,6 +46,14 @@ services:
     env_file:
       - .env
 
+  local_uta:
+    image: biocommons/uta:uta_20171026
+    restart: always
+    volumes:
+      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
+    ports:
+      - "15032:5432"
+
   api:
     container_name: svip_api
     # image: "svip_api:latest"
@@ -55,11 +63,13 @@ services:
     volumes:
       - ./svip_api:/app
       - api_static:/var/staticfiles
+      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     ports:
       - '8085:8085'
     depends_on:
       - db
       - redis
+      - local_uta
     # environment:
     #   - POSTGRES_HOST=db
     #   - POSTGRES_PORT=5432
@@ -73,6 +83,9 @@ services:
     #   - USE_DEV_SERVER=true
     #   - REDIS_HOST=${REDIS_HOST}
     #   - REDIS_PORT=${REDIS_PORT}
+    environment:
+      - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
+      - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
     env_file:
       - .env
     restart: unless-stopped

@@ -94,9 +94,14 @@ variants_in_svip_router.register(r'diseases', views.DiseaseInSVIPViewSet, basena
 diseases_router = nested_routers.NestedSimpleRouter(variants_in_svip_router, r'diseases', lookup='disease')
 diseases_router.register(r'samples', views.SampleViewSet, basename='sample')
 
+router.register(r'curation_requests', views.CurationRequestViewSet, basename='curation_requests')
 router.register(r'curation_entries', views.CurationEntryViewSet, basename='curation_entries')
 
 router.register(r'comments', views.VariantCommentViewSet, basename='variant_comments')
+
+# variants submitted for processing in SVIP
+router.register(r'submitted_variants', views.SubmittedVariantViewSet, basename='submitted_variants')
+router.register(r'submitted_variant_batches', views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
 urlpatterns = [
     path('', include(router.urls)),

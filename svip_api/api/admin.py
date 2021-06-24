@@ -1,7 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry
+from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant, SubmittedVariantBatch
 
 
 @admin.register(Variant)
@@ -48,3 +48,6 @@ class CurationEntryAdmin(SimpleHistoryAdmin):
     list_select_related = ('variant', 'owner',)
     list_filter = ('status', 'owner', 'type_of_evidence')
     autocomplete_fields = ['variant']
+
+admin.site.register(SubmittedVariant)
+admin.site.register(SubmittedVariantBatch)

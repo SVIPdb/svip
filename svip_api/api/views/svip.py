@@ -1,8 +1,10 @@
 import django_filters
+import hgvs.parser
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
-from rest_framework import viewsets, permissions, filters
+from hgvs.exceptions import HGVSParseError
+from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 
@@ -12,11 +14,15 @@ from api.models import (
     CurationEntry,
     Disease
 )
-from api.permissions import IsCurationPermitted, IsSampleViewer
+from api.models.svip import SubmittedVariant, SubmittedVariantBatch, CurationRequest
+from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
-from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer
+from api.serializers.svip import (
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer,
+    SubmittedVariantSerializer, CurationRequestSerializer
+)
 from api.support.history import make_history_response
 from api.utils import json_build_fields
 
@@ -111,6 +117,15 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
 # ================================================================================================================
 # === Curation
 # ================================================================================================================
+
+class CurationRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = CurationRequestSerializer
+    queryset = (
+        CurationRequest.objects
+            .prefetch_related('variant', 'variant__gene', 'submission')
+            .order_by('-created_on')
+    )
+
 
 class CurationEntryFilter(django_filters.FilterSet):
     from api.models.svip import CURATION_STATUS
@@ -257,6 +272,92 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
                 )
                 .order_by('created_on')
         )
+
+
+# ================================================================================================================
+# === SVIP Variant Submission
+# ================================================================================================================
+
+# hgvs stuff
+import hgvs.normalizer
+import hgvs.parser
+import hgvs.dataproviders.uta
+import hgvs.assemblymapper
+
+# these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
+hdp = hgvs.dataproviders.uta.connect()
+hgnorm = hgvs.normalizer.Normalizer(hdp)
+hgvsparser = hgvs.parser.Parser()
+am = hgvs.assemblymapper.AssemblyMapper(hdp, assembly_name='GRCh37', normalize=True)
+
+AC_MAP = {
+    '1': 'NC_000001',
+    '2': 'NC_000002',
+    '3': 'NC_000003',
+    '4': 'NC_000004',
+    '5': 'NC_000005',
+    '6': 'NC_000006',
+    '7': 'NC_000007',
+    '8': 'NC_000008',
+    '9': 'NC_000009',
+    '10': 'NC_000010',
+    '11': 'NC_000011',
+    '12': 'NC_000012',
+    '13': 'NC_000013',
+    '14': 'NC_000014',
+    '15': 'NC_000015',
+    '16': 'NC_000016',
+    '17': 'NC_000017',
+    '18': 'NC_000018',
+    '19': 'NC_000019',
+    '20': 'NC_000020',
+    '21': 'NC_000021',
+    '22': 'NC_000022',
+    'X': 'NC_000023',
+    '23': 'NC_000023',
+    'Y': 'NC_000024',
+}
+
+class SubmittedVariantBatchViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsSubmitter,)
+    serializer_class = SubmittedVariantBatchSerializer
+    queryset = SubmittedVariantBatch.objects.order_by('-created_on')
+
+class SubmittedVariantViewSet(viewsets.ModelViewSet):
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'chromosome', 'pos', 'ref', 'alt', 'status'
+    )
+    ordering_fields = filter_fields + ('created_on', 'processed_on', 'batch', 'owner', 'canonical_only', 'for_curation_request')
+    search_fields = ('chromosome', 'pos', 'ref', 'alt',)
+
+    permission_classes = (IsSubmitter,)
+    serializer_class = SubmittedVariantSerializer
+    queryset = SubmittedVariant.objects.order_by('-created_on')
+
+    @action(methods=['GET'], detail=False)
+    def map_hgvs(self, request):
+        try:
+            # removes all sorts of weird unicode characters that, e.g., SVIP, adds for formatting purposes
+            sanitized_hgvs = request.GET['hgvs_str'].strip().encode("ascii", errors='ignore').decode("utf8")
+            result = hgvsparser.parse_hgvs_variant(sanitized_hgvs)
+            lifted = False
+
+            # if it's not genomic, map it
+            if result.type == 'c':
+                lifted = True
+                result = am.c_to_g(result)
+        except HGVSParseError as ex:
+            return JsonResponse({ 'error': str(ex) }, status=status.HTTP_400_BAD_REQUEST)
+
+        return JsonResponse({
+            'full_result': str(result),
+            'chromosome': next((k for k, v in AC_MAP.items() if result.ac.split(".")[0].startswith(v)), None),
+            'pos': result.posedit.pos.start.base,
+            'ref': result.posedit.edit.ref,
+            'alt': result.posedit.edit.alt,
+            'lifted': lifted
+        })
 
 
 # ================================================================================================================

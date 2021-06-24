@@ -190,7 +190,8 @@ export default {
             // we're sure sources exists because we populated it from the store
             return store.state.genes.sources.filter(
                 x =>
-                    x.num_variants > 0 &&
+                    x.num_variants > 0 && // remove sources that have no variants across the board
+                    !x.no_associations && // remove sources that shouldn't appear to have variants
                     !this.variant.variantinsource_set.find(y => x.name === y.source.name)
             );
         }

@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
     'svip.nexus.ethz.ch',
     'svip.ch', 'www.svip.ch',
     'svip.sib.swiss', 'svip-public.sib.swiss',
-    'svip.sensa.sib.swiss', 'svip.sensa.sib.swiss'
+    'svip.sensa.sib.swiss',
+    'api.svip.ch'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -225,7 +226,8 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:8000',
     'localhost:8080',
     'svip-dev.nexus.ethz.ch',
-    'svip-test.nexus.ethz.ch'
+    'svip-test.nexus.ethz.ch',
+    'api.svip.ch'
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -238,3 +240,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 SOCIBP_BASE_URL = os.environ['SOCIBP_BASE_URL']
 SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
+
+VARIOMES_BASE_URL = 'https://candy.hesge.ch/Variomes/api'
+VARIOMES_VERIFY_REQUESTS = False
