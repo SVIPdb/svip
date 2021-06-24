@@ -129,7 +129,7 @@ class VariantInSVIP(models.Model):
                 evidence_obj = {}
                 evidence_obj["isOpen"] = False
                 evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
-                evidence_obj["effectOfVariant"] = []
+                evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
                 evidence_obj["curator"] = {
                     "annotatedEffect": evidence.annotated_effect, 
                     "annotatedTier": evidence.annotated_tier
@@ -259,6 +259,7 @@ class CurationAssociation(models.Model):
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
     disease = models.ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
+
 class CurationEvidence(models.Model):
     """
     Associate variant to diseases for which curation was given
@@ -267,7 +268,23 @@ class CurationEvidence(models.Model):
     type_of_evidence = models.TextField(null=True)
     annotated_effect = models.TextField(default="", null=True)
     annotated_tier = models.TextField(default="", null=True)
-    
+
+    def effect_of_variant(self):
+        effect_of_variant = []
+        for curation in self.curation_entries.all():
+            effect_is_registered = False
+            for effect_obj in effect_of_variant:
+                if effect_obj["label"] == curation.effect:
+                    effect_is_registered = True
+                    effect_obj += 1
+            if not effect_is_registered:
+                effect_obj = {
+                    "label": curation.effect,
+                    "count": 1
+                }
+                effect_of_variant.append(effect_obj)
+        return effect_of_variant
+
 
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
