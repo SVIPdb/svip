@@ -13,7 +13,6 @@ from django.forms import model_to_dict
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from rest_framework import serializers
-from rest_framework.response import Response
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug, IcdOMorpho, IcdOTopo, IcdOTopoApiDisease
@@ -565,7 +564,7 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
 
     def create(self, validated_data):
         icdo_morpho, icdo_topo_list = validated_data.pop(
-            'icdo_morpho'), validated_data.pop('icdo_topo')
+            'icdo_morpho', None), validated_data.pop('icdo_topo', None)
         result = super().create(validated_data)
         # after the instance is created, identify the disease and populate it
         _assign_disease_by_morpho_topo(
@@ -574,7 +573,7 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
 
     def update(self, instance, validated_data):
         icdo_morpho, icdo_topo_list = validated_data.pop(
-            'icdo_morpho'), validated_data.pop('icdo_topo')
+            'icdo_morpho', None), validated_data.pop('icdo_topo', None)
         result = super().update(instance, validated_data)
         # after the instance is created, identify the disease and populate it
         _assign_disease_by_morpho_topo(
@@ -588,8 +587,8 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
         # if not, ensure 'alt' is always an array, in keeping with pyVCF's formatting
         return (
             ("[%s]" % ", ".join(
-                [x.strip() if x is not '.' else 'None' for x in value.split(",")]))
-            if value is not None and value is not '.'
+                [x.strip() if x != '.' else 'None' for x in value.split(",")]))
+            if value is not None and value != '.'
             else '[None]'
         )
 
