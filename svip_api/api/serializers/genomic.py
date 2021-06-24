@@ -36,6 +36,7 @@ class SourceSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'display_name',
             'num_variants',
+            'no_associations'
         )
 
 

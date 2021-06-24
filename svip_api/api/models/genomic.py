@@ -27,6 +27,9 @@ class Source(models.Model):
     name = models.TextField(null=False, unique=True, db_index=True)
     display_name = models.TextField(null=False)
 
+    no_associations = models.BooleanField(default=False,
+        help_text="Indicates that this source doesn't contain evidence. If true, filters this source out from variantinsource queries")
+
     def num_variants(self):
         return VariantInSource.objects.filter(source=self).count()
 
