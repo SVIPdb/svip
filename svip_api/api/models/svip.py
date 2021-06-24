@@ -75,6 +75,7 @@ class VariantInSVIPManager(models.Manager):
             diseaseinsvip__isnull=True
         ).delete()
 
+
 class VariantInSVIP(models.Model):
     """
     Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
@@ -136,11 +137,13 @@ class DiseaseInSVIPManager(models.Manager):
         """
 
         return self.get_queryset().filter(
-            disease__isnull=False, # we have to preserve null diseases, since they're never explicitly referenced
+            # we have to preserve null diseases, since they're never explicitly referenced
+            disease__isnull=False,
             sample__isnull=True
         ).exclude(
             disease__in=CurationEntry.objects.values('disease')
         ).delete()
+
 
 class DiseaseInSVIP(SVIPModel):
     svip_variant = ForeignKey(to=VariantInSVIP, on_delete=DB_CASCADE)
@@ -183,8 +186,10 @@ class CurationRequest(SVIPModel):
     If the request is created by a clinician, it's considered a higher priority than one that the system generates.
     """
 
-    submission = models.ForeignKey('SubmittedVariant', on_delete=models.SET_NULL, null=True)
-    variant = models.ForeignKey(to=Variant, on_delete=models.SET_NULL, null=True)
+    submission = models.ForeignKey(
+        'SubmittedVariant', on_delete=models.SET_NULL, null=True)
+    variant = models.ForeignKey(
+        to=Variant, on_delete=models.SET_NULL, null=True)
     disease = ForeignKey(to=Disease, on_delete=DB_CASCADE)
 
     # there isn't always a requestor, e.g. in the case where it's system-generated or a curator created it themselves
@@ -231,10 +236,12 @@ class CurationEntryManager(models.Manager):
             if any(x in groups for x in CURATOR_ALLOWED_ROLES):
                 # curators see only their own entries if ALLOW_ANY_CURATOR is false
                 # if it's true, they can see any curation entry
-                result = qset.filter(owner=user) if not ALLOW_ANY_CURATOR else qset.all()
+                result = qset.filter(
+                    owner=user) if not ALLOW_ANY_CURATOR else qset.all()
             elif 'reviewers' in groups:
                 # FIXME: should reviewers see all entries, or just the ones they've been assigned?
-                result = qset.filter(status__in=('reviewed', 'submitted', 'unreviewed'))
+                result = qset.filter(status__in=(
+                    'reviewed', 'submitted', 'unreviewed'))
 
         if not result:
             # unauthenticated users and other users who don't have specific roles just see the default set
@@ -242,8 +249,8 @@ class CurationEntryManager(models.Manager):
 
         result = (
             result
-                .select_related('disease', 'variant', 'variant__gene')
-                .prefetch_related('extra_variants')
+            .select_related('disease', 'variant', 'variant__gene')
+            .prefetch_related('extra_variants')
         )
 
         return result
@@ -256,36 +263,49 @@ class CurationEntry(SVIPModel):
     Generally, these are in response to a request, although (apparently?) a curator can create a curation
     entry whenever they want.
     """
-    disease = ForeignKey(to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+    disease = ForeignKey(
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
-    extra_variants = models.ManyToManyField(to=Variant, through='VariantCuration', related_name='variants_new')
+    extra_variants = models.ManyToManyField(
+        to=Variant, through='VariantCuration', related_name='variants_new')
 
-    type_of_evidence = models.TextField(verbose_name="Type of evidence", null=True)
-    drugs = ArrayField(base_field=models.TextField(), verbose_name="Drugs", null=True, blank=True)
-    interactions = ArrayField(base_field=models.TextField(), verbose_name="Interactions", null=True, blank=True)
+    type_of_evidence = models.TextField(
+        verbose_name="Type of evidence", null=True)
+    drugs = ArrayField(base_field=models.TextField(),
+                       verbose_name="Drugs", null=True, blank=True)
+    interactions = ArrayField(base_field=models.TextField(
+    ), verbose_name="Interactions", null=True, blank=True)
     effect = models.TextField(verbose_name="Effect", null=True)
-    tier_level_criteria = models.TextField(verbose_name="Tier level Criteria", null=True)
+    tier_level_criteria = models.TextField(
+        verbose_name="Tier level Criteria", null=True)
     tier_level = models.TextField(verbose_name="Tier level", null=True)
-    mutation_origin = models.TextField(verbose_name="Mutation Origin", default="Somatic", null=True, blank=True)
-    associated_mendelian_diseases = models.TextField(verbose_name="Associated Mendelian Disease(s)", null=True, blank=True)
-    summary = models.TextField(verbose_name="Complementary information", null=True, blank=True)
+    mutation_origin = models.TextField(
+        verbose_name="Mutation Origin", default="Somatic", null=True, blank=True)
+    associated_mendelian_diseases = models.TextField(
+        verbose_name="Associated Mendelian Disease(s)", null=True, blank=True)
+    summary = models.TextField(
+        verbose_name="Complementary information", null=True, blank=True)
     support = models.TextField(verbose_name="Support", null=True, blank=True)
     comment = models.TextField(verbose_name="Comment", null=True, blank=True)
     references = models.TextField(verbose_name="References", null=True)
 
-    annotations = ArrayField(base_field=models.TextField(), null=True)
+    annotations = ArrayField(
+        base_field=models.TextField(), null=True, blank=True)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
-    status = models.TextField(verbose_name="Curation Status", choices=tuple(CURATION_STATUS.items()), default='draft', db_index=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              null=True, on_delete=models.SET_NULL)
+    status = models.TextField(verbose_name="Curation Status", choices=tuple(
+        CURATION_STATUS.items()), default='draft', db_index=True)
 
     # optionally, this curation entry could be the result of "claiming" a curation request
     # FIXME: should we always generate a curation request to make tracking its review easier?
     # FIXME #2: assumedly batches of curation entries are submitted for a single request, so this should be mandatory
-    request = ForeignKey(to=CurationRequest, on_delete=DB_CASCADE, null=True, blank=True)
+    request = ForeignKey(to=CurationRequest,
+                         on_delete=DB_CASCADE, null=True, blank=True)
 
     # FIXME: should we also track the review status's in the entry's history? is that even possible?
     #  it might be: https://django-simple-history.readthedocs.io/en/latest/historical_model.html#adding-additional-fields-to-historical-models
@@ -311,7 +331,8 @@ class CurationEntry(SVIPModel):
     def owner_name(self):
         if not self.owner:
             return "N/A"
-        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        fullname = ("%s %s" % (self.owner.first_name,
+                    self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def ensure_svip_provenance(self):
@@ -344,12 +365,13 @@ class CurationEntry(SVIPModel):
 
         return created_entries
 
-
     class Meta:
         verbose_name = "Curation Entry"
         verbose_name_plural = "Curation Entries"
 
 # whenever a curation entry is created, ensure its provenance
+
+
 @receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
 def curation_saved(sender, instance, **kwargs):
     instance.ensure_svip_provenance()
@@ -384,11 +406,13 @@ class CurationReview(SVIPModel):
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
     curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE)
-    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    status = models.TextField(verbose_name="Review Status", choices=tuple(REVIEW_STATUS.items()), default='pending', db_index=True)
+    status = models.TextField(verbose_name="Review Status", choices=tuple(
+        REVIEW_STATUS.items()), default='pending', db_index=True)
 
 
 # ================================================================================================================
@@ -401,7 +425,8 @@ class SubmittedVariantBatch(SVIPModel):
     Typically these batches of variants will be uploaded as a VCF.
     """
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.SET_NULL, null=True)
     created_on = models.DateTimeField(default=now, db_index=True)
 
     vcf_body = models.TextField()
@@ -409,7 +434,8 @@ class SubmittedVariantBatch(SVIPModel):
     def owner_name(self):
         if not self.owner:
             return "N/A"
-        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        fullname = ("%s %s" % (self.owner.first_name,
+                    self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
 
@@ -427,7 +453,7 @@ class SubmittedVariantManager(models.Manager):
         as_str: if true, returns a string rather than a file handle
         """
 
-        fp =  StringIO()
+        fp = StringIO()
         fp.write(SubmittedVariantManager.VCF_HEADER_TEMPLATE % {
             'curdate': datetime.now().strftime("%Y%m%d")
         })
@@ -454,9 +480,11 @@ class SubmittedVariant(SVIPModel):
         ('completed', 'completed'),
         ('error', 'error'),
     ))
-    SUBMITTED_VAR_CHROMOSOME = tuple((x, x) for x in list(range(1, 23)) + ["X", "Y", "MT"])
+    SUBMITTED_VAR_CHROMOSOME = tuple(
+        (x, x) for x in list(range(1, 23)) + ["X", "Y", "MT"])
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.SET_NULL, null=True)
     created_on = models.DateTimeField(default=now, db_index=True)
 
     chromosome = models.TextField(choices=SUBMITTED_VAR_CHROMOSOME)
@@ -464,24 +492,29 @@ class SubmittedVariant(SVIPModel):
     ref = models.TextField()
     alt = models.TextField()
 
-    canonical_only = models.BooleanField(default=False, help_text='If true, only retain VEP variants marked canonical')
+    canonical_only = models.BooleanField(
+        default=False, help_text='If true, only retain VEP variants marked canonical')
 
     # an optional batch from which this variant originates
-    batch = ForeignKey(SubmittedVariantBatch, on_delete=models.SET_NULL, null=True)
+    batch = ForeignKey(SubmittedVariantBatch,
+                       on_delete=models.SET_NULL, null=True)
 
-    status = models.TextField(verbose_name="Processing Status", choices=tuple(SUBMITTED_VAR_STATUS.items()), default='pending', db_index=True)
+    status = models.TextField(verbose_name="Processing Status", choices=tuple(
+        SUBMITTED_VAR_STATUS.items()), default='pending', db_index=True)
     processed_on = models.DateTimeField(db_index=True, null=True)
     error_msg = models.TextField(null=True)
 
     # the set of variants that were harvested from VEP for this submission
     # (there can be more than one, since VEP can return multiple results for a single chrom/pos/ref/alt set)
-    resulting_variants = ArrayField(base_field=models.IntegerField(), null=True)
+    resulting_variants = ArrayField(
+        base_field=models.IntegerField(), null=True)
 
     for_curation_request = models.BooleanField(default=False,
-        help_text='If true, a curation request should be created when this submission is completed')
+                                               help_text='If true, a curation request should be created when this submission is completed')
     curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
-        help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
-    requestor = models.TextField(null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+                                         help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
+    requestor = models.TextField(
+        null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
 
     objects = SubmittedVariantManager()
 
@@ -500,13 +533,15 @@ class SubmittedVariant(SVIPModel):
     def owner_name(self):
         if not self.owner:
             return "N/A"
-        fullname = ("%s %s" % (self.owner.first_name, self.owner.last_name)).strip()
+        fullname = ("%s %s" % (self.owner.first_name,
+                    self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def as_vcf_row(self):
         # CHROM  POS  ID  REF  ALT  QUAL  FILTER  INFO
         # QUAL and INFO are both '.', which indicates an empty field(?)
-        original_alt = ",".join([x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
+        original_alt = ",".join(
+            [x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
         return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
