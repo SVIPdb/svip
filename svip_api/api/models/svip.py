@@ -151,7 +151,7 @@ class VariantInSVIP(models.Model):
                 for curation in evidence.curation_entries.all():
                     curation_obj = {
                         "id": curation.id,
-                        "pmid": curation.references,
+                        "pmid": int(curation.references.split(":")[1]),
                         "effect": curation.effect,
                         "support": curation.support,
                         "comment": curation.comment
@@ -160,12 +160,23 @@ class VariantInSVIP(models.Model):
                 evidence_obj["curations"] = curations
                 
                 reviews = []
-                #for review in evidence.reviews.all():
+                for review in evidence.reviews.all():
+                    review_obj = {
+                        "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                        "status": review.status
+                    }
+                    reviews.append(review_obj)
+                while len(reviews)<2:
+                    review_obj = {
+                        "reviewer": "",
+                        "status": None
+                    }
+                    reviews.append(review_obj)
                 evidence_obj["reviews"] = reviews
                 
                 evidences.append(evidence_obj)
             disease["evidences"] = evidences
-              
+
             diseases_dict.append(disease)
         return diseases_dict
 

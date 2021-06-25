@@ -112,7 +112,7 @@ import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPro
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
-//import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 const log = ulog("VariantDisease");
 
@@ -133,8 +133,8 @@ export default {
     },
     data() {
         return {
-            review_test: {},
-            review: {
+            review: this.variant.svip_data.review_data[0],
+            review_test: {
                 disease: "Aggressive fibromatosis",
                 evidences: [
                     {
@@ -375,8 +375,10 @@ export default {
         };
     },
     mounted() {
-        //this.review_test = this.variant.svip_data.review_data[0]
-        //console.log(this.variant.svip_data.review_data)
+        this.review.evidences.map(evidence => {
+            evidence["currentReview"]["reviewer"] = this.user.firstName
+            console.log(this.user.first_name)
+        })
     },
     created() {
         this.channel.onmessage = () => {
@@ -390,10 +392,12 @@ export default {
         HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
-
-        console.log("flag")
     },
-    computed: {},
+    computed: {
+        ...mapGetters({
+            user: "currentUser"
+        })
+    },
     methods: {
         displayIcon(status) {
             if (status === true) {

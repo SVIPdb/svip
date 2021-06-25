@@ -98,8 +98,6 @@ export default {
     },
     methods: {
         getSummaryComment() {
-            //console.log(this.variant)
-
             // get already existing summary comment for this variant and user (if exists)
             HTTP.get(`/summary_comments/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
