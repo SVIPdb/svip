@@ -207,17 +207,17 @@ export default {
                         currentReview: {
                             annotatedEffect: "Unclear", //Initial value should be the same as curator
                             annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                            reviewer: "John Doe",
+                            reviewer_id: "John Doe",
                             status: true,
                             comment: null
                         },
                         reviews: [
                             {
-                                reviewer: "Johnny Doe",
+                                reviewer_name: "Johnny Doe",
                                 status: false
                             },
                             {
-                                reviewer: "Jean Doe",
+                                reviewer_name: "Jean Doe",
                                 status: null
                             }
                         ],
@@ -263,17 +263,17 @@ export default {
                         currentReview: {
                             annotatedEffect: "Associated with diagnosis", //Initial value should be the same as curator
                             annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                            reviewer: "John Doe",
+                            reviewer_name: "John Doe",
                             status: true,
                             comment: null
                         },
                         reviews: [
                             {
-                                reviewer: "Johnny Doe",
+                                reviewer_name: "Johnny Doe",
                                 status: true
                             },
                             {
-                                reviewer: "Jean Doe",
+                                reviewer_name: "Jean Doe",
                                 status: null
                             }
                         ],
@@ -304,17 +304,17 @@ export default {
                         currentReview: {
                             annotatedEffect: "Responsive", //Initial value should be the same as curator
                             annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
-                            reviewer: "John Doe",
+                            reviewer_name: "John Doe",
                             status: true,
                             comment: null
                         },
                         reviews: [
                             {
-                                reviewer: "Johnny Doe",
+                                reviewer_name: "Johnny Doe",
                                 status: true
                             },
                             {
-                                reviewer: "Jean Doe",
+                                reviewer_name: "Jean Doe",
                                 status: null
                             }
                         ],
@@ -344,17 +344,17 @@ export default {
                         currentReview: {
                             annotatedEffect: "Responsive", //Initial value should be the same as curator
                             annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
-                            reviewer: "John Doe",
+                            reviewer_name: "John Doe",
                             status: true,
                             comment: null
                         },
                         reviews: [
                             {
-                                reviewer: "Johnny Doe",
+                                reviewer_name: "Johnny Doe",
                                 status: true
                             },
                             {
-                                reviewer: "Jean Doe",
+                                reviewer_name: "Jean Doe",
                                 status: null
                             }
                         ],
@@ -376,8 +376,8 @@ export default {
     },
     mounted() {
         this.review.evidences.map(evidence => {
-            evidence["currentReview"]["reviewer"] = this.user.firstName
-            console.log(this.user.first_name)
+            //evidence["currentReview"]["reviewer"] = this.user.firstName
+            evidence["currentReview"]["reviewer_id"] = this.user.user_id
         })
     },
     created() {
