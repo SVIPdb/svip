@@ -72,6 +72,10 @@ class VariantInSVIPManager(models.Manager):
             diseaseinsvip__isnull=True
         ).delete()
 
+#class SVIPVariant(modlels.Model):
+#    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+    
+
 class VariantInSVIP(models.Model):
     """
     Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
@@ -82,7 +86,8 @@ class VariantInSVIP(models.Model):
     to devote a lot of time to engineering a normalized data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
-    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
+    #variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
@@ -174,12 +179,12 @@ class VariantInSVIP(models.Model):
         verbose_name_plural = "Variants in SVIP"
 
 
-class Review(models.Model):
-    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
-    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
-    disease = models.ForeignKey(Disease, on_delete=DB_CASCADE)
-    type_of_evidence = models.TextField(default="")
-    comment = models.TextField(default="")
+#class Review(models.Model):
+#    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+#    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
+#    disease = models.ForeignKey(Disease, on_delete=DB_CASCADE)
+#    type_of_evidence = models.TextField(default="")
+#    comment = models.TextField(default="")
 
 class SummaryComment(models.Model):
     """

@@ -133,7 +133,7 @@ export default {
     },
     data() {
         return {
-            review_test: this.variant.svip_data && this.variant.svip_data.review_data,
+            review_test: {},
             review: {
                 disease: "Aggressive fibromatosis",
                 evidences: [
@@ -375,7 +375,8 @@ export default {
         };
     },
     mounted() {
-        //
+        //this.review_test = this.variant.svip_data.review_data[0]
+        //console.log(this.variant.svip_data.review_data)
     },
     created() {
         this.channel.onmessage = () => {
