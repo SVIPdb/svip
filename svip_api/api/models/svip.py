@@ -190,13 +190,6 @@ class VariantInSVIP(models.Model):
         verbose_name_plural = "Variants in SVIP"
 
 
-#class Review(models.Model):
-#    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
-#    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
-#    disease = models.ForeignKey(Disease, on_delete=DB_CASCADE)
-#    type_of_evidence = models.TextField(default="")
-#    comment = models.TextField(default="")
-
 class SummaryComment(models.Model):
     """
     Summary comment posted by reviewer for a given variant
@@ -282,8 +275,8 @@ class CurationEvidence(models.Model):
     """
     association = models.ForeignKey(to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
     type_of_evidence = models.TextField(null=True)
-    annotated_effect = models.TextField(default="", null=True)
-    annotated_tier = models.TextField(default="", null=True)
+    annotated_effect = models.TextField(default="Not yet annotated", null=True)
+    annotated_tier = models.TextField(default="Not yet annotated", null=True)
 
     def effect_of_variant(self):
         effect_of_variant = []
