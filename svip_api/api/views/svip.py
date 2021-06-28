@@ -6,18 +6,18 @@ from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 
-from api.models.svip import SummaryComment
+from api.models.svip import SummaryComment, CurationReview
 from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease
+    Disease,
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
-from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer, SummaryCommentSerializer
+from api.serializers.svip import CurationEntrySerializer, DiseaseInSVIPSerializer, SummaryCommentSerializer, CurationReviewSerializer
 from api.support.history import make_history_response
 from api.utils import json_build_fields
 
@@ -263,6 +263,15 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
 
+class CurationReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = CurationReviewSerializer
+    
+    def get_queryset(self):
+        queryset = CurationReview.objects.all()
+        return queryset
+    
+
+
 # ================================================================================================================
 # === Samples
 # ================================================================================================================
@@ -319,44 +328,4 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
 
         return queryset
     
-    
-    #def get_serializer_context(self):
-    #    print('get_serializer_context')
-    #    return {'request': self.request}
-
-    #def get_queryset(self):
-    #    print(self.kwargs)
-    #    if 'pk' in self.kwargs:
-    #        print(f"variant_pk: {int(self.kwargs['pk'])}")
-    #        queryset = SummaryComment.objects.filter(variant=int(self.kwargs['pk']))
-    #    else:
-    #        print('no variant_pk')
-    #        queryset = SummaryComment.objects.all()
-    
-    #    print(queryset)
-    #    return queryset
-    
-    
-    
-    #def get_queryset(self):
-    #    print("flag A")
-    #    return SummaryComment.objects.all()
-    
-    #def get(self, request, *args, **kwargs):
-    #    print("flag b")
-        
-    #    id = request.query_params["id"]
-        
-    #    if id != None:
-    #        summary_comment = SummaryComment.objects.filter(variant=id)
-    #        serializer = SummaryCommentSerializer(summary_comment)
-        
-    #    else:
-    #        queryset = SummaryComment.objects.all()
-    #        serializer = SummaryCommentSerializer(queryset, many=True)
-        
-    #    return Response(serializer.data)
-
-#@api_view(['GET'])
-#def delete_summary_comment(request):
     

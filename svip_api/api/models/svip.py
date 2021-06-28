@@ -143,7 +143,7 @@ class VariantInSVIP(models.Model):
                     "annotatedEffect": evidence.annotated_effect, 
                     "annotatedTier": evidence.annotated_tier,
                     "reviewer": "",
-                    "status": True,
+                    "status": None,
                     "comment": None
                 }
                 
@@ -163,7 +163,10 @@ class VariantInSVIP(models.Model):
                 for review in evidence.reviews.all():
                     review_obj = {
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
-                        "status": review.status
+                        "status": review.status,
+                        "annotatedTier": review.annotated_tier,
+                        "annotatedEffect": review.annotated_effect,
+                        "comment": review.comment
                     }
                     reviews.append(review_obj)
                 while len(reviews)<2:
@@ -532,12 +535,17 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
-    curation_evidence = ForeignKey(to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
-    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
-
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     status = models.TextField(verbose_name="Review Status", choices=tuple(REVIEW_STATUS.items()), default='pending', db_index=True)
+    
+    curation_evidence = ForeignKey(to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
+    annotated_effect = models.TextField(null=True)
+    annotated_tier = models.TextField(null=True)
+    comment = models.TextField(default="")
+    
+    
 
 
 # ================================================================================================================

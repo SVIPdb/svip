@@ -7,10 +7,6 @@
         <VariantSummary :variant="variant" />
 
         <VariantDisease :variant="variant"/>
-
-        <b-button class="float-right">
-            Submit review
-        </b-button>
     </div>
 </template>
 <script>
@@ -125,6 +121,9 @@ export default {
             to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
             next();
         });
+    },
+    submitReview() {
+        console.log("function run in the parent component")
     }
 };
 </script>

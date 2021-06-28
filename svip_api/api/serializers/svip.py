@@ -13,7 +13,7 @@ from rest_framework import serializers
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug, IcdOMorpho, IcdOTopo, IcdOTopoApiDisease
-from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS, SummaryComment
+from api.models.svip import Disease, DiseaseInSVIP, CURATION_STATUS, SummaryComment, CurationReview
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
 from api.serializers.reference import DiseaseSerializer
@@ -474,3 +474,10 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
                 "allow_null": False,
             }
         }
+
+
+
+class CurationReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurationReview
+        fields = '__all__'

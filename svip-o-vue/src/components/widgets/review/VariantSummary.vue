@@ -117,7 +117,6 @@ export default {
                 owner: this.user.user_id,
                 variant: this.variant.id
             }
-            console.log(summaryCommentJSON)
 
             // post new comment (even only editing an existing one will create a new instance and delete the former one)
             HTTP.post(`/summary_comments/`, summaryCommentJSON)
