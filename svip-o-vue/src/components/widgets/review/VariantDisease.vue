@@ -387,7 +387,8 @@ export default {
             disease.evidences.map(evidence => {
                 evidence["currentReview"]["reviewer_id"] = this.user.user_id
             })
-        })
+        });
+        this.detectOwnReviews();
     },
     created() {
         this.channel.onmessage = () => {
@@ -429,10 +430,21 @@ export default {
         onChange(curatorValues, reviewerValues) {
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
+        detectOwnReviews() {
+            // iterate over every review
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    evidence.reviews.map(review => {
+                        if (review.reviewer_id === this.user.user_id) {
+                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
+                            evidence.currentReview.annotatedTier = review.annotatedTier;
+                        }
+                    })
+                })
+            })
+        },
         submitReviews() {
-
             let currentReviews = [];
-
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
@@ -465,10 +477,7 @@ export default {
                 annotated_tier: evidence.currentReview.annotatedTier,
                 comment: evidence.currentReview.comment
             }
-
             return singleReviewJSON
-
-
         }
     },
 };

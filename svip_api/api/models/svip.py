@@ -165,12 +165,15 @@ class VariantInSVIP(models.Model):
                 for review in evidence.reviews.all():
                     review_obj = {
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                        "reviewer_id": review.reviewer.id,
                         "status": review.status,
                         "annotatedTier": review.annotated_tier,
                         "annotatedEffect": review.annotated_effect,
                         "comment": review.comment
                     }
                     reviews.append(review_obj)
+                    
+                # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
                 while len(reviews)<2:
                     review_obj = {
                         "reviewer": "",
@@ -505,7 +508,12 @@ def create_CurationAssociation(sender, instance, **kwargs):
 @receiver(post_save, sender=CurationAssociation)
 def create_CurationEvidence(sender, instance, **kwargs):
     for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-        new_curation_evidence = CurationEvidence(association=instance, type_of_evidence=evidence, annotated_effect="", annotated_tier="")
+        new_curation_evidence = CurationEvidence(
+            association=instance, 
+            type_of_evidence=evidence, 
+            annotated_effect="Not yet annotated", 
+            annotated_tier="Not yet annotated"
+        )
         new_curation_evidence.save()
     return ""
 
