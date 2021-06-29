@@ -140,6 +140,7 @@ class VariantInSVIP(models.Model):
                     "annotatedTier": evidence.annotated_tier
                     }
                 evidence_obj["currentReview"] = {
+                    "id": evidence.id,
                     "annotatedEffect": evidence.annotated_effect, 
                     "annotatedTier": evidence.annotated_tier,
                     "reviewer": "",
@@ -543,7 +544,7 @@ class CurationReview(SVIPModel):
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
     annotated_effect = models.TextField(null=True)
     annotated_tier = models.TextField(null=True)
-    comment = models.TextField(default="")
+    comment = models.TextField(default="", null=True)
     
     
 

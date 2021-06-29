@@ -478,6 +478,11 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
 
 
 class CurationReviewSerializer(serializers.ModelSerializer):
+    
+    def __init__(self, *args, **kwargs):
+        many = kwargs.pop('many', True)
+        super(CurationReviewSerializer, self).__init__(many=many, *args, **kwargs)
+        
     class Meta:
         model = CurationReview
         fields = '__all__'

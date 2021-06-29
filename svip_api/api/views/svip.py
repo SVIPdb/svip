@@ -265,10 +265,15 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
 
 class CurationReviewViewSet(viewsets.ModelViewSet):
     serializer_class = CurationReviewSerializer
+    model = CurationReview
     
     def get_queryset(self):
         queryset = CurationReview.objects.all()
         return queryset
+    
+    def get_serializer(self, *args, **kwargs):
+        kwargs["many"] = True
+        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
     
 
 

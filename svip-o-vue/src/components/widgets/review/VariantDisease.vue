@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-for="review in diseases" :key="review">
+        <div v-for="(review) in diseases" :key="review">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showDisease"/>
@@ -100,7 +100,7 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitReview">
+        <b-button class="float-right" @click="submitReviews()">
             Submit review
         </b-button>
     </div>
@@ -140,234 +140,236 @@ export default {
         return {
             //review: this.variant.svip_data.review_data[0],
             diseases: this.variant.svip_data.review_data,
-            review_test: {
-                disease: "Aggressive fibromatosis",
-                evidences: [
-                    {
-                        isOpen: false,
-                        typeOfEvidence: "Prognostic",
-                        effectOfVariant: [
-                            {
-                                label: "Good outcome",
-                                count: 4
+            diseases_test: [
+                {
+                    disease: "Aggressive fibromatosis",
+                    evidences: [
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Prognostic",
+                            effectOfVariant: [
+                                {
+                                    label: "Good outcome",
+                                    count: 4
+                                },
+                                {
+                                    label: "Intermediate",
+                                    count: 2
+                                },
+                                {
+                                    label: "Poor outcome",
+                                    count: 1
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 1,
+                                    pmid: 1,
+                                    effect: "Good outcome",
+                                    support: "Strong",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 2,
+                                    pmid: 2,
+                                    effect: "Good outcome",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 3,
+                                    pmid: 3,
+                                    effect: "Good outcome",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 4,
+                                    pmid: 4,
+                                    effect: "Intermediate",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 5,
+                                    pmid: 5,
+                                    effect: "Intermediate",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 6,
+                                    pmid: 6,
+                                    effect: "Poor outcome",
+                                    support: "Moderate",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Unclear",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
+                                //annotatedEffect: "",
+                                //annotatedTier: ""
                             },
-                            {
-                                label: "Intermediate",
-                                count: 2
+                            currentReview: {
+                                annotatedEffect: "Unclear", //Initial value should be the same as curator
+                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
+                                reviewer_id: "John Doe",
+                                status: true,
+                                comment: null
                             },
-                            {
-                                label: "Poor outcome",
-                                count: 1
-                            }
-                        ],
-                        curations: [
-                            {
-                                id: 1,
-                                pmid: 1,
-                                effect: "Good outcome",
-                                support: "Strong",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
-                                id: 2,
-                                pmid: 2,
-                                effect: "Good outcome",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
-                                id: 3,
-                                pmid: 3,
-                                effect: "Good outcome",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
-                                id: 4,
-                                pmid: 4,
-                                effect: "Intermediate",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
-                                id: 5,
-                                pmid: 5,
-                                effect: "Intermediate",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            },
-                            {
-                                id: 6,
-                                pmid: 6,
-                                effect: "Poor outcome",
-                                support: "Moderate",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            }
-                        ],
-                        curator: {
-                            annotatedEffect: "Unclear",
-                            annotatedTier: "Tier IA: Included in Professional Guidelines"
-                            //annotatedEffect: "",
-                            //annotatedTier: ""
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: false
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
                         },
-                        currentReview: {
-                            annotatedEffect: "Unclear", //Initial value should be the same as curator
-                            annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                            reviewer_id: "John Doe",
-                            status: true,
-                            comment: null
-                        },
-                        reviews: [
-                            {
-                                reviewer_name: "Johnny Doe",
-                                status: false
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Diagnostic",
+                            effectOfVariant: [
+                                {
+                                    label: "Associated with diagnosis",
+                                    count: 1
+                                },
+                                {
+                                    label: "Not associated with diagnosis",
+                                    count: 1
+                                },
+                                {
+                                    label: "Other",
+                                    count: 0
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 7,
+                                    pmid: 7,
+                                    effect: "Associated with diagnosis",
+                                    support: "Strong",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 8,
+                                    pmid: 8,
+                                    effect: "Not associated with diagnosis",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Associated with diagnosis",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
                             },
-                            {
-                                reviewer_name: "Jean Doe",
-                                status: null
-                            }
-                        ],
-                        note: null
-                    },
-                    {
-                        isOpen: false,
-                        typeOfEvidence: "Diagnostic",
-                        effectOfVariant: [
-                            {
-                                label: "Associated with diagnosis",
-                                count: 1
+                            currentReview: {
+                                annotatedEffect: "Associated with diagnosis", //Initial value should be the same as curator
+                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
                             },
-                            {
-                                label: "Not associated with diagnosis",
-                                count: 1
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        },
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Predictive / Therapeutic",
+                            effectOfVariant: [
+                                {
+                                    label: "Drug 1",
+                                    count: 1
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 9,
+                                    pmid: 9,
+                                    effect: "Responsive",
+                                    support: "Moderate",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Responsive",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
                             },
-                            {
-                                label: "Other",
-                                count: 0
-                            }
-                        ],
-                        curations: [
-                            {
-                                id: 7,
-                                pmid: 7,
-                                effect: "Associated with diagnosis",
-                                support: "Strong",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                            currentReview: {
+                                annotatedEffect: "Responsive", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
                             },
-                            {
-                                id: 8,
-                                pmid: 8,
-                                effect: "Not associated with diagnosis",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            }
-                        ],
-                        curator: {
-                            annotatedEffect: "Associated with diagnosis",
-                            annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
                         },
-                        currentReview: {
-                            annotatedEffect: "Associated with diagnosis", //Initial value should be the same as curator
-                            annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                            reviewer_name: "John Doe",
-                            status: true,
-                            comment: null
-                        },
-                        reviews: [
-                            {
-                                reviewer_name: "Johnny Doe",
-                                status: true
+                        {
+                            typeOfEvidence: "Predictive / Therapeutic",
+                            effectOfVariant: [
+                                {
+                                    label: "Drug 2",
+                                    count: 3
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 10,
+                                    pmid: 10,
+                                    effect: "Other",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Responsive",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
                             },
-                            {
-                                reviewer_name: "Jean Doe",
-                                status: null
-                            }
-                        ],
-                        note: null
-                    },
-                    {
-                        isOpen: false,
-                        typeOfEvidence: "Predictive / Therapeutic",
-                        effectOfVariant: [
-                            {
-                                label: "Drug 1",
-                                count: 1
-                            }
-                        ],
-                        curations: [
-                            {
-                                id: 9,
-                                pmid: 9,
-                                effect: "Responsive",
-                                support: "Moderate",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            }
-                        ],
-                        curator: {
-                            annotatedEffect: "Responsive",
-                            annotatedTier: "Tier IA: Included in Professional Guidelines"
-                        },
-                        currentReview: {
-                            annotatedEffect: "Responsive", //Initial value should be the same as curator
-                            annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
-                            reviewer_name: "John Doe",
-                            status: true,
-                            comment: null
-                        },
-                        reviews: [
-                            {
-                                reviewer_name: "Johnny Doe",
-                                status: true
+                            currentReview: {
+                                annotatedEffect: "Responsive", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
                             },
-                            {
-                                reviewer_name: "Jean Doe",
-                                status: null
-                            }
-                        ],
-                        note: null
-                    },
-                    {
-                        typeOfEvidence: "Predictive / Therapeutic",
-                        effectOfVariant: [
-                            {
-                                label: "Drug 2",
-                                count: 3
-                            }
-                        ],
-                        curations: [
-                            {
-                                id: 10,
-                                pmid: 10,
-                                effect: "Other",
-                                support: "Low",
-                                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                            }
-                        ],
-                        curator: {
-                            annotatedEffect: "Responsive",
-                            annotatedTier: "Tier IA: Included in Professional Guidelines"
-                        },
-                        currentReview: {
-                            annotatedEffect: "Responsive", //Initial value should be the same as curator
-                            annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
-                            reviewer_name: "John Doe",
-                            status: true,
-                            comment: null
-                        },
-                        reviews: [
-                            {
-                                reviewer_name: "Johnny Doe",
-                                status: true
-                            },
-                            {
-                                reviewer_name: "Jean Doe",
-                                status: null
-                            }
-                        ],
-                        note: null
-                    }
-                ]
-            },
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        }
+                    ]
+                }
+            ],
             summary: null,
             history_entry_id: null,
 
@@ -427,15 +429,19 @@ export default {
         onChange(curatorValues, reviewerValues) {
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
-        submitReview() {
-            // Prepare a JSON containing parameters for CurationReview model
-            const reviewJSON = {
-                curation_evidence: 1,
-                reviewer: this.user.user_id,
-            }
+        submitReviews() {
+
+            let currentReviews = [];
+
+            // iterate over every review
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    currentReviews.push(this.submitSingleReview(evidence));
+                })
+            })
 
             // post new review
-            HTTP.post(`/reviews/`, reviewJSON)
+            HTTP.post(`/reviews/`, currentReviews)
                 .then((response) => {
                     // Here should be a function to reset fields
                     this.isEditMode = false;
@@ -445,6 +451,21 @@ export default {
                     log.warn(err);
                     this.$snotify.error("Failed to submit review");
                 })
+
+        },
+        submitSingleReview(evidence) {
+            // prepare a JSON containing parameters for CurationReview model
+            const singleReviewJSON = {
+                curation_evidence: evidence.id,
+                reviewer: this.user.user_id,
+                annotated_effect: evidence.currentReview.annotatedEffect,
+                annotated_tier: evidence.currentReview.annotatedTier,
+                comment: evidence.currentReview.comment
+            }
+
+            return singleReviewJSON
+
+
         }
     },
 };
