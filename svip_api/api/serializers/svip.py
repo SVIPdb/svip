@@ -423,6 +423,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'owner_name',
             'formatted_variants',
             'status',
+            
+            'curation_evidence',
         )
 
         extra_kwargs = {

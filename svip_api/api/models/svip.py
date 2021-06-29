@@ -138,7 +138,7 @@ class VariantInSVIP(models.Model):
                 evidence_obj["curator"] = {
                     "annotatedEffect": evidence.annotated_effect, 
                     "annotatedTier": evidence.annotated_tier
-                    }
+                }
                 evidence_obj["currentReview"] = {
                     "id": evidence.id,
                     "annotatedEffect": evidence.annotated_effect, 
@@ -492,6 +492,12 @@ def create_CurationAssociation(sender, instance, **kwargs):
             new_curation_association = CurationAssociation(variant=instance.variant, disease=instance.disease)
             new_curation_association.save()
             instance.curation_evidence = new_curation_association.curation_evidences.get(type_of_evidence = instance.type_of_evidence)
+            
+        # association already exists so simply need to associate the curation entry to the right curation evidence
+        else:
+            evidence = associations.first().curation_evidences.get(type_of_evidence = instance.type_of_evidence)
+            instance.curation_evidence = evidence
+            
     return ""
 
 # create 3 evidence instances when a curation association is created
@@ -545,8 +551,22 @@ class CurationReview(SVIPModel):
     annotated_effect = models.TextField(null=True)
     annotated_tier = models.TextField(null=True)
     comment = models.TextField(default="", null=True)
-    
-    
+
+## Detects whether a curation review from same user for same evidence already exists, then delete it
+#@receiver(pre_save, sender=CurationReview)
+#def delete_previous(sender, instance, **kwargs):
+#    # detect if a pk already exists for this curation review so you know whether it is a new one being created
+#    if instance.pk is None:
+#        print("curation review is being created")
+#        same_params = CurationReview.objects.filter(curation_evidence = instance.curation_evidence).filter(reviewer = instance.reviewer)
+#        already_a_review = len(same_params) > 0
+#        print(f"Already a review for these params: {already_a_review}")
+#        if already_a_review:
+#            for curation_rev in same_params:
+#                curation_rev.delete()
+#    else:
+#        print("curation review already exists")
+#    return ""
 
 
 # ================================================================================================================
