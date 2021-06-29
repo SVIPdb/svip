@@ -132,6 +132,7 @@ class VariantInSVIP(models.Model):
             evidences = []
             for evidence in association.curation_evidences.all():
                 evidence_obj = {}
+                evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
                 evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
                 evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
@@ -548,25 +549,25 @@ class CurationReview(SVIPModel):
     
     curation_evidence = ForeignKey(to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
-    annotated_effect = models.TextField(null=True)
-    annotated_tier = models.TextField(null=True)
-    comment = models.TextField(default="", null=True)
+    annotated_effect = models.TextField(null=True, blank=True)
+    annotated_tier = models.TextField(null=True, blank=True)
+    comment = models.TextField(default="", null=True, blank=True)
 
-## Detects whether a curation review from same user for same evidence already exists, then delete it
-#@receiver(pre_save, sender=CurationReview)
-#def delete_previous(sender, instance, **kwargs):
-#    # detect if a pk already exists for this curation review so you know whether it is a new one being created
-#    if instance.pk is None:
-#        print("curation review is being created")
-#        same_params = CurationReview.objects.filter(curation_evidence = instance.curation_evidence).filter(reviewer = instance.reviewer)
-#        already_a_review = len(same_params) > 0
-#        print(f"Already a review for these params: {already_a_review}")
-#        if already_a_review:
-#            for curation_rev in same_params:
-#                curation_rev.delete()
-#    else:
-#        print("curation review already exists")
-#    return ""
+# Detects whether a curation review from same user for same evidence already exists, then delete it
+@receiver(pre_save, sender=CurationReview)
+def delete_previous(sender, instance, **kwargs):
+    # detect if a pk already exists for this curation review so you know whether it is a new one being created
+    if instance.pk is None:
+        print("curation review is being created")
+        same_params = CurationReview.objects.filter(curation_evidence = instance.curation_evidence).filter(reviewer = instance.reviewer)
+        already_a_review = len(same_params) > 0
+        print(f"Already a review for these params: {already_a_review}")
+        if already_a_review:
+            for curation_rev in same_params:
+                curation_rev.delete()
+    else:
+        print("curation review already exists")
+    return ""
 
 
 # ================================================================================================================
