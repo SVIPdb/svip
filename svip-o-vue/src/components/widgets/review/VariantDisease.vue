@@ -436,7 +436,10 @@ export default {
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    currentReviews.push(this.submitSingleReview(evidence));
+                    // check that dropdown options have been selected
+                    if (evidence.currentReview.annotatedEffect.length * evidence.currentReview.annotatedTier.length > 0) {
+                        currentReviews.push(this.submitSingleReview(evidence));
+                    }
                 })
             })
 
