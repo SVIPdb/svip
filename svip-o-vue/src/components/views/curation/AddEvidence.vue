@@ -46,7 +46,14 @@
                     === MAIN FORM
                     =======================================================================================================
                     -->
-                    <b-card no-body style="margin-bottom: 1.5em;">
+                    <div v-bind:class="{ unduplicated: !duplicated }" style="margin-bottom: 0.5em; margin-left: 2em; color:red">
+                        Duplicated
+                    </div>
+
+                    <b-card 
+                        no-body style="margin-bottom: 1.5em;" 
+                        v-bind:border-variant="duplicated? 'danger': ''"
+                    >
                         <b-card-body>
                             <b-container fluid>
                                 <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
@@ -576,6 +583,7 @@ export default {
     },
     data() {
         return {
+            duplicated: false,
             variant: null, // the variant associated with the current curation entry
 
             evidence_types,
@@ -742,6 +750,8 @@ export default {
                                     ...this.$route.params
                                 }
                             });
+                            console.log("flag")
+                            this.duplicated = true;
                         }
                     })
                     .catch((err) => {
@@ -831,11 +841,11 @@ export default {
                 comment: this.form.comment,
                 annotations: this.form.annotations,
 
-                references: `${this.source}:${this.reference}`
+                references: `${this.source}:${this.reference}`,
             };
 
             if (duplicating) {
-                payload.formatted_variants = this.form.extra_variants
+                payload.formatted_variants = this.form.extra_variants;
             }
 
             return payload;
@@ -938,6 +948,10 @@ export default {
                     payload: JSON.stringify(this.getPayload(true))
                 }
             }).href;
+
+            //console.log(`payload: ${JSON.stringify(this.getPayload(true))}`)
+            console.log(`targetUrl: ${targetUrl}`)
+
 
             window.open(targetUrl, '_blank');
         },
@@ -1131,5 +1145,8 @@ export default {
 }
 .submission_properties .value {
     font-weight: bold;
+}
+.unduplicated {
+    display: none;
 }
 </style>
