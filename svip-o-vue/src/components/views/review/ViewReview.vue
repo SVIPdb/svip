@@ -7,7 +7,6 @@
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
         <modify-review v-for="(disease, index) in diseases" :key="index" :label="index" :disease="disease"/>
-
     </div>
 </template>
 

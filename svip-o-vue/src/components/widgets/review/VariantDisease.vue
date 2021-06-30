@@ -63,7 +63,12 @@
                                         <b-col cols="4">
                                             <b-textarea
                                                 :disabled="evidence.currentReview.status"
-                                                class="summary-box" rows="3" placeholder="Comment..."/>
+                                                class="summary-box" 
+                                                rows="3"
+                                                placeholder="Comment..."
+                                                v-model="evidence.currentReview.comment"
+                                            >
+                                            </b-textarea>
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
@@ -438,6 +443,7 @@ export default {
                         if (review.reviewer_id === this.user.user_id) {
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
+                            evidence.currentReview.comment = review.comment;
                         }
                     })
                 })
@@ -449,7 +455,7 @@ export default {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     // check that dropdown options have been selected
-                    if (evidence.currentReview.annotatedEffect.length * evidence.currentReview.annotatedTier.length > 0) {
+                    if (evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated") {
                         currentReviews.push(this.submitSingleReview(evidence));
                     }
                 })
