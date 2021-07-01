@@ -18,7 +18,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug, IcdOMorpho, IcdOTopo, IcdOTopoApiDisease
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest
+    CurationRequest, SummaryComment, CurationReview
 )
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
@@ -206,7 +206,8 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'variant',
             'summary',
             'tissue_counts',
-            'diseases'
+            'diseases',
+            'review_data',
         )
 
 
@@ -452,6 +453,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'owner_name',
             'formatted_variants',
             'status',
+
+            'curation_evidence',
         )
 
         extra_kwargs = {
@@ -641,4 +644,44 @@ class SampleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sample
+        fields = '__all__'
+
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+class SummaryCommentSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    # kwargs = {
+    #    'variant': 'variant',
+    # }
+
+    class Meta:
+        model = SummaryComment
+        fields = ('id', 'owner', 'content', 'variant', 'reviewer')
+        extra_kwargs = {
+            "content": {
+                "required": False,
+                "allow_null": True,
+            },
+            "reviewer": {
+                "required": False,
+                "allow_null": False,
+            }
+        }
+
+
+class CurationReviewSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        many = kwargs.pop('many', True)
+        super(CurationReviewSerializer, self).__init__(
+            many=many, *args, **kwargs)
+
+    class Meta:
+        model = CurationReview
         fields = '__all__'

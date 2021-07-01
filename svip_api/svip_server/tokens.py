@@ -17,6 +17,7 @@ class GroupsTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token['username'] = user.username
+        token['first_name'] = user.first_name
         token['groups'] = [x.name for x in user.groups.all()]
 
         # since the front-end expects all permissions to be communicated via the groups collection,
@@ -39,6 +40,8 @@ class GroupsTokenObtainSlidingSerializer(TokenObtainSlidingSerializer):
         token = super().get_token(user)
 
         token['username'] = user.username
+        print(user.username)
+        token['first_name'] = user.first_name
         token['groups'] = [x.name for x in user.groups.all()]
 
         # since the front-end expects all permissions to be communicated via the groups collection,

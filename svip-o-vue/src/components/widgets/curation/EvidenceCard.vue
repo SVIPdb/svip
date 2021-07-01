@@ -215,6 +215,11 @@ const full_fields = [
         sortable: true
     },
     {
+        key: "id",
+        label: "ID",
+        sortable: true
+    },
+    {
         key: "references",
         label: "Reference",
         sortable: true
@@ -301,6 +306,11 @@ const dashboard_fields = [
     {
         key: "references",
         label: "Reference",
+        sortable: true
+    },
+    {
+        key: "id",
+        label: "ID",
         sortable: true
     },
     {

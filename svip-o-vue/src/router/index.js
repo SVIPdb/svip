@@ -22,6 +22,7 @@ const Statistics = () => import("@/components/views/Statistics");
 const CurationDashboard = () => import("@/components/views/curation/CurationDashboard");
 const AnnotateVariant = () => import("@/components/views/curation/AnnotateVariant");
 const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
+const ViewReview = () => import("@/components/views/review/ViewReview");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const SubmitVariants = () =>  import("@/components/views/submission/SubmitVariants");
 const DebugPage = () => import("@/components/views/DebugPage");
@@ -173,6 +174,16 @@ const router = new Router({
             }
         },
 
+        {
+            path: "/review/gene/:gene_id/variant/:variant_id/view",
+            name: "view-review",
+            component: ViewReview,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: 'SVIP-O: Review validation',
+                requiresAuth: true, roles: ['curators'] // Ivo : Should I only let reviewers?
+            }
+        },
         {
             path: "/debug",
             name: "debug",

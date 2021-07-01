@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
 from django.db.models.base import ModelBase
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django_db_cascade.deletions import DB_CASCADE
@@ -17,8 +17,8 @@ from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
-from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
-                             PUBLIC_VISIBLE_STATUSES)
+from api.permissions import (
+    ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES, PUBLIC_VISIBLE_STATUSES)
 from api.utils import dictfetchall
 
 
@@ -76,6 +76,14 @@ class VariantInSVIPManager(models.Manager):
         ).delete()
 
 
+<< << << < HEAD
+== == == =
+# class SVIPVariant(modlels.Model):
+#    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+
+>>>>>> > 8176ec5fe1a8749e3d5fad23637e11e407c25ee7
+
+
 class VariantInSVIP(models.Model):
     """
     Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
@@ -83,10 +91,12 @@ class VariantInSVIP(models.Model):
     from the public data.
 
     Also, the SVIP-specific data model is still very much a work-in-progress, so I figure it doesn't make sense
-    to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
+    to devote a lot of time to engineering a normalized data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
-    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+    variant = models.OneToOneField(
+        to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
+    #variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
@@ -120,9 +130,110 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
+    def review_data(self):
+        # JSON containing data for VariantDisease.vue
+        diseases_dict = []
+        for association in self.variant.curation_associations.all():
+            disease = {}
+            disease["disease"] = association.disease.name
+
+            evidences = []
+            for evidence in association.curation_evidences.all():
+                evidence_obj = {}
+                evidence_obj["id"] = evidence.id
+                evidence_obj["isOpen"] = False
+                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
+                evidence_obj["curator"] = {
+                    "annotatedEffect": evidence.annotated_effect,
+                    "annotatedTier": evidence.annotated_tier
+                }
+                evidence_obj["currentReview"] = {
+                    "id": evidence.id,
+                    "annotatedEffect": evidence.annotated_effect,
+                    "annotatedTier": evidence.annotated_tier,
+                    "reviewer": "",
+                    "status": None,
+                    "comment": None
+                }
+
+                curations = []
+                for curation in evidence.curation_entries.all():
+                    curation_obj = {
+                        "id": curation.id,
+                        "pmid": int(curation.references.split(":")[1]),
+                        "effect": curation.effect,
+                        "support": curation.support,
+                        "comment": curation.comment
+                    }
+                    curations.append(curation_obj)
+                evidence_obj["curations"] = curations
+
+                reviews = []
+                for review in evidence.reviews.all():
+                    review_obj = {
+                        "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                        "reviewer_id": review.reviewer.id,
+                        "status": review.status,
+                        "annotatedTier": review.annotated_tier,
+                        "annotatedEffect": review.annotated_effect,
+                        "comment": review.comment
+                    }
+                    reviews.append(review_obj)
+
+                # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
+                while len(reviews) < 2:
+                    review_obj = {
+                        "reviewer": "",
+                        "status": None
+                    }
+                    reviews.append(review_obj)
+                evidence_obj["reviews"] = reviews
+
+                evidences.append(evidence_obj)
+            disease["evidences"] = evidences
+
+            diseases_dict.append(disease)
+        return diseases_dict
+
+    # def sib_view_data(self):
+    # JSON containing data for ViewReview.vue
+
     class Meta:
         verbose_name = "Variant in SVIP"
         verbose_name_plural = "Variants in SVIP"
+
+
+class SummaryComment(models.Model):
+    """
+    Summary comment posted by reviewer for a given variant
+    """
+    content = models.TextField(default="")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              null=True, on_delete=models.SET_NULL, default=16)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
+
+    def reviewer(self):
+        return f"{self.owner.first_name} {self.owner.last_name}"
+
+# Detects whether a summary comment from same user for same variant already exists, then delete it
+
+
+@receiver(pre_save, sender=SummaryComment)
+def delete_previous(sender, instance, **kwargs):
+    # detect if a pk already exists for this Summary comment so you know whether it is a new one being created
+    if instance.pk is None:
+        print("summary comment is being created")
+        same_params = SummaryComment.objects.filter(
+            variant=instance.variant).filter(owner=instance.owner)
+        already_a_comment = len(same_params) > 0
+        print(f"Already a comment for these params: {already_a_comment}")
+        if already_a_comment:
+            for summary_com in same_params:
+                summary_com.delete()
+    else:
+        print("summary comment already exists")
+    return ""
 
 
 # ================================================================================================================
@@ -168,6 +279,44 @@ class DiseaseInSVIP(SVIPModel):
 # ================================================================================================================
 # === Curation
 # ================================================================================================================
+
+
+class CurationAssociation(models.Model):
+    """
+    Associate variant to diseases for which curation was given
+    """
+    variant = models.ForeignKey(
+        to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
+    disease = models.ForeignKey(
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class CurationEvidence(models.Model):
+    """
+    Associate variant to diseases for which curation was given
+    """
+    association = models.ForeignKey(
+        to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
+    type_of_evidence = models.TextField(null=True)
+    annotated_effect = models.TextField(default="Not yet annotated", null=True)
+    annotated_tier = models.TextField(default="Not yet annotated", null=True)
+
+    def effect_of_variant(self):
+        effect_of_variant = []
+        for curation in self.curation_entries.all():
+            effect_is_registered = False
+            for effect_obj in effect_of_variant:
+                if effect_obj["label"] == curation.effect:
+                    effect_is_registered = True
+                    effect_obj["count"] += 1
+            if not effect_is_registered:
+                effect_obj = {
+                    "label": curation.effect,
+                    "count": 1
+                }
+                effect_of_variant.append(effect_obj)
+        return effect_of_variant
+
 
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
@@ -266,8 +415,13 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # link a curation entry to a curation evidence
+    curation_evidence = models.ForeignKey(
+        to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
+
     # variants = models.ManyToManyField(to=Variant)
-    variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
+    variant = models.ForeignKey(
+        to=Variant, on_delete=DB_CASCADE, related_name="curations")
     extra_variants = models.ManyToManyField(
         to=Variant, through='VariantCuration', related_name='variants_new')
 
@@ -369,6 +523,47 @@ class CurationEntry(SVIPModel):
         verbose_name = "Curation Entry"
         verbose_name_plural = "Curation Entries"
 
+
+# create an association instance when a curation entry is created (unless already linked to one)
+@receiver(pre_save, sender=CurationEntry)
+def create_CurationAssociation(sender, instance, **kwargs):
+    # check that a disease is indicated for the curation entry being saved
+    if instance.disease and (instance.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+        associations = CurationAssociation.objects.filter(
+            variant=instance.variant).filter(disease=instance.disease)
+
+        # check that no association already exists for these parameters
+        if len(associations) == 0:
+            new_curation_association = CurationAssociation(
+                variant=instance.variant, disease=instance.disease)
+            new_curation_association.save()
+            instance.curation_evidence = new_curation_association.curation_evidences.get(
+                type_of_evidence=instance.type_of_evidence)
+
+        # association already exists so simply need to associate the curation entry to the right curation evidence
+        else:
+            evidence = associations.first().curation_evidences.get(
+                type_of_evidence=instance.type_of_evidence)
+            instance.curation_evidence = evidence
+
+    return ""
+
+# create 3 evidence instances when a curation association is created
+
+
+@receiver(post_save, sender=CurationAssociation)
+def create_CurationEvidence(sender, instance, **kwargs):
+    for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+        new_curation_evidence = CurationEvidence(
+            association=instance,
+            type_of_evidence=evidence,
+            annotated_effect="Not yet annotated",
+            annotated_tier="Not yet annotated"
+        )
+        new_curation_evidence.save()
+    return ""
+
+
 # whenever a curation entry is created, ensure its provenance
 
 
@@ -413,6 +608,14 @@ class CurationReview(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     status = models.TextField(verbose_name="Review Status", choices=tuple(
         REVIEW_STATUS.items()), default='pending', db_index=True)
+
+    curation_evidence = ForeignKey(
+        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
+    annotated_effect = models.TextField(null=True, blank=True)
+    annotated_tier = models.TextField(null=True, blank=True)
+    comment = models.TextField(default="", null=True, blank=True)
 
 
 # ================================================================================================================
@@ -543,6 +746,24 @@ class SubmittedVariant(SVIPModel):
         original_alt = ",".join(
             [x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
         return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
+
+
+# Detects whether a curation review from same user for same evidence already exists, then delete it
+@receiver(pre_save, sender=CurationReview)
+def delete_previous(sender, instance, **kwargs):
+    # detect if a pk already exists for this curation review so you know whether it is a new one being created
+    if instance.pk is None:
+        print("curation review is being created")
+        same_params = CurationReview.objects.filter(
+            curation_evidence=instance.curation_evidence).filter(reviewer=instance.reviewer)
+        already_a_review = len(same_params) > 0
+        print(f"Already a review for these params: {already_a_review}")
+        if already_a_review:
+            for curation_rev in same_params:
+                curation_rev.delete()
+    else:
+        print("curation review already exists")
+    return ""
 
 
 # ================================================================================================================

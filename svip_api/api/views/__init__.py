@@ -18,7 +18,9 @@ from .svip import (
     CurationRequestViewSet,
     CurationEntryViewSet,
     SubmittedVariantViewSet,
-    SubmittedVariantBatchViewSet
+    SubmittedVariantBatchViewSet,
+    SummaryCommentViewSet,
+    CurationReviewViewSet
 )
 
 from .reference import (
