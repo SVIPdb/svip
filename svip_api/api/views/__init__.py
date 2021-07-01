@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .genomic import (
     SourceViewSet,
     GeneViewSet,

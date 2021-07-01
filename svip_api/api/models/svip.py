@@ -76,14 +76,6 @@ class VariantInSVIPManager(models.Manager):
         ).delete()
 
 
-<< << << < HEAD
-== == == =
-# class SVIPVariant(modlels.Model):
-#    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
-
->>>>>> > 8176ec5fe1a8749e3d5fad23637e11e407c25ee7
-
-
 class VariantInSVIP(models.Model):
     """
     Represents SVIP information about a variant. While this could conceivably be handled by VariantInSource,
@@ -96,7 +88,7 @@ class VariantInSVIP(models.Model):
     """
     variant = models.OneToOneField(
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
-    #variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+    # variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
@@ -220,7 +212,7 @@ class SummaryComment(models.Model):
 
 
 @receiver(pre_save, sender=SummaryComment)
-def delete_previous(sender, instance, **kwargs):
+def delete_previous_summary_comment(sender, instance, **kwargs):
     # detect if a pk already exists for this Summary comment so you know whether it is a new one being created
     if instance.pk is None:
         print("summary comment is being created")
@@ -750,7 +742,7 @@ class SubmittedVariant(SVIPModel):
 
 # Detects whether a curation review from same user for same evidence already exists, then delete it
 @receiver(pre_save, sender=CurationReview)
-def delete_previous(sender, instance, **kwargs):
+def delete_previous_curation_review(sender, instance, **kwargs):
     # detect if a pk already exists for this curation review so you know whether it is a new one being created
     if instance.pk is None:
         print("curation review is being created")

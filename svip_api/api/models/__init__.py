@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .genomic import (
     Source, Gene, Variant,
     VariantInSource, Association, CollapsedAssociation, Phenotype, Evidence, EnvironmentalContext
