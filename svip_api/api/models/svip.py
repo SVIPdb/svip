@@ -293,7 +293,7 @@ class CurationEvidence(models.Model):
             for effect_obj in effect_of_variant:
                 if effect_obj["label"] == curation.effect:
                     effect_is_registered = True
-                    effect_obj += 1
+                    effect_obj["count"] += 1
             if not effect_is_registered:
                 effect_obj = {
                     "label": curation.effect,
@@ -509,7 +509,7 @@ def create_CurationAssociation(sender, instance, **kwargs):
 def create_CurationEvidence(sender, instance, **kwargs):
     for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
         new_curation_evidence = CurationEvidence(
-            association=instance, 
+            association=instance,
             type_of_evidence=evidence, 
             annotated_effect="Not yet annotated", 
             annotated_tier="Not yet annotated"
