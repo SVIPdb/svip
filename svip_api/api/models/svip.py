@@ -292,6 +292,7 @@ class CurationEvidence(models.Model):
     type_of_evidence = models.TextField(null=True)
     annotated_effect = models.TextField(default="Not yet annotated", null=True)
     annotated_tier = models.TextField(default="Not yet annotated", null=True)
+    drug = models.TextField(null=True)
 
     def effect_of_variant(self):
         effect_of_variant = []
