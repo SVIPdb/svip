@@ -134,7 +134,8 @@ class VariantInSVIP(models.Model):
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
-                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                #evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidence_obj["typeOfEvidence"] = evidence.full_evidence_type()
                 evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
                 evidence_obj["curator"] = {
                     "annotatedEffect": evidence.annotated_effect,
@@ -294,6 +295,12 @@ class CurationEvidence(models.Model):
     annotated_tier = models.TextField(default="Not yet annotated", null=True)
     drug = models.TextField(null=True)
 
+    def full_evidence_type(self):
+        if self.drug:
+            return f"{self.type_of_evidence} - {self.drug}"
+        else:
+            return self.type_of_evidence
+
     def effect_of_variant(self):
         effect_of_variant = []
         for curation in self.curation_entries.all():
@@ -408,9 +415,11 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # link a curation entry to a curation evidence
-    curation_evidence = models.ForeignKey(
-        to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
+    # link a curation entry to curation evidence (usually one, but more if the curation is associated with several drugs)
+    curation_evidences = models.ManyToManyField(CurationEvidence, related_name='curation_entries')
+    
+    #curation_evidence = models.ForeignKey(
+    #    to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
 
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(
@@ -520,46 +529,70 @@ class CurationEntry(SVIPModel):
 # create an association instance when a curation entry is created (unless already linked to one)
 @receiver(pre_save, sender=CurationEntry)
 def create_CurationAssociation(sender, instance, **kwargs):
-    # check that a disease is indicated for the curation entry being saved
+    
+    # make sure a disease is indicated for the curation entry being saved
     if instance.disease and (instance.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
         associations = CurationAssociation.objects.filter(
-            variant=instance.variant).filter(disease=instance.disease)
+            variant=instance.variant
+        ).filter(disease=instance.disease)
 
-        # check that no association already exists for these parameters
+        # if no association with curation parameters, create one
         if len(associations) == 0:
-            new_curation_association = CurationAssociation(
-                variant=instance.variant, disease=instance.disease)
-            new_curation_association.save()
-            instance.curation_evidence = new_curation_association.curation_evidences.get(
-                type_of_evidence=instance.type_of_evidence)
-
-        # association already exists so simply need to associate the curation entry to the right curation evidence
+            association = CurationAssociation(
+                variant=instance.variant, disease=instance.disease
+            )
+            association.save()
+            
+        # association already exists 
         else:
-            evidence = associations.first().curation_evidences.get(
-                type_of_evidence=instance.type_of_evidence)
-            instance.curation_evidence = evidence
+            association = associations.first()
+
+        drugs = instance.drugs
+        print(drugs)
+        if len(instance.drugs) == 0:
+            # add null object to empty list so at least one iteration to create an evidence related to no drug
+            drugs.append(None)
+        for drug in instance.drugs:
+            matching_evidence_qs = association.curation_evidences.filter(type_of_evidence = instance.type_of_evidence).filter(drug = drug)
+            
+            # if no evidence with curation parameters, create one
+            if len(matching_evidence_qs) == 0:
+                new_curation_evidence = CurationEvidence(
+                    association=association,
+                    type_of_evidence=instance.type_of_evidence,
+                    annotated_effect="Not yet annotated",
+                    annotated_tier="Not yet annotated",
+                    drug = drug,
+                )
+                new_curation_evidence.save()
+                instance.curation_evidences.add(new_curation_evidence)
+                print("curation evidence added")
+            
+            # evidence already exists: link it to curation
+            else:
+                instance.curation_evidences.add(matching_evidence_qs.first())
+                print("curation evidence added")
 
     return ""
 
-# create 3 evidence instances when a curation association is created
+
+## create 3 evidence instances when a curation association is created
+#@receiver(post_save, sender=CurationAssociation)
+#def create_CurationEvidence(sender, instance, **kwargs):
+#    for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+#        new_curation_evidence = CurationEvidence(
+#            association=instance,
+#            type_of_evidence=evidence,
+#            annotated_effect="Not yet annotated",
+#            annotated_tier="Not yet annotated"
+#        )
+#        new_curation_evidence.save()
+#    return ""
 
 
-@receiver(post_save, sender=CurationAssociation)
-def create_CurationEvidence(sender, instance, **kwargs):
-    for evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-        new_curation_evidence = CurationEvidence(
-            association=instance,
-            type_of_evidence=evidence,
-            annotated_effect="Not yet annotated",
-            annotated_tier="Not yet annotated"
-        )
-        new_curation_evidence.save()
-    return ""
 
 
 # whenever a curation entry is created, ensure its provenance
-
-
 @receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
 def curation_saved(sender, instance, **kwargs):
     instance.ensure_svip_provenance()

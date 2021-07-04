@@ -24,8 +24,8 @@ class CurationsInlineAdmin(admin.TabularInline):
 
 @admin.register(CurationEvidence)
 class CurationEvidenceAdmin(admin.ModelAdmin):
-    fields = ['association', 'type_of_evidence']
-    inlines = [CurationsInlineAdmin]
+    fields = ['association', 'type_of_evidence', 'drug']
+    #inlines = [CurationsInlineAdmin]
 
 
 @admin.register(Variant)
