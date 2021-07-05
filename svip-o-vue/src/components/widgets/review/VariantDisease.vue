@@ -143,7 +143,6 @@ export default {
     },
     data() {
         return {
-            //review: this.variant.svip_data.review_data[0],
             diseases: this.variant.svip_data.review_data,
             diseases_test: [
                 {
@@ -213,8 +212,6 @@ export default {
                             curator: {
                                 annotatedEffect: "Unclear",
                                 annotatedTier: "Tier IA: Included in Professional Guidelines"
-                                //annotatedEffect: "",
-                                //annotatedTier: ""
                             },
                             currentReview: {
                                 annotatedEffect: "Unclear", //Initial value should be the same as curator
