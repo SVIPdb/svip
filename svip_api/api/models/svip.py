@@ -134,8 +134,8 @@ class VariantInSVIP(models.Model):
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
-                #evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
-                evidence_obj["typeOfEvidence"] = evidence.full_evidence_type()
+                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidence_obj["fullType"] = evidence.full_evidence_type()
                 evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
                 evidence_obj["curator"] = {
                     "id": evidence.annotation.id,

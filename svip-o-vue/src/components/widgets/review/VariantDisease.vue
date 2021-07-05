@@ -14,7 +14,7 @@
                                     <b-row align-v="center">
                                         <b-col align="center" cols="1">
                                             <expander v-model="evidence.isOpen"/>
-                                            {{ evidence.typeOfEvidence }}
+                                            {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
