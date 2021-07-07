@@ -592,7 +592,7 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
-    curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE)
+    curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE, default=520)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
 
