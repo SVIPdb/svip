@@ -4,15 +4,25 @@
             <b-card-header class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showReview"/>
-                    <span>{{ label }}</span>
+                    <span>{{ disease.disease }}</span>
                 </h6>
             </b-card-header>
 
             <transition name="slide-fade">
                 <b-card-text v-if="showReview">
                     <b-table v-for="(disease, index) in disease" :key="index" :fields="fields"
-                             :items="Object.values(disease)"
-                             :thead-class="index !== 'Prognostic' ? 'hidden_header' : ''" class="mb-0" :bordered="true">
+                        :items="Object.values(disease)"
+                        :thead-class="index !== 'Prognostic' ? 'hidden_header' : ''" class="mb-0" :bordered="true">
+
+                    <!--<b-table 
+                    v-for="(evidence) in disease.evidences" 
+                    :key="evidence"
+                    :fields="fields"
+                    :items="{'test': '92i'}"
+                    :thead-class="index !== 'Prognostic' ? 'hidden_header' : ''"
+                    class="mb-0"
+                    :bordered="true"
+                    >-->
 
                         <template v-slot:cell(type_of_evidence)="row">
                             <row-expander :row="row" class="mr-2"/>
@@ -23,7 +33,7 @@
                             <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}
                                 ({{ outcome.nb_evidence }} evidence-s)<br/></p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
-                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
+                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br/></span>
                             -->
                         </template>
 
@@ -270,7 +280,7 @@ export default {
     },
     props: {
         disease: {type: Object, required: false},
-        label: {type: String, required: false}
+        //label: {type: String, required: false}
     },
     methods: {
         pubmedURL,
@@ -282,6 +292,23 @@ export default {
                 // update the list of references, since we likely added one
                 this.refreshReferences();
             };
+        },
+        makeItems() {
+            this.evidence.typeOfEvidence
+            this.disease.evidences.map(evidence => {
+                const evidenceItems = {}
+
+                evidenceItems["outcome"] = []
+
+                try {
+                    this.evidences[evidence.typeOfEvidence].push(evidenceItems);
+                } catch (error) {
+                    this.evidences[evidence.typeOfEvidence] = []
+                    this.evidences[evidence.typeOfEvidence].push(evidenceItems);
+                }
+                
+                
+            })
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -358,6 +385,7 @@ export default {
     },
     data() {
         return {
+            evidences: {},
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",
@@ -447,6 +475,9 @@ export default {
                 'Other criteria'
             ],
         }
+    },
+    mounted() {
+        this.makeItems();
     },
     computed: {
         ...mapGetters({

@@ -751,7 +751,6 @@ export default {
                                     ...this.$route.params
                                 }
                             });
-                            console.log("flag")
                             this.duplicated = true;
                         }
                     })
@@ -878,6 +877,7 @@ export default {
                 : HTTP.post(`/curation_entries/`, payload)
             )
                 .then(result => {
+                    this.duplicated = false;
                     this.$snotify.success(
                         `${isDraft ? "Draft" : "Entry"} ${
                             this.is_saved ? "updated" : "saved"
