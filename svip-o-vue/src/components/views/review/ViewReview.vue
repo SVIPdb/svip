@@ -38,11 +38,10 @@ export default {
     },
     props: {
         review: {type: Object, required: false},
-        //variant: {type: Object, required: false},
     },
     data() {
         return {
-            //diseases_test: this.variant.svip_data.review_data,
+            //diseases_test: variant.svip_data.review_data,
             diseases: [
                 {
                     "disease": "Aggressive fibromatosis",
