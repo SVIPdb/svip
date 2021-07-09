@@ -4,7 +4,7 @@
             <b-card-header class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showReview"/>
-                    <span>{{ disease.disease }}</span>
+                    <span>{{ label }}</span>
                 </h6>
             </b-card-header>
 
@@ -13,16 +13,6 @@
                     <b-table v-for="(disease, index) in disease" :key="index" :fields="fields"
                         :items="Object.values(disease)"
                         :thead-class="index !== 'Prognostic' ? 'hidden_header' : ''" class="mb-0" :bordered="true">
-
-                    <!--<b-table 
-                    v-for="(evidence) in disease.evidences" 
-                    :key="evidence"
-                    :fields="fields"
-                    :items="{'test': '92i'}"
-                    :thead-class="index !== 'Prognostic' ? 'hidden_header' : ''"
-                    class="mb-0"
-                    :bordered="true"
-                    >-->
 
                         <template v-slot:cell(type_of_evidence)="row">
                             <row-expander :row="row" class="mr-2"/>
@@ -33,7 +23,7 @@
                             <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}
                                 ({{ outcome.nb_evidence }} evidence-s)<br/></p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
-                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br/></span>
+                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
                             -->
                         </template>
 
@@ -267,7 +257,6 @@ import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import {HTTP} from "@/router/http";
 import {BIcon, BIconCheckSquareFill, BIconSquare, BIconXSquareFill} from "bootstrap-vue";
-
 export default {
     name: "ModifyReview",
     components: {
@@ -280,35 +269,19 @@ export default {
     },
     props: {
         disease: {type: Object, required: false},
-        //label: {type: String, required: false}
+        label: {type: String, required: false}
     },
     methods: {
         pubmedURL,
-
         created() {
             this.refreshReferences();
-
             this.channel.onmessage = () => {
                 // update the list of references, since we likely added one
                 this.refreshReferences();
             };
         },
         makeItems() {
-            this.evidence.typeOfEvidence
-            this.disease.evidences.map(evidence => {
-                const evidenceItems = {}
-
-                evidenceItems["outcome"] = []
-
-                try {
-                    this.evidences[evidence.typeOfEvidence].push(evidenceItems);
-                } catch (error) {
-                    this.evidences[evidence.typeOfEvidence] = []
-                    this.evidences[evidence.typeOfEvidence].push(evidenceItems);
-                }
-                
-                
-            })
+            
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -329,12 +302,10 @@ export default {
             //  into a seprate field?
             // FIXME: alternatively, should curation entries have a 'main' variant at all, or should we restructure the
             //  URL to remove the gene, variant, disease refererences?
-
             const [gene_id, variant_id] = [
                 this.$route.params.gene_id,
                 this.$route.params.variant_id,
             ];
-
             return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry}`;
         },
         /*addEntryURL(entry) {
@@ -342,7 +313,6 @@ export default {
                 this.$route.params.gene_id,
                 this.$route.params.variant_id,
             ];
-
             //return `/curation/gene/${gene_id}/variant/${variant_id}/entry/add?source=PMID&reference=${entry.id}`;
         },*/
         addEvidence() {
@@ -362,7 +332,6 @@ export default {
         viewCitation() {
             // look up the reference via the variomes API
             this.loadingVariomes = true;
-
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
             HTTP.get(`variomes_single_ref`, {
                 params: {
@@ -385,7 +354,6 @@ export default {
     },
     data() {
         return {
-            evidences: {},
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",
@@ -477,7 +445,7 @@ export default {
         }
     },
     mounted() {
-        this.makeItems();
+        this.makeItems()
     },
     computed: {
         ...mapGetters({
@@ -491,7 +459,6 @@ export default {
             if (!this.source || !this.reference) {
                 return null;
             }
-
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
         },
@@ -506,63 +473,49 @@ export default {
 .table td {
     vertical-align: middle;
 }
-
 .hidden_header {
     display: none;
 }
-
 .ten-percent-class {
     width: 10%;
 }
-
 .fifteen-percent-class {
     width: 15%;
 }
-
 .twenty-percent-class {
     width: 20%;
 }
-
 .fourty-five-percent-class {
     width: 45%;
 }
-
 .modal-dialog {
     max-width: 1200px;
 }
-
 .custom-style .dropdown-toggle {
     border-radius: 0 !important;
     height: calc(2.15625rem + 2px) !important;
 }
-
 .custom-unrounded {
     border-radius: 0 !important;
 }
-
 .custom-border-left {
     border-radius: 0.25rem 0 0 0.25rem !important;
 }
-
 .custom-border-right {
     border-radius: 0 0.25rem 0.25rem 0 !important;
 }
-
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {
     transition: all 0.5s ease;
 }
-
 .slide-fade-leave-active {
     transition: all 0.3s ease;
 }
-
 .slide-fade-enter-to,
 .slide-fade-leave {
     max-height: 120px;
 }
-
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active below version 2.1.8 */
 {
@@ -574,12 +527,10 @@ export default {
 table >>> .thead-footer {
     display: none !important;
 }
-
 .action-tray {
     display: flex;
     justify-content: flex-end;
 }
-
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;

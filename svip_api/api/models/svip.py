@@ -415,7 +415,7 @@ class CurationEntry(SVIPModel):
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
     # link a curation entry to curation evidence (usually one, but more if the curation is associated with several drugs)
-    curation_evidences = models.ManyToManyField(CurationEvidence, related_name='curation_entries', null=True)
+    curation_evidences = models.ManyToManyField(CurationEvidence, related_name='curation_entries', default=None)
     
     #curation_evidence = models.ForeignKey(
     #    to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
