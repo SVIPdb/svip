@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='curationreview',
-            name='curation_entry',
-            field=django_db_cascade.fields.ForeignKey(default=520, on_delete=django_db_cascade.deletions.DB_CASCADE, to='api.CurationEntry'),
-        ),
+        #migrations.AddField(
+        #    model_name='curationreview',
+        #    name='curation_entry',
+        #    field=django_db_cascade.fields.ForeignKey(default=520, on_delete=django_db_cascade.deletions.DB_CASCADE, to='api.CurationEntry'),
+        #),
         migrations.AlterField(
             model_name='curationentry',
             name='annotations',

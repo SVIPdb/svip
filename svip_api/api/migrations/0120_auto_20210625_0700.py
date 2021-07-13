@@ -32,10 +32,10 @@ class Migration(migrations.Migration):
                 ('association', models.ForeignKey(on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='curation_evidences', to='api.CurationAssociation')),
             ],
         ),
-        migrations.RemoveField(
-            model_name='curationreview',
-            name='curation_entry',
-        ),
+        #migrations.RemoveField(
+        #    model_name='curationreview',
+        #    name='curation_entry',
+        #),
         migrations.AlterField(
             model_name='curationentry',
             name='variant',
