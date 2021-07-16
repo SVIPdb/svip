@@ -125,7 +125,7 @@ class VariantInSVIP(models.Model):
     def review_data(self):
         # JSON containing data for VariantDisease.vue
         diseases_dict = []
-        for association in self.variant.curation_associations.all():
+        for association in self.variant.curation_associations.all().order_by('id'):
             disease = {}
             disease["disease"] = association.disease.name
 
@@ -185,6 +185,7 @@ class VariantInSVIP(models.Model):
                 evidence_obj["reviews"] = reviews
 
                 evidences.append(evidence_obj)
+            
             disease["evidences"] = evidences
 
             diseases_dict.append(disease)
