@@ -62,7 +62,7 @@ export default {
 
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
-        }
+        },
     },
     methods: {
         desnakify,

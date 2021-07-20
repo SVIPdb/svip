@@ -281,7 +281,16 @@ export default {
             };
         },
         makeItems() {
-            
+            //this.disease.evidences.map(evidence => {
+            //    const evidenceItems = {}
+            //    evidenceItems["outcome"] = []
+            //    try {
+            //        this.evidences[evidence.typeOfEvidence].push(evidenceItems);
+            //    } catch (error) {
+            //        this.evidences[evidence.typeOfEvidence] = []
+            //        this.evidences[evidence.typeOfEvidence].push(evidenceItems);
+            //    }
+            //})
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
