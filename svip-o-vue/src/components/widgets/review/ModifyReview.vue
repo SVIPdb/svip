@@ -281,6 +281,16 @@ export default {
             };
         },
         makeItems() {
+            const evidences = {}
+            evidences["evidences"] = {}
+            this.disease.map(evidence => {
+                if (!(evidence.typeOfEvidence in evidences["evidences"])) {
+                    evidences["evidences"][evidence.typeOfEvidence] = []
+                }
+                let evidenceObj = {}
+                evidences["evidences"][evidence.typeOfEvidence].push(evidenceObj)
+
+            })
             //this.disease.evidences.map(evidence => {
             //    const evidenceItems = {}
             //    evidenceItems["outcome"] = []
@@ -291,6 +301,7 @@ export default {
             //        this.evidences[evidence.typeOfEvidence].push(evidenceItems);
             //    }
             //})
+            this.temp = evidences;
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -363,6 +374,7 @@ export default {
     },
     data() {
         return {
+            temp: {},
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",

@@ -41,8 +41,7 @@ export default {
     },
     data() {
         return {
-            //diseases_test: this.variant.svip_data.review_data,
-            diseases: [
+            diseases_test: [
                 {
                     "disease": "Aggressive fibromatosis",
                     evidences: {
@@ -279,6 +278,9 @@ export default {
             }
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
+        },
+        diseases() {
+            return this.$store.getters.variant.svip_data.review_data
         }
     },
     methods: {
