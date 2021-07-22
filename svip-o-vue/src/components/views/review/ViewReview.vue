@@ -7,7 +7,7 @@
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
         <div v-for="(disease) in diseases" :key="disease">
-            <modify-review :disease="disease.evidences" :label="disease.disease"/>
+            <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
             <!--<modify-review :index="index" :label="index" :disease="disease"/>-->
         </div>
     </div>

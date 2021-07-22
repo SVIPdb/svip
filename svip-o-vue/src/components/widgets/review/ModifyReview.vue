@@ -268,7 +268,7 @@ export default {
         BIconXSquareFill
     },
     props: {
-        disease: {type: Object, required: false},
+        raw_disease: {type: Object, required: false},
         label: {type: String, required: false}
     },
     methods: {
@@ -283,25 +283,37 @@ export default {
         makeItems() {
             const evidences = {}
             evidences["evidences"] = {}
-            this.disease.map(evidence => {
+            this.raw_disease.map(evidence => {
                 if (!(evidence.typeOfEvidence in evidences["evidences"])) {
                     evidences["evidences"][evidence.typeOfEvidence] = []
                 }
-                let evidenceObj = {}
+                const evidenceObj = {}
+                evidenceObj["outcome"] = []
+                evidence.effectOfVariant.map(effect => {
+                    evidenceObj["outcome"].push({
+                        "label": effect.label,
+                        "nb_evidence": effect.count
+                    })
+                })
+                evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
+                evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
+                evidenceObj["reviews"] = []
+                evidence.reviews.map(review => {
+                    console.log(review)
+                    if (review.status != null) {
+                        evidenceObj["reviews"].push(review)
+                    }
+                    console.log(evidenceObj.reviews)
+                })
+                evidenceObj["evidence"] = []
+                evidence.curations.map(curation => {
+                    evidenceObj["evidence"].push(curation)
+                })
+                evidenceObj["show_review_status"] = false
+                evidenceObj["note"] = null
                 evidences["evidences"][evidence.typeOfEvidence].push(evidenceObj)
-
             })
-            //this.disease.evidences.map(evidence => {
-            //    const evidenceItems = {}
-            //    evidenceItems["outcome"] = []
-            //    try {
-            //        this.evidences[evidence.typeOfEvidence].push(evidenceItems);
-            //    } catch (error) {
-            //        this.evidences[evidence.typeOfEvidence] = []
-            //        this.evidences[evidence.typeOfEvidence].push(evidenceItems);
-            //    }
-            //})
-            this.temp = evidences;
+            this.disease = evidences;
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -374,7 +386,7 @@ export default {
     },
     data() {
         return {
-            temp: {},
+            disease: {},
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",
