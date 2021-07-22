@@ -269,6 +269,7 @@ export default {
     },
     props: {
         raw_disease: {type: Object, required: false},
+        //disease: {type: Object, required: false},
         label: {type: String, required: false}
     },
     methods: {
@@ -282,10 +283,9 @@ export default {
         },
         makeItems() {
             const evidences = {}
-            evidences["evidences"] = {}
             this.raw_disease.map(evidence => {
-                if (!(evidence.typeOfEvidence in evidences["evidences"])) {
-                    evidences["evidences"][evidence.typeOfEvidence] = []
+                if (!(evidence.typeOfEvidence in evidences)) {
+                    evidences[evidence.typeOfEvidence] = []
                 }
                 const evidenceObj = {}
                 evidenceObj["outcome"] = []
@@ -299,9 +299,14 @@ export default {
                 evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
                 evidenceObj["reviews"] = []
                 evidence.reviews.map(review => {
-                    console.log(review)
                     if (review.status != null) {
-                        evidenceObj["reviews"].push(review)
+                        evidenceObj["reviews"].push({
+                            "reviewer": review.reviewer,
+                            "reviewer_mail": review.reviewer_mail,
+                            "reviewer_annotation_outcome": review.annotatedEffect,
+                            "reviewer_annotation_trust": review.annotatedTier,
+                            "comment": review.comment
+                        })
                     }
                     console.log(evidenceObj.reviews)
                 })
@@ -311,7 +316,7 @@ export default {
                 })
                 evidenceObj["show_review_status"] = false
                 evidenceObj["note"] = null
-                evidences["evidences"][evidence.typeOfEvidence].push(evidenceObj)
+                evidences[evidence.typeOfEvidence].push(evidenceObj)
             })
             this.disease = evidences;
         },

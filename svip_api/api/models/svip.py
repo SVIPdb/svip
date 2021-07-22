@@ -167,6 +167,7 @@ class VariantInSVIP(models.Model):
                 for review in evidence.reviews.all():
                     review_obj = {
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                        "reviewer_mail": review.reviewer.email,
                         "reviewer_id": review.reviewer.id,
                         "status": review.status,
                         "annotatedTier": review.annotated_tier,

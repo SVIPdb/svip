@@ -8,6 +8,11 @@
 
         <div v-for="(disease) in diseases" :key="disease">
             <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
+
+        <!--<div v-for="(disease) in diseases_test" :key="disease">-->
+            <!--<modify-review :disease="disease.evidences" :label="disease.disease"/>-->
+
+            <!--<modify-review :raw_disease="disease.evidences" :index="disease.disease" :label="disease.disease"/>-->
             <!--<modify-review :index="index" :label="index" :disease="disease"/>-->
         </div>
     </div>
@@ -54,8 +59,6 @@ export default {
                                 ],
                                 sib_annotation_outcome: "Intermediate",
                                 sib_annotation_trust: "Tier IID: Population study",
-                                //sib_annotation_outcome: "",
-                                //sib_annotation_trust: "",
                                 reviews: [
                                     {
                                         reviewer: "John Doe",
