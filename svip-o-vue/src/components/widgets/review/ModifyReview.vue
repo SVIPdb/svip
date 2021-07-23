@@ -308,11 +308,16 @@ export default {
                             "comment": review.comment
                         })
                     }
-                    console.log(evidenceObj.reviews)
                 })
                 evidenceObj["evidence"] = []
                 evidence.curations.map(curation => {
-                    evidenceObj["evidence"].push(curation)
+                    evidenceObj["evidence"].push({
+                        "reject": false,
+                        "outcome": curation.effect,
+                        "evidence_link": curation.id,
+                        "pmid_link": curation.pmid,
+                        "evidence_comment": curation.comment
+                    })
                 })
                 evidenceObj["show_review_status"] = false
                 evidenceObj["note"] = null
