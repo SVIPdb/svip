@@ -148,7 +148,8 @@ class CurationEntryFilter(django_filters.FilterSet):
 
     @staticmethod
     def any_variant_ref(queryset, name, value):
-        return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
+        return queryset.filter(Q(variant_id=value))
+        #return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
 
     class Meta:
         model = CurationEntry
