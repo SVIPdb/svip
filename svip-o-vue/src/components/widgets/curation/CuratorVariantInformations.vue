@@ -33,9 +33,11 @@
                 <template v-slot:cell(disease)>{{ disease_name }}</template>
                 <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
                 <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
+                <template v-slot:cell(additional_var)>
+                    {{ additionalVariants.join(", ") }}
+                </template>
 
                 <template v-if="multiple" v-slot:custom-footer>
-                    Add Variant
                 </template>
             </b-table>
             <div v-else class="m-2">
@@ -67,6 +69,7 @@ export default {
     },
     data() {
         return {
+            additionalVariants: [],
             fields,
             showCurationTool: false,
             extraVariants: [],
@@ -78,25 +81,67 @@ export default {
     },
     created() {
         this.refresh();
-
         // deal with updates from people editing curation entries, which could change pathogenicity/clinical sig.
         this.channel.onmessage = () => {
             this.refresh();
         };
+        console.log("flag")
+        this.getRows()
+        //console.log(this.apiUrl())
     },
     methods: {
         refresh() {
             HTTP.get(this.variantInfoUrl).then(response => {
                 const { disease, pathogenic, clinical_significance } = response.data;
+                //this.additional_var
                 this.disease_name = disease && disease.name;
                 this.pathogenicity = pathogenic;
                 this.clinical_significance = clinical_significance;
             });
 
+        },
+        apiUrl() {
+            const params = [
+                this.variant && `variant_ref=${this.variant.id}`,
+                // this.disease_id && `disease=${this.disease_id}`,
+                this.filterCurator && `owner=${this.userID}`,
+                // FIXME: these two are mutually exclusive
+                this.onlySubmitted && `status=submitted`,
+                this.notSubmitted && `status_ne=submitted`
+            ].filter(x => x);
+
+            return `/curation_entries${params ? "?" + params.join("&") : ""}`;
+        },
+        getRows() {
+            HTTP.get(this.apiUrl()).then(res => {
+                const additionalVariants = []
+                res.data.results.map(curation => {
+                    curation.extra_variants.map(extra_var => {
+                        if (!additionalVariants.includes(extra_var.description)) {
+                            additionalVariants.push(extra_var.description)
+                        }
+                    })
+                })
+                console.log(additionalVariants)
+                this.additionalVariants = additionalVariants;
+            }).catch(err => {
+                this.loading = { error: err };
+            });
         }
     },
     computed: {
         visibleFields() {
+            //const additional_var = {
+            //    "key": "addition_var",
+            //    "label": "Additional variants",
+            //    "sortable": false
+            //}
+            //fields.splice(2, 0, additional_var);
+            fields.push({
+                "key": "additional_var",
+                "label": "Additional variants",
+                "sortable": false
+            })
             return (!this.disease_id)
                 ? fields.filter(x => x.key !== 'disease')
                 : fields;
