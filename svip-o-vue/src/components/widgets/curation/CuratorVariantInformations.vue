@@ -34,7 +34,14 @@
                 <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
                 <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
                 <template v-slot:cell(additional_var)>
-                    {{ additionalVariants.join(", ") }}
+                    <div v-for="item in additionalVariants" :key="item">
+                        <router-link
+                            class="font-weight-bold"
+                            :to="{ name: 'gene', params: { gene_id: item.gene.id }}"
+                            target="_blank"
+                        >{{ item.gene.symbol }}
+                        </router-link>
+                    </div>
                 </template>
 
                 <template v-if="multiple" v-slot:custom-footer>
@@ -85,15 +92,12 @@ export default {
         this.channel.onmessage = () => {
             this.refresh();
         };
-        console.log("flag")
         this.getRows()
-        //console.log(this.apiUrl())
     },
     methods: {
         refresh() {
             HTTP.get(this.variantInfoUrl).then(response => {
                 const { disease, pathogenic, clinical_significance } = response.data;
-                //this.additional_var
                 this.disease_name = disease && disease.name;
                 this.pathogenicity = pathogenic;
                 this.clinical_significance = clinical_significance;
@@ -115,14 +119,15 @@ export default {
         getRows() {
             HTTP.get(this.apiUrl()).then(res => {
                 const additionalVariants = []
+                const IDs = []
                 res.data.results.map(curation => {
                     curation.extra_variants.map(extra_var => {
-                        if (!additionalVariants.includes(extra_var.description)) {
-                            additionalVariants.push(extra_var.description)
+                        if (!IDs.includes(extra_var.id)) {
+                            additionalVariants.push(extra_var)
+                            IDs.push(extra_var.id)
                         }
                     })
                 })
-                console.log(additionalVariants)
                 this.additionalVariants = additionalVariants;
             }).catch(err => {
                 this.loading = { error: err };
@@ -131,12 +136,6 @@ export default {
     },
     computed: {
         visibleFields() {
-            //const additional_var = {
-            //    "key": "addition_var",
-            //    "label": "Additional variants",
-            //    "sortable": false
-            //}
-            //fields.splice(2, 0, additional_var);
             fields.push({
                 "key": "additional_var",
                 "label": "Additional variants",
