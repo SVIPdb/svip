@@ -34,20 +34,20 @@ NPLUSONE_LOG_LEVEL = logging.WARN
 NPLUSONE_VERBOSE = True
 NPLUSONE_LOCAL_STACK = True
 
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'nplusone': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'nplusone': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 
 VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
 
@@ -72,3 +72,17 @@ VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
 #         }
 #     }
 # }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
