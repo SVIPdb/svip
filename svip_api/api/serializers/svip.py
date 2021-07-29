@@ -17,9 +17,10 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 import vcf
 from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
-from api.models.svip import (CURATION_STATUS, CurationRequest, Disease,
-                             DiseaseInSVIP, SubmittedVariant,
-                             SubmittedVariantBatch)
+from api.models.svip import (
+    Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
+    CurationRequest, SummaryComment, CurationReview
+)
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
 from api.serializers.reference import DiseaseSerializer
