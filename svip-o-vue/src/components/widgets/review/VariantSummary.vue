@@ -118,18 +118,32 @@ export default {
                 variant: this.variant.id
             }
 
-            // post new comment (even only editing an existing one will create a new instance and delete the former one)
-            HTTP.post(`/summary_comments/`, summaryCommentJSON)
-                .then((response) => {
-                    this.getSummaryComment();
-                    this.isEditMode = false;
-                    this.$snotify.success("Your comment has been saved");
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to update summary");
-                })
-            
+
+            if (this.serverSummaryComment === null) {
+                // summaryComment doesn't already exist (for this user and variant): post new
+                HTTP.post(`/summary_comments/`, summaryCommentJSON)
+                    .then((response) => {
+                        this.getSummaryComment();
+                        this.isEditMode = false;
+                        this.$snotify.success("Your comment has been posted");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to post new summary comment");
+                    })
+            } else {
+                // summaryComment already exists: modify it
+                HTTP.patch(`/summary_comments/${this.serverSummaryComment.id}`, {content: this.summaryComment})
+                    .then((response) => {
+                        this.getSummaryComment();
+                        this.isEditMode = false;
+                        this.$snotify.success("Your comment has been updated");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary comment");
+                    })
+            }
         },
         deleteSummaryComment() {
             // send a delete request only if SummaryComment instance exists in the server

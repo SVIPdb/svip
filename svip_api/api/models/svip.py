@@ -212,25 +212,6 @@ class SummaryComment(models.Model):
     def reviewer(self):
         return f"{self.owner.first_name} {self.owner.last_name}"
 
-# Detects whether a summary comment from same user for same variant already exists, then delete it
-
-
-@receiver(pre_save, sender=SummaryComment)
-def delete_previous_summary_comment(sender, instance, **kwargs):
-    # detect if a pk already exists for this Summary comment so you know whether it is a new one being created
-    if instance.pk is None:
-        print("summary comment is being created")
-        same_params = SummaryComment.objects.filter(
-            variant=instance.variant).filter(owner=instance.owner)
-        already_a_comment = len(same_params) > 0
-        print(f"Already a comment for these params: {already_a_comment}")
-        if already_a_comment:
-            for summary_com in same_params:
-                summary_com.delete()
-    else:
-        print("summary comment already exists")
-    return ""
-
 
 # ================================================================================================================
 # === Disease Aggregation
