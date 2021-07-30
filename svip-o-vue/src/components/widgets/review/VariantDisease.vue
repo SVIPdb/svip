@@ -506,6 +506,7 @@ export default {
                             let reviewID = this.selfReviewedEvidences[evidence.id]
                             HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
                                 .then((response) => {
+                                    this.getReviewData()
                                 })
                                 .catch((err) => {
                                     log.warn(err);
@@ -516,6 +517,7 @@ export default {
 
                             HTTP.post(`/reviews/`, this.reviewParams(evidence))
                                 .then((response) => {
+                                    this.getReviewData()
                                 })
                                 .catch((err) => {
                                     log.warn(err);
@@ -530,8 +532,7 @@ export default {
             this.$snotify.success("Your review has been saved");
             // Reset fields
             this.isEditMode = false;
-            this.detectOwnReviews();
-            this.changeReviewStatusCheckboxes()
+            
 
             //if (modifiedReviews.length > 0) {
             //    HTTP.put(`/reviews/`, modifiedReviews)
