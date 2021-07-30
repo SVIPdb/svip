@@ -6,8 +6,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        #('api', '0128_auto_20210701_1704'),
-        ('api', '0128_create_svip_variants'),
+        #('api', '0128_create_svip_variants'),
+        ('api', '0126_auto_20210701_1456'),
     ]
 
     operations = [

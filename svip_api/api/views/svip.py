@@ -11,14 +11,17 @@ from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 
-from api.models.svip import SummaryComment, CurationReview
 from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease,
+    Disease, Variant
 )
-from api.models.svip import SubmittedVariant, SubmittedVariantBatch, CurationRequest
+from api.models.svip import (
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest,
+    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation
+)
+
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
@@ -450,3 +453,71 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
+
+
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class ReviewDataView(APIView):
+    # when user accesses the review page, return the json data
+    def post(self, request, *args, **kwargs):
+
+        # create VariantInSVIP instance if doesn't exist
+        var_id = request.data.get('var_id')
+        variant = Variant.objects.get(id=var_id)
+        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
+        svip_var_exists = bool(len(matching_svip_var))
+        if not svip_var_exists:
+            svip_var = VariantInSVIP(variant=variant)
+            svip_var.save()
+        else:
+            svip_var = matching_svip_var[0]
+
+
+        for curation in CurationEntry.objects.filter(variant=variant):
+            
+            # check that a disease is indicated for the curation entry being saved
+            if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+                associations = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease)
+
+                # check that no association already exists for these parameters
+                if len(associations) == 0:
+                    new_curation_association = CurationAssociation(variant=variant, disease=curation.disease)
+                    new_curation_association.save()
+                    
+                    # Create the evidence objects involved that association, from the existing curation entries
+                    for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                        
+                        drugs = curation.drugs
+                        if len(curation.drugs) == 0:
+                            # add null object to empty list so at least one iteration to create an evidence related to no drug
+                            drugs.append(None)
+                        for drug in drugs:
+
+                            new_curation_evidence = CurationEvidence(
+                                association = new_curation_association,
+                                type_of_evidence = evidence_type,
+                                drug = drug
+                            )
+                            new_curation_evidence.save()
+                            
+                            # create an SIBAnnotation instance linked to the evidence just created
+                            annotation = SIBAnnotation(evidence=new_curation_evidence, effect="Not yet annotated", tier="Not yet annotated")
+                            annotation.save()
+
+                # link the matching evidences to the curation:
+                for association in associations:
+                    for drug in curation.drugs:
+                        evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+                        for evidence in evidences:
+                            curation.curation_evidences.add(evidence)
+
+                curation.save()
+
+        return Response(data={"review_data": svip_var.review_data()})
+

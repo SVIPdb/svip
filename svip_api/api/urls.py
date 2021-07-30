@@ -126,6 +126,7 @@ router.register(r'summary_comments', views.SummaryCommentViewSet,
                 basename='summary_comments')
 
 urlpatterns = [
+    path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
     path('', include(router.urls)),
     path('', include(genes_router.urls)),
     path('', include(variants_router.urls)),

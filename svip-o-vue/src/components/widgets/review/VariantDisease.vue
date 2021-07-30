@@ -143,7 +143,8 @@ export default {
     },
     data() {
         return {
-            diseases: this.variant.svip_data.review_data,
+            //diseases: this.variant.svip_data.review_data,
+            diseases: [],
             diseases_test: [
                 {
                     disease: "Aggressive fibromatosis",
@@ -390,7 +391,6 @@ export default {
                 evidence["currentReview"]["reviewer_id"] = this.user.user_id
             })
         });
-        this.detectOwnReviews();
     },
     created() {
         this.channel.onmessage = () => {
@@ -404,6 +404,8 @@ export default {
         HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
+
+        this.getReviewData()
     },
     computed: {
         ...mapGetters({
@@ -411,6 +413,22 @@ export default {
         })
     },
     methods: {
+        getReviewData() {
+            const params={
+                reviewer: this.user.user_id,
+                var_id: this.variant.id
+            }
+
+            HTTP.post(`/review_data`, params)
+                .then((response) => {
+                    console.log(response.data)
+                    this.diseases = response.data.review_data
+                    this.detectOwnReviews();
+                })
+                .catch((err) => {
+                    log.warn(err);
+                })
+        },
         displayIcon(status) {
             if (status === true) {
                 return "check-square-fill"
@@ -437,7 +455,10 @@ export default {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
+                        console.log(`review.reviewer_id: ${review.reviewer_id}`)
+                        console.log(`this.user.user_id: ${this.user.user_id}`)
                         if (review.reviewer_id === this.user.user_id) {
+                            console.log("review.reviewer_id === this.user.user_id")
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
                             evidence.currentReview.comment = review.comment;
@@ -448,12 +469,16 @@ export default {
         },
         submitReviews() {
             let currentReviews = [];
+            const editedEvidences = []
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     // check that dropdown options have been selected
-                    if (evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated") {
+                    if (
+                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
+                    ) {
                         currentReviews.push(this.submitSingleReview(evidence));
+                        editedEvidences.push(evidence)
                     }
                 })
             })
@@ -464,6 +489,11 @@ export default {
                     // Here should be a function to reset fields
                     this.isEditMode = false;
                     this.$snotify.success("Your review has been saved");
+
+                    // display the appropriate review status
+                    editedEvidences.map(evidence => {
+                        onChange(evidence.curator, evidence.currentReview)
+                    })
                 })
                 .catch((err) => {
                     log.warn(err);
