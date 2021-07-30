@@ -421,9 +421,9 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    console.log(response.data)
                     this.diseases = response.data.review_data
                     this.detectOwnReviews();
+                    this.changeReviewStatusCheckboxes();
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -450,15 +450,24 @@ export default {
         onChange(curatorValues, reviewerValues) {
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
+        changeReviewStatusCheckboxes() {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    // select only evidences for which an option has been selected
+                    if (
+                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
+                    ) {
+                        this.onChange(evidence.curator, evidence.currentReview)
+                    }
+                })
+            })
+        },
         detectOwnReviews() {
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
-                        console.log(`review.reviewer_id: ${review.reviewer_id}`)
-                        console.log(`this.user.user_id: ${this.user.user_id}`)
                         if (review.reviewer_id === this.user.user_id) {
-                            console.log("review.reviewer_id === this.user.user_id")
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
                             evidence.currentReview.comment = review.comment;
@@ -469,7 +478,6 @@ export default {
         },
         submitReviews() {
             let currentReviews = [];
-            const editedEvidences = []
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
@@ -478,7 +486,6 @@ export default {
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
                         currentReviews.push(this.submitSingleReview(evidence));
-                        editedEvidences.push(evidence)
                     }
                 })
             })
@@ -490,16 +497,16 @@ export default {
                     this.isEditMode = false;
                     this.$snotify.success("Your review has been saved");
 
-                    // display the appropriate review status
-                    editedEvidences.map(evidence => {
-                        onChange(evidence.curator, evidence.currentReview)
-                    })
+                    this.changeReviewStatusCheckboxes()
+                    //// display the appropriate review status checkbox
+                    //editedEvidences.map(evidence => {
+                    //    onChange(evidence.curator, evidence.currentReview)
+                    //})
                 })
                 .catch((err) => {
                     log.warn(err);
                     this.$snotify.error("Failed to submit review");
                 })
-
         },
         submitSingleReview(evidence) {
             // prepare a JSON containing parameters for CurationReview model
