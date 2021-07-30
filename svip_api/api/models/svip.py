@@ -703,24 +703,6 @@ class SubmittedVariant(SVIPModel):
         return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
-## Detects whether a curation review from same user for same evidence already exists, then delete it
-#@receiver(pre_save, sender=CurationReview)
-#def delete_previous_curation_review(sender, instance, **kwargs):
-#    # detect if a pk already exists for this curation review so you know whether it is a new one being created
-#    if instance.pk is None:
-#        print("curation review is being created")
-#        same_params = CurationReview.objects.filter(
-#            curation_evidence=instance.curation_evidence).filter(reviewer=instance.reviewer)
-#        already_a_review = len(same_params) > 0
-#        print(f"Already a review for these params: {already_a_review}")
-#        if already_a_review:
-#            for curation_rev in same_params:
-#                curation_rev.delete()
-#    else:
-#        print("curation review already exists")
-#    return ""
-
-
 # ================================================================================================================
 # === Samples
 # ================================================================================================================
