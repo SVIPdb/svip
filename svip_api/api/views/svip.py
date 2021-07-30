@@ -302,7 +302,7 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-        kwargs["many"] = True
+        #kwargs["many"] = True
         return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
 
 

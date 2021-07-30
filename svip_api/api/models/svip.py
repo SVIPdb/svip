@@ -169,6 +169,7 @@ class VariantInSVIP(models.Model):
                 reviews = []
                 for review in evidence.reviews.all():
                     review_obj = {
+                        "id": review.id,
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
                         "reviewer_mail": review.reviewer.email,
                         "reviewer_id": review.reviewer.id,
@@ -511,60 +512,6 @@ class CurationEntry(SVIPModel):
         verbose_name_plural = "Curation Entries"
 
 
-## create an association instance when a curation entry is created (unless already linked to one)
-#@receiver(pre_save, sender=CurationEntry)
-#def create_CurationAssociation(sender, instance, **kwargs):
-    
-#    # make sure a disease is indicated for the curation entry being saved
-#    if instance.disease and (instance.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-#        associations = CurationAssociation.objects.filter(
-#            variant=instance.variant
-#        ).filter(disease=instance.disease)
-
-#        # if no association with curation parameters, create one
-#        if len(associations) == 0:
-#            association = CurationAssociation(
-#                variant=instance.variant, disease=instance.disease
-#            )
-#            association.save()
-            
-#        # association already exists 
-#        else:
-#            association = associations.first()
-
-#        drugs = instance.drugs
-#        print(drugs)
-#        if len(instance.drugs) == 0:
-#            # add null object to empty list so at least one iteration to create an evidence related to no drug
-#            drugs.append(None)
-#        for drug in instance.drugs:
-#            matching_evidence_qs = association.curation_evidences.filter(type_of_evidence = instance.type_of_evidence).filter(drug = drug)
-            
-#            # if no evidence with curation parameters, create one
-#            if len(matching_evidence_qs) == 0:
-#                new_curation_evidence = CurationEvidence(
-#                    association=association,
-#                    type_of_evidence=instance.type_of_evidence,
-#                    drug = drug,
-#                )
-#                new_curation_evidence.save()
-#                instance.curation_evidences.add(new_curation_evidence)
-#                print("curation evidence added")
-            
-#            # evidence already exists: link it to curation
-#            else:
-#                instance.curation_evidences.add(matching_evidence_qs.first())
-#                print("curation evidence added")
-
-#    return ""
-
-
-## create an SIB association instance everytime an evidence is created
-#@receiver(post_save, sender=CurationEvidence)
-#def create_SIB_annotation(sender, instance, **kwargs):
-#    annotation = SIBAnnotation(evidence=instance, effect="Not yet annotated", tier="Not yet annotated")
-#    annotation.save()
-
 # whenever a curation entry is created, ensure its provenance
 @receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
 def curation_saved(sender, instance, **kwargs):
@@ -756,22 +703,22 @@ class SubmittedVariant(SVIPModel):
         return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
-# Detects whether a curation review from same user for same evidence already exists, then delete it
-@receiver(pre_save, sender=CurationReview)
-def delete_previous_curation_review(sender, instance, **kwargs):
-    # detect if a pk already exists for this curation review so you know whether it is a new one being created
-    if instance.pk is None:
-        print("curation review is being created")
-        same_params = CurationReview.objects.filter(
-            curation_evidence=instance.curation_evidence).filter(reviewer=instance.reviewer)
-        already_a_review = len(same_params) > 0
-        print(f"Already a review for these params: {already_a_review}")
-        if already_a_review:
-            for curation_rev in same_params:
-                curation_rev.delete()
-    else:
-        print("curation review already exists")
-    return ""
+## Detects whether a curation review from same user for same evidence already exists, then delete it
+#@receiver(pre_save, sender=CurationReview)
+#def delete_previous_curation_review(sender, instance, **kwargs):
+#    # detect if a pk already exists for this curation review so you know whether it is a new one being created
+#    if instance.pk is None:
+#        print("curation review is being created")
+#        same_params = CurationReview.objects.filter(
+#            curation_evidence=instance.curation_evidence).filter(reviewer=instance.reviewer)
+#        already_a_review = len(same_params) > 0
+#        print(f"Already a review for these params: {already_a_review}")
+#        if already_a_review:
+#            for curation_rev in same_params:
+#                curation_rev.delete()
+#    else:
+#        print("curation review already exists")
+#    return ""
 
 
 # ================================================================================================================

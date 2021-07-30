@@ -8,12 +8,6 @@
 
         <div v-for="(disease) in diseases" :key="disease">
             <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
-
-        <!--<div v-for="(disease) in diseases_test" :key="disease">-->
-            <!--<modify-review :disease="disease.evidences" :label="disease.disease"/>-->
-
-            <!--<modify-review :raw_disease="disease.evidences" :index="disease.disease" :label="disease.disease"/>-->
-            <!--<modify-review :index="index" :label="index" :disease="disease"/>-->
         </div>
     </div>
 </template>
@@ -257,7 +251,8 @@ export default {
                         content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec fringilla sapien, sit amet mattis."
                     }
                 ]
-            }
+            },
+            test: []
         }
     },
     mounted() {
@@ -266,11 +261,13 @@ export default {
             console.log(results)
             this.summary.comments = results;
         });
+        this.getReviewData();
     },
     computed: {
         ...mapGetters({
             variant: "variant",
-            gene: "gene"
+            gene: "gene",
+            user: "currentUser"
         }),
         disease_id() {
             return parseInt(this.$route.params.disease_id);
@@ -287,7 +284,20 @@ export default {
         }
     },
     methods: {
-        //
+        getReviewData() {
+            const params={
+                reviewer: this.user.user_id,
+                var_id: this.variant.id
+            }
+
+            HTTP.post(`/review_data`, params)
+                .then((response) => {
+                    this.diseases = response.data.review_data
+                })
+                .catch((err) => {
+                    log.warn(err);
+                })
+        }
     },
     beforeRouteEnter(to, from, next) {
         const {variant_id} = to.params;

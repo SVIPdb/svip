@@ -143,7 +143,6 @@ export default {
     },
     data() {
         return {
-            //diseases: this.variant.svip_data.review_data,
             diseases: [],
             diseases_test: [
                 {
@@ -373,6 +372,7 @@ export default {
                     ]
                 }
             ],
+            selfReviewedEvidences: {},
             summary: null,
             history_entry_id: null,
 
@@ -427,6 +427,7 @@ export default {
                 })
                 .catch((err) => {
                     log.warn(err);
+                    this.$snotify.error("Failed to fetch data");
                 })
         },
         displayIcon(status) {
@@ -463,7 +464,7 @@ export default {
             })
         },
         detectOwnReviews() {
-            // iterate over every review
+            // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
@@ -471,44 +472,101 @@ export default {
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
                             evidence.currentReview.comment = review.comment;
+
+                            // store the evidence ID so when the user submit it, the request is a patch
+                            this.selfReviewedEvidences[evidence.id] = review.id
                         }
                     })
                 })
             })
         },
         submitReviews() {
-            let currentReviews = [];
+            //let newReviews = [];
+            //let modifiedReviews = []
+
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    // check that dropdown options have been selected
                     if (
+                        // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
-                        currentReviews.push(this.submitSingleReview(evidence));
+                        if (evidence.id in this.selfReviewedEvidences) {
+
+                            //const singleReviewJSON = {
+                            //    id: this.selfReviewedEvidences[evidence.id],
+                            //    curation_evidence: evidence.id,
+                            //    reviewer: this.user.user_id,
+                            //    annotated_effect: evidence.currentReview.annotatedEffect,
+                            //    annotated_tier: evidence.currentReview.annotatedTier,
+                            //    comment: evidence.currentReview.comment
+                            //}
+                            //modifiedReviews.push(singleReviewJSON)
+
+                            let reviewID = this.selfReviewedEvidences[evidence.id]
+                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
+                                .then((response) => {
+                                })
+                                .catch((err) => {
+                                    log.warn(err);
+                                    this.$snotify.error("Failed to submit review");
+                                })
+                        } else {
+                            //newReviews.push(this.reviewParams(evidence));
+
+                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
+                                .then((response) => {
+                                })
+                                .catch((err) => {
+                                    log.warn(err);
+                                    this.$snotify.error("Failed to submit review");
+                                })
+
+                        }
                     }
                 })
             })
 
-            // post new review
-            HTTP.post(`/reviews/`, currentReviews)
-                .then((response) => {
-                    // Here should be a function to reset fields
-                    this.isEditMode = false;
-                    this.$snotify.success("Your review has been saved");
+            this.$snotify.success("Your review has been saved");
+            // Reset fields
+            this.isEditMode = false;
+            this.detectOwnReviews();
+            this.changeReviewStatusCheckboxes()
 
-                    this.changeReviewStatusCheckboxes()
-                    //// display the appropriate review status checkbox
-                    //editedEvidences.map(evidence => {
-                    //    onChange(evidence.curator, evidence.currentReview)
-                    //})
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to submit review");
-                })
+            //if (modifiedReviews.length > 0) {
+            //    HTTP.put(`/reviews/`, modifiedReviews)
+            //        .then((response) => {
+            //        })
+            //        .catch((err) => {
+            //            log.warn(err);
+            //            this.$snotify.error("Failed to submit review");
+            //        })
+            //}
+
+            //if (newReviews.length > 0) {
+            //    // post new review
+            //    HTTP.post(`/reviews/`, newReviews)
+            //        .then((response) => {
+            //            // Reset fields
+            //            this.isEditMode = false;
+            //            this.$snotify.success("Your review has been saved");
+            //            //this.detectOwnReviews();
+            //            //this.changeReviewStatusCheckboxes()
+            //            this.getReviewData()
+            //        })
+            //        .catch((err) => {
+            //            log.warn(err);
+            //            this.$snotify.error("Failed to submit review");
+            //        })
+            //} else {
+            //    // Reset fields
+            //    this.isEditMode = false;
+            //    this.detectOwnReviews();
+            //    this.changeReviewStatusCheckboxes()
+            //}
+
         },
-        submitSingleReview(evidence) {
+        reviewParams(evidence) {
             // prepare a JSON containing parameters for CurationReview model
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
