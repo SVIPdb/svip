@@ -427,7 +427,7 @@ export default {
                 })
                 .catch((err) => {
                     log.warn(err);
-                    this.$snotify.error("Failed to fetch data");
+                    //this.$snotify.error("Failed to fetch data");
                 })
         },
         displayIcon(status) {

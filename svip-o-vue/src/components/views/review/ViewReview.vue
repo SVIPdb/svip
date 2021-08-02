@@ -40,6 +40,7 @@ export default {
     },
     data() {
         return {
+            diseases: [],
             diseases_test: [
                 {
                     "disease": "Aggressive fibromatosis",
@@ -258,7 +259,6 @@ export default {
     mounted() {
         HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then((response) => {
             const results = response.data.results
-            console.log(results)
             this.summary.comments = results;
         });
         this.getReviewData();
@@ -279,12 +279,10 @@ export default {
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
         },
-        diseases() {
-            return this.$store.getters.variant.svip_data.review_data
-        }
     },
     methods: {
         getReviewData() {
+            console.log("getReviewData executed")
             const params={
                 reviewer: this.user.user_id,
                 var_id: this.variant.id
@@ -292,6 +290,7 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
+                    console.log(`review_data response: ${response.data.review_data}`)
                     this.diseases = response.data.review_data
                 })
                 .catch((err) => {
