@@ -4,6 +4,7 @@ This populates the seqrepo resource into `/usr/local/share/seqrepo`. Which is a 
 
 ## Requirements
 
+- If you are on a mac, make sure docker has the file sharing permission to the path `/usr/local/share/seqrepo`
 - Make sure the directory `/usr/local/share/seqrepo` exists and has the required permissions
 
 ```bash
