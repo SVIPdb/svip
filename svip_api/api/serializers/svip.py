@@ -3,7 +3,6 @@ Serializers for SVIP-specific models.
 """
 import datetime
 import io
-from pprint import pprint
 
 from django.contrib.admin.utils import NestedObjects
 from django.contrib.auth import get_user_model
