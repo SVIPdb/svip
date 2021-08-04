@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
 from django.db.models.base import ModelBase
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django_db_cascade.deletions import DB_CASCADE
@@ -17,8 +17,8 @@ from simple_history.models import HistoricalRecords
 
 from api.models.genomic import Variant
 from api.models.reference import Disease
-from api.permissions import (
-    ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES, PUBLIC_VISIBLE_STATUSES)
+from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
+                             PUBLIC_VISIBLE_STATUSES)
 from api.utils import dictfetchall
 
 
@@ -122,12 +122,10 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
-
     def review_data(self):
         # JSON containing data for VariantDisease.vue
         diseases_dict = []
-        
-        
+
         for association in self.variant.curation_associations.all().order_by('id'):
             disease = {}
             disease["disease"] = association.disease.name
@@ -190,7 +188,7 @@ class VariantInSVIP(models.Model):
                 evidence_obj["reviews"] = reviews
 
                 evidences.append(evidence_obj)
-            
+
             disease["evidences"] = evidences
 
             diseases_dict.append(disease)
@@ -402,9 +400,10 @@ class CurationEntry(SVIPModel):
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
     # link a curation entry to curation evidence (usually one, but more if the curation is associated with several drugs)
-    curation_evidences = models.ManyToManyField(CurationEvidence, related_name='curation_entries', default=None)
-    
-    #curation_evidence = models.ForeignKey(
+    curation_evidences = models.ManyToManyField(
+        CurationEvidence, related_name='curation_entries', default=None)
+
+    # curation_evidence = models.ForeignKey(
     #    to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
 
     # variants = models.ManyToManyField(to=Variant)
@@ -546,7 +545,8 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
-    curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE, null=True)
+    curation_entry = ForeignKey(
+        to=CurationEntry, on_delete=DB_CASCADE, null=True)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
 
@@ -568,7 +568,8 @@ class SIBAnnotation(models.Model):
     """
     Annotation of the SIB curators for a specific evidence
     """
-    evidence = models.OneToOneField(to=CurationEvidence, related_name="annotation", on_delete=DB_CASCADE)
+    evidence = models.OneToOneField(
+        to=CurationEvidence, related_name="annotation", on_delete=DB_CASCADE)
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
 
@@ -672,7 +673,7 @@ class SubmittedVariant(SVIPModel):
     curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
                                          help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
     requestor = models.TextField(
-        null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+        blank=True, null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
 
     objects = SubmittedVariantManager()
 
