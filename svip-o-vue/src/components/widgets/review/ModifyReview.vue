@@ -73,7 +73,7 @@
                             <!-- :href="addEntryURL()" -->
                             <div align="center">
                                 <b-button
-                                    v-b-modal.modal-add-evidence
+                                    v-b-modal="addEvidenceID"
                                     target="_blank"
                                     class="centered-icons mb-3"
                                     variant="info"
@@ -84,7 +84,7 @@
                                     Add publication
                                 </b-button>
                                 <b-button
-                                    v-b-modal.modal-add-note
+                                    v-b-modal="addNoteID"
                                     target="_blank"
                                     class="centered-icons"
                                     variant="primary"
@@ -158,14 +158,15 @@
             </transition>
         </b-card>
 
-        <b-modal id="modal-add-note" ref="modal-add-note" title="Add/modify a note" class="modal-add-evidence"
+        <b-modal :id="addNoteID" ref="modal-add-note" title="Add/modify a note" class="modal-add-evidence"
                  size="lg" :hide-footer="true">
             <b-card no-body>
                 <b-textarea class="summary-box" v-model="note" rows="3"/>
+                test {{label}}
             </b-card>
         </b-modal>
 
-        <b-modal id="modal-add-evidence" ref="modal-add-evidence" title="Add a new evidence" class="modal-add-evidence"
+        <b-modal :id="addEvidenceID" ref="modal-add-evidence" title="Add a new evidence" class="modal-add-evidence"
                  size="lg" :hide-footer="true">
             <b-card no-body>
                 <b-tabs
@@ -242,9 +243,6 @@
                 </b-tabs>
             </b-card>
         </b-modal>
-        <b-button class="float-right">
-            Submit review
-        </b-button>
     </div>
 </template>
 
@@ -397,6 +395,8 @@ export default {
     data() {
         return {
             disease: {},
+            addNoteID: '',
+            addEvidenceID: '',
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",
@@ -489,6 +489,8 @@ export default {
     },
     mounted() {
         this.makeItems()
+        this.addEvidenceID = `modal-add-evidence-${this.label.replace(" ", "-")}`
+        this.addNoteID = `modal-add-note-${this.label.replace(" ", "-")}`
     },
     computed: {
         ...mapGetters({

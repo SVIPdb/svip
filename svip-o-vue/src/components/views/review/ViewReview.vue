@@ -9,6 +9,9 @@
         <div v-for="(disease) in diseases" :key="disease">
             <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
         </div>
+        <b-button class="float-right">
+            Submit review
+        </b-button>
     </div>
 </template>
 
