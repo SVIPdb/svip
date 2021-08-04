@@ -121,9 +121,6 @@ export default {
             to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
             next();
         });
-    },
-    submitReview() {
-        console.log("function run in the parent component")
     }
 };
 </script>
