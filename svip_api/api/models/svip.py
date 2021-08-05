@@ -191,7 +191,12 @@ class VariantInSVIP(models.Model):
 
                 evidences.append(evidence_obj)
             
-            disease["evidences"] = evidences
+            ordered_evidences = []
+            for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                for matching_evidence in (ev for ev in evidences if ev["typeOfEvidence"] == evidence_type):
+                    ordered_evidences.append(matching_evidence)
+
+            disease["evidences"] = ordered_evidences
 
             diseases_dict.append(disease)
         return diseases_dict
