@@ -285,7 +285,6 @@ export default {
     },
     methods: {
         getReviewData() {
-            console.log("getReviewData executed")
             const params={
                 reviewer: this.user.user_id,
                 var_id: this.variant.id
