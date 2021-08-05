@@ -162,7 +162,6 @@
                  size="lg" :hide-footer="true">
             <b-card no-body>
                 <b-textarea class="summary-box" v-model="note" rows="3"/>
-                test {{label}}
             </b-card>
         </b-modal>
 
@@ -266,7 +265,7 @@ export default {
         BIconXSquareFill
     },
     props: {
-        raw_disease: {type: Object, required: false},
+        raw_disease: {type: Array, required: false},
         //disease: {type: Object, required: false},
         label: {type: String, required: false}
     },
@@ -325,16 +324,18 @@ export default {
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
-                /*HTTP.delete(`/curation_entries/${entry_id}`)
+                HTTP.delete(`/curation_entries/${entry_id}`)
                     .then(() => {
                         this.channel.postMessage(`Deleted ID ${entry_id}`);
                         this.$snotify.info("Entry deleted!");
                         this.$refs.paged_table.refresh();
                     })
-                    .catch(() => {
-                        this.$snotify.error("Failed to delete entry");
+                    .catch((err) => {
+                        console.log("ERROR:")
+                        console.log(err)
+                        //this.$snotify.error("Failed to delete entry");
                     });
-                */
+                
             }
         },
         editEntryURL(entry) {

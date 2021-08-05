@@ -9,7 +9,7 @@
         <div v-for="(disease) in diseases" :key="disease">
             <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
         </div>
-        <b-button class="float-right">
+        <b-button class="float-right" @click="submitAnnotations()">
             Submit review
         </b-button>
     </div>
@@ -307,6 +307,9 @@ export default {
             to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
             next();
         });
+    },
+    submitAnnotations() {
+        
     }
 };
 </script>
