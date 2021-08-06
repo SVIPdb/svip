@@ -132,6 +132,11 @@ class VariantInSVIP(models.Model):
 
             evidences = []
             for evidence in association.curation_evidences.all():
+                
+                if not hasattr(evidence, 'annotation'):
+                    annotation = SIBAnnotation(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                    annotation.save()
+                
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
@@ -151,7 +156,6 @@ class VariantInSVIP(models.Model):
                     "status": None,
                     "comment": None
                 }
-
                 curations = []
                 for curation in evidence.curation_entries.all():
                     curation_obj = {
