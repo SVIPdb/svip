@@ -7,9 +7,9 @@
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
         <div v-for="(disease) in diseases" :key="disease">
-            <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
+            <modify-review :raw_disease="disease.evidences" :label="disease.disease"  @annotated="updateAnnotations"/>
         </div>
-        <b-button class="float-right" @click="submitAnnotations()">
+        <b-button class="float-right" @click="submitAnnotations">
             Submit review
         </b-button>
     </div>
@@ -256,7 +256,7 @@ export default {
                     }
                 ]
             },
-            test: []
+            annotations: {}
         }
     },
     mounted() {
@@ -298,6 +298,25 @@ export default {
                 .catch((err) => {
                     log.warn(err);
                 })
+        },
+        updateAnnotations(evidence) {
+            const annotation = {
+                effect: evidence.sib_annotation_outcome,
+                tier: evidence.sib_annotation_trust
+            }
+            this.annotations[evidence.sib_annotation_id] = annotation
+        },
+        submitAnnotations() {
+            for (var id in this.annotations) {
+                HTTP.put(`/sib_annotations/${id}/`, this.annotations[id])
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
+            }
+            this.$snotify.success("Your review has been saved");
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -308,9 +327,6 @@ export default {
             next();
         });
     },
-    submitAnnotations() {
-        
-    }
 };
 </script>
 

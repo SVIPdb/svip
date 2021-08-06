@@ -28,7 +28,7 @@
                         </template>
 
                         <template v-slot:cell(sib_annotation)="data">
-                            <div class="pb-2">
+                            <div class="pb-2" @change="annotationEdited(data.item)">
                                 <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Prognostic'"
                                                :options="prognosticOutcomeOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Diagnostic'"
@@ -37,7 +37,7 @@
                                                v-if="index === 'Predictive / Therapeutic'"
                                                :options="predictiveOutcomeOptions" class="form-control"></b-form-select>
                             </div>
-                            <div class="pt-2">
+                            <div class="pt-2" @change="annotationEdited(data.item)">
                                 <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Prognostic'"
                                                :options="trustOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Diagnostic'"
@@ -292,6 +292,7 @@ export default {
                         "nb_evidence": effect.count
                     })
                 })
+                evidenceObj["sib_annotation_id"] = evidence.curator.id
                 evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
                 evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
                 evidenceObj["reviews"] = []
@@ -321,6 +322,9 @@ export default {
                 evidences[evidence.typeOfEvidence].push(evidenceObj)
             })
             this.disease = evidences;
+        },
+        annotationEdited(evidence) {
+            this.$emit('annotated', evidence)
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {

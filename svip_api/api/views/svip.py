@@ -27,7 +27,7 @@ from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer,
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotationSerializer,
     SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer
 )
 from api.support.history import make_history_response
@@ -429,6 +429,38 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
 
         return q.order_by('id')
 
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+
+class SIBAnnotationViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SIBAnnotationSerializer
+
+    def get_queryset(self):
+        queryset = SIBAnnotation.objects.all()
+        return queryset
+
+        #print(f"query params: {self.request.query_params} ")
+
+        #variant = self.request.query_params.get('variant')
+        #owner = self.request.query_params.get('owner')
+
+        #queryset = SummaryComment.objects.all()
+
+        #if variant is not None:
+        #    queryset = queryset.filter(variant=variant)
+
+        #if owner is not None:
+        #    queryset = queryset.filter(owner=owner)
+
+
+
+
+
+
 # ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
@@ -457,7 +489,7 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
 
 
 # ================================================================================================================
-# === SummaryComment
+# === Review data
 # ================================================================================================================
 
 from rest_framework.views import APIView
