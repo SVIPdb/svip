@@ -559,21 +559,21 @@ class ReviewDataView(APIView):
         return Response(data={"review_data": svip_var.review_data()})
 
 
-class ReviewsView(APIView):
-    reviews = []
-    for evidence in CurationEvidence.objects.all():
-        review_dict = {
-            'gene_id': evidence.association.variant.gene.id,
-            'variant_id': evidence.association.variant.id,
-            'gene_name': evidence.association.variant.gene.symbol,
-            'variant': evidence.association.variant.name,
-            'hgvs': evidence.association.variant.hgvs_c,
-            'disease': evidence.association.disease.name,
-            'status': '',
-            'deadline': 'n/a',
-            'requester': '',
-            'curator': []
-        }
-        reviews.append(review_dict)
+#class ReviewsView(APIView):
+#    reviews = []
+#    for evidence in CurationEvidence.objects.all():
+#        review_dict = {
+#            'gene_id': evidence.association.variant.gene.id,
+#            'variant_id': evidence.association.variant.id,
+#            'gene_name': evidence.association.variant.gene.symbol,
+#            'variant': evidence.association.variant.name,
+#            'hgvs': evidence.association.variant.hgvs_c,
+#            'disease': evidence.association.disease.name,
+#            'status': '',
+#            'deadline': 'n/a',
+#            'requester': '',
+#            'curator': []
+#        }
+#        reviews.append(review_dict)
         
 
