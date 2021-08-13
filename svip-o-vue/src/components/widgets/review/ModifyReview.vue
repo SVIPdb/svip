@@ -92,7 +92,7 @@
                                     block
                                 >
                                     <icon name="plus"/>
-                                    Add a note
+                                    Clinical input
                                 </b-button>
                             </div>
                         </template>
@@ -339,7 +339,6 @@ export default {
                         console.log(err)
                         //this.$snotify.error("Failed to delete entry");
                     });
-                
             }
         },
         editEntryURL(entry) {

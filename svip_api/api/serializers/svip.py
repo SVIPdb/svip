@@ -498,12 +498,18 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
 
     canonical_only = serializers.BooleanField(write_only=True)
 
-    for_curation_request = serializers.BooleanField(write_only=True)
-    requestor = serializers.CharField(write_only=True)
+    for_curation_request = serializers.BooleanField(
+        required=False, allow_null=True, write_only=True)
+    requestor = serializers.CharField(
+        required=False, allow_null=True, write_only=True)
+
+    def validate(self, data):
+        if data['for_curation_request'] and ('requestor' not in data or data['requestor'] is None or data['requestor'] == ''):
+            raise serializers.ValidationError(
+                {'requestor': 'is required if for_curation_request is true'})
+        return data
 
     def save(self):
-        print('---here 123---')
-        print(self.fields)
         cur_user = self.fields["owner"].get_default()
 
         with transaction.atomic():
@@ -542,7 +548,6 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
                     'batch': batch.pk
                 })
 
-                # TODO: parse data, creating new SubmittedVariants for each row
                 try:
                     if submitted_var_serializer.is_valid(raise_exception=True):
                         submitted_var_serializer.save()
@@ -714,12 +719,11 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
         }
 
 
-#class CurationReviewListSerializer(serializers.ListSerializer):
+# class CurationReviewListSerializer(serializers.ListSerializer):
 #    def update(self, instance, validated_data):
-        
 
 
-#class CurationReviewSerializer(serializers.ModelSerializer):
+# class CurationReviewSerializer(serializers.ModelSerializer):
 
 #    def __init__(self, *args, **kwargs):
 #        many = kwargs.pop('many', True)
@@ -738,4 +742,3 @@ class CurationReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurationReview
         fields = '__all__'
-    

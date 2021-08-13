@@ -122,7 +122,7 @@ export default {
             if (this.serverSummaryComment === null) {
                 // summaryComment doesn't already exist (for this user and variant): post new
                 HTTP.post(`/summary_comments/`, summaryCommentJSON)
-                    .then((response) => {
+                    .then(() => {
                         this.getSummaryComment();
                         this.isEditMode = false;
                         this.$snotify.success("Your comment has been posted");
@@ -134,7 +134,7 @@ export default {
             } else {
                 // summaryComment already exists: modify it
                 HTTP.patch(`/summary_comments/${this.serverSummaryComment.id}`, {content: this.summaryComment})
-                    .then((response) => {
+                    .then(() => {
                         this.getSummaryComment();
                         this.isEditMode = false;
                         this.$snotify.success("Your comment has been updated");
@@ -149,7 +149,7 @@ export default {
             // send a delete request only if SummaryComment instance exists in the server
             if (this.serverSummaryComment !== null) {
                 HTTP.delete(`/summary_comments/${this.serverSummaryComment.id}/`)
-                    .then((response) => {
+                    .then(() => {
                         this.serverSummaryComment = null
                         this.summaryComment = "";
                         this.isEditMode = false;

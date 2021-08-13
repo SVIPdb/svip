@@ -50,8 +50,8 @@
                         Duplicated
                     </div>
 
-                    <b-card 
-                        no-body style="margin-bottom: 1.5em;" 
+                    <b-card
+                        no-body style="margin-bottom: 1.5em;"
                         v-bind:border-variant="duplicated? 'danger': ''"
                     >
                         <b-card-body>
@@ -949,10 +949,6 @@ export default {
                     payload: JSON.stringify(this.getPayload(true))
                 }
             }).href;
-
-            //console.log(`payload: ${JSON.stringify(this.getPayload(true))}`)
-            console.log(`targetUrl: ${targetUrl}`)
-
 
             window.open(targetUrl, '_blank');
         },

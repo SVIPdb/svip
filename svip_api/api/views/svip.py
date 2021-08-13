@@ -18,7 +18,7 @@ from api.models import (
     Disease, Variant
 )
 from api.models.svip import (
-    SubmittedVariant, SubmittedVariantBatch, CurationRequest,
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
     SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation
 )
 
@@ -258,6 +258,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "input": entryIDs,
             "changed": result
         })
+        
+        
+        
 
     @action(detail=True)
     def history(self, request, pk):
@@ -496,6 +499,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 class ReviewDataView(APIView):
+    
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
 
@@ -525,12 +529,13 @@ class ReviewDataView(APIView):
                     # Create the evidence objects involved that association, from the existing curation entries
                     for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
                         
-                        drugs = curation.drugs
-                        if len(curation.drugs) == 0:
+                        if len(curation.drugs) > 0 and evidence_type == "Predictive / Therapeutic":
+                            drugs = curation.drugs
+                        else:
                             # add null object to empty list so at least one iteration to create an evidence related to no drug
-                            drugs.append(None)
-                        for drug in drugs:
+                            drugs = [None]
 
+                        for drug in drugs:
                             new_curation_evidence = CurationEvidence(
                                 association = new_curation_association,
                                 type_of_evidence = evidence_type,
@@ -552,4 +557,23 @@ class ReviewDataView(APIView):
                 curation.save()
 
         return Response(data={"review_data": svip_var.review_data()})
+
+
+class ReviewsView(APIView):
+    reviews = []
+    for evidence in CurationEvidence.objects.all():
+        review_dict = {
+            'gene_id': evidence.association.variant.gene.id,
+            'variant_id': evidence.association.variant.id,
+            'gene_name': evidence.association.variant.gene.symbol,
+            'variant': evidence.association.variant.name,
+            'hgvs': evidence.association.variant.hgvs_c,
+            'disease': evidence.association.disease.name,
+            'status': '',
+            'deadline': 'n/a',
+            'requester': '',
+            'curator': []
+        }
+        reviews.append(review_dict)
+        
 
