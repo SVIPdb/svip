@@ -27,6 +27,7 @@ const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const SubmitVariants = () =>  import("@/components/views/submission/SubmitVariants");
 const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
+const SubmitCurations = () => import("@/components/views/review/SubmitCurations");
 
 const log = ulog('Router:index');
 
@@ -163,7 +164,15 @@ const router = new Router({
                 requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
             }
         },
-
+        {
+            path: "/curation/gene/:gene_id/variant/:variant_id/submit",
+            name: "annotate-review",
+            component: SubmitCurations,
+            meta: {
+                title: 'SVIP-O: Review',
+                requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
+            }
+        },
         {
             path: "/submit-variants",
             name: "submit-variants",
