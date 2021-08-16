@@ -154,7 +154,7 @@
                 <template v-slot:extra_commands>
                     <div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
                         <b-button :disabled="selectedCount <= 0" variant="info" @click="submitSelected" style="height: 34px;">
-                        Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
+                            Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
                         </b-button>
                     </div>
                 </template>
