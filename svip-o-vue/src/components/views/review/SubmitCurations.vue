@@ -4,7 +4,7 @@
 
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
-        <VariantDisease :variant="variant"/>
+        <SelectEffect :variant="variant"/>
     </div>
 </template>
 <script>
@@ -14,7 +14,7 @@ import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
-import VariantDisease from "@/components/widgets/review/VariantDisease";
+import SelectEffect from "@/components/widgets/review/SelectEffect";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 
@@ -24,7 +24,7 @@ export default {
     name: "SubmitCurations",
     components: {
         ModifyVariantSummary,
-        VariantDisease,
+        SelectEffect,
         CuratorVariantInformations
     },
     data() {

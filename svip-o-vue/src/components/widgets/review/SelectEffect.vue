@@ -12,24 +12,16 @@
                             <div v-if="showDisease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
-                                        <b-col align="center" cols="1">
+                                        <b-col align="center" cols="3">
                                             <expander v-model="evidence.isOpen"/>
                                             {{ evidence.fullType }}
                                         </b-col>
-                                        <b-col cols="2">
+                                        <b-col cols="5">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
                                                 {{ effect.label }} ({{ effect.count ? effect.count : 'no' }}
                                                 evidence(s))</p>
                                         </b-col>
-                                        <b-col cols="2">
-                                            <b-row class="p-2">
-                                                <b-input v-model="evidence.curator.annotatedEffect" readonly/>
-                                            </b-row>
-                                            <b-row class="p-2">
-                                                <b-input v-model="evidence.curator.annotatedTier" readonly/>
-                                            </b-row>
-                                        </b-col>
-                                        <b-col cols="2">
+                                        <b-col cols="3">
                                             <b-row class="p-2">
                                                 <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
                                                                         v-model="evidence.currentReview.annotatedEffect"
@@ -46,29 +38,6 @@
                                                 <select-tier v-model="evidence.currentReview.annotatedTier"
                                                             @input="onChange(evidence.curator, evidence.currentReview)"></select-tier>
                                             </b-row>
-                                        </b-col>
-                                        <b-col cols="1" align="center">
-                                            <b-row class="justify-content-center">
-                                                Review status
-                                            </b-row>
-                                            <b-row class="justify-content-center">
-                                                <b-icon class="h4 mb-2 m-1"
-                                                        :style="displayColor(evidence.currentReview.status)"
-                                                        :icon="displayIcon(evidence.currentReview.status)"></b-icon>
-                                                <b-icon v-for="(review,key) in evidence.reviews" :key="key"
-                                                        class="h4 mb-2 m-1" :style="displayColor(review.status)"
-                                                        :icon="displayIcon(review.status)"></b-icon>
-                                            </b-row>
-                                        </b-col>
-                                        <b-col cols="4">
-                                            <b-textarea
-                                                :disabled="evidence.currentReview.status"
-                                                class="summary-box" 
-                                                rows="3"
-                                                placeholder="Comment..."
-                                                v-model="evidence.currentReview.comment"
-                                            >
-                                            </b-textarea>
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
