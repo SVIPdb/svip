@@ -527,7 +527,7 @@ class ReviewDataView(APIView):
                     new_association.save()
                     
                 association = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease).first()
-                    
+                
                 if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
                     drugs = curation.drugs
                 else:
@@ -551,36 +551,6 @@ class ReviewDataView(APIView):
                         
                     evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                     curation.curation_evidences.add(evidence)
-                    
-                    
-                    
-                    ## Create the evidence objects involved that association, from the existing curation entries
-                    #for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-                        
-                    #    if len(curation.drugs) > 0 and evidence_type == "Predictive / Therapeutic":
-                    #        drugs = curation.drugs
-                    #    else:
-                    #        # add null object to empty list so at least one iteration to create an evidence related to no drug
-                    #        drugs = [None]
-
-                    #    for drug in drugs:
-                    #        new_curation_evidence = CurationEvidence(
-                    #            association = new_curation_association,
-                    #            type_of_evidence = evidence_type,
-                    #            drug = drug
-                    #        )
-                    #        new_curation_evidence.save()
-                            
-                    #        # create an SIBAnnotation instance linked to the evidence just created
-                    #        annotation = SIBAnnotation(evidence=new_curation_evidence, effect="Not yet annotated", tier="Not yet annotated")
-                    #        annotation.save()
-
-                ## link the matching evidences to the curation:
-                #for association in associations:
-                #    for drug in curation.drugs:
-                #        evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-                #        for evidence in evidences:
-                #            curation.curation_evidences.add(evidence)
 
                 curation.save()
 
