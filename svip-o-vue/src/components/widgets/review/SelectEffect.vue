@@ -344,14 +344,31 @@ export default {
             selfReviewedEvidences: {},
             summary: null,
             history_entry_id: null,
-
             sample_curation_id: null,
-
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-
             showDisease: true,
+            support_fields: [
+                "Strong",
+                "Moderate",
+                "Low"
+            ],
+            tier_fields: [
+                "Included in Professional Guidelines (Tier IA)",
+                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                "Well-powered studies with consensus from experts in the field (Tier IB)",
+                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                "Small published studies with some consensus (Tier IIC)",
+                "Population study (Tier IID)",
+                "Clinical trial (Tier IID)",
+                "Pre-clinical trial (Tier IID)",
+                "Case reports (Tier IID)",
+                "No convincing published evidence of drugs effect (Tier III)",
+                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Other criteria"
+            ]
         };
     },
     mounted() {
@@ -391,8 +408,8 @@ export default {
             HTTP.post(`/review_data`, params)
                 .then((response) => {
                     this.diseases = response.data.review_data
+                    this.prefillAnnotations();
                     this.detectOwnReviews();
-                    this.changeReviewStatusCheckboxes();
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -417,18 +434,59 @@ export default {
             }
             return ""
         },
-        onChange(curatorValues, reviewerValues) {
-            reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
-        },
-        changeReviewStatusCheckboxes() {
+        prefillAnnotations() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    // select only evidences for which an option has been selected
-                    if (
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        this.onChange(evidence.curator, evidence.currentReview)
+                    let effects = {}
+
+                    evidence.curations.map(curation => {
+                        let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
+                        let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
+                        if (curation.effect in effects) {
+                            effects[curation.effect]["curations"] += 1
+                            if (support_score > effects[curation.effect]["support_score"]) {
+                                effects[curation.effect]["support_score"] = support_score
+                            }
+                            if (tier_score > effects[curation.effect]["tier_score"]) {
+                                effects[curation.effect]["tier_score"] = tier_score
+                            }
+                        } else {
+                            console.log(`support_score: ${support_score}`)
+                            effects[curation.effect] = {
+                                "support_score": support_score,
+                                "tier_score": tier_score,
+                                "curations": 1
+                            }
+                            console.log(`effects support score: ${effects[curation.effect]['support_score']}`)
+                        }
+                    })
+                    console.log(`effects tier score: ${effects[evidence['curations'][0]['effect']]['tier_score']}`)
+                    
+                    let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
+                    console.log(`trustedCuration: ${trustedCuration}`)
+                    const scores = ['support_score', 'tier_score', 'curations']
+                    const properties = [...scores, 'effect']
+
+                    for (const effect in effects) {
+                        for (var i = 0; i < scores.length; i++) {
+                            const effect_scores = effects[effect]
+                            console.log(effect_scores[scores[i]])
+                            if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
+                                
+                                properties.map(property => {
+                                    trustedCuration[property] = effect_scores[property]
+                                })
+
+                                break;
+                            } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
+                                break;
+                            }
+                        }
                     }
+                    console.log(`trustedCuration support: ${this.support_fields[this.support_fields.length - trustedCuration['support_score']]}`)
+                    evidence.curator.annotatedEffect = this.support_fields[this.support_fields.length - trustedCuration['support_score']]
+                    evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
+                    console.log("last flag")
                 })
             })
         },
@@ -501,39 +559,6 @@ export default {
             this.$snotify.success("Your review has been saved");
             // Reset fields
             this.isEditMode = false;
-            
-
-            //if (modifiedReviews.length > 0) {
-            //    HTTP.put(`/reviews/`, modifiedReviews)
-            //        .then((response) => {
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //}
-
-            //if (newReviews.length > 0) {
-            //    // post new review
-            //    HTTP.post(`/reviews/`, newReviews)
-            //        .then((response) => {
-            //            // Reset fields
-            //            this.isEditMode = false;
-            //            this.$snotify.success("Your review has been saved");
-            //            //this.detectOwnReviews();
-            //            //this.changeReviewStatusCheckboxes()
-            //            this.getReviewData()
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //} else {
-            //    // Reset fields
-            //    this.isEditMode = false;
-            //    this.detectOwnReviews();
-            //    this.changeReviewStatusCheckboxes()
-            //}
 
         },
         reviewParams(evidence) {

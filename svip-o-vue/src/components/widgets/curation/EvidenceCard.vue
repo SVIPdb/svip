@@ -500,20 +500,24 @@ export default {
             }
         },
         submitSelected() {
+            console.log("FLAG 1")
             const prompt = (this.selectedCount === 1
                 ? 'Are you sure you want to submit this entry?'
                 : `Are you sure that you want to submit these ${this.selectedCount} entries?`) +
             '\n\nYou will no longer be able to edit your entries after submitting them!';
 
             if (confirm(prompt)) {
+                console.log("TMTC")
                 const entryIDs = Object.keys(this.selected).join(",");
 
                 // TODO: set the status of all the selected entries to 'submitted'
                 HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
                     .then(result => {
+                        console.log('FLAG 2')
+                        window.location.href = `${window.location.href}submit/`;
                         this.channel.postMessage(`Submitted IDs ${entryIDs}`);
-                        this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
-                        this.$refs.paged_table.refresh();
+                        //this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
+                        //this.$refs.paged_table.refresh();
                     })
                     .catch((err) => {
                         this.$snotify.error("Failed to submit entries");

@@ -163,7 +163,8 @@ class VariantInSVIP(models.Model):
                         "pmid": int(curation.references.split(":")[1]),
                         "effect": curation.effect,
                         "support": curation.support,
-                        "comment": curation.comment
+                        "comment": curation.comment,
+                        "tier": f"{curation.tier_level_criteria} ({curation.tier_level})"
                     }
                     curations.append(curation_obj)
                 evidence_obj["curations"] = curations

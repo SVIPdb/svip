@@ -449,6 +449,7 @@ export default {
             return ""
         },
         onChange(curatorValues, reviewerValues) {
+        // change review status (true if option matches that of curator, false if doesn't match)
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
         changeReviewStatusCheckboxes() {

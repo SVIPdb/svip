@@ -549,8 +549,8 @@ class ReviewDataView(APIView):
                         annotation = SIBAnnotation(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
                         annotation.save()
                         
-                    evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-                    curation.curation_evidences.add(evidence)
+                        evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                        curation.curation_evidences.add(evidence)
 
                 curation.save()
 
