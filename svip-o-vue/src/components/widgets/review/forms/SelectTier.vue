@@ -7,10 +7,10 @@
         <option>Tier IIC: Multiples small published studies with some consensus
         </option>
         <option>Tier IID: Clinical trial</option>
-        <option>Tier IID: Pre-clinical study</option>
+        <option>Tier IID: Pre-clinical trial</option>
         <option>Tier IID: Population study</option>
         <option>Tier IID: Small published study</option>
-        <option>Tier IID: Case report</option>
+        <option>Tier IID: Case reports</option>
         <option>Tier III: No convincing published evidence of drugs effect</option>
         <option>Tier III: Author statement</option>
         <option>Tier IV: Reported evidence supportive of benign/likely benign

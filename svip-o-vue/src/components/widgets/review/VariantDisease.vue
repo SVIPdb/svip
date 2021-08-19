@@ -18,8 +18,8 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
-                                                {{ effect.label }} ({{ effect.count ? effect.count : 'no' }}
-                                                evidence(s))</p>
+                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                            </p>
                                         </b-col>
                                         <b-col cols="2">
                                             <b-row class="p-2">
@@ -312,7 +312,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null
@@ -352,7 +352,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null

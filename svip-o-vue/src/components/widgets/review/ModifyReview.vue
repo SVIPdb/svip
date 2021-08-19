@@ -20,8 +20,8 @@
                         </template>
 
                         <template v-slot:cell(list_of_evidences)="data">
-                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}
-                                ({{ outcome.nb_evidence }} evidence-s)<br/></p>
+                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}: {{ outcome.nb_evidence }} evidence(s)<br/>
+                            </p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
                             <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
                             -->
@@ -480,10 +480,10 @@ export default {
                 'Tier IB: Well-powered studies with consensus from experts in the field',
                 'Tier IIC: Multiples small published studies with some consensus',
                 'Tier IID: Clinical trial',
-                'Tier IID: Pre-clinical study',
+                'Tier IID: Pre-clinical trial',
                 'Tier IID: Population study',
                 'Tier IID: Small published study',
-                'Tier IID: Case report',
+                'Tier IID: Case reports',
                 'Tier III: No convincing published evidence of drugs effect',
                 'Tier III: Author statement',
                 'Tier IV: Reported evidence supportive of benign/likely benign effect',

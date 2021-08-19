@@ -158,20 +158,20 @@ export default {
                                     {label: "Bafilomycin", nb_evidence: 1}
                                 ],
                                 sib_annotation_outcome: "Resistant (in vitro)",
-                                sib_annotation_trust: "Tier IID: Pre-clinical study",
+                                sib_annotation_trust: "Tier IID: Pre-clinical trial",
                                 reviews: [
                                     {
                                         reviewer: "John Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Resistant (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null,
                                     },
                                     {
                                         reviewer: "Jean Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Resistant (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     },
                                     {
@@ -199,27 +199,27 @@ export default {
                                     {label: "Sorafenib", nb_evidence: 1}
                                 ],
                                 sib_annotation_outcome: "Sensitive (in vitro)",
-                                sib_annotation_trust: "Tier IID: Pre-clinical study",
+                                sib_annotation_trust: "Tier IID: Pre-clinical trial",
                                 reviews: [
                                     {
                                         reviewer: "John Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null,
                                     },
                                     {
                                         reviewer: "Jean Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     },
                                     {
                                         reviewer: "Johnny Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     }
                                 ],

@@ -18,24 +18,24 @@
                                         </b-col>
                                         <b-col cols="5">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
-                                                {{ effect.label }} ({{ effect.count ? effect.count : 'no' }}
-                                                evidence(s))</p>
+                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                            </p>
                                         </b-col>
                                         <b-col cols="3">
                                             <b-row class="p-2">
                                                 <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
+                                                                        v-bind="evidence.curator.annotatedEffect"
                                                                         @input="onChange(evidence.curator, evidence.currentReview)"></select-prognostic-outcome>
                                                 <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
+                                                                        v-model="evidence.curator.annotatedEffect"
                                                                         @input="onChange(evidence.curator, evidence.currentReview)"></select-diagnostic-outcome>
                                                 <select-predictive-therapeutic-outcome
                                                     v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
-                                                    v-model="evidence.currentReview.annotatedEffect"
+                                                    v-model="evidence.curator.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <select-tier v-model="evidence.currentReview.annotatedTier"
+                                                <select-tier v-model="evidence.curator.annotatedTier"
                                                             @input="onChange(evidence.curator, evidence.currentReview)"></select-tier>
                                             </b-row>
                                         </b-col>
@@ -112,6 +112,7 @@ export default {
     },
     data() {
         return {
+            temp: "Tier III: Author statement",
             diseases: [],
             diseases_test: [
                 {
@@ -281,7 +282,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null
@@ -321,7 +322,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null
@@ -355,18 +356,18 @@ export default {
                 "Low"
             ],
             tier_fields: [
-                "Included in Professional Guidelines (Tier IA)",
-                "FDA/EMA/Swissmedic approved therapy (Tier IA)",
-                "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
-                "Well-powered studies with consensus from experts in the field (Tier IB)",
-                "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
-                "Small published studies with some consensus (Tier IIC)",
-                "Population study (Tier IID)",
-                "Clinical trial (Tier IID)",
-                "Pre-clinical trial (Tier IID)",
-                "Case reports (Tier IID)",
-                "No convincing published evidence of drugs effect (Tier III)",
-                "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                "Tier IA: Included in Professional Guidelines",
+                "Tier IA: FDA/EMA/Swissmedic approved therapy",
+                "Tier IA: Therapy included in Professional Guidelines such as NCCN or CAP",
+                "Tier IB: Well-powered studies with consensus from experts in the field",
+                "Tier IIC: FDA/EMA/Swissmedic approved therapy for a different tumor type",
+                "Tier IIC: Small published studies with some consensus",
+                "Tier IID: Population study",
+                "Tier IID: Clinical trial",
+                "Tier IID: Pre-clinical trial",
+                "Tier IID: Case reports",
+                "Tier III: No convincing published evidence of drugs effect",
+                "Tier IV: Reported evidence supportive of benign/likely benign effect",
                 "Other criteria"
             ]
         };
@@ -409,12 +410,15 @@ export default {
                 .then((response) => {
                     this.diseases = response.data.review_data
                     this.prefillAnnotations();
-                    this.detectOwnReviews();
                 })
                 .catch((err) => {
                     log.warn(err);
                     //this.$snotify.error("Failed to fetch data");
                 })
+        },
+        onChange(curatorValues, reviewerValues) {
+        // change review status (true if option matches that of curator, false if doesn't match)
+            reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
         displayIcon(status) {
             if (status === true) {
@@ -455,7 +459,8 @@ export default {
                             effects[curation.effect] = {
                                 "support_score": support_score,
                                 "tier_score": tier_score,
-                                "curations": 1
+                                "curations": 1,
+                                "effect": curation.effect
                             }
                             console.log(`effects support score: ${effects[curation.effect]['support_score']}`)
                         }
@@ -464,7 +469,7 @@ export default {
                     
                     let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
                     console.log(`trustedCuration: ${trustedCuration}`)
-                    const scores = ['support_score', 'tier_score', 'curations']
+                    const scores = ['support_score', 'curations', 'tier_score']
                     const properties = [...scores, 'effect']
 
                     for (const effect in effects) {
@@ -484,26 +489,9 @@ export default {
                         }
                     }
                     console.log(`trustedCuration support: ${this.support_fields[this.support_fields.length - trustedCuration['support_score']]}`)
-                    evidence.curator.annotatedEffect = this.support_fields[this.support_fields.length - trustedCuration['support_score']]
+                    evidence.curator.annotatedEffect = trustedCuration['effect']
                     evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
                     console.log("last flag")
-                })
-            })
-        },
-        detectOwnReviews() {
-            // iterate over every review to prefill inputs with current user's past reviews
-            this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
-                    evidence.reviews.map(review => {
-                        if (review.reviewer_id === this.user.user_id) {
-                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
-                            evidence.currentReview.annotatedTier = review.annotatedTier;
-                            evidence.currentReview.comment = review.comment;
-
-                            // store the evidence ID so when the user submit it, the request is a patch
-                            this.selfReviewedEvidences[evidence.id] = review.id
-                        }
-                    })
                 })
             })
         },
