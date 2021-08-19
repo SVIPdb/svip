@@ -124,8 +124,8 @@ router.register(r'submitted_variant_batches',
 router.register(r'reviews', views.CurationReviewViewSet, basename='reviews')
 router.register(r'summary_comments', views.SummaryCommentViewSet,
                 basename='summary_comments')
-router.register(r'sib_annotations', views.SIBAnnotationViewSet,
-                basename='sib_annotations')
+router.register(r'sib_annotations_1', views.SIBAnnotation1ViewSet,
+                basename='sib_annotations_1')
 
 urlpatterns = [
     path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),

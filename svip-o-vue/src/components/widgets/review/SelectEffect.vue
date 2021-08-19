@@ -74,7 +74,7 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitReviews()">
+        <b-button class="float-right" @click="submitCurations()">
             Submit review
         </b-button>
     </div>
@@ -455,27 +455,21 @@ export default {
                                 effects[curation.effect]["tier_score"] = tier_score
                             }
                         } else {
-                            console.log(`support_score: ${support_score}`)
                             effects[curation.effect] = {
                                 "support_score": support_score,
                                 "tier_score": tier_score,
                                 "curations": 1,
                                 "effect": curation.effect
                             }
-                            console.log(`effects support score: ${effects[curation.effect]['support_score']}`)
                         }
                     })
-                    console.log(`effects tier score: ${effects[evidence['curations'][0]['effect']]['tier_score']}`)
-                    
                     let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
-                    console.log(`trustedCuration: ${trustedCuration}`)
                     const scores = ['support_score', 'curations', 'tier_score']
                     const properties = [...scores, 'effect']
 
                     for (const effect in effects) {
                         for (var i = 0; i < scores.length; i++) {
                             const effect_scores = effects[effect]
-                            console.log(effect_scores[scores[i]])
                             if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
                                 
                                 properties.map(property => {
@@ -488,78 +482,31 @@ export default {
                             }
                         }
                     }
-                    console.log(`trustedCuration support: ${this.support_fields[this.support_fields.length - trustedCuration['support_score']]}`)
                     evidence.curator.annotatedEffect = trustedCuration['effect']
                     evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
-                    console.log("last flag")
                 })
             })
         },
-        submitReviews() {
-            //let newReviews = [];
-            //let modifiedReviews = []
-
-            // iterate over every review
+        submitCurations() {
+            console.log("submit curations executed")
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    if (
-                        // check that dropdown options have been selected
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        if (evidence.id in this.selfReviewedEvidences) {
-
-                            //const singleReviewJSON = {
-                            //    id: this.selfReviewedEvidences[evidence.id],
-                            //    curation_evidence: evidence.id,
-                            //    reviewer: this.user.user_id,
-                            //    annotated_effect: evidence.currentReview.annotatedEffect,
-                            //    annotated_tier: evidence.currentReview.annotatedTier,
-                            //    comment: evidence.currentReview.comment
-                            //}
-                            //modifiedReviews.push(singleReviewJSON)
-
-                            let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
-                        } else {
-                            //newReviews.push(this.reviewParams(evidence));
-
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
-
-                        }
+                    const annotation = {
+                        'effect': evidence.curator.annotatedEffect,
+                        'tier': evidence.curator.annotatedTier
                     }
+                    HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
+                        .then((response) => {
+                            console.log(`response: ${response}`)
+                        })
+                        .catch((err) => {
+                            log.warn(err);
+                            this.$snotify.error("Failed to submit curation");
+                        })
                 })
             })
-
-            this.$snotify.success("Your review has been saved");
-            // Reset fields
-            this.isEditMode = false;
-
+            this.$snotify.success("Your curation(s) has been submitted to be reviewed");
         },
-        reviewParams(evidence) {
-            // prepare a JSON containing parameters for CurationReview model
-            const singleReviewJSON = {
-                curation_evidence: evidence.id,
-                reviewer: this.user.user_id,
-                annotated_effect: evidence.currentReview.annotatedEffect,
-                annotated_tier: evidence.currentReview.annotatedTier,
-                comment: evidence.currentReview.comment
-            }
-            return singleReviewJSON
-        }
     },
 };
 </script>

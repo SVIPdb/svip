@@ -19,7 +19,7 @@ from api.models import (
 )
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
-    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation
+    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -27,7 +27,7 @@ from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotationSerializer,
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
     SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer
 )
 from api.support.history import make_history_response
@@ -438,12 +438,12 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
 # ================================================================================================================
 
 
-class SIBAnnotationViewSet(viewsets.ModelViewSet):
+class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SIBAnnotationSerializer
+    serializer_class = SIBAnnotation1Serializer
 
     def get_queryset(self):
-        queryset = SIBAnnotation.objects.all()
+        queryset = SIBAnnotation1.objects.all()
         return queryset
 
         #print(f"query params: {self.request.query_params} ")
@@ -545,8 +545,8 @@ class ReviewDataView(APIView):
                         )
                         new_evidence.save()
                         
-                        # create an SIBAnnotation instance linked to the evidence just created
-                        annotation = SIBAnnotation(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
+                        # create an SIBAnnotation1 instance linked to the evidence just created
+                        annotation = SIBAnnotation1(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
                         annotation.save()
                         
                         evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()

@@ -295,7 +295,7 @@ export default {
         },
         submitAnnotations() {
             for (var id in this.annotations) {
-                HTTP.put(`/sib_annotations/${id}/`, this.annotations[id])
+                HTTP.put(`/sib_annotations_2/${id}/`, this.annotations[id])
                     .then((response) => {
                         console.log(`response: ${response}`)
                     })

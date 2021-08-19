@@ -133,9 +133,13 @@ class VariantInSVIP(models.Model):
             evidences = []
             for evidence in association.curation_evidences.all():
                 
-                if not hasattr(evidence, 'annotation'):
-                    annotation = SIBAnnotation(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                    annotation.save()
+                if not hasattr(evidence, 'annotation1'):
+                    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                    annotation1.save()
+                    
+                #if not hasattr(evidence, 'annotation2'):
+                #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                #    annotation2.save()
                 
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
@@ -144,14 +148,14 @@ class VariantInSVIP(models.Model):
                 evidence_obj["fullType"] = evidence.full_evidence_type()
                 evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
                 evidence_obj["curator"] = {
-                    "id": evidence.annotation.id,
-                    "annotatedEffect": evidence.annotation.effect,
-                    "annotatedTier": evidence.annotation.tier
+                    "id": evidence.annotation1.id,
+                    "annotatedEffect": evidence.annotation1.effect,
+                    "annotatedTier": evidence.annotation1.tier
                 }
                 evidence_obj["currentReview"] = {
                     "id": evidence.id,
-                    "annotatedEffect": evidence.annotation.effect,
-                    "annotatedTier": evidence.annotation.tier,
+                    "annotatedEffect": evidence.annotation1.effect,
+                    "annotatedTier": evidence.annotation1.tier,
                     "reviewer": "",
                     "status": None,
                     "comment": None
@@ -574,14 +578,23 @@ class CurationReview(SVIPModel):
     comment = models.TextField(default="", null=True, blank=True)
 
 
-class SIBAnnotation(models.Model):
+class SIBAnnotation1(models.Model):
     """
-    Annotation of the SIB curators for a specific evidence
+    First Annotation of the SIB curators for a specific evidence
     """
     evidence = models.OneToOneField(
-        to=CurationEvidence, related_name="annotation", on_delete=DB_CASCADE)
+        to=CurationEvidence, related_name="annotation1", on_delete=DB_CASCADE)
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
+    
+#class SIBAnnotation2(models.Model):
+#    """
+#    Second Annotation of the SIB curators for a specific evidence
+#    """
+#    evidence = models.OneToOneField(
+#        to=CurationEvidence, related_name="annotation2", on_delete=DB_CASCADE)
+#    effect = models.TextField(default="Not yet annotated", null=True)
+#    tier = models.TextField(default="Not yet annotated", null=True)
 
 
 # ================================================================================================================
