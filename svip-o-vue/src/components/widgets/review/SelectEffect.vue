@@ -233,7 +233,6 @@ export default {
             })
         },
         submitCurations() {
-            console.log("submit curations executed")
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     const annotation = {

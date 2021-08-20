@@ -385,13 +385,7 @@ export default {
             showDisease: true,
         };
     },
-    mounted() {
-        this.diseases.map(disease => {
-            disease.evidences.map(evidence => {
-                evidence["currentReview"]["reviewer_id"] = this.user.user_id
-            })
-        });
-    },
+    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
@@ -469,6 +463,7 @@ export default {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
+                        evidence["currentReview"]["reviewer_id"] = this.user.user_id
                         if (review.reviewer_id === this.user.user_id) {
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
@@ -481,28 +476,44 @@ export default {
                 })
             })
         },
+        missingComment() {
+        // return true if a same evidence doesn't match the curators annotation and has not been given a comment
+            for (var i = 0; i < this.diseases.length; i++) {
+                const disease = this.diseases[i]
+                for (var j = 0; j < disease["evidences"].length; j++) {
+                    const evidence = disease["evidences"][j]
+                    if (!evidence.currentReview.status) {
+                    // review doesn't match curator's annotation
+                        const regExp = /[a-zA-Z]/g;
+                        if (evidence.currentReview.comment === null || ! regExp.test(evidence.currentReview.comment)) {
+                        // no letter was found in the comment
+                            return true
+                        }
+                    }
+                }
+            }
+            return false
+        },
         submitReviews() {
-            //let newReviews = [];
-            //let modifiedReviews = []
+
+            if (this.missingComment()) {
+                this.$snotify.error(
+                    "Please enter a comment for every review conflicting with that of curators", 
+                    "",
+                    { timeout: 5000 }
+                );
+                return false
+            }
 
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
+
                     if (
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
                         if (evidence.id in this.selfReviewedEvidences) {
-
-                            //const singleReviewJSON = {
-                            //    id: this.selfReviewedEvidences[evidence.id],
-                            //    curation_evidence: evidence.id,
-                            //    reviewer: this.user.user_id,
-                            //    annotated_effect: evidence.currentReview.annotatedEffect,
-                            //    annotated_tier: evidence.currentReview.annotatedTier,
-                            //    comment: evidence.currentReview.comment
-                            //}
-                            //modifiedReviews.push(singleReviewJSON)
 
                             let reviewID = this.selfReviewedEvidences[evidence.id]
                             HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
@@ -533,40 +544,6 @@ export default {
             this.$snotify.success("Your review has been saved");
             // Reset fields
             this.isEditMode = false;
-            
-
-            //if (modifiedReviews.length > 0) {
-            //    HTTP.put(`/reviews/`, modifiedReviews)
-            //        .then((response) => {
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //}
-
-            //if (newReviews.length > 0) {
-            //    // post new review
-            //    HTTP.post(`/reviews/`, newReviews)
-            //        .then((response) => {
-            //            // Reset fields
-            //            this.isEditMode = false;
-            //            this.$snotify.success("Your review has been saved");
-            //            //this.detectOwnReviews();
-            //            //this.changeReviewStatusCheckboxes()
-            //            this.getReviewData()
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //} else {
-            //    // Reset fields
-            //    this.isEditMode = false;
-            //    this.detectOwnReviews();
-            //    this.changeReviewStatusCheckboxes()
-            //}
-
         },
         reviewParams(evidence) {
             // prepare a JSON containing parameters for CurationReview model
