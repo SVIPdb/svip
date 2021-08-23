@@ -417,9 +417,6 @@ class CurationEntry(SVIPModel):
     curation_evidences = models.ManyToManyField(
         CurationEvidence, related_name='curation_entries', default=None)
 
-    # curation_evidence = models.ForeignKey(
-    #    to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
-
     # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(
         to=Variant, on_delete=DB_CASCADE, related_name="curations")
@@ -587,14 +584,16 @@ class SIBAnnotation1(models.Model):
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
     
-#class SIBAnnotation2(models.Model):
-#    """
-#    Second Annotation of the SIB curators for a specific evidence
-#    """
-#    evidence = models.OneToOneField(
-#        to=CurationEvidence, related_name="annotation2", on_delete=DB_CASCADE)
-#    effect = models.TextField(default="Not yet annotated", null=True)
-#    tier = models.TextField(default="Not yet annotated", null=True)
+    
+class SIBAnnotation2(models.Model):
+    """
+    Second Annotation of the SIB curators for a specific evidence
+    """
+    evidence = models.OneToOneField(
+        to=CurationEvidence, related_name="annotation2", on_delete=DB_CASCADE)
+    effect = models.TextField(default="Not yet annotated", null=True)
+    tier = models.TextField(default="Not yet annotated", null=True)
+    clinical_input = models.TextField(null=True)
 
 
 # ================================================================================================================

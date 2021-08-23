@@ -6,6 +6,11 @@
 
         <EvidenceCard :variant="variant" is-submittable small />
 
+        <!--<b-button class="float-right redirection-button" :to="{ name: 'annotate-review' }" @click="redirect">
+            See submitted annotations
+        </b-button>
+        <br/><br/><br/>-->
+
         <div>
             <b-card no-body>
                 <b-tabs
@@ -193,6 +198,9 @@ export default {
                     };
                     // this.loadingVariomes = false;
                 });
+        },
+        redirect() {
+            window.location.href = `${window.location.href}/submit/`;
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -280,5 +288,9 @@ export default {
 .disease {
     color: #3d811e;
     font-weight: bold;
+}
+.redirection-button {
+    margin-bottom: 2px;
+    display: block;
 }
 </style>

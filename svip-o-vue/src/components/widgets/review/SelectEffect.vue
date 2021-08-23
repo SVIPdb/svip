@@ -71,7 +71,7 @@
             </b-card>
         </div>
         <b-button class="float-right" @click="submitCurations()">
-            Submit review
+            Submit for review
         </b-button>
     </div>
 </template>

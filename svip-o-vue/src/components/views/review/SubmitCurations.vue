@@ -27,6 +27,9 @@ export default {
         SelectEffect,
         CuratorVariantInformations
     },
+    props: {
+        entryIDs: {type: String},
+    },
     data() {
         return {
             channel: new BroadcastChannel("curation-update"),

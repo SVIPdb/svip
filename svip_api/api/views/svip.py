@@ -19,7 +19,8 @@ from api.models import (
 )
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
-    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1
+    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
+    SIBAnnotation2
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -28,7 +29,7 @@ from api.serializers import (
 )
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
-    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer
+    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer,
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -497,11 +498,13 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from datetime import datetime
 
 class ReviewDataView(APIView):
     
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
+        time_1 = datetime.now()
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
@@ -515,7 +518,8 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
 
-        for curation in CurationEntry.objects.filter(variant=variant).filter(status="submitted"):
+        #for curation in CurationEntry.objects.filter(variant=variant).filter(status="submitted"):
+        for curation in variant.curations.filter(status="submitted"):
             
             # check that a disease is indicated for the curation entry being saved
             if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
@@ -545,16 +549,26 @@ class ReviewDataView(APIView):
                         )
                         new_evidence.save()
                         
-                        # create an SIBAnnotation1 instance linked to the evidence just created
-                        annotation = SIBAnnotation1(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
-                        annotation.save()
+                        # create both SIB annotation instances of the 2 different annotation stages, linked to the evidence just created
+                        annotation1 = SIBAnnotation1(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
+                        annotation1.save()
+                        annotation2 = SIBAnnotation2(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
+                        annotation2.save()
                         
                         evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                         curation.curation_evidences.add(evidence)
 
                 curation.save()
-
-        return Response(data={"review_data": svip_var.review_data()})
+                
+        time_2 = datetime.now()
+        return Response(
+            data={
+                "review_data": svip_var.review_data(),
+                "time_1": time_1,
+                "time_2": time_2,
+                "time_3": datetime.now()
+            }
+        )
 
 
 #class ReviewsView(APIView):
