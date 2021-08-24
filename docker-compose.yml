@@ -1,4 +1,4 @@
-version: "3.5"
+version: '3.5'
 
 volumes:
   svip_pgdata:
@@ -14,25 +14,26 @@ services:
       context: ./service_config/nginx
       dockerfile: Dockerfile
     volumes:
-      - "${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro"
-      - "${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro"
-      - "web_built:/usr/share/nginx/html:ro"
-      - "api_static:/usr/share/api_static:ro"
+      - '${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro'
+      - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro'
+      - 'web_built:/usr/share/nginx/html:ro'
+      - 'api_static:/usr/share/api_static:ro'
     depends_on:
       - api
       - frontend
+    restart: unless-stopped
 
   db:
     container_name: svip_db
-    image: "postgres:11.1"
+    image: 'postgres:11.1'
     hostname: db
-    shm_size: "2gb"
+    shm_size: '2gb'
     restart: always
     command: -c 'max_wal_size=2GB'
     ports:
-      - "30432:5432" # FIXME: dev access port
+      - '30432:5432' # FIXME: dev access port
     volumes:
-      - "svip_pgdata:/var/lib/postgresql/data"
+      - 'svip_pgdata:/var/lib/postgresql/data'
       - ./svip_db_backups:/backups
       - ./service_config/postgres:/docker-entrypoint-initdb.d
     # environment:
@@ -51,20 +52,20 @@ services:
     volumes:
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     ports:
-      - "15032:5432"
+      - '15032:5432'
 
   api:
     container_name: svip_api
     # image: "svip_api:latest"
     build: ./svip_api
-    # restart: always
+    restart: unless-stopped
     hostname: api
     volumes:
       - ./svip_api:/app
       - api_static:/var/staticfiles
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     ports:
-      - "8085:8085"
+      - '8085:8085'
     depends_on:
       - db
       - redis
@@ -85,6 +86,7 @@ services:
     environment:
       - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
       - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
+      - PYTHONUNBUFFERED=1
     env_file:
       - .env
 
@@ -100,16 +102,17 @@ services:
       # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
       - .git:/app/.git:delegated,ro
     command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
-    restart: "no"
+    restart: 'no'
     ports:
-      - "3000:8080"
+      - '3000:8080'
     environment:
-      - "VUE_APP_API_URL=http://localhost:8085/api/v1/"
+      - 'VUE_APP_API_URL=http://localhost:8085/api/v1/'
     depends_on:
       - api
 
   redis:
     container_name: svip_redis
-    image: "redis:alpine"
+    image: 'redis:alpine'
+    restart: unless-stopped
     env_file:
       - .env
