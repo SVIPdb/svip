@@ -3,9 +3,15 @@ version: '3.5'
 services:
   seqrepo:
     image: biocommons/seqrepo
-    # user: davmeyer:admin
     environment:
       SEQREPO_DATA_RELEASE: '2018-11-26'
+      # If you are behind a proxy use the RSYNC_PROXY
+      # value to configure the rsync proxy. It's basically
+      # the http(s) proxy server.
+      # RSYNC_PROXY: localhost:8888
     volumes:
       - /usr/local/share/seqrepo:/usr/local/share/seqrepo
+    # We use the network mode host to allow the container
+    # to access the local network interfaces
+    network_mode: host
     # command: sh -c "seqrepo pull -i 2018-11-26 && seqrepo show-status -i 2018-11-26"
