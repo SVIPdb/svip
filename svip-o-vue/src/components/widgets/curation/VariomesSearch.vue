@@ -134,10 +134,10 @@
                     </pass>
                 </template>
 
-                <template v-slot:cell(authors)="data">{{ data.value && data.value.split('|').join(", ")}}</template>
+                <template v-slot:cell(authors)="data">{{ data.value && data.value.join(", ")}}</template>
                 <template v-slot:cell(publication_types)="data">
                     <b class="mb-1 d-block">{{ data.item.collection }}</b>
-                    {{ data.value && data.value.split('|').join(", ") }}<br />
+                    {{ data.value && data.value.join(", ") }}<br />
                 </template>
                 <template v-slot:cell(score)="data">
                     <b class="dotted-line" :ref="data.item.id">{{ data.value.toFixed(2) }}</b>

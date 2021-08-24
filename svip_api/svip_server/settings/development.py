@@ -49,7 +49,7 @@ NPLUSONE_LOCAL_STACK = True
 #     },
 # }
 
-VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
+VARIOMES_BASE_URL = 'http://candy.hesge.ch/VariomesDev/api'
 
 # LOGGING = {
 #     'version': 1,
