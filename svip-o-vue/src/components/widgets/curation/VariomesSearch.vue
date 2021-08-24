@@ -72,7 +72,6 @@
                 ({{ variomesError.reason }})
             </div>
             <b-table v-else show-empty :busy="variomes.length === 0"
-                primary-key="id"
                 :fields="fieldsTextMining" :items="pubs_by_disease" thead-class="unwrappable-header"
                 :sort-by="sortBy" :sort-desc="sortDesc"
                 :filter="search"
