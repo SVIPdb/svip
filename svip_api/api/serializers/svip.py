@@ -19,7 +19,7 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1
+    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2
 )
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
@@ -688,6 +688,14 @@ class SIBAnnotation1Serializer(serializers.ModelSerializer):
         #}
 
 
+class SIBAnnotation2Serializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = SIBAnnotation2
+        fields = ('id', 'effect', 'tier', 'clinical_input')
 
 
 

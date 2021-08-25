@@ -29,21 +29,21 @@
 
                         <template v-slot:cell(sib_annotation)="data">
                             <div class="pb-2" @change="annotationEdited(data.item)">
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Prognostic'"
+                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Prognostic')"
                                                :options="prognosticOutcomeOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Diagnostic'"
+                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Diagnostic')"
                                                :options="diagnosticOutcomeOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_outcome"
-                                               v-if="index === 'Predictive / Therapeutic'"
+                                               v-if="index.includes('Predictive / Therapeutic')"
                                                :options="predictiveOutcomeOptions" class="form-control"></b-form-select>
                             </div>
                             <div class="pt-2" @change="annotationEdited(data.item)">
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Prognostic'"
+                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Prognostic')"
                                                :options="trustOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Diagnostic'"
+                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Diagnostic')"
                                                :options="trustOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_trust"
-                                               v-if="index === 'Predictive / Therapeutic'" :options="trustOptions"
+                                               v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
                                                class="form-control"></b-form-select>
                             </div>
                         </template>
@@ -281,8 +281,8 @@ export default {
         makeItems() {
             const evidences = {}
             this.raw_disease.map(evidence => {
-                if (!(evidence.typeOfEvidence in evidences)) {
-                    evidences[evidence.typeOfEvidence] = []
+                if (!(evidence.fullType in evidences)) {
+                    evidences[evidence.fullType] = []
                 }
                 const evidenceObj = {}
                 evidenceObj["outcome"] = []
@@ -292,9 +292,17 @@ export default {
                         "nb_evidence": effect.count
                     })
                 })
+
                 evidenceObj["sib_annotation_id"] = evidence.curator.id
-                evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
-                evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
+                // If not final annotation yet, then the values are those of first annotation
+                const not_yet_annotated = evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated"
+                evidenceObj["sib_annotation_outcome"] = not_yet_annotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect
+                evidenceObj["sib_annotation_trust"] = not_yet_annotated? evidence.curator.annotatedTier : evidence.finalAnnotation.annotatedTier
+                console.log(not_yet_annotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect)
+                //evidenceObj["sib_annotation_outcome"] = "test 1"
+                //evidenceObj["sib_annotation_outcome"] = "test 2"
+                evidenceObj["sib_annotation_clinical_input"] = evidence.finalAnnotation.clinical_input
+                
                 evidenceObj["reviews"] = []
                 evidence.reviews.map(review => {
                     if (review.status != null) {
@@ -319,7 +327,7 @@ export default {
                 })
                 evidenceObj["show_review_status"] = false
                 evidenceObj["note"] = null
-                evidences[evidence.typeOfEvidence].push(evidenceObj)
+                evidences[evidence.fullType].push(evidenceObj)
             })
             this.disease = evidences;
         },

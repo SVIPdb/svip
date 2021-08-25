@@ -29,7 +29,8 @@ from api.serializers import (
 )
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
-    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer,
+    SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
+    CurationReviewSerializer,
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -461,6 +462,13 @@ class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
         #    queryset = queryset.filter(owner=owner)
 
 
+class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SIBAnnotation2Serializer
+
+    def get_queryset(self):
+        queryset = SIBAnnotation2.objects.all()
+        return queryset
 
 
 

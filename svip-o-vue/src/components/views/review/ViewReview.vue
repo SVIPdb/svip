@@ -7,7 +7,7 @@
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
         <div v-for="(disease) in diseases" :key="disease">
-            <modify-review :raw_disease="disease.evidences" :label="disease.disease"  @annotated="updateAnnotations"/>
+            <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
         </div>
         <b-button class="float-right" @click="submitAnnotations">
             Submit review
@@ -290,7 +290,8 @@ export default {
         updateAnnotations(evidence) {
             const annotation = {
                 effect: evidence.sib_annotation_outcome,
-                tier: evidence.sib_annotation_trust
+                tier: evidence.sib_annotation_trust,
+                //clinical_input: evidence.sib_annotation
             }
             this.annotations[evidence.sib_annotation_id] = annotation
         },
