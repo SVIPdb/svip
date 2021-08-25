@@ -45,6 +45,7 @@
                                 <b-form-select v-model="data.item.sib_annotation_trust"
                                                v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
                                                class="form-control"></b-form-select>
+                                               {{data.item.sib_annotation_trust}}
                             </div>
                         </template>
 
@@ -295,12 +296,9 @@ export default {
 
                 evidenceObj["sib_annotation_id"] = evidence.curator.id
                 // If not final annotation yet, then the values are those of first annotation
-                const not_yet_annotated = evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated"
-                evidenceObj["sib_annotation_outcome"] = not_yet_annotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect
-                evidenceObj["sib_annotation_trust"] = not_yet_annotated? evidence.curator.annotatedTier : evidence.finalAnnotation.annotatedTier
-                console.log(not_yet_annotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect)
-                //evidenceObj["sib_annotation_outcome"] = "test 1"
-                //evidenceObj["sib_annotation_outcome"] = "test 2"
+                const notYetAnnotated = evidence.finalAnnotation.annotatedEffect === "Not yet annotated" || evidence.finalAnnotation.annotatedTier === "Not yet annotated"
+                evidenceObj["sib_annotation_outcome"] = notYetAnnotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect
+                evidenceObj["sib_annotation_trust"] = notYetAnnotated? evidence.curator.annotatedTier : evidence.finalAnnotation.annotatedTier
                 evidenceObj["sib_annotation_clinical_input"] = evidence.finalAnnotation.clinical_input
                 
                 evidenceObj["reviews"] = []
