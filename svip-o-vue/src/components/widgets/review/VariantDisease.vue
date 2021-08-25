@@ -410,7 +410,8 @@ export default {
         getReviewData() {
             const params={
                 reviewer: this.user.user_id,
-                var_id: this.variant.id
+                var_id: this.variant.id,
+                entry_ids: 'all'
             }
 
             HTTP.post(`/review_data`, params)

@@ -508,6 +508,8 @@ class ReviewDataView(APIView):
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
+        entry_ids = request.data.get('entry_ids')
+        
         variant = Variant.objects.get(id=var_id)
         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
         svip_var_exists = bool(len(matching_svip_var))
@@ -517,8 +519,6 @@ class ReviewDataView(APIView):
         else:
             svip_var = matching_svip_var[0]
 
-
-        #for curation in CurationEntry.objects.filter(variant=variant).filter(status="submitted"):
         for curation in variant.curations.filter(status="submitted"):
             
             # check that a disease is indicated for the curation entry being saved
@@ -540,7 +540,7 @@ class ReviewDataView(APIView):
 
                 for drug in drugs:
                     evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-                        
+                    
                     if len(evidences) == 0:
                         new_evidence = CurationEvidence(
                             association = association,
@@ -559,16 +559,29 @@ class ReviewDataView(APIView):
                         curation.curation_evidences.add(evidence)
 
                 curation.save()
-                
+
         time_2 = datetime.now()
-        return Response(
-            data={
-                "review_data": svip_var.review_data(),
-                "time_1": time_1,
-                "time_2": time_2,
-                "time_3": datetime.now()
-            }
-        )
+        
+        
+        if entry_ids == 'all':
+            return Response(
+                data={
+                    "review_data": svip_var.review_data(),
+                    "time_1": time_1,
+                    "time_2": time_2,
+                    "time_3": datetime.now()
+                }
+            )
+        
+        else:
+            return Response(
+                data={
+                    "review_data": svip_var.first_annotation_data(entry_ids),
+                    "time_1": time_1,
+                    "time_2": time_2,
+                    "time_3": datetime.now()
+                }
+            )
 
 
 #class ReviewsView(APIView):

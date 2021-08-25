@@ -127,6 +127,7 @@ class VariantInSVIP(models.Model):
         diseases_dict = []
 
         for association in self.variant.curation_associations.all().order_by('id'):
+                
             disease = {}
             disease["disease"] = association.disease.name
 
@@ -137,9 +138,9 @@ class VariantInSVIP(models.Model):
                     annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
                     annotation1.save()
                     
-                #if not hasattr(evidence, 'annotation2'):
-                #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                #    annotation2.save()
+                if not hasattr(evidence, 'annotation2'):
+                    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                    annotation2.save()
                 
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
@@ -150,7 +151,13 @@ class VariantInSVIP(models.Model):
                 evidence_obj["curator"] = {
                     "id": evidence.annotation1.id,
                     "annotatedEffect": evidence.annotation1.effect,
-                    "annotatedTier": evidence.annotation1.tier
+                    "annotatedTier": evidence.annotation1.tier,
+                }
+                evidence_obj["finalAnnotation"] = {
+                    "id": evidence.annotation2.id,
+                    "annotatedEffect": evidence.annotation2.effect,
+                    "annotatedTier": evidence.annotation2.tier,
+                    "clinical_input": evidence.annotation2.clinical_input
                 }
                 evidence_obj["currentReview"] = {
                     "id": evidence.id,
@@ -206,10 +213,98 @@ class VariantInSVIP(models.Model):
             disease["evidences"] = ordered_evidences
 
             diseases_dict.append(disease)
+
+        return diseases_dict
+    
+    
+    def first_annotation_data(self, entry_ids):
+        # JSON containing data for first annotation
+        diseases_dict = []
+
+        for association in self.variant.curation_associations.all().order_by('id'):
+            disease = {}
+            disease["disease"] = association.disease.name
+
+            evidences = []
+            for evidence in association.curation_evidences.all():
+                
+                for entry_id in entry_ids:
+                    if CurationEntry.objects.get(id=entry_id) in evidence.curation_entries.all():
+                        
+                        if not hasattr(evidence, 'annotation1'):
+                            annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                            annotation1.save()
+                        
+                        evidence_obj = {}
+                        evidence_obj["id"] = evidence.id
+                        evidence_obj["isOpen"] = False
+                        evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                        evidence_obj["fullType"] = evidence.full_evidence_type()
+                        evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
+                        evidence_obj["curator"] = {
+                            "id": evidence.annotation1.id,
+                            "annotatedEffect": evidence.annotation1.effect,
+                            "annotatedTier": evidence.annotation1.tier
+                        }
+                        evidence_obj["currentReview"] = {
+                            "id": evidence.id,
+                            "annotatedEffect": evidence.annotation1.effect,
+                            "annotatedTier": evidence.annotation1.tier,
+                            "reviewer": "",
+                            "status": None,
+                            "comment": None
+                        }
+                        curations = []
+                        for curation in evidence.curation_entries.all():
+                            curation_obj = {
+                                "id": curation.id,
+                                "pmid": int(curation.references.split(":")[1]),
+                                "effect": curation.effect,
+                                "support": curation.support,
+                                "comment": curation.comment,
+                                "tier": f"{curation.tier_level}: {curation.tier_level_criteria}"
+                            }
+                            curations.append(curation_obj)
+                        evidence_obj["curations"] = curations
+
+                        reviews = []
+                        for review in evidence.reviews.all():
+                            review_obj = {
+                                "id": review.id,
+                                "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                                "reviewer_mail": review.reviewer.email,
+                                "reviewer_id": review.reviewer.id,
+                                "status": review.status,
+                                "annotatedTier": review.annotated_tier,
+                                "annotatedEffect": review.annotated_effect,
+                                "comment": review.comment
+                            }
+                            reviews.append(review_obj)
+
+                        # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
+                        while len(reviews) < 2:
+                            review_obj = {
+                                "reviewer": "",
+                                "status": None
+                            }
+                            reviews.append(review_obj)
+                        evidence_obj["reviews"] = reviews
+
+                        evidences.append(evidence_obj)
+                
+            if len(evidences) > 0:
+                
+                ordered_evidences = []
+                for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                    for matching_evidence in (ev for ev in evidences if ev["typeOfEvidence"] == evidence_type):
+                        ordered_evidences.append(matching_evidence)
+
+                disease["evidences"] = ordered_evidences
+
+                diseases_dict.append(disease)
+            
         return diseases_dict
 
-    # def sib_view_data(self):
-    # JSON containing data for ViewReview.vue
 
     class Meta:
         verbose_name = "Variant in SVIP"

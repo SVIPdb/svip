@@ -71,7 +71,7 @@
             </b-card>
         </div>
         <b-button class="float-right" @click="submitCurations()">
-            Submit for review
+            Confirm annotation
         </b-button>
     </div>
 </template>
@@ -105,6 +105,7 @@ export default {
     },
     props: {
         variant: {type: Object, required: false},
+        entryIDs: {type: String},
     },
     data() {
         return {
@@ -171,7 +172,8 @@ export default {
         getReviewData() {
             const params={
                 reviewer: this.user.user_id,
-                var_id: this.variant.id
+                var_id: this.variant.id,
+                entry_ids: this.entryIDs.split(/[ ,]+/)
             }
             HTTP.post(`/review_data`, params)
                 .then((response) => {
@@ -186,71 +188,90 @@ export default {
         prefillAnnotations() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    let effects = {}
+                    if (evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated") {
 
-                    evidence.curations.map(curation => {
-                        let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
-                        let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
-                        if (curation.effect in effects) {
-                            effects[curation.effect]["curations"] += 1
-                            if (support_score > effects[curation.effect]["support_score"]) {
-                                effects[curation.effect]["support_score"] = support_score
+                        let effects = {}
+                        evidence.curations.map(curation => {
+                            let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
+                            let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
+                            if (curation.effect in effects) {
+                                effects[curation.effect]["curations"] += 1
+                                if (support_score > effects[curation.effect]["support_score"]) {
+                                    effects[curation.effect]["support_score"] = support_score
+                                }
+                                if (tier_score > effects[curation.effect]["tier_score"]) {
+                                    effects[curation.effect]["tier_score"] = tier_score
+                                }
+                            } else {
+                                effects[curation.effect] = {
+                                    "support_score": support_score,
+                                    "tier_score": tier_score,
+                                    "curations": 1,
+                                    "effect": curation.effect
+                                }
                             }
-                            if (tier_score > effects[curation.effect]["tier_score"]) {
-                                effects[curation.effect]["tier_score"] = tier_score
-                            }
-                        } else {
-                            effects[curation.effect] = {
-                                "support_score": support_score,
-                                "tier_score": tier_score,
-                                "curations": 1,
-                                "effect": curation.effect
+                        })
+                        let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
+                        const scores = ['support_score', 'curations', 'tier_score']
+                        const properties = [...scores, 'effect']
+
+                        for (const effect in effects) {
+                            for (var i = 0; i < scores.length; i++) {
+                                const effect_scores = effects[effect]
+                                if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
+                                    
+                                    properties.map(property => {
+                                        trustedCuration[property] = effect_scores[property]
+                                    })
+
+                                    break;
+                                } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
+                                    break;
+                                }
                             }
                         }
-                    })
-                    let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
-                    const scores = ['support_score', 'curations', 'tier_score']
-                    const properties = [...scores, 'effect']
+                        evidence.curator.annotatedEffect = trustedCuration['effect']
+                        evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
 
-                    for (const effect in effects) {
-                        for (var i = 0; i < scores.length; i++) {
-                            const effect_scores = effects[effect]
-                            if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                                
-                                properties.map(property => {
-                                    trustedCuration[property] = effect_scores[property]
-                                })
-
-                                break;
-                            } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
-                                break;
-                            }
-                        }
+                        this.submitOneEvidence(evidence)
                     }
-                    evidence.curator.annotatedEffect = trustedCuration['effect']
-                    evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
                 })
             })
         },
         submitCurations() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    const annotation = {
-                        'effect': evidence.curator.annotatedEffect,
-                        'tier': evidence.curator.annotatedTier
-                    }
-                    HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
-                        .then((response) => {
-                            console.log(`response: ${response}`)
-                        })
-                        .catch((err) => {
-                            log.warn(err);
-                            this.$snotify.error("Failed to submit curation");
-                        })
+                    this.submitOneEvidence(evidence)
+                    //const annotation = {
+                    //    'effect': evidence.curator.annotatedEffect,
+                    //    'tier': evidence.curator.annotatedTier
+                    //}
+                    //HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
+                    //    .then((response) => {
+                    //        console.log(`response: ${response}`)
+                    //    })
+                    //    .catch((err) => {
+                    //        log.warn(err);
+                    //        this.$snotify.error("Failed to submit curation");
+                    //    })
                 })
             })
             this.$snotify.success("Your curation(s) has been submitted to be reviewed");
         },
+        submitOneEvidence(evidence) {
+            const annotation = {
+                'effect': evidence.curator.annotatedEffect,
+                'tier': evidence.curator.annotatedTier
+            }
+            HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
+                .then((response) => {
+                    console.log(`response: ${response}`)
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to submit curation");
+                })
+        }
     },
 };
 </script>

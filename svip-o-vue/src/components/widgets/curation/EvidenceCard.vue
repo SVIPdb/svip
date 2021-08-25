@@ -508,31 +508,26 @@ export default {
 
             if (confirm(prompt)) {
                 const entryIDs = Object.keys(this.selected).join(",");
-                
-                console.log("flag")
-                console.log(typeof entryIDs) // entryIDs seems to be a string
-                console.log(entryIDs)
 
-                router.push({
-                    name: "annotate-review",
-                    params: {
-                        entryIDs: entryIDs,
-                    }
-                });
-                
+                // TODO: set the status of all the selected entries to 'submitted'
+                HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
+                    .then(result => {
+                        router.push({
+                            name: "submit-curation",
+                            params: {
+                                entryIDs: entryIDs,
+                            }
+                        });
 
-                //// TODO: set the status of all the selected entries to 'submitted'
-                //HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
-                //    .then(result => {
-                //        window.location.href = `${window.location.href}/submit/`;
-                //        this.channel.postMessage(`Submitted IDs ${entryIDs}`);
-                //        //this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
-                //        //this.$refs.paged_table.refresh();
-                //    })
-                //    .catch((err) => {
-                //        this.$snotify.error("Failed to submit entries");
-                //        log.warn(err);
-                //    });
+                        //window.location.href = `${window.location.href}/submit/`;
+                        //this.channel.postMessage(`Submitted IDs ${entryIDs}`);
+                        ////this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
+                        ////this.$refs.paged_table.refresh();
+                    })
+                    .catch((err) => {
+                        this.$snotify.error("Failed to submit entries");
+                        log.warn(err);
+                    });
             }
         },
         showHistory(entry_id) {

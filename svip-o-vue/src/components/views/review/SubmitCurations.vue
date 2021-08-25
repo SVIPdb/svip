@@ -4,7 +4,7 @@
 
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
-        <SelectEffect :variant="variant"/>
+        <SelectEffect :variant="variant" :entryIDs="entryIDs"/>
     </div>
 </template>
 <script>

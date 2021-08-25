@@ -165,12 +165,12 @@ const router = new Router({
             }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/submit",
-            name: "annotate-review",
+            path: "/curation/gene/:gene_id/variant/:variant_id/submit/:entryIDs",
+            name: "submit-curation",
             component: SubmitCurations,
+            props: true,
             meta: {
-                title: 'SVIP-O: Review',
-                requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
+                requiresAuth: true, roles: ['curators', 'reviewers']
             }
         },
         {
