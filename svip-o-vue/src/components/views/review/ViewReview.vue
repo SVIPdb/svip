@@ -272,7 +272,7 @@ export default {
     },
     methods: {
         getReviewData() {
-            const params={
+            const params = {
                 reviewer: this.user.user_id,
                 var_id: this.variant.id,
                 entry_ids: 'all'

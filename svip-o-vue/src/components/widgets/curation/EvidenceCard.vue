@@ -55,13 +55,6 @@
                 :extraFilters="statusFilter !== 'all' ? { status: statusFilter } : null"
                 :responsive="true"
             >
-                <template v-slot:cell(submit_box)="data">
-                    <input type="checkbox" v-if="data.item.status === 'draft' || data.item.status === 'saved'"
-                        :disabled="data.item.status === 'draft'"
-                        :value="selected[data.item.id]" @input="toggleSelected(data.item.id, $event.target.checked)"
-                        aria-label="select"
-                    />
-                </template>
 
                 <template v-slot:cell(variant__gene__symbol)="data">
                     <b><router-link :to="`/gene/${data.item.variant.gene.id}`">{{ data.item.variant.gene.symbol }}</router-link></b>
@@ -152,9 +145,15 @@
                 </template>
 
                 <template v-slot:extra_commands>
-                    <div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
+                    <!--<div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
                         <b-button :disabled="selectedCount <= 0" variant="info" @click="submitSelected" style="height: 34px;">
                             Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
+                        </b-button>
+                    </div>-->
+
+                    <div style="margin-bottom: 10px; margin-right: 10px;">
+                        <b-button variant="info" @click="submitAll" style="height: 34px;">
+                            Submit to review
                         </b-button>
                     </div>
                 </template>
@@ -210,11 +209,11 @@ const DateTimeField = {
 
 // used by the citations browser
 const full_fields = [
-    {
-        key: "status",
-        label: "Status",
-        sortable: true
-    },
+    //{
+    //    key: "status",
+    //    label: "Status",
+    //    sortable: true
+    //},
     {
         key: "id",
         label: "ID",
@@ -498,6 +497,41 @@ export default {
                     .catch(() => {
                         this.$snotify.error("Failed to delete entry");
                     });
+            }
+        },
+        submitRequest() {
+            const entryIDs = Object.keys(this.selected).join(",");
+            // TODO: set the status of all the selected entries to 'submitted'
+            HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
+                .then(result => {
+
+                    // add request to change the status of the variant
+
+                    router.push({
+                        name: "submit-curation",
+                        params: {
+                            entryIDs: entryIDs,
+                        }
+                    });
+                })
+                .catch((err) => {
+                    this.$snotify.error("Failed to submit entries");
+                    log.warn(err);
+                });
+        },
+        submitAll() {
+            const prompt = "Are you sure that you want to submit the entries of this variant?\n\nYou will no longer be able to edit your entries after submitting them!"
+            if (confirm(prompt)) {
+                const params = {var_id : this.variant.id}
+                HTTP.post(`/curation_ids`, params)
+                    .then((response) => {
+                        console.log(`curation_ids response: ${response.data}`)
+                        this.selected = response.data
+                        this.submitRequest();
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
             }
         },
         submitSelected() {

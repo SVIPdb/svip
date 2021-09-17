@@ -45,7 +45,6 @@
                                 <b-form-select v-model="data.item.sib_annotation_trust"
                                                v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
                                                class="form-control"></b-form-select>
-                                               {{data.item.sib_annotation_trust}}
                             </div>
                         </template>
 
@@ -86,6 +85,7 @@
                                 </b-button>
                                 <b-button
                                     v-b-modal="addNoteID"
+                                    
                                     target="_blank"
                                     class="centered-icons"
                                     variant="primary"
@@ -159,15 +159,17 @@
             </transition>
         </b-card>
 
-        <b-modal :id="addNoteID" ref="modal-add-note" title="Add/modify a note" class="modal-add-evidence"
-                 size="lg" :hide-footer="true">
-            <b-card no-body>
-                <b-textarea class="summary-box" v-model="note" rows="3"/>
-            </b-card>
-        </b-modal>
+        <div v-for="(evidence) in disease" :key="evidence">
+            <b-modal :id="addNoteID" :ref="evidence.sib_annotation_id" title="Add/modify a note" class="modal-add-evidence"
+                    size="lg" :hide-footer="true">
+                <b-card no-body>
+                    <b-textarea class="summary-box" v-model="note" rows="3"/>
+                </b-card>
+            </b-modal>
+        </div>
 
         <b-modal :id="addEvidenceID" ref="modal-add-evidence" title="Add a new evidence" class="modal-add-evidence"
-                 size="lg" :hide-footer="true">
+                size="lg" :hide-footer="true">
             <b-card no-body>
                 <b-tabs
                     card
@@ -182,7 +184,7 @@
                                 <b-row no-gutters>
                                     <b-col cols="3">
                                         <b-form-select required class="custom-border-left" v-model="source"
-                                                       :options="['PMID']"/>
+                                                    :options="['PMID']"/>
                                     </b-col>
                                     <b-col cols="6">
                                         <b-form-input
@@ -195,14 +197,14 @@
                                     <b-col cols="2">
                                         <b-button-group>
                                             <b-button :disabled="!source || !reference"
-                                                      class="custom-unrounded centered-icons" variant="info"
-                                                      @click="viewCitation">
+                                                    class="custom-unrounded centered-icons" variant="info"
+                                                    @click="viewCitation">
                                                 <icon name="eye"/>
                                                 View Abstract
                                             </b-button>
                                             <b-button :disabled="!source || !reference" type="submit"
-                                                      class="custom-border-right centered-icons" variant="success"
-                                                      @click="addEvidence" target="_blank">
+                                                    class="custom-border-right centered-icons" variant="success"
+                                                    @click="addEvidence" target="_blank">
                                                 <icon name="plus"/>
                                                 Create Entry
                                             </b-button>
@@ -220,9 +222,9 @@
 
                                             <div class="mt-1 text-left">
                                                 <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                          v-for="x in annotationUsed" :key="x.id"
-                                                          :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                                          target="_blank"
+                                                        v-for="x in annotationUsed" :key="x.id"
+                                                        :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
+                                                        target="_blank"
                                                 >
                                                     Entry #{{ x.id }}
                                                 </b-button>
@@ -234,7 +236,7 @@
                                 <b-row no-gutters>
                                     <b-col cols="12">
                                         <VariomesAbstract v-if="loadingVariomes" style="margin-top: 1em;"
-                                                          :variomes="variomes"/>
+                                                        :variomes="variomes"/>
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -243,6 +245,7 @@
                 </b-tabs>
             </b-card>
         </b-modal>
+
     </div>
 </template>
 
@@ -299,7 +302,9 @@ export default {
                 const notYetAnnotated = evidence.finalAnnotation.annotatedEffect === "Not yet annotated" || evidence.finalAnnotation.annotatedTier === "Not yet annotated"
                 evidenceObj["sib_annotation_outcome"] = notYetAnnotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect
                 evidenceObj["sib_annotation_trust"] = notYetAnnotated? evidence.curator.annotatedTier : evidence.finalAnnotation.annotatedTier
-                evidenceObj["sib_annotation_clinical_input"] = evidence.finalAnnotation.clinical_input
+                evidenceObj["clinical_input"] = evidence.finalAnnotation.clinical_input
+                //evidenceObj["clinical_input"] = `modal-add-note-${this.label.replace(" ", "-")}`
+
                 
                 evidenceObj["reviews"] = []
                 evidence.reviews.map(review => {
@@ -383,6 +388,7 @@ export default {
             // look up the reference via the variomes API
             this.loadingVariomes = true;
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
+            console.log("VARIOMES IS CALLED IN MODIFYREVIEW")
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
@@ -500,7 +506,7 @@ export default {
     mounted() {
         this.makeItems()
         this.addEvidenceID = `modal-add-evidence-${this.label.replace(" ", "-")}`
-        this.addNoteID = `modal-add-note-${this.label.replace(" ", "-")}`
+        this.addNoteID = `modal-add-note-${this.label.replace("wesh", "-")}`
     },
     computed: {
         ...mapGetters({

@@ -592,19 +592,14 @@ class ReviewDataView(APIView):
             )
 
 
-#class ReviewsView(APIView):
-#    reviews = []
-#    for evidence in CurationEvidence.objects.all():
-#        review_dict = {
-#            'gene_id': evidence.association.variant.gene.id,
-#            'variant_id': evidence.association.variant.id,
-#            'gene_name': evidence.association.variant.gene.symbol,
-#            'variant': evidence.association.variant.name,
-#            'hgvs': evidence.association.variant.hgvs_c,
-#            'disease': evidence.association.disease.name,
-#            'status': '',
-#            'deadline': 'n/a',
-#            'requester': '',
-#            'curator': []
-#        }
-#        reviews.append(review_dict)
+class CurationIds(APIView):
+    
+    # returns all the IDs of the curation associated with the current variant
+    def post(self, request, *args, **kwargs):
+        var_id = request.data.get('var_id')
+        curations = {}
+        
+        for curation in Variant.objects.get(id=var_id).curations.all():
+            curations[curation.id] = True
+            
+        return Response(data = curations)

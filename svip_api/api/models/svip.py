@@ -86,6 +86,9 @@ class VariantInSVIP(models.Model):
     to devote a lot of time to engineering a normalized data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
+    
+    #status = models.TextField(null=True, blank=True)
+    
     variant = models.OneToOneField(
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
     # variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)

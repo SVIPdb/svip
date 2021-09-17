@@ -680,6 +680,7 @@ export default {
         },
         loadVariomeData() {
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
+            console.log("VARIOMES IS CALLED IN ADDEVIDENCE")
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
