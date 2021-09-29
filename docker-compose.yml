@@ -47,12 +47,15 @@ services:
       - .env
 
   local_uta:
+    # image: biocommons/uta:uta_20190928
     image: biocommons/uta:uta_20171026
     restart: always
     volumes:
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     ports:
       - '15032:5432'
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
 
   api:
     container_name: svip_api
