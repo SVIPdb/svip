@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 volumes:
   vep_data:
@@ -17,11 +17,11 @@ services:
       - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
       - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
     volumes:
-      - './g2p-aggregator/harvester:/app'
-      - './g2p-aggregator/data:/data'
-      - './outputs:/output'
-      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
-      - 'vep_data:/opt/data'
+      - "./g2p-aggregator/harvester:/app"
+      - "./g2p-aggregator/data:/data"
+      - "./outputs:/output"
+      - "/usr/local/share/seqrepo:/usr/local/share/seqrepo"
+      - "vep_data:/opt/data"
     depends_on:
       - db
       - local_uta
