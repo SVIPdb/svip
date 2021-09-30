@@ -515,7 +515,7 @@ export default {
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
                         if (evidence.id in this.selfReviewedEvidences) {
-
+                            console.log('REREVIEWED')
                             let reviewID = this.selfReviewedEvidences[evidence.id]
                             HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
                                 .then((response) => {
@@ -527,7 +527,7 @@ export default {
                                 })
                         } else {
                             //newReviews.push(this.reviewParams(evidence));
-
+                            console.log('FIRST REVIEW')
                             HTTP.post(`/reviews/`, this.reviewParams(evidence))
                                 .then((response) => {
                                     this.getReviewData()

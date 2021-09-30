@@ -73,7 +73,7 @@ HTTP.interceptors.request.use(request => {
 
     const end = new Date()
     const duration = (end - start)/1000
-    console.log(`request: ${duration.toFixed(1)}s`)
+    //console.log(`request: ${duration.toFixed(1)}s`)
     return request;
 });
 
@@ -83,7 +83,7 @@ HTTP.interceptors.response.use(
         np_manager && np_manager.done();
         const end = new Date()
         const duration = (end - start)/1000
-        console.log(`response: ${duration.toFixed(1)}s`)
+        //console.log(`response: ${duration.toFixed(1)}s`)
         return response;
     },
     (err) => {

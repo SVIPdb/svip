@@ -280,7 +280,7 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    console.log(`review_data response: ${response.data.review_data}`)
+                    console.log(`review_data response: ${JSON.stringify(response.data)}`)
                     this.diseases = response.data.review_data
                 })
                 .catch((err) => {

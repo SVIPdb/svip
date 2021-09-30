@@ -1,5 +1,6 @@
 import itertools
 
+from collections import OrderedDict
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
@@ -302,6 +303,17 @@ class Association(models.Model):
     extras = JSONField(null=True, verbose_name="Association-specific extra data")
 
 
+REVIEW_STATUS = OrderedDict((
+    ('none', 'none'),
+    ('loaded', 'loaded'),
+    ('curated', 'curated'),
+    ('conflicting_reviews', 'conflicting_reviews'),
+    ('to_review_again', 'to_review_again'),
+    ('on_hold', 'on_hold'),
+    ('fully_reviewed', 'fully_reviewed')
+))
+
+
 class CollapsedAssociation(models.Model):
     """
     A simplified version of Association that collapses entries that have the same information except the source
@@ -326,6 +338,8 @@ class CollapsedAssociation(models.Model):
     publications = ArrayField(base_field=models.TextField(), blank=True, null=True, verbose_name="Publication URLs")
     children = JSONField(blank=True, null=True)
     collapsed_count = models.BigIntegerField(blank=True, null=True)
+
+    review_status = models.TextField(verbose_name="Review status", choices=tuple(REVIEW_STATUS.items()), default='none', blank=True, null=True)
 
     class Meta:
         managed = False  # Created from a view. Don't remove.
