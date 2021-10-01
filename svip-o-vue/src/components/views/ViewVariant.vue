@@ -98,6 +98,8 @@
                 </div>
             </div>
 
+            <VariantSummary :variant="variant" class="variant-summary" />
+
             <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
             <variant-public-databases :variant="variant"></variant-public-databases>
 
@@ -138,6 +140,8 @@ import variantSvip from "@/components/genes/variants/SVIPInfo";
 import store from "@/store";
 import linkItems from "@/data/curation/links/items.json";
 
+import VariantSummary from "@/components/widgets/VariantSummary";
+
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 import Sidebar from "@/components/structure/sidebar/Sidebar";
@@ -147,7 +151,7 @@ import { HTTP } from "@/router/http";
 
 export default {
     name: "ViewVariant",
-    components: {CommentList, Sidebar, VariantExternalInfo, variantPublicDatabases, variantSvip},
+    components: {CommentList, Sidebar, VariantExternalInfo, variantPublicDatabases, variantSvip, VariantSummary},
     data() {
         return {
             showAliases: false,
@@ -257,6 +261,10 @@ export default {
 .variant-header th {
     vertical-align: text-bottom;
     padding: 1rem;
+}
+
+.variant-summary {
+    margin-top: 1rem;
 }
 
 .aliases-list {
