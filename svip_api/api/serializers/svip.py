@@ -19,7 +19,8 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2
+    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
+    SummaryDraft
 )
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
@@ -726,6 +727,12 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
             }
         }
 
+
+class SummaryDraftSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = SummaryDraft
+        fields = '__all__'
 
 # class CurationReviewListSerializer(serializers.ListSerializer):
 #    def update(self, instance, validated_data):
