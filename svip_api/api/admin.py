@@ -3,10 +3,11 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from api.models import VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant, SubmittedVariantBatch
 from api.models.svip import (SummaryComment, CurationAssociation, CurationEvidence, CurationReview,
-                             SIBAnnotation1, SIBAnnotation2
+                             SIBAnnotation1, SIBAnnotation2, SummaryDraft
                             )
 
 admin.site.register(SummaryComment)
+admin.site.register(SummaryDraft)
 admin.site.register(CurationReview)
 admin.site.register(SIBAnnotation1)
 admin.site.register(SIBAnnotation2)

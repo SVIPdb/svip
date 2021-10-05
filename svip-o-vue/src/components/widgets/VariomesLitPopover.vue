@@ -150,7 +150,6 @@ export default {
                 return;
             }
 
-            console.log("VARIOMES IS CALLED IN LITPOPER")
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.parsedPMID,

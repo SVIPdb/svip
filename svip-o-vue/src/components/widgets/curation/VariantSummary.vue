@@ -4,10 +4,17 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Variant Summary
+                    <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
                 </h6>
 
                 <b-card-text class="p-2 m-0">
-                    <b-textarea class="summary-box" v-on:input="changeSummary($event)" rows="3" :value=summary />
+                    <b-textarea 
+                        class="summary-box" 
+                        v-on:input="changeSummary($event)" 
+                        rows="3" 
+                        :value=summaryModel
+                        v-bind:style="{backgroundColor: this.summaryTextBackground}"
+                    />
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
@@ -19,11 +26,10 @@
                     >
                         <icon name="history" label="History" /> History
                     </b-button>
-                    <!--<b-button variant="success" class="centered-icons" @click="saveAsADraft">-->
-                    <b-button variant="warning" class="mr-2 centered-icons" :disabled=!showSummaryDraft>
-                        Save as a draft
+                    <b-button variant="warning" class="mr-2 centered-icons" :disabled=!showSummaryDraft @click="saveSummaryDraft">
+                        Finish later
                     </b-button>
-                    <b-button variant="danger" class="mr-2 centered-icons" :disabled=!showSummaryDraft>
+                    <b-button variant="danger" class="mr-2 centered-icons" :disabled=!showSummaryDraft @click="deleteSummaryDraft">
                         Delete this draft
                     </b-button>
                     <b-button variant="success" class="centered-icons" @click="saveSummary">
@@ -51,6 +57,7 @@ import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHistory";
 import ulog from 'ulog';
+import {mapGetters} from "vuex";
 
 const log = ulog('VariantSummary');
 
@@ -63,13 +70,13 @@ export default {
     data() {
         return {
             summary: this.variant.svip_data && this.variant.svip_data.summary,
-            history_entry_id: null,
+            summaryDraft: '',
+            serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and variant (if so: PATCH request instead of POST)
 
+            history_entry_id: null,
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            summaryDraft: '',
-            summaryInput: '' 
         };
     },
     mounted() {
@@ -85,35 +92,97 @@ export default {
     computed: {
         showSummaryDraft() {
             const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryInput) && this.summaryInput !== this.summary) {
+            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
                 return true
             } else {
                 return false
             }
         },
         summaryModel() {
-            return this.showSummaryDraft ? this.summary : this.summaryDraft
+            return this.showSummaryDraft ? this.summaryDraft : this.summary
+        },
+        ...mapGetters({
+            user: "currentUser"
+        }),
+        draftDisplay() {
+            return this.showSummaryDraft ? 'inline-block' : 'none'
+        },
+        summaryTextBackground() {
+            return this.showSummaryDraft ? 'rgb(247, 233, 203)' : 'white'
         }
     },
     methods: {
         getSummaryDraft() {
             // get already existing summary comment for this variant and user (if exists)
-            HTTP.get(`/summary_drafts/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
+            HTTP.get(`/summary_draft/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
-
                 if (results.length > 0) {
-                    this.summaryDraft = results[0]
+                    this.serverSummaryDraft = results[0]
+                    this.summaryDraft = results[0].content
                     //this.summaryDraft = results[0].content
                 }
             });
         },
         changeSummary(event) {
-            console.log(event)
-            this.summaryInput = event
+            this.summaryDraft = event
+        },
+        saveSummaryDraft() {
+            // Prepare a JSON containing parameters for SummaryDraft model
+            const summaryDraftJSON = {
+                content: this.summaryDraft,
+                owner: this.user.user_id,
+                variant: this.variant.id
+            }
+
+
+            if (this.serverSummaryDraft === null) {
+                // summaryDraft doesn't already exist (for this user and variant): post new
+                HTTP.post(`/summary_draft/`, summaryDraftJSON)
+                    .then(() => {
+                        this.getSummaryDraft();
+                        this.isEditMode = false;
+                        this.$snotify.success("Your draft has been posted");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to post new summary draft");
+                    })
+            } else {
+                // summaryDraft already exists: modify it
+                HTTP.patch(`/summary_draft/${this.serverSummaryDraft.id}`, {content: this.summaryDraft})
+                    .then(() => {
+                        this.getSummaryDraft();
+                        this.isEditMode = false;
+                        this.$snotify.success("Your draft has been updated");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary draft");
+                    })
+            }
+        },
+        deleteSummaryDraft() {
+            // send a delete request only if SummaryComment instance exists in the server
+            if (this.serverSummaryDraft !== null) {
+                HTTP.delete(`/summary_draft/${this.serverSummaryDraft.id}/`)
+                    .then(() => {
+                        this.serverSummaryDraft = null
+                        this.summaryDraft = "";
+                        this.$snotify.success("Your draft has been deleted");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to delete your draft");
+                    })
+            } else {
+                this.summaryComment = "";
+                this.isEditMode = false;
+                this.$snotify.success("Your draft has been deleted");
+            }
         },
         saveSummary() {
             if (!this.variant.svip_data) {
-                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summary })
+                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summaryModel })
                     .then((response) => {
                         this.variant.svip_data = response.data;
                         this.summary = response.data.summary;
@@ -124,8 +193,7 @@ export default {
                         this.$snotify.error("Failed to update summary");
                     })
             }
-
-            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summary })
+            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summaryModel })
                 .then((response) => {
                     this.summary = response.data.summary;
                     this.$snotify.success("Summary updated!");
@@ -171,5 +239,10 @@ export default {
 
 .summary-box {
     color: black !important;
+}
+
+.draft-header {
+    margin-left: 3rem;
+    color: rgb(247, 233, 203);
 }
 </style>
