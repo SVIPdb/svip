@@ -24,7 +24,7 @@ services:
       - /app/node_modules # prevent syncing of node_modules
     # starts react in hot-reload mode
     # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
-    command: sh -c "npm install && npm run serve"
+    command: sh -c "npm install && npm run serve --allowed-hosts all"
     restart: 'no'
     ports:
       - '3000:8080'
