@@ -22,6 +22,7 @@ from .svip import (
     SubmittedVariantViewSet,
     SubmittedVariantBatchViewSet,
     SummaryCommentViewSet,
+    SummaryDraftViewSet,
     CurationReviewViewSet,
     SIBAnnotation1ViewSet,
     SIBAnnotation2ViewSet

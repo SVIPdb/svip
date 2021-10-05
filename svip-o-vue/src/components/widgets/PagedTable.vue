@@ -127,8 +127,8 @@ export default {
     methods: {
         desnakify,
         provider(ctx) {
-            console.log("ctx :")
-            console.log(ctx)
+            //console.log("ctx :")
+            //console.log(ctx)
             const { __search, ...filter_params } = ctx.filter;
 
             const params = {

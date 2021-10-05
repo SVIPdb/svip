@@ -314,6 +314,15 @@ class VariantInSVIP(models.Model):
         verbose_name_plural = "Variants in SVIP"
 
 
+class SummaryDraft(models.Model):
+    """
+    Uncompleted summary specific to a curator and a given variant
+    """
+    content = models.TextField(default="")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, default=16)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
+
+
 class SummaryComment(models.Model):
     """
     Summary comment posted by reviewer for a given variant

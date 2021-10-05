@@ -20,7 +20,7 @@ from api.models import (
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
     SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
-    SIBAnnotation2
+    SIBAnnotation2, SummaryDraft
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -30,7 +30,7 @@ from api.serializers import (
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
     SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
-    CurationReviewSerializer,
+    CurationReviewSerializer, SummaryDraftSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -435,11 +435,6 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-# ================================================================================================================
-# === SummaryComment
-# ================================================================================================================
-
-
 class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = SIBAnnotation1Serializer
@@ -483,7 +478,6 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
     serializer_class = SummaryCommentSerializer
 
     def get_queryset(self):
-        print(f"query params: {self.request.query_params} ")
 
         variant = self.request.query_params.get('variant')
         owner = self.request.query_params.get('owner')
@@ -497,6 +491,28 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
+
+
+class SummaryDraftViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SummaryDraftSerializer
+    
+    def get_queryset(self):
+        print(f"query params: {self.request.query_params} ")
+        
+        variant = self.request.query_params.get('variant')
+        owner = self.request.query_params.get('owner')
+        
+        queryset = SummaryDraft.objects.all()
+        
+        if variant is not None:
+            queryset = queryset.filter(variant=variant)
+
+        if owner is not None:
+            queryset = queryset.filter(owner=owner)
+
+        return queryset
+    
 
 
 

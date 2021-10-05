@@ -75,7 +75,7 @@ export default {
             showSummary: false,
             isEditMode: false,
             summaryComment: "",
-            serverSummaryComment: null,
+            serverSummaryComment: null, // defines whether a comment exists in the DB for this user and variant (if so: PATCH request instead of POST)
         };
     },
     mounted() {
@@ -141,7 +141,7 @@ export default {
                     })
                     .catch((err) => {
                         log.warn(err);
-                        this.$snotify.error("Failed to update summary comment");
+                        this.$snotify.error("Failed to update your comment");
                     })
             }
         },
@@ -157,7 +157,7 @@ export default {
                     })
                     .catch((err) => {
                         log.warn(err);
-                        this.$snotify.error("Failed to update summary");
+                        this.$snotify.error("Failed to delete your comment");
                     })
             } else {
                 this.summaryComment = "";
