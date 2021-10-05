@@ -13,7 +13,12 @@ module.exports = {
     configureWebpack: {
         plugins: [
             new GitRevisionPlugin({ branch: true })
-        ]
+        ],
+        devServer: {
+            allowedHosts: [
+                'nc2:3000'
+            ]
+        }
     },
     chainWebpack: config => {
         config.plugins.delete('progress')
