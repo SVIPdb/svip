@@ -25,6 +25,8 @@ if USE_NPLUSONE:
 INTERNAL_IPS = [
     '127.0.0.1',
     'localhost',
+    'nc2',
+    '192.168.1.52'
     (socket.gethostbyname(socket.gethostname()))[:-1] + '1'
 ]
 
