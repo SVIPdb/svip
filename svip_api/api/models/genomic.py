@@ -270,6 +270,18 @@ class VariantInSource(models.Model):
         )
 
 
+class VariantStatus(models.Model):
+    """
+    Each instance of VariantStatus corresponds to a specific stage of curation.
+    From an instance of this class, all the existing variants of that status can be accessed using the related_name 'variants'.
+    """
+    name = models.TextField(null=True, blank=True)
+    stars = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
 class Association(models.Model):
     """
     Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts for a specific
@@ -303,17 +315,6 @@ class Association(models.Model):
     extras = JSONField(null=True, verbose_name="Association-specific extra data")
 
 
-REVIEW_STATUS = OrderedDict((
-    ('none', 'none'),
-    ('loaded', 'loaded'),
-    ('curated', 'curated'),
-    ('conflicting_reviews', 'conflicting_reviews'),
-    ('to_review_again', 'to_review_again'),
-    ('on_hold', 'on_hold'),
-    ('fully_reviewed', 'fully_reviewed')
-))
-
-
 class CollapsedAssociation(models.Model):
     """
     A simplified version of Association that collapses entries that have the same information except the source
@@ -339,7 +340,7 @@ class CollapsedAssociation(models.Model):
     children = JSONField(blank=True, null=True)
     collapsed_count = models.BigIntegerField(blank=True, null=True)
 
-    review_status = models.TextField(verbose_name="Review status", choices=tuple(REVIEW_STATUS.items()), default='none', blank=True, null=True)
+    status = models.ForeignKey(VariantStatus, on_delete=DB_CASCADE, related_name='variants')
 
     class Meta:
         managed = False  # Created from a view. Don't remove.

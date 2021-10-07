@@ -108,7 +108,7 @@ export default {
             return this.showSummaryDraft ? 'inline-block' : 'none'
         },
         summaryTextBackground() {
-            return this.showSummaryDraft ? 'rgb(247, 233, 203)' : 'white'
+            return this.showSummaryDraft ? 'rgb(248, 236, 210)' : 'white'
         }
     },
     methods: {
@@ -243,6 +243,6 @@ export default {
 
 .draft-header {
     margin-left: 3rem;
-    color: rgb(247, 233, 203);
+    color: rgb(248, 236, 210);
 }
 </style>
