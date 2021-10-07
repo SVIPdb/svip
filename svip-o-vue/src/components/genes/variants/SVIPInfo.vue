@@ -155,7 +155,7 @@ const NoSVIPInfo = {
         return (
             <div class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center" style="font-size: 150%;">
                 <icon name="question-circle" scale="1.5" style="margin-right: 10px;"/>
-                <div>No SVIP information found</div>
+                <div>No SVIP sample information found</div>
             </div>
         );
     }
