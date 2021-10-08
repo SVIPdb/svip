@@ -15,7 +15,7 @@ from django_db_cascade.deletions import DB_CASCADE
 from django_db_cascade.fields import ForeignKey
 from simple_history.models import HistoricalRecords
 
-from api.models.genomic import Variant
+from api.models.genomic import Variant, VariantStatus
 from api.models.reference import Disease
 from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
                              PUBLIC_VISIBLE_STATUSES)
@@ -105,15 +105,18 @@ class VariantInSVIP(models.Model):
         new_status = 'none'
         var = self.variant
         
-        if var.curations.objects.all().count() > 0 :
+        if var.curation_request.all().count() > 0:
+            new_status = 'loaded'
+        
+        if var.curations.all().count() > 0 :
             new_status = 'ongoign_curation'
         
         for curation in var.curations.all():
             if curation.status == 'submitted':
                 new_status = '0_review'
         
-        for association in var.curation_associations():
-            for evidence in association.curation_evidences():
+        for association in var.curation_associations.all():
+            for evidence in association.curation_evidences.all():
                 if evidence.reviews.count() == 1:
                     new_status = '1_review'
                 if evidence.reviews.count() == 2:
@@ -126,8 +129,12 @@ class VariantInSVIP(models.Model):
                         new_status = 'fully_reviewed'
                     else:
                         new_status = 'conflicting_reviews'
+                if evidence.annotation2 != None:
+                    new_status = 'to_review_again'
         
-        if new_status != var.status.name:
+        if var.status == None :
+            var.status = VariantStatus(name=new_status)
+        elif new_status != var.status.name:
             var.status = VariantStatus(name=new_status)
 
     def tissue_counts(self):
@@ -709,6 +716,14 @@ class CurationReview(SVIPModel):
     annotated_effect = models.TextField(null=True, blank=True)
     annotated_tier = models.TextField(null=True, blank=True)
     comment = models.TextField(default="", null=True, blank=True)
+
+
+#class RevisedReview(models.Model):
+#    """
+#    2nd cycle of reviews (after annotation of curators)
+#    """
+#    reviewer = models.ForeignKey(
+#        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
 
 
 class SIBAnnotation1(models.Model):

@@ -65,11 +65,26 @@ class Gene(models.Model):
     def __str__(self):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
+
+class VariantStatus(models.Model):
+    """
+    Each instance of VariantStatus corresponds to a specific stage of curation.
+    From an instance of this class, all the existing variants of that status can be accessed using the related_name 'variants'.
+    """
+    name = models.TextField(null=True, blank=True)
+    stars = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
 class VariantManager(models.Manager):
     def get_by_natural_key(self, description, hgvs_g):
         return self.get(description=description, hgvs_g=hgvs_g)
 
 class Variant(models.Model):
+    
+    status = models.ForeignKey(VariantStatus, on_delete=DB_CASCADE, related_name='variants', null=True)
     
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
@@ -270,18 +285,6 @@ class VariantInSource(models.Model):
         )
 
 
-class VariantStatus(models.Model):
-    """
-    Each instance of VariantStatus corresponds to a specific stage of curation.
-    From an instance of this class, all the existing variants of that status can be accessed using the related_name 'variants'.
-    """
-    name = models.TextField(null=True, blank=True)
-    stars = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.name
-
-
 class Association(models.Model):
     """
     Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts for a specific
@@ -339,8 +342,6 @@ class CollapsedAssociation(models.Model):
     publications = ArrayField(base_field=models.TextField(), blank=True, null=True, verbose_name="Publication URLs")
     children = JSONField(blank=True, null=True)
     collapsed_count = models.BigIntegerField(blank=True, null=True)
-
-    status = models.ForeignKey(VariantStatus, on_delete=DB_CASCADE, related_name='variants')
 
     class Meta:
         managed = False  # Created from a view. Don't remove.
