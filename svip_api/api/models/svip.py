@@ -131,6 +131,11 @@ class VariantInSVIP(models.Model):
                         new_status = 'conflicting_reviews'
                 if evidence.annotation2 != None:
                     new_status = 'to_review_again'
+                if evidence.revised_reviews.all().count() == 3:
+                    if evidence.revised_reviews.filter(agree=True).count() == 3:
+                        new_status = 'fully_reviewed'
+                    else:
+                        new_status = 'on_hold'
         
         if var.status == None :
             var.status = VariantStatus(name=new_status)
@@ -718,13 +723,16 @@ class CurationReview(SVIPModel):
     comment = models.TextField(default="", null=True, blank=True)
 
 
-#class RevisedReview(models.Model):
-#    """
-#    2nd cycle of reviews (after annotation of curators)
-#    """
-#    reviewer = models.ForeignKey(
-#        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
-
+class RevisedReview(models.Model):
+    """
+    2nd cycle of reviewing (if a conflict exists among 1st cycle reviews)
+    """
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+    curation_evidence = ForeignKey(
+        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="revised_reviews")
+    agree = models.BooleanField()
+    comment = models.TextField(default="", null=True, blank=True)
 
 class SIBAnnotation1(models.Model):
     """
