@@ -138,9 +138,12 @@ class VariantInSVIP(models.Model):
                         new_status = 'on_hold'
         
         if var.status == None :
-            var.status = VariantStatus(name=new_status)
+            var.status = VariantStatus.objects.get(name=new_status)
         elif new_status != var.status.name:
-            var.status = VariantStatus(name=new_status)
+            var.status = VariantStatus.objects.get(name=new_status)
+        
+        var.save()
+        return var.status
 
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday

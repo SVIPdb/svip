@@ -137,6 +137,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('gene')
         fields.append('gene_symbol')
         fields.append('in_svip')
+        fields.append('status')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
 
         # FIXME: add sources collection here, from VariantInSource
