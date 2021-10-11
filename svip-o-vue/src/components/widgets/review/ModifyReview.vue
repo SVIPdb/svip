@@ -297,7 +297,9 @@ export default {
                     })
                 })
 
-                evidenceObj["sib_annotation_id"] = evidence.curator.id
+                // use id of final_annotation object so that the PUT request is made to the right 
+                evidenceObj["final_annotation_id"] = evidence.finalAnnotation.id
+
                 // If not final annotation yet, then the values are those of first annotation
                 const notYetAnnotated = evidence.finalAnnotation.annotatedEffect === "Not yet annotated" || evidence.finalAnnotation.annotatedTier === "Not yet annotated"
                 evidenceObj["sib_annotation_outcome"] = notYetAnnotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect

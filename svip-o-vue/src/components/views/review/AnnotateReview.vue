@@ -6,7 +6,13 @@
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <VariantDisease :variant="variant"/>
+        <div v-if="['to_review_again', 'on_hold', 'fully_reviewed'].includes(variant.status_name)">
+            <SecondReviewCycle :variant="variant"/>
+        </div>
+        <div v-else>
+            <VariantDisease :variant="variant"/>
+        </div>
+
     </div>
 </template>
 <script>
@@ -17,6 +23,7 @@ import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariantSummary from "@/components/widgets/review/VariantSummary";
 import VariantDisease from "@/components/widgets/review/VariantDisease";
+import SecondReviewCycle from "@/components/widgets/review/SecondReviewCycle";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 
@@ -27,6 +34,7 @@ export default {
     components: {
         VariantSummary,
         VariantDisease,
+        SecondReviewCycle,
         CuratorVariantInformations
     },
     data() {

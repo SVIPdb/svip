@@ -10,7 +10,7 @@
             <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
         </div>
         <b-button class="float-right" @click="submitAnnotations">
-            Submit review
+            Submit annotation
         </b-button>
     </div>
 </template>
@@ -280,7 +280,7 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    console.log(`review_data response: ${JSON.stringify(response.data)}`)
+                    //console.log(`review_data response: ${JSON.stringify(response.data)}`)
                     this.diseases = response.data.review_data
                 })
                 .catch((err) => {
@@ -293,10 +293,13 @@ export default {
                 tier: evidence.sib_annotation_trust,
                 //clinical_input: evidence.sib_annotation
             }
-            this.annotations[evidence.sib_annotation_id] = annotation
+            this.annotations[evidence.final_annotation_id] = annotation
         },
         submitAnnotations() {
+            console.log('FLAG 1')
             for (var id in this.annotations) {
+                console.log('FLAG 2')
+                console.log(this.annotations[id])
                 HTTP.put(`/sib_annotations_2/${id}/`, this.annotations[id])
                     .then((response) => {
                         console.log(`response: ${response}`)
