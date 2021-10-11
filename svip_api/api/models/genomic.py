@@ -145,6 +145,51 @@ class Variant(models.Model):
             models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
 
+    def status_name(self):
+        return self.status.name
+
+    def update_status(self):
+        new_status = 'none'
+        
+        if self.curation_request.all().count() > 0:
+            new_status = 'loaded'
+        
+        if self.curations.all().count() > 0 :
+            new_status = 'ongoign_curation'
+        
+        for curation in self.curations.all():
+            if curation.status == 'submitted':
+                new_status = '0_review'
+        
+        for association in self.curation_associations.all():
+            for evidence in association.curation_evidences.all():
+                if evidence.reviews.count() == 1:
+                    new_status = '1_review'
+                if evidence.reviews.count() == 2:
+                    new_status = '2_reviews'
+                if evidence.reviews.count() == 3:
+                    if evidence.reviews.filter(
+                        annotated_effect=self.annotation1.effect,
+                        annotated_tier=self.annotation1.tier
+                    ).count() == 3:
+                        new_status = 'fully_reviewed'
+                    else:
+                        new_status = 'conflicting_reviews'
+                if evidence.annotation2 != None:
+                    new_status = 'to_review_again'
+                if evidence.revised_reviews.all().count() == 3:
+                    if evidence.revised_reviews.filter(agree=True).count() == 3:
+                        new_status = 'fully_reviewed'
+                    else:
+                        new_status = 'on_hold'
+        
+        if self.status == None :
+            self.status = VariantStatus.objects.get(name=new_status)
+        elif new_status != self.status.name:
+            self.status = VariantStatus.objects.get(name=new_status)
+        
+        self.save()
+        return self.status
 
 
 class VariantInSource(models.Model):

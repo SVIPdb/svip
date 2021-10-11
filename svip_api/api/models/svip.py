@@ -101,50 +101,6 @@ class VariantInSVIP(models.Model):
 
     history = HistoricalRecords(cascade_delete_history=True)
 
-    def update_status(self):
-        new_status = 'none'
-        var = self.variant
-        
-        if var.curation_request.all().count() > 0:
-            new_status = 'loaded'
-        
-        if var.curations.all().count() > 0 :
-            new_status = 'ongoign_curation'
-        
-        for curation in var.curations.all():
-            if curation.status == 'submitted':
-                new_status = '0_review'
-        
-        for association in var.curation_associations.all():
-            for evidence in association.curation_evidences.all():
-                if evidence.reviews.count() == 1:
-                    new_status = '1_review'
-                if evidence.reviews.count() == 2:
-                    new_status = '2_reviews'
-                if evidence.reviews.count() == 3:
-                    if evidence.reviews.filter(
-                        annotated_effect=var.annotation1.effect,
-                        annotated_tier=var.annotation1.tier
-                    ).count() == 3:
-                        new_status = 'fully_reviewed'
-                    else:
-                        new_status = 'conflicting_reviews'
-                if evidence.annotation2 != None:
-                    new_status = 'to_review_again'
-                if evidence.revised_reviews.all().count() == 3:
-                    if evidence.revised_reviews.filter(agree=True).count() == 3:
-                        new_status = 'fully_reviewed'
-                    else:
-                        new_status = 'on_hold'
-        
-        if var.status == None :
-            var.status = VariantStatus.objects.get(name=new_status)
-        elif new_status != var.status.name:
-            var.status = VariantStatus.objects.get(name=new_status)
-        
-        var.save()
-        return var.status
-
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
         # TODO: check if correct
