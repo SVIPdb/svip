@@ -161,27 +161,27 @@ class Variant(models.Model):
             if curation.status == 'submitted':
                 new_status = '0_review'
         
-        for association in self.curation_associations.all():
-            for evidence in association.curation_evidences.all():
-                if evidence.reviews.count() == 1:
-                    new_status = '1_review'
-                if evidence.reviews.count() == 2:
-                    new_status = '2_reviews'
-                if evidence.reviews.count() == 3:
-                    if evidence.reviews.filter(
-                        annotated_effect=self.annotation1.effect,
-                        annotated_tier=self.annotation1.tier
-                    ).count() == 3:
-                        new_status = 'fully_reviewed'
-                    else:
-                        new_status = 'conflicting_reviews'
-                if hasattr(evidence, 'annotation2'):
-                    new_status = 'to_review_again'
-                if evidence.revised_reviews.all().count() == 3:
-                    if evidence.revised_reviews.filter(agree=True).count() == 3:
-                        new_status = 'fully_reviewed'
-                    else:
-                        new_status = 'on_hold'
+        evidence = self.curation_associations.first().curation_evidences.first()
+
+        if evidence.reviews.count() == 1:
+            new_status = '1_review'
+        if evidence.reviews.count() == 2:
+            new_status = '2_reviews'
+        if evidence.reviews.count() == 3:
+            if evidence.reviews.filter(
+                annotated_effect=self.annotation1.effect,
+                annotated_tier=self.annotation1.tier
+            ).count() == 3:
+                new_status = 'fully_reviewed'
+            else:
+                new_status = 'conflicting_reviews'
+        if hasattr(evidence, 'annotation2'):
+            new_status = 'to_review_again'
+        if evidence.revised_reviews.all().count() == 3:
+            if evidence.revised_reviews.filter(agree=True).count() == 3:
+                new_status = 'fully_reviewed'
+            else:
+                new_status = 'on_hold'
         
         if self.status == None :
             self.status = VariantStatus.objects.get(name=new_status)

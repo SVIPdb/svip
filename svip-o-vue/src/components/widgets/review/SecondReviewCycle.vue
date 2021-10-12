@@ -12,32 +12,36 @@
                             <div v-if="showDisease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
-                                        <b-col align="center" cols="1">
+                                        <b-col align="center" cols="2">
                                             <expander v-model="evidence.isOpen"/>
                                             {{ evidence.fullType }}
                                         </b-col>
-                                        <b-col cols="1">
+                                        <b-col cols="2">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
                                                 {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
                                             </p>
                                         </b-col>
-                                        <b-col cols="2">
+                                        <!--<b-col cols="2">
                                             <b-row class="p-2">
                                                 <b-input v-model="evidence.curator.annotatedEffect" readonly/>
                                             </b-row>
                                             <b-row class="p-2">
                                                 <b-input v-model="evidence.curator.annotatedTier" readonly/>
                                             </b-row>
-                                        </b-col>
+                                        </b-col>-->
 
-                                        <b-col cols="2">
+                                        <!--<b-col cols="2">
                                             <b-row class="p-2">
-                                                <b-input v-model="evidence.currentReview.annotatedEffect" readonly/>
+                                                <div v-if="evidence.myReview">
+                                                    <b-input v-model="evidence.myReview.annotatedEffect" readonly/>
+                                                </div>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <b-input v-model="evidence.currentReview.annotatedTier" readonly/>
+                                                <div v-if="evidence.myReview">
+                                                    <b-input v-model="evidence.myReview.annotatedTier" readonly/>
+                                                </div>
                                             </b-row>
-                                        </b-col>
+                                        </b-col>-->
 
                                         <b-col cols="2">
                                             <!--Final curators' annotation:-->
@@ -49,20 +53,20 @@
                                             </b-row>
                                         </b-col>
 
-                                        <!--<b-col cols="2">
+                                        <b-col cols="2">
                                             <b-row class="p-2">
-                                                <select-agreement v-model="evidence.currentReview.agreement"
-                                                            @input="onChange(evidence.curator, evidence.currentReview)"/>
+                                                <select-agreement v-model="evidence.newReview.agreement"/>
+                                                            <!--@input="onChange(evidence.curator, evidence.myReview)"/>-->
                                             </b-row>
-                                        </b-col>-->
+                                        </b-col>
 
                                         <b-col cols="4">
                                             <b-textarea
-                                                :disabled="evidence.currentReview.status"
+                                                :disabled="evidence.newReview.agreement === 'I agree.'"
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
-                                                v-model="evidence.currentReview.comment"
+                                                v-model="evidence.newReview.comment"
                                             >
                                             </b-textarea>
                                         </b-col>
@@ -414,7 +418,6 @@ export default {
                 .then((response) => {
                     this.diseases = response.data.review_data
                     this.detectOwnReviews();
-                    this.changeReviewStatusCheckboxes();
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -443,28 +446,25 @@ export default {
         // change review status (true if option matches that of curator, false if doesn't match)
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
-        changeReviewStatusCheckboxes() {
-            this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
-                    // select only evidences for which an option has been selected
-                    if (
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        this.onChange(evidence.curator, evidence.currentReview)
-                    }
-                })
-            })
-        },
         detectOwnReviews() {
             // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
+
+                    const newReview = {
+                        "reviewer_id": this.user.user_id,
+                        "agreement": 'I agree.'
+                    }
+
+                    evidence["newReview"] = newReview
                     evidence.reviews.map(review => {
-                        evidence["currentReview"]["reviewer_id"] = this.user.user_id
                         if (review.reviewer_id === this.user.user_id) {
-                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
-                            evidence.currentReview.annotatedTier = review.annotatedTier;
-                            evidence.currentReview.comment = review.comment;
+                            const myReview = {
+                                'annotatedEffect': review.annotatedEffect,
+                                'annotatedTier': review.annotatedTier,
+                                'comment': review.comment
+                            }
+                            evidence['myReview'] = myReview
 
                             // store the evidence ID so when the user submit it, the request is a patch
                             this.selfReviewedEvidences[evidence.id] = review.id
@@ -479,10 +479,10 @@ export default {
                 const disease = this.diseases[i]
                 for (var j = 0; j < disease["evidences"].length; j++) {
                     const evidence = disease["evidences"][j]
-                    if (!evidence.currentReview.status) {
+                    if (evidence.newReview.agreement === "I don't agree.") {
                     // review doesn't match curator's annotation
                         const regExp = /[a-zA-Z]/g;
-                        if (evidence.currentReview.comment === null || ! regExp.test(evidence.currentReview.comment)) {
+                        if (evidence.newReview.comment === null || ! regExp.test(evidence.newReview.comment)) {
                         // no letter was found in the comment
                             return true
                         }

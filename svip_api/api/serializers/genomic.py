@@ -138,6 +138,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('gene_symbol')
         fields.append('in_svip')
         fields.append('status_name')
+        #fields.append('update_status')
         fields.remove('status')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
 
