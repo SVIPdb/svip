@@ -345,8 +345,3 @@ export default {
     max-height: 0;
 }
 </style>
-<style>
-.ajax-loader-bar {
-    display: none !important;
-}
-</style>

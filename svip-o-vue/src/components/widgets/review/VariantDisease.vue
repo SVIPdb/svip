@@ -451,12 +451,7 @@ export default {
         changeReviewStatusCheckboxes() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    // select only evidences for which an option has been selected
-                    if (
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        this.onChange(evidence.curator, evidence.currentReview)
-                    }
+                    this.onChange(evidence.curator, evidence.currentReview)
                 })
             })
         },
@@ -466,6 +461,20 @@ export default {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
 
+                        if (review.reviewer_id === this.user.user_id) {
+                            let currentReviewObj = {
+                                "annotatedEffect": review.annotatedEffect,
+                                "annotatedTier": review.annotatedTier,
+                                "comment": review.comment
+                            }
+                            evidence['currentReview'] = currentReviewObj
+
+                            // store the evidence ID so when the user submit it, the request is a patch
+                            this.selfReviewedEvidences[evidence.id] = review.id
+                        }
+                    })
+
+                    if (typeof evidence.currentReview === 'undefined') {
                         let currentReviewObj = {
                             "id": evidence.id,
                             "annotatedEffect": evidence.curator.annotatedEffect,
@@ -474,25 +483,15 @@ export default {
                             "status": null,
                             "comment": null
                         }
-
-                        //evidence["currentReview"]["reviewer_id"] = this.user.user_id
                         evidence['currentReview'] = currentReviewObj
+                    }
 
-                        if (review.reviewer_id === this.user.user_id) {
-                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
-                            evidence.currentReview.annotatedTier = review.annotatedTier;
-                            evidence.currentReview.comment = review.comment;
-
-                            // store the evidence ID so when the user submit it, the request is a patch
-                            this.selfReviewedEvidences[evidence.id] = review.id
-                        }
-                    })
                 })
             })
             this.diseases = diseases
         },
         missingComment() {
-        // return true if a same evidence doesn't match the curators annotation and has not been given a comment
+        // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
             for (var i = 0; i < this.diseases.length; i++) {
                 const disease = this.diseases[i]
                 for (var j = 0; j < disease["evidences"].length; j++) {
@@ -501,7 +500,7 @@ export default {
                     // review doesn't match curator's annotation
                         const regExp = /[a-zA-Z]/g;
                         if (evidence.currentReview.comment === null || ! regExp.test(evidence.currentReview.comment)) {
-                        // no letter was found in the comment
+                        // no letter was found in the comment string
                             return true
                         }
                     }
