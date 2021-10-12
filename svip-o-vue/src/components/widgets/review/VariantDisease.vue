@@ -416,9 +416,10 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    this.diseases = response.data.review_data
-                    this.detectOwnReviews();
-                    this.changeReviewStatusCheckboxes();
+
+                    //this.diseases = response.data.review_data
+                    this.detectOwnReviews(response.data.review_data);
+                    this.changeReviewStatusCheckboxes(this.diseases);
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -459,12 +460,24 @@ export default {
                 })
             })
         },
-        detectOwnReviews() {
+        detectOwnReviews(diseases) {
             // iterate over every review to prefill inputs with current user's past reviews
-            this.diseases.map(disease => {
+            diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
-                        evidence["currentReview"]["reviewer_id"] = this.user.user_id
+
+                        let currentReviewObj = {
+                            "id": evidence.id,
+                            "annotatedEffect": evidence.curator.annotatedEffect,
+                            "annotatedTier": evidence.curator.annotatedTier,
+                            "reviewer_id": this.user.user_id,
+                            "status": null,
+                            "comment": null
+                        }
+
+                        //evidence["currentReview"]["reviewer_id"] = this.user.user_id
+                        evidence['currentReview'] = currentReviewObj
+
                         if (review.reviewer_id === this.user.user_id) {
                             evidence.currentReview.annotatedEffect = review.annotatedEffect;
                             evidence.currentReview.annotatedTier = review.annotatedTier;
@@ -476,6 +489,7 @@ export default {
                     })
                 })
             })
+            this.diseases = diseases
         },
         missingComment() {
         // return true if a same evidence doesn't match the curators annotation and has not been given a comment

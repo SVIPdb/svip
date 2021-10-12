@@ -237,59 +237,6 @@ export default {
 
                         //this.submitOneEvidence(evidence)
                     }
-
-
-
-
-
-
-                    //if (evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated") {
-
-                    //    let effects = {}
-                    //    evidence.curations.map(curation => {
-                    //        let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
-                    //        let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
-                    //        if (curation.effect in effects) {
-                    //            effects[curation.effect]["curations"] += 1
-                    //            if (support_score > effects[curation.effect]["support_score"]) {
-                    //                effects[curation.effect]["support_score"] = support_score
-                    //            }
-                    //            if (tier_score > effects[curation.effect]["tier_score"]) {
-                    //                effects[curation.effect]["tier_score"] = tier_score
-                    //            }
-                    //        } else {
-                    //            effects[curation.effect] = {
-                    //                "support_score": support_score,
-                    //                "tier_score": tier_score,
-                    //                "curations": 1,
-                    //                "effect": curation.effect
-                    //            }
-                    //        }
-                    //    })
-                    //    let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
-                    //    const scores = ['support_score', 'curations', 'tier_score']
-                    //    const properties = [...scores, 'effect']
-
-                    //    for (const effect in effects) {
-                    //        for (var i = 0; i < scores.length; i++) {
-                    //            const effect_scores = effects[effect]
-                    //            if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                                    
-                    //                properties.map(property => {
-                    //                    trustedCuration[property] = effect_scores[property]
-                    //                })
-
-                    //                break;
-                    //            } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
-                    //                break;
-                    //            }
-                    //        }
-                    //    }
-                    //    evidence.curator.annotatedEffect = trustedCuration['effect']
-                    //    evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
-
-                    //    this.submitOneEvidence(evidence)
-                    //}
                 })
             })
         },

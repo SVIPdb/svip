@@ -175,7 +175,7 @@ class Variant(models.Model):
                         new_status = 'fully_reviewed'
                     else:
                         new_status = 'conflicting_reviews'
-                if evidence.annotation2 != None:
+                if hasattr(evidence, 'annotation2'):
                     new_status = 'to_review_again'
                 if evidence.revised_reviews.all().count() == 3:
                     if evidence.revised_reviews.filter(agree=True).count() == 3:
