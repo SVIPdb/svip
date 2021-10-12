@@ -17,7 +17,8 @@ TODO.md
 /resources
 /scratch
 
-
-
 svip_api/api/views/beacon_v2.py
 docker-compose.override.yml
+
+# support folder containing project organization files
+.0

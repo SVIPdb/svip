@@ -14,6 +14,7 @@
             </b-col>
         </b-row>
         <div v-else>
+        <!--<div v-if="pageError">-->
             <CuratorVariantInformations :variant="fullVariant" />
 
             <b-row v-if="isVariomesPMC">
@@ -45,7 +46,14 @@
                     === MAIN FORM
                     =======================================================================================================
                     -->
-                    <b-card no-body style="margin-bottom: 1.5em;">
+                    <div v-bind:class="{ unduplicated: !duplicated }" style="margin-bottom: 0.5em; margin-left: 2em; color:red">
+                        Duplicated
+                    </div>
+
+                    <b-card
+                        no-body style="margin-bottom: 1.5em;"
+                        v-bind:border-variant="duplicated? 'danger': ''"
+                    >
                         <b-card-body>
                             <b-container fluid>
                                 <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
@@ -575,6 +583,7 @@ export default {
     },
     data() {
         return {
+            duplicated: false,
             variant: null, // the variant associated with the current curation entry
 
             evidence_types,
@@ -742,6 +751,7 @@ export default {
                                     ...this.$route.params
                                 }
                             });
+                            this.duplicated = true;
                         }
                     })
                     .catch((err) => {
@@ -831,11 +841,11 @@ export default {
                 comment: this.form.comment,
                 annotations: this.form.annotations,
 
-                references: `${this.source}:${this.reference}`
+                references: `${this.source}:${this.reference}`,
             };
 
             if (duplicating) {
-                payload.formatted_variants = this.form.extra_variants
+                payload.formatted_variants = this.form.extra_variants;
             }
 
             return payload;
@@ -867,6 +877,7 @@ export default {
                 : HTTP.post(`/curation_entries/`, payload)
             )
                 .then(result => {
+                    this.duplicated = false;
                     this.$snotify.success(
                         `${isDraft ? "Draft" : "Entry"} ${
                             this.is_saved ? "updated" : "saved"
@@ -942,10 +953,10 @@ export default {
             window.open(targetUrl, '_blank');
         },
         onSubmitDraft() {
-            this.submit(true);
+            this.submit(true); // true for 'isDraft'
         },
         onSubmit() {
-            this.submit(false);
+            this.submit(false); // false for 'isDraft'
         },
         onDelete() {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -1131,5 +1142,8 @@ export default {
 }
 .submission_properties .value {
     font-weight: bold;
+}
+.unduplicated {
+    display: none;
 }
 </style>

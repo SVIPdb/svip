@@ -4,27 +4,28 @@ Serializers for SVIP-specific models.
 import datetime
 import io
 
-import vcf
 from django.contrib.admin.utils import NestedObjects
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models import Count, Q, F
+from django.db.models import Count, F, Q
 from django.forms import model_to_dict
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from api.models import VariantInSVIP, Sample, CurationEntry, Variant, Drug, IcdOMorpho, IcdOTopo, IcdOTopoApiDisease
+import vcf
+from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
+                        IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest
+    CurationRequest, SummaryComment, CurationReview
 )
 from api.serializers import SimpleVariantSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
 from api.serializers.reference import DiseaseSerializer
-from api.shared import pathogenic, clinical_significance
-from api.utils import format_variant, field_is_empty, model_field_null
+from api.shared import clinical_significance, pathogenic
+from api.utils import field_is_empty, format_variant, model_field_null
 
 User = get_user_model()
 
@@ -206,7 +207,8 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'variant',
             'summary',
             'tissue_counts',
-            'diseases'
+            'diseases',
+            'review_data',
         )
 
 
@@ -452,6 +454,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'owner_name',
             'formatted_variants',
             'status',
+
+            'curation_evidences',
         )
 
         extra_kwargs = {
@@ -494,6 +498,17 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
 
     canonical_only = serializers.BooleanField(write_only=True)
 
+    for_curation_request = serializers.BooleanField(
+        required=False, allow_null=True, write_only=True)
+    requestor = serializers.CharField(
+        required=False, allow_null=True, write_only=True)
+
+    def validate(self, data):
+        if data['for_curation_request'] and ('requestor' not in data or data['requestor'] is None or data['requestor'] == ''):
+            raise serializers.ValidationError(
+                {'requestor': 'is required if for_curation_request is true'})
+        return data
+
     def save(self):
         cur_user = self.fields["owner"].get_default()
 
@@ -518,23 +533,28 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
                 if not row:
                     continue
 
-                submitted_var_serializer = SubmittedVariantSerializer(data={
-                    'icdo_morpho': self.validated_data['icdo_morpho'],
-                    'icdo_topo': self.validated_data['icdo_topo']
+                submitted_var_serializer = SubmittedVariantSerializer(context={'request': self.context['request']}, data={
+                    'icdo_morpho': self.validated_data['icdo_morpho'] if 'icdo_morpho' in self.validated_data else None,
+                    'icdo_topo': self.validated_data['icdo_topo'] if 'icdo_topo' in self.validated_data else None,
+                    'canonical_only': self.validated_data['canonical_only'] if 'canonical_only' in self.validated_data else False,
+                    'for_curation_request': self.validated_data[
+                        'for_curation_request'] if 'for_curation_request' in self.validated_data else False,
+                    'requestor': self.validated_data['requestor'] if 'requestor' in self.validated_data else None,
+                    'chromosome': row.CHROM.replace('chr', ''),
+                    'pos': row.POS,
+                    'ref': row.REF,
+                    'alt': str(row.ALT),
+                    'owner': cur_user.pk,
+                    'batch': batch.pk
                 })
 
-                # TODO: parse data, creating new SubmittedVariants for each row
-                submitted_var_serializer.save(
-                    chromosome=row.CHROM,
-                    pos=row.POS,
-                    ref=row.REF,
-                    alt=row.ALT,
-                    owner=cur_user, batch=batch,
-                    canonical_only=self.validated_data['canonical_only'],
-                    # curator data
-                    for_curation_request=self.validated_data['for_curation_request'],
-                    requestor=self.validated_data['requestor']
-                )
+                try:
+                    if submitted_var_serializer.is_valid(raise_exception=True):
+                        submitted_var_serializer.save()
+                except Exception as ex:
+                    print('---VALIDATION ERROR---', ex)
+                    print(submitted_var_serializer.errors)
+                    raise
 
             return self.instance
 
@@ -546,11 +566,11 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
             'owner',
             'owner_name',
             'created_on',
-            # 'for_curation_request',
-            # 'requestor',
             'icdo_morpho',
             'icdo_topo',
-            'canonical_only'
+            'canonical_only',
+            'for_curation_request',
+            'requestor'
         )
 
 
@@ -641,4 +661,57 @@ class SampleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sample
+        fields = '__all__'
+
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+class SummaryCommentSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    # kwargs = {
+    #    'variant': 'variant',
+    # }
+
+    class Meta:
+        model = SummaryComment
+        fields = ('id', 'owner', 'content', 'variant', 'reviewer')
+        extra_kwargs = {
+            "content": {
+                "required": False,
+                "allow_null": True,
+            },
+            "reviewer": {
+                "required": False,
+                "allow_null": False,
+            }
+        }
+
+
+# class CurationReviewListSerializer(serializers.ListSerializer):
+#    def update(self, instance, validated_data):
+
+
+# class CurationReviewSerializer(serializers.ModelSerializer):
+
+#    def __init__(self, *args, **kwargs):
+#        many = kwargs.pop('many', True)
+#        super(CurationReviewSerializer, self).__init__(
+#            many=many, *args, **kwargs)
+
+#    class Meta:
+#        model = CurationReview
+#        fields = '__all__'
+
+class CurationReviewSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(CurationReviewSerializer, self).__init__(
+            *args, **kwargs)
+
+    class Meta:
+        model = CurationReview
         fields = '__all__'

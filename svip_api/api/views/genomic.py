@@ -1,25 +1,26 @@
 import django_filters
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from django_filters import rest_framework as df_filters
+from django_filters.filterset import FilterSet
 # Create your views here.
-from rest_framework import viewsets, permissions, filters
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.models import (
-    Source, Gene, Variant, Association, Phenotype, Evidence, EnvironmentalContext, VariantInSource,
-    CollapsedAssociation, DiseaseInSVIP
-)
-from api.serializers import (
-    SourceSerializer, GeneSerializer,
-    VariantSerializer, AssociationSerializer,
-    PhenotypeSerializer, EvidenceSerializer, EnvironmentalContextSerializer, FullVariantSerializer,
-    VariantInSourceSerializer, CollapsedAssociationSerializer, SimpleVariantSerializer
-)
+from api.models import (Association, CollapsedAssociation, DiseaseInSVIP,
+                        EnvironmentalContext, Evidence, Gene, Phenotype,
+                        Source, Variant, VariantInSource)
+from api.serializers import (AssociationSerializer,
+                             CollapsedAssociationSerializer,
+                             EnvironmentalContextSerializer,
+                             EvidenceSerializer, FullVariantSerializer,
+                             GeneSerializer, PhenotypeSerializer,
+                             SimpleVariantSerializer, SourceSerializer,
+                             VariantInSourceSerializer, VariantSerializer)
 # svip data endpoints
 from api.serializers.genomic_svip import OnlySVIPVariantSerializer
-from api.shared import pathogenic, clinical_significance
+from api.shared import clinical_significance, pathogenic
 
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,6 +32,15 @@ class SourceViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class GeneFilter(df_filters.FilterSet):
+    aliases = df_filters.BaseInFilter(lookup_expr='contains')
+    prev_symbols = df_filters.BaseInFilter(lookup_expr='contains')
+
+    class Meta:
+        model = Gene
+        fields = ('symbol', 'aliases', 'prev_symbols')
+
+
 class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Genes that we've discovered from harvesting.
@@ -39,20 +49,24 @@ class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GeneSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
-    filter_fields = (
-        'symbol',
-    )
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
+    filterset_class = GeneFilter
+    search_fields = ['symbol', 'aliases', 'prev_symbols']
 
 
 class VariantFilter(df_filters.FilterSet):
     gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
-    gene_symbol = df_filters.CharFilter(field_name='gene__symbol', label='Gene Symbol')
+    gene_symbol = df_filters.CharFilter(
+        field_name='gene__symbol', label='Gene Symbol')
     name = df_filters.CharFilter(field_name='name')
     description = df_filters.CharFilter(field_name='description')
-    so_name = df_filters.AllValuesFilter(field_name='so_name', label='Sequence Ontology Name')
-    sources = df_filters.BaseInFilter(field_name='sources', lookup_expr='contains')
-    in_svip = df_filters.BooleanFilter(label='Is SVIP Variant?', method='filter_has_svipdata')
+    so_name = df_filters.AllValuesFilter(
+        field_name='so_name', label='Sequence Ontology Name')
+    sources = df_filters.BaseInFilter(
+        field_name='sources', lookup_expr='contains')
+    in_svip = df_filters.BooleanFilter(
+        label='Is SVIP Variant?', method='filter_has_svipdata')
 
     # noinspection PyMethodMayBeStatic
     def filter_has_svipdata(self, queryset, name, value):
@@ -85,26 +99,26 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         q = q.select_related('gene')
 
         # if they want inline svip data, be sure to prefetch it and all its dependencies
-        if self.request.GET.get('inline_svip_data') == 'true' or self.action  == 'retrieve':
+        if self.request.GET.get('inline_svip_data') == 'true' or self.action == 'retrieve':
             q = (q
-                .select_related('variantinsvip')
-                .prefetch_related(
-                    Prefetch(
-                        'variantinsvip__diseaseinsvip_set', queryset=(
-                            DiseaseInSVIP.objects
-                                .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                                .prefetch_related(
-                                    'sample_set',
-                                    'disease__curationentry_set',
-                                    'disease__curationentry_set__owner'
-                                )
-                        )
-                    ),
-                    Prefetch(
-                        'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
-                    )
-                )
-            )
+                 .select_related('variantinsvip')
+                 .prefetch_related(
+                     Prefetch(
+                         'variantinsvip__diseaseinsvip_set', queryset=(
+                             DiseaseInSVIP.objects
+                             .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                             .prefetch_related(
+                                 'sample_set',
+                                 'disease__curationentry_set',
+                                 'disease__curationentry_set__owner'
+                             )
+                         )
+                     ),
+                     Prefetch(
+                         'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
+                     )
+                 )
+                 )
 
         return q.order_by('name')
 
@@ -117,13 +131,15 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
             return OnlySVIPVariantSerializer
         return VariantSerializer
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter)
     filterset_class = VariantFilter
     # filter_fields = ('gene', 'name', 'description', 'so_name')
     search_fields = (
         'name', 'description', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'gene__symbol', 'sources'
     )
-    ordering_fields = ('name', 'hgvs_c', 'hgvs_p', 'hgvs_g', 'so_name', 'sources')
+    ordering_fields = ('name', 'hgvs_c', 'hgvs_p',
+                       'hgvs_g', 'so_name', 'sources')
 
     @action(detail=False)
     def autocomplete(self, request):
@@ -162,7 +178,8 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         # first, get curation entries that we should be able to view based on our access privileges
         # returns curation entries in which either the main variant or one of the extra variants is this variant
         authed_set = CurationEntry.objects.authed_curation_set(request.user)
-        curation_entries = authed_set.filter(Q(extra_variants=variant) | Q(variant=variant))
+        curation_entries = authed_set.filter(
+            Q(extra_variants=variant) | Q(variant=variant))
 
         def summarize_disease(ce_entries, target_disease):
             disease_ce_entries = ce_entries.filter(disease=target_disease)
@@ -174,7 +191,8 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
             }
 
         if disease_id:
-            response = summarize_disease(curation_entries, Disease.objects.get(id=disease_id))
+            response = summarize_disease(
+                curation_entries, Disease.objects.get(id=disease_id))
         else:
             response = dict(
                 (disease.name, summarize_disease(curation_entries, disease))
@@ -193,7 +211,8 @@ class VariantInSourceViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'variant_pk' in self.kwargs:
-            q = VariantInSource.objects.filter(variant_id=self.kwargs['variant_pk'])
+            q = VariantInSource.objects.filter(
+                variant_id=self.kwargs['variant_pk'])
         else:
             q = VariantInSource.objects.all()
         return q.order_by('source__display_name')
@@ -224,15 +243,18 @@ class AssociationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'variant_pk' in self.kwargs:
-            q = Association.objects.filter(variant_id=self.kwargs['variant_pk'])
+            q = Association.objects.filter(
+                variant_id=self.kwargs['variant_pk'])
         elif 'variant_in_source_pk' in self.kwargs:
-            q = Association.objects.filter(variant_in_source_id=self.kwargs['variant_in_source_pk'])
+            q = Association.objects.filter(
+                variant_in_source_id=self.kwargs['variant_in_source_pk'])
         else:
             q = Association.objects.all()
 
         return q.order_by('id')
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
         'variant_in_source__variant__gene', 'variant_in_source__source',
         'phenotype__term',
@@ -276,13 +298,15 @@ class CollapsedAssociationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'variant_in_source_pk' in self.kwargs:
-            q = CollapsedAssociation.objects.filter(variant_in_source_id=self.kwargs['variant_in_source_pk'])
+            q = CollapsedAssociation.objects.filter(
+                variant_in_source_id=self.kwargs['variant_in_source_pk'])
         else:
             q = CollapsedAssociation.objects.all()
 
         return q.order_by('id')
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
         'variant_in_source__variant__gene', 'variant_in_source__source',
         'disease',

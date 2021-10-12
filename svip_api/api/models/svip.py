@@ -83,10 +83,12 @@ class VariantInSVIP(models.Model):
     from the public data.
 
     Also, the SVIP-specific data model is still very much a work-in-progress, so I figure it doesn't make sense
-    to devote a lot of time to engineering a normalzed data model here. Instead, we just load the contents of the
+    to devote a lot of time to engineering a normalized data model here. Instead, we just load the contents of the
     mock SVIP variants file into 'data' for each variant.
     """
-    variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
+    variant = models.OneToOneField(
+        to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
+    # variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
 
     # contains a summary from the curators about this variant
@@ -120,9 +122,101 @@ class VariantInSVIP(models.Model):
 
             return dictfetchall(cursor)
 
+    def review_data(self):
+        # JSON containing data for VariantDisease.vue
+        diseases_dict = []
+
+        for association in self.variant.curation_associations.all().order_by('id'):
+            disease = {}
+            disease["disease"] = association.disease.name
+
+            evidences = []
+            for evidence in association.curation_evidences.all():
+                
+                if not hasattr(evidence, 'annotation'):
+                    annotation = SIBAnnotation(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                    annotation.save()
+                
+                evidence_obj = {}
+                evidence_obj["id"] = evidence.id
+                evidence_obj["isOpen"] = False
+                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+                evidence_obj["fullType"] = evidence.full_evidence_type()
+                evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
+                evidence_obj["curator"] = {
+                    "id": evidence.annotation.id,
+                    "annotatedEffect": evidence.annotation.effect,
+                    "annotatedTier": evidence.annotation.tier
+                }
+                evidence_obj["currentReview"] = {
+                    "id": evidence.id,
+                    "annotatedEffect": evidence.annotation.effect,
+                    "annotatedTier": evidence.annotation.tier,
+                    "reviewer": "",
+                    "status": None,
+                    "comment": None
+                }
+                curations = []
+                for curation in evidence.curation_entries.all():
+                    curation_obj = {
+                        "id": curation.id,
+                        "pmid": int(curation.references.split(":")[1]),
+                        "effect": curation.effect,
+                        "support": curation.support,
+                        "comment": curation.comment
+                    }
+                    curations.append(curation_obj)
+                evidence_obj["curations"] = curations
+
+                reviews = []
+                for review in evidence.reviews.all():
+                    review_obj = {
+                        "id": review.id,
+                        "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+                        "reviewer_mail": review.reviewer.email,
+                        "reviewer_id": review.reviewer.id,
+                        "status": review.status,
+                        "annotatedTier": review.annotated_tier,
+                        "annotatedEffect": review.annotated_effect,
+                        "comment": review.comment
+                    }
+                    reviews.append(review_obj)
+
+                # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
+                while len(reviews) < 2:
+                    review_obj = {
+                        "reviewer": "",
+                        "status": None
+                    }
+                    reviews.append(review_obj)
+                evidence_obj["reviews"] = reviews
+
+                evidences.append(evidence_obj)
+
+            disease["evidences"] = evidences
+
+            diseases_dict.append(disease)
+        return diseases_dict
+
+    # def sib_view_data(self):
+    # JSON containing data for ViewReview.vue
+
     class Meta:
         verbose_name = "Variant in SVIP"
         verbose_name_plural = "Variants in SVIP"
+
+
+class SummaryComment(models.Model):
+    """
+    Summary comment posted by reviewer for a given variant
+    """
+    content = models.TextField(default="")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              null=True, on_delete=models.SET_NULL, default=16)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
+
+    def reviewer(self):
+        return f"{self.owner.first_name} {self.owner.last_name}"
 
 
 # ================================================================================================================
@@ -168,6 +262,49 @@ class DiseaseInSVIP(SVIPModel):
 # ================================================================================================================
 # === Curation
 # ================================================================================================================
+
+
+class CurationAssociation(models.Model):
+    """
+    Associate variant to diseases for which curation was given
+    """
+    variant = models.ForeignKey(
+        to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
+    disease = models.ForeignKey(
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class CurationEvidence(models.Model):
+    """
+    Link an association between a variant and a disease to an effect (and then to curation entries)
+    """
+    association = models.ForeignKey(
+        to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
+    type_of_evidence = models.TextField(null=True)
+    drug = models.TextField(null=True)
+
+    def full_evidence_type(self):
+        if self.drug:
+            return f"{self.type_of_evidence} - {self.drug.capitalize()}"
+        else:
+            return self.type_of_evidence
+
+    def effect_of_variant(self):
+        effect_of_variant = []
+        for curation in self.curation_entries.all():
+            effect_is_registered = False
+            for effect_obj in effect_of_variant:
+                if effect_obj["label"] == curation.effect:
+                    effect_is_registered = True
+                    effect_obj["count"] += 1
+            if not effect_is_registered:
+                effect_obj = {
+                    "label": curation.effect,
+                    "count": 1
+                }
+                effect_of_variant.append(effect_obj)
+        return effect_of_variant
+
 
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
@@ -266,8 +403,16 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # link a curation entry to curation evidence (usually one, but more if the curation is associated with several drugs)
+    curation_evidences = models.ManyToManyField(
+        CurationEvidence, related_name='curation_entries', default=None)
+
+    # curation_evidence = models.ForeignKey(
+    #    to=CurationEvidence, related_name="curation_entries", null=True, on_delete=DB_CASCADE)
+
     # variants = models.ManyToManyField(to=Variant)
-    variant = models.ForeignKey(to=Variant, on_delete=DB_CASCADE)
+    variant = models.ForeignKey(
+        to=Variant, on_delete=DB_CASCADE, related_name="curations")
     extra_variants = models.ManyToManyField(
         to=Variant, through='VariantCuration', related_name='variants_new')
 
@@ -369,9 +514,8 @@ class CurationEntry(SVIPModel):
         verbose_name = "Curation Entry"
         verbose_name_plural = "Curation Entries"
 
+
 # whenever a curation entry is created, ensure its provenance
-
-
 @receiver(post_save, sender=CurationEntry, dispatch_uid="update_svip_provenance")
 def curation_saved(sender, instance, **kwargs):
     instance.ensure_svip_provenance()
@@ -405,7 +549,8 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
-    curation_entry = ForeignKey(to=CurationEntry, on_delete=DB_CASCADE)
+    curation_entry = ForeignKey(
+        to=CurationEntry, on_delete=DB_CASCADE, null=True)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
 
@@ -413,6 +558,24 @@ class CurationReview(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     status = models.TextField(verbose_name="Review Status", choices=tuple(
         REVIEW_STATUS.items()), default='pending', db_index=True)
+
+    curation_evidence = ForeignKey(
+        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
+    annotated_effect = models.TextField(null=True, blank=True)
+    annotated_tier = models.TextField(null=True, blank=True)
+    comment = models.TextField(default="", null=True, blank=True)
+
+
+class SIBAnnotation(models.Model):
+    """
+    Annotation of the SIB curators for a specific evidence
+    """
+    evidence = models.OneToOneField(
+        to=CurationEvidence, related_name="annotation", on_delete=DB_CASCADE)
+    effect = models.TextField(default="Not yet annotated", null=True)
+    tier = models.TextField(default="Not yet annotated", null=True)
 
 
 # ================================================================================================================
@@ -514,7 +677,7 @@ class SubmittedVariant(SVIPModel):
     curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
                                          help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
     requestor = models.TextField(
-        null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+        blank=True, null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
 
     objects = SubmittedVariantManager()
 

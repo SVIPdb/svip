@@ -25,6 +25,8 @@ if USE_NPLUSONE:
 INTERNAL_IPS = [
     '127.0.0.1',
     'localhost',
+    'nc2',
+    '192.168.1.52',
     (socket.gethostbyname(socket.gethostname()))[:-1] + '1'
 ]
 
@@ -34,22 +36,22 @@ NPLUSONE_LOG_LEVEL = logging.WARN
 NPLUSONE_VERBOSE = True
 NPLUSONE_LOCAL_STACK = True
 
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'nplusone': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'nplusone': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 
-VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
+VARIOMES_BASE_URL = 'http://candy.hesge.ch/VariomesDev/api'
 
 # LOGGING = {
 #     'version': 1,
@@ -72,3 +74,17 @@ VARIOMES_API = 'http://candy.hesge.ch/VariomesDev/api'
 #         }
 #     }
 # }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}

@@ -17,5 +17,8 @@ module.exports = {
     },
     chainWebpack: config => {
         config.plugins.delete('progress')
+    },
+    devServer: {
+        disableHostCheck: true
     }
 };

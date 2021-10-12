@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .genomic import (
     SourceViewSet,
     GeneViewSet,
@@ -18,7 +20,9 @@ from .svip import (
     CurationRequestViewSet,
     CurationEntryViewSet,
     SubmittedVariantViewSet,
-    SubmittedVariantBatchViewSet
+    SubmittedVariantBatchViewSet,
+    SummaryCommentViewSet,
+    CurationReviewViewSet,
 )
 
 from .reference import (

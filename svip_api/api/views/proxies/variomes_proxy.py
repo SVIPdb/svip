@@ -31,6 +31,8 @@ def variomes_single_ref(request):
 def variomes_search(request):
 
     # proxy requests to variomes server
+    print('--variomes request--', '%s/rankLit.jsp' %
+          settings.VARIOMES_BASE_URL, request.GET)
     response = cached_sess.get('%s/rankLit.jsp' % settings.VARIOMES_BASE_URL,
                                params=request.GET, verify=settings.VARIOMES_VERIFY_REQUESTS)
 

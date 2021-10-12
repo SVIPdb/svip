@@ -47,18 +47,21 @@ services:
       - .env
 
   local_uta:
+    # image: biocommons/uta:uta_20190928
     image: biocommons/uta:uta_20171026
     restart: always
     volumes:
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
     ports:
-      - "15032:5432"
+      - '15032:5432'
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
 
   api:
     container_name: svip_api
     # image: "svip_api:latest"
     build: ./svip_api
-    # restart: always
+    restart: unless-stopped
     hostname: api
     volumes:
       - ./svip_api:/app
@@ -86,6 +89,7 @@ services:
     environment:
       - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
       - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
+      - PYTHONUNBUFFERED=1
     env_file:
       - .env
     restart: unless-stopped
@@ -102,7 +106,6 @@ services:
       # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
       - .git:/app/.git:delegated,ro
     command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
-
     ports:
       - '3000:8080'
     environment:

@@ -1,365 +1,378 @@
 <template>
     <div>
-        <b-card class="shadow-sm mb-3" align="left" no-body>
-            <b-card-body class="p-0">
+        <div v-for="(review) in diseases" :key="review">
+            <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showDisease" />Disease 1
+                    <expander v-model="showDisease"/>
+                    {{ review.disease }}
                 </h6>
+                <div v-for="(evidence,index) in review.evidences" :key="index">
+                    <b-card-body class="p-0">
+                        <transition name="slide-fade">
+                            <div v-if="showDisease">
+                                <b-card-text class="p-2 m-0">
+                                    <b-row align-v="center">
+                                        <b-col align="center" cols="1">
+                                            <expander v-model="evidence.isOpen"/>
+                                            {{ evidence.fullType }}
+                                        </b-col>
+                                        <b-col cols="2">
+                                            <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
+                                                {{ effect.label }} ({{ effect.count ? effect.count : 'no' }}
+                                                evidence(s))</p>
+                                        </b-col>
+                                        <b-col cols="2">
+                                            <b-row class="p-2">
+                                                <b-input v-model="evidence.curator.annotatedEffect" readonly/>
+                                            </b-row>
+                                            <b-row class="p-2">
+                                                <b-input v-model="evidence.curator.annotatedTier" readonly/>
+                                            </b-row>
+                                        </b-col>
+                                        <b-col cols="2">
+                                            <b-row class="p-2">
+                                                <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
+                                                                        v-model="evidence.currentReview.annotatedEffect"
+                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-prognostic-outcome>
+                                                <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
+                                                                        v-model="evidence.currentReview.annotatedEffect"
+                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-diagnostic-outcome>
+                                                <select-predictive-therapeutic-outcome
+                                                    v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
+                                                    v-model="evidence.currentReview.annotatedEffect"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"></select-predictive-therapeutic-outcome>
+                                            </b-row>
+                                            <b-row class="p-2">
+                                                <select-tier v-model="evidence.currentReview.annotatedTier"
+                                                            @input="onChange(evidence.curator, evidence.currentReview)"></select-tier>
+                                            </b-row>
+                                        </b-col>
+                                        <b-col cols="1" align="center">
+                                            <b-row class="justify-content-center">
+                                                Review status
+                                            </b-row>
+                                            <b-row class="justify-content-center">
+                                                <b-icon class="h4 mb-2 m-1"
+                                                        :style="displayColor(evidence.currentReview.status)"
+                                                        :icon="displayIcon(evidence.currentReview.status)"></b-icon>
+                                                <b-icon v-for="(review,key) in evidence.reviews" :key="key"
+                                                        class="h4 mb-2 m-1" :style="displayColor(review.status)"
+                                                        :icon="displayIcon(review.status)"></b-icon>
+                                            </b-row>
+                                        </b-col>
+                                        <b-col cols="4">
+                                            <b-textarea
+                                                :disabled="evidence.currentReview.status"
+                                                class="summary-box" 
+                                                rows="3"
+                                                placeholder="Comment..."
+                                                v-model="evidence.currentReview.comment"
+                                            >
+                                            </b-textarea>
+                                        </b-col>
+                                    </b-row>
+                                </b-card-text>
+                            </div>
+                        </transition>
+                        <transition name="slide-fade">
+                            <div v-if="evidence.isOpen">
+                                <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                                    <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
+                                        <b-col class="border p-2">PMID:
+                                            <b-link target="_blank" active
+                                                    :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
+                                                {{ curation.pmid }}
+                                            </b-link>
+                                        </b-col>
+                                        <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                        <b-col class="border p-2">
+                                            Support: {{ curation.support }}
+                                        </b-col>
+                                        <b-col class="border p-2">
+                                            <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
+                                                    target="_blank"
+                                                    alt="Link to evidence">Curation entry #{{ curation.id }}
+                                            </b-link>
+                                        </b-col>
 
-                <transition name="slide-fade">
-                    <div v-if="showDisease">
-                        <b-card-text class="p-2 m-0">
-                            <b-row align-v="center">
-                                <b-col align="center" cols="1">
-                                    <expander v-model="showPrognostic" />Prognostic
-                                </b-col>
-                                <b-col cols="2">
-                                    Good outcome (4 evidences)
-                                    <br />Intermediate (2 evidences)
-                                    <br />Poor outcome (1 evidence)
-                                    <br />
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-input v-model="prognosticOutcomePredicted" readonly />
+                                        <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
                                     </b-row>
-                                    <b-row class="p-2">
-                                        <b-input v-model="prognosticTrustPredicted" readonly />
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="prognosticOutcomeSelected" class="form-control">
-                                            <option>Good outcome</option>
-                                            <option>Poor outcome</option>
-                                            <option>Intermediate</option>
-                                            <option>Unclear</option>
-                                            <option>Context-dependent</option>
-                                        </b-form-select>
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="prognosticTrustSelected" class="form-control">
-                                            <option>Tier IA: Included in Professional Guidelines</option>
-                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
-                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
-                                            <option>Tier IID: Clinical trial</option>
-                                            <option>Tier IID: Pre-clinical study</option>
-                                            <option>Tier IID: Population study</option>
-                                            <option>Tier IID: Small published study</option>
-                                            <option>Tier IID: Case report</option>
-                                            <option>Tier III: No convincing published evidence of drugs effect</option>
-                                            <option>Tier III: Author statement</option>
-                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
-                                            <option>Other criteria</option>
-                                        </b-form-select>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="1" align="center">
-                                    <b-row class="justify-content-center">
-                                        Review status
-                                    </b-row>
-                                    <b-row class="justify-content-center">
-                                        <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="prognosticOutcomeSelected === prognosticOutcomePredicted && prognosticTrustSelected === prognosticTrustPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="prognosticOutcomeSelected === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="prognosticOutcomeSelected !== prognosticOutcomePredicted || prognosticTrustSelected !== prognosticTrustPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="4">
-                                    <b-textarea :disabled="prognosticOutcomeSelected === prognosticOutcomePredicted && prognosticTrustSelected === prognosticTrustPredicted" class="summary-box" rows="3" placeholder="Comment..." />
-                                </b-col>
-                            </b-row>
-                        </b-card-text>
-                    </div>
-                </transition>
-                <transition name="slide-fade">
-                    <div v-if="showPrognostic">
-                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                    <!-- <router-link :to="`/curation/gene/${data.item.gene_id}/variant/${data.item.variant_id}/evidence/${data.item.evidence_id}`" target="_blank">{{ data.value }}</router-link> -->
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                        </b-card-footer>
-                    </div>
-                </transition>
-            </b-card-body>
-
-            <b-card-body class="p-0">
-                <transition name="slide-fade">
-                    <div v-if="showDisease">
-                        <b-card-text class="p-2 m-0">
-                            <b-row align-v="center">
-                                <b-col align="center" cols="1">
-                                    <expander v-model="showDiagnostic" />Diagnostic
-                                </b-col>
-                                <b-col cols="2">
-                                    Associated with diagnosis (1 evidence)
-                                    <br />Not associated with diagnosis (1 evidence)
-                                    <br />Other (no evidence)
-                                    <br />
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-input v-model="diagnosticOutcomePredicted" readonly />
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-input v-model="diagnosticTrustPredicted" readonly />
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="diagnosticOutcomeSelected" class="form-control">
-                                            <option>Associated with diagnosis</option>
-                                            <option>Not associated with diagnosis</option>
-                                            <option>Other</option>
-                                        </b-form-select>
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="diagnosticTrustSelected" class="form-control">
-                                            <option>Tier IA: Included in Professional Guidelines</option>
-                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
-                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
-                                            <option>Tier IID: Clinical trial</option>
-                                            <option>Tier IID: Pre-clinical study</option>
-                                            <option>Tier IID: Population study</option>
-                                            <option>Tier IID: Small published study</option>
-                                            <option>Tier IID: Case report</option>
-                                            <option>Tier III: No convincing published evidence of drugs effect</option>
-                                            <option>Tier III: Author statement</option>
-                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
-                                            <option>Other criteria</option>
-                                        </b-form-select>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="1" align="center">
-                                    <b-row class="justify-content-center">
-                                        Review status
-                                    </b-row>
-                                    <b-row class="justify-content-center">
-                                        <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="diagnosticOutcomeSelected === diagnosticOutcomePredicted && diagnosticTrustSelected === diagnosticTrustPredicted" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="diagnosticOutcomeSelected === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="diagnosticOutcomeSelected !== diagnosticOutcomePredicted || diagnosticTrustSelected !== diagnosticTrustPredicted" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="4">
-                                    <b-textarea :disabled="diagnosticOutcomeSelected === diagnosticOutcomePredicted && diagnosticTrustSelected === diagnosticTrustPredicted" class="summary-box" rows="3" placeholder="Comment..." />
-                                </b-col>
-                            </b-row>
-                        </b-card-text>
-                    </div>
-                </transition>
-                <transition name="slide-fade">
-                    <div v-if="showDiagnostic">
-                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                        </b-card-footer>
-                    </div>
-                </transition>
-            </b-card-body>
-
-            <b-card-body class="p-0">
-                <transition name="slide-fade">
-                    <div v-if="showDisease">
-                        <b-card-text class="p-2 m-0">
-                            <b-row align-v="center">
-                                <b-col align="center" cols="1">
-                                    <expander v-model="showPredictive" />
-                                    Predictive /<br />Therapeutic
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="pb-5 pt-5 pl-3">Drug 1 (1 evidence)</b-row>
-                                    <b-row class="pb-5 pt-5 pl-3">Drug 2 (3 evidences)</b-row>
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-input v-model="predictiveOutcomePredictedDrug1" readonly />
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-input v-model="predictiveTrustPredictedDrug1" readonly />
-                                    </b-row>
-                                    <b-row class="p-2 pt-4">
-                                        <b-input v-model="predictiveOutcomePredictedDrug2" readonly />
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-input v-model="predictiveTrustPredictedDrug2" readonly />
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="2">
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="predictiveOutcomeSelectedDrug1" class="form-control">
-                                            <option>Sensitive (in vitro)</option>
-                                            <option>Responsive</option>
-                                            <option>Resistant (in vitro)</option>
-                                            <option>Reduced sensivity</option>
-                                            <option>Not responsive</option>
-                                            <option>Adverse response</option>
-                                            <option>Other</option>
-                                        </b-form-select>
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="predictiveTrustSelectedDrug1" class="form-control">
-                                            <option>Tier IA: Included in Professional Guidelines</option>
-                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
-                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
-                                            <option>Tier IID: Clinical trial</option>
-                                            <option>Tier IID: Pre-clinical study</option>
-                                            <option>Tier IID: Population study</option>
-                                            <option>Tier IID: Small published study</option>
-                                            <option>Tier IID: Case report</option>
-                                            <option>Tier III: No convincing published evidence of drugs effect</option>
-                                            <option>Tier III: Author statement</option>
-                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
-                                            <option>Other criteria</option>
-                                        </b-form-select>
-                                    </b-row>
-                                    <b-row class="p-2 pt-4">
-                                        <b-form-select v-model="predictiveOutcomeSelectedDrug2" class="form-control">
-                                            <option>Sensitive (in vitro)</option>
-                                            <option>Responsive</option>
-                                            <option>Resistant (in vitro)</option>
-                                            <option>Reduced sensivity</option>
-                                            <option>Not responsive</option>
-                                            <option>Adverse response</option>
-                                            <option>Other</option>
-                                        </b-form-select>
-                                    </b-row>
-                                    <b-row class="p-2">
-                                        <b-form-select v-model="predictiveTrustSelectedDrug2" class="form-control">
-                                            <option>Tier IA: Included in Professional Guidelines</option>
-                                            <option>Tier IB: Well-powered studies with consensus from experts in the field</option>
-                                            <option>Tier IIC: Multiples small published studies with some consensus</option>
-                                            <option>Tier IID: Clinical trial</option>
-                                            <option>Tier IID: Pre-clinical study</option>
-                                            <option>Tier IID: Population study</option>
-                                            <option>Tier IID: Small published study</option>
-                                            <option>Tier IID: Case report</option>
-                                            <option>Tier III: No convincing published evidence of drugs effect</option>
-                                            <option>Tier III: Author statement</option>
-                                            <option>Tier IV: Reported evidence supportive of benign/likely benign effect</option>
-                                            <option>Other criteria</option>
-                                        </b-form-select>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="1" align="center">
-                                    <b-row class="justify-content-center">
-                                        Review status
-                                    </b-row>
-                                    <b-row class="justify-content-center">
-                                        <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 === predictiveOutcomePredictedDrug1 && predictiveTrustSelectedDrug1 === predictiveTrustPredictedDrug1" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug1 === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug1 !== predictiveOutcomePredictedDrug1 || predictiveTrustSelectedDrug1 !== predictiveTrustPredictedDrug1" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                    </b-row>
-                                    <b-row class="pt-5 justify-content-center">
-                                        Review status
-                                    </b-row>
-                                    <b-row class="justify-content-center">
-                                        <!-- Ivo : service to get the others statuses -->
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 === predictiveOutcomePredictedDrug2 && predictiveTrustSelectedDrug2 === predictiveTrustPredictedDrug2" style="color:blue;" class="h4 mb-2 m-1" icon="check-square-fill"></b-icon>
-                                        <b-icon v-if="predictiveOutcomeSelectedDrug2 === ''" class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon v-else-if="predictiveOutcomeSelectedDrug2 !== predictiveOutcomePredictedDrug2 || predictiveTrustSelectedDrug2 !== predictiveTrustPredictedDrug2" style="color:red;" class="h4 mb-2 m-1" icon="x-square-fill"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                        <b-icon class="h4 mb-2 m-1" icon="square"></b-icon>
-                                    </b-row>
-                                </b-col>
-                                <b-col cols="4">
-                                    <b-row class="p-3 pb-4">
-                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug1 === predictiveOutcomePredictedDrug1 && predictiveTrustSelectedDrug1 === predictiveTrustPredictedDrug1" class="summary-box" rows="3" placeholder="Comment..." />
-                                    </b-row>
-                                    <b-row class="p-3">
-                                        <b-textarea :disabled="predictiveOutcomeSelectedDrug2 === predictiveOutcomePredictedDrug2 && predictiveTrustSelectedDrug2 === predictiveTrustPredictedDrug2" class="summary-box" rows="3" placeholder="Comment..." />
-                                    </b-row>
-                                </b-col>
-                            </b-row>
-                        </b-card-text>
-                    </div>
-                </transition>
-                <transition name="slide-fade">
-                    <div v-if="showPredictive">
-                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                            <b-row align-v="center">
-                                <b-col class="border p-2">Good outcome</b-col>
-                                <b-col class="border p-2">
-                                    <b-link v-if="sample_curation_id" :to="{ name: 'view-evidence', params: { action: sample_curation_id } }" target="_blank" alt="Link to evidence">Evidence #1</b-link>
-                                </b-col>
-                                <b-col class="border p-2">PMID: 20619739</b-col>
-                                <b-col class="border p-2" cols="6">Public comment from evidence...</b-col>
-                            </b-row>
-                        </b-card-footer>
-                    </div>
-                </transition>
-            </b-card-body>
-        </b-card>
+                                </b-card-footer>
+                            </div>
+                        </transition>
+                    </b-card-body>
+                    <hr v-if="showDisease"/>
+                </div>
+            </b-card>
+        </div>
+        <b-button class="float-right" @click="submitReviews()">
+            Submit review
+        </b-button>
     </div>
 </template>
 
 <script>
 /* eslint-disable */
 // import fields from "@/data/curation/evidence/fields.js";
-import { HTTP } from "@/router/http";
+import {HTTP} from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import {BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill} from "bootstrap-vue";
 import ulog from "ulog";
-import RowDetailsHeader from '@/components/genes/variants/sources/shared/RowDetailsHeader';
+import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPrognosticOutcome";
+import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
+import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
+import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import { mapGetters } from "vuex";
 
 const log = ulog("VariantDisease");
 
 export default {
     name: "VariantDisease",
     components: {
+        SelectTier,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
         BIconXSquareFill,
+        SelectPrognosticOutcome,
+        SelectDiagnosticOutcome,
+        SelectPredictiveTherapeuticOutcome,
     },
     props: {
-        variant: { type: Object, required: false },
+        variant: {type: Object, required: false},
     },
     data() {
         return {
+            diseases: [],
+            diseases_test: [
+                {
+                    disease: "Aggressive fibromatosis",
+                    evidences: [
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Prognostic",
+                            effectOfVariant: [
+                                {
+                                    label: "Good outcome",
+                                    count: 4
+                                },
+                                {
+                                    label: "Intermediate",
+                                    count: 2
+                                },
+                                {
+                                    label: "Poor outcome",
+                                    count: 1
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 1,
+                                    pmid: 1,
+                                    effect: "Good outcome",
+                                    support: "Strong",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 2,
+                                    pmid: 2,
+                                    effect: "Good outcome",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 3,
+                                    pmid: 3,
+                                    effect: "Good outcome",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 4,
+                                    pmid: 4,
+                                    effect: "Intermediate",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 5,
+                                    pmid: 5,
+                                    effect: "Intermediate",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 6,
+                                    pmid: 6,
+                                    effect: "Poor outcome",
+                                    support: "Moderate",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Unclear",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            },
+                            currentReview: {
+                                annotatedEffect: "Unclear", //Initial value should be the same as curator
+                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
+                                reviewer_id: "John Doe",
+                                status: true,
+                                comment: null
+                            },
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: false
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        },
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Diagnostic",
+                            effectOfVariant: [
+                                {
+                                    label: "Associated with diagnosis",
+                                    count: 1
+                                },
+                                {
+                                    label: "Not associated with diagnosis",
+                                    count: 1
+                                },
+                                {
+                                    label: "Other",
+                                    count: 0
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 7,
+                                    pmid: 7,
+                                    effect: "Associated with diagnosis",
+                                    support: "Strong",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                },
+                                {
+                                    id: 8,
+                                    pmid: 8,
+                                    effect: "Not associated with diagnosis",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Associated with diagnosis",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            },
+                            currentReview: {
+                                annotatedEffect: "Associated with diagnosis", //Initial value should be the same as curator
+                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
+                            },
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        },
+                        {
+                            isOpen: false,
+                            typeOfEvidence: "Predictive / Therapeutic",
+                            effectOfVariant: [
+                                {
+                                    label: "Drug 1",
+                                    count: 1
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 9,
+                                    pmid: 9,
+                                    effect: "Responsive",
+                                    support: "Moderate",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Responsive",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            },
+                            currentReview: {
+                                annotatedEffect: "Responsive", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
+                            },
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        },
+                        {
+                            typeOfEvidence: "Predictive / Therapeutic",
+                            effectOfVariant: [
+                                {
+                                    label: "Drug 2",
+                                    count: 3
+                                }
+                            ],
+                            curations: [
+                                {
+                                    id: 10,
+                                    pmid: 10,
+                                    effect: "Other",
+                                    support: "Low",
+                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
+                                }
+                            ],
+                            curator: {
+                                annotatedEffect: "Responsive",
+                                annotatedTier: "Tier IA: Included in Professional Guidelines"
+                            },
+                            currentReview: {
+                                annotatedEffect: "Responsive", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                reviewer_name: "John Doe",
+                                status: true,
+                                comment: null
+                            },
+                            reviews: [
+                                {
+                                    reviewer_name: "Johnny Doe",
+                                    status: true
+                                },
+                                {
+                                    reviewer_name: "Jean Doe",
+                                    status: null
+                                }
+                            ],
+                            note: null
+                        }
+                    ]
+                }
+            ],
+            selfReviewedEvidences: {},
             summary: null,
             history_entry_id: null,
 
@@ -370,31 +383,14 @@ export default {
             channel: new BroadcastChannel("curation-update"),
 
             showDisease: true,
-            showPrognostic: false,
-            showDiagnostic: false,
-            showPredictive: false,
-
-            // Ivo : Fake data... Need a service to get evidences to generate predictive fields and to get other reviews status
-            prognosticOutcomePredicted: "Unclear",
-            prognosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
-            diagnosticOutcomePredicted: "Associated with diagnosis",
-            diagnosticTrustPredicted: "Tier IA: Included in Professional Guidelines",
-            predictiveOutcomePredictedDrug1: "Responsive",
-            predictiveTrustPredictedDrug1: "Tier IID: Case report",
-            predictiveOutcomePredictedDrug2: "Other",
-            predictiveTrustPredictedDrug2: "Tier III: Author statement",
-
-            prognosticOutcomeSelected: "Unclear",
-            prognosticTrustSelected: "Tier IA: Included in Professional Guidelines",
-            diagnosticOutcomeSelected: "Associated with diagnosis",
-            diagnosticTrustSelected: "Tier IA: Included in Professional Guidelines",
-            predictiveOutcomeSelectedDrug1: "Responsive",
-            predictiveTrustSelectedDrug1: "Tier IID: Case report",
-            predictiveOutcomeSelectedDrug2: "Other",
-            predictiveTrustSelectedDrug2: "Tier III: Author statement",
-
-            prognosticComment: ""
         };
+    },
+    mounted() {
+        this.diseases.map(disease => {
+            disease.evidences.map(evidence => {
+                evidence["currentReview"]["reviewer_id"] = this.user.user_id
+            })
+        });
     },
     created() {
         this.channel.onmessage = () => {
@@ -408,9 +404,181 @@ export default {
         HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
+
+        this.getReviewData()
     },
-    computed: {},
-    methods: {},
+    computed: {
+        ...mapGetters({
+            user: "currentUser"
+        })
+    },
+    methods: {
+        getReviewData() {
+            const params={
+                reviewer: this.user.user_id,
+                var_id: this.variant.id
+            }
+
+            HTTP.post(`/review_data`, params)
+                .then((response) => {
+                    this.diseases = response.data.review_data
+                    this.detectOwnReviews();
+                    this.changeReviewStatusCheckboxes();
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to fetch data");
+                })
+        },
+        displayIcon(status) {
+            if (status === true) {
+                return "check-square-fill"
+            }
+            if (status === false) {
+                return "x-square-fill"
+            }
+            return "square"
+        },
+        displayColor(status) {
+            if (status === true) {
+                return "color:blue;"
+            }
+            if (status === false) {
+                return "color:red;"
+            }
+            return ""
+        },
+        onChange(curatorValues, reviewerValues) {
+            reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
+        },
+        changeReviewStatusCheckboxes() {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    // select only evidences for which an option has been selected
+                    if (
+                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
+                    ) {
+                        this.onChange(evidence.curator, evidence.currentReview)
+                    }
+                })
+            })
+        },
+        detectOwnReviews() {
+            // iterate over every review to prefill inputs with current user's past reviews
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    evidence.reviews.map(review => {
+                        if (review.reviewer_id === this.user.user_id) {
+                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
+                            evidence.currentReview.annotatedTier = review.annotatedTier;
+                            evidence.currentReview.comment = review.comment;
+
+                            // store the evidence ID so when the user submit it, the request is a patch
+                            this.selfReviewedEvidences[evidence.id] = review.id
+                        }
+                    })
+                })
+            })
+        },
+        submitReviews() {
+            //let newReviews = [];
+            //let modifiedReviews = []
+
+            // iterate over every review
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    if (
+                        // check that dropdown options have been selected
+                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
+                    ) {
+                        if (evidence.id in this.selfReviewedEvidences) {
+
+                            //const singleReviewJSON = {
+                            //    id: this.selfReviewedEvidences[evidence.id],
+                            //    curation_evidence: evidence.id,
+                            //    reviewer: this.user.user_id,
+                            //    annotated_effect: evidence.currentReview.annotatedEffect,
+                            //    annotated_tier: evidence.currentReview.annotatedTier,
+                            //    comment: evidence.currentReview.comment
+                            //}
+                            //modifiedReviews.push(singleReviewJSON)
+
+                            let reviewID = this.selfReviewedEvidences[evidence.id]
+                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
+                                .then((response) => {
+                                    this.getReviewData()
+                                })
+                                .catch((err) => {
+                                    log.warn(err);
+                                    this.$snotify.error("Failed to submit review");
+                                })
+                        } else {
+                            //newReviews.push(this.reviewParams(evidence));
+
+                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
+                                .then((response) => {
+                                    this.getReviewData()
+                                })
+                                .catch((err) => {
+                                    log.warn(err);
+                                    this.$snotify.error("Failed to submit review");
+                                })
+
+                        }
+                    }
+                })
+            })
+
+            this.$snotify.success("Your review has been saved");
+            // Reset fields
+            this.isEditMode = false;
+            
+
+            //if (modifiedReviews.length > 0) {
+            //    HTTP.put(`/reviews/`, modifiedReviews)
+            //        .then((response) => {
+            //        })
+            //        .catch((err) => {
+            //            log.warn(err);
+            //            this.$snotify.error("Failed to submit review");
+            //        })
+            //}
+
+            //if (newReviews.length > 0) {
+            //    // post new review
+            //    HTTP.post(`/reviews/`, newReviews)
+            //        .then((response) => {
+            //            // Reset fields
+            //            this.isEditMode = false;
+            //            this.$snotify.success("Your review has been saved");
+            //            //this.detectOwnReviews();
+            //            //this.changeReviewStatusCheckboxes()
+            //            this.getReviewData()
+            //        })
+            //        .catch((err) => {
+            //            log.warn(err);
+            //            this.$snotify.error("Failed to submit review");
+            //        })
+            //} else {
+            //    // Reset fields
+            //    this.isEditMode = false;
+            //    this.detectOwnReviews();
+            //    this.changeReviewStatusCheckboxes()
+            //}
+
+        },
+        reviewParams(evidence) {
+            // prepare a JSON containing parameters for CurationReview model
+            const singleReviewJSON = {
+                curation_evidence: evidence.id,
+                reviewer: this.user.user_id,
+                annotated_effect: evidence.currentReview.annotatedEffect,
+                annotated_tier: evidence.currentReview.annotatedTier,
+                comment: evidence.currentReview.comment
+            }
+            return singleReviewJSON
+        }
+    },
 };
 </script>
 
@@ -420,6 +588,7 @@ export default {
     display: flex;
     align-items: center;
 }
+
 .pub-status > .fa-icon {
     margin-right: 0.4rem;
 }
@@ -428,6 +597,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
+
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;

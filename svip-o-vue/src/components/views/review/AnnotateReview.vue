@@ -6,11 +6,7 @@
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <VariantDisease />
-
-        <b-button class="float-right">
-            Submit review
-        </b-button>
+        <VariantDisease :variant="variant"/>
     </div>
 </template>
 <script>
@@ -66,7 +62,7 @@ export default {
 
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
-        }
+        },
     },
     methods: {
         desnakify,

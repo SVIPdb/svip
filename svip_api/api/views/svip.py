@@ -1,3 +1,6 @@
+import hgvs.assemblymapper
+import hgvs.dataproviders.uta
+import hgvs.normalizer
 import django_filters
 import hgvs.parser
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -12,16 +15,20 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease
+    Disease, Variant
 )
-from api.models.svip import SubmittedVariant, SubmittedVariantBatch, CurationRequest
+from api.models.svip import (
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest,
+    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation
+)
+
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer,
-    SubmittedVariantSerializer, CurationRequestSerializer
+    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -45,30 +52,33 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
     def get_queryset(self):
+        print(self.kwargs)
         if 'variant_pk' in self.kwargs:
-            q = VariantInSVIP.objects.filter(variant_id=self.kwargs['variant_pk'])
+            q = VariantInSVIP.objects.filter(
+                variant_id=self.kwargs['variant_pk'])
         else:
             q = VariantInSVIP.objects.all()
 
         q = (q
-            .select_related('variant')
-            .prefetch_related(
-                Prefetch('diseaseinsvip_set', queryset=(
-                        DiseaseInSVIP.objects
-                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                            .prefetch_related(
-                                'sample_set'
-                            )
-                    )
-                ),
-                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-            )
-        )
+             .select_related('variant')
+             .prefetch_related(
+                 Prefetch('diseaseinsvip_set', queryset=(
+                     DiseaseInSVIP.objects
+                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                     .prefetch_related(
+                         'sample_set'
+                     )
+                 )
+                 ),
+                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+             )
+             )
 
         return q
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+    filter_backends = (
+        django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
     filter_fields = (
         'variant__gene',
         'variant__gene__symbol',
@@ -78,11 +88,13 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
     search_fields = (
         'variant__gene__symbol',
         'variant__name',
-        'disease__icd_o_morpho__term'
+        'disease__icd_o_morpho__term',
+        'summary_comments'
     )
 
     @action(detail=True)
     def history(self, request, pk):
+        print("action is executed")
         entry = VariantInSVIP.objects.get(id=pk)
         return make_history_response(entry, add_created_by=False)
 
@@ -104,7 +116,8 @@ class DiseaseInSVIPViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if 'svip_variant_pk' in self.kwargs:
-            q = DiseaseInSVIP.objects.filter(svip_variant_id=self.kwargs['svip_variant_pk'])
+            q = DiseaseInSVIP.objects.filter(
+                svip_variant_id=self.kwargs['svip_variant_pk'])
         else:
             q = DiseaseInSVIP.objects.all()
 
@@ -122,8 +135,8 @@ class CurationRequestViewSet(viewsets.ModelViewSet):
     serializer_class = CurationRequestSerializer
     queryset = (
         CurationRequest.objects
-            .prefetch_related('variant', 'variant__gene', 'submission')
-            .order_by('-created_on')
+        .prefetch_related('variant', 'variant__gene', 'submission')
+        .order_by('-created_on')
     )
 
 
@@ -138,7 +151,8 @@ class CurationEntryFilter(django_filters.FilterSet):
 
     @staticmethod
     def any_variant_ref(queryset, name, value):
-        return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
+        return queryset.filter(Q(variant_id=value))
+        #return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
 
     class Meta:
         model = CurationEntry
@@ -153,6 +167,7 @@ class CurationEntryFilter(django_filters.FilterSet):
             'status_ne'
         )
 
+
 def lookup_disease_for_id(x):
     if not x:
         return "(none)"
@@ -161,6 +176,7 @@ def lookup_disease_for_id(x):
         return Disease.objects.get(id=x).name
     except Disease.DoesNotExist:
         return "(unknown: %s)" % str(x)
+
 
 def remap_curation_history_fields(field, value):
     """
@@ -182,9 +198,11 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     Curation entry for a specific variant w/SVIP data and disease.
     """
     serializer_class = CurationEntrySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly, IsCurationPermitted)
 
-    filter_backends = (DisabledHTMLFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (DisabledHTMLFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
     filterset_class = CurationEntryFilter
     ordering_fields = (
         "action",
@@ -234,7 +252,8 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
     def bulk_submit(self, request):
         # for every ID in items, if it's saved upgrade it to a draft
         entryIDs = [int(x) for x in request.GET['items'].split(",")]
-        result = CurationEntry.objects.filter(id__in=entryIDs, status='saved').update(status='submitted')
+        result = CurationEntry.objects.filter(
+            id__in=entryIDs, status='saved').update(status='submitted')
         return JsonResponse({
             "input": entryIDs,
             "changed": result
@@ -251,11 +270,11 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             'references': {
                 x['references']: x['recs'] for x in (
                     CurationEntry.objects
-                        .select_related('variant', 'variant__gene')
-                        .values('references')
-                        .annotate(recs=ArrayAgg(json_build_fields(
-                            id='id', variant_id='variant__id', gene_id='variant__gene__id', etype='type_of_evidence'
-                        )))
+                    .select_related('variant', 'variant__gene')
+                    .values('references')
+                    .annotate(recs=ArrayAgg(json_build_fields(
+                        id='id', variant_id='variant__id', gene_id='variant__gene__id', etype='type_of_evidence'
+                    )))
                 )
             }
         })
@@ -264,31 +283,40 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # pre-select variant and gene data to prevent thousands of queries
         return (
             CurationEntry.objects.authed_curation_set(self.request.user)
-                .select_related('owner', 'variant', 'variant__gene', 'disease')
-                .prefetch_related(
-                    'extra_variants',
-                    'extra_variants__gene',
-                    'disease'
-                )
-                .order_by('created_on')
+            .select_related('owner', 'variant', 'variant__gene', 'disease')
+            .prefetch_related(
+                'extra_variants',
+                'extra_variants__gene',
+                'disease'
+            )
+            .order_by('created_on')
         )
+
+
+class CurationReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = CurationReviewSerializer
+    model = CurationReview
+
+    def get_queryset(self):
+        queryset = CurationReview.objects.all()
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+        #kwargs["many"] = True
+        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
 # ================================================================================================================
 # === SVIP Variant Submission
 # ================================================================================================================
-
 # hgvs stuff
-import hgvs.normalizer
-import hgvs.parser
-import hgvs.dataproviders.uta
-import hgvs.assemblymapper
 
 # these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
 hdp = hgvs.dataproviders.uta.connect()
 hgnorm = hgvs.normalizer.Normalizer(hdp)
 hgvsparser = hgvs.parser.Parser()
-am = hgvs.assemblymapper.AssemblyMapper(hdp, assembly_name='GRCh37', normalize=True)
+am = hgvs.assemblymapper.AssemblyMapper(
+    hdp, assembly_name='GRCh37', normalize=True)
 
 AC_MAP = {
     '1': 'NC_000001',
@@ -318,17 +346,22 @@ AC_MAP = {
     'Y': 'NC_000024',
 }
 
+
 class SubmittedVariantBatchViewSet(viewsets.ModelViewSet):
     permission_classes = (IsSubmitter,)
     serializer_class = SubmittedVariantBatchSerializer
     queryset = SubmittedVariantBatch.objects.order_by('-created_on')
 
+
 class SubmittedVariantViewSet(viewsets.ModelViewSet):
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
         'chromosome', 'pos', 'ref', 'alt', 'status'
     )
-    ordering_fields = filter_fields + ('created_on', 'processed_on', 'batch', 'owner', 'canonical_only', 'for_curation_request')
+    ordering_fields = filter_fields + \
+        ('created_on', 'processed_on', 'batch', 'owner',
+         'canonical_only', 'for_curation_request')
     search_fields = ('chromosome', 'pos', 'ref', 'alt',)
 
     permission_classes = (IsSubmitter,)
@@ -339,7 +372,8 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
     def map_hgvs(self, request):
         try:
             # removes all sorts of weird unicode characters that, e.g., SVIP, adds for formatting purposes
-            sanitized_hgvs = request.GET['hgvs_str'].strip().encode("ascii", errors='ignore').decode("utf8")
+            sanitized_hgvs = request.GET['hgvs_str'].strip().encode(
+                "ascii", errors='ignore').decode("utf8")
             result = hgvsparser.parse_hgvs_variant(sanitized_hgvs)
             lifted = False
 
@@ -348,7 +382,7 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
                 lifted = True
                 result = am.c_to_g(result)
         except HGVSParseError as ex:
-            return JsonResponse({ 'error': str(ex) }, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({
             'full_result': str(result),
@@ -369,7 +403,8 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SampleSerializer
     permission_classes = (permissions.IsAuthenticated, IsSampleViewer)
 
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
         'disease_in_svip__disease', 'sample_id', 'year_of_birth', 'gender', 'hospital', 'medical_service', 'provider_annotation',
         'sample_tissue', 'tumor_purity', 'tnm_stage', 'sample_type', 'sample_site', 'specimen_type', 'sequencing_date',
@@ -381,7 +416,8 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if not self.request.user.has_perm('api.view_sample'):
-            raise PermissionDenied(detail="You do not have the necessary permissions to view sample data")
+            raise PermissionDenied(
+                detail="You do not have the necessary permissions to view sample data")
 
         if 'disease_pk' in self.kwargs and 'variant_in_svip_pk' in self.kwargs:
             q = Sample.objects.filter(
@@ -392,3 +428,96 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
             q = Sample.objects.all()
 
         return q.order_by('id')
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+
+class SummaryCommentViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SummaryCommentSerializer
+
+    def get_queryset(self):
+        print(f"query params: {self.request.query_params} ")
+
+        variant = self.request.query_params.get('variant')
+        owner = self.request.query_params.get('owner')
+
+        queryset = SummaryComment.objects.all()
+
+        if variant is not None:
+            queryset = queryset.filter(variant=variant)
+
+        if owner is not None:
+            queryset = queryset.filter(owner=owner)
+
+        return queryset
+
+
+
+# ================================================================================================================
+# === SummaryComment
+# ================================================================================================================
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class ReviewDataView(APIView):
+    # when user accesses the review page, return the json data
+    def post(self, request, *args, **kwargs):
+
+        # create VariantInSVIP instance if doesn't exist
+        var_id = request.data.get('var_id')
+        variant = Variant.objects.get(id=var_id)
+        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
+        svip_var_exists = bool(len(matching_svip_var))
+        if not svip_var_exists:
+            svip_var = VariantInSVIP(variant=variant)
+            svip_var.save()
+        else:
+            svip_var = matching_svip_var[0]
+
+
+        for curation in CurationEntry.objects.filter(variant=variant):
+            
+            # check that a disease is indicated for the curation entry being saved
+            if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+                associations = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease)
+
+                # check that no association already exists for these parameters
+                if len(associations) == 0:
+                    new_curation_association = CurationAssociation(variant=variant, disease=curation.disease)
+                    new_curation_association.save()
+                    
+                    # Create the evidence objects involved that association, from the existing curation entries
+                    for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                        
+                        drugs = curation.drugs
+                        if len(curation.drugs) == 0:
+                            # add null object to empty list so at least one iteration to create an evidence related to no drug
+                            drugs.append(None)
+                        for drug in drugs:
+
+                            new_curation_evidence = CurationEvidence(
+                                association = new_curation_association,
+                                type_of_evidence = evidence_type,
+                                drug = drug
+                            )
+                            new_curation_evidence.save()
+                            
+                            # create an SIBAnnotation instance linked to the evidence just created
+                            annotation = SIBAnnotation(evidence=new_curation_evidence, effect="Not yet annotated", tier="Not yet annotated")
+                            annotation.save()
+
+                # link the matching evidences to the curation:
+                for association in associations:
+                    for drug in curation.drugs:
+                        evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+                        for evidence in evidences:
+                            curation.curation_evidences.add(evidence)
+
+                curation.save()
+
+        return Response(data={"review_data": svip_var.review_data()})
+

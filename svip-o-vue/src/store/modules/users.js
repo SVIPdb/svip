@@ -48,14 +48,18 @@ const getters = {
     username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
     userID: (state, getters) => getters.jwtData ? getters.jwtData.user_id : null,
     groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
+    firstName: (state, getters) => getters.jwtData ? getters.jwtData.first_name : null,
 
     currentUser: (state, getters) => {
         if (!getters.jwtData) {
             return null;
         }
 
+        console.log(getters.jwtData)
+
         return {
             username: getters.username,
+            first_name: getters.firstName,
             user_id: getters.userID,
             groups: getters.groups
         };
