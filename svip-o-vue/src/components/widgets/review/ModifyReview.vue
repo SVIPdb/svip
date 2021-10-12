@@ -28,7 +28,7 @@
                         </template>
 
                         <template v-slot:cell(sib_annotation)="data">
-                            <div class="pb-2" @change="annotationEdited(data.item)">
+                            <div class="pb-2" @change="handleEffect" v-bind:id="`effect-${data.item.id}`">
                                 <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Prognostic')"
                                                :options="prognosticOutcomeOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Diagnostic')"
@@ -37,7 +37,7 @@
                                                v-if="index.includes('Predictive / Therapeutic')"
                                                :options="predictiveOutcomeOptions" class="form-control"></b-form-select>
                             </div>
-                            <div class="pt-2" @change="annotationEdited(data.item)">
+                            <div class="pt-2" @change="handleTier" v-bind:id="`tier-${data.item.id}`">
                                 <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Prognostic')"
                                                :options="trustOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Diagnostic')"
@@ -46,6 +46,7 @@
                                                v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
                                                class="form-control"></b-form-select>
                             </div>
+                            <input class='invisible' v-model="data.item.sib_annotation_outcome" @change="annotationEdited(data.item)" />
                         </template>
 
                         <template v-slot:cell(reviewer_annotation)="data">
@@ -258,6 +259,7 @@ import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import {HTTP} from "@/router/http";
 import {BIcon, BIconCheckSquareFill, BIconSquare, BIconXSquareFill} from "bootstrap-vue";
+
 export default {
     name: "ModifyReview",
     components: {
@@ -282,6 +284,30 @@ export default {
                 this.refreshReferences();
             };
         },
+        handleEffect(event) {
+            const tag_id = event.target.parentNode.id
+            const selectedValue = document.getElementById(tag_id).childNodes[2].value
+            const evidence_id = tag_id.split("-").pop()
+            for (var outcome in this.disease) {
+                const evidence = this.disease[outcome][0]
+                if (evidence.id == parseInt(evidence_id)) {
+                    evidence['sib_annotation_outcome'] = selectedValue
+                    this.annotationEdited(evidence)
+                }
+            }
+        },
+        handleTier(event) {
+            const tag_id = event.target.parentNode.id
+            const selectedValue = document.getElementById(tag_id).childNodes[2].value
+            const evidence_id = tag_id.split("-").pop()
+            for (var outcome in this.disease) {
+                const evidence = this.disease[outcome][0]
+                if (evidence.id == parseInt(evidence_id)) {
+                    evidence['sib_annotation_trust'] = selectedValue
+                    this.annotationEdited(evidence)
+                }
+            }
+        },
         makeItems() {
             const evidences = {}
             this.raw_disease.map(evidence => {
@@ -297,17 +323,23 @@ export default {
                     })
                 })
 
-                // use id of final_annotation object so that the PUT request is made to the right 
-                evidenceObj["final_annotation_id"] = evidence.finalAnnotation.id
+                evidenceObj['id'] = evidence.id
 
-                // If not final annotation yet, then the values are those of first annotation
-                const notYetAnnotated = evidence.finalAnnotation.annotatedEffect === "Not yet annotated" || evidence.finalAnnotation.annotatedTier === "Not yet annotated"
-                evidenceObj["sib_annotation_outcome"] = notYetAnnotated? evidence.curator.annotatedEffect : evidence.finalAnnotation.annotatedEffect
-                evidenceObj["sib_annotation_trust"] = notYetAnnotated? evidence.curator.annotatedTier : evidence.finalAnnotation.annotatedTier
-                evidenceObj["clinical_input"] = evidence.finalAnnotation.clinical_input
-                //evidenceObj["clinical_input"] = `modal-add-note-${this.label.replace(" ", "-")}`
+                if (typeof evidence.finalAnnotation === 'undefined') {
+                    // If not final annotation yet, then the values are those of first annotation
+                    evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
+                    evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
+                    evidenceObj["clinical_input"] = ''
+                    
+                } else {
+                    evidenceObj["sib_annotation_outcome"] = evidence.finalAnnotation.annotatedEffect
+                    evidenceObj["sib_annotation_trust"] = evidence.finalAnnotation.annotatedTier
+                    evidenceObj["clinical_input"] = evidence.finalAnnotation.clinical_input
 
-                
+                    // use id of final_annotation object so that the PATCH request is made to the right ID
+                    evidenceObj["final_annotation_id"] = evidence.finalAnnotation.id
+                }
+
                 evidenceObj["reviews"] = []
                 evidence.reviews.map(review => {
                     if (review.status != null) {
@@ -333,11 +365,21 @@ export default {
                 evidenceObj["show_review_status"] = false
                 evidenceObj["note"] = null
                 evidences[evidence.fullType].push(evidenceObj)
+                this.annotationEdited(evidenceObj)
             })
             this.disease = evidences;
         },
         annotationEdited(evidence) {
-            this.$emit('annotated', evidence)
+            let annotation = {
+                'effect': evidence.sib_annotation_outcome,
+                'tier': evidence.sib_annotation_trust,
+                'evidence': evidence.id,
+                'clinical_input': evidence.clinical_inpu
+            }
+            if (typeof evidence['final_annotation_id'] !== 'undefined') {
+                annotation['id'] = evidence['final_annotation_id']
+            }
+            this.$emit('annotated', annotation)
         },
         deleteEntry(entry_id) {
             if (confirm("Are you sure that you want to delete this entry?")) {
@@ -390,7 +432,6 @@ export default {
             // look up the reference via the variomes API
             this.loadingVariomes = true;
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
-            console.log("VARIOMES IS CALLED IN MODIFYREVIEW")
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
@@ -603,5 +644,8 @@ table >>> .thead-footer {
 }
 .text-small {
     font-size: smaller;
+}
+.invisble {
+    display: none;
 }
 </style>

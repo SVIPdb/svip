@@ -280,34 +280,41 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    //console.log(`review_data response: ${JSON.stringify(response.data)}`)
                     this.diseases = response.data.review_data
                 })
                 .catch((err) => {
                     log.warn(err);
                 })
         },
-        updateAnnotations(evidence) {
-            const annotation = {
-                effect: evidence.sib_annotation_outcome,
-                tier: evidence.sib_annotation_trust,
-                //clinical_input: evidence.sib_annotation
-            }
-            this.annotations[evidence.final_annotation_id] = annotation
+        updateAnnotations(annotation) {
+            this.annotations[annotation['evidence']] = annotation
         },
         submitAnnotations() {
-            console.log('FLAG 1')
-            for (var id in this.annotations) {
-                console.log('FLAG 2')
-                console.log(this.annotations[id])
-                HTTP.put(`/sib_annotations_2/${id}/`, this.annotations[id])
+            for (var evidence_id in this.annotations) {
+                // check wether annotation has an ID field (in that case it means an instance already exists in the DB)
+                const annotation = this.annotations[evidence_id]
+                if (typeof annotation.id === 'undefined') {
+                    HTTP.post('/sib_annotations_2/', annotation)
                     .then((response) => {
                         console.log(`response: ${response}`)
                     })
                     .catch((err) => {
                         log.warn(err);
                     })
+                } else {
+                    const params = annotation
+                    //console.log(annotation.id)
+                    //delete params['id']
+                    HTTP.patch(`/sib_annotations_2/${annotation.id}/`, annotation)
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
+                }
             }
+
             this.$snotify.success("Your review has been saved");
         }
     },
