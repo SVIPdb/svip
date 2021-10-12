@@ -130,20 +130,19 @@ class VariantInSVIP(models.Model):
         diseases_dict = []
 
         for association in self.variant.curation_associations.all().order_by('id'):
-                
             disease = {}
             disease["disease"] = association.disease.name
 
             evidences = []
             for evidence in association.curation_evidences.all():
                 
-                if not hasattr(evidence, 'annotation1'):
-                    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                    annotation1.save()
+                #if not hasattr(evidence, 'annotation1'):
+                #    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                #    annotation1.save()
                     
-                if not hasattr(evidence, 'annotation2'):
-                    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                    annotation2.save()
+                #if not hasattr(evidence, 'annotation2'):
+                #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                #    annotation2.save()
                 
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
@@ -151,25 +150,29 @@ class VariantInSVIP(models.Model):
                 evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
                 evidence_obj["fullType"] = evidence.full_evidence_type()
                 evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
-                evidence_obj["curator"] = {
-                    "id": evidence.annotation1.id,
-                    "annotatedEffect": evidence.annotation1.effect,
-                    "annotatedTier": evidence.annotation1.tier,
-                }
-                evidence_obj["finalAnnotation"] = {
-                    "id": evidence.annotation2.id,
-                    "annotatedEffect": evidence.annotation2.effect,
-                    "annotatedTier": evidence.annotation2.tier,
-                    "clinical_input": evidence.annotation2.clinical_input
-                }
-                evidence_obj["currentReview"] = {
-                    "id": evidence.id,
-                    "annotatedEffect": evidence.annotation1.effect,
-                    "annotatedTier": evidence.annotation1.tier,
-                    "reviewer": "",
-                    "status": None,
-                    "comment": None
-                }
+                
+                if hasattr(evidence, 'annotation1'):
+                    evidence_obj["curator"] = {
+                        "id": evidence.annotation1.id,
+                        "annotatedEffect": evidence.annotation1.effect,
+                        "annotatedTier": evidence.annotation1.tier,
+                    }
+                if hasattr(evidence, 'annotation2'):
+                    evidence_obj["finalAnnotation"] = {
+                        "id": evidence.annotation2.id,
+                        "annotatedEffect": evidence.annotation2.effect,
+                        "annotatedTier": evidence.annotation2.tier,
+                        "clinical_input": evidence.annotation2.clinical_input
+                    }
+                
+                #evidence_obj["currentReview"] = {
+                #    "id": evidence.id,
+                #    "annotatedEffect": evidence.annotation1.effect,
+                #    "annotatedTier": evidence.annotation1.tier,
+                #    "reviewer": "",
+                #    "status": None,
+                #    "comment": None
+                #}
                 curations = []
                 for curation in evidence.curation_entries.all():
                     curation_obj = {
@@ -233,30 +236,44 @@ class VariantInSVIP(models.Model):
                 
                 for entry_id in entry_ids:
                     if CurationEntry.objects.get(id=entry_id) in evidence.curation_entries.all():
-                        
-                        if not hasattr(evidence, 'annotation1'):
-                            annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                            annotation1.save()
-                        
+
+                        #if not hasattr(evidence, 'annotation1'):
+                        #    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                        #    annotation1.save()
+
+                        #if not hasattr(evidence, 'annotation2'):
+                        #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
+                        #    annotation2.save()
+
                         evidence_obj = {}
                         evidence_obj["id"] = evidence.id
                         evidence_obj["isOpen"] = False
                         evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
                         evidence_obj["fullType"] = evidence.full_evidence_type()
                         evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
-                        evidence_obj["curator"] = {
-                            "id": evidence.annotation1.id,
-                            "annotatedEffect": evidence.annotation1.effect,
-                            "annotatedTier": evidence.annotation1.tier
-                        }
-                        evidence_obj["currentReview"] = {
-                            "id": evidence.id,
-                            "annotatedEffect": evidence.annotation1.effect,
-                            "annotatedTier": evidence.annotation1.tier,
-                            "reviewer": "",
-                            "status": None,
-                            "comment": None
-                        }
+                        
+                        if hasattr(evidence, 'annotation1'):
+                            evidence_obj["curator"] = {
+                                "id": evidence.annotation1.id,
+                                "annotatedEffect": evidence.annotation1.effect,
+                                "annotatedTier": evidence.annotation1.tier,
+                            }
+                        if hasattr(evidence, 'annotation2'):
+                            evidence_obj["finalAnnotation"] = {
+                                "id": evidence.annotation2.id,
+                                "annotatedEffect": evidence.annotation2.effect,
+                                "annotatedTier": evidence.annotation2.tier,
+                                "clinical_input": evidence.annotation2.clinical_input
+                            }
+                        
+                        #evidence_obj["currentReview"] = {
+                        #    "id": evidence.id,
+                        #    "annotatedEffect": evidence.annotation1.effect,
+                        #    "annotatedTier": evidence.annotation1.tier,
+                        #    "reviewer": "",
+                        #    "status": None,
+                        #    "comment": None
+                        #}
                         curations = []
                         for curation in evidence.curation_entries.all():
                             curation_obj = {

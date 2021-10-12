@@ -51,7 +51,7 @@
 
                                         <!--<b-col cols="2">
                                             <b-row class="p-2">
-                                                <select-tier v-model="evidence.currentReview.agreement"
+                                                <select-agreement v-model="evidence.currentReview.agreement"
                                                             @input="onChange(evidence.curator, evidence.currentReview)"/>
                                             </b-row>
                                         </b-col>-->
@@ -117,7 +117,7 @@ import ulog from "ulog";
 import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPrognosticOutcome";
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
-import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import SelectAgreement from "@/components/widgets/review/forms/SelectAgreement";
 import { mapGetters } from "vuex";
 
 const log = ulog("SecondReviewCycle");
@@ -125,7 +125,7 @@ const log = ulog("SecondReviewCycle");
 export default {
     name: "SecondReviewCycle",
     components: {
-        SelectTier,
+        SelectAgreement,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,

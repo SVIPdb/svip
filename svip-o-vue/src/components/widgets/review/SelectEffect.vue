@@ -22,18 +22,22 @@
                                             </p>
                                         </b-col>
                                         <b-col cols="3">
-                                            <b-row class="p-2">
-                                                <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                        v-bind="evidence.curator.annotatedEffect"></select-prognostic-outcome>
-                                                <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
-                                                                        v-model="evidence.curator.annotatedEffect"></select-diagnostic-outcome>
-                                                <select-predictive-therapeutic-outcome
-                                                    v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
-                                                    v-model="evidence.curator.annotatedEffect"></select-predictive-therapeutic-outcome>
-                                            </b-row>
-                                            <b-row class="p-2">
-                                                <select-tier v-model="evidence.curator.annotatedTier"></select-tier>
-                                            </b-row>
+                                            <!--<div v-if="evidence.curator">evidence.curator exists</div>
+                                            <div v-if="evidence.reviews">evidence.reviews exists</div>-->
+                                            <div v-if="evidence.curator">
+                                                <b-row class="p-2">
+                                                    <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
+                                                                            v-bind="evidence.curator.annotatedEffect"></select-prognostic-outcome>
+                                                    <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
+                                                                            v-model="evidence.curator.annotatedEffect"></select-diagnostic-outcome>
+                                                    <select-predictive-therapeutic-outcome
+                                                        v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
+                                                        v-model="evidence.curator.annotatedEffect"></select-predictive-therapeutic-outcome>
+                                                </b-row>
+                                                <b-row class="p-2">
+                                                    <select-tier v-model="evidence.curator.annotatedTier"></select-tier>
+                                                </b-row>
+                                            </div>
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
@@ -141,13 +145,7 @@ export default {
             ]
         };
     },
-    mounted() {
-        this.diseases.map(disease => {
-            disease.evidences.map(evidence => {
-                evidence["currentReview"]["reviewer_id"] = this.user.user_id
-            })
-        });
-    },
+    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
@@ -188,7 +186,10 @@ export default {
         prefillAnnotations() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    if (evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated") {
+
+                    // Check whether SIBAnnotation1 objects already exist in the database
+                    if (typeof evidence.curator === 'undefined') {
+                        console.log('FLAG')
 
                         let effects = {}
                         evidence.curations.map(curation => {
@@ -230,11 +231,65 @@ export default {
                                 }
                             }
                         }
+                        evidence.curator = []
                         evidence.curator.annotatedEffect = trustedCuration['effect']
                         evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
 
-                        this.submitOneEvidence(evidence)
+                        //this.submitOneEvidence(evidence)
                     }
+
+
+
+
+
+
+                    //if (evidence.curator.annotatedEffect === "Not yet annotated" || evidence.curator.annotatedTier === "Not yet annotated") {
+
+                    //    let effects = {}
+                    //    evidence.curations.map(curation => {
+                    //        let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
+                    //        let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
+                    //        if (curation.effect in effects) {
+                    //            effects[curation.effect]["curations"] += 1
+                    //            if (support_score > effects[curation.effect]["support_score"]) {
+                    //                effects[curation.effect]["support_score"] = support_score
+                    //            }
+                    //            if (tier_score > effects[curation.effect]["tier_score"]) {
+                    //                effects[curation.effect]["tier_score"] = tier_score
+                    //            }
+                    //        } else {
+                    //            effects[curation.effect] = {
+                    //                "support_score": support_score,
+                    //                "tier_score": tier_score,
+                    //                "curations": 1,
+                    //                "effect": curation.effect
+                    //            }
+                    //        }
+                    //    })
+                    //    let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
+                    //    const scores = ['support_score', 'curations', 'tier_score']
+                    //    const properties = [...scores, 'effect']
+
+                    //    for (const effect in effects) {
+                    //        for (var i = 0; i < scores.length; i++) {
+                    //            const effect_scores = effects[effect]
+                    //            if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
+                                    
+                    //                properties.map(property => {
+                    //                    trustedCuration[property] = effect_scores[property]
+                    //                })
+
+                    //                break;
+                    //            } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
+                    //                break;
+                    //            }
+                    //        }
+                    //    }
+                    //    evidence.curator.annotatedEffect = trustedCuration['effect']
+                    //    evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
+
+                    //    this.submitOneEvidence(evidence)
+                    //}
                 })
             })
         },
@@ -242,18 +297,6 @@ export default {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     this.submitOneEvidence(evidence)
-                    //const annotation = {
-                    //    'effect': evidence.curator.annotatedEffect,
-                    //    'tier': evidence.curator.annotatedTier
-                    //}
-                    //HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
-                    //    .then((response) => {
-                    //        console.log(`response: ${response}`)
-                    //    })
-                    //    .catch((err) => {
-                    //        log.warn(err);
-                    //        this.$snotify.error("Failed to submit curation");
-                    //    })
                 })
             })
             this.$snotify.success("Your curation(s) has been submitted to be reviewed");
@@ -261,16 +304,30 @@ export default {
         submitOneEvidence(evidence) {
             const annotation = {
                 'effect': evidence.curator.annotatedEffect,
-                'tier': evidence.curator.annotatedTier
+                'tier': evidence.curator.annotatedTier,
+                'evidence': evidence.id
             }
-            HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
-                .then((response) => {
-                    console.log(`response: ${response}`)
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to submit curation");
-                })
+
+            // check wether an SIBAnnotation1 instance already exists in the DB
+            if (typeof evidence.curator.id === 'undefined') {
+                HTTP.post(`/sib_annotations_1/`, annotation)
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to submit curation");
+                    })
+            } else {
+                HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to submit curation");
+                    })
+            }
         }
     },
 };

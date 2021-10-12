@@ -676,7 +676,7 @@ class SIBAnnotation1Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = SIBAnnotation1
-        fields = ('id', 'effect', 'tier')
+        fields = ('id', 'evidence', 'effect', 'tier')
         #extra_kwargs = {
         #    "content": {
         #        "required": False,
@@ -696,7 +696,7 @@ class SIBAnnotation2Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = SIBAnnotation2
-        fields = ('id', 'effect', 'tier', 'clinical_input')
+        fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
 
 
 
