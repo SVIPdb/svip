@@ -77,6 +77,15 @@ export default {
         this.fetchRequestedVariants()
     },
     methods: {
+        calculateStage(stage){
+            if (stage === 'loaded') {
+                return 'Not assigned'
+            } else if (stage === 'ongoing_curation') {
+                return 'Ongoing'
+            } else {
+                return 'Complete'
+            }
+        },
         fetchRequestedVariants() {
             this.loading = true;
             this.error = null;
@@ -91,7 +100,8 @@ export default {
                         'variant': x.variant && x.variant.name,
                         'hgvs': x.variant && x.variant.hgvs_c,
                         'disease': x.disease_name,
-                        'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                        //'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                        'status': this.calculateStage(x.variant.stage),
                         'deadline': 'n/a',
                         'requester': x.submission.requestor,
                         'curator': [],
