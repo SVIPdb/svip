@@ -209,6 +209,18 @@ class VariantInSVIP(models.Model):
                     reviews.append(review_obj)
                 evidence_obj["reviews"] = reviews
 
+                revised_reviews = []
+                for rr in evidence.revised_reviews.all():
+                    rr_obj = {
+                        "id": rr.id,
+                        "reviewer": f"{rr.reviewer.first_name} {rr.reviewer.last_name}",
+                        "reviewer_mail": rr.reviewer.email,
+                        'agree': rr.agree,
+                        'comment': rr.comment
+                    }
+                    revised_reviews.append(rr_obj)
+                evidence_obj['revised_reviews'] = revised_reviews
+
                 evidences.append(evidence_obj)
             
             ordered_evidences = []

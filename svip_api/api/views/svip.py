@@ -528,7 +528,6 @@ class ReviewDataView(APIView):
     
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
-        time_1 = datetime.now()
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
@@ -573,27 +572,15 @@ class ReviewDataView(APIView):
                         )
                         new_evidence.save()
                         
-                        ## create both SIB annotation instances of the 2 different annotation stages, linked to the evidence just created
-                        #annotation1 = SIBAnnotation1(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
-                        #annotation1.save()
-                        #annotation2 = SIBAnnotation2(evidence=new_evidence, effect="Not yet annotated", tier="Not yet annotated")
-                        #annotation2.save()
-                        
                         evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                         curation.curation_evidences.add(evidence)
 
                 curation.save()
 
-        time_2 = datetime.now()
-        
-        
         if entry_ids == 'all':
             return Response(
                 data={
                     "review_data": svip_var.review_data(),
-                    "time_1": time_1,
-                    "time_2": time_2,
-                    "time_3": datetime.now()
                 }
             )
         
@@ -601,9 +588,6 @@ class ReviewDataView(APIView):
             return Response(
                 data={
                     "review_data": svip_var.first_annotation_data(entry_ids),
-                    "time_1": time_1,
-                    "time_2": time_2,
-                    "time_3": datetime.now()
                 }
             )
 

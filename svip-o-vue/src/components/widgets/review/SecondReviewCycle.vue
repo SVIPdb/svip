@@ -55,14 +55,12 @@
 
                                         <b-col cols="2">
                                             <b-row class="p-2">
-                                                <select-agreement v-model="evidence.newReview.agreement"/>
-                                                            <!--@input="onChange(evidence.curator, evidence.myReview)"/>-->
+                                                <select-agreement v-model="evidence.newReview.agreement" @input="onChange(evidence.newReview)"/>
                                             </b-row>
                                         </b-col>
 
                                         <b-col cols="4">
                                             <b-textarea
-                                                :disabled="evidence.newReview.agreement === 'I agree.'"
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
@@ -442,21 +440,16 @@ export default {
             }
             return ""
         },
-        onChange(curatorValues, reviewerValues) {
+        onChange(newReview) {
+            newReview.agree = newReview.agree? false : true
         // change review status (true if option matches that of curator, false if doesn't match)
-            reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
+            //reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
         detectOwnReviews() {
             // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
 
-                    const newReview = {
-                        "reviewer_id": this.user.user_id,
-                        "agreement": 'I agree.'
-                    }
-
-                    evidence["newReview"] = newReview
                     evidence.reviews.map(review => {
                         if (review.reviewer_id === this.user.user_id) {
                             const myReview = {
@@ -466,10 +459,33 @@ export default {
                             }
                             evidence['myReview'] = myReview
 
-                            // store the evidence ID so when the user submit it, the request is a patch
-                            this.selfReviewedEvidences[evidence.id] = review.id
                         }
                     })
+
+                    evidence.revised_reviews.map(rr => {
+                        if (rr.reviewer_id === this.user.user_id) {
+                            const newReview = {
+                                "reviewer_id": this.user.user_id,
+                                "agreement": rr.agreement,
+                                'agree': rr.agree,
+                                'comment': rr.comment
+                            }
+                            evidence['newReview'] = newReview
+                        }
+                        // store the evidence ID so when the user submit it, the request is a patch
+                        this.selfReviewedEvidences[evidence.id] = rr.id
+                    })
+
+                    if (typeof evidence['newReview'] === 'undefined') {
+                        const newReview = {
+                            "reviewer_id": this.user.user_id,
+                            "agreement": 'I agree.',
+                            'agree': true,
+                            'comment': ''
+                        }
+                        evidence["newReview"] = newReview
+                    }
+
                 })
             })
         },
@@ -493,47 +509,42 @@ export default {
         },
         submitReviews() {
 
-            if (this.missingComment()) {
-                this.$snotify.error(
-                    "Please enter a comment for every review conflicting with that of curators", 
-                    "",
-                    { timeout: 5000 }
-                );
-                return false
-            }
+            //if (this.missingComment()) {
+            //    this.$snotify.error(
+            //        "Please enter a comment for every review conflicting with that of curators", 
+            //        "",
+            //        { timeout: 5000 }
+            //    );
+            //    return false
+            //}
 
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
 
-                    if (
-                        // check that dropdown options have been selected
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        if (evidence.id in this.selfReviewedEvidences) {
-                            console.log('REREVIEWED')
-                            let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
-                        } else {
-                            //newReviews.push(this.reviewParams(evidence));
-                            console.log('FIRST REVIEW')
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                    if (evidence.id in this.selfReviewedEvidences) {
+                        console.log('REREVIEWED')
+                        let reviewID = this.selfReviewedEvidences[evidence.id]
+                        HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
+                            .then((response) => {
+                                this.getReviewData()
+                            })
+                            .catch((err) => {
+                                log.warn(err);
+                                this.$snotify.error("Failed to submit review");
+                            })
+                    } else {
+                        //newReviews.push(this.reviewParams(evidence));
+                        console.log('FIRST REVIEW')
+                        HTTP.post(`/reviews/`, this.reviewParams(evidence))
+                            .then((response) => {
+                                this.getReviewData()
+                            })
+                            .catch((err) => {
+                                log.warn(err);
+                                this.$snotify.error("Failed to submit review");
+                            })
 
-                        }
                     }
                 })
             })
