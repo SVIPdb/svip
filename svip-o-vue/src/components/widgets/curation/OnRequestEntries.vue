@@ -94,7 +94,10 @@ export default {
                         'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
                         'deadline': 'n/a',
                         'requester': x.submission.requestor,
-                        'curator': []
+                        'curator': [],
+                        'review_count': x.variant.review_count,
+                        'reviews': x.variant.reviews,
+                        'stage': x.variant.stage
                     }));
 
                     this.$emit('itemsloaded', this.items);

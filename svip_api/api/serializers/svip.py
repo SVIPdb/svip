@@ -663,7 +663,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
 
     @staticmethod
     def get_review_count(obj):
-        if not str(obj.status) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
             evidence = obj.curation_associations.first().curation_evidences.first()
             return evidence.reviews.count()
         else:
@@ -672,7 +672,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     @staticmethod
     def get_reviews(obj):
         reviews = []
-        if not str(obj.status) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
             evidence = obj.curation_associations.first().curation_evidences.first()
             if evidence.reviews.count() > 0:
                 for review in evidence.reviews.all():
@@ -690,7 +690,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'hgvs_c',
             'review_count',
             'reviews',
-            'status'
+            'stage'
         )
 
 

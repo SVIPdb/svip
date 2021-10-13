@@ -187,10 +187,19 @@
                     </p>
                 </template>
 
-                <template v-slot:cell(status)>
-                    <b-icon style="color:blue;" class="h5 m-1" icon="check-square-fill"></b-icon>
-                    <b-icon class="h5 m-1" icon="square"></b-icon>
-                    <b-icon style="color:red;" class="h5 m-1" icon="x-square-fill"></b-icon>
+                <template v-slot:cell(status)="status_obj">
+                    <span v-for="(review) in status_obj['item']['reviews']" :key="review">
+                        <span v-if="review">
+                            <b-icon style="color:blue;" class="h5 m-1" icon="check-square-fill"></b-icon>
+                        </span>
+                        <span v-else>
+                            <b-icon style="color:red;" class="h5 m-1" icon="x-square-fill"></b-icon>
+                        </span>
+                    </span>
+
+                    <span v-for="(index) in 3 - status_obj['item']['review_count']" :key="index">
+                        <b-icon class="h5 m-1" icon="square"></b-icon>
+                    </span>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">

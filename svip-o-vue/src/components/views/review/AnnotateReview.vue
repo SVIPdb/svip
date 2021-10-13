@@ -6,7 +6,7 @@
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <div v-if="['to_review_again', 'on_hold', 'fully_reviewed'].includes(variant.status)">
+        <div v-if="['to_review_again', 'on_hold', 'fully_reviewed'].includes(variant.stage)">
             <SecondReviewCycle :variant="variant"/>
         </div>
         <div v-else>
