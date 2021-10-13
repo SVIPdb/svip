@@ -4,8 +4,6 @@ from simple_history.admin import SimpleHistoryAdmin
 from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant, 
                         SubmittedVariantBatch)
 
-from api.models.genomic import VariantStatus
-
 from api.models.svip import (SummaryComment, CurationAssociation, CurationEvidence, CurationReview,
                              SIBAnnotation1, SIBAnnotation2, SummaryDraft, CurationRequest, RevisedReview
                             )
@@ -17,8 +15,6 @@ admin.site.register(RevisedReview)
 admin.site.register(SIBAnnotation1)
 admin.site.register(SIBAnnotation2)
 admin.site.register(CurationRequest)
-
-admin.site.register(VariantStatus)
 
 
 @admin.register(CurationAssociation)

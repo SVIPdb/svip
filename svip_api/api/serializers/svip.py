@@ -22,7 +22,7 @@ from api.models.svip import (
     CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
     SummaryDraft, RevisedReview
 )
-from api.serializers import SimpleVariantSerializer
+from api.serializers import SimpleVariantSerializer, SimpleGeneSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
@@ -628,9 +628,79 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
         fields = '__all__'
 
 
+
+
+class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
+    gene = SimpleGeneSerializer()
+
+    review_count = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
+
+
+    def to_internal_value(self, data):
+        from api.utils import to_dict
+
+        try:
+            # we might get data in any of the following forms:
+            # 1. an integer identifying the variant
+            # 2. {id: <variant id:int>}
+            # 3. {id: "v_<variant id:int>" }
+
+            try:
+                numeric_id = int(data)
+            except TypeError:
+                if 'id' in data:
+                    data = data['id']
+
+                if '_' in str(data):
+                    data = data.split("_")[1]
+
+                numeric_id = int(data)
+
+            return to_dict(Variant.objects.get(id=numeric_id))
+        except ValueError:
+            return super().to_internal_value(data)
+
+    @staticmethod
+    def get_review_count(obj):
+        if not str(obj.update_status()) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+            evidence = obj.curation_associations.first().curation_evidences.first()
+            return evidence.reviews.count()
+        else:
+            return 0
+        
+    @staticmethod
+    def get_reviews(obj):
+        reviews = []
+        if not str(obj.update_status()) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+            evidence = obj.curation_associations.first().curation_evidences.first()
+            if evidence.reviews.count() > 0:
+                for review in evidence.reviews.all():
+                    reviews.append(review.match)
+        return reviews
+
+    class Meta:
+        model = Variant
+        fields = (
+            'id',
+            'url',
+            'gene',
+            'name',
+            'description',
+            'hgvs_c',
+            'review_count',
+            'reviews',
+            'update_status'
+        )
+
+
+
+
+
 # this would usually be in the curation section, but it needs to come after SubmittedVariantSerializer
 class CurationRequestSerializer(serializers.ModelSerializer):
-    variant = SimpleVariantSerializer()
+    #variant = SimpleVariantSerializer()
+    variant = VariantInDashboardSerializer()
     submission = SubmittedVariantSerializer()
     disease_name = serializers.SerializerMethodField()
 

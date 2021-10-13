@@ -66,26 +66,25 @@ class Gene(models.Model):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
 
-class VariantStatus(models.Model):
-    """
-    Each instance of VariantStatus corresponds to a specific stage of curation.
-    From an instance of this class, all the existing variants of that status can be accessed using the related_name 'variants'.
-    """
-    name = models.TextField(null=True, blank=True)
-    stars = models.IntegerField(default=0)
+#class VariantStatus(models.Model):
+#    """
+#    Each instance of VariantStatus corresponds to a specific stage of curation.
+#    From an instance of this class, all the existing variants of that status can be accessed using the related_name 'variants'.
+#    """
+#    name = models.TextField(null=True, blank=True)
+#    stars = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.name
+#    def __str__(self):
+#        return self.name
 
 
 class VariantManager(models.Manager):
     def get_by_natural_key(self, description, hgvs_g):
         return self.get(description=description, hgvs_g=hgvs_g)
+    
+    
 
 class Variant(models.Model):
-    
-    status = models.ForeignKey(VariantStatus, on_delete=DB_CASCADE, related_name='variants', null=True)
-    
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
@@ -144,52 +143,53 @@ class Variant(models.Model):
             models.Index(fields=['gene', 'name']),
             models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
+    
+    @property
+    def status(self):
 
-    def status_name(self):
-        return self.status.name
-
-    def update_status(self):
-        new_status = 'none'
-        
         if self.curation_request.all().count() > 0:
-            new_status = 'loaded'
+            return 'loaded'
         
         if self.curations.all().count() > 0 :
-            new_status = 'ongoign_curation'
+            return 'ongoing_curation'
         
         for curation in self.curations.all():
             if curation.status == 'submitted':
-                new_status = '0_review'
+                return '0_review'
         
-        evidence = self.curation_associations.first().curation_evidences.first()
+        if self.curation_associations.count() > 0:
+            if self.curation_associations.first().curation_evidences.count() > 0:
+                evidence = self.curation_associations.first().curation_evidences.first()
 
-        if evidence.reviews.count() == 1:
-            new_status = '1_review'
-        if evidence.reviews.count() == 2:
-            new_status = '2_reviews'
-        if evidence.reviews.count() == 3:
-            if evidence.reviews.filter(
-                annotated_effect=self.annotation1.effect,
-                annotated_tier=self.annotation1.tier
-            ).count() == 3:
-                new_status = 'fully_reviewed'
-            else:
-                new_status = 'conflicting_reviews'
-        if hasattr(evidence, 'annotation2'):
-            new_status = 'to_review_again'
-        if evidence.revised_reviews.all().count() == 3:
-            if evidence.revised_reviews.filter(agree=True).count() == 3:
-                new_status = 'fully_reviewed'
-            else:
-                new_status = 'on_hold'
+                if evidence.reviews.count() == 1:
+                    return '1_review'
+                if evidence.reviews.count() == 2:
+                    return '2_reviews'
+                if evidence.reviews.count() == 3:
+                    if evidence.reviews.filter(
+                        annotated_effect=self.annotation1.effect,
+                        annotated_tier=self.annotation1.tier
+                    ).count() == 3:
+                        return 'fully_reviewed'
+                    else:
+                        return 'conflicting_reviews'
+                if hasattr(evidence, 'annotation2'):
+                    return 'to_review_again'
+                if evidence.revised_reviews.all().count() == 3:
+                    if evidence.revised_reviews.filter(agree=True).count() == 3:
+                        return 'fully_reviewed'
+                    else:
+                        return 'on_hold'
         
-        if self.status == None :
-            self.status = VariantStatus.objects.get(name=new_status)
-        elif new_status != self.status.name:
-            self.status = VariantStatus.objects.get(name=new_status)
+        return 'none'
+    
+        #if self.status == None :
+        #    self.status = VariantStatus.objects.get(name=new_status)
+        #elif new_status != self.status.name:
+        #    self.status = VariantStatus.objects.get(name=new_status)
         
-        self.save()
-        return self.status
+        #self.save()
+        #return str(self.status)
 
 
 class VariantInSource(models.Model):

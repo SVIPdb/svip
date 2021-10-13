@@ -15,7 +15,7 @@ from django_db_cascade.deletions import DB_CASCADE
 from django_db_cascade.fields import ForeignKey
 from simple_history.models import HistoricalRecords
 
-from api.models.genomic import Variant, VariantStatus
+from api.models.genomic import Variant
 from api.models.reference import Disease
 from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
                              PUBLIC_VISIBLE_STATUSES)
@@ -709,6 +709,10 @@ class CurationReview(SVIPModel):
     annotated_effect = models.TextField(null=True, blank=True)
     annotated_tier = models.TextField(null=True, blank=True)
     comment = models.TextField(default="", null=True, blank=True)
+    
+    def match(self):
+        SIBAnnotation = self.curation_evidence.annotation1
+        return (self.annotated_effect == SIBAnnotation.effect) and (self.annotated_tier == SIBAnnotation.tier)
 
 
 class RevisedReview(models.Model):

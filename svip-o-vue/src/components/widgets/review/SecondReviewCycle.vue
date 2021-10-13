@@ -56,24 +56,6 @@
                                         <b-col cols="6">
                                             <ReviewAgreementComment :value="evidence.newReview" @input="review => evidence.newReview = review"/>
                                         </b-col>
-
-                                        <!--<b-col cols="2">
-                                            <b-row class="p-2">
-                                                <select-agreement v-model="evidence.newReview.agreement" @input="onChange(evidence.newReview)"/>
-                                            </b-row>
-                                        </b-col>
-
-                                        <b-col cols="4">
-                                            <b-textarea
-                                                :disabled=""
-                                                class="summary-box" 
-                                                rows="3"
-                                                placeholder="Comment..."
-                                                v-model="evidence.newReview.comment"
-                                            >
-                                            </b-textarea>
-                                            {{evidence.newReview.agreement}}
-                                        </b-col>-->
                                     </b-row>
                                 </b-card-text>
                             </div>
@@ -527,7 +509,7 @@ export default {
                     if (evidence.id in this.selfReviewedEvidences) {
                         console.log('REREVIEWED')
                         let reviewID = this.selfReviewedEvidences[evidence.id]
-                        HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
+                        HTTP.put(`/revised_reviews/${reviewID}/`, this.reviewParams(evidence))
                             .then((response) => {
                                 this.getReviewData()
                             })
@@ -536,9 +518,8 @@ export default {
                                 this.$snotify.error("Failed to submit review");
                             })
                     } else {
-                        //newReviews.push(this.reviewParams(evidence));
                         console.log('FIRST REVIEW')
-                        HTTP.post(`/reviews/`, this.reviewParams(evidence))
+                        HTTP.post(`/revised_reviews/`, this.reviewParams(evidence))
                             .then((response) => {
                                 this.getReviewData()
                             })
@@ -560,9 +541,8 @@ export default {
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
                 reviewer: this.user.user_id,
-                annotated_effect: evidence.currentReview.annotatedEffect,
-                annotated_tier: evidence.currentReview.annotatedTier,
-                comment: evidence.currentReview.comment
+                comment: evidence.newReview.comment,
+                agree: evidence.newReview.agreement === 'I agree.'? true: false
             }
             return singleReviewJSON
         }
