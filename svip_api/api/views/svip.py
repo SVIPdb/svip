@@ -20,7 +20,7 @@ from api.models import (
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
     SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
-    SIBAnnotation2, SummaryDraft
+    SIBAnnotation2, SummaryDraft, RevisedReview
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -30,7 +30,7 @@ from api.serializers import (
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
     SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
-    CurationReviewSerializer, SummaryDraftSerializer
+    CurationReviewSerializer, SummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -309,6 +309,19 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         #kwargs["many"] = True
         return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
+
+
+class RevisedReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = RevisedReviewSerializer
+    model = RevisedReview
+
+    def get_queryset(self):
+        queryset = RevisedReview.objects.all()
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+        #kwargs["many"] = True
+        return super(RevisedReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
 # ================================================================================================================

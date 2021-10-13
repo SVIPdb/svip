@@ -122,6 +122,8 @@ router.register(r'submitted_variant_batches',
                 views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
 router.register(r'reviews', views.CurationReviewViewSet, basename='reviews')
+router.register(r'revised_reviews', views.RevisedReviewViewSet, basename='revised_reviews')
+
 router.register(r'summary_comments', views.SummaryCommentViewSet,
                 basename='summary_comments')
 

@@ -7,12 +7,13 @@ from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, Su
 from api.models.genomic import VariantStatus
 
 from api.models.svip import (SummaryComment, CurationAssociation, CurationEvidence, CurationReview,
-                             SIBAnnotation1, SIBAnnotation2, SummaryDraft, CurationRequest, 
+                             SIBAnnotation1, SIBAnnotation2, SummaryDraft, CurationRequest, RevisedReview
                             )
 
 admin.site.register(SummaryComment)
 admin.site.register(SummaryDraft)
 admin.site.register(CurationReview)
+admin.site.register(RevisedReview)
 admin.site.register(SIBAnnotation1)
 admin.site.register(SIBAnnotation2)
 admin.site.register(CurationRequest)

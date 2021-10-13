@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div v-for="(review) in diseases" :key="review">
+        <div v-for="(review, review_index) in diseases" :key="'review' + review_index">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showDisease"/>
                     {{ review.disease }}
                 </h6>
-                <div v-for="(evidence,index) in review.evidences" :key="index">
+                <div v-for="(evidence,evidence_index) in review.evidences" :key="'evidence' + evidence_index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="showDisease">
@@ -53,7 +53,11 @@
                                             </b-row>
                                         </b-col>
 
-                                        <b-col cols="2">
+                                        <b-col cols="6">
+                                            <ReviewAgreementComment :value="evidence.newReview" @input="review => evidence.newReview = review"/>
+                                        </b-col>
+
+                                        <!--<b-col cols="2">
                                             <b-row class="p-2">
                                                 <select-agreement v-model="evidence.newReview.agreement" @input="onChange(evidence.newReview)"/>
                                             </b-row>
@@ -61,13 +65,15 @@
 
                                         <b-col cols="4">
                                             <b-textarea
+                                                :disabled=""
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
                                                 v-model="evidence.newReview.comment"
                                             >
                                             </b-textarea>
-                                        </b-col>
+                                            {{evidence.newReview.agreement}}
+                                        </b-col>-->
                                     </b-row>
                                 </b-card-text>
                             </div>
@@ -120,6 +126,7 @@ import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPro
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectAgreement from "@/components/widgets/review/forms/SelectAgreement";
+import ReviewAgreementComment from "@/components/widgets/review/forms/reviewAgreementComment";
 import { mapGetters } from "vuex";
 
 const log = ulog("SecondReviewCycle");
@@ -135,6 +142,7 @@ export default {
         SelectPrognosticOutcome,
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
+        ReviewAgreementComment
     },
     props: {
         variant: {type: Object, required: false},
@@ -440,11 +448,6 @@ export default {
             }
             return ""
         },
-        onChange(newReview) {
-            newReview.agree = newReview.agree? false : true
-        // change review status (true if option matches that of curator, false if doesn't match)
-            //reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
-        },
         detectOwnReviews() {
             // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map(disease => {
@@ -467,7 +470,6 @@ export default {
                             const newReview = {
                                 "reviewer_id": this.user.user_id,
                                 "agreement": rr.agreement,
-                                'agree': rr.agree,
                                 'comment': rr.comment
                             }
                             evidence['newReview'] = newReview
