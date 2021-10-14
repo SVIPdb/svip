@@ -176,6 +176,33 @@ class Variant(models.Model):
 
         return 'none'
 
+    @property
+    def public_stage(self):
+        stage = self.stage
+        if stage in ['none']:
+            return 'None'
+        elif stage in ['loaded']:
+            return 'Loaded'
+        elif stage in ['ongoing_curation']:
+            return 'In progress'
+        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+            return 'Annotated'
+        elif stage in ['on_hold']:
+            return 'On hold'
+        elif stage in ['fully_reviewed']:
+            return 'Approved'
+
+    @property
+    def confidence(self):
+        confidence_dict = {
+            'None': 0,
+            'Loaded': 1,
+            'In progress': 1,
+            'Annotated': 2,
+            'On hold': 2,
+            'Approved': 3
+        }
+        return confidence_dict[self.public_stage]
 
 class VariantInSource(models.Model):
     """

@@ -17,6 +17,8 @@
                             <!-- <th>Molecular consequence</th> -->
                             <th :class="hiddenCols">Position</th>
                             <th :class="hiddenCols">Allele Frequency</th>
+                            <th>Status</th>
+                            <th>SVIP Confidence</th>
                             <th></th>
                             <!--- for actions -->
                         </tr>
@@ -60,6 +62,16 @@
                             <td :class="hiddenCols">
                                 <span v-if="allele_frequency">{{ allele_frequency }}</span>
                                 <span v-else class="unavailable">unavailable</span>
+                            </td>
+
+                            <td>{{this.variant.public_stage}}</td>
+                            <td>
+                                <icon
+                                    v-for="score in [1,2,3]"
+                                    :key="score"
+                                    :name="variant.confidence < score ? 'regular/star' : 'star'"
+                                    style="margin-right: 5px"
+                                />
                             </td>
 
                             <td>

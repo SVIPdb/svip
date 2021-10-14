@@ -37,7 +37,7 @@
                     </div>
                 </template>
 
-                <template v-slot:cell(score)="data">
+                <!--<template v-slot:cell(score)="data">
                     <div style="white-space: nowrap;">
                         <icon
                             v-for="score in [1,2,3,4]"
@@ -46,7 +46,7 @@
                             style="margin-right: 5px"
                         />
                     </div>
-                </template>
+                </template>-->
 
                 <template v-slot:cell(last_modified)="data">
                     <pass :summary="curationSummary(data.item)">
@@ -238,11 +238,25 @@ export default {
             if (!this.variant || !this.variant.svip_data || !this.variant.svip_data.diseases) {
                 return null;
             }
+            
+            const entries = []
+            this.variant.svip_data.diseases.map(disease => {
+                if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {
 
-            return this.variant.svip_data.diseases.map(x => ({
+
+                    entries.push(disease)
+                }
+            })
+            return entries.map(x => ({
                 _showDetails: false,
                 ...x
             }));
+
+
+            //return this.variant.svip_data.diseases.map(x => ({
+            //    _showDetails: false,
+            //    ...x
+            //}));
         },
         totalPatients() {
             return this.variant.svip_data.diseases.reduce(
@@ -298,17 +312,17 @@ export default {
                     sortable: false,
                     class: "d-none d-lg-table-cell"
                 },
-                {
-                    key: "status",
-                    label: "Status",
-                    sortable: false
-                },
-                {
-                    key: "score",
-                    label: "SVIP Confidence",
-                    sortable: true,
-                    class: "text-center"
-                },
+                //{
+                //    key: "status",
+                //    label: "Status",
+                //    sortable: false
+                //},
+                //{
+                //    key: "score",
+                //    label: "SVIP Confidence",
+                //    sortable: true,
+                //    class: "text-center"
+                //},
                 {
                     key: "last_modified",
                     label: "Last Curated",
