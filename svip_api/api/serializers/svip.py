@@ -168,6 +168,18 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     def get_clinical_significance(self, obj):
         return clinical_significance(self._curation_entries(obj))
+        
+        #var = obj.svip_variant.variant
+        #association = obj.disease.curation_associations.get(variant=var)
+        #evidence = 
+
+        #if var.curation_associations.count() > 0:
+        #    if var.curation_associations.first().curation_evidences.count() > 0:
+        #        evidence = 
+        #        if hasattr(var, 'annotation2'):
+        #            return f"{var.annotation2.effect} ({var.annotation2.tier})"
+        #        elif hasattr(var, 'annotation1'):
+        #            return f"{var.annotation2.effect} ({var.annotation1.tier})"
 
     class Meta:
         model = DiseaseInSVIP

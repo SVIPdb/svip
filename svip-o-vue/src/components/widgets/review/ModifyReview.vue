@@ -84,7 +84,7 @@
                                     <icon name="plus"/>
                                     Add publication
                                 </b-button>
-                                <b-button
+                                <!--<b-button
                                     v-b-modal="addNoteID"
                                     
                                     target="_blank"
@@ -95,7 +95,7 @@
                                 >
                                     <icon name="plus"/>
                                     Clinical input
-                                </b-button>
+                                </b-button>-->
                             </div>
                         </template>
 
@@ -140,7 +140,7 @@
                                             Edit
                                         </b-button>
                                         <b-button
-                                            @click="deleteEntry(data.item.evidence_link)"
+                                            @click="deleteEntry(data.item.evidence_link, index, data)"
                                             class="mt-2 centered-icons"
                                             variant="danger"
                                             style="width: 110px;"
@@ -368,6 +368,10 @@ export default {
                 this.annotationEdited(evidenceObj)
             })
             this.disease = evidences;
+
+            //let items = []
+            //items.push(Object.values(evidences))
+            //this.items = items
         },
         annotationEdited(evidence) {
             let annotation = {
@@ -381,13 +385,18 @@ export default {
             }
             this.$emit('annotated', annotation)
         },
-        deleteEntry(entry_id) {
+        deleteEntry(entry_id, index) {
+
             if (confirm("Are you sure that you want to delete this entry?")) {
+                console.log(`index: ${index}`)
+                delete this.disease[index]
+
                 HTTP.delete(`/curation_entries/${entry_id}`)
                     .then(() => {
                         this.channel.postMessage(`Deleted ID ${entry_id}`);
                         this.$snotify.info("Entry deleted!");
-                        this.$refs.paged_table.refresh();
+                        delete this.disease[index]
+                        //this.$refs.paged_table.refresh();
                     })
                     .catch((err) => {
                         console.log("ERROR:")
@@ -405,7 +414,7 @@ export default {
                 this.$route.params.gene_id,
                 this.$route.params.variant_id,
             ];
-            return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry}`;
+            return `/curation/entry/${entry}`;
         },
         /*addEntryURL(entry) {
             const [gene_id, variant_id] = [
@@ -426,7 +435,9 @@ export default {
                 },
                 query: {source: this.source, reference: this.reference}
             });
-            window.open(route.href, "_blank");
+            let new_route = route.href + '&variant_id=' + this.$route.params.variant_id
+            console.log(new_route)
+            window.open(new_route, "_blank");
         },
         viewCitation() {
             // look up the reference via the variomes API
@@ -454,6 +465,7 @@ export default {
     data() {
         return {
             disease: {},
+            items: [],
             addNoteID: '',
             addEvidenceID: '',
             showReview: true,

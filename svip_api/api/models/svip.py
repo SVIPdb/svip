@@ -136,13 +136,17 @@ class VariantInSVIP(models.Model):
             evidences = []
             for evidence in association.curation_evidences.all():
                 
-                #if not hasattr(evidence, 'annotation1'):
-                #    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                #    annotation1.save()
-                    
-                #if not hasattr(evidence, 'annotation2'):
-                #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                #    annotation2.save()
+                if evidence.curation_entries.all().count() == 0:
+                    if hasattr(evidence, 'annotation1'):
+                        evidence.annotation1.delete()
+                    if hasattr(evidence, 'annotation2'):
+                        evidence.annotation2.delete()
+                    for review in evidence.reviews.all():
+                        review.delete()
+                    for rr in evidence.revised_reviews.all():
+                        rr.delete()
+                    evidence.delete()
+                    break
                 
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
@@ -165,14 +169,6 @@ class VariantInSVIP(models.Model):
                         "clinical_input": evidence.annotation2.clinical_input
                     }
                 
-                #evidence_obj["currentReview"] = {
-                #    "id": evidence.id,
-                #    "annotatedEffect": evidence.annotation1.effect,
-                #    "annotatedTier": evidence.annotation1.tier,
-                #    "reviewer": "",
-                #    "status": None,
-                #    "comment": None
-                #}
                 curations = []
                 for curation in evidence.curation_entries.all():
                     curation_obj = {
@@ -248,14 +244,6 @@ class VariantInSVIP(models.Model):
                 
                 for entry_id in entry_ids:
                     if CurationEntry.objects.get(id=entry_id) in evidence.curation_entries.all():
-
-                        #if not hasattr(evidence, 'annotation1'):
-                        #    annotation1 = SIBAnnotation1(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                        #    annotation1.save()
-
-                        #if not hasattr(evidence, 'annotation2'):
-                        #    annotation2 = SIBAnnotation2(evidence=evidence, effect="Not yet annotated", tier="Not yet annotated")
-                        #    annotation2.save()
 
                         evidence_obj = {}
                         evidence_obj["id"] = evidence.id
@@ -417,7 +405,7 @@ class CurationAssociation(models.Model):
     variant = models.ForeignKey(
         to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
     disease = models.ForeignKey(
-        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True, related_name='curation_associations')
 
 
 class CurationEvidence(models.Model):
