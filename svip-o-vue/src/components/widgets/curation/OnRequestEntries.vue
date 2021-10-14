@@ -59,7 +59,7 @@ const fields_on_request = [
         "key": "action",
         "label": "Action",
         "sortable": false
-    }
+    },
 ];
 
 export default {
