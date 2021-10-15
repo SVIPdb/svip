@@ -9,7 +9,7 @@
 <script>
 import NotificationCard from "@/components/widgets/curation/NotificationCard";
 import { HTTP } from "@/router/http";
-import uniqBy from "lodash/uniqBy";
+//import uniqBy from "lodash/uniqBy";
 
 import { abbreviatedName } from "@/utils";
 
@@ -59,7 +59,7 @@ const fields_on_request = [
         "key": "action",
         "label": "Action",
         "sortable": false
-    }
+    },
 ];
 
 export default {
@@ -77,6 +77,15 @@ export default {
         this.fetchRequestedVariants()
     },
     methods: {
+        calculateStage(stage){
+            if (stage === 'loaded') {
+                return 'Not assigned'
+            } else if (stage === 'ongoing_curation') {
+                return 'Ongoing'
+            } else {
+                return 'Complete'
+            }
+        },
         fetchRequestedVariants() {
             this.loading = true;
             this.error = null;
@@ -91,10 +100,14 @@ export default {
                         'variant': x.variant && x.variant.name,
                         'hgvs': x.variant && x.variant.hgvs_c,
                         'disease': x.disease_name,
-                        'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                        //'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                        'status': this.calculateStage(x.variant.stage),
                         'deadline': 'n/a',
                         'requester': x.submission.requestor,
-                        'curator': []
+                        'curator': [],
+                        'review_count': x.variant.review_count,
+                        'reviews': x.variant.reviews,
+                        'stage': x.variant.stage
                     }));
 
                     this.$emit('itemsloaded', this.items);

@@ -1,12 +1,12 @@
 <template>
     <b-button-group :size="size">
         <b-button class="filter-btn" v-for="item in items"
-            :variant="item.variant || (value === (item.value || item.label) && selectedVariant) || defaultVariant || 'primary'"
-            @click="update(item.value || item.label)" :key="item.label"
+            :variant="item.variant || (value === (item.value === undefined? item.label: item.value) && selectedVariant) || defaultVariant || 'primary'"
+            @click="update(item.value === undefined? item.label: item.value)" :key="item.label"
         >
             {{ item.label }}
             <transition name="fade">
-                <icon class="caret" scale="1.5" v-if="value === (item.value || item.label)" name="caret-up" />
+                <icon class="caret" scale="1.5" v-if="value === (item.value === undefined? item.label: item.value)" name="caret-up" />
             </transition>
         </b-button>
     </b-button-group>

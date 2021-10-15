@@ -55,8 +55,6 @@ const getters = {
             return null;
         }
 
-        console.log(getters.jwtData)
-
         return {
             username: getters.username,
             first_name: getters.firstName,

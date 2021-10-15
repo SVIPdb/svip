@@ -1,18 +1,18 @@
 <template>
     <div>
-        <div v-for="(review) in diseases" :key="review">
+        <div v-for="(review, review_index) in diseases" :key="'review' + review_index">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showDisease"/>
                     {{ review.disease }}
                 </h6>
-                <div v-for="(evidence,index) in review.evidences" :key="index">
+                <div v-for="(evidence,evidence_index) in review.evidences" :key="'evidence' + evidence_index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="showDisease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
-                                        <b-col align="center" cols="1">
+                                        <b-col align="center" cols="2">
                                             <expander v-model="evidence.isOpen"/>
                                             {{ evidence.fullType }}
                                         </b-col>
@@ -21,54 +21,40 @@
                                                 {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
                                             </p>
                                         </b-col>
-                                        <b-col cols="2">
+                                        <!--<b-col cols="2">
                                             <b-row class="p-2">
                                                 <b-input v-model="evidence.curator.annotatedEffect" readonly/>
                                             </b-row>
                                             <b-row class="p-2">
                                                 <b-input v-model="evidence.curator.annotatedTier" readonly/>
                                             </b-row>
-                                        </b-col>
+                                        </b-col>-->
+
+                                        <!--<b-col cols="2">
+                                            <b-row class="p-2">
+                                                <div v-if="evidence.myReview">
+                                                    <b-input v-model="evidence.myReview.annotatedEffect" readonly/>
+                                                </div>
+                                            </b-row>
+                                            <b-row class="p-2">
+                                                <div v-if="evidence.myReview">
+                                                    <b-input v-model="evidence.myReview.annotatedTier" readonly/>
+                                                </div>
+                                            </b-row>
+                                        </b-col>-->
+
                                         <b-col cols="2">
+                                            <!--Final curators' annotation:-->
                                             <b-row class="p-2">
-                                                <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
-                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-prognostic-outcome>
-                                                <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
-                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-diagnostic-outcome>
-                                                <select-predictive-therapeutic-outcome
-                                                    v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
-                                                    v-model="evidence.currentReview.annotatedEffect"
-                                                    @input="onChange(evidence.curator, evidence.currentReview)"></select-predictive-therapeutic-outcome>
+                                                <b-input v-model="evidence.finalAnnotation.annotatedEffect" readonly/>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <select-tier v-model="evidence.currentReview.annotatedTier"
-                                                            @input="onChange(evidence.curator, evidence.currentReview)"></select-tier>
+                                                <b-input v-model="evidence.finalAnnotation.annotatedTier" readonly/>
                                             </b-row>
                                         </b-col>
-                                        <b-col cols="1" align="center">
-                                            <b-row class="justify-content-center">
-                                                Review status
-                                            </b-row>
-                                            <b-row class="justify-content-center">
-                                                <b-icon class="h4 mb-2 m-1"
-                                                        :style="displayColor(evidence.currentReview.status)"
-                                                        :icon="displayIcon(evidence.currentReview.status)"></b-icon>
-                                                <b-icon v-for="(review,key) in evidence.reviews" :key="key"
-                                                        class="h4 mb-2 m-1" :style="displayColor(review.status)"
-                                                        :icon="displayIcon(review.status)"></b-icon>
-                                            </b-row>
-                                        </b-col>
-                                        <b-col cols="4">
-                                            <b-textarea
-                                                :disabled="evidence.currentReview.status"
-                                                class="summary-box" 
-                                                rows="3"
-                                                placeholder="Comment..."
-                                                v-model="evidence.currentReview.comment"
-                                            >
-                                            </b-textarea>
+
+                                        <b-col cols="6">
+                                            <ReviewAgreementComment :value="evidence.newReview" @input="review => evidence.newReview = review"/>
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
@@ -121,15 +107,16 @@ import ulog from "ulog";
 import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPrognosticOutcome";
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
-import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import SelectAgreement from "@/components/widgets/review/forms/SelectAgreement";
+import ReviewAgreementComment from "@/components/widgets/review/forms/reviewAgreementComment";
 import { mapGetters } from "vuex";
 
-const log = ulog("VariantDisease");
+const log = ulog("SecondReviewCycle");
 
 export default {
-    name: "VariantDisease",
+    name: "SecondReviewCycle",
     components: {
-        SelectTier,
+        SelectAgreement,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
@@ -137,6 +124,7 @@ export default {
         SelectPrognosticOutcome,
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
+        ReviewAgreementComment
     },
     props: {
         variant: {type: Object, required: false},
@@ -416,10 +404,8 @@ export default {
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-
-                    //this.diseases = response.data.review_data
-                    this.detectOwnReviews(response.data.review_data);
-                    this.changeReviewStatusCheckboxes(this.diseases);
+                    this.diseases = response.data.review_data
+                    this.detectOwnReviews();
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -444,63 +430,60 @@ export default {
             }
             return ""
         },
-        onChange(curatorValues, reviewerValues) {
-        // change review status (true if option matches that of curator, false if doesn't match)
-            reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
-        },
-        changeReviewStatusCheckboxes() {
+        detectOwnReviews() {
+            // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    this.onChange(evidence.curator, evidence.currentReview)
-                })
-            })
-        },
-        detectOwnReviews(diseases) {
-            // iterate over every review to prefill inputs with current user's past reviews
-            diseases.map(disease => {
-                disease.evidences.map(evidence => {
+
                     evidence.reviews.map(review => {
-
                         if (review.reviewer_id === this.user.user_id) {
-                            let currentReviewObj = {
-                                "annotatedEffect": review.annotatedEffect,
-                                "annotatedTier": review.annotatedTier,
-                                "comment": review.comment
+                            const myReview = {
+                                'annotatedEffect': review.annotatedEffect,
+                                'annotatedTier': review.annotatedTier,
+                                'comment': review.comment
                             }
-                            evidence['currentReview'] = currentReviewObj
+                            evidence['myReview'] = myReview
 
-                            // store the evidence ID so when the user submit it, the request is a patch
-                            this.selfReviewedEvidences[evidence.id] = review.id
                         }
                     })
 
-                    if (typeof evidence.currentReview === 'undefined') {
-                        let currentReviewObj = {
-                            "id": evidence.id,
-                            "annotatedEffect": evidence.curator.annotatedEffect,
-                            "annotatedTier": evidence.curator.annotatedTier,
-                            "reviewer_id": this.user.user_id,
-                            "status": null,
-                            "comment": null
+                    evidence.revised_reviews.map(rr => {
+                        if (rr.reviewer_id === this.user.user_id) {
+                            const newReview = {
+                                "reviewer_id": this.user.user_id,
+                                "agreement": rr.agreement,
+                                'comment': rr.comment
+                            }
+                            evidence['newReview'] = newReview
                         }
-                        evidence['currentReview'] = currentReviewObj
+                        // store the evidence ID so when the user submit it, the request is a patch
+                        this.selfReviewedEvidences[evidence.id] = rr.id
+                    })
+
+                    if (typeof evidence['newReview'] === 'undefined') {
+                        const newReview = {
+                            "reviewer_id": this.user.user_id,
+                            "agreement": 'I agree.',
+                            'agree': true,
+                            'comment': ''
+                        }
+                        evidence["newReview"] = newReview
                     }
 
                 })
             })
-            this.diseases = diseases
         },
         missingComment() {
-        // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
+        // return true if a same evidence doesn't match the curators annotation and has not been given a comment
             for (var i = 0; i < this.diseases.length; i++) {
                 const disease = this.diseases[i]
                 for (var j = 0; j < disease["evidences"].length; j++) {
                     const evidence = disease["evidences"][j]
-                    if (!evidence.currentReview.status) {
+                    if (evidence.newReview.agreement === "I don't agree.") {
                     // review doesn't match curator's annotation
                         const regExp = /[a-zA-Z]/g;
-                        if (evidence.currentReview.comment === null || ! regExp.test(evidence.currentReview.comment)) {
-                        // no letter was found in the comment string
+                        if (evidence.newReview.comment === null || ! regExp.test(evidence.newReview.comment)) {
+                        // no letter was found in the comment
                             return true
                         }
                     }
@@ -510,47 +493,41 @@ export default {
         },
         submitReviews() {
 
-            if (this.missingComment()) {
-                this.$snotify.error(
-                    "Please enter a comment for every review conflicting with that of curators", 
-                    "",
-                    { timeout: 5000 }
-                );
-                return false
-            }
+            //if (this.missingComment()) {
+            //    this.$snotify.error(
+            //        "Please enter a comment for every review conflicting with that of curators", 
+            //        "",
+            //        { timeout: 5000 }
+            //    );
+            //    return false
+            //}
 
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
 
-                    if (
-                        // check that dropdown options have been selected
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        if (evidence.id in this.selfReviewedEvidences) {
-                            console.log('REREVIEWED')
-                            let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
-                        } else {
-                            //newReviews.push(this.reviewParams(evidence));
-                            console.log('FIRST REVIEW')
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
-                                .then((response) => {
-                                    this.getReviewData()
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                    if (evidence.id in this.selfReviewedEvidences) {
+                        console.log('REREVIEWED')
+                        let reviewID = this.selfReviewedEvidences[evidence.id]
+                        HTTP.put(`/revised_reviews/${reviewID}/`, this.reviewParams(evidence))
+                            .then((response) => {
+                                this.getReviewData()
+                            })
+                            .catch((err) => {
+                                log.warn(err);
+                                this.$snotify.error("Failed to submit review");
+                            })
+                    } else {
+                        console.log('FIRST REVIEW')
+                        HTTP.post(`/revised_reviews/`, this.reviewParams(evidence))
+                            .then((response) => {
+                                this.getReviewData()
+                            })
+                            .catch((err) => {
+                                log.warn(err);
+                                this.$snotify.error("Failed to submit review");
+                            })
 
-                        }
                     }
                 })
             })
@@ -564,9 +541,8 @@ export default {
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
                 reviewer: this.user.user_id,
-                annotated_effect: evidence.currentReview.annotatedEffect,
-                annotated_tier: evidence.currentReview.annotatedTier,
-                comment: evidence.currentReview.comment
+                comment: evidence.newReview.comment,
+                agree: evidence.newReview.agreement === 'I agree.'? true: false
             }
             return singleReviewJSON
         }

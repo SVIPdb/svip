@@ -1,18 +1,10 @@
 <template>
     <div class="container-fluid">
-        <!-- Ivo : To change? -->
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
-        <!-- Ivo : Change name to "VariantSummaryReview"? -->
-        <VariantSummary :variant="variant" />
+        <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
-        <div v-if="['to_review_again', 'on_hold', 'fully_reviewed'].includes(variant.stage)">
-            <SecondReviewCycle :variant="variant"/>
-        </div>
-        <div v-else>
-            <VariantDisease :variant="variant"/>
-        </div>
-
+        <SelectEffect :variant="variant" :entryIDs="entryIDs"/>
     </div>
 </template>
 <script>
@@ -21,21 +13,22 @@ import CuratorVariantInformations from "@/components/widgets/curation/CuratorVar
 import store from "@/store";
 import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
-import VariantSummary from "@/components/widgets/review/VariantSummary";
-import VariantDisease from "@/components/widgets/review/VariantDisease";
-import SecondReviewCycle from "@/components/widgets/review/SecondReviewCycle";
+import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
+import SelectEffect from "@/components/widgets/review/SelectEffect";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 
-const log = ulog('Review:AnnotateReview');
+const log = ulog('SubmitCurations');
 
 export default {
-    name: "AnnotateReview",
+    name: "SubmitCurations",
     components: {
-        VariantSummary,
-        VariantDisease,
-        SecondReviewCycle,
+        ModifyVariantSummary,
+        SelectEffect,
         CuratorVariantInformations
+    },
+    props: {
+        entryIDs: {type: String},
     },
     data() {
         return {
@@ -44,8 +37,18 @@ export default {
             reference: "",
             loadingVariomes: false,
             variomes: null,
-            used_references: {}
+            used_references: {},
+            summary: {
+                content: "",
+                comments: []
+            },
         }
+    },
+    mounted() {
+        HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then((response) => {
+            const results = response.data.results
+            this.summary.comments = results;
+        });
     },
     created() {
         this.refreshReferences();

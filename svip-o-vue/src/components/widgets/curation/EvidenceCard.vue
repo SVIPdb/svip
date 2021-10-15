@@ -55,13 +55,6 @@
                 :extraFilters="statusFilter !== 'all' ? { status: statusFilter } : null"
                 :responsive="true"
             >
-                <template v-slot:cell(submit_box)="data">
-                    <input type="checkbox" v-if="data.item.status === 'draft' || data.item.status === 'saved'"
-                        :disabled="data.item.status === 'draft'"
-                        :value="selected[data.item.id]" @input="toggleSelected(data.item.id, $event.target.checked)"
-                        aria-label="select"
-                    />
-                </template>
 
                 <template v-slot:cell(variant__gene__symbol)="data">
                     <b><router-link :to="`/gene/${data.item.variant.gene.id}`">{{ data.item.variant.gene.symbol }}</router-link></b>
@@ -152,9 +145,15 @@
                 </template>
 
                 <template v-slot:extra_commands>
-                    <div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
+                    <!--<div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
                         <b-button :disabled="selectedCount <= 0" variant="info" @click="submitSelected" style="height: 34px;">
-                        Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
+                            Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
+                        </b-button>
+                    </div>-->
+
+                    <div style="margin-bottom: 10px; margin-right: 10px;">
+                        <b-button variant="info" @click="submitAll" style="height: 34px;">
+                            Submit to review
                         </b-button>
                     </div>
                 </template>
@@ -190,6 +189,7 @@ import { mapGetters } from "vuex";
 import dayjs from 'dayjs';
 import ulog from 'ulog';
 import FilterButtons from "@/components/widgets/curation/FilterButtons";
+import router from '@/router';
 
 const log = ulog('Curation:EvidenceCard');
 
@@ -209,11 +209,11 @@ const DateTimeField = {
 
 // used by the citations browser
 const full_fields = [
-    {
-        key: "status",
-        label: "Status",
-        sortable: true
-    },
+    //{
+    //    key: "status",
+    //    label: "Status",
+    //    sortable: true
+    //},
     {
         key: "id",
         label: "ID",
@@ -499,6 +499,40 @@ export default {
                     });
             }
         },
+        submitRequest() {
+            const entryIDs = Object.keys(this.selected).join(",");
+            // TODO: set the status of all the selected entries to 'submitted'
+            HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
+                .then(result => {
+
+                    // add request to change the status of the variant
+
+                    router.push({
+                        name: "submit-curation",
+                        params: {
+                            entryIDs: entryIDs,
+                        }
+                    });
+                })
+                .catch((err) => {
+                    this.$snotify.error("Failed to submit entries");
+                    log.warn(err);
+                });
+        },
+        submitAll() {
+            const prompt = "Are you sure that you want to submit the entries of this variant?\n\nYou will no longer be able to edit your entries after submitting them!"
+            if (confirm(prompt)) {
+                const params = {var_id : this.variant.id}
+                HTTP.post(`/curation_ids`, params)
+                    .then((response) => {
+                        this.selected = response.data
+                        this.submitRequest();
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
+            }
+        },
         submitSelected() {
             const prompt = (this.selectedCount === 1
                 ? 'Are you sure you want to submit this entry?'
@@ -511,9 +545,17 @@ export default {
                 // TODO: set the status of all the selected entries to 'submitted'
                 HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
                     .then(result => {
-                        this.channel.postMessage(`Submitted IDs ${entryIDs}`);
-                        this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
-                        this.$refs.paged_table.refresh();
+                        router.push({
+                            name: "submit-curation",
+                            params: {
+                                entryIDs: entryIDs,
+                            }
+                        });
+
+                        //window.location.href = `${window.location.href}/submit/`;
+                        //this.channel.postMessage(`Submitted IDs ${entryIDs}`);
+                        ////this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
+                        ////this.$refs.paged_table.refresh();
                     })
                     .catch((err) => {
                         this.$snotify.error("Failed to submit entries");

@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
-            <NotificationCard v-if="REVIEW_ENABLED"
+            <ReviewNotificationCard v-if="REVIEW_ENABLED"
                 :items="on_request.items" :fields="review.fields" :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import NotificationCard from "@/components/widgets/curation/NotificationCard";
+import {HTTP} from "@/router/http";
+import ReviewNotificationCard from "@/components/widgets/curation/ReviewNotificationCard";
 import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
 // Manual import of fake data (FIXME: API)
@@ -65,12 +66,16 @@ import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 import OnRequestEntries from "@/components/widgets/curation/OnRequestEntries";
 
+import {
+    abbreviatedName
+} from "@/utils";
+
 export default {
     name: "CurationDashboard",
     components: {
         OnRequestEntries,
         EvidenceCard,
-        NotificationCard
+        ReviewNotificationCard
     },
     data() {
         return {
@@ -91,6 +96,8 @@ export default {
                 items: []
             },
 
+            reviews: [],
+
             // TO BE CURATED FAKE DATA
             to_be_curated, // data
             fields_to_be_curated, // columns
@@ -101,15 +108,48 @@ export default {
 
             // NON SVIP VARIANTS FAKE DATA
             nonsvip_variants, // data
-            fields_nonsvip_variants // columns
+            fields_nonsvip_variants, // columns
         };
+    },
+    mounted() {
+        HTTP.get(`/reviews`).then((response) => {
+            console.log(response)
+            //this.reviews = response.data.results
+            const reviews = response.data.results
+            //this.reviews = response.data.results.map((x) => ({
+            //    gene_id: x.variant && x.variant.gene.id,
+            //    variant_id: x.variant && x.variant.id,
+            //    'gene_name': x.variant && x.variant.gene.symbol,
+            //    'variant': x.variant && x.variant.name,
+            //    'hgvs': x.variant && x.variant.hgvs_c,
+            //    'disease': x.disease_name,
+            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+            //    'deadline': 'n/a',
+            //    'requester': x.submission.requestor,
+            //    'curator': []
+            //}));
+
+            //this.reviews = response.data.results.map((x) => ({
+            //    gene_id: x.variant && x.variant.gene.id,
+            //    variant_id: x.variant && x.variant.id,
+            //    'gene_name': x.variant && x.variant.gene.symbol,
+            //    'variant': x.variant && x.variant.name,
+            //    'hgvs': x.variant && x.variant.hgvs_c,
+            //    'disease': x.disease_name,
+            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+            //    'deadline': 'n/a',
+            //    'requester': x.submission.requestor,
+            //    'curator': []
+            //}));
+            
+        });
     },
     methods: {
         checkInRole,
         onRequestItemsLoaded(items) {
             this.on_request.items = items;
             this.on_request.loading = false;
-        }
+        },
     }
 };
 </script>

@@ -51,10 +51,10 @@
                     {{title}}
 
                     <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" :items="[
-                        { label: '0 review', variant: 'light' },
-                        { label: '1 review', variant: 'danger' },
-                        { label: '2 reviews', variant: 'warning' },
-                        { label: '3 reviews', variant: 'success' },
+                        { label: '0 review', value: 0, variant: 'light' },
+                        { label: '1 review', value: 1, variant: 'danger' },
+                        { label: '2 reviews', value: 2, variant: 'warning' },
+                        { label: '3 reviews', value: 3, variant: 'success' },
                         { label: 'All', value: 'all', variant: 'info' }
                     ]" />
                 </div>
@@ -98,7 +98,7 @@
                     </p>
                 </template>
 
-                <template v-slot:cell(status)="data">
+                <template v-slot:cell(review_count)="data">
                     <b-badge :variant="setBadgeClass(data.value)">{{data.value}}</b-badge>
                 </template>
 
@@ -268,7 +268,7 @@ import FilterButtons from "@/components/widgets/curation/FilterButtons";
 import { BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill } from 'bootstrap-vue';
 
 export default {
-    name: "NotificationCard",
+    name: "ReviewNotificationCard",
     components: {
         FilterButtons,
         BIcon,
@@ -462,7 +462,7 @@ export default {
             let items = this.items;
 
             if (this.statusFilter !== "all") {
-                items = items.filter(element => element.status === this.statusFilter);
+                items = items.filter(element => element.review_count === this.statusFilter);
             }
 
             if (this.myFilter !== "all") {
@@ -476,7 +476,7 @@ export default {
             let items = this.items;
 
             if (this.statusReviewFilter !== "all") {
-                items = items.filter(element => element.status === this.statusFilter);
+                items = items.filter(element => element.review_count === this.statusFilter);
             }
         },
         myCurations() {
