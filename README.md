@@ -34,13 +34,49 @@ the default database dumps.
 
 # Initial Setup
 
+## Clone the project and its submodules
+
 To clone the project and its submodules, you can run the following:
 
-```
+```bash
 git clone git@github.com:SVIPdb/coordinator.git svip
-cd coordinator
+cd svip
 git submodule update --init --recursive
 ```
+
+## Configure your environment
+
+### Make the `seqrepo` database available locally
+
+```bash
+cd seqrepo
+make
+```
+
+### Download the harvester resources
+
+To download the harvester resources you need to have an access token to onkokb as well as for bioontology.
+
+```bash
+cd g2p-aggregator/data
+make
+```
+
+Also add the access tokens to your `.env` file.
+
+```bash
+BIOONTOLOGY_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ONCOKB_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+### Populate the VEP cache
+
+```bash
+./dc_harvester.sh build harvester
+./dc_harvester.sh run --rm harvester /bin/sh -c 'scripts/populate_vep_cache.sh'
+```
+
+## Do initial tasks
 
 To initially start the database server, API, and frontend:
 
