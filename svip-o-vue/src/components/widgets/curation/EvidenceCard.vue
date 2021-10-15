@@ -525,7 +525,6 @@ export default {
                 const params = {var_id : this.variant.id}
                 HTTP.post(`/curation_ids`, params)
                     .then((response) => {
-                        console.log(`curation_ids response: ${response.data}`)
                         this.selected = response.data
                         this.submitRequest();
                     })

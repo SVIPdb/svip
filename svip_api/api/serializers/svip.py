@@ -688,7 +688,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             evidence = obj.curation_associations.first().curation_evidences.first()
             if evidence.reviews.count() > 0:
                 for review in evidence.reviews.all():
-                    reviews.append(review.match)
+                    reviews.append(review.match())
         return reviews
 
     class Meta:

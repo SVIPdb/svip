@@ -9,7 +9,7 @@
 <script>
 import NotificationCard from "@/components/widgets/curation/NotificationCard";
 import { HTTP } from "@/router/http";
-import uniqBy from "lodash/uniqBy";
+//import uniqBy from "lodash/uniqBy";
 
 import { abbreviatedName } from "@/utils";
 

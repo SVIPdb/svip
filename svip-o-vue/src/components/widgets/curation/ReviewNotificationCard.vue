@@ -54,7 +54,7 @@
                         { label: '0 review', value: 0, variant: 'light' },
                         { label: '1 review', value: 1, variant: 'danger' },
                         { label: '2 reviews', value: 2, variant: 'warning' },
-                        { label: '3 reviews', value:3, variant: 'success' },
+                        { label: '3 reviews', value: 3, variant: 'success' },
                         { label: 'All', value: 'all', variant: 'info' }
                     ]" />
                 </div>

@@ -730,7 +730,6 @@ export default {
                 this.reference = reference.trim();
 
                 // FIXME: we should also load the variant when adding a new entry
-                console.log(variant_id)
                 HTTP.get(`/variants/${variant_id}?simple=true`)
                     .then((response) => {
                         const variant = response.data;
@@ -756,10 +755,9 @@ export default {
                         }
                     })
                     .catch((err) => {
-                        console.log(err)
-                        //this.pageError = {
-                        //    message: err.toString()
-                        //};
+                        this.pageError = {
+                            message: err.toString()
+                        };
                     });
             }
             else {
