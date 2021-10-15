@@ -3,6 +3,8 @@
 # You can run it on an instance with a working database and dump in a clean
 # harvester dump. It will merge the required tables and make shure the 
 # relations are the same as before.
+# The script is written in a general manner so you can also use it to merge
+# database tables in other projects.
 
 function usage {
   echo " --> USAGE $(basename $0) dumpfile"
@@ -191,6 +193,16 @@ overwrite_table 'api_source'
 
 # USAGE of merge_table:
 # merge_table table related_tables unique_cols columns relations
+#   table: the table you want to merge from the dump into the database in the form
+#          table_name
+#   related_tables: the tables that are related to this one in the form 
+#          table:key_field_to_the_related_table1 table:key_field_to_the_related_table2 (can be '' if no related table)
+#   unique_cols: the columns that can be used as a unique constratint in this table in the form 
+#          col_name:col_type
+#   columns: the columns you want to update from the dump (merge) into the schema in the form
+#          col1,col2,...
+#   relations: the relation to the related table in the form 
+#          key_field_to_the_related_table=related_table:unique_colmn_of_related_table1,unique_colmn_of_related_table2,...
 merge_table 'api_gene' 'api_variant:gene_id' 'symbol:text' 'entrez_id,ensembl_gene_id,symbol,sources,uniprot_ids,location,aliases,prev_symbols' ''
 merge_table 'api_variant' \
 'api_variantinsource:variant_id' \
