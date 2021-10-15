@@ -122,11 +122,22 @@ router.register(r'submitted_variant_batches',
                 views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
 router.register(r'reviews', views.CurationReviewViewSet, basename='reviews')
+router.register(r'revised_reviews', views.RevisedReviewViewSet, basename='revised_reviews')
+
 router.register(r'summary_comments', views.SummaryCommentViewSet,
                 basename='summary_comments')
 
+router.register(r'summary_draft', views.SummaryDraftViewSet,
+                basename='summary_draft')
+
+router.register(r'sib_annotations_1', views.SIBAnnotation1ViewSet,
+                basename='sib_annotations_1')
+router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
+                basename='sib_annotations_2')
+
 urlpatterns = [
     path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
+    path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
     path('', include(router.urls)),
     path('', include(genes_router.urls)),
     path('', include(variants_router.urls)),

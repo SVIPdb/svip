@@ -26,7 +26,7 @@ ENV DJANGO_SU_NAME=admin.name
 ENV DJANGO_SU_EMAIL=admin.email
 ENV DJANGO_SU_PASSWORD=admin.password
 ENV SOCIBP_BASE_URL=https://xxx:xxxg@socibp.nexus.ethz.ch/
-ENV USE_DEV_SERVER=true
+#ENV USE_DEV_SERVER=true
 
 # API port
 EXPOSE 8085

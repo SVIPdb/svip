@@ -12,34 +12,6 @@
                         <b-card-text class="p-2 m-0">
                             <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
                         </b-card-text>
-
-                        <b-card-footer class="p-2 m-0">
-                            <b-row align-v="center">
-                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">Your comment :</b-col>
-                                <b-col v-if="!isEditMode && summaryComment !== ''" class="text-justify">
-                                    {{ summaryComment }}
-                                </b-col>
-                                <b-col v-if="isEditMode">
-                                    <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
-                                </b-col>
-                                <b-col v-if="!isEditMode">
-                                    <b-button v-if="summaryComment === ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Comment summary
-                                    </b-button>
-                                    <b-button v-if="summaryComment !== ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Modify comment
-                                    </b-button>
-                                </b-col>
-                                <b-col v-if="isEditMode" md="auto">
-                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === ''" variant="success" class="centered-icons">
-                                        Save comment
-                                    </b-button>
-                                    <b-button @click="deleteSummaryComment" variant="danger" class="centered-icons mt-2">
-                                        Delete comment
-                                    </b-button>
-                                </b-col>
-                            </b-row>
-                        </b-card-footer>
                     </div>
                 </transition>
             </b-card-body>
@@ -72,10 +44,10 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: false,
+            showSummary: true,
             isEditMode: false,
             summaryComment: "",
-            serverSummaryComment: null, // defines whether a comment exists in the DB for this user and variant (if so: PATCH request instead of POST)
+            serverSummaryComment: null,
         };
     },
     mounted() {
@@ -141,7 +113,7 @@ export default {
                     })
                     .catch((err) => {
                         log.warn(err);
-                        this.$snotify.error("Failed to update your comment");
+                        this.$snotify.error("Failed to update summary comment");
                     })
             }
         },
@@ -157,7 +129,7 @@ export default {
                     })
                     .catch((err) => {
                         log.warn(err);
-                        this.$snotify.error("Failed to delete your comment");
+                        this.$snotify.error("Failed to update summary");
                     })
             } else {
                 this.summaryComment = "";

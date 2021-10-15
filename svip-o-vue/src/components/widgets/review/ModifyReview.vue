@@ -20,32 +20,33 @@
                         </template>
 
                         <template v-slot:cell(list_of_evidences)="data">
-                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}
-                                ({{ outcome.nb_evidence }} evidence-s)<br/></p>
+                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}: {{ outcome.nb_evidence }} evidence(s)<br/>
+                            </p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
                             <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
                             -->
                         </template>
 
                         <template v-slot:cell(sib_annotation)="data">
-                            <div class="pb-2">
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Prognostic'"
+                            <div class="pb-2" @change="handleEffect" v-bind:id="`effect-${data.item.id}`">
+                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Prognostic')"
                                                :options="prognosticOutcomeOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index === 'Diagnostic'"
+                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Diagnostic')"
                                                :options="diagnosticOutcomeOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_outcome"
-                                               v-if="index === 'Predictive / Therapeutic'"
+                                               v-if="index.includes('Predictive / Therapeutic')"
                                                :options="predictiveOutcomeOptions" class="form-control"></b-form-select>
                             </div>
-                            <div class="pt-2">
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Prognostic'"
+                            <div class="pt-2" @change="handleTier" v-bind:id="`tier-${data.item.id}`">
+                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Prognostic')"
                                                :options="trustOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index === 'Diagnostic'"
+                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Diagnostic')"
                                                :options="trustOptions" class="form-control"></b-form-select>
                                 <b-form-select v-model="data.item.sib_annotation_trust"
-                                               v-if="index === 'Predictive / Therapeutic'" :options="trustOptions"
+                                               v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
                                                class="form-control"></b-form-select>
                             </div>
+                            <input class='invisible' v-model="data.item.sib_annotation_outcome" @change="annotationEdited(data.item)" />
                         </template>
 
                         <template v-slot:cell(reviewer_annotation)="data">
@@ -73,7 +74,7 @@
                             <!-- :href="addEntryURL()" -->
                             <div align="center">
                                 <b-button
-                                    v-b-modal.modal-add-evidence
+                                    v-b-modal="addEvidenceID"
                                     target="_blank"
                                     class="centered-icons mb-3"
                                     variant="info"
@@ -83,8 +84,9 @@
                                     <icon name="plus"/>
                                     Add publication
                                 </b-button>
-                                <b-button
-                                    v-b-modal.modal-add-note
+                                <!--<b-button
+                                    v-b-modal="addNoteID"
+                                    
                                     target="_blank"
                                     class="centered-icons"
                                     variant="primary"
@@ -92,8 +94,8 @@
                                     block
                                 >
                                     <icon name="plus"/>
-                                    Add a note
-                                </b-button>
+                                    Clinical input
+                                </b-button>-->
                             </div>
                         </template>
 
@@ -138,7 +140,7 @@
                                             Edit
                                         </b-button>
                                         <b-button
-                                            @click="deleteEntry(data.item.evidence_link)"
+                                            @click="deleteEntry(data.item.evidence_link, index, data)"
                                             class="mt-2 centered-icons"
                                             variant="danger"
                                             style="width: 110px;"
@@ -158,15 +160,17 @@
             </transition>
         </b-card>
 
-        <b-modal id="modal-add-note" ref="modal-add-note" title="Add/modify a note" class="modal-add-evidence"
-                 size="lg" :hide-footer="true">
-            <b-card no-body>
-                <b-textarea class="summary-box" v-model="note" rows="3"/>
-            </b-card>
-        </b-modal>
+        <div v-for="(evidence) in disease" :key="evidence">
+            <b-modal :id="addNoteID" :ref="evidence.sib_annotation_id" title="Add/modify a note" class="modal-add-evidence"
+                    size="lg" :hide-footer="true">
+                <b-card no-body>
+                    <b-textarea class="summary-box" v-model="note" rows="3"/>
+                </b-card>
+            </b-modal>
+        </div>
 
-        <b-modal id="modal-add-evidence" ref="modal-add-evidence" title="Add a new evidence" class="modal-add-evidence"
-                 size="lg" :hide-footer="true">
+        <b-modal :id="addEvidenceID" ref="modal-add-evidence" title="Add a new evidence" class="modal-add-evidence"
+                size="lg" :hide-footer="true">
             <b-card no-body>
                 <b-tabs
                     card
@@ -181,7 +185,7 @@
                                 <b-row no-gutters>
                                     <b-col cols="3">
                                         <b-form-select required class="custom-border-left" v-model="source"
-                                                       :options="['PMID']"/>
+                                                    :options="['PMID']"/>
                                     </b-col>
                                     <b-col cols="6">
                                         <b-form-input
@@ -194,14 +198,14 @@
                                     <b-col cols="2">
                                         <b-button-group>
                                             <b-button :disabled="!source || !reference"
-                                                      class="custom-unrounded centered-icons" variant="info"
-                                                      @click="viewCitation">
+                                                    class="custom-unrounded centered-icons" variant="info"
+                                                    @click="viewCitation">
                                                 <icon name="eye"/>
                                                 View Abstract
                                             </b-button>
                                             <b-button :disabled="!source || !reference" type="submit"
-                                                      class="custom-border-right centered-icons" variant="success"
-                                                      @click="addEvidence" target="_blank">
+                                                    class="custom-border-right centered-icons" variant="success"
+                                                    @click="addEvidence" target="_blank">
                                                 <icon name="plus"/>
                                                 Create Entry
                                             </b-button>
@@ -219,9 +223,9 @@
 
                                             <div class="mt-1 text-left">
                                                 <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                          v-for="x in annotationUsed" :key="x.id"
-                                                          :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                                          target="_blank"
+                                                        v-for="x in annotationUsed" :key="x.id"
+                                                        :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
+                                                        target="_blank"
                                                 >
                                                     Entry #{{ x.id }}
                                                 </b-button>
@@ -233,7 +237,7 @@
                                 <b-row no-gutters>
                                     <b-col cols="12">
                                         <VariomesAbstract v-if="loadingVariomes" style="margin-top: 1em;"
-                                                          :variomes="variomes"/>
+                                                        :variomes="variomes"/>
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -242,9 +246,7 @@
                 </b-tabs>
             </b-card>
         </b-modal>
-        <b-button class="float-right">
-            Submit review
-        </b-button>
+
     </div>
 </template>
 
@@ -257,6 +259,7 @@ import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import {HTTP} from "@/router/http";
 import {BIcon, BIconCheckSquareFill, BIconSquare, BIconXSquareFill} from "bootstrap-vue";
+
 export default {
     name: "ModifyReview",
     components: {
@@ -268,7 +271,7 @@ export default {
         BIconXSquareFill
     },
     props: {
-        raw_disease: {type: Object, required: false},
+        raw_disease: {type: Array, required: false},
         //disease: {type: Object, required: false},
         label: {type: String, required: false}
     },
@@ -281,11 +284,35 @@ export default {
                 this.refreshReferences();
             };
         },
+        handleEffect(event) {
+            const tag_id = event.target.parentNode.id
+            const selectedValue = document.getElementById(tag_id).childNodes[2].value
+            const evidence_id = tag_id.split("-").pop()
+            for (var outcome in this.disease) {
+                const evidence = this.disease[outcome][0]
+                if (evidence.id == parseInt(evidence_id)) {
+                    evidence['sib_annotation_outcome'] = selectedValue
+                    this.annotationEdited(evidence)
+                }
+            }
+        },
+        handleTier(event) {
+            const tag_id = event.target.parentNode.id
+            const selectedValue = document.getElementById(tag_id).childNodes[2].value
+            const evidence_id = tag_id.split("-").pop()
+            for (var outcome in this.disease) {
+                const evidence = this.disease[outcome][0]
+                if (evidence.id == parseInt(evidence_id)) {
+                    evidence['sib_annotation_trust'] = selectedValue
+                    this.annotationEdited(evidence)
+                }
+            }
+        },
         makeItems() {
             const evidences = {}
             this.raw_disease.map(evidence => {
-                if (!(evidence.typeOfEvidence in evidences)) {
-                    evidences[evidence.typeOfEvidence] = []
+                if (!(evidence.fullType in evidences)) {
+                    evidences[evidence.fullType] = []
                 }
                 const evidenceObj = {}
                 evidenceObj["outcome"] = []
@@ -295,8 +322,24 @@ export default {
                         "nb_evidence": effect.count
                     })
                 })
-                evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
-                evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
+
+                evidenceObj['id'] = evidence.id
+
+                if (typeof evidence.finalAnnotation === 'undefined') {
+                    // If not final annotation yet, then the values are those of first annotation
+                    evidenceObj["sib_annotation_outcome"] = evidence.curator.annotatedEffect
+                    evidenceObj["sib_annotation_trust"] = evidence.curator.annotatedTier
+                    evidenceObj["clinical_input"] = ''
+                    
+                } else {
+                    evidenceObj["sib_annotation_outcome"] = evidence.finalAnnotation.annotatedEffect
+                    evidenceObj["sib_annotation_trust"] = evidence.finalAnnotation.annotatedTier
+                    evidenceObj["clinical_input"] = evidence.finalAnnotation.clinical_input
+
+                    // use id of final_annotation object so that the PATCH request is made to the right ID
+                    evidenceObj["final_annotation_id"] = evidence.finalAnnotation.id
+                }
+
                 evidenceObj["reviews"] = []
                 evidence.reviews.map(review => {
                     if (review.status != null) {
@@ -312,31 +355,54 @@ export default {
                 evidenceObj["evidence"] = []
                 evidence.curations.map(curation => {
                     evidenceObj["evidence"].push({
-                        "reject": false,
-                        "outcome": curation.effect,
-                        "evidence_link": curation.id,
-                        "pmid_link": curation.pmid,
-                        "evidence_comment": curation.comment
+                        reject: false,
+                        outcome: curation.effect,
+                        evidence_link: curation.id,
+                        pmid_link: curation.pmid.toString(),
+                        evidence_comment: curation.comment
                     })
                 })
                 evidenceObj["show_review_status"] = false
                 evidenceObj["note"] = null
-                evidences[evidence.typeOfEvidence].push(evidenceObj)
+                evidences[evidence.fullType].push(evidenceObj)
+                this.annotationEdited(evidenceObj)
             })
             this.disease = evidences;
+
+            //let items = []
+            //items.push(Object.values(evidences))
+            //this.items = items
         },
-        deleteEntry(entry_id) {
+        annotationEdited(evidence) {
+            let annotation = {
+                'effect': evidence.sib_annotation_outcome,
+                'tier': evidence.sib_annotation_trust,
+                'evidence': evidence.id,
+                'clinical_input': evidence.clinical_inpu
+            }
+            if (typeof evidence['final_annotation_id'] !== 'undefined') {
+                annotation['id'] = evidence['final_annotation_id']
+            }
+            this.$emit('annotated', annotation)
+        },
+        deleteEntry(entry_id, index) {
+
             if (confirm("Are you sure that you want to delete this entry?")) {
-                /*HTTP.delete(`/curation_entries/${entry_id}`)
+                console.log(`index: ${index}`)
+                delete this.disease[index]
+
+                HTTP.delete(`/curation_entries/${entry_id}`)
                     .then(() => {
                         this.channel.postMessage(`Deleted ID ${entry_id}`);
                         this.$snotify.info("Entry deleted!");
-                        this.$refs.paged_table.refresh();
+                        delete this.disease[index]
+                        //this.$refs.paged_table.refresh();
                     })
-                    .catch(() => {
-                        this.$snotify.error("Failed to delete entry");
+                    .catch((err) => {
+                        console.log("ERROR:")
+                        console.log(err)
+                        //this.$snotify.error("Failed to delete entry");
                     });
-                */
             }
         },
         editEntryURL(entry) {
@@ -348,7 +414,7 @@ export default {
                 this.$route.params.gene_id,
                 this.$route.params.variant_id,
             ];
-            return `/curation/gene/${gene_id}/variant/${variant_id}/entry/${entry}`;
+            return `/curation/entry/${entry}`;
         },
         /*addEntryURL(entry) {
             const [gene_id, variant_id] = [
@@ -369,7 +435,9 @@ export default {
                 },
                 query: {source: this.source, reference: this.reference}
             });
-            window.open(route.href, "_blank");
+            let new_route = route.href + '&variant_id=' + this.$route.params.variant_id
+            console.log(new_route)
+            window.open(new_route, "_blank");
         },
         viewCitation() {
             // look up the reference via the variomes API
@@ -397,6 +465,9 @@ export default {
     data() {
         return {
             disease: {},
+            items: [],
+            addNoteID: '',
+            addEvidenceID: '',
             showReview: true,
             channel: new BroadcastChannel("curation-update"),
             source: "PMID",
@@ -476,10 +547,10 @@ export default {
                 'Tier IB: Well-powered studies with consensus from experts in the field',
                 'Tier IIC: Multiples small published studies with some consensus',
                 'Tier IID: Clinical trial',
-                'Tier IID: Pre-clinical study',
+                'Tier IID: Pre-clinical trial',
                 'Tier IID: Population study',
                 'Tier IID: Small published study',
-                'Tier IID: Case report',
+                'Tier IID: Case reports',
                 'Tier III: No convincing published evidence of drugs effect',
                 'Tier III: Author statement',
                 'Tier IV: Reported evidence supportive of benign/likely benign effect',
@@ -489,6 +560,8 @@ export default {
     },
     mounted() {
         this.makeItems()
+        this.addEvidenceID = `modal-add-evidence-${this.label.replace(" ", "-")}`
+        this.addNoteID = `modal-add-note-${this.label.replace("wesh", "-")}`
     },
     computed: {
         ...mapGetters({
@@ -583,5 +656,8 @@ table >>> .thead-footer {
 }
 .text-small {
     font-size: smaller;
+}
+.invisble {
+    display: none;
 }
 </style>
