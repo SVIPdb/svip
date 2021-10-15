@@ -204,9 +204,10 @@ overwrite_table 'api_source'
 #   relations: the relation to the related table in the form 
 #          key_field_to_the_related_table=related_table:unique_colmn_of_related_table1,unique_colmn_of_related_table2,...
 merge_table 'api_gene' 'api_variant:gene_id' 'symbol:text' 'entrez_id,ensembl_gene_id,symbol,sources,uniprot_ids,location,aliases,prev_symbols' ''
+# it is basically not usefull to have so many unique fields, but in this setup (as long as we do not have a unique hash) its not possible to squice this list.
 merge_table 'api_variant' \
 'api_variantinsource:variant_id' \
-'name:text hgvs_g:text' \
+'name:text description:text hgvs_g:text hgvs_c:text start_pos:int alt:text ref:text' \
 'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status' \
 'gene_id=api_gene:symbol'
 merge_table 'api_variantinsource' '' 'variant_url:text' 'id,variant_url,extras,source_id' 'variant_id=api_variant:name,hgvs_g'
