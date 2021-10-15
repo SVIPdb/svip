@@ -92,7 +92,7 @@ To start the harvester:
 
 1. (Optional) Start a screen/tmux session, since this will likely take a while.
 2. Run `docker-compose run --rm harvester /bin/bash`
-3. Within the container, edit `entrypoint.sh` and then execute it to start the harvesting process.
+3. Within the container, edit `entrypoint.sh all` and then execute it to start the harvesting process.
 
 # Notes and other components:
 
