@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost', '127.0.0.1', '0.0.0.0', 'api',
-    'nc2', '192.168.1.52'
+    'nc2', '192.168.1.52',
     'svip-dev.nexus.ethz.ch',
     'svip-test.nexus.ethz.ch',
     'svip.nexus.ethz.ch',
