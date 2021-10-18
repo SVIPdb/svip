@@ -4,7 +4,7 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
-                    Variant Summary
+                    Gene Summary
                 </h6>
 
                 <transition name="slide-fade">
@@ -26,20 +26,20 @@ import BroadcastChannel from "broadcast-channel";
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
 
-const log = ulog('VariantSummary');
+const log = ulog('GeneSummary');
 
 export default {
-    name: "VariantSummary",
+    name: "GeneSummary",
     components: {
 
     },
     props: {
-        variant: { type: Object, required: false },
+        gene: { type: Object, required: false },
         isOpen: { type: Boolean, required: false, default: false }
     },
     data() {
         return {
-            summary: this.variant.svip_data && this.variant.svip_data.summary,
+            summary: this.gene.summary,
             history_entry_id: null,
             loading: false,
             error: null,
