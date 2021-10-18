@@ -3,7 +3,7 @@
         <b-card class="shadow-sm mb-3" align="left" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    Variant Summary
+                    Gene Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
                 </h6>
 
@@ -18,14 +18,14 @@
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
-                    <b-button
+                    <!--<b-button
                         class="mr-2 centered-icons"
                         variant="info"
                         v-b-tooltip="'History'"
                         @click="showHistory"
                     >
                         <icon name="history" label="History" /> History
-                    </b-button>
+                    </b-button>-->
                     <b-button variant="warning" class="mr-2 centered-icons" :disabled=!showSummaryDraft @click="saveSummaryDraft">
                         Finish later
                     </b-button>
@@ -59,19 +59,19 @@ import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHis
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
 
-const log = ulog('VariantSummary');
+const log = ulog('CurationGeneSummary');
 
 export default {
-    name: "VariantSummary",
+    name: "CurationGeneSummary",
     components: { VariantInSVIPHistory },
     props: {
-        variant: { type: Object, required: false }
+        gene: { type: Object, required: false }
     },
     data() {
         return {
-            summary: this.variant.svip_data && this.variant.svip_data.summary,
+            summary: this.gene.summary,
             summaryDraft: '',
-            serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and variant (if so: PATCH request instead of POST)
+            serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and gene (if so: PATCH request instead of POST)
 
             history_entry_id: null,
             loading: false,
@@ -113,8 +113,8 @@ export default {
     },
     methods: {
         getSummaryDraft() {
-            // get already existing summary comment for this variant and user (if exists)
-            HTTP.get(`/summary_draft/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
+            // get already existing summary comment for this gene and user (if exists)
+            HTTP.get(`/gene_summary_draft/?gene=${this.gene.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
                 if (results.length > 0) {
                     this.serverSummaryDraft = results[0]
@@ -130,13 +130,13 @@ export default {
             const summaryDraftJSON = {
                 content: this.summaryDraft,
                 owner: this.user.user_id,
-                variant: this.variant.id
+                gene: this.gene.id
             }
 
 
             if (this.serverSummaryDraft === null) {
-                // summaryDraft doesn't already exist (for this user and variant): post new
-                HTTP.post(`/summary_draft/`, summaryDraftJSON)
+                // summaryDraft doesn't already exist (for this user and gene): post new
+                HTTP.post(`/gene_summary_draft/`, summaryDraftJSON)
                     .then(() => {
                         this.getSummaryDraft();
                         this.isEditMode = false;
@@ -163,7 +163,7 @@ export default {
         deleteSummaryDraft() {
             // send a delete request only if SummaryComment instance exists in the server
             if (this.serverSummaryDraft !== null) {
-                HTTP.delete(`/summary_draft/${this.serverSummaryDraft.id}/`)
+                HTTP.delete(`/gene_summary_draft/${this.serverSummaryDraft.id}/`)
                     .then(() => {
                         this.serverSummaryDraft = null
                         this.summaryDraft = "";
@@ -180,19 +180,7 @@ export default {
             }
         },
         saveSummary() {
-            if (!this.variant.svip_data) {
-                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summaryModel })
-                    .then((response) => {
-                        this.variant.svip_data = response.data;
-                        this.summary = response.data.summary;
-                        this.$snotify.success("Summary updated! (SVIP variant created, too.)");
-                    })
-                    .catch((err) => {
-                        log.warn(err);
-                        this.$snotify.error("Failed to update summary");
-                    })
-            }
-            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summaryModel })
+            HTTP.patch(`/genes/${this.gene.id}/`, { summary: this.summaryModel })
                 .then((response) => {
                     this.summary = response.data.summary;
                     this.$snotify.success("Summary updated!");
@@ -204,7 +192,7 @@ export default {
         },
         showHistory() {
             this.$refs["history-modal"].show();
-            this.history_entry_id = this.variant.svip_data.id;
+            //this.history_entry_id = this.variant.svip_data.id;
         }
     }
 };

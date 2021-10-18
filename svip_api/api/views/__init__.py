@@ -23,6 +23,7 @@ from .svip import (
     SubmittedVariantBatchViewSet,
     SummaryCommentViewSet,
     SummaryDraftViewSet,
+    GeneSummaryDraftViewSet,
     CurationReviewViewSet,
     RevisedReviewViewSet,
     SIBAnnotation1ViewSet,

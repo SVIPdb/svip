@@ -2,6 +2,8 @@
     <div class="container-fluid">
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
+        <CurationGeneSummary :gene="gene" />
+
         <VariantSummary :variant="variant" />
 
         <EvidenceCard :variant="variant" is-submittable small />
@@ -95,6 +97,7 @@ import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import VariantSummary from "@/components/widgets/curation/VariantSummary";
+import CurationGeneSummary from "@/components/widgets/curation/CurationGeneSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 import MessageWithIcon from "@/components/widgets/MessageWithIcon";
@@ -107,6 +110,7 @@ export default {
     components: {
         EntriesInUse,
         MessageWithIcon,
+        CurationGeneSummary,
         VariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,

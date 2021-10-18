@@ -20,7 +20,7 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
     CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
-    SummaryDraft, RevisedReview
+    SummaryDraft, GeneSummaryDraft, RevisedReview
 )
 from api.serializers import SimpleVariantSerializer, SimpleGeneSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
@@ -815,6 +815,14 @@ class SummaryDraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = SummaryDraft
         fields = '__all__'
+
+
+class GeneSummaryDraftSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = GeneSummaryDraft
+        fields = '__all__'
+
 
 # class CurationReviewListSerializer(serializers.ListSerializer):
 #    def update(self, instance, validated_data):

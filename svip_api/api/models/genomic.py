@@ -47,6 +47,8 @@ class Gene(models.Model):
     symbol = models.TextField(unique=True, db_index=True)
     uniprot_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     location = models.TextField(null=True)
+    
+    summary = models.TextField(null=True, blank=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
