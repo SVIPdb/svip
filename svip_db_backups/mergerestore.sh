@@ -210,7 +210,11 @@ merge_table 'api_variant' \
 'name:text description:text hgvs_g:text hgvs_c:text start_pos:int alt:text ref:text' \
 'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status' \
 'gene_id=api_gene:symbol'
-merge_table 'api_variantinsource' '' 'variant_url:text' 'id,variant_url,extras,source_id' 'variant_id=api_variant:name,hgvs_g'
+merge_table 'api_variantinsource' \
+'' \
+'variant_url:text' \
+'id,variant_url,extras,source_id' \
+'variant_id=api_variant:name,description,hgvs_g,hgvs_c,start_pos,alt,ref'
 
 # restore the overwrite table
 for table in api_association api_environmentalcontext api_phenotype api_evidence
