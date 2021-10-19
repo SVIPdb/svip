@@ -5,6 +5,13 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Variant Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
+
+                    <div v-if="summary !== null" class="update">Last update: 
+                        <b class="date">
+                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
+                        </b>
+                    </div>
+
                 </h6>
 
                 <b-card-text class="p-2 m-0">
@@ -18,12 +25,6 @@
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
-
-                    <div v-if="summary !== null" class="update">Last update: 
-                        <b class="date">
-                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
-                        </b>
-                    </div>
 
                     <b-button
                         class="mr-2 centered-icons"
@@ -276,9 +277,9 @@ export default {
 }
 
 .update {
-    margin-right: auto;
-    margin-left: 0.7rem;
-    margin-top: 0.4rem;
+    right: 1rem;
+    position: absolute;
+    display: inline-block
 }
 
 .date {

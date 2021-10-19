@@ -5,6 +5,13 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
                     Variant Summary
+
+                    <div v-if="summary !== null" class="update">Last update: 
+                        <b class="date">
+                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
+                        </b>
+                    </div>
+
                 </h6>
 
                 <transition name="slide-fade">
@@ -100,5 +107,15 @@ export default {
 
 .summary-box {
     color: black !important;
+}
+
+.update {
+    right: 1rem;
+    position: absolute;
+    display: inline-block
+}
+
+.date {
+    margin-left: 0.5rem;
 }
 </style>
