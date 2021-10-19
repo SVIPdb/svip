@@ -108,7 +108,7 @@ function delete_duplicates {
   conflict_cols="$2"
 
   whr=''
-  for conflict_col in conflict_cols
+  for conflict_col in ${conflict_cols}
   do
     whr+=" AND a.${conflict_col} = b.${conflict_col}"
   done
