@@ -113,7 +113,7 @@ function delete_duplicates {
     whr+= " AND a.${conflict_col} = b.${conflict_col}"
   done
 
-  sql "DELETE FROM ${table} a USING basket b WHERE a.id < b.id ${whr};"
+  sql "DELETE FROM ${table} a USING ${table} b WHERE a.id < b.id ${whr};"
 }
 
 function merge_table {
