@@ -104,10 +104,10 @@ function drop_column {
 }
 
 function delete_duplicates {
-  table="$1"
-  conflict_cols="$2"
+  local table="$1"
+  local conflict_cols="$2"
 
-  whr=''
+  local whr=''
   for conflict_col in ${conflict_cols//,/ }
   do
     whr+=" AND a.${conflict_col} = b.${conflict_col}"
