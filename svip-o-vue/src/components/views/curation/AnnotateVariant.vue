@@ -4,7 +4,7 @@
 
         <CurationGeneSummary :gene="gene" />
 
-        <VariantSummary :variant="variant" />
+        <CurationVariantSummary :variant="variant" />
 
         <EvidenceCard :variant="variant" is-submittable small />
 
@@ -96,7 +96,7 @@ import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
-import VariantSummary from "@/components/widgets/curation/VariantSummary";
+import CurationVariantSummary from "@/components/widgets/curation/CurationVariantSummary";
 import CurationGeneSummary from "@/components/widgets/curation/CurationGeneSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
@@ -111,7 +111,7 @@ export default {
         EntriesInUse,
         MessageWithIcon,
         CurationGeneSummary,
-        VariantSummary,
+        CurationVariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
         EvidenceCard

@@ -18,6 +18,13 @@
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
+
+                    <div v-if="summary !== null" class="update">Last update: 
+                        <b class="date">
+                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
+                        </b>
+                    </div>
+
                     <b-button
                         class="mr-2 centered-icons"
                         variant="info"
@@ -59,10 +66,10 @@ import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHis
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
 
-const log = ulog('VariantSummary');
+const log = ulog('CurationVariantSummary');
 
 export default {
-    name: "VariantSummary",
+    name: "CurationVariantSummary",
     components: { VariantInSVIPHistory },
     props: {
         variant: { type: Object, required: false }
@@ -77,6 +84,8 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
+            date: null,
+            changeDate: true,
         };
     },
     mounted() {
@@ -88,6 +97,7 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
+        this.date = new Date(this.variant.svip_data.calculate_summary_date)
     },
     computed: {
         showSummaryDraft() {
@@ -180,9 +190,25 @@ export default {
             }
         },
         saveSummary() {
+
+            let params = {summary: this.summaryModel,}
+
+
+            const prompt = "Do you want to set the value of the last summary update to today?"
+            if (confirm(prompt)) {
+                this.changeDate = true
+                params['summary_date'] = new Date().toJSON()
+            } else{
+                this.changeDate = false
+            }
+
             if (!this.variant.svip_data) {
-                return HTTP.post('/variants_in_svip', { variant: this.variant.url, summary: this.summaryModel })
+                params['variant'] = this.variant.url
+                return HTTP.post('/variants_in_svip', params)
                     .then((response) => {
+                        if (this.changeDate) {
+                            this.date = new Date()
+                        }
                         this.variant.svip_data = response.data;
                         this.summary = response.data.summary;
                         this.$snotify.success("Summary updated! (SVIP variant created, too.)");
@@ -191,16 +217,20 @@ export default {
                         log.warn(err);
                         this.$snotify.error("Failed to update summary");
                     })
+            } else {
+                HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, params)
+                    .then((response) => {
+                        if (this.changeDate) {
+                            this.date = new Date()
+                        }
+                        this.summary = response.data.summary;
+                        this.$snotify.success("Summary updated!");
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary");
+                    })
             }
-            HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, { summary: this.summaryModel })
-                .then((response) => {
-                    this.summary = response.data.summary;
-                    this.$snotify.success("Summary updated!");
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to update summary");
-                })
         },
         showHistory() {
             this.$refs["history-modal"].show();
@@ -243,5 +273,15 @@ export default {
 .draft-header {
     margin-left: 3rem;
     color: rgb(248, 236, 210);
+}
+
+.update {
+    margin-right: auto;
+    margin-left: 0.7rem;
+    margin-top: 0.4rem;
+}
+
+.date {
+    margin-left: 0.5rem;
 }
 </style>

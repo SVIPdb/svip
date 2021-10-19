@@ -96,10 +96,32 @@ class VariantInSVIP(models.Model):
 
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
+    summary_date = models.DateTimeField(null=True)
 
     objects = VariantInSVIPManager()
 
     history = HistoricalRecords(cascade_delete_history=True)
+
+    def calculate_summary_date(self):
+        if self.summary_date:
+            return self.summary_date
+        
+        else:
+            if not self.summary:
+                return None
+
+            if len(self.history.all())==1:
+                return self.history.last().history_date
+
+            if len(self.history.all())>1:
+                current = self.history.first()
+                for i in range(1,len(self.history.all())):
+                    version = self.history.all()[i]
+                    delta = current.diff_against(version)
+                    for change in delta.changes:
+                        if change.field == 'summary':
+                            return self.history.all()[i-1].history_date
+            return None
 
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
