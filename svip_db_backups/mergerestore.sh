@@ -124,18 +124,6 @@ function merge_table {
   local columns="${4}"
   local relations="${5}"
 
-  if [ "${2}" != "" ]; then
-    for related_table in $related_tables
-    do
-      for col in $unique_cols
-      do
-        add_column "${related_table%%:*}" "__${col%%:*}" "${col#*:}"
-        echo " --> Update ${related_table%%:*} set __${col%%:*} from table ${table}..."
-        sql "update ${related_table%%:*} RT set __${col%%:*}=(select ${col%%:*} from ${table} where id=RT.${related_table#*:});"
-      done
-    done
-  fi
-
   echo " --> Merging table ${table} -> ${orig_table}..."
 
   # If one of the conflict columns is hit update it
@@ -188,6 +176,18 @@ function merge_table {
   
   # Drop the temporary constraint for the conflicting columns
   sql "ALTER TABLE ${orig_table} DROP CONSTRAINT temp_constraint;"
+
+  if [ "${2}" != "" ]; then
+    for related_table in $related_tables
+    do
+      for col in $unique_cols
+      do
+        add_column "${related_table%%:*}" "__${col%%:*}" "${col#*:}"
+        echo " --> Update ${related_table%%:*} set __${col%%:*} from table ${table}..."
+        sql "update ${related_table%%:*} RT set __${col%%:*}=(select ${col%%:*} from ${table} where id=RT.${related_table#*:});"
+      done
+    done
+  fi
 }
 
 function overwrite_table {
