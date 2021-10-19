@@ -103,6 +103,19 @@ function drop_column {
   sql "ALTER TABLE ${table} DROP COLUMN IF EXISTS ${column};"
 }
 
+function delete_duplicates {
+  table="$1"
+  conflict_cols="$2"
+
+  whr=''
+  for conflict_col in conflict_cols
+  do
+    whr+= " AND a.${conflict_col} = b.${conflict_col}"
+  done
+
+  sql "DELETE FROM ${table} a USING basket b WHERE a.id < b.id ${whr};"
+}
+
 function merge_table {
   local table="${SCHEMA}.${1}"
   local orig_table="${ORIG_SCHEMA}.${1}"
@@ -158,6 +171,9 @@ function merge_table {
     all_cols="${additional_cols},${all_cols}"
   fi
   
+  # Delete the duplicated to create the unique constraint
+  delete_duplicates "${orig_table}" "${conflict_cols}"
+
   # Add a temporary constraint for the conflicting columns
   sql "ALTER TABLE ${orig_table} ADD CONSTRAINT temp_constraint UNIQUE (${conflict_cols});"
 
