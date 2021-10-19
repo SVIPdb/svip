@@ -110,7 +110,7 @@ function delete_duplicates {
   whr=''
   for conflict_col in conflict_cols
   do
-    whr+= " AND a.${conflict_col} = b.${conflict_col}"
+    whr+=" AND a.${conflict_col} = b.${conflict_col}"
   done
 
   sql "DELETE FROM ${table} a USING ${table} b WHERE a.id < b.id ${whr};"
