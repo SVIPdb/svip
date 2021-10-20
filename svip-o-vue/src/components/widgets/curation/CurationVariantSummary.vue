@@ -6,7 +6,7 @@
                     Variant Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
 
-                    <div v-if="summary !== null" class="update">Last update: 
+                    <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
@@ -86,7 +86,7 @@ export default {
             error: null,
             channel: new BroadcastChannel("curation-update"),
             date: null,
-            changeDate: true,
+            changeDate: false,
         };
     },
     mounted() {
@@ -98,7 +98,9 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        this.date = new Date(this.variant.svip_data.calculate_summary_date)
+        if (this.variant.svip_data.calculate_summary_date) {
+            this.date = new Date(this.variant.svip_data.calculate_summary_date)
+        }
     },
     computed: {
         showSummaryDraft() {
@@ -194,12 +196,17 @@ export default {
 
             let params = {summary: this.summaryModel,}
 
-            const prompt = "Do you want to set the value of the last summary update to today?"
-            if (confirm(prompt)) {
+            if (this.gene.summary) {
+                const prompt = "Do you want to set the value of the last summary update to today?"
+                if (confirm(prompt)) {
+                    this.changeDate = true
+                    params['summary_date'] = new Date().toJSON()
+                } else{
+                    this.changeDate = false
+                }
+            } else {
                 this.changeDate = true
                 params['summary_date'] = new Date().toJSON()
-            } else{
-                this.changeDate = false
             }
 
             if (!this.variant.svip_data) {

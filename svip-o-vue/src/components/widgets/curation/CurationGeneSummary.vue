@@ -6,7 +6,7 @@
                     Gene Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
 
-                    <div v-if="summary !== null" class="update">Last update: 
+                    <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
@@ -85,7 +85,7 @@ export default {
             error: null,
             channel: new BroadcastChannel("curation-update"),
             date: null,
-            changeDate: true,
+            changeDate: false,
         };
     },
     mounted() {
@@ -97,6 +97,9 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
+        if (this.gene.summary_date) {
+            this.date = new Date(this.gene.summary_date)
+        }
     },
     computed: {
         showSummaryDraft() {
@@ -200,7 +203,7 @@ export default {
                 this.changeDate = false
             }
 
-            HTTP.patch(`/genes/${this.gene.id}/`, { summary: this.summaryModel })
+            HTTP.patch(`/genes/${this.gene.id}/`, params)
                 .then((response) => {
                     if (this.changeDate) {
                         this.date = new Date()

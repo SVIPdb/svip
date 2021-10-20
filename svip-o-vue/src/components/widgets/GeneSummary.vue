@@ -5,7 +5,7 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
                     Gene Summary
-                    <div v-if="summary !== null" class="update">Last update: 
+                    <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
@@ -66,6 +66,10 @@ export default {
         };
         if(this.isOpen){
             this.showSummary = true;
+        }
+
+        if (this.gene.summary_date) {
+            this.date = new Date(this.gene.summary_date)
         }
     },
     computed: {
