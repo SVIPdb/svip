@@ -15,7 +15,7 @@ from django_db_cascade.deletions import DB_CASCADE
 from django_db_cascade.fields import ForeignKey
 from simple_history.models import HistoricalRecords
 
-from api.models.genomic import Variant
+from api.models.genomic import Variant, Gene
 from api.models.reference import Disease
 from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
                              PUBLIC_VISIBLE_STATUSES)
@@ -96,10 +96,32 @@ class VariantInSVIP(models.Model):
 
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
+    summary_date = models.DateTimeField(null=True)
 
     objects = VariantInSVIPManager()
 
     history = HistoricalRecords(cascade_delete_history=True)
+
+    def calculate_summary_date(self):
+        if self.summary_date:
+            return self.summary_date
+        
+        else:
+            if not self.summary:
+                return None
+
+            if len(self.history.all())==1:
+                return self.history.last().history_date
+
+            if len(self.history.all())>1:
+                current = self.history.first()
+                for i in range(1,len(self.history.all())):
+                    version = self.history.all()[i]
+                    delta = current.diff_against(version)
+                    for change in delta.changes:
+                        if change.field == 'summary':
+                            return self.history.all()[i-1].history_date
+            return None
 
     def tissue_counts(self):
         # FIXME: figure out how to do this with the ORM someday
@@ -336,8 +358,8 @@ class SummaryDraft(models.Model):
     Uncompleted summary specific to a curator and a given variant
     """
     content = models.TextField(default="")
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, default=16)
-    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
 
 
 class SummaryComment(models.Model):
@@ -346,11 +368,20 @@ class SummaryComment(models.Model):
     """
     content = models.TextField(default="")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                              null=True, on_delete=models.SET_NULL, default=16)
-    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, default=278)
+                              null=True, on_delete=models.SET_NULL)
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE)
 
     def reviewer(self):
         return f"{self.owner.first_name} {self.owner.last_name}"
+
+
+class GeneSummaryDraft(models.Model):
+    """
+    Uncompleted summary specific to a curator and a given gene
+    """
+    content = models.TextField(default="")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    gene = models.ForeignKey(Gene, on_delete=DB_CASCADE)
 
 
 # ================================================================================================================

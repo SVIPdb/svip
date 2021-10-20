@@ -130,6 +130,9 @@ router.register(r'summary_comments', views.SummaryCommentViewSet,
 router.register(r'summary_draft', views.SummaryDraftViewSet,
                 basename='summary_draft')
 
+router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
+                basename='gene_summary_draft')
+
 router.register(r'sib_annotations_1', views.SIBAnnotation1ViewSet,
                 basename='sib_annotations_1')
 router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
