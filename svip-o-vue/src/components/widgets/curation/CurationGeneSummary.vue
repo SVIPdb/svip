@@ -196,18 +196,39 @@ export default {
             let params = {summary: this.summaryModel,}
 
             if (this.date) {
-                const prompt = "Do you want to set the value of the last summary update to today?"
-                if (confirm(prompt)) {
-                    this.changeDate = true
-                    params['summary_date'] = new Date().toJSON()
-                } else{
-                    this.changeDate = false
-                }
+                
+                // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
+                this.$confirm(
+                    {
+                        message: `Change the modification date of this summary ?\n\n
+                        If so, the current date will be replace the existing one.`,
+                        button: {
+                            no: 'Ignore',
+                            yes: 'Update'
+                        },
+                        /**
+                         * Callback Function
+                         * @param {Boolean} confirm 
+                         */
+                        callback: confirm => {
+                            if (confirm) {
+                                this.changeDate = true
+                                params['summary_date'] = new Date().toJSON()
+                            } else {
+                                this.changeDate = false
+                            }
+                            this.sendSummaryRequest(params)
+                        }
+                    }
+                )
+
             } else {
                 this.changeDate = true
                 params['summary_date'] = new Date().toJSON()
+                this.sendSummaryRequest(params)
             }
-
+        },
+        sendSummaryRequest(params) {
             HTTP.patch(`/genes/${this.gene.id}/`, params)
                 .then((response) => {
                     if (this.changeDate) {
