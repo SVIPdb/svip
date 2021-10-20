@@ -195,12 +195,17 @@ export default {
 
             let params = {summary: this.summaryModel,}
 
-            const prompt = "Do you want to set the value of the last summary update to today?"
-            if (confirm(prompt)) {
+            if (this.date) {
+                const prompt = "Do you want to set the value of the last summary update to today?"
+                if (confirm(prompt)) {
+                    this.changeDate = true
+                    params['summary_date'] = new Date().toJSON()
+                } else{
+                    this.changeDate = false
+                }
+            } else {
                 this.changeDate = true
                 params['summary_date'] = new Date().toJSON()
-            } else{
-                this.changeDate = false
             }
 
             HTTP.patch(`/genes/${this.gene.id}/`, params)

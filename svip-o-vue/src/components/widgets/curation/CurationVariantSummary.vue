@@ -196,7 +196,7 @@ export default {
 
             let params = {summary: this.summaryModel,}
 
-            if (this.gene.summary) {
+            if (this.date) {
                 const prompt = "Do you want to set the value of the last summary update to today?"
                 if (confirm(prompt)) {
                     this.changeDate = true
