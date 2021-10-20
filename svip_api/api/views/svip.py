@@ -20,7 +20,7 @@ from api.models import (
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
     SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
-    SIBAnnotation2, SummaryDraft, RevisedReview
+    SIBAnnotation2, SummaryDraft, GeneSummaryDraft, RevisedReview
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -30,7 +30,7 @@ from api.serializers import (
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
     SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
-    CurationReviewSerializer, SummaryDraftSerializer, RevisedReviewSerializer
+    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -511,11 +511,8 @@ class SummaryDraftViewSet(viewsets.ModelViewSet):
     serializer_class = SummaryDraftSerializer
     
     def get_queryset(self):
-        print(f"query params: {self.request.query_params} ")
-        
         variant = self.request.query_params.get('variant')
         owner = self.request.query_params.get('owner')
-        
         queryset = SummaryDraft.objects.all()
         
         if variant is not None:
@@ -525,7 +522,25 @@ class SummaryDraftViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
+
+
+
+class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = GeneSummaryDraftSerializer
     
+    def get_queryset(self):
+        gene = self.request.query_params.get('gene')
+        owner = self.request.query_params.get('owner')
+        queryset = GeneSummaryDraft.objects.all()
+        
+        if gene is not None:
+            queryset = queryset.filter(gene=gene)
+
+        if owner is not None:
+            queryset = queryset.filter(owner=owner)
+
+        return queryset
 
 
 

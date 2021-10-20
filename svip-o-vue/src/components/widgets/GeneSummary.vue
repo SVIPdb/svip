@@ -4,7 +4,7 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
-                    Variant Summary
+                    Gene Summary
                     <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
@@ -31,20 +31,20 @@ import BroadcastChannel from "broadcast-channel";
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
 
-const log = ulog('VariantSummary');
+const log = ulog('GeneSummary');
 
 export default {
-    name: "VariantSummary",
+    name: "GeneSummary",
     components: {
 
     },
     props: {
-        variant: { type: Object, required: false },
+        gene: { type: Object, required: false },
         isOpen: { type: Boolean, required: false, default: false }
     },
     data() {
         return {
-            summary: this.variant.svip_data && this.variant.svip_data.summary,
+            summary: this.gene.summary,
             history_entry_id: null,
             loading: false,
             error: null,
@@ -68,8 +68,8 @@ export default {
             this.showSummary = true;
         }
 
-        if (this.variant.svip_data.calculate_summary_date) {
-            this.date = new Date(this.variant.svip_data.calculate_summary_date)
+        if (this.gene.summary_date) {
+            this.date = new Date(this.gene.summary_date)
         }
     },
     computed: {

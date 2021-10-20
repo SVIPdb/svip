@@ -39,5 +39,18 @@ if [[ -n "${USE_DEV_SERVER}" ]]; then
     # this dev server is less efficient than gunicorn, but it auto-reloads on source changes
     python manage.py runserver 0.0.0.0:8085
 else
+    #gunicorn = WSGIApplication()
+    #gunicorn.load_wsgiapp = lambda: app
+    #gunicorn.cfg.set('bind', '%s:%s' % (host, port))
+    #gunicorn.cfg.set('workers', workers)
+    #gunicorn.cfg.set('threads', workers)
+    #gunicorn.cfg.set('pidfile', None)
+    #gunicorn.cfg.set('worker_class', 'sync')
+    #gunicorn.cfg.set('keepalive', 10)
+    #gunicorn.cfg.set('accesslog', '-')
+    #gunicorn.cfg.set('errorlog', '-')
+    #gunicorn.cfg.set('reload', True)
+    #gunicorn.chdir()
+    #gunicorn.run()
     gunicorn svip_server.wsgi -b 0.0.0.0:8085 --reload -k gevent -w 16
 fi
