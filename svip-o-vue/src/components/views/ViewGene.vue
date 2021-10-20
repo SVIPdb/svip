@@ -64,6 +64,8 @@
             </div>
         </div>
 
+        <GeneSummary :gene="gene" class="variant-summary" />
+
         <div class="row align-items-baseline">
             <div class="col">
                 <b-form-group label-cols="2" label="Filter">
@@ -145,12 +147,16 @@ import store from "@/store";
 import { makeVariantProvider } from "@/components/genes/variants/item_providers/variant_provider";
 import { change_from_hgvs } from "@/utils";
 import SourceIcon from "@/components/widgets/SourceIcon";
+import GeneSummary from "@/components/widgets/GeneSummary";
 import ulog from 'ulog';
 
 const log = ulog('ViewGene');
 
 export default {
-    components: {SourceIcon},
+    components: {
+        SourceIcon,
+        GeneSummary
+    },
     name: 'ViewGene',
     data() {
         return {

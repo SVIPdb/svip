@@ -54,6 +54,8 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
             'sources',
             'aliases',
             'prev_symbols',
+            'summary',
+            'summary_date'
         )
 
 
