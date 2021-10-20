@@ -41,7 +41,7 @@ class GeneFilter(df_filters.FilterSet):
         fields = ('symbol', 'aliases', 'prev_symbols')
 
 
-class GeneViewSet(viewsets.ReadOnlyModelViewSet):
+class GeneViewSet(viewsets.ModelViewSet):
     """
     Genes that we've discovered from harvesting.
     """

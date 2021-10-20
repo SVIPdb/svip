@@ -7,8 +7,11 @@
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
         <div v-for="(disease) in diseases" :key="disease">
-            <modify-review :raw_disease="disease.evidences" :label="disease.disease"/>
+            <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
         </div>
+        <b-button class="float-right" @click="submitAnnotations">
+            Submit annotation
+        </b-button>
     </div>
 </template>
 
@@ -40,6 +43,7 @@ export default {
     },
     data() {
         return {
+            diseases: [],
             diseases_test: [
                 {
                     "disease": "Aggressive fibromatosis",
@@ -154,20 +158,20 @@ export default {
                                     {label: "Bafilomycin", nb_evidence: 1}
                                 ],
                                 sib_annotation_outcome: "Resistant (in vitro)",
-                                sib_annotation_trust: "Tier IID: Pre-clinical study",
+                                sib_annotation_trust: "Tier IID: Pre-clinical trial",
                                 reviews: [
                                     {
                                         reviewer: "John Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Resistant (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null,
                                     },
                                     {
                                         reviewer: "Jean Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Resistant (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     },
                                     {
@@ -195,27 +199,27 @@ export default {
                                     {label: "Sorafenib", nb_evidence: 1}
                                 ],
                                 sib_annotation_outcome: "Sensitive (in vitro)",
-                                sib_annotation_trust: "Tier IID: Pre-clinical study",
+                                sib_annotation_trust: "Tier IID: Pre-clinical trial",
                                 reviews: [
                                     {
                                         reviewer: "John Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null,
                                     },
                                     {
                                         reviewer: "Jean Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     },
                                     {
                                         reviewer: "Johnny Doe",
                                         reviewer_mail: "test@test.com",
                                         reviewer_annotation_outcome: "Sensitive (in vitro)",
-                                        reviewer_annotation_trust: "Tier IID: Pre-clinical study",
+                                        reviewer_annotation_trust: "Tier IID: Pre-clinical trial",
                                         comment: null
                                     }
                                 ],
@@ -236,29 +240,15 @@ export default {
                 }
             ],
             summary: {
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                comments: [
-                    {
-                        reviewer: "John Doe",
-                        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec fringilla sapien, sit amet mattis."
-                    },
-                    {
-                        reviewer: "Jean Doe",
-                        content: null
-                    },
-                    {
-                        reviewer: "Johnny Doe",
-                        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec fringilla sapien, sit amet mattis."
-                    }
-                ]
+                content: "",
+                comments: []
             },
-            test: []
+            annotations: {}
         }
     },
     mounted() {
         HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then((response) => {
             const results = response.data.results
-            console.log(results)
             this.summary.comments = results;
         });
         this.getReviewData();
@@ -279,15 +269,13 @@ export default {
             const thisRef = `${this.source.trim()}:${this.reference.trim()}`;
             return this.used_references[thisRef];
         },
-        diseases() {
-            return this.$store.getters.variant.svip_data.review_data
-        }
     },
     methods: {
         getReviewData() {
-            const params={
+            const params = {
                 reviewer: this.user.user_id,
-                var_id: this.variant.id
+                var_id: this.variant.id,
+                entry_ids: 'all'
             }
 
             HTTP.post(`/review_data`, params)
@@ -297,6 +285,37 @@ export default {
                 .catch((err) => {
                     log.warn(err);
                 })
+        },
+        updateAnnotations(annotation) {
+            this.annotations[annotation['evidence']] = annotation
+        },
+        submitAnnotations() {
+            for (var evidence_id in this.annotations) {
+                // check wether annotation has an ID field (in that case it means an instance already exists in the DB)
+                const annotation = this.annotations[evidence_id]
+                if (typeof annotation.id === 'undefined') {
+                    HTTP.post('/sib_annotations_2/', annotation)
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
+                } else {
+                    const params = annotation
+                    //console.log(annotation.id)
+                    //delete params['id']
+                    HTTP.patch(`/sib_annotations_2/${annotation.id}/`, annotation)
+                    .then((response) => {
+                        console.log(`response: ${response}`)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                    })
+                }
+            }
+
+            this.$snotify.success("Your review has been saved");
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -306,7 +325,7 @@ export default {
             to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
             next();
         });
-    }
+    },
 };
 </script>
 
@@ -331,10 +350,5 @@ export default {
 {
     opacity: 0;
     max-height: 0;
-}
-</style>
-<style>
-.ajax-loader-bar {
-    display: none !important;
 }
 </style>

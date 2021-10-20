@@ -56,6 +56,7 @@ createAuthRefreshInterceptor(
     }, {statusCodes: [401, 403]});
 
 HTTP.interceptors.request.use(request => {
+    const start = new Date()
     // update nprogress
     np_manager && np_manager.start()
 
@@ -70,12 +71,20 @@ HTTP.interceptors.request.use(request => {
         }
     }
 
+    const end = new Date()
+    const duration = (end - start)/1000
+    //console.log(`request: ${duration.toFixed(1)}s`)
     return request;
 });
 
 HTTP.interceptors.response.use(
     (response) => {
-        np_manager && np_manager.done(); return response;
+        const start = new Date()
+        np_manager && np_manager.done();
+        const end = new Date()
+        const duration = (end - start)/1000
+        //console.log(`response: ${duration.toFixed(1)}s`)
+        return response;
     },
     (err) => {
         np_manager && np_manager.done();

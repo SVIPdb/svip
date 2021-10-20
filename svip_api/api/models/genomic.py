@@ -1,5 +1,6 @@
 import itertools
 
+from collections import OrderedDict
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
@@ -46,6 +47,9 @@ class Gene(models.Model):
     symbol = models.TextField(unique=True, db_index=True)
     uniprot_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     location = models.TextField(null=True)
+    
+    summary = models.TextField(null=True, blank=True)
+    summary_date = models.DateTimeField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
@@ -64,12 +68,14 @@ class Gene(models.Model):
     def __str__(self):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
+
 class VariantManager(models.Manager):
     def get_by_natural_key(self, description, hgvs_g):
         return self.get(description=description, hgvs_g=hgvs_g)
+    
+    
 
 class Variant(models.Model):
-    
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
@@ -128,8 +134,78 @@ class Variant(models.Model):
             models.Index(fields=['gene', 'name']),
             models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
+    
+    @property
+    def stage(self):
 
+        if self.curation_associations.count() > 0:
+            if self.curation_associations.first().curation_evidences.count() > 0:
+                evidence = self.curation_associations.first().curation_evidences.first()
 
+                if evidence.revised_reviews.all().count() == 3:
+                    if evidence.revised_reviews.filter(agree=True).count() == 3:
+                        return 'fully_reviewed'
+                    else:
+                        return 'on_hold'
+
+                if hasattr(evidence, 'annotation2'):
+                    return 'to_review_again'
+
+                if evidence.reviews.count() == 3:
+                    if hasattr(evidence, 'annotation1'):
+                        if evidence.reviews.filter(
+                            annotated_effect=self.annotation1.effect,
+                            annotated_tier=self.annotation1.tier
+                        ).count() == 3:
+                            return 'fully_reviewed'
+                        else:
+                            return 'conflicting_reviews'
+
+                if evidence.reviews.count() == 2:
+                    return '2_reviews'
+
+                if evidence.reviews.count() == 1:
+                    return '1_review'
+
+        for curation in self.curations.all():
+            if curation.status == 'submitted':
+                return '0_review'
+
+        if self.curations.all().count() > 0 :
+            return 'ongoing_curation'
+
+        if self.curation_request.all().count() > 0:
+            return 'loaded'
+
+        return 'none'
+
+    @property
+    def public_stage(self):
+        stage = self.stage
+        if stage in ['none']:
+            return 'None'
+        elif stage in ['loaded']:
+            return 'Loaded'
+        elif stage in ['ongoing_curation']:
+            return 'In progress'
+        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+            return 'Annotated'
+        elif stage in ['on_hold']:
+            return 'On hold'
+        elif stage in ['fully_reviewed']:
+            return 'Approved'
+
+    @property
+    def confidence(self):
+        confidence_dict = {
+            'None': 0,
+            'Loaded': 1,
+            'In progress': 1,
+            'Annotated': 2,
+            'On hold': 2,
+            'Approved': 3
+        }
+        return confidence_dict[self.public_stage]
 
 class VariantInSource(models.Model):
     """

@@ -2,7 +2,7 @@
 # from public sources we adjust the sources array in the variant itself
 
 from django.core.management.base import BaseCommand
-from models.genomic import Variant
+from api.models.genomic import Variant
 from tqdm import tqdm
 from time import sleep
 

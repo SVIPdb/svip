@@ -54,6 +54,8 @@ class GeneSerializer(serializers.HyperlinkedModelSerializer):
             'sources',
             'aliases',
             'prev_symbols',
+            'summary',
+            'summary_date'
         )
 
 
@@ -137,6 +139,9 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('gene')
         fields.append('gene_symbol')
         fields.append('in_svip')
+        fields.append('stage')
+        fields.append('public_stage')
+        fields.append('confidence')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
 
         # FIXME: add sources collection here, from VariantInSource

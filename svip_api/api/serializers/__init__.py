@@ -4,6 +4,7 @@ from .genomic import (
     SourceSerializer,
     GeneSerializer,
     SimpleVariantSerializer,
+    SimpleGeneSerializer,
     VariantSerializer,
     VariantInSourceSerializer,
     AssociationSerializer,

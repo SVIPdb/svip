@@ -2,9 +2,16 @@
     <div class="container-fluid">
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
-        <VariantSummary :variant="variant" />
+        <CurationGeneSummary :gene="gene" />
+
+        <CurationVariantSummary :variant="variant" />
 
         <EvidenceCard :variant="variant" is-submittable small />
+
+        <!--<b-button class="float-right redirection-button" :to="{ name: 'annotate-review' }" @click="redirect">
+            See submitted annotations
+        </b-button>
+        <br/><br/><br/>-->
 
         <div>
             <b-card no-body>
@@ -89,7 +96,8 @@ import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
-import VariantSummary from "@/components/widgets/curation/VariantSummary";
+import CurationVariantSummary from "@/components/widgets/curation/CurationVariantSummary";
+import CurationGeneSummary from "@/components/widgets/curation/CurationGeneSummary";
 import ulog from 'ulog';
 import BroadcastChannel from "broadcast-channel";
 import MessageWithIcon from "@/components/widgets/MessageWithIcon";
@@ -102,7 +110,8 @@ export default {
     components: {
         EntriesInUse,
         MessageWithIcon,
-        VariantSummary,
+        CurationGeneSummary,
+        CurationVariantSummary,
         VariomesSearch, VariomesAbstract,
         CuratorVariantInformations,
         EvidenceCard
@@ -193,6 +202,9 @@ export default {
                     };
                     // this.loadingVariomes = false;
                 });
+        },
+        redirect() {
+            window.location.href = `${window.location.href}/submit/`;
         }
     },
     beforeRouteEnter(to, from, next) {
@@ -280,5 +292,9 @@ export default {
 .disease {
     color: #3d811e;
     font-weight: bold;
+}
+.redirection-button {
+    margin-bottom: 2px;
+    display: block;
 }
 </style>

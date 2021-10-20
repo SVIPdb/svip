@@ -8,7 +8,9 @@ import router from "./router";
 import "@/css/bootstrap.css";
 import "@/css/main.css";
 import "vue-simple-context-menu/dist/vue-simple-context-menu.css";
-import Snotify, { SnotifyPosition } from "vue-snotify";
+import Snotify, {
+    SnotifyPosition
+} from "vue-snotify";
 import "vue-snotify/styles/material.css";
 import Access from "@/directives/access";
 import '@/plugins/vue-awesome'
@@ -20,7 +22,9 @@ import vSelect from "vue-select";
 import 'vue-select/dist/vue-select.css';
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import VueClipboard from 'vue-clipboard2'
-import { ValidationProvider } from 'vee-validate';
+import {
+    ValidationProvider
+} from 'vee-validate';
 import RowExpander from "@/components/widgets/RowExpander";
 import Expander from "@/components/widgets/Expander";
 
@@ -31,7 +35,12 @@ Vue.use(AsyncComputed);
 
 Vue.config.productionTip = false;
 
-Vue.use(Snotify, {toast: {position: SnotifyPosition.centerTop, showProgressBar: false}});
+Vue.use(Snotify, {
+    toast: {
+        position: SnotifyPosition.centerTop,
+        showProgressBar: false
+    }
+});
 Vue.use(VueClipboard);
 
 // register vee-validate's validator
@@ -44,7 +53,9 @@ Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 // a utility component that binds variables to its slots
 Vue.component("pass", {
-    render() { return this.$scopedSlots.default(this.$attrs); }
+    render() {
+        return this.$scopedSlots.default(this.$attrs);
+    }
 });
 
 // the little arrow to the left of rows that allows them to be expanded, used everywhere
@@ -60,7 +71,9 @@ export default new Vue({
     el: "#app",
     router,
     store,
-    components: {App},
+    components: {
+        App
+    },
     template: "<App/>"
 });
 

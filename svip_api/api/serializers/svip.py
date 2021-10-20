@@ -19,9 +19,10 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview
+    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
+    SummaryDraft, GeneSummaryDraft, RevisedReview
 )
-from api.serializers import SimpleVariantSerializer
+from api.serializers import SimpleVariantSerializer, SimpleGeneSerializer
 from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
@@ -167,6 +168,18 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     def get_clinical_significance(self, obj):
         return clinical_significance(self._curation_entries(obj))
+        
+        #var = obj.svip_variant.variant
+        #association = obj.disease.curation_associations.get(variant=var)
+        #evidence = 
+
+        #if var.curation_associations.count() > 0:
+        #    if var.curation_associations.first().curation_evidences.count() > 0:
+        #        evidence = 
+        #        if hasattr(var, 'annotation2'):
+        #            return f"{var.annotation2.effect} ({var.annotation2.tier})"
+        #        elif hasattr(var, 'annotation1'):
+        #            return f"{var.annotation2.effect} ({var.annotation1.tier})"
 
     class Meta:
         model = DiseaseInSVIP
@@ -206,6 +219,8 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'variant',
             'summary',
+            'summary_date',
+            'calculate_summary_date',
             'tissue_counts',
             'diseases',
             'review_data',
@@ -627,9 +642,79 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
         fields = '__all__'
 
 
+
+
+class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
+    gene = SimpleGeneSerializer()
+
+    review_count = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
+
+
+    def to_internal_value(self, data):
+        from api.utils import to_dict
+
+        try:
+            # we might get data in any of the following forms:
+            # 1. an integer identifying the variant
+            # 2. {id: <variant id:int>}
+            # 3. {id: "v_<variant id:int>" }
+
+            try:
+                numeric_id = int(data)
+            except TypeError:
+                if 'id' in data:
+                    data = data['id']
+
+                if '_' in str(data):
+                    data = data.split("_")[1]
+
+                numeric_id = int(data)
+
+            return to_dict(Variant.objects.get(id=numeric_id))
+        except ValueError:
+            return super().to_internal_value(data)
+
+    @staticmethod
+    def get_review_count(obj):
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+            evidence = obj.curation_associations.first().curation_evidences.first()
+            return evidence.reviews.count()
+        else:
+            return 0
+        
+    @staticmethod
+    def get_reviews(obj):
+        reviews = []
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+            evidence = obj.curation_associations.first().curation_evidences.first()
+            if evidence.reviews.count() > 0:
+                for review in evidence.reviews.all():
+                    reviews.append(review.match())
+        return reviews
+
+    class Meta:
+        model = Variant
+        fields = (
+            'id',
+            'url',
+            'gene',
+            'name',
+            'description',
+            'hgvs_c',
+            'review_count',
+            'reviews',
+            'stage'
+        )
+
+
+
+
+
 # this would usually be in the curation section, but it needs to come after SubmittedVariantSerializer
 class CurationRequestSerializer(serializers.ModelSerializer):
-    variant = SimpleVariantSerializer()
+    #variant = SimpleVariantSerializer()
+    variant = VariantInDashboardSerializer()
     submission = SubmittedVariantSerializer()
     disease_name = serializers.SerializerMethodField()
 
@@ -665,6 +750,41 @@ class SampleSerializer(serializers.ModelSerializer):
 
 
 # ================================================================================================================
+# === SIBAnnotation
+# ================================================================================================================
+
+class SIBAnnotation1Serializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = SIBAnnotation1
+        fields = ('id', 'evidence', 'effect', 'tier')
+        #extra_kwargs = {
+        #    "content": {
+        #        "required": False,
+        #        "allow_null": True,
+        #    },
+        #    "reviewer": {
+        #        "required": False,
+        #        "allow_null": False,
+        #    }
+        #}
+
+
+class SIBAnnotation2Serializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = SIBAnnotation2
+        fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
+
+
+
+# ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
 
@@ -692,6 +812,20 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
         }
 
 
+class SummaryDraftSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = SummaryDraft
+        fields = '__all__'
+
+
+class GeneSummaryDraftSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = GeneSummaryDraft
+        fields = '__all__'
+
+
 # class CurationReviewListSerializer(serializers.ListSerializer):
 #    def update(self, instance, validated_data):
 
@@ -714,4 +848,14 @@ class CurationReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CurationReview
+        fields = '__all__'
+
+
+class RevisedReviewSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(RevisedReviewSerializer, self).__init__(
+            *args, **kwargs)
+
+    class Meta:
+        model = RevisedReview
         fields = '__all__'

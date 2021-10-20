@@ -18,8 +18,9 @@ from api.models import (
     Disease, Variant
 )
 from api.models.svip import (
-    SubmittedVariant, SubmittedVariantBatch, CurationRequest,
-    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
+    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
+    SIBAnnotation2, SummaryDraft, GeneSummaryDraft, RevisedReview
 )
 
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
@@ -27,8 +28,9 @@ from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer,
-    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, CurationReviewSerializer
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
+    SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
+    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -258,6 +260,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "input": entryIDs,
             "changed": result
         })
+        
+        
+        
 
     @action(detail=True)
     def history(self, request, pk):
@@ -306,45 +311,58 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
+class RevisedReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = RevisedReviewSerializer
+    model = RevisedReview
+
+    def get_queryset(self):
+        queryset = RevisedReview.objects.all()
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+        #kwargs["many"] = True
+        return super(RevisedReviewViewSet, self).get_serializer(*args, **kwargs)
+
+
 # ================================================================================================================
 # === SVIP Variant Submission
 # ================================================================================================================
 # hgvs stuff
 
-# these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
-hdp = hgvs.dataproviders.uta.connect()
-hgnorm = hgvs.normalizer.Normalizer(hdp)
-hgvsparser = hgvs.parser.Parser()
-am = hgvs.assemblymapper.AssemblyMapper(
-    hdp, assembly_name='GRCh37', normalize=True)
+## these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
+#hdp = hgvs.dataproviders.uta.connect()
+#hgnorm = hgvs.normalizer.Normalizer(hdp)
+#hgvsparser = hgvs.parser.Parser()
+#am = hgvs.assemblymapper.AssemblyMapper(
+#    hdp, assembly_name='GRCh37', normalize=True)
 
-AC_MAP = {
-    '1': 'NC_000001',
-    '2': 'NC_000002',
-    '3': 'NC_000003',
-    '4': 'NC_000004',
-    '5': 'NC_000005',
-    '6': 'NC_000006',
-    '7': 'NC_000007',
-    '8': 'NC_000008',
-    '9': 'NC_000009',
-    '10': 'NC_000010',
-    '11': 'NC_000011',
-    '12': 'NC_000012',
-    '13': 'NC_000013',
-    '14': 'NC_000014',
-    '15': 'NC_000015',
-    '16': 'NC_000016',
-    '17': 'NC_000017',
-    '18': 'NC_000018',
-    '19': 'NC_000019',
-    '20': 'NC_000020',
-    '21': 'NC_000021',
-    '22': 'NC_000022',
-    'X': 'NC_000023',
-    '23': 'NC_000023',
-    'Y': 'NC_000024',
-}
+#AC_MAP = {
+#    '1': 'NC_000001',
+#    '2': 'NC_000002',
+#    '3': 'NC_000003',
+#    '4': 'NC_000004',
+#    '5': 'NC_000005',
+#    '6': 'NC_000006',
+#    '7': 'NC_000007',
+#    '8': 'NC_000008',
+#    '9': 'NC_000009',
+#    '10': 'NC_000010',
+#    '11': 'NC_000011',
+#    '12': 'NC_000012',
+#    '13': 'NC_000013',
+#    '14': 'NC_000014',
+#    '15': 'NC_000015',
+#    '16': 'NC_000016',
+#    '17': 'NC_000017',
+#    '18': 'NC_000018',
+#    '19': 'NC_000019',
+#    '20': 'NC_000020',
+#    '21': 'NC_000021',
+#    '22': 'NC_000022',
+#    'X': 'NC_000023',
+#    '23': 'NC_000023',
+#    'Y': 'NC_000024',
+#}
 
 
 class SubmittedVariantBatchViewSet(viewsets.ModelViewSet):
@@ -429,6 +447,40 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
 
         return q.order_by('id')
 
+
+class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SIBAnnotation1Serializer
+
+    def get_queryset(self):
+        queryset = SIBAnnotation1.objects.all()
+        return queryset
+
+        #print(f"query params: {self.request.query_params} ")
+
+        #variant = self.request.query_params.get('variant')
+        #owner = self.request.query_params.get('owner')
+
+        #queryset = SummaryComment.objects.all()
+
+        #if variant is not None:
+        #    queryset = queryset.filter(variant=variant)
+
+        #if owner is not None:
+        #    queryset = queryset.filter(owner=owner)
+
+
+class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SIBAnnotation2Serializer
+
+    def get_queryset(self):
+        queryset = SIBAnnotation2.objects.all()
+        return queryset
+
+
+
+
 # ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
@@ -439,7 +491,6 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
     serializer_class = SummaryCommentSerializer
 
     def get_queryset(self):
-        print(f"query params: {self.request.query_params} ")
 
         variant = self.request.query_params.get('variant')
         owner = self.request.query_params.get('owner')
@@ -455,20 +506,61 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+class SummaryDraftViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SummaryDraftSerializer
+    
+    def get_queryset(self):
+        variant = self.request.query_params.get('variant')
+        owner = self.request.query_params.get('owner')
+        queryset = SummaryDraft.objects.all()
+        
+        if variant is not None:
+            queryset = queryset.filter(variant=variant)
+
+        if owner is not None:
+            queryset = queryset.filter(owner=owner)
+
+        return queryset
+
+
+
+class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = GeneSummaryDraftSerializer
+    
+    def get_queryset(self):
+        gene = self.request.query_params.get('gene')
+        owner = self.request.query_params.get('owner')
+        queryset = GeneSummaryDraft.objects.all()
+        
+        if gene is not None:
+            queryset = queryset.filter(gene=gene)
+
+        if owner is not None:
+            queryset = queryset.filter(owner=owner)
+
+        return queryset
+
+
 
 # ================================================================================================================
-# === SummaryComment
+# === Review data
 # ================================================================================================================
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from datetime import datetime
 
 class ReviewDataView(APIView):
+    
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
+        entry_ids = request.data.get('entry_ids')
+        
         variant = Variant.objects.get(id=var_id)
         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
         svip_var_exists = bool(len(matching_svip_var))
@@ -478,8 +570,7 @@ class ReviewDataView(APIView):
         else:
             svip_var = matching_svip_var[0]
 
-
-        for curation in CurationEntry.objects.filter(variant=variant):
+        for curation in variant.curations.filter(status="submitted"):
             
             # check that a disease is indicated for the curation entry being saved
             if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
@@ -487,37 +578,56 @@ class ReviewDataView(APIView):
 
                 # check that no association already exists for these parameters
                 if len(associations) == 0:
-                    new_curation_association = CurationAssociation(variant=variant, disease=curation.disease)
-                    new_curation_association.save()
+                    new_association = CurationAssociation(variant=variant, disease=curation.disease)
+                    new_association.save()
                     
-                    # Create the evidence objects involved that association, from the existing curation entries
-                    for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+                association = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease).first()
+                
+                if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
+                    drugs = curation.drugs
+                else:
+                    # add null object to empty list so at least one iteration to create an evidence related to no drug
+                    drugs = [None]
+
+                for drug in drugs:
+                    evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+                    
+                    if len(evidences) == 0:
+                        new_evidence = CurationEvidence(
+                            association = association,
+                            type_of_evidence = curation.type_of_evidence,
+                            drug = drug
+                        )
+                        new_evidence.save()
                         
-                        drugs = curation.drugs
-                        if len(curation.drugs) == 0:
-                            # add null object to empty list so at least one iteration to create an evidence related to no drug
-                            drugs.append(None)
-                        for drug in drugs:
-
-                            new_curation_evidence = CurationEvidence(
-                                association = new_curation_association,
-                                type_of_evidence = evidence_type,
-                                drug = drug
-                            )
-                            new_curation_evidence.save()
-                            
-                            # create an SIBAnnotation instance linked to the evidence just created
-                            annotation = SIBAnnotation(evidence=new_curation_evidence, effect="Not yet annotated", tier="Not yet annotated")
-                            annotation.save()
-
-                # link the matching evidences to the curation:
-                for association in associations:
-                    for drug in curation.drugs:
-                        evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-                        for evidence in evidences:
-                            curation.curation_evidences.add(evidence)
+                        evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                        curation.curation_evidences.add(evidence)
 
                 curation.save()
 
-        return Response(data={"review_data": svip_var.review_data()})
+        if entry_ids == 'all':
+            return Response(
+                data={
+                    "review_data": svip_var.review_data(),
+                }
+            )
+        
+        else:
+            return Response(
+                data={
+                    "review_data": svip_var.first_annotation_data(entry_ids),
+                }
+            )
 
+
+class CurationIds(APIView):
+    
+    # returns all the IDs of the curation associated with the current variant
+    def post(self, request, *args, **kwargs):
+        var_id = request.data.get('var_id')
+        curations = {}
+        
+        for curation in Variant.objects.get(id=var_id).curations.all():
+            curations[curation.id] = True
+            
+        return Response(data = curations)

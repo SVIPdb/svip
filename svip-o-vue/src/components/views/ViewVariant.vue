@@ -17,6 +17,8 @@
                             <!-- <th>Molecular consequence</th> -->
                             <th :class="hiddenCols">Position</th>
                             <th :class="hiddenCols">Allele Frequency</th>
+                            <th>Status</th>
+                            <th>SVIP Confidence</th>
                             <th></th>
                             <!--- for actions -->
                         </tr>
@@ -62,6 +64,16 @@
                                 <span v-else class="unavailable">unavailable</span>
                             </td>
 
+                            <td>{{this.variant.public_stage}}</td>
+                            <td>
+                                <icon
+                                    v-for="score in [1,2,3]"
+                                    :key="score"
+                                    :name="variant.confidence < score ? 'regular/star' : 'star'"
+                                    style="margin-right: 5px"
+                                />
+                            </td>
+
                             <td>
                                 <div class="details-tray" style="text-align: right;">
                                     <!--
@@ -97,6 +109,10 @@
                     </table>
                 </div>
             </div>
+
+            <GeneSummary :gene="gene" class="variant-summary" />
+
+            <VariantSummary :variant="variant" class="variant-summary" />
 
             <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
             <variant-public-databases :variant="variant"></variant-public-databases>
@@ -138,6 +154,9 @@ import variantSvip from "@/components/genes/variants/SVIPInfo";
 import store from "@/store";
 import linkItems from "@/data/curation/links/items.json";
 
+import GeneSummary from "@/components/widgets/GeneSummary";
+import VariantSummary from "@/components/widgets/VariantSummary";
+
 import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
 import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
 import Sidebar from "@/components/structure/sidebar/Sidebar";
@@ -147,7 +166,15 @@ import { HTTP } from "@/router/http";
 
 export default {
     name: "ViewVariant",
-    components: {CommentList, Sidebar, VariantExternalInfo, variantPublicDatabases, variantSvip},
+    components: {
+        CommentList, 
+        Sidebar, 
+        VariantExternalInfo, 
+        variantPublicDatabases, 
+        variantSvip,
+        GeneSummary,
+        VariantSummary
+    },
     data() {
         return {
             showAliases: false,
@@ -257,6 +284,10 @@ export default {
 .variant-header th {
     vertical-align: text-bottom;
     padding: 1rem;
+}
+
+.variant-summary {
+    margin-top: 1rem;
 }
 
 .aliases-list {

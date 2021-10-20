@@ -18,8 +18,8 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
-                                                {{ effect.label }} ({{ effect.count ? effect.count : 'no' }}
-                                                evidence(s))</p>
+                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                            </p>
                                         </b-col>
                                         <b-col cols="2">
                                             <b-row class="p-2">
@@ -312,7 +312,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null
@@ -352,7 +352,7 @@ export default {
                             },
                             currentReview: {
                                 annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case report", //Initial value should be the same as curator
+                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
                                 reviewer_name: "John Doe",
                                 status: true,
                                 comment: null
@@ -385,13 +385,7 @@ export default {
             showDisease: true,
         };
     },
-    mounted() {
-        this.diseases.map(disease => {
-            disease.evidences.map(evidence => {
-                evidence["currentReview"]["reviewer_id"] = this.user.user_id
-            })
-        });
-    },
+    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
@@ -416,18 +410,20 @@ export default {
         getReviewData() {
             const params={
                 reviewer: this.user.user_id,
-                var_id: this.variant.id
+                var_id: this.variant.id,
+                entry_ids: 'all'
             }
 
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    this.diseases = response.data.review_data
-                    this.detectOwnReviews();
-                    this.changeReviewStatusCheckboxes();
+
+                    //this.diseases = response.data.review_data
+                    this.detectOwnReviews(response.data.review_data);
+                    this.changeReviewStatusCheckboxes(this.diseases);
                 })
                 .catch((err) => {
                     log.warn(err);
-                    this.$snotify.error("Failed to fetch data");
+                    //this.$snotify.error("Failed to fetch data");
                 })
         },
         displayIcon(status) {
@@ -449,60 +445,90 @@ export default {
             return ""
         },
         onChange(curatorValues, reviewerValues) {
+        // change review status (true if option matches that of curator, false if doesn't match)
             reviewerValues.status = curatorValues.annotatedEffect === reviewerValues.annotatedEffect && curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
         changeReviewStatusCheckboxes() {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    // select only evidences for which an option has been selected
-                    if (
-                        evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
-                    ) {
-                        this.onChange(evidence.curator, evidence.currentReview)
-                    }
+                    this.onChange(evidence.curator, evidence.currentReview)
                 })
             })
         },
-        detectOwnReviews() {
+        detectOwnReviews(diseases) {
             // iterate over every review to prefill inputs with current user's past reviews
-            this.diseases.map(disease => {
+            diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     evidence.reviews.map(review => {
+
                         if (review.reviewer_id === this.user.user_id) {
-                            evidence.currentReview.annotatedEffect = review.annotatedEffect;
-                            evidence.currentReview.annotatedTier = review.annotatedTier;
-                            evidence.currentReview.comment = review.comment;
+                            let currentReviewObj = {
+                                "annotatedEffect": review.annotatedEffect,
+                                "annotatedTier": review.annotatedTier,
+                                "comment": review.comment
+                            }
+                            evidence['currentReview'] = currentReviewObj
 
                             // store the evidence ID so when the user submit it, the request is a patch
                             this.selfReviewedEvidences[evidence.id] = review.id
                         }
                     })
+
+                    if (typeof evidence.currentReview === 'undefined') {
+                        let currentReviewObj = {
+                            "id": evidence.id,
+                            "annotatedEffect": evidence.curator.annotatedEffect,
+                            "annotatedTier": evidence.curator.annotatedTier,
+                            "reviewer_id": this.user.user_id,
+                            "status": null,
+                            "comment": null
+                        }
+                        evidence['currentReview'] = currentReviewObj
+                    }
+
                 })
             })
+            this.diseases = diseases
+        },
+        missingComment() {
+        // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
+            for (var i = 0; i < this.diseases.length; i++) {
+                const disease = this.diseases[i]
+                for (var j = 0; j < disease["evidences"].length; j++) {
+                    const evidence = disease["evidences"][j]
+                    if (!evidence.currentReview.status) {
+                    // review doesn't match curator's annotation
+                        const regExp = /[a-zA-Z]/g;
+                        if (evidence.currentReview.comment === null || ! regExp.test(evidence.currentReview.comment)) {
+                        // no letter was found in the comment string
+                            return true
+                        }
+                    }
+                }
+            }
+            return false
         },
         submitReviews() {
-            //let newReviews = [];
-            //let modifiedReviews = []
+
+            if (this.missingComment()) {
+                this.$snotify.error(
+                    "Please enter a comment for every review conflicting with that of curators", 
+                    "",
+                    { timeout: 5000 }
+                );
+                return false
+            }
 
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
+
                     if (
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
                         if (evidence.id in this.selfReviewedEvidences) {
-
-                            //const singleReviewJSON = {
-                            //    id: this.selfReviewedEvidences[evidence.id],
-                            //    curation_evidence: evidence.id,
-                            //    reviewer: this.user.user_id,
-                            //    annotated_effect: evidence.currentReview.annotatedEffect,
-                            //    annotated_tier: evidence.currentReview.annotatedTier,
-                            //    comment: evidence.currentReview.comment
-                            //}
-                            //modifiedReviews.push(singleReviewJSON)
-
+                            console.log('REREVIEWED')
                             let reviewID = this.selfReviewedEvidences[evidence.id]
                             HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
                                 .then((response) => {
@@ -514,7 +540,7 @@ export default {
                                 })
                         } else {
                             //newReviews.push(this.reviewParams(evidence));
-
+                            console.log('FIRST REVIEW')
                             HTTP.post(`/reviews/`, this.reviewParams(evidence))
                                 .then((response) => {
                                     this.getReviewData()
@@ -532,40 +558,6 @@ export default {
             this.$snotify.success("Your review has been saved");
             // Reset fields
             this.isEditMode = false;
-            
-
-            //if (modifiedReviews.length > 0) {
-            //    HTTP.put(`/reviews/`, modifiedReviews)
-            //        .then((response) => {
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //}
-
-            //if (newReviews.length > 0) {
-            //    // post new review
-            //    HTTP.post(`/reviews/`, newReviews)
-            //        .then((response) => {
-            //            // Reset fields
-            //            this.isEditMode = false;
-            //            this.$snotify.success("Your review has been saved");
-            //            //this.detectOwnReviews();
-            //            //this.changeReviewStatusCheckboxes()
-            //            this.getReviewData()
-            //        })
-            //        .catch((err) => {
-            //            log.warn(err);
-            //            this.$snotify.error("Failed to submit review");
-            //        })
-            //} else {
-            //    // Reset fields
-            //    this.isEditMode = false;
-            //    this.detectOwnReviews();
-            //    this.changeReviewStatusCheckboxes()
-            //}
-
         },
         reviewParams(evidence) {
             // prepare a JSON containing parameters for CurationReview model
