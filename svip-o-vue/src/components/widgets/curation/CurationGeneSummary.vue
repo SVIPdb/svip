@@ -5,6 +5,13 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Gene Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
+
+                    <div v-if="summary !== null" class="update">Last update: 
+                        <b class="date">
+                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
+                        </b>
+                    </div>
+
                 </h6>
 
                 <b-card-text class="p-2 m-0">
@@ -77,6 +84,8 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
+            date: null,
+            changeDate: true,
         };
     },
     mounted() {
@@ -180,8 +189,22 @@ export default {
             }
         },
         saveSummary() {
+
+            let params = {summary: this.summaryModel,}
+
+            const prompt = "Do you want to set the value of the last summary update to today?"
+            if (confirm(prompt)) {
+                this.changeDate = true
+                params['summary_date'] = new Date().toJSON()
+            } else{
+                this.changeDate = false
+            }
+
             HTTP.patch(`/genes/${this.gene.id}/`, { summary: this.summaryModel })
                 .then((response) => {
+                    if (this.changeDate) {
+                        this.date = new Date()
+                    }
                     this.summary = response.data.summary;
                     this.$snotify.success("Summary updated!");
                 })
@@ -231,5 +254,15 @@ export default {
 .draft-header {
     margin-left: 3rem;
     color: rgb(248, 236, 210);
+}
+
+.update {
+    right: 1rem;
+    position: absolute;
+    display: inline-block
+}
+
+.date {
+    margin-left: 0.5rem;
 }
 </style>

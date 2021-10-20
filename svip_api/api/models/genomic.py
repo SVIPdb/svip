@@ -49,6 +49,7 @@ class Gene(models.Model):
     location = models.TextField(null=True)
     
     summary = models.TextField(null=True, blank=True)
+    summary_date = models.DateTimeField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
     sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
