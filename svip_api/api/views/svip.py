@@ -15,7 +15,8 @@ from api.models import (
     VariantInSVIP, Sample,
     DiseaseInSVIP,
     CurationEntry,
-    Disease, Variant
+    Disease, Variant,
+    Gene
 )
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
@@ -98,7 +99,6 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
         print("action is executed")
         entry = VariantInSVIP.objects.get(id=pk)
         return make_history_response(entry, add_created_by=False)
-
 
 
 
@@ -649,5 +649,22 @@ class UpdateVariantSummary(APIView):
 
         SummaryDraft.objects.get(id = summary_draft_id).delete()
         return Response(data = f"""The summary of VariantInSVIP {var_id} is updated. 
+                        The SummaryDraft {summary_draft_id} is deleted.
+                        """)
+
+class UpdateGeneSummary(APIView):
+    def post(self, request, *args, **kwargs):
+        gene_id = request.data.get('gene_id')
+        summary = request.data.get('summary')
+        summary_draft_id = request.data.get('summary_draft_id')
+
+        gene = Gene.objects.get(id = gene_id)
+        gene.summary = summary
+        if 'summary_date' in request.data:
+            gene.summary_date = request.data.get('summary_date')
+        gene.save()
+
+        GeneSummaryDraft.objects.get(id = summary_draft_id).delete()
+        return Response(data = f"""The summary of Gene {gene_id} is updated. 
                         The SummaryDraft {summary_draft_id} is deleted.
                         """)

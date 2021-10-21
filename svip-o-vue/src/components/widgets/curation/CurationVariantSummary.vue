@@ -5,13 +5,11 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Variant Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
-
                     <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
                     </div>
-
                 </h6>
 
                 <b-card-text class="p-2 m-0">
@@ -83,12 +81,13 @@ export default {
             showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and variant (if so: PATCH request instead of POST)
 
+            date: null,
+            changeDate: false,
+
             history_entry_id: null,
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            date: null,
-            changeDate: false,
         };
     },
     mounted() {
@@ -198,7 +197,6 @@ export default {
             let params = {summary: this.summaryModel,}
 
             if (this.date) {
-
                 // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
                 this.$confirm(
                     {
@@ -230,7 +228,6 @@ export default {
                 params['summary_date'] = new Date().toJSON()
                 this.sendSummaryRequest(params)
             }
-
         },
         sendSummaryRequest(params) {
             //check if a summary draft exists in the DB to delete it
@@ -325,7 +322,7 @@ export default {
 }
 
 .draft-header {
-    margin-left: 1.2rem;
+    margin-left: 1rem;
     color: rgb(248, 236, 210);
 }
 
