@@ -62,20 +62,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-             .select_related('variant')
-             .prefetch_related(
-                 Prefetch('diseaseinsvip_set', queryset=(
-                     DiseaseInSVIP.objects
-                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                     .prefetch_related(
-                         'sample_set'
-                     )
-                 )
-                 ),
-                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-             )
-             )
+            .select_related('variant')
+            .prefetch_related(
+                Prefetch('diseaseinsvip_set', queryset=(
+                    DiseaseInSVIP.objects
+                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                    .prefetch_related(
+                        'sample_set'
+                    )
+                )),
+                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+            )
+        )
 
         return q
 
@@ -99,6 +98,9 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
         print("action is executed")
         entry = VariantInSVIP.objects.get(id=pk)
         return make_history_response(entry, add_created_by=False)
+
+
+
 
 
 # ================================================================================================================
@@ -631,3 +633,21 @@ class CurationIds(APIView):
             curations[curation.id] = True
             
         return Response(data = curations)
+
+
+class UpdateVariantSummary(APIView):
+    def post(self, request, *args, **kwargs):
+        var_id = request.data.get('var_id')
+        summary = request.data.get('summary')
+        summary_draft_id = request.data.get('summary_draft_id')
+
+        variant = VariantInSVIP.objects.get(id = var_id)
+        variant.summary = summary
+        if 'summary_date' in request.data:
+            variant.summary_date = request.data.get('summary_date')
+        variant.save()
+
+        SummaryDraft.objects.get(id = summary_draft_id).delete()
+        return Response(data = f"""The summary of VariantInSVIP {var_id} is updated. 
+                        The SummaryDraft {summary_draft_id} is deleted.
+                        """)

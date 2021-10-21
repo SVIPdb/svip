@@ -125,7 +125,7 @@ export default {
     },
     methods: {
         getSummaryDraft() {
-            // get already existing summary comment for this gene and user (if exists)
+            // get already existing summary draft for this gene and user (if exists)
             HTTP.get(`/gene_summary_draft/?gene=${this.gene.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
                 if (results.length > 0) {
@@ -145,13 +145,11 @@ export default {
                 gene: this.gene.id
             }
 
-
             if (this.serverSummaryDraft === null) {
                 // summaryDraft doesn't already exist (for this user and gene): post new
                 HTTP.post(`/gene_summary_draft/`, summaryDraftJSON)
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been posted");
                     })
                     .catch((err) => {
@@ -163,7 +161,6 @@ export default {
                 HTTP.patch(`/summary_draft/${this.serverSummaryDraft.id}`, {content: this.summaryDraft})
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been updated");
                     })
                     .catch((err) => {
@@ -186,8 +183,7 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryComment = "";
-                this.isEditMode = false;
+                this.summaryDraft = "";
                 this.$snotify.success("Your draft has been deleted");
             }
         },
@@ -236,6 +232,7 @@ export default {
                     }
                     this.summary = response.data.summary;
                     this.$snotify.success("Summary updated!");
+                    this.showSummaryDraft = false
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -281,7 +278,7 @@ export default {
 }
 
 .draft-header {
-    margin-left: 3rem;
+    margin-left: 1.2rem;
     color: rgb(248, 236, 210);
 }
 
