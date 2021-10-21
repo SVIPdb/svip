@@ -143,7 +143,12 @@ function merge_table {
   local conflict_cols=''
   for unique_col in $unique_cols
   do
-    conflict_cols+="${unique_col%%:*},"
+    local type=${unique_col#*:}
+    if [ "${type}" == "text" ]; then
+      conflict_cols+="COALESCE(${unique_col%%:*}, 'NULL'),"
+    else
+      conflict_cols+="COALESCE(${unique_col%%:*}, -1),"
+    fi
   done
   # Remove last ,
   conflict_cols=${conflict_cols:0:(-1)}
@@ -159,7 +164,7 @@ function merge_table {
     local whr=''
     for rel_col in ${rel_cols//,/ }
     do
-      whr+="(${rel_col} IS NOT DISTINCT FROM TBL.__${rel_col}) and "
+      whr+="(${rel_col} = TBL.__${rel_col}) and "
     done
     # remove the last ' and '
     whr="${whr:0:(-5)}"
