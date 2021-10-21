@@ -239,4 +239,4 @@ do
   overwrite_table ${table}
 done
 
-rename_schema ${ORIG_SCHEMA} ${SCHEMA}
+# rename_schema ${ORIG_SCHEMA} ${SCHEMA}
