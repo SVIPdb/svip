@@ -53,6 +53,7 @@ export default {
             isEditMode: false,
             summaryComment: "",
             serverSummaryComment: null,
+            date: null
         };
     },
     mounted() {
