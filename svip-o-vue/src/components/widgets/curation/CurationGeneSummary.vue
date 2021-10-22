@@ -109,7 +109,6 @@ export default {
             // get already existing summary draft for this gene and user (if exists)
             HTTP.get(`/gene_summary_draft/?gene=${this.gene.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
-                console.log(results)
                 if (results.length > 0) {
                     this.serverSummaryDraft = results[0]
                     this.summaryDraft = results[0].content
@@ -216,7 +215,7 @@ export default {
                 HTTP.patch(`/genes/${this.gene.id}/`, params)
                     .then((response) => {
                         this.summary = response.data.summary;
-                        this.summaryUpdateCallback(response)
+                        this.summaryUpdateCallback()
                     })
                     .catch((err) => {
                         log.warn(err);
@@ -231,7 +230,7 @@ export default {
                     .then((response) => {
                         this.serverSummaryDraft = null
                         this.summary = this.summaryModel
-                        this.summaryUpdateCallback(response)
+                        this.summaryUpdateCallback()
                     })
                     .catch((err) => {
                         log.warn(err);
@@ -239,7 +238,7 @@ export default {
                     })
             }
         },
-        summaryUpdateCallback(response) {
+        summaryUpdateCallback() {
             this.summaryDraft = ''
             this.showSummaryDraft = false
             this.$snotify.success("Summary updated!");

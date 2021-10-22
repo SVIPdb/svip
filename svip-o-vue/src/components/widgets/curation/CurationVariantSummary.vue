@@ -240,7 +240,7 @@ export default {
                             this.variant.svip_data = response.data;
                             this.$snotify.success("Summary updated! (SVIP variant created, too.)");
                             this.summary = response.data.summary;
-                            this.summaryUpdateCallback(response)
+                            this.summaryUpdateCallback()
                         })
                         .catch((err) => {
                             log.warn(err);
@@ -251,7 +251,7 @@ export default {
                         .then((response) => {
                             this.$snotify.success("Summary updated!");
                             this.summary = response.data.summary;
-                            this.summaryUpdateCallback(response)
+                            this.summaryUpdateCallback()
                         })
                         .catch((err) => {
                             log.warn(err);
@@ -268,7 +268,7 @@ export default {
                         this.serverSummaryDraft = null
                         this.$snotify.success("Summary updated!");
                         this.summary = this.summaryModel
-                        this.summaryUpdateCallback(response)
+                        this.summaryUpdateCallback()
                     })
                     .catch((err) => {
                         log.warn(err);
@@ -276,7 +276,7 @@ export default {
                     })
             }
         },
-        summaryUpdateCallback(response) {
+        summaryUpdateCallback() {
             this.summaryDraft = ''
             this.showSummaryDraft = false
             if (this.changeDate) {

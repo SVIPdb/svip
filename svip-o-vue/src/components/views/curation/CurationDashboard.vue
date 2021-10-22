@@ -112,8 +112,7 @@ export default {
         };
     },
     mounted() {
-        HTTP.get(`/reviews`).then((response) => {
-            console.log(response)
+        HTTP.get(`/reviews`).then((response) => {          
             //this.reviews = response.data.results
             const reviews = response.data.results
             //this.reviews = response.data.results.map((x) => ({
