@@ -28,10 +28,14 @@ import {
 import RowExpander from "@/components/widgets/RowExpander";
 import Expander from "@/components/widgets/Expander";
 
+import VueConfirmDialog from 'vue-confirm-dialog'
+
 import store from "./store";
 
 // enables the asyncComputed key, allowing computed properties to return promises
 Vue.use(AsyncComputed);
+
+Vue.use(VueConfirmDialog)
 
 Vue.config.productionTip = false;
 
@@ -42,6 +46,8 @@ Vue.use(Snotify, {
     }
 });
 Vue.use(VueClipboard);
+
+Vue.component('vue-confirm-dialog', VueConfirmDialog.default)
 
 // register vee-validate's validator
 Vue.component('ValidationProvider', ValidationProvider);

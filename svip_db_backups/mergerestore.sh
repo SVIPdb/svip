@@ -113,6 +113,7 @@ function delete_duplicates {
     whr+=" AND a.${conflict_col} = b.${conflict_col}"
   done
 
+  echo " --> Delete duplicates from table ${table}, keeping lowest id..."
   sql "DELETE FROM ${table} a USING ${table} b WHERE a.id < b.id ${whr};"
 }
 
@@ -124,13 +125,30 @@ function merge_table {
   local columns="${4}"
   local relations="${5}"
 
+  if [ "${2}" != "" ]; then
+    for related_table in $related_tables
+    do
+      for col in $unique_cols
+      do
+        add_column "${related_table%%:*}" "__${col%%:*}" "${col#*:}"
+        echo " --> Update ${related_table%%:*} set __${col%%:*} from table ${table}..."
+        sql "update ${related_table%%:*} RT set __${col%%:*}=(select ${col%%:*} from ${table} where id=RT.${related_table#*:});"
+      done
+    done
+  fi
+
   echo " --> Merging table ${table} -> ${orig_table}..."
 
   # If one of the conflict columns is hit update it
   local conflict_cols=''
   for unique_col in $unique_cols
   do
-    conflict_cols+="${unique_col%%:*},"
+    local type=${unique_col#*:}
+    if [ "${type}" == "text" ]; then
+      conflict_cols+="COALESCE(${unique_col%%:*}, 'NULL'),"
+    else
+      conflict_cols+="COALESCE(${unique_col%%:*}, -1),"
+    fi
   done
   # Remove last ,
   conflict_cols=${conflict_cols:0:(-1)}
@@ -146,7 +164,7 @@ function merge_table {
     local whr=''
     for rel_col in ${rel_cols//,/ }
     do
-      whr+="${rel_col}=TBL.__${rel_col} and "
+      whr+="(${rel_col} = TBL.__${rel_col}) and "
     done
     # remove the last ' and '
     whr="${whr:0:(-5)}"
@@ -176,18 +194,6 @@ function merge_table {
   
   # Drop the temporary constraint for the conflicting columns
   sql "ALTER TABLE ${orig_table} DROP CONSTRAINT temp_constraint;"
-
-  if [ "${2}" != "" ]; then
-    for related_table in $related_tables
-    do
-      for col in $unique_cols
-      do
-        add_column "${related_table%%:*}" "__${col%%:*}" "${col#*:}"
-        echo " --> Update ${related_table%%:*} set __${col%%:*} from table ${table}..."
-        sql "update ${related_table%%:*} RT set __${col%%:*}=(select ${col%%:*} from ${table} where id=RT.${related_table#*:});"
-      done
-    done
-  fi
 }
 
 function overwrite_table {
@@ -238,4 +244,4 @@ do
   overwrite_table ${table}
 done
 
-rename_schema ${ORIG_SCHEMA} ${SCHEMA}
+# rename_schema ${ORIG_SCHEMA} ${SCHEMA}

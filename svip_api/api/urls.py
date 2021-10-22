@@ -141,6 +141,8 @@ router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
 urlpatterns = [
     path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
     path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
+    path('update_variant_summary', views.svip.UpdateVariantSummary.as_view(), name='update_variant_summary'),
+    path('update_gene_summary', views.svip.UpdateGeneSummary.as_view(), name='update_gene_summary'),
     path('', include(router.urls)),
     path('', include(genes_router.urls)),
     path('', include(variants_router.urls)),

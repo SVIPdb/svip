@@ -5,13 +5,11 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Gene Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
-
                     <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
                     </div>
-
                 </h6>
 
                 <b-card-text class="p-2 m-0">
@@ -21,18 +19,11 @@
                         rows="3" 
                         :value=summaryModel
                         v-bind:style="{backgroundColor: this.summaryTextBackground}"
+                        @input="summaryDraftBoolean"
                     />
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
-                    <!--<b-button
-                        class="mr-2 centered-icons"
-                        variant="info"
-                        v-b-tooltip="'History'"
-                        @click="showHistory"
-                    >
-                        <icon name="history" label="History" /> History
-                    </b-button>-->
                     <b-button variant="warning" class="mr-2 centered-icons" :disabled=!showSummaryDraft @click="saveSummaryDraft">
                         Finish later
                     </b-button>
@@ -45,16 +36,6 @@
                 </b-card-footer>
             </b-card-body>
         </b-card>
-
-        <b-modal ref="history-modal"
-            hide-footer static lazy scrollable size="lg"
-            :title="`Summary History`"
-        >
-            <div>
-                <VariantInSVIPHistory v-if="history_entry_id" :entry_id="history_entry_id" />
-                <div v-else>Error: no summary history available</div>
-            </div>
-        </b-modal>
     </div>
 </template>
 
@@ -62,7 +43,6 @@
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHistory";
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
 
@@ -70,7 +50,7 @@ const log = ulog('CurationGeneSummary');
 
 export default {
     name: "CurationGeneSummary",
-    components: { VariantInSVIPHistory },
+    components: {},
     props: {
         gene: { type: Object, required: false }
     },
@@ -78,14 +58,15 @@ export default {
         return {
             summary: this.gene.summary,
             summaryDraft: '',
+            showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and gene (if so: PATCH request instead of POST)
 
-            history_entry_id: null,
+            date: null,
+            changeDate: false,
+
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            date: null,
-            changeDate: false,
         };
     },
     mounted() {
@@ -102,14 +83,6 @@ export default {
         }
     },
     computed: {
-        showSummaryDraft() {
-            const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
-                return true
-            } else {
-                return false
-            }
-        },
         summaryModel() {
             return this.showSummaryDraft ? this.summaryDraft : this.summary
         },
@@ -124,14 +97,24 @@ export default {
         }
     },
     methods: {
+        summaryDraftBoolean() {
+            const regExp = /[a-zA-Z]/g;
+            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+                this.showSummaryDraft = true
+            } else {
+                this.showSummaryDraft = false
+            }
+        },
         getSummaryDraft() {
-            // get already existing summary comment for this gene and user (if exists)
+            // get already existing summary draft for this gene and user (if exists)
             HTTP.get(`/gene_summary_draft/?gene=${this.gene.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
+                console.log(results)
                 if (results.length > 0) {
                     this.serverSummaryDraft = results[0]
                     this.summaryDraft = results[0].content
                 }
+                this.summaryDraftBoolean()
             });
         },
         changeSummary(event) {
@@ -145,13 +128,11 @@ export default {
                 gene: this.gene.id
             }
 
-
             if (this.serverSummaryDraft === null) {
                 // summaryDraft doesn't already exist (for this user and gene): post new
                 HTTP.post(`/gene_summary_draft/`, summaryDraftJSON)
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been posted");
                     })
                     .catch((err) => {
@@ -160,10 +141,9 @@ export default {
                     })
             } else {
                 // summaryDraft already exists: modify it
-                HTTP.patch(`/summary_draft/${this.serverSummaryDraft.id}`, {content: this.summaryDraft})
+                HTTP.patch(`/gene_summary_draft/${this.serverSummaryDraft.id}`, {content: this.summaryDraft})
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been updated");
                     })
                     .catch((err) => {
@@ -179,6 +159,7 @@ export default {
                     .then(() => {
                         this.serverSummaryDraft = null
                         this.summaryDraft = "";
+                        this.showSummaryDraft = false
                         this.$snotify.success("Your draft has been deleted");
                     })
                     .catch((err) => {
@@ -186,45 +167,86 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryComment = "";
-                this.isEditMode = false;
+                this.summaryDraft = "";
+                this.showSummaryDraft = false
                 this.$snotify.success("Your draft has been deleted");
             }
         },
         saveSummary() {
-
             let params = {summary: this.summaryModel,}
 
             if (this.date) {
-                const prompt = "Do you want to set the value of the last summary update to today?"
-                if (confirm(prompt)) {
-                    this.changeDate = true
-                    params['summary_date'] = new Date().toJSON()
-                } else{
-                    this.changeDate = false
-                }
+                // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
+                this.$confirm(
+                    {
+                        message: `Change the modification date of this summary ?\n\n
+                        If so, the current date will be replace the existing one.`,
+                        button: {
+                            no: 'Ignore',
+                            yes: 'Update'
+                        },
+                        /**
+                         * Callback Function
+                         * @param {Boolean} confirm 
+                         */
+                        callback: confirm => {
+                            if (confirm) {
+                                this.changeDate = true
+                                params['summary_date'] = new Date().toJSON()
+                            } else {
+                                this.changeDate = false
+                            }
+                            this.sendSummaryRequest(params)
+                        }
+                    }
+                )
+
             } else {
+            // no date for summary yet, so don't offer to ignore the date change
                 this.changeDate = true
                 params['summary_date'] = new Date().toJSON()
+                this.sendSummaryRequest(params)
             }
-
-            HTTP.patch(`/genes/${this.gene.id}/`, params)
-                .then((response) => {
-                    if (this.changeDate) {
-                        this.date = new Date()
-                    }
-                    this.summary = response.data.summary;
-                    this.$snotify.success("Summary updated!");
-                })
-                .catch((err) => {
-                    log.warn(err);
-                    this.$snotify.error("Failed to update summary");
-                })
         },
-        showHistory() {
-            this.$refs["history-modal"].show();
-            //this.history_entry_id = this.variant.svip_data.id;
-        }
+
+        sendSummaryRequest(params) {
+            //check if a summary draft exists in the DB to delete it
+            if (!this.serverSummaryDraft) {
+                // No summary draft in the DB
+                HTTP.patch(`/genes/${this.gene.id}/`, params)
+                    .then((response) => {
+                        this.summary = response.data.summary;
+                        this.summaryUpdateCallback(response)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary");
+                    })
+            } else {
+            // Update summary and delete draft in the same request
+                params['gene_id'] = this.gene.id
+                params['summary_draft_id'] = this.serverSummaryDraft.id
+
+                HTTP.post(`/update_gene_summary`, params)
+                    .then((response) => {
+                        this.serverSummaryDraft = null
+                        this.summary = this.summaryModel
+                        this.summaryUpdateCallback(response)
+                    })
+                    .catch((err) => {
+                        log.warn(err);
+                        this.$snotify.error("Failed to update summary");
+                    })
+            }
+        },
+        summaryUpdateCallback(response) {
+            this.summaryDraft = ''
+            this.showSummaryDraft = false
+            this.$snotify.success("Summary updated!");
+            if (this.changeDate) {
+                this.date = new Date()
+            }
+        },
     }
 };
 </script>
@@ -260,7 +282,7 @@ export default {
 }
 
 .draft-header {
-    margin-left: 3rem;
+    margin-left: 1rem;
     color: rgb(248, 236, 210);
 }
 
