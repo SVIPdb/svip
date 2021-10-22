@@ -503,7 +503,7 @@ export default {
             const entryIDs = Object.keys(this.selected).join(",");
             // TODO: set the status of all the selected entries to 'submitted'
             HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
-                .then(result => {
+                .then(() => {
 
                     // add request to change the status of the variant
 
@@ -544,7 +544,7 @@ export default {
 
                 // TODO: set the status of all the selected entries to 'submitted'
                 HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
-                    .then(result => {
+                    .then(() => {
                         router.push({
                             name: "submit-curation",
                             params: {
