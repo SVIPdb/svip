@@ -55,9 +55,7 @@ export default {
             serverSummaryComment: null,
         };
     },
-    mounted() {
-        this.getSummaryComment();
-    },
+    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
