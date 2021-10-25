@@ -15,7 +15,7 @@
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
+                            <b-textarea id='gene-summary' class="summary-box" v-model="summary" rows="3" readonly v-bind:style="{ height: textboxHeight }" />
                         </b-card-text>
                     </div>
                 </transition>
@@ -26,7 +26,6 @@
 
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
-import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import ulog from 'ulog';
 import {mapGetters} from "vuex";
@@ -53,11 +52,9 @@ export default {
             isEditMode: false,
             summaryComment: "",
             serverSummaryComment: null,
-            date: null
+            date: null,
+            textboxHeight: '2rem'
         };
-    },
-    mounted() {
-        this.getSummaryComment();
     },
     created() {
         this.channel.onmessage = () => {
@@ -73,12 +70,25 @@ export default {
             this.date = new Date(this.gene.summary_date)
         }
     },
+    mounted() {
+        const totalHeight = document.getElementById('gene-summary').scrollHeight
+        const maxHeight = this.convertRemToPixels(14)
+        if (totalHeight > maxHeight) {
+            this.textboxHeight = maxHeight + 'px'
+        } else {
+            this.textboxHeight = totalHeight + 'px'
+        }
+    },
     computed: {
         ...mapGetters({
             user: "currentUser"
         })
     },
-    methods: {}
+    methods: {
+        convertRemToPixels(rem) {    
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+        }
+    }
 };
 </script>
 
