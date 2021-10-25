@@ -376,6 +376,7 @@
                         @click="duplicateEntry"
                         target="_blank"
                         v-if="!isViewOnly"
+                        v-bind:class="{ duplicated: duplicated }"
                     >Duplicate</b-button>
 
                     <b-card class="shadow-sm mb-3" header-bg-variant="white" no-body>
