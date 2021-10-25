@@ -46,13 +46,14 @@
                     === MAIN FORM
                     =======================================================================================================
                     -->
-                    <div v-bind:class="{ unduplicated: !duplicated }" style="margin-bottom: 0.5em; margin-left: 2em; color:red">
-                        Duplicated
+                    <div v-bind:class="{ unduplicated: !duplicated }" style="margin-bottom: 0.5em; color:red; text-align: center;">
+                        DUPLICATED
                     </div>
 
                     <b-card
                         no-body style="margin-bottom: 1.5em;"
                         v-bind:border-variant="duplicated? 'danger': ''"
+                        v-bind:class="{ duplicated: duplicated }"
                     >
                         <b-card-body>
                             <b-container fluid>
@@ -1145,5 +1146,13 @@ export default {
 }
 .unduplicated {
     display: none;
+}
+
+.duplicated {
+    background-color: rgb( 247, 237, 217 );
+}
+
+.v-select {
+    background-color: white !important;
 }
 </style>
