@@ -13,12 +13,13 @@
                 </h6>
 
                 <b-card-text class="p-2 m-0">
-                    <b-textarea 
+                    <b-textarea
+                        id='gene-summary'
                         class="summary-box" 
                         v-on:input="changeSummary($event)" 
                         rows="3" 
                         :value=summaryModel
-                        v-bind:style="{backgroundColor: this.summaryTextBackground}"
+                        v-bind:style="{backgroundColor: this.summaryTextBackground, height: textboxHeight}"
                         @input="summaryDraftBoolean"
                     />
                 </b-card-text>
@@ -64,13 +65,11 @@ export default {
             date: null,
             changeDate: false,
 
+            textboxHeight: '2rem',
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
         };
-    },
-    mounted() {
-        this.getSummaryDraft();
     },
     created() {
         this.channel.onmessage = () => {
@@ -81,6 +80,9 @@ export default {
         if (this.gene.summary_date) {
             this.date = new Date(this.gene.summary_date)
         }
+    },
+    mounted() {
+        this.getSummaryDraft();
     },
     computed: {
         summaryModel() {
@@ -97,6 +99,9 @@ export default {
         }
     },
     methods: {
+        convertRemToPixels(rem) {    
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+        },
         summaryDraftBoolean() {
             const regExp = /[a-zA-Z]/g;
             if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
@@ -114,6 +119,14 @@ export default {
                     this.summaryDraft = results[0].content
                 }
                 this.summaryDraftBoolean()
+
+                const totalHeight = document.getElementById('gene-summary').scrollHeight
+                const maxHeight = this.convertRemToPixels(14)
+                if (totalHeight > maxHeight) {
+                    this.textboxHeight = maxHeight + 'px'
+                } else {
+                    this.textboxHeight = totalHeight + 'px'
+                }
             });
         },
         changeSummary(event) {
@@ -227,7 +240,7 @@ export default {
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_gene_summary`, params)
-                    .then((response) => {
+                    .then(() => {
                         this.serverSummaryDraft = null
                         this.summary = this.summaryModel
                         this.summaryUpdateCallback()

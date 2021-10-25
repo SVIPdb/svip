@@ -211,15 +211,18 @@ class VariantInSVIP(models.Model):
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
                         "reviewer_mail": review.reviewer.email,
                         "reviewer_id": review.reviewer.id,
-                        "status": review.status,
                         "annotatedTier": review.annotated_tier,
                         "annotatedEffect": review.annotated_effect,
                         "comment": review.comment
                     }
+                    if (review.annotated_effect == evidence.annotation1.effect) and (review.annotated_tier == evidence.annotation1.tier):
+                        review_obj['status'] = True
+                    else:
+                        review_obj['status'] = False
                     reviews.append(review_obj)
 
                 # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
-                while len(reviews) < 2:
+                while len(reviews) < 3:
                     review_obj = {
                         "reviewer": "",
                         "status": None

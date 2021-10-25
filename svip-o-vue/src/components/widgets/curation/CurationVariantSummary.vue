@@ -14,11 +14,12 @@
 
                 <b-card-text class="p-2 m-0">
                     <b-textarea 
+                        id='variant-summary'
                         class="summary-box" 
                         v-on:input="changeSummary($event)" 
                         rows="3" 
                         :value=summaryModel
-                        v-bind:style="{backgroundColor: this.summaryTextBackground}"
+                        v-bind:style="{backgroundColor: this.summaryTextBackground, height: textboxHeight}"
                         @input="summaryDraftBoolean"
                     />
                 </b-card-text>
@@ -84,6 +85,7 @@ export default {
             date: null,
             changeDate: false,
 
+            textboxHeight: '2rem',
             history_entry_id: null,
             loading: false,
             error: null,
@@ -119,6 +121,9 @@ export default {
         }
     },
     methods: {
+        convertRemToPixels(rem) {    
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+        },
         summaryDraftBoolean() {
             const regExp = /[a-zA-Z]/g;
             if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
@@ -136,6 +141,14 @@ export default {
                     this.summaryDraft = results[0].content
                 }
                 this.summaryDraftBoolean()
+
+                const totalHeight = document.getElementById('variant-summary').scrollHeight
+                const maxHeight = this.convertRemToPixels(14)
+                if (totalHeight > maxHeight) {
+                    this.textboxHeight = maxHeight + 'px'
+                } else {
+                    this.textboxHeight = totalHeight + 'px'
+                }
             });
         },
         changeSummary(event) {
@@ -264,7 +277,7 @@ export default {
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_variant_summary`, params)
-                    .then((response) => {
+                    .then(() => {
                         this.serverSummaryDraft = null
                         this.$snotify.success("Summary updated!");
                         this.summary = this.summaryModel
