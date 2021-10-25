@@ -26,12 +26,8 @@
 
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
-import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import ulog from 'ulog';
 import {mapGetters} from "vuex";
-
-const log = ulog('VariantSummary');
 
 export default {
     name: "VariantSummary",

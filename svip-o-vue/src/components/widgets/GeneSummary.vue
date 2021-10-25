@@ -27,10 +27,7 @@
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
 import BroadcastChannel from "broadcast-channel";
-import ulog from 'ulog';
 import {mapGetters} from "vuex";
-
-const log = ulog('GeneSummary');
 
 export default {
     name: "GeneSummary",

@@ -277,7 +277,7 @@ export default {
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_variant_summary`, params)
-                    .then((response) => {
+                    .then(() => {
                         this.serverSummaryDraft = null
                         this.$snotify.success("Summary updated!");
                         this.summary = this.summaryModel

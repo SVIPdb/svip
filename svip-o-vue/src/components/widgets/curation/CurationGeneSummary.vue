@@ -240,7 +240,7 @@ export default {
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_gene_summary`, params)
-                    .then((response) => {
+                    .then(() => {
                         this.serverSummaryDraft = null
                         this.summary = this.summaryModel
                         this.summaryUpdateCallback()
