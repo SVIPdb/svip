@@ -3,9 +3,6 @@
         <div class="card-header">
             <div class="card-title">
                 SVIP Information
-                <!--
-                <span class="text-danger float-right">WARNING: fake data - only as a demo</span>
-                -->
             </div>
         </div>
 
@@ -36,17 +33,6 @@
                         <span v-else class="unavailable">unavailable</span>
                     </div>
                 </template>
-
-                <!--<template v-slot:cell(score)="data">
-                    <div style="white-space: nowrap;">
-                        <icon
-                            v-for="score in [1,2,3,4]"
-                            :key="score"
-                            :name="data.item.score < score ? 'regular/star' : 'star'"
-                            style="margin-right: 5px"
-                        />
-                    </div>
-                </template>-->
 
                 <template v-slot:cell(last_modified)="data">
                     <pass :summary="curationSummary(data.item)">
@@ -93,7 +79,8 @@
                                 >
                                     <b-tab active>
                                         <template v-slot:title>Evidence <b-badge class="text-center">{{ entries.finalized.length }}</b-badge></template>
-                                        <EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />
+                                        <EvidenceTable :variant="variant" :row="row" :diseaseName="row.item.name"/>
+                                        <!--<EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />-->
                                     </b-tab>
 
                                     <b-tab v-if="groups && groups.includes('clinicians')">
@@ -103,7 +90,7 @@
 
                                     <b-tab v-if="groups && groups.includes('curators')">
                                         <template v-slot:title>Curation <b-badge class="text-center">{{ entries.pending.length }}</b-badge></template>
-                                        <EvidenceTable :variant="variant" :row="row" :entries="entries.pending" />
+                                        <CurationTable :variant="variant" :row="row" :entries="entries.pending" />
                                     </b-tab>
                                 </b-tabs>
                             </b-card>
@@ -144,6 +131,7 @@ import { checkInRole } from "@/directives/access";
 import ageDistribution from "@/components/plots/ageDistribution";
 import genderPlot from "@/components/plots/genderPlot";
 import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
+import CurationTable from "@/components/genes/variants/svip/CurationTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
 
@@ -163,7 +151,7 @@ const NoSVIPInfo = {
 
 export default {
     name: "SVIPInfo",
-    components: {SampleTable, EvidenceTable, ageDistribution, genderPlot, NoSVIPInfo}, // TissueDistribution
+    components: {SampleTable, EvidenceTable, CurationTable, ageDistribution, genderPlot, NoSVIPInfo}, // TissueDistribution
     props: {
         variant: {type: Object, required: true},
         gene: {type: String, required: true}
@@ -242,7 +230,6 @@ export default {
             const entries = []
             this.variant.svip_data.diseases.map(disease => {
                 if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {
-
 
                     entries.push(disease)
                 }
