@@ -150,6 +150,8 @@ import ulog from "ulog";
 import CreateCurationRequest from "@/components/widgets/submission/CreateCurationRequest";
 
 const log = ulog('SubmitVariants')
+// eslint-disable-next-line
+const re_email = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 
 export default {
     name: "SubmitVariants",
@@ -185,11 +187,21 @@ export default {
             return Array.from({length: 22}).map((_, idx) => (idx+1).toString()).concat(['X', 'Y', 'MT']);
         },
         all_fields_valid() {
+            console.log('curationReq', this.curationReq)
             return (
                 this.chromosome !== null && this.chromosomes.includes(this.chromosome) &&
                 this.pos !== null && !isNaN(Number.parseInt(this.pos)) &&
                 this.ref !== null &&
-                this.alt !== null
+                this.alt !== null &&
+                (
+                    this.curationReq === null ||
+                    (
+                        this.curationReq.for_curation_request === true ?
+                            this.curationReq.requestor !== null && this.curationReq.requestor.match(re_email) &&
+                            this.curationReq.icdo_morpho !== null &&
+                            this.curationReq.icdo_topo !== null && this.curationReq.icdo_topo.length > 0 : true
+                    )
+                )
             )
         }
     },

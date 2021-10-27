@@ -7,7 +7,7 @@
         </b-form-group>
 
         <b-form-group label="Requestor" v-if="for_curation_request">
-            <b-input type="text" name="requestor" v-model="requestor" />
+            <b-input type="text" name="requestor" v-model="requestor" @input="modelChanged" />
         </b-form-group>
 
         <ValidatedFormField v-if="for_curation_request"
