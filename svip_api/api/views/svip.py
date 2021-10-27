@@ -1,3 +1,6 @@
+from datetime import datetime
+from rest_framework.response import Response
+from rest_framework.views import APIView
 import hgvs.assemblymapper
 import hgvs.dataproviders.uta
 import hgvs.normalizer
@@ -30,7 +33,7 @@ from api.serializers import (
 )
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
-    SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer, 
+    SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer,
     CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
@@ -63,19 +66,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-            .select_related('variant')
-            .prefetch_related(
-                Prefetch('diseaseinsvip_set', queryset=(
-                    DiseaseInSVIP.objects
-                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                    .prefetch_related(
-                        'sample_set'
-                    )
-                )),
-                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-            )
-        )
+             .select_related('variant')
+             .prefetch_related(
+                 Prefetch('diseaseinsvip_set', queryset=(
+                     DiseaseInSVIP.objects
+                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                     .prefetch_related(
+                         'sample_set'
+                     )
+                 )),
+                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+             )
+             )
 
         return q
 
@@ -99,8 +102,6 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
         print("action is executed")
         entry = VariantInSVIP.objects.get(id=pk)
         return make_history_response(entry, add_created_by=False)
-
-
 
 
 # ================================================================================================================
@@ -156,7 +157,7 @@ class CurationEntryFilter(django_filters.FilterSet):
     @staticmethod
     def any_variant_ref(queryset, name, value):
         return queryset.filter(Q(variant_id=value))
-        #return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
+        # return queryset.filter(Q(variant_id=value) | Q(extra_variants=value))
 
     class Meta:
         model = CurationEntry
@@ -262,9 +263,6 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "input": entryIDs,
             "changed": result
         })
-        
-        
-        
 
     @action(detail=True)
     def history(self, request, pk):
@@ -331,40 +329,40 @@ class RevisedReviewViewSet(viewsets.ModelViewSet):
 # ================================================================================================================
 # hgvs stuff
 
-## these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
-#hdp = hgvs.dataproviders.uta.connect()
-#hgnorm = hgvs.normalizer.Normalizer(hdp)
-#hgvsparser = hgvs.parser.Parser()
-#am = hgvs.assemblymapper.AssemblyMapper(
-#    hdp, assembly_name='GRCh37', normalize=True)
+# these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
+hdp = hgvs.dataproviders.uta.connect()
+hgnorm = hgvs.normalizer.Normalizer(hdp)
+hgvsparser = hgvs.parser.Parser()
+am = hgvs.assemblymapper.AssemblyMapper(
+    hdp, assembly_name='GRCh37', normalize=True)
 
-#AC_MAP = {
-#    '1': 'NC_000001',
-#    '2': 'NC_000002',
-#    '3': 'NC_000003',
-#    '4': 'NC_000004',
-#    '5': 'NC_000005',
-#    '6': 'NC_000006',
-#    '7': 'NC_000007',
-#    '8': 'NC_000008',
-#    '9': 'NC_000009',
-#    '10': 'NC_000010',
-#    '11': 'NC_000011',
-#    '12': 'NC_000012',
-#    '13': 'NC_000013',
-#    '14': 'NC_000014',
-#    '15': 'NC_000015',
-#    '16': 'NC_000016',
-#    '17': 'NC_000017',
-#    '18': 'NC_000018',
-#    '19': 'NC_000019',
-#    '20': 'NC_000020',
-#    '21': 'NC_000021',
-#    '22': 'NC_000022',
-#    'X': 'NC_000023',
-#    '23': 'NC_000023',
-#    'Y': 'NC_000024',
-#}
+AC_MAP = {
+    '1': 'NC_000001',
+    '2': 'NC_000002',
+    '3': 'NC_000003',
+    '4': 'NC_000004',
+    '5': 'NC_000005',
+    '6': 'NC_000006',
+    '7': 'NC_000007',
+    '8': 'NC_000008',
+    '9': 'NC_000009',
+    '10': 'NC_000010',
+    '11': 'NC_000011',
+    '12': 'NC_000012',
+    '13': 'NC_000013',
+    '14': 'NC_000014',
+    '15': 'NC_000015',
+    '16': 'NC_000016',
+    '17': 'NC_000017',
+    '18': 'NC_000018',
+    '19': 'NC_000019',
+    '20': 'NC_000020',
+    '21': 'NC_000021',
+    '22': 'NC_000022',
+    'X': 'NC_000023',
+    '23': 'NC_000023',
+    'Y': 'NC_000024',
+}
 
 
 class SubmittedVariantBatchViewSet(viewsets.ModelViewSet):
@@ -465,10 +463,10 @@ class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
 
         #queryset = SummaryComment.objects.all()
 
-        #if variant is not None:
+        # if variant is not None:
         #    queryset = queryset.filter(variant=variant)
 
-        #if owner is not None:
+        # if owner is not None:
         #    queryset = queryset.filter(owner=owner)
 
 
@@ -479,8 +477,6 @@ class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = SIBAnnotation2.objects.all()
         return queryset
-
-
 
 
 # ================================================================================================================
@@ -511,12 +507,12 @@ class SummaryCommentViewSet(viewsets.ModelViewSet):
 class SummaryDraftViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = SummaryDraftSerializer
-    
+
     def get_queryset(self):
         variant = self.request.query_params.get('variant')
         owner = self.request.query_params.get('owner')
         queryset = SummaryDraft.objects.all()
-        
+
         if variant is not None:
             queryset = queryset.filter(variant=variant)
 
@@ -526,16 +522,15 @@ class SummaryDraftViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-
 class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = GeneSummaryDraftSerializer
-    
+
     def get_queryset(self):
         gene = self.request.query_params.get('gene')
         owner = self.request.query_params.get('owner')
         queryset = GeneSummaryDraft.objects.all()
-        
+
         if gene is not None:
             queryset = queryset.filter(gene=gene)
 
@@ -545,24 +540,20 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-
 # ================================================================================================================
 # === Review data
 # ================================================================================================================
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from datetime import datetime
 
 class ReviewDataView(APIView):
-    
+
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
         entry_ids = request.data.get('entry_ids')
-        
+
         variant = Variant.objects.get(id=var_id)
         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
         svip_var_exists = bool(len(matching_svip_var))
@@ -573,18 +564,21 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
         for curation in variant.curations.filter(status="submitted"):
-            
+
             # check that a disease is indicated for the curation entry being saved
             if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                associations = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease)
+                associations = CurationAssociation.objects.filter(
+                    variant=variant).filter(disease=curation.disease)
 
                 # check that no association already exists for these parameters
                 if len(associations) == 0:
-                    new_association = CurationAssociation(variant=variant, disease=curation.disease)
+                    new_association = CurationAssociation(
+                        variant=variant, disease=curation.disease)
                     new_association.save()
-                    
-                association = CurationAssociation.objects.filter(variant=variant).filter(disease=curation.disease).first()
-                
+
+                association = CurationAssociation.objects.filter(
+                    variant=variant).filter(disease=curation.disease).first()
+
                 if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
                     drugs = curation.drugs
                 else:
@@ -592,17 +586,19 @@ class ReviewDataView(APIView):
                     drugs = [None]
 
                 for drug in drugs:
-                    evidences = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-                    
+                    evidences = association.curation_evidences.filter(
+                        type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+
                     if len(evidences) == 0:
                         new_evidence = CurationEvidence(
-                            association = association,
-                            type_of_evidence = curation.type_of_evidence,
-                            drug = drug
+                            association=association,
+                            type_of_evidence=curation.type_of_evidence,
+                            drug=drug
                         )
                         new_evidence.save()
-                        
-                        evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+
+                        evidence = association.curation_evidences.filter(
+                            type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                         curation.curation_evidences.add(evidence)
 
                 curation.save()
@@ -613,7 +609,7 @@ class ReviewDataView(APIView):
                     "review_data": svip_var.review_data(),
                 }
             )
-        
+
         else:
             return Response(
                 data={
@@ -623,16 +619,16 @@ class ReviewDataView(APIView):
 
 
 class CurationIds(APIView):
-    
+
     # returns all the IDs of the curation associated with the current variant
     def post(self, request, *args, **kwargs):
         var_id = request.data.get('var_id')
         curations = {}
-        
+
         for curation in Variant.objects.get(id=var_id).curations.all():
             curations[curation.id] = True
-            
-        return Response(data = curations)
+
+        return Response(data=curations)
 
 
 class UpdateVariantSummary(APIView):
@@ -641,16 +637,17 @@ class UpdateVariantSummary(APIView):
         summary = request.data.get('summary')
         summary_draft_id = request.data.get('summary_draft_id')
 
-        variant = VariantInSVIP.objects.get(id = var_id)
+        variant = VariantInSVIP.objects.get(id=var_id)
         variant.summary = summary
         if 'summary_date' in request.data:
             variant.summary_date = request.data.get('summary_date')
         variant.save()
 
-        SummaryDraft.objects.get(id = summary_draft_id).delete()
-        return Response(data = f"""The summary of VariantInSVIP {var_id} is updated. 
+        SummaryDraft.objects.get(id=summary_draft_id).delete()
+        return Response(data=f"""The summary of VariantInSVIP {var_id} is updated. 
                         The SummaryDraft {summary_draft_id} is deleted.
                         """)
+
 
 class UpdateGeneSummary(APIView):
     def post(self, request, *args, **kwargs):
@@ -658,13 +655,13 @@ class UpdateGeneSummary(APIView):
         summary = request.data.get('summary')
         summary_draft_id = request.data.get('summary_draft_id')
 
-        gene = Gene.objects.get(id = gene_id)
+        gene = Gene.objects.get(id=gene_id)
         gene.summary = summary
         if 'summary_date' in request.data:
             gene.summary_date = request.data.get('summary_date')
         gene.save()
 
-        GeneSummaryDraft.objects.get(id = summary_draft_id).delete()
-        return Response(data = f"""The summary of Gene {gene_id} is updated. 
+        GeneSummaryDraft.objects.get(id=summary_draft_id).delete()
+        return Response(data=f"""The summary of Gene {gene_id} is updated. 
                         The SummaryDraft {summary_draft_id} is deleted.
                         """)
