@@ -119,7 +119,6 @@ export default {
                     }
                     this.items.push(evidenceRow)
                 }
-                
             })
         })
     },
