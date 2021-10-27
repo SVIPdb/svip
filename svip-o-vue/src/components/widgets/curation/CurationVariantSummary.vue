@@ -5,22 +5,22 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Variant Summary
                     <b class='draft-header' v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
-
                     <div v-if="date !== null" class="update">Last update: 
                         <b class="date">
                             {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
                     </div>
-
                 </h6>
 
                 <b-card-text class="p-2 m-0">
                     <b-textarea 
+                        id='variant-summary'
                         class="summary-box" 
                         v-on:input="changeSummary($event)" 
                         rows="3" 
                         :value=summaryModel
-                        v-bind:style="{backgroundColor: this.summaryTextBackground}"
+                        v-bind:style="{backgroundColor: this.summaryTextBackground, height: textboxHeight}"
+                        @input="summaryDraftBoolean"
                     />
                 </b-card-text>
 
@@ -77,16 +77,19 @@ export default {
     },
     data() {
         return {
-            summary: this.variant.svip_data && this.variant.svip_data.summary,
+            summary: this.variant.svip_data && this.variant.svip_data.summary, // permanent summary (not draft)
             summaryDraft: '',
+            showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and variant (if so: PATCH request instead of POST)
 
+            date: null,
+            changeDate: false,
+
+            textboxHeight: '2rem',
             history_entry_id: null,
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            date: null,
-            changeDate: false,
         };
     },
     mounted() {
@@ -103,15 +106,8 @@ export default {
         }
     },
     computed: {
-        showSummaryDraft() {
-            const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
-                return true
-            } else {
-                return false
-            }
-        },
         summaryModel() {
+        // What ii shown in the summary box
             return this.showSummaryDraft ? this.summaryDraft : this.summary
         },
         ...mapGetters({
@@ -125,13 +121,33 @@ export default {
         }
     },
     methods: {
+        convertRemToPixels(rem) {    
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+        },
+        summaryDraftBoolean() {
+            const regExp = /[a-zA-Z]/g;
+            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+                this.showSummaryDraft = true
+            } else {
+                this.showSummaryDraft = false
+            }
+        },
         getSummaryDraft() {
-            // get already existing summary comment for this variant and user (if exists)
+            // get already existing summary draft for this variant and user (if exists)
             HTTP.get(`/summary_draft/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
                 const results = response.data.results
                 if (results.length > 0) {
                     this.serverSummaryDraft = results[0]
                     this.summaryDraft = results[0].content
+                }
+                this.summaryDraftBoolean()
+
+                const totalHeight = document.getElementById('variant-summary').scrollHeight
+                const maxHeight = this.convertRemToPixels(14)
+                if (totalHeight > maxHeight) {
+                    this.textboxHeight = maxHeight + 'px'
+                } else {
+                    this.textboxHeight = totalHeight + 'px'
                 }
             });
         },
@@ -146,13 +162,11 @@ export default {
                 variant: this.variant.id
             }
 
-
             if (this.serverSummaryDraft === null) {
                 // summaryDraft doesn't already exist (for this user and variant): post new
                 HTTP.post(`/summary_draft/`, summaryDraftJSON)
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been posted");
                     })
                     .catch((err) => {
@@ -164,7 +178,6 @@ export default {
                 HTTP.patch(`/summary_draft/${this.serverSummaryDraft.id}`, {content: this.summaryDraft})
                     .then(() => {
                         this.getSummaryDraft();
-                        this.isEditMode = false;
                         this.$snotify.success("Your draft has been updated");
                     })
                     .catch((err) => {
@@ -174,12 +187,13 @@ export default {
             }
         },
         deleteSummaryDraft() {
-            // send a delete request only if SummaryComment instance exists in the server
+            // send a delete request only if SummaryDraft instance exists in the server
             if (this.serverSummaryDraft !== null) {
                 HTTP.delete(`/summary_draft/${this.serverSummaryDraft.id}/`)
                     .then(() => {
                         this.serverSummaryDraft = null
                         this.summaryDraft = "";
+                        this.showSummaryDraft = false
                         this.$snotify.success("Your draft has been deleted");
                     })
                     .catch((err) => {
@@ -187,56 +201,99 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryComment = "";
-                this.isEditMode = false;
+                this.summaryDraft = "";
+                this.showSummaryDraft = false
                 this.$snotify.success("Your draft has been deleted");
             }
         },
         saveSummary() {
-
             let params = {summary: this.summaryModel,}
 
             if (this.date) {
-                const prompt = "Do you want to set the value of the last summary update to today?"
-                if (confirm(prompt)) {
-                    this.changeDate = true
-                    params['summary_date'] = new Date().toJSON()
-                } else{
-                    this.changeDate = false
-                }
+                // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
+                this.$confirm(
+                    {
+                        message: `Change the modification date of this summary ?\n\n
+                        If so, the current date will be replace the existing one.`,
+                        button: {
+                            no: 'Ignore',
+                            yes: 'Update'
+                        },
+                        /**
+                         * Callback Function
+                         * @param {Boolean} confirm 
+                         */
+                        callback: confirm => {
+                            if (confirm) {
+                                this.changeDate = true
+                                params['summary_date'] = new Date().toJSON()
+                            } else {
+                                this.changeDate = false
+                            }
+                            this.sendSummaryRequest(params)
+                        }
+                    }
+                )
+
             } else {
+            // no date for summary yet, so don't offer to ignore the date change
                 this.changeDate = true
                 params['summary_date'] = new Date().toJSON()
+                this.sendSummaryRequest(params)
             }
-
-            if (!this.variant.svip_data) {
-                params['variant'] = this.variant.url
-                return HTTP.post('/variants_in_svip', params)
-                    .then((response) => {
-                        if (this.changeDate) {
-                            this.date = new Date()
-                        }
-                        this.variant.svip_data = response.data;
-                        this.summary = response.data.summary;
-                        this.$snotify.success("Summary updated! (SVIP variant created, too.)");
-                    })
-                    .catch((err) => {
-                        log.warn(err);
-                        this.$snotify.error("Failed to update summary");
-                    })
+        },
+        sendSummaryRequest(params) {
+            //check if a summary draft exists in the DB to delete it
+            if (!this.serverSummaryDraft) {
+                // No summary draft in the DB
+                if (!this.variant.svip_data) {
+                    params['variant'] = this.variant.url
+                    return HTTP.post('/variants_in_svip', params)
+                        .then((response) => {
+                            this.variant.svip_data = response.data;
+                            this.$snotify.success("Summary updated! (SVIP variant created, too.)");
+                            this.summary = response.data.summary;
+                            this.summaryUpdateCallback()
+                        })
+                        .catch((err) => {
+                            log.warn(err);
+                            this.$snotify.error("Failed to update summary");
+                        })
+                } else {
+                    HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, params)
+                        .then((response) => {
+                            this.$snotify.success("Summary updated!");
+                            this.summary = response.data.summary;
+                            this.summaryUpdateCallback()
+                        })
+                        .catch((err) => {
+                            log.warn(err);
+                            this.$snotify.error("Failed to update summary");
+                        })
+                }
             } else {
-                HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, params)
-                    .then((response) => {
-                        if (this.changeDate) {
-                            this.date = new Date()
-                        }
-                        this.summary = response.data.summary;
+            // Update summary and delete draft in the same request
+                params['var_id'] = this.variant.svip_data.id
+                params['summary_draft_id'] = this.serverSummaryDraft.id
+
+                HTTP.post(`/update_variant_summary`, params)
+                    .then(() => {
+                        this.serverSummaryDraft = null
                         this.$snotify.success("Summary updated!");
+                        this.summary = this.summaryModel
+                        this.summaryUpdateCallback()
                     })
                     .catch((err) => {
                         log.warn(err);
                         this.$snotify.error("Failed to update summary");
                     })
+            }
+        },
+        summaryUpdateCallback() {
+            this.summaryDraft = ''
+            this.showSummaryDraft = false
+            if (this.changeDate) {
+                this.date = new Date()
             }
         },
         showHistory() {
@@ -278,7 +335,7 @@ export default {
 }
 
 .draft-header {
-    margin-left: 3rem;
+    margin-left: 1rem;
     color: rgb(248, 236, 210);
 }
 

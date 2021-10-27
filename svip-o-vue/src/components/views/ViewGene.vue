@@ -226,7 +226,7 @@ export default {
                     sortable: false
                 }
             ],
-            sortBy: null
+            sortBy: "hgvs_g"
         };
     },
     computed: {

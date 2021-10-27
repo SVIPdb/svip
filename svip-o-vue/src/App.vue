@@ -2,6 +2,7 @@
     <div id="app">
         <vue-snotify></vue-snotify>
         <nav-header></nav-header>
+        <vue-confirm-dialog></vue-confirm-dialog>
 
         <!-- content -->
         <router-view style="margin: 90px auto 200px auto"/>
