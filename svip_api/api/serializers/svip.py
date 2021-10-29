@@ -158,8 +158,6 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             if entry.disease.topo_codes == obj_disease_topocodes:
                 entries.append(entry)
 
-        print(entries)
-
         #return self._curation_cache[str(obj)]
         return entries
 
@@ -291,16 +289,33 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
 
         # build a Q-object that's all the topo entries related to the target Disease ANDed together
         q_objects = Q(icd_o_morpho=icdo_morpho['id'])
+        print (f"\nq_objects:\n{q_objects}\n")
+
+        candidates = Disease.objects.filter(q_objects)
+        print (f"\ncandidates:\n{candidates}\n")
 
         if icdo_topo_list:
             for x in icdo_topo_list:
-                q_objects &= Q(icdotopoapidisease__icd_o_topo__id=x['id'])
-        else:
-            # we need to search for a morpho that has no associated topo codes
-            q_objects &= Q(icdotopoapidisease=None)
+                print (f"\ntopo item:\n{x}\n")
+                
+                q_objects = Q(icdotopoapidisease__icd_o_topo__id=x['id'])
+                print (f"\nq_objects:\n{q_objects}\n")
+                
+                topo_diseases = Disease.objects.filter(q_objects)
+                print (f"\ntopo_diseases:\n{topo_diseases}\n")
+                
+                candidates = candidates.intersection(candidates, topo_diseases)
+                print (f"\ncandidates:\n{candidates}\n")
+        #else:
+        #    # we need to search for a morpho that has no associated topo codes
+        #    q_objects &= Q(icdotopoapidisease=None)
 
-        # either retrieve an existing disease that matches the description, or create it
-        candidate = Disease.objects.filter(q_objects).first()
+        #print (f"\nDisease.objects.filter(q_objects):\n{Disease.objects.filter(q_objects)}\n")
+
+        ## either retrieve an existing disease that matches the description, or create it
+        #candidate = Disease.objects.filter(q_objects).first()
+
+        candidate = candidates.first()
 
         if not candidate:
             candidate = Disease.objects.create(
