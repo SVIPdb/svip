@@ -134,16 +134,34 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         obj_disease_morpho = obj.disease.icd_o_morpho if not model_field_null(
             obj, 'disease') else None
 
+
+        #get topo_codes
+        obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
+            obj, 'disease') else None
+
+
         # in addition to getting curation entries we can view, filter them down to the current disease
         if str(obj) not in self._curation_cache:
             self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
                 Q(extra_variants=obj.svip_variant.variant) | Q(
-                    variant=obj.svip_variant.variant),
-                Q(disease__icd_o_morpho__isnull=False,
-                  disease__icd_o_morpho=obj_disease_morpho)
+                    Q(variant=obj.svip_variant.variant),
+                    Q(
+                        disease__icd_o_morpho__isnull=False,
+                        disease__icd_o_morpho=obj_disease_morpho,
+                    )
+                )
             ).select_related('disease', 'variant', 'variant__gene').prefetch_related('extra_variants').all())
 
-        return self._curation_cache[str(obj)]
+        # return only entries that have the same topo terms
+        entries = []
+        for entry in self._curation_cache[str(obj)]:
+            if entry.disease.topo_codes == obj_disease_topocodes:
+                entries.append(entry)
+
+        print(entries)
+
+        #return self._curation_cache[str(obj)]
+        return entries
 
     @staticmethod
     def get_sample_count(obj):

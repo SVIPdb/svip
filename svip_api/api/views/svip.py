@@ -263,8 +263,6 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "changed": result
         })
         
-        
-        
 
     @action(detail=True)
     def history(self, request, pk):
