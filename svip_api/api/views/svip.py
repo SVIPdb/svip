@@ -66,19 +66,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-             .select_related('variant')
-             .prefetch_related(
-                 Prefetch('diseaseinsvip_set', queryset=(
-                     DiseaseInSVIP.objects
-                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                     .prefetch_related(
-                         'sample_set'
-                     )
-                 )),
-                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-             )
-             )
+            .select_related('variant')
+            .prefetch_related(
+                Prefetch('diseaseinsvip_set', queryset=(
+                    DiseaseInSVIP.objects
+                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                    .prefetch_related(
+                        'sample_set'
+                    )
+                )),
+                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+            )
+        )
 
         return q
 
@@ -263,6 +263,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "input": entryIDs,
             "changed": result
         })
+
 
     @action(detail=True)
     def history(self, request, pk):
