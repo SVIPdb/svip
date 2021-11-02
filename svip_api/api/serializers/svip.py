@@ -135,8 +135,12 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             obj, 'disease') else None
 
 
-        #get topo_codes
-        obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
+        ##get topo_codes
+        #obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
+        #    obj, 'disease') else None
+
+        # get disease name:
+        obj_disease_name = obj.disease.name if not model_field_null(
             obj, 'disease') else None
 
 
@@ -155,7 +159,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         # return only entries that have the same topo terms
         entries = []
         for entry in self._curation_cache[str(obj)]:
-            if entry.disease.topo_codes == obj_disease_topocodes:
+            if entry.disease.name == obj_disease_name: # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
                 entries.append(entry)
 
         #return self._curation_cache[str(obj)]
