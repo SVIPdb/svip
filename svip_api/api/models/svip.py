@@ -424,7 +424,7 @@ class DiseaseInSVIP(SVIPModel):
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
         verbose_name_plural = "Diseases in SVIP"
-        unique_together = ('svip_variant', 'disease')
+        #unique_together = ('svip_variant', 'disease')
 
 
 # ================================================================================================================

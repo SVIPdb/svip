@@ -69,9 +69,9 @@ class IcdOTopoApiDisease(models.Model):
     icd_o_topo = models.ForeignKey(IcdOTopo, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'icd_o_topo_api_disease'
-        unique_together = (('api_disease', 'icd_o_topo'),)
+        #unique_together = (('api_disease', 'icd_o_topo'),)
 
 
 class IcdOTopoLevel(models.Model):

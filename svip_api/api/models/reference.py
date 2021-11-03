@@ -33,6 +33,8 @@ class DiseaseManager(models.Manager):
     def get_queryset(self):
         # we'll always need at least icd_o_morpho, so select it ahead of time
         return super(DiseaseManager, self).get_queryset().select_related('icd_o_morpho')
+    
+        use_in_migrations = True
 
 class Disease(models.Model):
     created_on = models.DateTimeField(blank=True, null=True)
