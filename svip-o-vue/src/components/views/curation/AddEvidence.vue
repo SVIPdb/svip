@@ -1156,4 +1156,8 @@ export default {
 .v-select {
     background-color: white !important;
 }
+
+.form-control, .form-control:focus, .custom-select, .custom-select:focus {
+    color: black;
+}
 </style>

@@ -30,16 +30,7 @@ class Command(BaseCommand):
             if topo_str in diseases[disease.icd_o_morpho.id]:
                 disease_to_keep = Disease.objects.get(id=diseases[disease.icd_o_morpho.id][topo_str])
                 
-                print(f"disease {disease.id} is a dublicate of disease {disease_to_keep}")
-
-                for curation in disease.curationentry_set.all():
-                    curation.disease = disease_to_keep
-                    curation.save()
-
-                for svip_disease in disease.diseaseinsvip_set.all():
-                    svip_disease.disease = disease_to_keep
-                    print(disease_to_keep.id)
-                    svip_disease.save()
+                print(f"disease {disease.id} is a duplicate of disease {disease_to_keep}")
 
                 for association in disease.curation_associations.all():
                     association.disease = disease_to_keep
@@ -53,11 +44,27 @@ class Command(BaseCommand):
                     submitted_var.curation_disease = disease_to_keep
                     submitted_var.save()
 
+                for svip_disease in disease.diseaseinsvip_set.all():
+                    svip_disease.disease = disease_to_keep
+                    print(disease_to_keep.id)
+                    svip_disease.save()
+
+                print('flag 1')
+                for curation in disease.curationentry_set.all():
+                    print(f'curation detected: ID is {curation.id}')
+                    print(f"disease of curation should become {disease_to_keep.id}")
+                    curation.disease = disease_to_keep
+                    curation.save()
+                print('flag 2')
+
                 disease.delete()
-                print(f"disease {disease.id} is deleted")
+                print('disease has been deleted.')
 
             else:
                 diseases[disease.icd_o_morpho.id][topo_str] = disease.id
                 print(f"disease {disease.id} is stored.")
 
     print(diseases)
+
+
+def clean_diseases_in_svip():

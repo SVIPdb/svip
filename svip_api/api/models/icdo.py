@@ -65,11 +65,11 @@ class IcdOTopo(models.Model):
 
 
 class IcdOTopoApiDisease(models.Model):
-    api_disease = models.ForeignKey(Disease, models.DO_NOTHING)
-    icd_o_topo = models.ForeignKey(IcdOTopo, models.DO_NOTHING)
+    api_disease = models.ForeignKey(Disease, models.DO_NOTHING, null=True)
+    icd_o_topo = models.ForeignKey(IcdOTopo, models.DO_NOTHING, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'icd_o_topo_api_disease'
         #unique_together = (('api_disease', 'icd_o_topo'),)
 
