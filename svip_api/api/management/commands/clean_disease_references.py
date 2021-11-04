@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from api.models.reference import Disease
 from api.models.icdo import IcdOTopoApiDisease
+from api.models.svip import DiseaseInSVIP
 
 class Command(BaseCommand):
   help = 'Gets rid of duplidated diseases and attribute the associated data to the disease of reference'
@@ -65,6 +66,3 @@ class Command(BaseCommand):
                 print(f"disease {disease.id} is stored.")
 
     print(diseases)
-
-
-def clean_diseases_in_svip():
