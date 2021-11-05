@@ -73,8 +73,8 @@ def clean_diseases():
                     curation.disease = disease_to_keep
                     curation.save()
 
+                print(f'disease {disease.id} has been deleted.\n')
                 disease.delete()
-                print('disease has been deleted.\n')
 
             else:
                 diseases[disease.icd_o_morpho.id][topo_str] = disease.id
