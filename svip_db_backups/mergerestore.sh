@@ -21,7 +21,7 @@ DUMP="$1"
 SCHEMA='public'
 ORIG_SCHEMA='public_orig'
 UID_FIELD='__uid'
-DEBUG=1
+DEBUG=0
 
 stmt_buffer=''
 post_stmt_buffer=''
@@ -169,6 +169,8 @@ function add_uid_relation {
   notice "Add relation ${related_table} -> ${table}..."
   add_column "${schema}.${related_table}" "__${reference_field}_uid" "text"
   sql "UPDATE ${schema}.${related_table} RT set __${reference_field}_uid=(select ${UID_FIELD} FROM ${schema}.${table} where id=RT.${reference_field});"
+  sql "CREATE INDEX IF NOT EXISTS idx_${reference_field}_uid ON ${schema}.${related_table} (__${reference_field}_uid);"
+  # sql "DROP INDEX ${schema}.idx_${reference_field}_uid;" 1
   # later_drop_column "${schema}.${related_table}" "__${reference_field}_uid}"
 }
 
@@ -213,7 +215,6 @@ function merge_table {
     all_cols="${additional_cols},${all_cols}"
   fi
 
-  # sql "ALTER TABLE ${orig_table} ADD CONSTRAINT ${orig_table#*.}_temp_constraint UNIQUE (${UID_FIELD}) INITIALLY IMMEDIATE;"
   commit
   sql "CREATE UNIQUE INDEX IF NOT EXISTS ${orig_table#*.}_temp_constraint ON ${orig_table} (${UID_FIELD});"
 
@@ -292,7 +293,7 @@ if [ $DEBUG -eq 1 ]; then
   printf "BEGIN;\n${post_stmt_buffer}COMMIT;\n"
 else
   printf "BEGIN;\n${stmt_buffer}COMMIT;\n" | psql -v ON_ERROR_STOP=1 -P pager=off -e -U ${DB_USER} -d ${DB_NAME}
-  # printf "BEGIN;\n${post_stmt_buffer}COMMIT;\n" | psql -v ON_ERROR_STOP=1 -P pager=off -e -U ${DB_USER} -d ${DB_NAME}
+  printf "BEGIN;\n${post_stmt_buffer}COMMIT;\n" | psql -v ON_ERROR_STOP=1 -P pager=off -e -U ${DB_USER} -d ${DB_NAME}
 fi
 
-# rename_schema ${ORIG_SCHEMA} ${SCHEMA}
+rename_schema ${ORIG_SCHEMA} ${SCHEMA}
