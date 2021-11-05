@@ -1,6 +1,6 @@
 <template>
     <b-card-text>
-        <b-table :fields="fields" :responsive="true" :items="items" show-empty small class="align-rows-center">
+        <b-table :fields="fields" :responsive="true" :items="entries" show-empty small class="align-rows-center">
             <template v-slot:cell(display)="row">
                 <row-expander v-access="'curators'" :row="row"/>
             </template>
@@ -53,17 +53,15 @@ import { simpleDateTime, trimPrefix } from "@/utils";
 import { checkInRole } from "@/directives/access";
 
 export default {
-    name: "EvidenceTable",
+    name: "CurationTable",
     components: {VariomesLitPopover},
     props: {
         variant: {required: true, type: Object},
         row: {required: true, type: Object},
-        diseaseName: {required: true, type: String}
-        //entries: { required: true, type: Array }
+        entries: { required: true, type: Array }
     },
     data() {
         return {
-            items: [],
             fields: [
                 {key: "display", label: "", sortable: false},
                 {key: "warning", label: "", sortable: false},
@@ -72,55 +70,32 @@ export default {
                 {key: "drugs", label: "Drugs", sortable: true, formatter: (x) => x.join(", ")},
                 {key: "tier_level_criteria", label: "Tier Criteria", sortable: true},
                 {key: "tier_level", label: "Tier Level", sortable: true},
-                //{key: "mutation_origin", label: "Mutation Origin", sortable: true},
-                //{key: "support", label: "Support", sortable: true},
-                //{key: "references", label: "References", sortable: false},
-                //{
-                //    key: "owner_name",
-                //    label: "Curator",
-                //    sortable: false,
-                //    class: [this.checkInRole("curators") ? "" : "d-none"]
-                //},
-                //{
-                //    key: "status",
-                //    label: "Status",
-                //    sortable: false,
-                //    class: [this.checkInRole("curators") ? "" : "d-none"]
-                //},
+                {key: "mutation_origin", label: "Mutation Origin", sortable: true},
+                {key: "support", label: "Support", sortable: true},
+                {key: "references", label: "References", sortable: false},
+                {
+                    key: "owner_name",
+                    label: "Curator",
+                    sortable: false,
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
+                },
+                {
+                    key: "status",
+                    label: "Status",
+                    sortable: false,
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
+                },
+                {
+                    key: "created_on",
+                    label: "Date",
+                    sortable: true,
+                    class: [this.checkInRole("curators") ? "" : "d-none"]
+                }
             ].map(x => {
                 if (!x.formatter) { x.formatter = (v) => v || '-'; }
                 return x;
             })
         };
-    },
-    created() {
-        let items = []
-        this.variant.svip_data.review_data.filter(association => association.disease === this.diseaseName).map(disease => {
-            disease.evidences.map(evidence => {
-                if ('curator' in evidence) {
-                    let evidenceRow = {}
-                    evidenceRow.name = 'test'
-                    evidenceRow.type_of_evidence = evidence.typeOfEvidence
-                    evidenceRow.drugs = []
-                    if (evidence.typeOfEvidence === "Predictive / Therapeutic") {
-                        evidenceRow.drugs.push(evidence.fullType.split('- ')[1])
-                    }
-
-                    if ('finalAnnotation' in evidence) {
-                        evidenceRow.effect = evidence.finalAnnotation.annotatedEffect
-                        const fullTier = evidence.finalAnnotation.annotatedTier
-                        evidenceRow.tier_level = fullTier.substr(0, fullTier.indexOf(':'))
-                        evidenceRow.tier_level_criteria = fullTier.split(':')[1]
-                    } else {
-                        evidenceRow.effect = evidence.curator.annotatedEffect
-                        const fullTier = evidence.curator.annotatedTier
-                        evidenceRow.tier_level = fullTier.substr(0, fullTier.indexOf(':'))
-                        evidenceRow.tier_level_criteria = fullTier.split(':')[1]
-                    }
-                    this.items.push(evidenceRow)
-                }
-            })
-        })
     },
     methods: {
         trimPrefix,
