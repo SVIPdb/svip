@@ -27,27 +27,11 @@ SECRET_KEY = 'ceqqi+r54k4btz4v_3#kl3_%xpbxopm9fag@vq-6q72-v!^lg$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost', '127.0.0.1', '0.0.0.0', 'api',
-    'nc2', '192.168.1.52',
-    'svip-dev.nexus.ethz.ch',
-    'svip-test.nexus.ethz.ch',
-    'svip.nexus.ethz.ch',
-    'svip.ch', 'www.svip.ch',
-    'svip.sib.swiss', 'svip-public.sib.swiss',
-    'svip.sensa.sib.swiss',
-    'api.svip.ch'
-]
+# For security reasons by default we restict the allowed hosts to localhost (empty array)
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
-CSRF_TRUSTED_ORIGINS = [
-    'localhost:8080', 'api:8080',
-    'nc2:3000',
-    'svip-dev.nexus.ethz.ch',
-    'svip-test.nexus.ethz.ch',
-    'svip.ch', 'www.svip.ch',
-    'svip.sib.swiss', 'svip-public.sib.swiss',
-    'svip.sensa.sib.swiss', 'svip.sensa.sib.swiss'
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # allows django to detect that we're running behind a secure proxy (e.g., nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -224,13 +208,7 @@ SIMPLE_JWT = {
 
 # CORS config (https://github.com/ottoyiu/django-cors-headers/)
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8000',
-    'localhost:8080',
-    'svip-dev.nexus.ethz.ch',
-    'svip-test.nexus.ethz.ch',
-    'api.svip.ch'
-)
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', '').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # Elasticsearch configuration
