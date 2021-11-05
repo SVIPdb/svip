@@ -29,6 +29,9 @@ DEBUG = True
 
 # For security reasons by default we restict the allowed hosts to localhost (empty array)
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS.append('127.0.0.1')
+ALLOWED_HOSTS.append('localhost')
+
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
