@@ -134,7 +134,6 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         obj_disease_morpho = obj.disease.icd_o_morpho if not model_field_null(
             obj, 'disease') else None
 
-
         ##get topo_codes
         #obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
         #    obj, 'disease') else None
@@ -147,7 +146,13 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         # in addition to getting curation entries we can view, filter them down to the current disease
         if str(obj) not in self._curation_cache:
             self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
-                Q(extra_variants=obj.svip_variant.variant) | Q(
+                Q(
+                    Q(extra_variants=obj.svip_variant.variant),
+                    Q(
+                        disease__icd_o_morpho__isnull=False,
+                        disease__icd_o_morpho=obj_disease_morpho,
+                    )
+                ) | Q(
                     Q(variant=obj.svip_variant.variant),
                     Q(
                         disease__icd_o_morpho__isnull=False,
@@ -159,8 +164,26 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         # return only entries that have the same topo terms
         entries = []
         for entry in self._curation_cache[str(obj)]:
-            if entry.disease.name == obj_disease_name: # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
-                entries.append(entry)
+            if entry.disease != None:
+                if entry.disease.name == obj_disease_name: # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
+                    entries.append(entry)
+            else:
+                if model_field_null(obj, 'disease'):
+                    entries.append(entry)
+
+
+        if model_field_null(obj, 'disease'):
+            self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
+                Q(
+                    Q(extra_variants=obj.svip_variant.variant),
+                    Q(disease=None)
+                ) | Q(
+                    Q(variant=obj.svip_variant.variant),
+                    Q(disease=None)
+                )
+            ).select_related('disease', 'variant', 'variant__gene').prefetch_related('extra_variants').all())
+            return self._curation_cache[str(obj)]
+
 
         #return self._curation_cache[str(obj)]
         return entries
@@ -271,6 +294,8 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
     # 'vacuum' them on a schedule with a script. this will require
     # identifying every model that refers to a Disease
 
+    print('\n\n_assign_disease_by_morpho_topo is run\n\n')
+
     with transaction.atomic():
         if not icdo_morpho:
             # we can't assign a disease if they didn't specify a morpho field
@@ -286,30 +311,32 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
             collector.collect([instance_disease])
 
             if collector.can_fast_delete():
-                print("Fast-deleting old disease")
+                #print("Fast-deleting old disease")
                 instance_disease.delete()
             else:
                 print("Can't fast-delete old disease: %s" % collector.nested())
 
         # build a Q-object that's all the topo entries related to the target Disease ANDed together
         q_objects = Q(icd_o_morpho=icdo_morpho['id'])
-        print (f"\nq_objects:\n{q_objects}\n")
+        #print (f"\nq_objects:\n{q_objects}\n")
 
         candidates = Disease.objects.filter(q_objects)
-        print (f"\ncandidates:\n{candidates}\n")
+        #print (f"\ncandidates:\n{candidates}\n")
 
         if icdo_topo_list:
             for x in icdo_topo_list:
-                print (f"\ntopo item:\n{x}\n")
+                #print (f"\ntopo item:\n{x}\n")
                 
                 q_objects = Q(icdotopoapidisease__icd_o_topo__id=x['id'])
-                print (f"\nq_objects:\n{q_objects}\n")
+                #print (f"\nq_objects:\n{q_objects}\n")
                 
                 topo_diseases = Disease.objects.filter(q_objects)
-                print (f"\ntopo_diseases:\n{topo_diseases}\n")
+                #print (f"\ntopo_diseases:\n{topo_diseases}\n")
                 
                 candidates = candidates.intersection(candidates, topo_diseases)
-                print (f"\ncandidates:\n{candidates}\n")
+                #print (f"\ncandidates:\n{candidates}\n")
+
+
         #else:
         #    # we need to search for a morpho that has no associated topo codes
         #    q_objects &= Q(icdotopoapidisease=None)
@@ -326,7 +353,7 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
                 icd_o_morpho=IcdOMorpho.objects.get(id=icdo_morpho['id']))
             IcdOTopoApiDisease.objects.bulk_create([
                 IcdOTopoApiDisease(api_disease=candidate,
-                                   icd_o_topo=IcdOTopo.objects.get(id=x['id']))
+                                    icd_o_topo=IcdOTopo.objects.get(id=x['id']))
                 for x in (icdo_topo_list if icdo_topo_list else [])
             ])
             candidate.save()
@@ -389,6 +416,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 Drug.objects.create(common_name=drug, user_created=True)
 
     def create(self, validated_data):
+        print('create is run')
         icdo_morpho, icdo_topo_list = validated_data.pop(
             'icdo_morpho'), validated_data.pop('icdo_topo')
         self._remap_multifields(validated_data)
@@ -401,6 +429,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         return result
 
     def update(self, instance, validated_data):
+        print('update is run')
         icdo_morpho, icdo_topo_list = validated_data.pop(
             'icdo_morpho'), validated_data.pop('icdo_topo')
         validated_data.pop('owner')
