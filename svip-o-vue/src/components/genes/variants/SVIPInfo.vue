@@ -229,8 +229,12 @@ export default {
             
             const entries = []
             this.variant.svip_data.diseases.map(disease => {
-                if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {
 
+                //if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {}
+
+                if (disease.name !== 'Unspecified') {
+                    entries.push(disease)
+                } else if (disease.curation_entries.length > 0) {
                     entries.push(disease)
                 }
             })
@@ -238,7 +242,6 @@ export default {
                 _showDetails: false,
                 ...x
             }));
-
 
             //return this.variant.svip_data.diseases.map(x => ({
             //    _showDetails: false,
