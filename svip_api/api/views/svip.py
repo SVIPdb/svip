@@ -565,9 +565,11 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
         for curation in variant.curations.filter(status="submitted"):
+            #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+
 
             # check that a disease is indicated for the curation entry being saved
-            if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+            if curation.disease:
                 associations = CurationAssociation.objects.filter(
                     variant=variant).filter(disease=curation.disease)
 
@@ -612,9 +614,10 @@ class ReviewDataView(APIView):
             )
 
         else:
+            print('\n\nFLAG 1\n\n')
             return Response(
                 data={
-                    "review_data": svip_var.first_annotation_data(entry_ids),
+                    "review_data": svip_var.review_data(all_evidence_types=True),
                 }
             )
 

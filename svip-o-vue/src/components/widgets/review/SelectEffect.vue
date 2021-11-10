@@ -159,6 +159,7 @@ export default {
             this.sample_curation_id = response.data.results[0].id;
         });
 
+        console.log('getReviewData() about to be run')
         this.getReviewData()
     },
     computed: {
@@ -173,8 +174,10 @@ export default {
                 var_id: this.variant.id,
                 entry_ids: this.entryIDs.split(/[ ,]+/)
             }
+            console.log('review request params: \n', params)
             HTTP.post(`/review_data`, params)
                 .then((response) => {
+                    console.log('response: \n', response)
                     this.diseases = response.data.review_data
                     this.prefillAnnotations();
                 })
