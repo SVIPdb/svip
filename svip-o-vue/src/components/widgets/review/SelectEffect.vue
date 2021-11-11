@@ -54,6 +54,7 @@
                                             </b-link>
                                         </b-col>
                                         <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                        <b-col class="border p-2">{{ curation.tier }}</b-col>
                                         <b-col class="border p-2">
                                             Support: {{ curation.support }}
                                         </b-col>
@@ -113,7 +114,6 @@ export default {
     },
     data() {
         return {
-            temp: "Tier III: Author statement",
             diseases: [],
             selfReviewedEvidences: {},
             summary: null,
@@ -142,6 +142,9 @@ export default {
                 "Tier III: No convincing published evidence of drugs effect",
                 "Tier IV: Reported evidence supportive of benign/likely benign effect",
                 "Other criteria"
+            ],
+            non_clinical_tier_fields: [
+                
             ]
         };
     },

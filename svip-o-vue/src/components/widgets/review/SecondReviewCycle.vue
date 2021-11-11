@@ -71,6 +71,7 @@
                                             </b-link>
                                         </b-col>
                                         <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                        <b-col class="border p-2">{{ curation.tier }}</b-col>
                                         <b-col class="border p-2">
                                             Support: {{ curation.support }}
                                         </b-col>

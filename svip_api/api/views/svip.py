@@ -58,7 +58,6 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
     def get_queryset(self):
-        print(self.kwargs)
         if 'variant_pk' in self.kwargs:
             q = VariantInSVIP.objects.filter(
                 variant_id=self.kwargs['variant_pk'])
@@ -99,7 +98,6 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def history(self, request, pk):
-        print("action is executed")
         entry = VariantInSVIP.objects.get(id=pk)
         return make_history_response(entry, add_created_by=False)
 
@@ -565,46 +563,46 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
         for curation in variant.curations.filter(status="submitted"):
+
             #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+            ## check that a disease is indicated for the curation entry being saved
+            #if curation.disease:
 
+            associations = CurationAssociation.objects.filter(
+                variant=variant).filter(disease=curation.disease)
 
-            # check that a disease is indicated for the curation entry being saved
-            if curation.disease:
-                associations = CurationAssociation.objects.filter(
-                    variant=variant).filter(disease=curation.disease)
+            # check that no association already exists for these parameters
+            if len(associations) == 0:
+                new_association = CurationAssociation(
+                    variant=variant, disease=curation.disease)
+                new_association.save()
 
-                # check that no association already exists for these parameters
-                if len(associations) == 0:
-                    new_association = CurationAssociation(
-                        variant=variant, disease=curation.disease)
-                    new_association.save()
+            association = CurationAssociation.objects.filter(
+                variant=variant).filter(disease=curation.disease).first()
 
-                association = CurationAssociation.objects.filter(
-                    variant=variant).filter(disease=curation.disease).first()
+            if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
+                drugs = curation.drugs
+            else:
+                # add null object to empty list so at least one iteration to create an evidence related to no drug
+                drugs = [None]
 
-                if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
-                    drugs = curation.drugs
-                else:
-                    # add null object to empty list so at least one iteration to create an evidence related to no drug
-                    drugs = [None]
+            for drug in drugs:
+                evidences = association.curation_evidences.filter(
+                    type_of_evidence=curation.type_of_evidence).filter(drug=drug)
 
-                for drug in drugs:
-                    evidences = association.curation_evidences.filter(
-                        type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+                if len(evidences) == 0:
+                    new_evidence = CurationEvidence(
+                        association=association,
+                        type_of_evidence=curation.type_of_evidence,
+                        drug=drug
+                    )
+                    new_evidence.save()
 
-                    if len(evidences) == 0:
-                        new_evidence = CurationEvidence(
-                            association=association,
-                            type_of_evidence=curation.type_of_evidence,
-                            drug=drug
-                        )
-                        new_evidence.save()
+                    evidence = association.curation_evidences.filter(
+                        type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                    curation.curation_evidences.add(evidence)
 
-                        evidence = association.curation_evidences.filter(
-                            type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-                        curation.curation_evidences.add(evidence)
-
-                curation.save()
+            curation.save()
 
         if entry_ids == 'all':
             return Response(
@@ -614,7 +612,6 @@ class ReviewDataView(APIView):
             )
 
         else:
-            print('\n\nFLAG 1\n\n')
             return Response(
                 data={
                     "review_data": svip_var.review_data(all_evidence_types=True),

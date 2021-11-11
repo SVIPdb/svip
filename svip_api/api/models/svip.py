@@ -152,19 +152,21 @@ class VariantInSVIP(models.Model):
 
 
     def review_data(self, *args, **kwargs):
-        
-        print('\n\nFLAG 2\n\n')
-        
+
         # JSON containing data for VariantDisease.vue
         diseases_dict = []
 
         for association in self.variant.curation_associations.all().order_by('id'):
             disease = {}
-            disease["disease"] = association.disease.name
+            
+            if association.disease:
+                disease["disease"] = association.disease.name
+            else:
+                disease["disease"] = 'Unspecified'
 
             evidences = []
             for evidence in association.curation_evidences.all():
-                
+
                 # delete evidences that don't contain any curation
                 if evidence.curation_entries.all().count() == 0:
                     if hasattr(evidence, 'annotation1'):
@@ -177,7 +179,7 @@ class VariantInSVIP(models.Model):
                         rr.delete()
                     evidence.delete()
                     break
-                
+
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
@@ -201,13 +203,18 @@ class VariantInSVIP(models.Model):
                 
                 curations = []
                 for curation in evidence.curation_entries.all():
+                    if curation.tier_level:
+                        tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
+                    else:
+                        tier = curation.tier_level_criteria
+                    
                     curation_obj = {
                         "id": curation.id,
                         "pmid": int(curation.references.split(":")[1]),
                         "effect": curation.effect,
                         "support": curation.support,
                         "comment": curation.comment,
-                        "tier": f"{curation.tier_level}: {curation.tier_level_criteria}"
+                        "tier": tier
                     }
                     curations.append(curation_obj)
                 evidence_obj["curations"] = curations
@@ -256,9 +263,7 @@ class VariantInSVIP(models.Model):
             
             # optional argument defines whether all evidence types should be passed, or only clinical ones
             all_evidence_types = kwargs.get('all_evidence_types', False)
-            
-            print(f"\n\nevidences: \n{evidences}\n\n")
-            
+
             if all_evidence_types:
                 for ev in evidences:
                     ordered_evidences.append(ev)
