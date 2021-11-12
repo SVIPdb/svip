@@ -551,7 +551,11 @@ class ReviewDataView(APIView):
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
-        entry_ids = request.data.get('entry_ids')
+        
+        if request.data.get('only_clinical') == False:
+            only_clinical = False
+        else:
+            only_clinical = True
 
         variant = Variant.objects.get(id=var_id)
         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
@@ -604,13 +608,12 @@ class ReviewDataView(APIView):
 
             curation.save()
 
-        if entry_ids == 'all':
+        if only_clinical:
             return Response(
                 data={
                     "review_data": svip_var.review_data(),
                 }
             )
-
         else:
             return Response(
                 data={

@@ -117,7 +117,6 @@ export default {
     },
     props: {
         variant: {type: Object, required: false},
-        entryIDs: {type: String},
     },
     data() {
         return {
@@ -168,8 +167,6 @@ export default {
         HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
-
-        console.log('getReviewData() about to be run')
         this.getReviewData()
     },
     computed: {
@@ -182,12 +179,10 @@ export default {
             const params={
                 reviewer: this.user.user_id,
                 var_id: this.variant.id,
-                entry_ids: this.entryIDs.split(/[ ,]+/)
+                only_clinical: false
             }
-            console.log('review request params: \n', params)
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    console.log('response: \n', response)
                     this.diseases = response.data.review_data
                     this.prefillAnnotations();
                 })
@@ -202,8 +197,6 @@ export default {
 
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === 'undefined') {
-                        console.log('FLAG')
-
                         let effects = {}
                         evidence.curations.map(curation => {
                             let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
