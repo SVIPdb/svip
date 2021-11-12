@@ -33,6 +33,11 @@
                                                     <select-predictive-therapeutic-outcome
                                                         v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                         v-model="evidence.curator.annotatedEffect"></select-predictive-therapeutic-outcome>
+                                                    <select-various-outcome
+                                                        v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
+                                                        v-model="evidence.curator.annotatedEffect"
+                                                        :evidenceType='evidence.typeOfEvidence'>
+                                                    </select-various-outcome>
                                                 </b-row>
                                                 <b-row class="p-2">
                                                     <select-tier v-model="evidence.curator.annotatedTier"></select-tier>
@@ -91,6 +96,7 @@ import ulog from "ulog";
 import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPrognosticOutcome";
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
+import SelectVariousOutcome from "@/components/widgets/review/forms/SelectVariousOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
 import { mapGetters } from "vuex";
 
@@ -107,6 +113,7 @@ export default {
         SelectPrognosticOutcome,
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
+        SelectVariousOutcome
     },
     props: {
         variant: {type: Object, required: false},

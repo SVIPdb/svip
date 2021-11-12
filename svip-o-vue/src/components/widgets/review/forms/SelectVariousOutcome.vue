@@ -1,17 +1,21 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <option>Associated with diagnosis</option>
-        <option>Not associated with diagnosis</option>
-        <option>Other</option>
+        <template v-for="(effect) in effects">
+            <option :key="effect.id">{{ effect }}</option>
+        </template>
     </b-form-select>
 </template>
 
 <script>
 export default {
-    name: "SelectDiagnosticOutcome",
-    props: ['value'],
+    name: "SelectVariousOutcome",
+    props: [
+        'value',
+        'evidenceType'
+    ],
     data() {
-        return { 
+        return {
+            effects: [],
             options: {
                 "Predictive / Therapeutic": {
                     "effect": [
@@ -84,9 +88,92 @@ export default {
                     "tier_criteria": [
                         "None"
                     ]
-                }
+                },
+                "Function": {
+                    "effect": [
+                        "Gain of function",
+                        "Loss of function",
+                        "Neomorphic",
+                        "Unaltered function",
+                        "Dominant negative"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vitro study",
+                        "Well-established in vivo study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Subcellular location": {
+                    "effect": [
+                        "Loss of physiological location",
+                        "Decreased physiological location",
+                        "Increased physiological location",
+                        "New location",
+                        "Unaltered location",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vitro study",
+                        "Well-established in vivo study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Interaction": {
+                    "effect": [
+                        "Loss of interaction with known partner(s)",
+                        "Decreased interaction with known partner(s)",
+                        "Increased interaction with known partner(s)",
+                        "New interaction partner(s)",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vitro study",
+                        "Well-established in vivo study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Expression": {
+                    "effect": [
+                        "Loss of expression",
+                        "Decreased expression",
+                        "Increased expression",
+                        "Misexpression",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vitro study",
+                        "Well-established in vivo study",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Response to drug": {
+                    "effect": [
+                        "Loss of drug response",
+                        "Decreased drug response",
+                        "Increased drug response",
+                        "Newly acquired drug response",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vitro study",
+                        "Well-established in vivo study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
             }
         }
+    },
+    created() {
+        this.effects = this.options[this.evidenceType]['effect']
     },
     computed: {
         selection: {
@@ -97,7 +184,7 @@ export default {
                 this.$emit('input', value)
             },
         }
-    }
+    },
 }
 </script>
 
