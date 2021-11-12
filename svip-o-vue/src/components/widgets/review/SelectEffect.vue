@@ -36,11 +36,21 @@
                                                     <select-various-outcome
                                                         v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
                                                         v-model="evidence.curator.annotatedEffect"
-                                                        :evidenceType='evidence.typeOfEvidence'>
+                                                        :evidenceType='evidence.typeOfEvidence'
+                                                        fieldType='effect'>
                                                     </select-various-outcome>
                                                 </b-row>
                                                 <b-row class="p-2">
-                                                    <select-tier v-model="evidence.curator.annotatedTier"></select-tier>
+                                                    <select-tier
+                                                        v-if="['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
+                                                        v-model="evidence.curator.annotatedTier">
+                                                    </select-tier>
+                                                    <select-various-outcome
+                                                        v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
+                                                        v-model="evidence.curator.annotatedEffect"
+                                                        :evidenceType='evidence.typeOfEvidence'
+                                                        fieldType='tier'>
+                                                    </select-various-outcome>
                                                 </b-row>
                                             </div>
                                         </b-col>
@@ -149,9 +159,160 @@ export default {
                 "Tier IV: Reported evidence supportive of benign/likely benign effect",
                 "Other criteria"
             ],
-            non_clinical_tier_fields: [
-                
-            ]
+            all_fields: {
+                "Predictive / Therapeutic": {
+                    "effect": [
+                        "Sensitive (in vitro)",
+                        "Responsive",
+                        "Resistant (in vitro)",
+                        "Reduced sensitivity",
+                        "Not responsive",
+                        "Adverse response",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "FDA/EMA/Swissmedic approved therapy (Tier IA)",
+                        "Therapy included in Professional Guidelines such as NCCN or CAP (Tier IA)",
+                        "Well-powered studies with consensus from experts in the field (Tier IB)",
+                        "FDA/EMA/Swissmedic approved therapy for a different tumor type (Tier IIC)",
+                        "Small published studies with some consensus (Tier IIC)",
+                        "Population study (Tier IID)",
+                        "Clinical trial (Tier IID)",
+                        "Pre-clinical trial (Tier IID)",
+                        "Case reports (Tier IID)",
+                        "No convincing published evidence of drugs effect (Tier III)",
+                        "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                        "Other criteria"
+                    ]
+                },
+                "Prognostic": {
+                    "effect": [
+                        "Good outcome",
+                        "Poor outcome",
+                        "Intermediate",
+                        "Not associated with prognosis"
+                    ],
+                    "tier_criteria": [
+                        "Included in Professional Guidelines (Tier IA)",
+                        "Well-powered studies with consensus from experts in the field (Tier IB)",
+                        "Small published studies with some consensus (Tier IIC)",
+                        "Population study (Tier IID)",
+                        "Clinical trial (Tier IID)",
+                        "Pre-clinical trial (Tier IID)",
+                        "Case reports (Tier IID)",
+                        "No convincing published evidence of drugs effect (Tier III)",
+                        "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                        "Other criteria"
+                    ]
+                },
+                "Diagnostic": {
+                    "effect": [
+                        "Associated with diagnosis",
+                        "Not associated with diagnosis",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Included in Professional Guidelines (Tier IA)",
+                        "Well-powered studies with consensus from experts in the field (Tier IB)",
+                        "Small published studies with some consensus (Tier IIC)",
+                        "Population study (Tier IID)",
+                        "Clinical trial (Tier IID)",
+                        "Pre-clinical trial (Tier IID)",
+                        "Case reports (Tier IID)",
+                        "No convincing published evidence of drugs effect (Tier III)",
+                        "Reported evidence supportive of benign/likely benign effect (Tier IV)",
+                        "Other criteria"
+                    ]
+                },
+                "Variant identification": {
+                    "effect": [
+                        "Unknown"
+                    ],
+                    "tier_criteria": [
+                        "None"
+                    ]
+                },
+                "Function": {
+                    "effect": [
+                        "Gain of function",
+                        "Loss of function",
+                        "Neomorphic",
+                        "Unaltered function",
+                        "Dominant negative"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vivo study",
+                        "Well-established in vitro study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Subcellular location": {
+                    "effect": [
+                        "Loss of physiological location",
+                        "Decreased physiological location",
+                        "Increased physiological location",
+                        "New location",
+                        "Unaltered location",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vivo study",
+                        "Well-established in vitro study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Interaction": {
+                    "effect": [
+                        "Loss of interaction with known partner(s)",
+                        "Decreased interaction with known partner(s)",
+                        "Increased interaction with known partner(s)",
+                        "New interaction partner(s)",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vivo study",
+                        "Well-established in vitro study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Expression": {
+                    "effect": [
+                        "Loss of expression",
+                        "Decreased expression",
+                        "Increased expression",
+                        "Misexpression",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vivo study",
+                        "Well-established in vitro study",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+                "Response to drug": {
+                    "effect": [
+                        "Loss of drug response",
+                        "Decreased drug response",
+                        "Increased drug response",
+                        "Newly acquired drug response",
+                        "Other"
+                    ],
+                    "tier_criteria": [
+                        "Well-established in vivo study",
+                        "Well-established in vitro study",
+                        "Prediction",
+                        "Author statement",
+                        "Other criteria"
+                    ]
+                },
+            }
         };
     },
     mounted() {},
@@ -197,54 +358,89 @@ export default {
 
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === 'undefined') {
-                        let effects = {}
-                        evidence.curations.map(curation => {
-                            let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
-                            let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
-                            if (curation.effect in effects) {
-                                effects[curation.effect]["curations"] += 1
-                                if (support_score > effects[curation.effect]["support_score"]) {
-                                    effects[curation.effect]["support_score"] = support_score
-                                }
-                                if (tier_score > effects[curation.effect]["tier_score"]) {
-                                    effects[curation.effect]["tier_score"] = tier_score
-                                }
-                            } else {
-                                effects[curation.effect] = {
-                                    "support_score": support_score,
-                                    "tier_score": tier_score,
-                                    "curations": 1,
-                                    "effect": curation.effect
-                                }
-                            }
-                        })
-                        let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
-                        const scores = ['support_score', 'curations', 'tier_score']
-                        const properties = [...scores, 'effect']
-
-                        for (const effect in effects) {
-                            for (var i = 0; i < scores.length; i++) {
-                                const effect_scores = effects[effect]
-                                if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                                    
-                                    properties.map(property => {
-                                        trustedCuration[property] = effect_scores[property]
-                                    })
-
-                                    break;
-                                } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
-                                    break;
-                                }
-                            }
+                        if (['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)) {
+                            this.annotatateClinicalEvidence(evidence)
+                        } else {
+                            this.annotatateNonClinicalEvidence
                         }
-                        evidence.curator = []
-                        evidence.curator.annotatedEffect = trustedCuration['effect']
-                        evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
-
-                        //this.submitOneEvidence(evidence)
                     }
                 })
             })
+        },
+        annotatateClinicalEvidence() {
+            let effects = {}
+            evidence.curations.map(curation => {
+                let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
+                let tier_score = this.tier_fields.length - this.tier_fields.indexOf(curation.tier)
+                if (curation.effect in effects) {
+                    effects[curation.effect]["curations"] += 1
+                    if (support_score > effects[curation.effect]["support_score"]) {
+                        effects[curation.effect]["support_score"] = support_score
+                    }
+                    if (tier_score > effects[curation.effect]["tier_score"]) {
+                        effects[curation.effect]["tier_score"] = tier_score
+                    }
+                } else {
+                    effects[curation.effect] = {
+                        "support_score": support_score,
+                        "tier_score": tier_score,
+                        "curations": 1,
+                        "effect": curation.effect
+                    }
+                }
+            })
+
+            // trustedCuration is the most trustable associatoin of effect & tier calculated from tier_level and number of such curations
+            let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
+
+            // score categories ranked by priority
+            const scores = ['support_score', 'curations', 'tier_score']
+
+            const properties = [...scores, 'effect']
+
+            for (const effect in effects) {
+                for (var i = 0; i < scores.length; i++) {
+                    const effect_scores = effects[effect]
+                    if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
+                        
+                        properties.map(property => {
+                            trustedCuration[property] = effect_scores[property]
+                        })
+
+                        break;
+                    } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
+                        break;
+                    }
+                }
+            }
+            evidence.curator = {}
+            evidence.curator.annotatedEffect = trustedCuration['effect']
+            evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
+        },
+        annotatateNonClinicalEvidence() {
+            let effects = {}
+            let maxKey, maxValue = 0;
+            evidence.curations.map(curation => {
+                let tier_score = this.all_fields[this.evidenceType]["tier_criteria"].length - this.all_fields[this.evidenceType]["tier_criteria"].indexOf(curation.tier)
+                if (curation.effect in effects) {
+                    effects[curation.effect]["curations"] += 1
+                    if (tier_score > effects[curation.effect]["tier_score"]) {
+                        effects[curation.effect]["tier_score"] = tier_score
+                    }
+                } else {
+                    effects[curation.effect] = {
+                        "tier_score": tier_score,
+                        "curations": 1,
+                        "effect": curation.effect
+                    }
+                }
+            })
+            
+
+
+            evidence.curator = {}
+            evidence.curator.annotatedEffect = trustedCuration['effect']
+            evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
         },
         submitCurations() {
             this.diseases.map(disease => {

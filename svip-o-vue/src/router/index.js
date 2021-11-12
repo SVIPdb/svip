@@ -137,7 +137,7 @@ const router = new Router({
             component: AddEvidence,
             meta: {
                 title: 'SVIP-O: Edit Curation',
-                requiresAuth: true, roles: ['curators', 'clinicians']
+                requiresAuth: true, roles: ['curators']
             }
         },
         {

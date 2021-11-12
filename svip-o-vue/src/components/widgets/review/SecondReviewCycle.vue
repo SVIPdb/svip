@@ -374,7 +374,6 @@ export default {
             showDisease: true,
         };
     },
-    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {

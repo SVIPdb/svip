@@ -1,7 +1,7 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <template v-for="(effect) in effects">
-            <option :key="effect.id">{{ effect }}</option>
+        <template v-for="(opt) in selectables">
+            <option :key="opt.id">{{ opt }}</option>
         </template>
     </b-form-select>
 </template>
@@ -11,11 +11,12 @@ export default {
     name: "SelectVariousOutcome",
     props: [
         'value',
-        'evidenceType'
+        'evidenceType',
+        'fieldType'
     ],
     data() {
         return {
-            effects: [],
+            selectables: [],
             options: {
                 "Predictive / Therapeutic": {
                     "effect": [
@@ -173,7 +174,11 @@ export default {
         }
     },
     created() {
-        this.effects = this.options[this.evidenceType]['effect']
+        if (this.fieldType === 'effect') {
+            this.selectables = this.options[this.evidenceType]['effect']
+        } else {
+            this.selectables = this.options[this.evidenceType]["tier_criteria"]
+        }
     },
     computed: {
         selection: {
@@ -184,7 +189,7 @@ export default {
                 this.$emit('input', value)
             },
         }
-    },
+    }
 }
 </script>
 
