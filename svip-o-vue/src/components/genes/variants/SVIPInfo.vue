@@ -209,6 +209,7 @@ export default {
             }
         },
         splitCurationEntries(row) {
+            console.log(row)
             const annotated_entries = row.item.curation_entries.map(x => ({...x, _showDetails: false}));
 
             return {
