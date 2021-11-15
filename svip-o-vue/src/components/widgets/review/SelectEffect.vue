@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-for="(review) in diseases" :key="review">
+        <div v-for="(review, idx) in diseases" :key="idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showDisease"/>
@@ -47,7 +47,7 @@
                                                     </select-tier>
                                                     <select-various-outcome
                                                         v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
-                                                        v-model="evidence.curator.annotatedEffect"
+                                                        v-model="evidence.curator.annotatedTier"
                                                         :evidenceType='evidence.typeOfEvidence'
                                                         fieldType='tier'>
                                                     </select-various-outcome>
@@ -359,15 +359,15 @@ export default {
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === 'undefined') {
                         if (['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)) {
-                            this.annotatateClinicalEvidence(evidence)
+                            this.annotateClinicalEvidence(evidence)
                         } else {
-                            this.annotatateNonClinicalEvidence
+                            this.annotateNonClinicalEvidence(evidence)
                         }
                     }
                 })
             })
         },
-        annotatateClinicalEvidence() {
+        annotateClinicalEvidence(evidence) {
             let effects = {}
             evidence.curations.map(curation => {
                 let support_score = this.support_fields.length - this.support_fields.indexOf(curation.support)
@@ -390,23 +390,22 @@ export default {
                 }
             })
 
-            // trustedCuration is the most trustable associatoin of effect & tier calculated from tier_level and number of such curations
+            // trustedCuration is the currently most trusted association of effect & tier calculated from tier_level and number of such curations
             let trustedCuration = {'effect': '', 'support_score': 0, 'tier_score': 0, "curations": 0}
 
             // score categories ranked by priority
             const scores = ['support_score', 'curations', 'tier_score']
-
             const properties = [...scores, 'effect']
 
             for (const effect in effects) {
                 for (var i = 0; i < scores.length; i++) {
+                // iterate to next score field only if current score values are equal (so score field with lower priority will settle which effect to keep)
+                // otherwise break and iterate to next effect
                     const effect_scores = effects[effect]
                     if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                        
                         properties.map(property => {
                             trustedCuration[property] = effect_scores[property]
                         })
-
                         break;
                     } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
                         break;
@@ -417,30 +416,54 @@ export default {
             evidence.curator.annotatedEffect = trustedCuration['effect']
             evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
         },
-        annotatateNonClinicalEvidence() {
+        annotateNonClinicalEvidence(evidence) {
+            console.log(`annotatedNonClinical is run`)
             let effects = {}
-            let maxKey, maxValue = 0;
             evidence.curations.map(curation => {
-                let tier_score = this.all_fields[this.evidenceType]["tier_criteria"].length - this.all_fields[this.evidenceType]["tier_criteria"].indexOf(curation.tier)
+                // tiers listed first are the most trustable ones (so we attribute a higher score)
+                let tier_score = this.all_fields[evidence.typeOfEvidence]["tier_criteria"].length - this.all_fields[evidence.typeOfEvidence]["tier_criteria"].indexOf(curation.tier)
                 if (curation.effect in effects) {
+                    // keep record of number of times the effect is listed
                     effects[curation.effect]["curations"] += 1
+                    // replace tier_score only if higher than the one already registered for this effect
                     if (tier_score > effects[curation.effect]["tier_score"]) {
                         effects[curation.effect]["tier_score"] = tier_score
                     }
                 } else {
                     effects[curation.effect] = {
-                        "tier_score": tier_score,
                         "curations": 1,
+                        "tier_score": tier_score,
                         "effect": curation.effect
                     }
                 }
             })
             
+            // trustedCuration is the currently most trusted association of effect & tier calculated from tier_level and number of such curations
+            let trustedCuration = {'effect': '', 'tier_score': 0, "curations": 0}
 
+            // score categories ranked by priority (count is more important than tier)
+            const scores = ['curations', 'tier_score']
+            const properties = [...scores, 'effect']
 
+            for (const effect in effects) {
+                for (var i = 0; i < scores.length; i++) {
+                // iterate to next score field only if current score values are equal (so score field with lower priority will settle which effect to keep)
+                // otherwise break and iterate to next effect
+                    const effect_scores = effects[effect]
+                    if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
+                        properties.map(property => {
+                            trustedCuration[property] = effect_scores[property]
+                        })
+                        break;
+                    } else if (effect_scores[scores[i]] < trustedCuration[scores[i]]) {
+                        break;
+                    }
+                }
+            }
             evidence.curator = {}
             evidence.curator.annotatedEffect = trustedCuration['effect']
-            evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
+            
+            evidence.curator.annotatedTier = this.all_fields[evidence.typeOfEvidence]["tier_criteria"][this.all_fields[evidence.typeOfEvidence]["tier_criteria"].length - trustedCuration['tier_score']]
         },
         submitCurations() {
             this.diseases.map(disease => {
