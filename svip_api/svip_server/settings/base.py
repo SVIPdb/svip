@@ -32,7 +32,7 @@ if os.environ.get('DJANGO_ALLOWED_HOSTS') == '*':
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 else:
     #ALLOWED_HOSTS = ast.literal_eval(os.environ.get('DJANGO_ALLOWED_HOSTS'))
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
