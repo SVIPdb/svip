@@ -94,7 +94,6 @@ export default {
         };
     },
     created() {
-        let items = []
         this.variant.svip_data.review_data.filter(association => association.disease === this.diseaseName).map(disease => {
             disease.evidences.map(evidence => {
                 if ('curator' in evidence) {
@@ -120,6 +119,10 @@ export default {
                     this.items.push(evidenceRow)
                 }
             })
+        })
+        this.$emit('evidencesNum', {
+            evidence_id: this.row.item.id,
+            value: this.items.length
         })
     },
     methods: {
