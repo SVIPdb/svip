@@ -172,12 +172,8 @@ export default {
     },
     methods: {
         displayEvidencesNum(evidencesNum) {
-            console.log('value', evidencesNum.value)
-            console.log('evidence_id', evidencesNum.evidence_id)
-            //row.item.evidencesNum = 3
-            //console.log(row.item.evidencesNum)
+            // update the number of evidences calculated inside the child component
             this.svip_entries.filter(entry => entry.id === evidencesNum.evidence_id).map(row => row.evidencesNum = evidencesNum.value)
-            //this.$refs.table.refresh();
         },
         packedFilter(filters) {
             return JSON.stringify(filters);
