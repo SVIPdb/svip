@@ -19,9 +19,9 @@ DB_USER='postgres'
 DB_NAME='svip_api'
 DUMP="$1"
 SCHEMA='public'
-ORIG_SCHEMA='public_orig'
+ORIG_SCHEMA='orig'
 UID_FIELD='__uid'
-DEBUG=0
+DEBUG=1
 
 stmt_buffer=''
 post_stmt_buffer=''
