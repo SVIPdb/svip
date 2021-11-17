@@ -160,7 +160,7 @@
             </transition>
         </b-card>
 
-        <div v-for="(evidence) in disease" :key="evidence">
+        <div v-for="(evidence, idx) in disease" :key="idx">
             <b-modal :id="addNoteID" :ref="evidence.sib_annotation_id" title="Add/modify a note" class="modal-add-evidence"
                     size="lg" :hide-footer="true">
                 <b-card no-body>
@@ -223,7 +223,7 @@
 
                                             <div class="mt-1 text-left">
                                                 <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
-                                                        v-for="x in annotationUsed" :key="x.id"
+                                                        v-for="(x, i) in annotationUsed" :key="i"
                                                         :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
                                                         target="_blank"
                                                 >

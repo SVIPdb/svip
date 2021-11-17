@@ -275,9 +275,7 @@ export default {
             const params = {
                 reviewer: this.user.user_id,
                 var_id: this.variant.id,
-                entry_ids: 'all'
             }
-
             HTTP.post(`/review_data`, params)
                 .then((response) => {
                     this.diseases = response.data.review_data

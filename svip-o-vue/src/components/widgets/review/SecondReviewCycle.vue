@@ -71,6 +71,7 @@
                                             </b-link>
                                         </b-col>
                                         <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                        <b-col class="border p-2">{{ curation.tier }}</b-col>
                                         <b-col class="border p-2">
                                             Support: {{ curation.support }}
                                         </b-col>
@@ -373,7 +374,6 @@ export default {
             showDisease: true,
         };
     },
-    mounted() {},
     created() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
@@ -399,9 +399,7 @@ export default {
             const params={
                 reviewer: this.user.user_id,
                 var_id: this.variant.id,
-                entry_ids: 'all'
             }
-
             HTTP.post(`/review_data`, params)
                 .then((response) => {
                     this.diseases = response.data.review_data

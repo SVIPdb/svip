@@ -145,12 +145,6 @@
                 </template>
 
                 <template v-slot:extra_commands>
-                    <!--<div v-if="isSubmittable" style="margin-bottom: 10px; margin-right: 10px;">
-                        <b-button :disabled="selectedCount <= 0" variant="info" @click="submitSelected" style="height: 34px;">
-                            Submit {{ selectedCount }} {{ selectedCount === 1 ? 'Entry' : 'Entries' }}
-                        </b-button>
-                    </div>-->
-
                     <div style="margin-bottom: 10px; margin-right: 10px;">
                         <b-button variant="info" @click="submitAll" style="height: 34px;">
                             Submit to review
@@ -508,10 +502,7 @@ export default {
                     // add request to change the status of the variant
 
                     router.push({
-                        name: "submit-curation",
-                        params: {
-                            entryIDs: entryIDs,
-                        }
+                        name: "submit-curation"
                     });
                 })
                 .catch((err) => {
@@ -531,36 +522,6 @@ export default {
                     .catch((err) => {
                         log.warn(err);
                     })
-            }
-        },
-        submitSelected() {
-            const prompt = (this.selectedCount === 1
-                ? 'Are you sure you want to submit this entry?'
-                : `Are you sure that you want to submit these ${this.selectedCount} entries?`) +
-            '\n\nYou will no longer be able to edit your entries after submitting them!';
-
-            if (confirm(prompt)) {
-                const entryIDs = Object.keys(this.selected).join(",");
-
-                // TODO: set the status of all the selected entries to 'submitted'
-                HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
-                    .then(() => {
-                        router.push({
-                            name: "submit-curation",
-                            params: {
-                                entryIDs: entryIDs,
-                            }
-                        });
-
-                        //window.location.href = `${window.location.href}/submit/`;
-                        //this.channel.postMessage(`Submitted IDs ${entryIDs}`);
-                        ////this.$snotify.info(`${result.data.changed} ${result.data.changed == 1 ? 'entry' : 'entries'} submitted`);
-                        ////this.$refs.paged_table.refresh();
-                    })
-                    .catch((err) => {
-                        this.$snotify.error("Failed to submit entries");
-                        log.warn(err);
-                    });
             }
         },
         showHistory(entry_id) {

@@ -118,7 +118,7 @@ const router = new Router({
             component: CurationDashboard,
             meta: {
                 title: 'SVIP-O: Dashboard',
-                requiresAuth: true, roles: ['curators', 'reviewers']
+                requiresAuth: true, roles: ['curators', 'clinicians']
             }
         },
         {
@@ -128,7 +128,7 @@ const router = new Router({
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Curate',
-                requiresAuth: true, roles: ['curators', 'reviewers']
+                requiresAuth: true, roles: ['curators', 'clinicians']
             }
         },
         {
@@ -137,7 +137,7 @@ const router = new Router({
             component: AddEvidence,
             meta: {
                 title: 'SVIP-O: Edit Curation',
-                requiresAuth: true, roles: ['curators', 'reviewers']
+                requiresAuth: true, roles: ['curators']
             }
         },
         {
@@ -151,7 +151,7 @@ const router = new Router({
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: View Evidence',
-                requiresAuth: true, roles: ['curators', 'reviewers']
+                requiresAuth: true, roles: ['curators', 'clinicians']
             }
         },
         {
@@ -161,16 +161,16 @@ const router = new Router({
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Review',
-                requiresAuth: true, roles: ['curators', 'reviewers'] // Ivo : Should I only let reviewers?
+                requiresAuth: true, roles: ['clinicians']
             }
         },
         {
-            path: "/curation/gene/:gene_id/variant/:variant_id/submit/:entryIDs",
+            path: "/curation/gene/:gene_id/variant/:variant_id/submit",
             name: "submit-curation",
             component: SubmitCurations,
             props: true,
             meta: {
-                requiresAuth: true, roles: ['curators', 'reviewers']
+                requiresAuth: true, roles: ['curators']
             }
         },
         {
@@ -190,7 +190,7 @@ const router = new Router({
             // beforeEnter: remapGeneSymbol,
             meta: {
                 title: 'SVIP-O: Review validation',
-                requiresAuth: true, roles: ['curators'] // Ivo : Should I only let reviewers?
+                requiresAuth: true, roles: ['curators']
             }
         },
         {

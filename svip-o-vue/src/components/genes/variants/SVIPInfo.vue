@@ -10,6 +10,7 @@
             <b-table v-if="svip_entries"
                 :fields="fields" :items="svip_entries" :sort-by.sync="sortBy" :sort-desc="false"
                 style="margin-bottom: 0;" show-empty
+                ref='table'
             >
                 <template v-slot:cell(display)="row">
                     <row-expander :row="row"/>
@@ -78,8 +79,8 @@
                                     :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
                                 >
                                     <b-tab active>
-                                        <template v-slot:title>Evidence <b-badge class="text-center">{{ entries.finalized.length }}</b-badge></template>
-                                        <EvidenceTable :variant="variant" :row="row" :diseaseName="row.item.name"/>
+                                        <template v-slot:title>Evidence <b-badge class="text-center">{{ row.item.evidencesNum }}</b-badge></template>
+                                        <EvidenceTable :variant="variant" :row="row" :diseaseName="row.item.name" @evidencesNum="displayEvidencesNum"/>
                                         <!--<EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />-->
                                     </b-tab>
 
@@ -170,6 +171,10 @@ export default {
         };
     },
     methods: {
+        displayEvidencesNum(evidencesNum) {
+            // update the number of evidences calculated inside the child component
+            this.svip_entries.filter(entry => entry.id === evidencesNum.evidence_id).map(row => row.evidencesNum = evidencesNum.value)
+        },
         packedFilter(filters) {
             return JSON.stringify(filters);
         },
@@ -210,7 +215,6 @@ export default {
         },
         splitCurationEntries(row) {
             const annotated_entries = row.item.curation_entries.map(x => ({...x, _showDetails: false}));
-
             return {
                 finalized: annotated_entries.filter(x => x.status === 'reviewed' || x.status === 'unreviewed'),
                 pending: annotated_entries.filter(x => x.status !== 'reviewed')
@@ -226,24 +230,23 @@ export default {
             if (!this.variant || !this.variant.svip_data || !this.variant.svip_data.diseases) {
                 return null;
             }
-            
+
             const entries = []
             this.variant.svip_data.diseases.map(disease => {
-                if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {
+                //if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {}
 
-                    entries.push(disease)
+                let diseaseItem = disease
+                diseaseItem.evidencesNum = 0
+                if (disease.name !== 'Unspecified') {
+                    entries.push(diseaseItem)
+                } else if (disease.curation_entries.length > 0) {
+                    entries.push(diseaseItem)
                 }
             })
             return entries.map(x => ({
                 _showDetails: false,
                 ...x
             }));
-
-
-            //return this.variant.svip_data.diseases.map(x => ({
-            //    _showDetails: false,
-            //    ...x
-            //}));
         },
         totalPatients() {
             return this.variant.svip_data.diseases.reduce(
