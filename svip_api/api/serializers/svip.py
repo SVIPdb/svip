@@ -294,8 +294,6 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
     # 'vacuum' them on a schedule with a script. this will require
     # identifying every model that refers to a Disease
 
-    print('\n\n_assign_disease_by_morpho_topo is run\n\n')
-
     with transaction.atomic():
         if not icdo_morpho:
             # we can't assign a disease if they didn't specify a morpho field
@@ -318,24 +316,13 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
 
         # build a Q-object that's all the topo entries related to the target Disease ANDed together
         q_objects = Q(icd_o_morpho=icdo_morpho['id'])
-        #print (f"\nq_objects:\n{q_objects}\n")
-
         candidates = Disease.objects.filter(q_objects)
-        #print (f"\ncandidates:\n{candidates}\n")
 
         if icdo_topo_list:
             for x in icdo_topo_list:
-                #print (f"\ntopo item:\n{x}\n")
-                
                 q_objects = Q(icdotopoapidisease__icd_o_topo__id=x['id'])
-                #print (f"\nq_objects:\n{q_objects}\n")
-                
                 topo_diseases = Disease.objects.filter(q_objects)
-                #print (f"\ntopo_diseases:\n{topo_diseases}\n")
-                
                 candidates = candidates.intersection(candidates, topo_diseases)
-                #print (f"\ncandidates:\n{candidates}\n")
-
 
         #else:
         #    # we need to search for a morpho that has no associated topo codes
@@ -416,7 +403,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
                 Drug.objects.create(common_name=drug, user_created=True)
 
     def create(self, validated_data):
-        print('create is run')
         icdo_morpho, icdo_topo_list = validated_data.pop(
             'icdo_morpho'), validated_data.pop('icdo_topo')
         self._remap_multifields(validated_data)
@@ -429,7 +415,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         return result
 
     def update(self, instance, validated_data):
-        print('update is run')
         icdo_morpho, icdo_topo_list = validated_data.pop(
             'icdo_morpho'), validated_data.pop('icdo_topo')
         validated_data.pop('owner')

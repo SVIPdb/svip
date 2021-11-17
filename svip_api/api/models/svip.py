@@ -203,6 +203,7 @@ class VariantInSVIP(models.Model):
                 
                 curations = []
                 for curation in evidence.curation_entries.all():
+                    #print(f"\n\ncuration id: {curation.id}\n\n")
                     if curation.tier_level:
                         tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
                     else:
