@@ -5,7 +5,7 @@
             <div class="row" style="width: 100%;">
                 <div class="col-lg-3 col-sm-12 text-center version-info">
                     <div class="align-bottom">
-                        <a :href="serverURL" target="_blank">SVIPdb</a> v{{appVersion}} ({{releaseName}})
+                        <a :href="serverURL" target="_blank">SVIPdb</a> {{appVersion}} ({{releaseName}})
                         <div class="feedback">
                             <anchor-router-link
                                 :to="{name: 'about', hash: '#disclaimer'}"
