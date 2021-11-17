@@ -549,6 +549,8 @@ class ReviewDataView(APIView):
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
 
+        print('review_data')
+
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
         
@@ -567,6 +569,8 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
         for curation in variant.curations.filter(status="submitted"):
+            
+            print('iteration')
 
             #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
             ## check that a disease is indicated for the curation entry being saved
@@ -591,6 +595,7 @@ class ReviewDataView(APIView):
                 drugs = [None]
 
             for drug in drugs:
+                print(f"\n\ncuration id: {curation.id}\n\n")
                 evidences = association.curation_evidences.filter(
                     type_of_evidence=curation.type_of_evidence).filter(drug=drug)
 
@@ -602,9 +607,8 @@ class ReviewDataView(APIView):
                     )
                     new_evidence.save()
 
-                    evidence = association.curation_evidences.filter(
-                        type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-                    curation.curation_evidences.add(evidence)
+                evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                curation.curation_evidences.add(evidence)
 
             curation.save()
 
