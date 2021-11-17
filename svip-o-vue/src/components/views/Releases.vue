@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-9 offset-1 mt-1">
                 <h1>Releases</h1>
-                <p>The current SVIP release is <b>v0.3.0</b>. The full changelog with each version is listed below.</p>
+                <p>The current SVIP release is <b>{{ appVersion }} ({{ releaseName }})</b>. The full changelog with each version is listed below.</p>
 
                 <div v-for="(release, code) in releases" class="release" :key="code">
                     <h3>v{{ code }} - {{ release.name }}</h3>
@@ -42,10 +42,12 @@
 </template>
 
 <script>
+import {appVersion, releaseName} from '@/app_config'
 import v020_commits from '@/data/releases/v020_commits.js';
 import v030_commits from '@/data/releases/v030_commits.js';
 import v090_commits from '@/data/releases/v090_commits.js';
 import v100_commits from '@/data/releases/v100_commits.js';
+import v130_commits from '@/data/releases/v130_commits.js';
 import dayjs from "dayjs";
 import RelativeTime from 'dayjs/plugin/relativeTime' // load on demand
 dayjs.extend(RelativeTime);
@@ -54,10 +56,22 @@ export default {
     name: "Releases",
     data() {
         return {
+            appVersion,
+            releaseName,
             releases: {
+                "1.3.0": {
+                    name: 'Init Expo',
+                    summary: 'Released on 17.12.2021, this includes the reviewer interface and a submit variant feature.',
+                    changes: [
+                        'Finalized review interface',
+                        'Introduced feature to submit additional variants',
+                        'Lots of bugfixes and other improvements'
+                    ],
+                    significant: true, full: false, changelog: v130_commits
+                },
                 "1.0.0": {
                     name: 'Beta Aleph',
-                    summary: 'Released on 10.20.2020, this is the first feature-complete public release.',
+                    summary: 'Released on 20.10.2020, this is the first feature-complete public release.',
                     changes: [
                         'Finalized curation interface',
                         'Added 273 SVIP-curated entries for selected variants in TP53, CTNNB1, NRAS',
