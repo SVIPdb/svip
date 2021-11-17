@@ -335,6 +335,7 @@
                                                 class="mt-3"
                                             >
                                                 <b-form-textarea
+                                                    style="background-color: rgb(243,243,243)"
                                                     rows="3"
                                                     disabled
                                                     :value="annotation"
