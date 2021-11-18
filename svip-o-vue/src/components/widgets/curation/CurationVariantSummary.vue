@@ -273,7 +273,10 @@ export default {
                 }
             } else {
             // Update summary and delete draft in the same request
-                params['var_id'] = this.variant.svip_data.id
+                // Provide var_id only if VariantInSVIP already existing (if not provided, the viewset will simply create it)
+                if (this.variant.svip_data) {
+                    params['var_id'] = this.variant.svip_data.id
+                }
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_variant_summary`, params)

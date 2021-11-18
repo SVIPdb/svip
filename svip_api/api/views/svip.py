@@ -641,17 +641,25 @@ class CurationIds(APIView):
 
 class UpdateVariantSummary(APIView):
     def post(self, request, *args, **kwargs):
-        var_id = request.data.get('var_id')
+        var_id = kwargs.get('var_id')
         summary = request.data.get('summary')
         summary_draft_id = request.data.get('summary_draft_id')
+        
+        summary_draft = SummaryDraft.objects.get(id=summary_draft_id)
 
-        variant = VariantInSVIP.objects.get(id=var_id)
-        variant.summary = summary
+        if var_id == None:
+            svip_var, svip_created = VariantInSVIP.objects.get_or_create(
+                variant=summary_draft.variant
+            )
+        else:
+            svip_var = VariantInSVIP.objects.get(id=var_id)
+
+        svip_var.summary = summary
         if 'summary_date' in request.data:
-            variant.summary_date = request.data.get('summary_date')
-        variant.save()
+            svip_var.summary_date = request.data.get('summary_date')
+        svip_var.save()
 
-        SummaryDraft.objects.get(id=summary_draft_id).delete()
+        summary_draft.delete()
         return Response(data=f"""The summary of VariantInSVIP {var_id} is updated. 
                         The SummaryDraft {summary_draft_id} is deleted.
                         """)
