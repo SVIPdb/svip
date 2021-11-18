@@ -569,8 +569,6 @@ class ReviewDataView(APIView):
             svip_var = matching_svip_var[0]
 
         for curation in variant.curations.filter(status="submitted"):
-            
-            print('iteration')
 
             #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
             ## check that a disease is indicated for the curation entry being saved
@@ -595,7 +593,6 @@ class ReviewDataView(APIView):
                 drugs = [None]
 
             for drug in drugs:
-                print(f"\n\ncuration id: {curation.id}\n\n")
                 evidences = association.curation_evidences.filter(
                     type_of_evidence=curation.type_of_evidence).filter(drug=drug)
 
