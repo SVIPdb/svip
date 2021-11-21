@@ -272,7 +272,7 @@ merge_table 'api_gene' 'api_variant:gene_id' 'symbol' 'entrez_id,ensembl_gene_id
 # it is basically not usefull to have so many unique fields, but in this setup (as long as we do not have a unique hash) its not possible to squice this list.
 merge_table 'api_variant' \
 'api_variantinsource:variant_id' \
-'name,description,hgvs_g,hgvs_c,start_pos,alt,ref' \
+'gene_id,name,hgvs_g' \
 'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status' \
 'gene_id=api_gene:symbol'
 clear_table 'api_variantinsource'
@@ -280,7 +280,7 @@ merge_table 'api_variantinsource' \
 '' \
 'variant_url' \
 'id,variant_url,extras,source_id' \
-'variant_id=api_variant:name,description,hgvs_g,hgvs_c,start_pos,alt,ref'
+'variant_id=api_variant:gene_id,name,hgvs_g'
 
 # restore the overwrite table
 for table in api_association api_environmentalcontext api_phenotype api_evidence
