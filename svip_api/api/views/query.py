@@ -1,5 +1,5 @@
 # non-model-backed functional endpoints
-from functools import reduce
+from functools import reduce, total_ordering
 
 from django.db.models import Count, Q
 from rest_framework import viewsets
@@ -12,6 +12,25 @@ from references.prot_to_hgvs import three_to_one_icase
 
 MAX_GENES = 100
 MAX_VARIANTS = 100
+
+
+
+
+
+@total_ordering
+class MinType(object):
+    def __ge__(self, other):
+        return True
+
+    def __eq__(self, other):
+        return (self is other)
+
+
+
+
+
+
+
 
 class QueryView(viewsets.ViewSet):
     def list(self, request, format=None):
@@ -97,8 +116,11 @@ class QueryView(viewsets.ViewSet):
             } for x in gq.order_by('symbol'))
             resp = g_resp
 
+        Min = MinType()
+        my_list.sort(key=lambda x: (x.chromosome, Min if x.start_pos is None else x.start_pos))
 
         return Response(resp)
+
 
     @action(detail=False)
     def stats(self, request):

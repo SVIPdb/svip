@@ -202,6 +202,7 @@ export default {
             }).then(res => {
                 // only take the response if it matches the query (timeing problem especially through proxy)
                 if (res.config.params.q === vm.query) {
+                    console.log(res.data)
                     vm.raw_options = res.data;
                 }
                 loading(false);
