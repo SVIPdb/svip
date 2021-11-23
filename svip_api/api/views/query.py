@@ -13,25 +13,6 @@ from references.prot_to_hgvs import three_to_one_icase
 MAX_GENES = 100
 MAX_VARIANTS = 100
 
-
-
-
-
-@total_ordering
-class MinType(object):
-    def __ge__(self, other):
-        return True
-
-    def __eq__(self, other):
-        return (self is other)
-
-
-
-
-
-
-
-
 class QueryView(viewsets.ViewSet):
     def list(self, request, format=None):
         """
@@ -68,7 +49,7 @@ class QueryView(viewsets.ViewSet):
 
             vq = Variant.objects.filter(
                 q_set | Q(name__contains=collapsed_search)
-            ).select_related('gene')
+            ).select_related('gene').order_by('chromosome').order_by('start_pos')
 
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
@@ -115,9 +96,6 @@ class QueryView(viewsets.ViewSet):
                 'label': x.symbol
             } for x in gq.order_by('symbol'))
             resp = g_resp
-
-        Min = MinType()
-        my_list.sort(key=lambda x: (x.chromosome, Min if x.start_pos is None else x.start_pos))
 
         return Response(resp)
 

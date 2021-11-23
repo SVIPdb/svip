@@ -120,6 +120,12 @@ class Variant(models.Model):
         # return "%s %s" % (self.gene.symbol, self.name)
         return self.description
 
+    def sortable_chr(self):
+        if len(self.chromosome) == 1:
+            return '0' + self.chromosome
+        else:
+            return self.chromosome
+
     def gene_symbol(self):
         return self.gene.symbol
 
