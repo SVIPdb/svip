@@ -446,13 +446,3 @@ class EnvironmentalContext(models.Model):
     envcontext_id = models.TextField(null=True)  # just called 'id' in the original object
     usan_stem = models.TextField(null=True)
     description = models.TextField()
-
-
-
-#class VCF(models.Model):
-#    name = models.TextField()
-#    variants = models.ManyToManyField(to=Variant)
-#    sample = models.ForeignKey(to=Patient, on_delete=DB_CASCADE)
-
-#class Sample(models.Model):
-    

@@ -120,6 +120,7 @@ export default {
             HTTP.get(this.apiUrl()).then(res => {
                 const additionalVariants = []
                 const IDs = []
+                console.log(res.data.results)
                 res.data.results.map(curation => {
                     curation.extra_variants.map(extra_var => {
                         if (!IDs.includes(extra_var.id)) {
