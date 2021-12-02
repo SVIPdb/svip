@@ -1,7 +1,8 @@
 # non-model-backed functional endpoints
-from functools import reduce
+from functools import reduce, total_ordering
 
-from django.db.models import Count, Q
+from django.db.models.functions import Concat, Length
+from django.db.models import Count, Q, F, Value, CharField, Case, When
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -47,9 +48,16 @@ class QueryView(viewsets.ViewSet):
             # database; e.g., 'Val600Glu' becomes 'V600E'
             collapsed_search = reduce(lambda acc, v: v[0].sub(v[1], acc), three_to_one_icase.items(), search_term)
 
-            vq = Variant.objects.filter(
+            queried_variants = Variant.objects.filter(
                 q_set | Q(name__contains=collapsed_search)
             ).select_related('gene')
+
+            #start variants by chrosome number, then by their genomic position
+            vq = queried_variants.annotate(chr_digits=Length('chromosome')).annotate(sortable_chr=Case(
+                #if chromosome is a 1-digit string, then we want variant to come first so add a '0' before (eg. 6 should come before 10)
+                When(chr_digits=1, then=Concat(Value('0'), F('chromosome'), output_field=CharField())),
+                default=F('chromosome')
+            )).order_by('sortable_chr', 'start_pos')
 
             if in_svip:
                 vq = vq.filter(variantinsvip__isnull=False)
@@ -97,8 +105,8 @@ class QueryView(viewsets.ViewSet):
             } for x in gq.order_by('symbol'))
             resp = g_resp
 
-
         return Response(resp)
+
 
     @action(detail=False)
     def stats(self, request):
