@@ -78,7 +78,7 @@ export default {
     data() {
         return {
             summary: this.variant.svip_data && this.variant.svip_data.summary, // permanent summary (not draft)
-            summaryDraft: '',
+            summaryDraft: null,
             showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and variant (if so: PATCH request instead of POST)
 
@@ -107,7 +107,7 @@ export default {
     },
     computed: {
         summaryModel() {
-        // What ii shown in the summary box
+        // What is shown in the summary box
             return this.showSummaryDraft ? this.summaryDraft : this.summary
         },
         ...mapGetters({
@@ -125,8 +125,9 @@ export default {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         },
         summaryDraftBoolean() {
-            const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            //const regExp = /[a-zA-Z]/g;
+            //if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            if (this.summaryDraft != null && this.summaryDraft !== this.summary) {
                 this.showSummaryDraft = true
             } else {
                 this.showSummaryDraft = false
@@ -192,7 +193,7 @@ export default {
                 HTTP.delete(`/summary_draft/${this.serverSummaryDraft.id}/`)
                     .then(() => {
                         this.serverSummaryDraft = null
-                        this.summaryDraft = "";
+                        this.summaryDraft = null;
                         this.showSummaryDraft = false
                         this.$snotify.success("Your draft has been deleted");
                     })
@@ -201,13 +202,13 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryDraft = "";
+                this.summaryDraft = null;
                 this.showSummaryDraft = false
                 this.$snotify.success("Your draft has been deleted");
             }
         },
         saveSummary() {
-            let params = {summary: this.summaryModel,}
+            let params = {summary: this.summaryModel}
 
             if (this.date) {
                 // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
@@ -293,7 +294,7 @@ export default {
             }
         },
         summaryUpdateCallback() {
-            this.summaryDraft = ''
+            this.summaryDraft = null
             this.showSummaryDraft = false
             if (this.changeDate) {
                 this.date = new Date()

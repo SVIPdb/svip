@@ -58,7 +58,7 @@ export default {
     data() {
         return {
             summary: this.gene.summary,
-            summaryDraft: '',
+            summaryDraft: null,
             showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and gene (if so: PATCH request instead of POST)
 
@@ -103,8 +103,9 @@ export default {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         },
         summaryDraftBoolean() {
-            const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            //const regExp = /[a-zA-Z]/g;
+            //if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            if (this.summaryDraft != null && this.summaryDraft !== this.summary) {
                 this.showSummaryDraft = true
             } else {
                 this.showSummaryDraft = false
@@ -170,7 +171,7 @@ export default {
                 HTTP.delete(`/gene_summary_draft/${this.serverSummaryDraft.id}/`)
                     .then(() => {
                         this.serverSummaryDraft = null
-                        this.summaryDraft = "";
+                        this.summaryDraft = null;
                         this.showSummaryDraft = false
                         this.$snotify.success("Your draft has been deleted");
                     })
@@ -179,7 +180,7 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryDraft = "";
+                this.summaryDraft = null;
                 this.showSummaryDraft = false
                 this.$snotify.success("Your draft has been deleted");
             }
@@ -252,7 +253,7 @@ export default {
             }
         },
         summaryUpdateCallback() {
-            this.summaryDraft = ''
+            this.summaryDraft = null
             this.showSummaryDraft = false
             this.$snotify.success("Summary updated!");
             if (this.changeDate) {
