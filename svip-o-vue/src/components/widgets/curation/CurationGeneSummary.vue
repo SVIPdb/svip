@@ -86,6 +86,7 @@ export default {
     },
     computed: {
         summaryModel() {
+            console.log(`summaryModel() changed: '${this.showSummaryDraft ? this.summaryDraft : this.summary}'`)
             return this.showSummaryDraft ? this.summaryDraft : this.summary
         },
         ...mapGetters({
@@ -186,7 +187,9 @@ export default {
             }
         },
         saveSummary() {
-            let params = {summary: this.summaryModel,}
+            let params = {summary: this.summaryModel}
+            
+            console.log(`\nsummaryModel: '${this.summaryModel}'`)
 
             if (this.date) {
                 // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
@@ -223,11 +226,14 @@ export default {
         },
 
         sendSummaryRequest(params) {
+            console.log(`sendSummaryRequest params: ${params['summary']}`)
             //check if a summary draft exists in the DB to delete it
             if (!this.serverSummaryDraft) {
+                console.log('no SummaryDraft in DB')
                 // No summary draft in the DB
                 HTTP.patch(`/genes/${this.gene.id}/`, params)
                     .then((response) => {
+                        console.log(`response: '${response.data.summary}'`)
                         this.summary = response.data.summary;
                         this.summaryUpdateCallback()
                     })
@@ -237,11 +243,13 @@ export default {
                     })
             } else {
             // Update summary and delete draft in the same request
+                console.log('summaryDraft in DB')
                 params['gene_id'] = this.gene.id
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_gene_summary`, params)
                     .then(() => {
+                        console.log(`summary after response: '${this.summaryModel}'`)
                         this.serverSummaryDraft = null
                         this.summary = this.summaryModel
                         this.summaryUpdateCallback()
