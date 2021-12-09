@@ -58,7 +58,7 @@ export default {
     data() {
         return {
             summary: this.gene.summary,
-            summaryDraft: '',
+            summaryDraft: null,
             showSummaryDraft: false,
             serverSummaryDraft: null, // defines whether a draft exists in the DB for this user and gene (if so: PATCH request instead of POST)
 
@@ -86,6 +86,7 @@ export default {
     },
     computed: {
         summaryModel() {
+            console.log(`summaryModel() changed: '${this.showSummaryDraft ? this.summaryDraft : this.summary}'`)
             return this.showSummaryDraft ? this.summaryDraft : this.summary
         },
         ...mapGetters({
@@ -103,8 +104,9 @@ export default {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         },
         summaryDraftBoolean() {
-            const regExp = /[a-zA-Z]/g;
-            if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            //const regExp = /[a-zA-Z]/g;
+            //if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
+            if (this.summaryDraft != null && this.summaryDraft !== this.summary) {
                 this.showSummaryDraft = true
             } else {
                 this.showSummaryDraft = false
@@ -170,7 +172,7 @@ export default {
                 HTTP.delete(`/gene_summary_draft/${this.serverSummaryDraft.id}/`)
                     .then(() => {
                         this.serverSummaryDraft = null
-                        this.summaryDraft = "";
+                        this.summaryDraft = null;
                         this.showSummaryDraft = false
                         this.$snotify.success("Your draft has been deleted");
                     })
@@ -179,13 +181,15 @@ export default {
                         this.$snotify.error("Failed to delete your draft");
                     })
             } else {
-                this.summaryDraft = "";
+                this.summaryDraft = null;
                 this.showSummaryDraft = false
                 this.$snotify.success("Your draft has been deleted");
             }
         },
         saveSummary() {
-            let params = {summary: this.summaryModel,}
+            let params = {summary: this.summaryModel}
+            
+            console.log(`\nsummaryModel: '${this.summaryModel}'`)
 
             if (this.date) {
                 // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
@@ -222,11 +226,14 @@ export default {
         },
 
         sendSummaryRequest(params) {
+            console.log(`sendSummaryRequest params: ${params['summary']}`)
             //check if a summary draft exists in the DB to delete it
             if (!this.serverSummaryDraft) {
+                console.log('no SummaryDraft in DB')
                 // No summary draft in the DB
                 HTTP.patch(`/genes/${this.gene.id}/`, params)
                     .then((response) => {
+                        console.log(`response: '${response.data.summary}'`)
                         this.summary = response.data.summary;
                         this.summaryUpdateCallback()
                     })
@@ -236,11 +243,13 @@ export default {
                     })
             } else {
             // Update summary and delete draft in the same request
+                console.log('summaryDraft in DB')
                 params['gene_id'] = this.gene.id
                 params['summary_draft_id'] = this.serverSummaryDraft.id
 
                 HTTP.post(`/update_gene_summary`, params)
                     .then(() => {
+                        console.log(`summary after response: '${this.summaryModel}'`)
                         this.serverSummaryDraft = null
                         this.summary = this.summaryModel
                         this.summaryUpdateCallback()
@@ -252,7 +261,7 @@ export default {
             }
         },
         summaryUpdateCallback() {
-            this.summaryDraft = ''
+            this.summaryDraft = null
             this.showSummaryDraft = false
             this.$snotify.success("Summary updated!");
             if (this.changeDate) {
