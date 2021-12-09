@@ -176,7 +176,7 @@ function add_uid_relation {
   sql_now "CREATE INDEX IF NOT EXISTS ${schema}_idx_${reference_field}_uid ON ${schema}.${related_table} (__${reference_field}_uid);"
   if [ "${schema}" == "${ORIG_SCHEMA}" ]; then
     sql "DROP INDEX IF EXISTS ${schema}.idx_${reference_field}_uid;" 1
-    later_drop_column "${schema}.${related_table}" "__${reference_field}_uid}"
+    later_drop_column "${schema}.${related_table}" "__${reference_field}_uid"
   fi
 }
 
