@@ -21,7 +21,7 @@ DUMP="$1"
 SCHEMA='public'
 ORIG_SCHEMA='orig'
 UID_FIELD='__uid'
-DEBUG=1
+DEBUG=0
 
 stmt_buffer=''
 post_stmt_buffer=''
@@ -46,6 +46,8 @@ function sql_now {
   fi
   if [ $DEBUG -eq 0 ]; then
     echo "${stmt}" | psql -U ${DB_USER} -d ${DB_NAME}
+  else
+    echo "${stmt}"
   fi
 }
 
@@ -123,7 +125,7 @@ function add_column {
   local type="$3"
 
   notice "Adding ${column} FROM ${table}"
-  sql "ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column} ${type};"
+  sql_now "ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column} ${type};"
 }
 
 function later_drop_column {
@@ -147,7 +149,7 @@ function delete_duplicates {
   local table="$1"
 
   notice "Delete duplicates from table ${table}, keeping lowest id..."
-  sql "DELETE FROM ${table} a USING ${table} b WHERE a.id < b.id AND a.${UID_FIELD} = b.${UID_FIELD};"
+  sql_now "DELETE FROM ${table} a USING ${table} b WHERE a.id < b.id AND a.${UID_FIELD} = b.${UID_FIELD};"
 }
 
 function add_uid {
@@ -156,8 +158,10 @@ function add_uid {
 
   notice "Create uid in table ${table} FROM unique columns ${unique_cols}"
   add_column "${table}" "${UID_FIELD}" "text"
-  sql "UPDATE ${table} RT set ${UID_FIELD}=md5(concat(${unique_cols}))"
+  sql_now "UPDATE ${table} RT set ${UID_FIELD}=md5(concat(${unique_cols}))"
   delete_duplicates "${table}"
+  sql_now "CREATE UNIQUE INDEX IF NOT EXISTS ${table//\./_}_idx_uid ON ${table} (${UID_FIELD});"
+  sql "DROP INDEX IF EXISTS ${table//\./_}_idx_uid;" 1
 }
 
 function add_uid_relation {
@@ -168,10 +172,32 @@ function add_uid_relation {
 
   notice "Add relation ${related_table} -> ${table}..."
   add_column "${schema}.${related_table}" "__${reference_field}_uid" "text"
-  sql "UPDATE ${schema}.${related_table} RT set __${reference_field}_uid=(select ${UID_FIELD} FROM ${schema}.${table} where id=RT.${reference_field});"
-  sql "CREATE INDEX IF NOT EXISTS idx_${reference_field}_uid ON ${schema}.${related_table} (__${reference_field}_uid);"
-  # sql "DROP INDEX ${schema}.idx_${reference_field}_uid;" 1
-  # later_drop_column "${schema}.${related_table}" "__${reference_field}_uid}"
+  sql_now "UPDATE ${schema}.${related_table} RT set __${reference_field}_uid=(select ${UID_FIELD} FROM ${schema}.${table} where id=RT.${reference_field});"
+  sql_now "CREATE INDEX IF NOT EXISTS ${schema}_idx_${reference_field}_uid ON ${schema}.${related_table} (__${reference_field}_uid);"
+  if [ "${schema}" == "${ORIG_SCHEMA}" ]; then
+    sql "DROP INDEX IF EXISTS ${schema}.idx_${reference_field}_uid;" 1
+    later_drop_column "${schema}.${related_table}" "__${reference_field}_uid}"
+  fi
+}
+
+function prepare_table {
+  local table="${SCHEMA}.${1}"
+  local orig_table="${ORIG_SCHEMA}.${1}"
+  local related_tables="${2}"
+  local unique_cols="${3}"
+
+  add_uid "${table}" "${unique_cols}"
+  add_uid "${orig_table}" "${unique_cols}"
+  later_drop_column "${orig_table}" "${UID_FIELD}"
+
+  # If there are some relations defined generate a reference to the ${UID_FIELD} field
+  if [ "${2}" != "" ]; then
+    for related_table in $related_tables
+    do
+      add_uid_relation "${SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
+      add_uid_relation "${ORIG_SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
+    done
+  fi
 }
 
 function merge_table {
@@ -184,19 +210,21 @@ function merge_table {
 
   notice "Merging table ${table} -> ${orig_table}..."
 
-  add_uid "${table}" "${unique_cols}"
-  add_uid "${orig_table}" "${unique_cols}"
-  later_drop_column "${orig_table}" "${UID_FIELD}"
-  
-  # If there are some relations defined generate a reference to the ${UID_FIELD} field
-  if [ "${2}" != "" ]; then
-    for related_table in $related_tables
-    do
-      add_uid_relation "${SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
-      # add_uid_relation "${ORIG_SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
-    done
-  fi
-  
+  prepare_table "${1}" "${related_tables}" "${unique_cols}"
+
+  # add_uid "${table}" "${unique_cols}"
+  # add_uid "${orig_table}" "${unique_cols}"
+  # later_drop_column "${orig_table}" "${UID_FIELD}"
+
+  # # If there are some relations defined generate a reference to the ${UID_FIELD} field
+  # if [ "${2}" != "" ]; then
+  #   for related_table in $related_tables
+  #   do
+  #     add_uid_relation "${SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
+  #     add_uid_relation "${ORIG_SCHEMA}" "${1}" "${related_table%%:*}" "${related_table#*:}"
+  #   done
+  # fi
+
   local slct=''
   local additional_cols=''
   for relation in ${relations//;/ }
@@ -215,8 +243,8 @@ function merge_table {
     all_cols="${additional_cols},${all_cols}"
   fi
 
-  commit
-  sql "CREATE UNIQUE INDEX IF NOT EXISTS ${orig_table#*.}_temp_constraint ON ${orig_table} (${UID_FIELD});"
+  # commit
+  sql_now "CREATE UNIQUE INDEX IF NOT EXISTS ${orig_table#*.}_temp_constraint ON ${orig_table} (${UID_FIELD});"
 
   local stmt="INSERT INTO ${orig_table} (${all_cols},${UID_FIELD}) SELECT ${slct} ${columns},${UID_FIELD} FROM ${table} TBL ON CONFLICT (${UID_FIELD}) DO UPDATE set "
   for column in ${all_cols//,/ }
@@ -225,18 +253,67 @@ function merge_table {
   done
   # replace the last , with a ;
   stmt="${stmt%?};"
-  sql "${stmt}"
+  sql_now "${stmt}"
   
-  sql "DROP INDEX ${orig_table}_temp_constraint;"
+  sql_now "DROP INDEX ${orig_table}_temp_constraint;"
   notice "Migration done for ${1}"
-  commit
+  # commit
+}
+
+function insert_existing {
+  local table="${SCHEMA}.${1}"
+  local orig_table="${ORIG_SCHEMA}.${1}"
+  local relation="${2}"
+  local columns="${3}"
+
+  notice "Insert existing table ${table} -> ${orig_table} using reference ${relation}..."
+
+  local relation_parts=(${relation//:/ })
+  local reference_table=${relation_parts[0]}
+  local reference_field=${relation_parts[1]}
+  if [ "${4}" != "" ]; then
+    local reference_uid_field="${reference_field}"
+  else
+    local reference_uid_field="__${reference_field}_uid"
+  fi
+  local uid_field=${4:-${UID_FIELD}}
+
+  local stmt="INSERT INTO ${orig_table} (${reference_field},${columns}) SELECT (SELECT id FROM ${ORIG_SCHEMA}.${reference_table} WHERE ${uid_field} = tbl.${reference_uid_field}) as ${reference_field}, ${columns} FROM ${table} as tbl WHERE EXISTS (SELECT ${uid_field} FROM ${ORIG_SCHEMA}.${reference_table} AS rt WHERE rt.${uid_field} = tbl.${reference_uid_field})"
+  sql_now "${stmt}"
+}
+
+function merge_existing {
+  local table="${SCHEMA}.${1}"
+  local orig_table="${ORIG_SCHEMA}.${1}"
+  local unique_cols="${2}"
+  local columns="${3},${UID_FIELD}"
+
+  notice "Merge existing table ${table} -> ${orig_table}..."
+
+  local stmt="UPDATE ${orig_table} AS ot SET "
+  for column in ${columns//,/ }
+  do
+    stmt+="${column} = pt.${column},"
+  done
+  # replace the last , with a space
+  stmt="${stmt%?} "
+  stmt+="FROM ${table} AS pt WHERE ot.${UID_FIELD} = pt.${UID_FIELD};"
+
+  # local stmt="INSERT INTO ${orig_table} (${columns}) SELECT ${columns} FROM ${table} as tbl WHERE EXISTS (SELECT ${UID_FIELD} FROM ${orig_table} WHERE ${UID_FIELD} = tbl.${UID_FIELD}) ON CONFLICT (${UID_FIELD}) DO UPDATE set "
+  # for column in ${columns//,/ }
+  # do
+  #   stmt+="${column} = EXCLUDED.${column},"
+  # done
+  # # replace the last , with a ;
+  # stmt="${stmt%?};"
+  # sql "${stmt}"
 }
 
 function clear_table {
   local orig_table="${ORIG_SCHEMA}.${1}"
 
   notice "Clearing table ${1}..."
-  sql "DELETE FROM ${orig_table};"
+  sql_now "DELETE FROM ${orig_table};"
 }
 
 function overwrite_table {
@@ -244,8 +321,8 @@ function overwrite_table {
   local orig_table="${ORIG_SCHEMA}.${1}"
 
   notice "Overwriting table ${1}..."
-  sql "DELETE FROM ${orig_table};"
-  sql "INSERT INTO ${orig_table} SELECT * FROM ${table};"
+  sql_now "DELETE FROM ${orig_table};"
+  sql_now "INSERT INTO ${orig_table} SELECT * FROM ${table};"
 }
 
 disconnect_everyone
@@ -268,25 +345,62 @@ overwrite_table 'api_source'
 #          col1,col2,...
 #   relations: the relation to the related table in the form 
 #          key_field_to_the_related_table1=related_table1:unique_fields1;key_field_to_the_related_table2=related_table2:unique_fields2
-merge_table 'api_gene' 'api_variant:gene_id' 'symbol' 'entrez_id,ensembl_gene_id,symbol,sources,uniprot_ids,location,aliases,prev_symbols' ''
-# it is basically not usefull to have so many unique fields, but in this setup (as long as we do not have a unique hash) its not possible to squice this list.
-merge_table 'api_variant' \
-'api_variantinsource:variant_id' \
-'gene_id,name,hgvs_g' \
-'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status' \
-'gene_id=api_gene:symbol'
-clear_table 'api_variantinsource'
-merge_table 'api_variantinsource' \
-'' \
-'variant_url' \
-'id,variant_url,extras,source_id' \
-'variant_id=api_variant:gene_id,name,hgvs_g'
+# merge_table 'api_gene' \
+#   'api_variant:gene_id' \
+#   'symbol' \
+#   'entrez_id,ensembl_gene_id,symbol,sources,uniprot_ids,location,aliases,prev_symbols' \
+#   ''
+prepare_table 'api_gene' \
+  'api_variant:gene_id' \
+  'symbol'
+merge_existing 'api_gene' \
+  'symbol' \
+  'entrez_id,ensembl_gene_id,symbol,sources,uniprot_ids,location,aliases,prev_symbols'
 
-# restore the overwrite table
-for table in api_association api_environmentalcontext api_phenotype api_evidence
-do
-  overwrite_table ${table}
-done
+# it is basically not usefull to have so many unique fields, but in this setup (as long as we do not have a unique hash) its not possible to squice this list.
+# merge_table 'api_variant' \
+#   'api_variantinsource:variant_id' \
+#   '__gene_id_uid,name,hgvs_g,hgvs_c' \
+#   'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status' \
+#   'gene_id=api_gene:symbol'
+prepare_table 'api_variant' \
+  'api_variantinsource:variant_id' \
+  '__gene_id_uid,name,hgvs_g,hgvs_c'
+merge_existing 'api_variant' \
+  '__gene_id_uid,name,hgvs_g,hgvs_c' \
+  'name,description,biomarker_type,so_hierarchy,soid,sources,so_name,isoform,refseq,chromosome,end_pos,hgvs_c,hgvs_p,reference_name,start_pos,alt,ref,hgvs_g,dbsnp_ids,myvariant_hg19,mv_info,crawl_status,somatic_status'
+
+clear_table 'api_variantinsource'
+# prepare_table 'api_variantinsource' \
+#   'api_association:variant_in_source_id' \
+#   'description,drug_labels,variant_name,source_link,clinical_significance,evidence_level,source,source_url,drug_interaction_type,evidence_direction,evidence_type'
+insert_existing 'api_variantinsource' \
+  'api_variant:variant_id' \
+  'id,variant_url,extras,source_id'
+
+clear_table 'api_association'
+insert_existing 'api_association' \
+  'api_variantinsource:variant_in_source_id' \
+  'id, description,drug_labels,variant_name,source_link,clinical_significance,evidence_level,payload,source,source_url,drug_interaction_type,evidence_direction,evidence_type,crawl_status,extras' \
+  'id'
+
+clear_table 'api_environmentalcontext'
+insert_existing 'api_environmentalcontext' \
+  'api_association:association_id' \
+  'id, source, term, envcontext_id, usan_stem, description' \
+  'id'
+
+clear_table 'api_phenotype'
+insert_existing 'api_phenotype' \
+  'api_association:association_id' \
+  'id, source, term, pheno_id, family, description' \
+  'id'
+
+clear_table 'api_evidence'
+insert_existing 'api_evidence' \
+  'api_association:association_id' \
+  'id, publications, "evidenceType_sourceName", "evidenceType_id"' \
+  'id'
 
 if [ $DEBUG -eq 1 ]; then
   printf "BEGIN;\n${stmt_buffer}COMMIT;\n"
@@ -296,4 +410,5 @@ else
   printf "BEGIN;\n${post_stmt_buffer}COMMIT;\n" | psql -v ON_ERROR_STOP=1 -P pager=off -e -U ${DB_USER} -d ${DB_NAME}
 fi
 
+rename_schema ${SCHEMA} 'import'
 rename_schema ${ORIG_SCHEMA} ${SCHEMA}
