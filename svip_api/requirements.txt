@@ -36,7 +36,7 @@ jedi==0.13.2
 Jinja2==2.11.3
 jsonpointer==1.14
 jsonschema==2.6.0
-Markdown==3.0.1
+Markdown>=3.2.1
 MarkupSafe==1.1.0
 msgpack==0.6.1
 mygene==3.1.0
@@ -48,7 +48,7 @@ prompt-toolkit==2.0.8
 psycopg2==2.8.1
 psycopg2-binary==2.7.6.1
 ptyprocess==0.6.0
-Pygments==2.7.4
+Pygments>=2.10.0,<3.0.0
 PyJWT==1.6.4
 pytz==2018.7
 PyVCF==0.6.8
@@ -66,3 +66,11 @@ uritemplate==3.0.0
 urllib3==1.26.5
 validate-email==1.3
 wcwidth==0.1.7
+django-csp==3.7
+
+git+https://github.com/dameyerdave/django-mkdocs.git
+mkdocs>=1.2.3,<2.0.0
+mkdocs-include-markdown-plugin>=3.2.3,<4.0.0
+mkdocs-material-extensions>=1.0.3,<2.0.0
+mkdocs-material>=8.0.1,<9.0.0
+# mkdocs-bootstrap>=1.1.0<2.0.0

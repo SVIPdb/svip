@@ -86,6 +86,9 @@ celerybeat-schedule
 # notebooks that aren't ready to be shared yet
 /notebooks
 
+# mkdocs
+docs/site
+
 Pipfile
 
 .env*

@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os, ast
+import os
+import re
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
@@ -31,7 +32,7 @@ DEBUG = True
 if os.environ.get('DJANGO_ALLOWED_HOSTS') == '*':
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 else:
-    #ALLOWED_HOSTS = ast.literal_eval(os.environ.get('DJANGO_ALLOWED_HOSTS'))
+    # ALLOWED_HOSTS = ast.literal_eval(os.environ.get('DJANGO_ALLOWED_HOSTS'))
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'simple_history',
+    'django_mkdocs',
 
     # FIXME: enable when we get around to blacklisting tokens correctly
     # 'rest_framework_simplejwt.token_blacklist',
@@ -81,7 +83,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
@@ -98,6 +101,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'csp.context_processors.nonce'
             ],
         },
     },
@@ -227,3 +231,31 @@ SOCIBP_API_URL = SOCIBP_BASE_URL + '/api'
 
 VARIOMES_BASE_URL = 'https://candy.hesge.ch/Variomes/api'
 VARIOMES_VERIFY_REQUESTS = False
+
+DOCUMENTATION_ROOT = STATIC_ROOT + '/docs'
+
+# Allow some urls to be integrated in iframes
+CSP_DEFAULT_SRC = ["'self'"]
+CSP_SCRIPT_SRC = ["https://cdnjs.cloudflare.com",
+                  "'unsafe-inline'"]
+CSP_STYLE_SRC = ["https://cdnjs.cloudflare.com",
+                 "https://fonts.googleapis.com",
+                 "'unsafe-inline'"]
+CSP_FONT_SRC = ["data: fonts.gstatic.com"]
+CSP_INCLUDE_NONCE_IN = ["script-src"]
+DOCUMENTATION_URL = os.environ.get('VUE_APP_DOCUMENTATION_URL', None)
+if DOCUMENTATION_URL:
+    documentation_url = re.sub(
+        r'(.*//[^/]+)/.*', r'\1', DOCUMENTATION_URL)
+    CSP_FRAME_SRC = ["'self'", documentation_url]
+    CSP_STYLE_SRC.append(documentation_url)
+    CSP_SCRIPT_SRC.append(documentation_url)
+    CSP_FONT_SRC.append(documentation_url)
+
+
+# Mkdocs config
+PROJECT_DIR = BASE_DIR
+DOCUMENTATION_ROOT = PROJECT_DIR + '/../docs'
+DOCUMENTATION_HTML_ROOT = DOCUMENTATION_ROOT + '/site'
+DOCUMENTATION_XSENDFILE = False
+def DOCUMENTATION_ACCESS_FUNCTION(_): return True
