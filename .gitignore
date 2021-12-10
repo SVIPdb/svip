@@ -22,3 +22,4 @@ docker-compose.override.yml
 
 # support folder containing project organization files
 .0
+svip-o-vue/src/components/help/json/convert.py
