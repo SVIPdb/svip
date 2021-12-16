@@ -19,6 +19,9 @@ case $(hostname) in
   "svip-api.nexus.ethz.ch")
     SITE_COMPOSE="-f compose_configs/sites/svip-api.yml"
     ;;
+  "escat.nexus.ethz.ch")
+    SITE_COMPOSE="-f compose_configs/sites/escat.yml"
+    ;;
   *)
     SITE_COMPOSE=""
 esac
