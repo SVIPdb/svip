@@ -9,6 +9,8 @@ until PGPASSWORD="$POSTGRES_PASSWORD" psql -d  "$POSTGRES_DB" -h "$POSTGRES_HOST
   sleep 3
 done
 
+#pip install django_mkdocs
+
 python manage.py migrate
 python manage.py createcachetable
 
@@ -34,9 +36,12 @@ python manage.py collectstatic --no-input
 # ensure that the mock svip variants are present
 # python manage.py populate_mock_svipdata
 
+#(cd docs; mkdocs build --clean)
+
 # and finally run the server
 if [[ -n "${USE_DEV_SERVER}" ]]; then
     # this dev server is less efficient than gunicorn, but it auto-reloads on source changes
+    # We should not do this since gunicorn has a reload option because its fu***ing slow.
     python manage.py runserver 0.0.0.0:8085
 else
     #gunicorn = WSGIApplication()
@@ -52,5 +57,5 @@ else
     #gunicorn.cfg.set('reload', True)
     #gunicorn.chdir()
     #gunicorn.run()
-    gunicorn svip_server.wsgi -b 0.0.0.0:8085 --reload -k gevent -w 16
+    gunicorn svip_server.wsgi -b 0.0.0.0:8085 --reload -k gevent -w 16 --timeout 300
 fi

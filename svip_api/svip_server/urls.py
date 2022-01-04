@@ -13,29 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import path, re_path, include
-
-# jwt auth
-from rest_framework_simplejwt.views import (
-    TokenRefreshView, TokenVerifyView
-)
-
+from django.urls import include, path, re_path
+from django.views.static import serve
+from drf_yasg import openapi
 # drf-yasg schema metadata
 from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 from rest_framework import permissions
+# jwt auth
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 import api.views.beacon as beacon101
 import api.views.beacon_v110 as beacon110
 from api.views.proxies import socibp_proxy
-from api.views.proxies.swisspo_proxy import get_pdbs, get_residues, get_pdb_data
-from api.views.proxies.variomes_proxy import variomes_single_ref, variomes_search
-from django.conf import settings
-
-from svip_server.tokens import GroupsTokenObtainPairView, TokenInfo, TokenInvalidate
-
+from api.views.proxies.swisspo_proxy import (get_pdb_data, get_pdbs,
+                                             get_residues)
+from api.views.proxies.variomes_proxy import (variomes_search,
+                                              variomes_single_ref)
+from svip_server.tokens import (GroupsTokenObtainPairView, TokenInfo,
+                                TokenInvalidate)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -112,6 +110,9 @@ urlpatterns = [
             name='socibp_get_genes'),
     re_path(r'^api/v1/socibp/stats/(?P<gene>.+)/(?P<change>.+)$',
             socibp_proxy.get_changed_samples, name='socibp_stats'),
+#    re_path(r'^api/v1/docs/',
+        #    include('django_mkdocs.urls', namespace="documentation"),
+        #    name='documentation')
 ]
 
 # serve static files from the dev server
