@@ -123,7 +123,7 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitReviews()">
+        <b-button class="float-right" @click="submitOptions()">
             Submit review
         </b-button>
     </div>
@@ -175,8 +175,10 @@ export default {
             showDisease: true,
         };
     },
-    mounted() {},
     created() {
+
+        window.addEventListener('beforeunload', this.beforeWindowUnload)
+
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -196,7 +198,69 @@ export default {
             user: "currentUser"
         })
     },
+    beforeRouteLeave (to, from, next) {
+        console.log('beforeRouteLeave is run')
+        // If the form is dirty and the user did not confirm leave,
+        // prevent losing unsaved changes by canceling navigation
+        if (this.confirmStayInDirtyForm()){
+            next(true)
+        } else {
+            // Navigate to next view
+            next(true)
+        }
+    },
+    beforeDestroy() {
+        //console.log('beforeDestroy is run')
+        window.removeEventListener('beforeunload', this.beforeWindowUnload)
+    },
     methods: {
+        saveBeforeExit() {
+
+            console.log('SAVE BEFORE EXIST IS RUN')
+
+            // TODO add a condition that avoids saving as a draft if has already been saved permanently
+            this.submitReviews(true)
+        },
+        confirmLeave() {
+            return window.confirm('Do you really want to leave? You have unsaved changes.')
+        },
+        confirmStayInDirtyForm() {
+            //return this.form_dirty && !this.confirmLeave()
+            return true && !this.confirmLeave()
+        },
+        beforeWindowUnload(e) {
+            console.log('beforeWindowUnload is run')
+            if (this.confirmStayInDirtyForm()) {
+                // Cancel the event
+                e.preventDefault()
+                // Chrome requires returnValue to be set
+                e.returnValue = ''
+            }
+        },
+        submitOptions() {
+            this.$confirm(
+                {
+                    message: `It seems there are sections that you didn't edit.\n\n
+                    Do you want to finish later?`,
+                    button: {
+                        yes: 'Save as a draft',
+                        no: 'Submit permanently'
+                    },
+                    /**
+                     * Callback Function
+                     * @param {Boolean} confirm 
+                     */
+                    callback: confirm => {
+                        if (confirm) {
+                            // save as a draft
+                            this.submitReviews(true)
+                        } else {
+                            this.submitReviews(false)
+                        }
+                    }
+                }
+            )
+        },
         getReviewData() {
             const params={
                 reviewer: this.user.user_id,
@@ -302,9 +366,11 @@ export default {
             }
             return false
         },
-        submitReviews() {
+        submitReviews(draft) {
 
-            if (this.missingComment()) {
+            // draft is a boolean that indicates whether the data is to be saved as a draft
+
+            if (!draft && this.missingComment()) {
                 this.$snotify.error(
                     "Please enter a comment for every review conflicting with that of curators", 
                     "",
@@ -316,15 +382,13 @@ export default {
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-
                     if (
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
                         if (evidence.id in this.selfReviewedEvidences) {
-                            console.log('REREVIEWED')
                             let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence))
+                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
                                 .then((response) => {
                                     this.getReviewData()
                                 })
@@ -334,8 +398,7 @@ export default {
                                 })
                         } else {
                             //newReviews.push(this.reviewParams(evidence));
-                            console.log('FIRST REVIEW')
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence))
+                            HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
                                 .then((response) => {
                                     this.getReviewData()
                                 })
@@ -343,7 +406,6 @@ export default {
                                     log.warn(err);
                                     this.$snotify.error("Failed to submit review");
                                 })
-
                         }
                     }
                 })
@@ -353,14 +415,15 @@ export default {
             // Reset fields
             this.isEditMode = false;
         },
-        reviewParams(evidence) {
+        reviewParams(evidence, draft) {
             // prepare a JSON containing parameters for CurationReview model
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
                 reviewer: this.user.user_id,
                 annotated_effect: evidence.currentReview.annotatedEffect,
                 annotated_tier: evidence.currentReview.annotatedTier,
-                comment: evidence.currentReview.comment
+                comment: evidence.currentReview.comment,
+                draft: draft
             }
             return singleReviewJSON
         }

@@ -3,16 +3,24 @@
         <div v-for="(review, idx) in diseases" :key="idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showDisease"/>
+                    <expander v-model="review.showDisease" id='id-'/>
                     {{ review.disease }}
                 </h6>
                 <div v-for="(evidence,index) in review.evidences" :key="index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
-                            <div v-if="showDisease">
+                            <div v-if="review.showDisease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
                                         <b-col align="center" cols="3">
+
+                        <!--<template v-slot:cell(type_of_evidence)="row">
+                            <row-expander :row="row" class="mr-2"/>
+                            <span>{{ index }}</span>
+                        </template>
+
+                        <template v-slot:row-details="row"></template>-->
+
                                             <expander v-model="evidence.isOpen"/>
                                             {{ evidence.fullType }}
                                         </b-col>
@@ -86,7 +94,7 @@
                             </div>
                         </transition>
                     </b-card-body>
-                    <hr v-if="showDisease"/>
+                    <hr v-if="review.showDisease"/>
                 </div>
             </b-card>
         </div>
@@ -138,7 +146,6 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showDisease: true,
             support_fields: [
                 "Strong",
                 "Moderate",
@@ -354,8 +361,13 @@ export default {
         },
         prefillAnnotations() {
             this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
 
+                console.log('prefill annotation is run')
+
+                // Show disease card
+                disease['showDisease'] = true;
+
+                disease.evidences.map(evidence => {
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === 'undefined') {
                         if (['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)) {
