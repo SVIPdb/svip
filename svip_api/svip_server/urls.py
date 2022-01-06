@@ -110,9 +110,8 @@ urlpatterns = [
             name='socibp_get_genes'),
     re_path(r'^api/v1/socibp/stats/(?P<gene>.+)/(?P<change>.+)$',
             socibp_proxy.get_changed_samples, name='socibp_stats'),
-#    re_path(r'^api/v1/docs/',
-        #    include('django_mkdocs.urls', namespace="documentation"),
-        #    name='documentation')
+    re_path(r'^api/v1/docs/',
+            include('django_mkdocs.urls', namespace="documentation"), name='documentation')
 ]
 
 # serve static files from the dev server

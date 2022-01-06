@@ -1,0 +1,28 @@
+site_name: SVIP Documentation
+# site_url: !!python/object/apply:os.getenv ["VITE_APP_DOCUMENTATION_URL"]
+use_directory_urls: false
+docs_dir: docs
+site_dir: site
+
+# Some extra stuff
+theme:
+  name: readthedocs
+extra_css:
+  - css/default.css
+nav:
+  - Home: index.md
+  - Variant info: variant_info.md
+  - SVIP Overview: svip_info.md
+  - SVIP Samples: svip_samples.md
+  - SVIP Curation: svip_curation.md
+  - Public databases: public_info.md
+plugins:
+  - include-markdown
+markdown_extensions:
+  # - pymdownx.emoji:
+  #     emoji_index: !!python/name:materialx.emoji.twemoji
+  #     emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      permalink: "#"
+      baselevel: 2
+      separator: "_"
