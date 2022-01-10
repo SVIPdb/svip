@@ -176,7 +176,7 @@ export default {
         };
     },
     created() {
-
+        // Watch if whether is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload)
 
         this.channel.onmessage = () => {
@@ -210,18 +210,18 @@ export default {
         }
     },
     beforeDestroy() {
-        //console.log('beforeDestroy is run')
+        console.log('beforeDestroy is run')
         window.removeEventListener('beforeunload', this.beforeWindowUnload)
     },
     methods: {
         saveBeforeExit() {
-
-            console.log('SAVE BEFORE EXIST IS RUN')
+            console.log('saveBeforeExit() is run')
 
             // TODO add a condition that avoids saving as a draft if has already been saved permanently
             this.submitReviews(true)
         },
         confirmLeave() {
+            console.log('confirmLeave is run')
             return window.confirm('Do you really want to leave? You have unsaved changes.')
         },
         confirmStayInDirtyForm() {

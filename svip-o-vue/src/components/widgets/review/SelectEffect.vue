@@ -1,26 +1,27 @@
-<template>
-    <div>
-        <div v-for="(review, idx) in diseases" :key="idx">
-            <b-card class="shadow-sm mb-3" align="left" no-body>
-                <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="review.showDisease" id='id-'/>
-                    {{ review.disease }}
-                </h6>
-                <div v-for="(evidence,index) in review.evidences" :key="index">
-                    <b-card-body class="p-0">
-                        <transition name="slide-fade">
-                            <div v-if="review.showDisease">
-                                <b-card-text class="p-2 m-0">
-                                    <b-row align-v="center">
-                                        <b-col align="center" cols="3">
-
-                        <!--<template v-slot:cell(type_of_evidence)="row">
+<!--<template v-slot:cell(type_of_evidence)="row">
                             <row-expander :row="row" class="mr-2"/>
                             <span>{{ index }}</span>
                         </template>
 
                         <template v-slot:row-details="row"></template>-->
 
+<template>
+    <div v-if="diseases.length>0">
+        <div v-for="(review, idx) in diseases" :key="'review'+idx">
+            <b-card class="shadow-sm mb-3" align="left" no-body>
+                <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
+                    <expander v-model="diseases[idx].showDisease"/>
+                    {{diseases[idx].showDisease}}
+                    {{ review.disease }}
+                </h6>
+                <div v-for="(evidence,index) in review.evidences" :key="'evidence'+index">
+                    <b-card-body class="p-0">
+                        <transition name="slide-fade">
+                            <div v-if="diseases[idx].evidences[index].isOpen">
+                                <b-card-text class="p-2 m-0">
+                                    <b-row align-v="center">
+                                        <b-col align="center" cols="3">
+                        
                                             <expander v-model="evidence.isOpen"/>
                                             {{ evidence.fullType }}
                                         </b-col>
@@ -351,16 +352,18 @@ export default {
             }
             HTTP.post(`/review_data`, params)
                 .then((response) => {
+                    //this.diseases = response.data.review_data
+                    //this.prefillAnnotations();
                     this.diseases = response.data.review_data
-                    this.prefillAnnotations();
+                    this.prefillAnnotations(this.diseases)
                 })
                 .catch((err) => {
                     log.warn(err);
                     //this.$snotify.error("Failed to fetch data");
                 })
         },
-        prefillAnnotations() {
-            this.diseases.map(disease => {
+        prefillAnnotations(diseases) {
+            diseases.map(disease => {
 
                 console.log('prefill annotation is run')
 
