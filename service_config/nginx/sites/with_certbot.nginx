@@ -1,0 +1,44 @@
+# Settings for a TLS enabled server.
+upstream svip_api {
+  server api:8085 fail_timeout=10;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name _;
+
+  # Certbot
+  include certbot.conf;
+  
+  location / {
+      return 301 https://$host$request_uri;
+  }
+}
+
+server {
+  listen       443 ssl http2 default_server;
+  listen       [::]:443 ssl http2 default_server;
+  server_name  _;
+
+  root           /usr/share/nginx/html;
+  index          index.html;
+
+  ssl_certificate "/etc/letsencrypt/live/example.org/fullchain.pem";
+  ssl_certificate_key "/etc/letsencrypt/live/example.org/privkey.pem";
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+  ssl_session_cache shared:SSL:1m;
+  ssl_session_timeout  10m;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+  ssl_prefer_server_ciphers on;
+
+  # enables HSTS for 1 year (31536000 seconds)
+  add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+  #  API routes
+  include shared.conf;
+
+  # Certbot
+  include certbot.conf;
+}
