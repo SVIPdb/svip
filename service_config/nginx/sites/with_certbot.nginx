@@ -24,8 +24,8 @@ server {
   root           /usr/share/nginx/html;
   index          index.html;
 
-  ssl_certificate "/etc/letsencrypt/live/example.org/fullchain.pem";
-  ssl_certificate_key "/etc/letsencrypt/live/example.org/privkey.pem";
+  ssl_certificate "/etc/letsencrypt/live/api.svip.ch/fullchain.pem";
+  ssl_certificate_key "/etc/letsencrypt/live/api.svip.ch/privkey.pem";
   #include /etc/letsencrypt/options-ssl-nginx.conf;
   #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
   ssl_session_cache shared:SSL:1m;
