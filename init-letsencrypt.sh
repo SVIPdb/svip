@@ -5,6 +5,11 @@ if ! [ -x "$(command -v ./dc_host.sh)" ]; then
   exit 1
 fi
 
+if [ $# -lt 1 ]; then
+  echo "Please provide the domain(s) as an argument."
+  exit 1
+fi
+
 domains=($*)
 rsa_key_size=4096
 data_path="./data/certbot"
