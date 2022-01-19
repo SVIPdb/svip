@@ -80,4 +80,4 @@ echo "### Reloading nginx ..."
 ./dc_host.sh exec nginx nginx -s reload
 
 echo "### Starting certbot ..."
-./dc_host.sh up -d certbot"
+./dc_host.sh up -d certbot
