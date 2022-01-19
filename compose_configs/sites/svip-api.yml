@@ -26,7 +26,6 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt:z
       - ./data/certbot/www:/var/www/certbot:z
-    #entrypoint: "certbot certonly --webroot -w /var/www/certbot --register-unsafely-without-email -d api.svip.ch --rsa-key-size 4096 --agree-tos --force-renewal"
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   frontend:
