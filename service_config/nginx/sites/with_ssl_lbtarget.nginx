@@ -7,7 +7,13 @@ server {
   listen 80 default_server;
   listen [::]:80 default_server;
   server_name _;
-  return 301 https://$host$request_uri;
+
+  # Certbot
+  include certbot.conf;
+  
+  location / {
+      return 301 https://$host$request_uri;
+  }
 }
 
 server {
@@ -18,8 +24,10 @@ server {
   root           /usr/share/nginx/html;
   index          index.html;
 
-  ssl_certificate "/etc/pki/tls/certs/svip.ch.chained.crt";
-  ssl_certificate_key "/etc/pki/tls/private/svip.ch.key";
+  ssl_certificate "/etc/letsencrypt/live/svip.ch/fullchain.pem";
+  ssl_certificate_key "/etc/letsencrypt/live/svip.ch/privkey.pem";
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
   ssl_session_cache shared:SSL:1m;
   ssl_session_timeout  10m;
   ssl_ciphers HIGH:!aNULL:!MD5;
@@ -30,6 +38,9 @@ server {
 
   #  API routes
   include shared.conf;
+
+  # Certbot
+  include certbot.conf;
 }
 
 

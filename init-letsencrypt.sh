@@ -5,7 +5,7 @@ if ! [ -x "$(command -v ./dc_host.sh)" ]; then
   exit 1
 fi
 
-domains=(api.svip.ch)
+domains=($*)
 rsa_key_size=4096
 data_path="./data/certbot"
 email="" # Adding a valid address is strongly recommended

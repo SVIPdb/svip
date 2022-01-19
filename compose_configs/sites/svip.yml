@@ -11,8 +11,12 @@ services:
       - /etc/pki/tls/private/svip.nexus.ethz.ch.privkey.pem:/etc/pki/tls/private/host.privkey.pem
 
       # extra mappings for acting as a load-balancer target for svip.ch
-      - /etc/pki/tls/certs/svip.ch.chained.crt:/etc/pki/tls/certs/svip.ch.chained.crt
-      - /etc/pki/tls/private/svip.ch.key:/etc/pki/tls/private/svip.ch.key
+      # - /etc/pki/tls/certs/svip.ch.chained.crt:/etc/pki/tls/certs/svip.ch.chained.crt
+      # - /etc/pki/tls/private/svip.ch.key:/etc/pki/tls/private/svip.ch.key
+
+      # extra mappings for certbot
+      - ./data/certbot/conf:/etc/letsencrypt:z
+      - ./data/certbot/www:/var/www/certbot:z
 
   frontend:
     environment:
