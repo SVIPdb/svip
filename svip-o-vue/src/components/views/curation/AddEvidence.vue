@@ -239,6 +239,22 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.escat_score"
+                                        :enabled="form.type_of_evidence !== 'Excluded'"
+                                        label="ESCAT Score"
+                                        inner-id="escat_score"
+                                    >
+                                        <b-form-select
+                                            id="escat_score"
+                                            v-model="form.escat_score"
+                                            :disabled="isViewOnly"
+                                            :options="escat_scores"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.mutation_origin"
                                         :enabled="form.type_of_evidence !== 'Excluded'"
                                         label="Origin of the mutation"
@@ -615,6 +631,20 @@ export default {
             reference: null, // the PMID of the reference, populated like 'source' above
             variomes: null,
 
+            escat_scores: [
+                '',
+                'I-A: associated with improved outcome (prospective, randomised)',
+                'I-B: associated with improved outcome (prospective, non-randomised)',
+                'I-C: associated with improved outcome (across tumour types or basket)',
+                'II-A: associated with antitumour activity, magnitude of benefit unknown (retrospective studies)',
+                'II-B: associated with antitumour activity, magnitude of benefit unknown (prospective clinical trials)',
+                'III-A: suspected to improve outcome (clinical benefit demonstrated)',
+                'III-B: suspected to improve outcome (has a similar predicted functional impact)',
+                'IV-A: pre-clinical evidence of actionability (drug sensitivity in preclinical in vitro or in vivo models)',
+                'IV-B: pre-clinical evidence of actionability (actionability predicted in silico)',
+                'V: associated with objective response',
+                'X: lack of evidence'
+            ],
             form: {
                 // these fields are empty or populated on submission/load
                 id: null,
@@ -632,6 +662,7 @@ export default {
                 interactions: [],
                 effect: null,
                 tier_criteria: null,
+                escat_score: null,
                 mutation_origin: null,
                 associated_mendelian_diseases: null,
                 support: null,
@@ -680,6 +711,7 @@ export default {
             this.form.drugs = [];
             this.form.effect = null;
             this.form.tier_criteria = null;
+            this.form.escat_score = null;
         },
         loadVariomeData() {
             // FIXME: we should ensure that we have a variant before we fire this off somehow...

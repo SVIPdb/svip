@@ -543,6 +543,8 @@ class CurationEntry(SVIPModel):
     status = models.TextField(verbose_name="Curation Status", choices=tuple(
         CURATION_STATUS.items()), default='draft', db_index=True)
 
+    escat_score = models.TextField(verbose_name="ESCAT score", null=True, blank=True)
+
     # optionally, this curation entry could be the result of "claiming" a curation request
     # FIXME: should we always generate a curation request to make tracking its review easier?
     # FIXME #2: assumedly batches of curation entries are submitted for a single request, so this should be mandatory

@@ -33,7 +33,7 @@
                                             <div v-if="evidence.curator">
                                                 <b-row class="p-2">
                                                     <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                            v-bind="evidence.curator.annotatedEffect"></select-prognostic-outcome>
+                                                                            v-model="evidence.curator.annotatedEffect"></select-prognostic-outcome>
                                                     <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
                                                                             v-model="evidence.curator.annotatedEffect"></select-diagnostic-outcome>
                                                     <select-predictive-therapeutic-outcome

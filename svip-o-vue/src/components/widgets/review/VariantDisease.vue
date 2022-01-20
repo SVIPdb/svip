@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div v-for="(review, idx) in diseases" :key="idx">
+        <div v-for="(review, idx) in diseases" :key="'disease'+ idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="expander_array[idx].disease"/>
                     {{ review.disease }}
                 </h6>
-                <div v-for="(evidence, index) in review.evidences" :key="index">
+                <div v-for="(evidence, index) in review.evidences" :key="'evidence' + index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="expander_array[idx].disease">
@@ -17,7 +17,7 @@
                                             {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
-                                            <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
+                                            <p class="mb-2" v-for="(effect, effect_idx) in evidence.effectOfVariant" :key="'effect' + effect_idx">
                                                 {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
                                             </p>
                                         </b-col>
@@ -53,7 +53,7 @@
                                             </b-row>
                                             <b-row class="justify-content-center">
 
-                                                <span v-for="(review,key) in evidence.reviews" :key="key">
+                                                <span v-for="(review, review_idx) in evidence.reviews" :key="'review' + review_idx">
                                                     <span v-if="review.status !== null">
                                                         <b-icon
                                                             class="h4 mb-2 m-1" :style="displayColor(review.status)"
@@ -66,7 +66,7 @@
                                                         :style="displayColor(evidence.currentReview.status)"
                                                         :icon="displayIcon(evidence.currentReview.status)"></b-icon>
 
-                                                <span v-for="(review,key) in evidence.reviews" :key="key">
+                                                <span v-for="(review, key) in evidence.reviews" :key="key">
                                                     <span v-if="review.status === null">
                                                         <b-icon
                                                             class="h4 mb-2 m-1" :style="displayColor(review.status)"
@@ -93,7 +93,7 @@
                                 <transition name="slide-fade">
                                     <div v-if="expander_array[idx].evidences[index]">
                                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                                            <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
+                                            <b-row align-v="center" v-for="(curation, i) in evidence.curations" :key="'curation' + i">
                                                 <b-col class="border p-2">PMID:
                                                     <b-link target="_blank" active
                                                             :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
@@ -201,29 +201,38 @@ export default {
     },
     beforeRouteLeave (to, from, next) {
         console.log('beforeRouteLeave is run')
-        // If the form is dirty and the user did not confirm leave,
-        // prevent losing unsaved changes by canceling navigation
-        if (this.confirmStayInDirtyForm()){
-            next(true)
-        } else {
-            // Navigate to next view
-            next(true)
-        }
+        this.$dialog.confirm('Do you want to proceed?')
+        .then(function () {
+            next(false);
+        })
+        .catch(function () {
+            next(false);
+        });
+        //this.submitOptions()
+        //// If the form is dirty and the user did not confirm leave,
+        //// prevent losing unsaved changes by canceling navigation
+        //if (this.confirmStayInDirtyForm()){
+        //    next(false)
+        //} else {
+        //    // Navigate to next view
+        //    next(false)
+        //}
     },
     beforeDestroy() {
         console.log('beforeDestroy is run')
-        window.removeEventListener('beforeunload', this.beforeWindowUnload)
+        //window.removeEventListener('beforeunload', this.beforeWindowUnload)
     },
     methods: {
         saveBeforeExit() {
             console.log('saveBeforeExit() is run')
 
-            // TODO add a condition that avoids saving as a draft if has already been saved permanently
+            // TODO add a condition that avoids saving as a draft if it has already been saved permanently
             this.submitReviews(true)
         },
         confirmLeave() {
             console.log('confirmLeave is run')
-            return window.confirm('Do you really want to leave? You have unsaved changes.')
+            //return window.confirm('Do you really want to leave? You have unsaved changes.')
+            return this.submitOptions()
         },
         confirmStayInDirtyForm() {
             //return this.form_dirty && !this.confirmLeave()
@@ -231,12 +240,10 @@ export default {
         },
         beforeWindowUnload(e) {
             console.log('beforeWindowUnload is run')
-            if (this.confirmStayInDirtyForm()) {
-                // Cancel the event
-                e.preventDefault()
-                // Chrome requires returnValue to be set
-                e.returnValue = ''
-            }
+            // Cancel the event
+            e.preventDefault()
+            // Chrome requires returnValue to be set
+            e.returnValue = ''
         },
         submitOptions() {
             this.$confirm(
