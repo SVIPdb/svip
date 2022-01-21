@@ -869,6 +869,7 @@ export default {
                 effect: this.form.effect,
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,
+                escat_score: this.form.escat_score,
                 mutation_origin: this.form.mutation_origin,
                 associated_mendelian_diseases: this.form.associated_mendelian_diseases,
                 summary: this.form.summary,
@@ -1102,6 +1103,11 @@ export default {
         tier_criteria() {
             return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
                 ? evidence_attrs[this.form.type_of_evidence].tier_criteria
+                : [];
+        },
+        escat_score() {
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].escat_score
                 : [];
         },
         is_saved() {

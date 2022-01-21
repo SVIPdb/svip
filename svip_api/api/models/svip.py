@@ -278,7 +278,8 @@ class VariantInSVIP(models.Model):
 
             disease["evidences"] = ordered_evidences
 
-            diseases_dict.append(disease)
+            if len(disease["evidences"]) > 0:
+                diseases_dict.append(disease)
 
         return diseases_dict
 
