@@ -173,7 +173,8 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            expander_array: []
+            expander_array: [],
+            evidence_counter: 0
         };
     },
     created() {
@@ -219,6 +220,7 @@ export default {
         //}
     },
     beforeDestroy() {
+        this.submitOptions()
         console.log('beforeDestroy is run')
         //window.removeEventListener('beforeunload', this.beforeWindowUnload)
     },
@@ -248,11 +250,10 @@ export default {
         submitOptions() {
             this.$confirm(
                 {
-                    message: `It seems there are sections that you didn't edit.\n\n
-                    Do you want to finish later?`,
+                    message: `You are about to submit permanently the reviews for each of the ${this.evidence_counter} evidences of this variant. Are you sure?`,
                     button: {
-                        yes: 'Save as a draft',
-                        no: 'Submit permanently'
+                        yes: 'Submit permanently',
+                        no: 'Continue to review'
                     },
                     /**
                      * Callback Function
@@ -261,8 +262,6 @@ export default {
                     callback: confirm => {
                         if (confirm) {
                             // save as a draft
-                            this.submitReviews(true)
-                        } else {
                             this.submitReviews(false)
                         }
                     }
@@ -315,6 +314,8 @@ export default {
             })
         },
         detectOwnReviews(diseases) {
+            let evidence_counter = 0
+
             // iterate over every review to prefill inputs with current user's past reviews
             diseases.map(disease => {
 
@@ -355,8 +356,8 @@ export default {
                         evidence['currentReview'] = currentReviewObj
                     }
 
+                    evidence_counter += 1
                     evidences_expanders.push(false)
-
                 })
             
                 this.expander_array.push({
@@ -366,6 +367,7 @@ export default {
             
             })
             this.diseases = diseases
+            this.evidence_counter = evidence_counter
         },
         missingComment() {
         // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
