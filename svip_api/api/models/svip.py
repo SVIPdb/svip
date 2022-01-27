@@ -181,8 +181,6 @@ class VariantInSVIP(models.Model):
                     evidence.delete()
                     break
 
-                
-
                 evidence_obj = {}
                 evidence_obj["id"] = evidence.id
                 evidence_obj["isOpen"] = False
@@ -232,7 +230,8 @@ class VariantInSVIP(models.Model):
                         "reviewer_id": review.reviewer.id,
                         "annotatedTier": review.annotated_tier,
                         "annotatedEffect": review.annotated_effect,
-                        "comment": review.comment
+                        "comment": review.comment,
+                        "draft": review.draft
                     }
                     if (review.annotated_effect == evidence.annotation1.effect) and (review.annotated_tier == evidence.annotation1.tier):
                         review_obj['status'] = True

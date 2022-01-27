@@ -212,12 +212,11 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
 
     function redirect() {
-        console.log('redirect() is run')
         if (to.name && np_manager) {
             // Start the route progress bar.
             np_manager.start(`transition: ${to.name}`);
         }
-    
+
         if (to.matched.some(record => record.meta.requiresAuth)) {
             // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
             // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
@@ -252,7 +251,6 @@ router.beforeEach((to, from, next) => {
 
     let origin = from.fullPath
     if (origin.includes('/review/') || (origin.substr(origin.length - 7) === '/submit')) {
-        console.log(from)
         if (confirm("If you leave the page, all your entries will be lost. Leave anyway?") === true) {
             redirect()
         } else {

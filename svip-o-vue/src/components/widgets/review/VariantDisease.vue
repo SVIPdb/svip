@@ -31,20 +31,31 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <b-row class="p-2">
-                                                <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
-                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-prognostic-outcome>
-                                                <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
-                                                                        v-model="evidence.currentReview.annotatedEffect"
-                                                                        @input="onChange(evidence.curator, evidence.currentReview)"></select-diagnostic-outcome>
+                                                <select-prognostic-outcome 
+                                                    v-if="evidence.typeOfEvidence === 'Prognostic'"
+                                                    v-model="evidence.currentReview.annotatedEffect"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="submitted"
+                                                ></select-prognostic-outcome>
+                                                <select-diagnostic-outcome 
+                                                    v-if="evidence.typeOfEvidence === 'Diagnostic'"
+                                                    v-model="evidence.currentReview.annotatedEffect"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="submitted"
+                                                ></select-diagnostic-outcome>
                                                 <select-predictive-therapeutic-outcome
                                                     v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
-                                                    @input="onChange(evidence.curator, evidence.currentReview)"></select-predictive-therapeutic-outcome>
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="submitted"
+                                                ></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <select-tier v-model="evidence.currentReview.annotatedTier"
-                                                            @input="onChange(evidence.curator, evidence.currentReview)"></select-tier>
+                                                <select-tier 
+                                                    v-model="evidence.currentReview.annotatedTier"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="submitted"
+                                                ></select-tier>
                                             </b-row>
                                         </b-col>
                                         <b-col cols="1" align="center">
@@ -79,7 +90,7 @@
                                         </b-col>
                                         <b-col cols="4">
                                             <b-textarea
-                                                :disabled="evidence.currentReview.status"
+                                                :disabled="evidence.currentReview.status || submitted"
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
@@ -125,9 +136,17 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitOptions()">
+        <div class="float-right">
+        <b-button  variant="warning" @click="submitReviews(true)" :disabled="submitted">
+            Finish later
+        </b-button>
+        <b-button class="footer-btn" @click="submitOptions()" :disabled="submitted">
             Submit review
         </b-button>
+        </div>
+        <b-navbar-text class="fixed-bottom submitted-bar" align="center">
+            YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
+        </b-navbar-text>
     </div>
 </template>
 
@@ -174,7 +193,8 @@ export default {
             error: null,
             channel: new BroadcastChannel("curation-update"),
             expander_array: [],
-            evidence_counter: 0
+            evidence_counter: 0,
+            submitted: false
         };
     },
     created() {
@@ -209,30 +229,9 @@ export default {
         .catch(function () {
             next(false);
         });
-        //this.submitOptions()
-        //// If the form is dirty and the user did not confirm leave,
-        //// prevent losing unsaved changes by canceling navigation
-        //if (this.confirmStayInDirtyForm()){
-        //    next(false)
-        //} else {
-        //    // Navigate to next view
-        //    next(false)
-        //}
-    },
-    beforeDestroy() {
-        this.submitOptions()
-        console.log('beforeDestroy is run')
-        //window.removeEventListener('beforeunload', this.beforeWindowUnload)
     },
     methods: {
-        saveBeforeExit() {
-            console.log('saveBeforeExit() is run')
-
-            // TODO add a condition that avoids saving as a draft if it has already been saved permanently
-            this.submitReviews(true)
-        },
         confirmLeave() {
-            console.log('confirmLeave is run')
             //return window.confirm('Do you really want to leave? You have unsaved changes.')
             return this.submitOptions()
         },
@@ -325,10 +324,11 @@ export default {
 
                     evidence.reviews.map((review, index) => {
                         if (review.reviewer_id === this.user.user_id) {
+                            if (review.draft === false) {this.submitted = true}
                             let currentReviewObj = {
                                 "annotatedEffect": review.annotatedEffect,
                                 "annotatedTier": review.annotatedTier,
-                                "comment": review.comment
+                                "comment": review.comment,
                             }
                             evidence['currentReview'] = currentReviewObj
 
@@ -351,7 +351,7 @@ export default {
                             "annotatedTier": evidence.curator.annotatedTier,
                             "reviewer_id": this.user.user_id,
                             "status": null,
-                            "comment": null
+                            "comment": null,
                         }
                         evidence['currentReview'] = currentReviewObj
                     }
@@ -412,6 +412,7 @@ export default {
                             HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
                                 .then((response) => {
                                     this.getReviewData()
+                                    this.submitted = true
                                 })
                                 .catch((err) => {
                                     log.warn(err);
@@ -422,6 +423,7 @@ export default {
                             HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
                                 .then((response) => {
                                     this.getReviewData()
+                                    this.submitted = true
                                 })
                                 .catch((err) => {
                                     log.warn(err);
@@ -432,7 +434,11 @@ export default {
                 })
             })
 
-            this.$snotify.success("Your review has been saved");
+            if (draft) {
+                this.$snotify.success("Your review is saved as a draft.");
+            } else {
+                this.$snotify.success("Your reviews for this variant have been submitted.");
+            }
             // Reset fields
             this.isEditMode = false;
         },
@@ -482,5 +488,17 @@ export default {
 
 .summary-box {
     color: black !important;
+}
+
+.footer-btn {
+    margin-left: 1.2rem;
+}
+
+.submitted-bar {
+    background-color: rgb(44, 62, 80);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.4rem;
 }
 </style>
