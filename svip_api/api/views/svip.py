@@ -238,6 +238,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         'support',
         'tier_level',
         'tier_level_criteria',
+        'escat_score',
         'type_of_evidence',
     )
 
@@ -548,8 +549,6 @@ class ReviewDataView(APIView):
 
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
-
-        print('review_data')
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')

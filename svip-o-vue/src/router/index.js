@@ -1,4 +1,5 @@
 import Vue from "vue";
+import VueConfirmDialog from 'vue-confirm-dialog'
 import Router from "vue-router";
 import store from '@/store';
 import { TokenErrors } from "@/store/modules/users";
@@ -209,41 +210,54 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.name && np_manager) {
-        // Start the route progress bar.
-        np_manager.start(`transition: ${to.name}`);
+
+    function redirect() {
+        if (to.name && np_manager) {
+            // Start the route progress bar.
+            np_manager.start(`transition: ${to.name}`);
+        }
+
+        if (to.matched.some(record => record.meta.requiresAuth)) {
+            // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
+            // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
+    
+            const possibleRoles = to.matched.reduce((acc, record) => {
+                return record.meta.roles ? acc.concat(record.meta.roles) : acc;
+            }, []);
+    
+            store.dispatch("checkCredentials").then((result) => {
+                if (!result.valid && (result.reason === TokenErrors.EXPIRED || result.reason === TokenErrors.REFRESH_EXPIRED) && to.name !== "login") {
+                    // if our token's expired, go get a new one from the login page,
+                    // remembering where we eventually want to go to as well
+                    next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
+                }
+                else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
+                    log.warn("Roles check failed!");
+                    next({
+                        name: 'login', params: {
+                            default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
+                            nextRoute: to.path
+                        }
+                    });
+                }
+                else {
+                    next();
+                }
+            });
+        } else {
+            next(); // just let them proceed
+        }
     }
 
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
-        // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
-
-        const possibleRoles = to.matched.reduce((acc, record) => {
-            return record.meta.roles ? acc.concat(record.meta.roles) : acc;
-        }, []);
-
-        store.dispatch("checkCredentials").then((result) => {
-            if (!result.valid && (result.reason === TokenErrors.EXPIRED || result.reason === TokenErrors.REFRESH_EXPIRED) && to.name !== "login") {
-                // if our token's expired, go get a new one from the login page,
-                // remembering where we eventually want to go to as well
-                next({ name: 'login', params: { default_error_msg: "Token expired, please log in again", nextRoute: to.path } });
-            }
-            else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
-                log.warn("Roles check failed!");
-                next({
-                    name: 'login', params: {
-                        default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(", ")}).`,
-                        nextRoute: to.path
-                    }
-                });
-            }
-            else {
-                next();
-            }
-        });
-    }
-    else {
-        next(); // just let them proceed
+    let origin = from.fullPath
+    if (origin.includes('/review/') || (origin.substr(origin.length - 7) === '/submit')) {
+        if (confirm("If you leave the page, all your entries will be lost. Leave anyway?") === true) {
+            redirect()
+        } else {
+            next(false)
+        }
+    } else {
+        redirect()
     }
 });
 

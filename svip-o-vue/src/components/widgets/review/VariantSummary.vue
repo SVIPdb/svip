@@ -72,7 +72,7 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            showSummary: false,
+            showSummary: true,
             isEditMode: false,
             summaryComment: "",
             serverSummaryComment: null, // defines whether a comment exists in the DB for this user and variant (if so: PATCH request instead of POST)

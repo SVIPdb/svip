@@ -13,6 +13,7 @@ export default {
     },
     methods: {
         toggle() {
+            console.log('value', this.value)
             this.$emit('input', !this.value);
         }
     }
