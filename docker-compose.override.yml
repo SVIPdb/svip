@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  nginx:
+    command: 'sh -c exit' # no-op, since we don't run nginx in dev
+    restart: 'no'
+
+  db:
+    ports:
+      - '30432:5432' # dev access port
+
+  api:
+    ports:
+      - '8889:8889' # jupyterlab port
+    environment:
+      - POSTGRES_DB=svip_api
+
+  frontend:
+    build:
+      context: ./svip-o-vue
+      dockerfile: Dockerfile
+    volumes:
+      - ./svip-o-vue:/app:delegated
+      - /app/node_modules # prevent syncing of node_modules
+    # starts react in hot-reload mode
+    # filesystem changes will immediately be reflected in the frontend, which speeds up prototyping a lot
+    command: sh -c "npm install && npm run serve"
+    restart: 'no'
+    ports:
+      - '3000:8080'
+    environment:
+      - 'VUE_APP_API_URL=http://localhost:8085/api/v1/'
+
+  redis:
+    ports:
+      - '${REDIS_PORT}:${REDIS_PORT}'
