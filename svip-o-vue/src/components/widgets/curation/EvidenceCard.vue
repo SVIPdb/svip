@@ -142,11 +142,14 @@
                             <icon name="history" label="History" />
                         </b-button>
                     </span>
+                    <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="already_submitted">
+                    THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.
+                </b-navbar-text>
                 </template>
 
                 <template v-slot:extra_commands>
                     <div style="margin-bottom: 10px; margin-right: 10px;">
-                        <b-button variant="info" @click="submitAll" style="height: 34px;">
+                        <b-button variant="info" @click="submitAll" style="height: 34px;" :disabled="already_submitted">
                             Submit to review
                         </b-button>
                     </div>
@@ -248,6 +251,11 @@ const full_fields = [
     {
         key: "tier_level",
         label: "Tier level",
+        sortable: true
+    },
+    {
+        key: "escat_score",
+        label: "ESCAT score",
         sortable: true
     },
     {
@@ -364,7 +372,8 @@ export default {
             history_entry_id: null,
             filter: null,
             selected: {},
-            statusFilter: 'all'
+            statusFilter: 'all',
+            already_submitted: false
         };
     },
     created() {
@@ -373,6 +382,18 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
+
+        if ([
+            '0_review', 
+            '1_review', 
+            '2_reviews', 
+            'conflicting_reviews', 
+            'to_review_again', 
+            'on_hold', 
+            'fully_reviewed'
+        ].includes(this.variant.stage)) {
+            this.already_submitted = true
+        }
     },
     computed: {
         ...mapGetters(["userID"]),
@@ -565,5 +586,13 @@ export default {
 
 #evidence_table >>> .table {
     margin-bottom: 0;
+}
+
+.submitted-bar {
+    background-color: rgb(194, 71, 0);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.4rem;
 }
 </style>

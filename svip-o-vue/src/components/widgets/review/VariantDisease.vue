@@ -144,7 +144,7 @@
             Submit review
         </b-button>
         </div>
-        <b-navbar-text class="fixed-bottom submitted-bar" align="center">
+        <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted">
             YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
         </b-navbar-text>
     </div>
@@ -495,7 +495,7 @@ export default {
 }
 
 .submitted-bar {
-    background-color: rgb(44, 62, 80);
+    background-color: rgb(194, 71, 0);
     color: white;
     font-weight: bold;
     text-align: center;

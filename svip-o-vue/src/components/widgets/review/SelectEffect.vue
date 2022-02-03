@@ -1,10 +1,3 @@
-<!--<template v-slot:cell(type_of_evidence)="row">
-                            <row-expander :row="row" class="mr-2"/>
-                            <span>{{ index }}</span>
-                        </template>
-
-                        <template v-slot:row-details="row"></template>-->
-
 <template>
     <div v-if="diseases.length>0">
         <div v-for="(review, idx) in diseases" :key="idx">
@@ -96,9 +89,15 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitCurations()">
+        <b-button class="float-right" @click="submitCurations(true)" :disabled="not_submitted || already_reviewed">
             Confirm annotation
         </b-button>
+        <b-navbar-text v-if="not_submitted" class="fixed-bottom submitted-bar" align="center">
+            THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE ANNOTATED YET.
+        </b-navbar-text>
+        <b-navbar-text v-if="already_reviewed" class="fixed-bottom submitted-bar" align="center">
+            THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE VARIANT HAS ALREADY RECEIVED REVIEW(S).
+        </b-navbar-text>
     </div>
 </template>
 
@@ -318,11 +317,18 @@ export default {
                     ]
                 },
             },
+            already_reviewed: false,
+            not_submitted: false,
             expander_array: []
         };
     },
     mounted() {},
     created() {
+        if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
+            this.not_submitted = true
+        } else if (['1_review', '2_reviews', 'conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
+            this.already_reviewed = true
+        }
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -350,8 +356,6 @@ export default {
             }
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    //this.diseases = response.data.review_data
-                    //this.prefillAnnotations();
                     this.diseases = response.data.review_data
                     this.prefillAnnotations(this.diseases)
                 })
@@ -376,6 +380,8 @@ export default {
 
                     evidences_expanders.push(false)
                 })
+
+                this.submitCurations(false)
 
                 this.expander_array.push({
                     'disease': true,
@@ -481,13 +487,15 @@ export default {
             
             evidence.curator.annotatedTier = this.all_fields[evidence.typeOfEvidence]["tier_criteria"][this.all_fields[evidence.typeOfEvidence]["tier_criteria"].length - trustedCuration['tier_score']]
         },
-        submitCurations() {
+        submitCurations(notify) {
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
                     this.submitOneEvidence(evidence)
                 })
             })
-            this.$snotify.success("Your curation(s) has been submitted to be reviewed");
+            if (notify) {
+                this.$snotify.success("Your curation(s) has been submitted to be reviewed");
+            }
         },
         submitOneEvidence(evidence) {
             const annotation = {
@@ -496,7 +504,7 @@ export default {
                 'evidence': evidence.id
             }
 
-            // check wether an SIBAnnotation1 instance already exists in the DB
+            // check whether an SIBAnnotation1 instance already exists in the DB
             if (typeof evidence.curator.id === 'undefined') {
                 HTTP.post(`/sib_annotations_1/`, annotation)
                     .then((response) => {
@@ -536,7 +544,6 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
-
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;
@@ -551,5 +558,13 @@ export default {
 
 .summary-box {
     color: black !important;
+}
+
+.submitted-bar {
+    background-color: rgb(194, 71, 0);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.4rem;
 }
 </style>
