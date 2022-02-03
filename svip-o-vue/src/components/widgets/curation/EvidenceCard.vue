@@ -254,6 +254,11 @@ const full_fields = [
         sortable: true
     },
     {
+        key: "escat_score",
+        label: "ESCAT score",
+        sortable: true
+    },
+    {
         key: "extra_variants",
         label: "Other Variants",
         sortable: true
