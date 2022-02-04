@@ -41,9 +41,13 @@
                                                 </b-row>
                                                 <b-row class="p-2">
                                                     <select-tier
-                                                        v-if="['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
+                                                        v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)" 
                                                         v-model="evidence.curator.annotatedTier">
                                                     </select-tier>
+                                                    <select-therapeutic-tier
+                                                        v-if="['Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
+                                                        v-model="evidence.curator.annotatedTier">
+                                                    </select-therapeutic-tier>
                                                     <select-various-outcome
                                                         v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
                                                         v-model="evidence.curator.annotatedTier"
@@ -113,6 +117,7 @@ import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDia
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectVariousOutcome from "@/components/widgets/review/forms/SelectVariousOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import SelectTherapeuticTier from "@/components/widgets/review/forms/SelectTherapeuticTier";
 import { mapGetters } from "vuex";
 
 const log = ulog("SelectEffect");
@@ -121,6 +126,7 @@ export default {
     name: "SelectEffect",
     components: {
         SelectTier,
+        SelectTherapeuticTier,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
@@ -437,6 +443,7 @@ export default {
             evidence.curator = {}
             evidence.curator.annotatedEffect = trustedCuration['effect']
             evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
+            console.log('clinical: ', evidence.curator.annotatedTier)
         },
         annotateNonClinicalEvidence(evidence) {
             let effects = {}
@@ -483,8 +490,8 @@ export default {
             }
             evidence.curator = {}
             evidence.curator.annotatedEffect = trustedCuration['effect']
-            
             evidence.curator.annotatedTier = this.all_fields[evidence.typeOfEvidence]["tier_criteria"][this.all_fields[evidence.typeOfEvidence]["tier_criteria"].length - trustedCuration['tier_score']]
+            console.log('non clinical: ', evidence.curator.annotatedTier)
         },
         submitCurations(notify) {
             this.diseases.map(disease => {
