@@ -381,13 +381,13 @@ export default {
                     evidences_expanders.push(false)
                 })
 
-                this.submitCurations(false)
-
                 this.expander_array.push({
                     'disease': true,
                     'evidences': evidences_expanders
                 })
             })
+
+            this.submitCurations(false)
         },
         annotateClinicalEvidence(evidence) {
             let effects = {}
@@ -439,7 +439,6 @@ export default {
             evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
         },
         annotateNonClinicalEvidence(evidence) {
-            console.log(`annotatedNonClinical is run`)
             let effects = {}
             evidence.curations.map(curation => {
                 // tiers listed first are the most trustable ones (so we attribute a higher score)
