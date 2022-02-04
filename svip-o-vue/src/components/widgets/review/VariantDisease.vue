@@ -51,11 +51,18 @@
                                                 ></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <select-tier 
+                                                <select-tier
+                                                    v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)"
                                                     v-model="evidence.currentReview.annotatedTier"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
                                                     :disabled="submitted"
                                                 ></select-tier>
+                                                <select-therapeutic-tier
+                                                    v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
+                                                    v-model="evidence.currentReview.annotatedTier"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="submitted"
+                                                ></select-therapeutic-tier>
                                             </b-row>
                                         </b-col>
                                         <b-col cols="1" align="center">
@@ -161,6 +168,7 @@ import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPro
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import SelectTherapeuticTier from "@/components/widgets/review/forms/SelectTherapeuticTier";
 import { mapGetters } from "vuex";
 
 const log = ulog("VariantDisease");
@@ -169,6 +177,7 @@ export default {
     name: "VariantDisease",
     components: {
         SelectTier,
+        SelectTherapeuticTier,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
