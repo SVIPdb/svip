@@ -9,6 +9,8 @@ until PGPASSWORD="$POSTGRES_PASSWORD" psql -d  "$POSTGRES_DB" -h "$POSTGRES_HOST
   sleep 3
 done
 
+#pip install django_mkdocs
+
 python manage.py migrate
 python manage.py createcachetable
 

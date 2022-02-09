@@ -7,6 +7,7 @@ from itertools import chain
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
+from django.db.models import Q
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -165,7 +166,7 @@ class VariantInSVIP(models.Model):
                 disease["disease"] = 'Unspecified'
 
             evidences = []
-            for evidence in association.curation_evidences.all():
+            for evidence in association.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):
 
                 # delete evidences that don't contain any curation
                 if evidence.curation_entries.all().count() == 0:
@@ -229,7 +230,8 @@ class VariantInSVIP(models.Model):
                         "reviewer_id": review.reviewer.id,
                         "annotatedTier": review.annotated_tier,
                         "annotatedEffect": review.annotated_effect,
-                        "comment": review.comment
+                        "comment": review.comment,
+                        "draft": review.draft
                     }
                     if (review.annotated_effect == evidence.annotation1.effect) and (review.annotated_tier == evidence.annotation1.tier):
                         review_obj['status'] = True
@@ -275,7 +277,8 @@ class VariantInSVIP(models.Model):
 
             disease["evidences"] = ordered_evidences
 
-            diseases_dict.append(disease)
+            if len(disease["evidences"]) > 0:
+                diseases_dict.append(disease)
 
         return diseases_dict
 
@@ -540,6 +543,8 @@ class CurationEntry(SVIPModel):
     status = models.TextField(verbose_name="Curation Status", choices=tuple(
         CURATION_STATUS.items()), default='draft', db_index=True)
 
+    escat_score = models.TextField(verbose_name="ESCAT score", null=True, blank=True)
+
     # optionally, this curation entry could be the result of "claiming" a curation request
     # FIXME: should we always generate a curation request to make tracking its review easier?
     # FIXME #2: assumedly batches of curation entries are submitted for a single request, so this should be mandatory
@@ -661,6 +666,8 @@ class CurationReview(SVIPModel):
     annotated_tier = models.TextField(null=True, blank=True)
     comment = models.TextField(default="", null=True, blank=True)
     
+    draft = models.BooleanField(default=False)
+    
     def match(self):
         SIBAnnotation = self.curation_evidence.annotation1
         return (self.annotated_effect == SIBAnnotation.effect) and (self.annotated_tier == SIBAnnotation.tier)
@@ -677,6 +684,8 @@ class RevisedReview(models.Model):
     agree = models.BooleanField()
     comment = models.TextField(default="", null=True, blank=True)
 
+    draft = models.BooleanField(default=False)
+
 class SIBAnnotation1(models.Model):
     """
     First Annotation of the SIB curators for a specific evidence
@@ -685,8 +694,9 @@ class SIBAnnotation1(models.Model):
         to=CurationEvidence, related_name="annotation1", on_delete=DB_CASCADE)
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
-    
-    
+    draft = models.BooleanField(default=False)
+
+
 class SIBAnnotation2(models.Model):
     """
     Second Annotation of the SIB curators for a specific evidence
@@ -696,6 +706,7 @@ class SIBAnnotation2(models.Model):
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
     clinical_input = models.TextField(null=True)
+    draft = models.BooleanField(default=False)
 
 
 # ================================================================================================================

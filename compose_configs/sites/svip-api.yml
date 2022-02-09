@@ -7,13 +7,26 @@ services:
       - "80:80"
     volumes:
       - "${PWD}/service_config/nginx/api.conf:/etc/nginx/shared.conf:ro"
-      - "${PWD}/service_config/nginx/sites/with_ssl.nginx:/etc/nginx/conf.d/svip.nginx:ro"
-      - /etc/pki/tls/certs/api.svip.ch.chain.crt.pem:/etc/pki/tls/certs/host.crt.pem
-      - /etc/pki/tls/private/api.svip.ch.privkey.pem:/etc/pki/tls/private/host.privkey.pem
+      - "${PWD}/service_config/nginx/certbot.conf:/etc/nginx/certbot.conf:ro"
+      - "${PWD}/service_config/nginx/sites/with_certbot.nginx:/etc/nginx/conf.d/svip.nginx:ro"
+      
+      # - /etc/pki/tls/certs/api.svip.ch.chain.crt.pem:/etc/pki/tls/certs/host.crt.pem
+      # - /etc/pki/tls/private/api.svip.ch.privkey.pem:/etc/pki/tls/private/host.privkey.pem
 
       # extra mappings for acting as a load-balancer target for svip.ch
-      - /etc/pki/tls/certs/svip.ch.chained.crt:/etc/pki/tls/certs/svip.ch.chained.crt
-      - /etc/pki/tls/private/svip.ch.key:/etc/pki/tls/private/svip.ch.key
+      # - /etc/pki/tls/certs/svip.ch.chained.crt:/etc/pki/tls/certs/svip.ch.chained.crt
+      # - /etc/pki/tls/private/svip.ch.key:/etc/pki/tls/private/svip.ch.key
+
+      # extra mappings for certbot
+      - ./data/certbot/conf:/etc/letsencrypt:z
+      - ./data/certbot/www:/var/www/certbot:z
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt:z
+      - ./data/certbot/www:/var/www/certbot:z
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   frontend:
     environment:

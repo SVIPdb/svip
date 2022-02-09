@@ -1,48 +1,26 @@
 <template>
     <div>
-        <div v-for="(review, review_index) in diseases" :key="'review' + review_index">
+        <div v-for="(review, idx) in diseases" :key="'disease'+ idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showDisease"/>
+                    <expander v-model="expander_array[idx].disease"/>
                     {{ review.disease }}
                 </h6>
-                <div v-for="(evidence,evidence_index) in review.evidences" :key="'evidence' + evidence_index">
+                <div v-for="(evidence, index) in review.evidences" :key="'evidence' + index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
-                            <div v-if="showDisease">
+                            <div v-if="expander_array[idx].disease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
                                         <b-col align="center" cols="2">
-                                            <expander v-model="evidence.isOpen"/>
+                                            <expander v-model="expander_array[idx].evidences[index]"/>
                                             {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
-                                            <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
+                                            <p class="mb-2" v-for="(effect, effect_idx) in evidence.effectOfVariant" :key="'effect' + effect_idx">
                                                 {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
                                             </p>
                                         </b-col>
-                                        <!--<b-col cols="2">
-                                            <b-row class="p-2">
-                                                <b-input v-model="evidence.curator.annotatedEffect" readonly/>
-                                            </b-row>
-                                            <b-row class="p-2">
-                                                <b-input v-model="evidence.curator.annotatedTier" readonly/>
-                                            </b-row>
-                                        </b-col>-->
-
-                                        <!--<b-col cols="2">
-                                            <b-row class="p-2">
-                                                <div v-if="evidence.myReview">
-                                                    <b-input v-model="evidence.myReview.annotatedEffect" readonly/>
-                                                </div>
-                                            </b-row>
-                                            <b-row class="p-2">
-                                                <div v-if="evidence.myReview">
-                                                    <b-input v-model="evidence.myReview.annotatedTier" readonly/>
-                                                </div>
-                                            </b-row>
-                                        </b-col>-->
-
                                         <b-col cols="2">
                                             <!--Final curators' annotation:-->
                                             <b-row class="p-2">
@@ -58,37 +36,37 @@
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
-                            </div>
-                        </transition>
-                        <transition name="slide-fade">
-                            <div v-if="evidence.isOpen">
-                                <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                                    <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
-                                        <b-col class="border p-2">PMID:
-                                            <b-link target="_blank" active
-                                                    :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
-                                                {{ curation.pmid }}
-                                            </b-link>
-                                        </b-col>
-                                        <b-col class="border p-2">{{ curation.effect }}</b-col>
-                                        <b-col class="border p-2">{{ curation.tier }}</b-col>
-                                        <b-col class="border p-2">
-                                            Support: {{ curation.support }}
-                                        </b-col>
-                                        <b-col class="border p-2">
-                                            <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
-                                                    target="_blank"
-                                                    alt="Link to evidence">Curation entry #{{ curation.id }}
-                                            </b-link>
-                                        </b-col>
+                                <transition name="slide-fade">
+                                    <div v-if="expander_array[idx].evidences[index]">
+                                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                                            <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
+                                                <b-col class="border p-2">PMID:
+                                                    <b-link target="_blank" active
+                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
+                                                        {{ curation.pmid }}
+                                                    </b-link>
+                                                </b-col>
+                                                <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                                <b-col class="border p-2">{{ curation.tier }}</b-col>
+                                                <b-col class="border p-2">
+                                                    Support: {{ curation.support }}
+                                                </b-col>
+                                                <b-col class="border p-2">
+                                                    <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
+                                                            target="_blank"
+                                                            alt="Link to evidence">Curation entry #{{ curation.id }}
+                                                    </b-link>
+                                                </b-col>
 
-                                        <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
-                                    </b-row>
-                                </b-card-footer>
+                                                <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
+                                            </b-row>
+                                        </b-card-footer>
+                                    </div>
+                                </transition>
                             </div>
                         </transition>
                     </b-card-body>
-                    <hr v-if="showDisease"/>
+                    <hr v-if="expander_array[idx].disease"/>
                 </div>
             </b-card>
         </div>
@@ -133,245 +111,15 @@ export default {
     data() {
         return {
             diseases: [],
-            diseases_test: [
-                {
-                    disease: "Aggressive fibromatosis",
-                    evidences: [
-                        {
-                            isOpen: false,
-                            typeOfEvidence: "Prognostic",
-                            effectOfVariant: [
-                                {
-                                    label: "Good outcome",
-                                    count: 4
-                                },
-                                {
-                                    label: "Intermediate",
-                                    count: 2
-                                },
-                                {
-                                    label: "Poor outcome",
-                                    count: 1
-                                }
-                            ],
-                            curations: [
-                                {
-                                    id: 1,
-                                    pmid: 1,
-                                    effect: "Good outcome",
-                                    support: "Strong",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 2,
-                                    pmid: 2,
-                                    effect: "Good outcome",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 3,
-                                    pmid: 3,
-                                    effect: "Good outcome",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 4,
-                                    pmid: 4,
-                                    effect: "Intermediate",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 5,
-                                    pmid: 5,
-                                    effect: "Intermediate",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 6,
-                                    pmid: 6,
-                                    effect: "Poor outcome",
-                                    support: "Moderate",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                }
-                            ],
-                            curator: {
-                                annotatedEffect: "Unclear",
-                                annotatedTier: "Tier IA: Included in Professional Guidelines"
-                            },
-                            currentReview: {
-                                annotatedEffect: "Unclear", //Initial value should be the same as curator
-                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                                reviewer_id: "John Doe",
-                                status: true,
-                                comment: null
-                            },
-                            reviews: [
-                                {
-                                    reviewer_name: "Johnny Doe",
-                                    status: false
-                                },
-                                {
-                                    reviewer_name: "Jean Doe",
-                                    status: null
-                                }
-                            ],
-                            note: null
-                        },
-                        {
-                            isOpen: false,
-                            typeOfEvidence: "Diagnostic",
-                            effectOfVariant: [
-                                {
-                                    label: "Associated with diagnosis",
-                                    count: 1
-                                },
-                                {
-                                    label: "Not associated with diagnosis",
-                                    count: 1
-                                },
-                                {
-                                    label: "Other",
-                                    count: 0
-                                }
-                            ],
-                            curations: [
-                                {
-                                    id: 7,
-                                    pmid: 7,
-                                    effect: "Associated with diagnosis",
-                                    support: "Strong",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                },
-                                {
-                                    id: 8,
-                                    pmid: 8,
-                                    effect: "Not associated with diagnosis",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                }
-                            ],
-                            curator: {
-                                annotatedEffect: "Associated with diagnosis",
-                                annotatedTier: "Tier IA: Included in Professional Guidelines"
-                            },
-                            currentReview: {
-                                annotatedEffect: "Associated with diagnosis", //Initial value should be the same as curator
-                                annotatedTier: "Tier IA: Included in Professional Guidelines", //Initial value should be the same as curator
-                                reviewer_name: "John Doe",
-                                status: true,
-                                comment: null
-                            },
-                            reviews: [
-                                {
-                                    reviewer_name: "Johnny Doe",
-                                    status: true
-                                },
-                                {
-                                    reviewer_name: "Jean Doe",
-                                    status: null
-                                }
-                            ],
-                            note: null
-                        },
-                        {
-                            isOpen: false,
-                            typeOfEvidence: "Predictive / Therapeutic",
-                            effectOfVariant: [
-                                {
-                                    label: "Drug 1",
-                                    count: 1
-                                }
-                            ],
-                            curations: [
-                                {
-                                    id: 9,
-                                    pmid: 9,
-                                    effect: "Responsive",
-                                    support: "Moderate",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                }
-                            ],
-                            curator: {
-                                annotatedEffect: "Responsive",
-                                annotatedTier: "Tier IA: Included in Professional Guidelines"
-                            },
-                            currentReview: {
-                                annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
-                                reviewer_name: "John Doe",
-                                status: true,
-                                comment: null
-                            },
-                            reviews: [
-                                {
-                                    reviewer_name: "Johnny Doe",
-                                    status: true
-                                },
-                                {
-                                    reviewer_name: "Jean Doe",
-                                    status: null
-                                }
-                            ],
-                            note: null
-                        },
-                        {
-                            typeOfEvidence: "Predictive / Therapeutic",
-                            effectOfVariant: [
-                                {
-                                    label: "Drug 2",
-                                    count: 3
-                                }
-                            ],
-                            curations: [
-                                {
-                                    id: 10,
-                                    pmid: 10,
-                                    effect: "Other",
-                                    support: "Low",
-                                    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla rutrum erat at consequat. Sed eu pellentesque massa, et molestie magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce vitae sagittis est. Mauris sed quam vitae velit varius aliquam. In hac habitasse platea dictumst. Nam est metus, rhoncus non lacinia eget, rhoncus volutpat nulla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ac posuere urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque sit amet iaculis dui. In pharetra feugiat nisl, in maximus libero. Suspendisse potenti."
-                                }
-                            ],
-                            curator: {
-                                annotatedEffect: "Responsive",
-                                annotatedTier: "Tier IA: Included in Professional Guidelines"
-                            },
-                            currentReview: {
-                                annotatedEffect: "Responsive", //Initial value should be the same as curator
-                                annotatedTier: "Tier IID: Case reports", //Initial value should be the same as curator
-                                reviewer_name: "John Doe",
-                                status: true,
-                                comment: null
-                            },
-                            reviews: [
-                                {
-                                    reviewer_name: "Johnny Doe",
-                                    status: true
-                                },
-                                {
-                                    reviewer_name: "Jean Doe",
-                                    status: null
-                                }
-                            ],
-                            note: null
-                        }
-                    ]
-                }
-            ],
             selfReviewedEvidences: {},
             summary: null,
             history_entry_id: null,
-
             sample_curation_id: null,
-
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-
             showDisease: true,
+            expander_array: []
         };
     },
     created() {
@@ -430,7 +178,10 @@ export default {
         },
         detectOwnReviews() {
             // iterate over every review to prefill inputs with current user's past reviews
-            this.diseases.map(disease => {
+            this.diseases.map((disease, i) => {
+
+                let evidences_expanders = []
+
                 disease.evidences.map(evidence => {
 
                     evidence.reviews.map(review => {
@@ -441,7 +192,6 @@ export default {
                                 'comment': review.comment
                             }
                             evidence['myReview'] = myReview
-
                         }
                     })
 
@@ -468,6 +218,13 @@ export default {
                         evidence["newReview"] = newReview
                     }
 
+                    evidences_expanders.push(false)
+
+                })
+
+                this.expander_array.push({
+                    'disease': true,
+                    'evidences': evidences_expanders
                 })
             })
         },

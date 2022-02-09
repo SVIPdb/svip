@@ -34,10 +34,10 @@
                 <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
                 <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
                 <template v-slot:cell(additional_var)>
-                    <div v-for="item in additionalVariants" :key="item">
+                    <div v-for="(item, index) in additionalVariants" :key="index">
                         <router-link
                             class="font-weight-bold"
-                            :to="{ name: 'gene', params: { gene_id: item.gene.id }}"
+                            :to="{ name: 'gene', params: { gene_id: additionalVariants[index].gene.id }}"
                             target="_blank"
                         >{{ item.gene.symbol }}
                         </router-link>
@@ -120,7 +120,7 @@ export default {
             HTTP.get(this.apiUrl()).then(res => {
                 const additionalVariants = []
                 const IDs = []
-                console.log(res.data.results)
+                //console.log(res.data.results)
                 res.data.results.map(curation => {
                     curation.extra_variants.map(extra_var => {
                         if (!IDs.includes(extra_var.id)) {
