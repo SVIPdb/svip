@@ -7,10 +7,10 @@
             <!-- Ivo : Change name to "VariantSummaryReview"? -->
             <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
-            <div v-for="(disease) in diseases" :key="disease" :annotated="annotated" :not-reviewed="not_reviewed">
-                <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
+            <div v-for="(disease) in diseases" :key="disease">
+                <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations" :annotated="annotated" :not_reviewed="not_reviewed"/>
             </div>
-            <b-button class="float-right" @click="submitAnnotations">
+            <b-button class="float-right" @click="submitAnnotations" :disabled="not_reviewed || annotated">
                 Submit annotation
             </b-button>
         </div>

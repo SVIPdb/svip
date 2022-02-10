@@ -405,7 +405,6 @@ class CurationEvidence(models.Model):
                 effect_of_variant.append(effect_obj)
         return effect_of_variant
 
-
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
     ('saved', 'saved'),
