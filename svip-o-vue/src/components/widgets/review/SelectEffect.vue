@@ -1,101 +1,112 @@
 <template>
-    <div v-if="diseases.length>0">
-        <div v-for="(review, idx) in diseases" :key="idx">
-            <b-card class="shadow-sm mb-3" align="left" no-body>
-                <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="expander_array[idx].disease"/>
-                    {{ review.disease }}
-                </h6>
-                <div v-for="(evidence, index) in review.evidences" :key="index">
-                    <b-card-body class="p-0">
-                        <transition name="slide-fade">
-                            <div v-if="expander_array[idx].disease">
-                                <b-card-text class="p-2 m-0">
-                                    <b-row align-v="center">
-                                        <b-col align="center" cols="3">
-                        
-                                            <expander v-model="expander_array[idx].evidences[index]"/>
-                                            {{ evidence.fullType }}
-                                        </b-col>
-                                        <b-col cols="5">
-                                            <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
-                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
-                                            </p>
-                                        </b-col>
-                                        <b-col cols="3">
-                                            <div v-if="evidence.curator">
-                                                <b-row class="p-2">
-                                                    <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
-                                                                            v-model="evidence.curator.annotatedEffect"></select-prognostic-outcome>
-                                                    <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
-                                                                            v-model="evidence.curator.annotatedEffect"></select-diagnostic-outcome>
-                                                    <select-predictive-therapeutic-outcome
-                                                        v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
-                                                        v-model="evidence.curator.annotatedEffect"></select-predictive-therapeutic-outcome>
-                                                    <select-various-outcome
-                                                        v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
-                                                        v-model="evidence.curator.annotatedEffect"
-                                                        :evidenceType='evidence.typeOfEvidence'
-                                                        fieldType='effect'>
-                                                    </select-various-outcome>
-                                                </b-row>
-                                                <b-row class="p-2">
-                                                    <select-tier
-                                                        v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)" 
-                                                        v-model="evidence.curator.annotatedTier">
-                                                    </select-tier>
-                                                    <select-therapeutic-tier
-                                                        v-if="['Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
-                                                        v-model="evidence.curator.annotatedTier">
-                                                    </select-therapeutic-tier>
-                                                    <select-various-outcome
-                                                        v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
-                                                        v-model="evidence.curator.annotatedTier"
-                                                        :evidenceType='evidence.typeOfEvidence'
-                                                        fieldType='tier'>
-                                                    </select-various-outcome>
-                                                </b-row>
-                                            </div>
-                                        </b-col>
-                                    </b-row>
-                                </b-card-text>
-                                <transition name="slide-fade">
-                                    <div v-if="expander_array[idx].evidences[index]">
-                                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                                            <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
-                                                <b-col class="border p-2">PMID:
-                                                    <b-link target="_blank" active
-                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
-                                                        {{ curation.pmid }}
-                                                    </b-link>
-                                                </b-col>
-                                                <b-col class="border p-2">{{ curation.effect }}</b-col>
-                                                <b-col class="border p-2">{{ curation.tier }}</b-col>
-                                                <b-col class="border p-2">
-                                                    Support: {{ curation.support }}
-                                                </b-col>
-                                                <b-col class="border p-2">
-                                                    <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
-                                                            target="_blank"
-                                                            alt="Link to evidence">Curation entry #{{ curation.id }}
-                                                    </b-link>
-                                                </b-col>
+    <div>
+        <div v-if="diseases.length>0">
+            <div v-for="(review, idx) in diseases" :key="idx">
+                <b-card class="shadow-sm mb-3" align="left" no-body>
+                    <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
+                        <expander v-model="expander_array[idx].disease"/>
+                        {{ review.disease }}
+                    </h6>
+                    <div v-for="(evidence, index) in review.evidences" :key="index">
+                        <b-card-body class="p-0">
+                            <transition name="slide-fade">
+                                <div v-if="expander_array[idx].disease">
+                                    <b-card-text class="p-2 m-0">
+                                        <b-row align-v="center">
+                                            <b-col align="center" cols="3">
+                                                <expander v-model="expander_array[idx].evidences[index]"/>
+                                                {{ evidence.fullType }}
+                                            </b-col>
+                                            <b-col cols="5">
+                                                <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
+                                                    {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                                </p>
+                                            </b-col>
+                                            <b-col cols="3">
+                                                <div v-if="evidence.curator">
+                                                    <b-row class="p-2">
+                                                        <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
+                                                                                v-model="evidence.curator.annotatedEffect"
+                                                                                :disabled="not_submitted || already_reviewed"
+                                                        ></select-prognostic-outcome>
+                                                        <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
+                                                                                v-model="evidence.curator.annotatedEffect"
+                                                                                :disabled="not_submitted || already_reviewed"
+                                                        ></select-diagnostic-outcome>
+                                                        <select-predictive-therapeutic-outcome
+                                                            v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
+                                                            v-model="evidence.curator.annotatedEffect"
+                                                            :disabled="not_submitted || already_reviewed"
+                                                        ></select-predictive-therapeutic-outcome>
+                                                        <select-various-outcome
+                                                            v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
+                                                            v-model="evidence.curator.annotatedEffect"
+                                                            :evidenceType='evidence.typeOfEvidence'
+                                                            fieldType='effect'
+                                                            :disabled="not_submitted || already_reviewed"
+                                                        ></select-various-outcome>
+                                                    </b-row>
+                                                    <b-row class="p-2">
+                                                        <select-tier
+                                                            v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)" 
+                                                            v-model="evidence.curator.annotatedTier"
+                                                            :disabled="not_submitted || already_reviewed"
+                                                        />
+                                                        <select-therapeutic-tier
+                                                            v-if="['Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
+                                                            v-model="evidence.curator.annotatedTier"
+                                                            :disabled="not_submitted || already_reviewed"
+                                                        />
+                                                        <select-various-outcome
+                                                            v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
+                                                            v-model="evidence.curator.annotatedTier"
+                                                            :evidenceType='evidence.typeOfEvidence'
+                                                            fieldType='tier'
+                                                            :disabled="not_submitted || already_reviewed"
+                                                        />
+                                                    </b-row>
+                                                </div>
+                                            </b-col>
+                                        </b-row>
+                                    </b-card-text>
+                                    <transition name="slide-fade">
+                                        <div v-if="expander_array[idx].evidences[index]">
+                                            <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                                                <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
+                                                    <b-col class="border p-2">PMID:
+                                                        <b-link target="_blank" active
+                                                                :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
+                                                            {{ curation.pmid }}
+                                                        </b-link>
+                                                    </b-col>
+                                                    <b-col class="border p-2">{{ curation.effect }}</b-col>
+                                                    <b-col class="border p-2">{{ curation.tier }}</b-col>
+                                                    <b-col class="border p-2">
+                                                        Support: {{ curation.support }}
+                                                    </b-col>
+                                                    <b-col class="border p-2">
+                                                        <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
+                                                                target="_blank"
+                                                                alt="Link to evidence">Curation entry #{{ curation.id }}
+                                                        </b-link>
+                                                    </b-col>
 
-                                                <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
-                                            </b-row>
-                                        </b-card-footer>
-                                    </div>
-                                </transition>
-                            </div>
-                        </transition>
-                    </b-card-body>
-                    <hr v-if="expander_array[idx].disease"/>
-                </div>
-            </b-card>
+                                                    <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
+                                                </b-row>
+                                            </b-card-footer>
+                                        </div>
+                                    </transition>
+                                </div>
+                            </transition>
+                        </b-card-body>
+                        <hr v-if="expander_array[idx].disease"/>
+                    </div>
+                </b-card>
+            </div>
+            <b-button class="float-right" @click="submitCurations(true)" :disabled="not_submitted || already_reviewed">
+                Confirm annotation
+            </b-button>
         </div>
-        <b-button class="float-right" @click="submitCurations(true)" :disabled="not_submitted || already_reviewed">
-            Confirm annotation
-        </b-button>
         <b-navbar-text v-if="not_submitted" class="fixed-bottom submitted-bar" align="center">
             THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE ANNOTATED YET.
         </b-navbar-text>
@@ -371,6 +382,11 @@ export default {
                 })
         },
         prefillAnnotations(diseases) {
+
+            if (diseases.length === 0) {
+                this.not_submitted = true
+            }
+
             diseases.map(disease => {
                 let evidences_expanders = []
 
@@ -567,7 +583,7 @@ export default {
 }
 
 .submitted-bar {
-    background-color: rgb(194, 71, 0);
+    background-color: rgb(194, 45, 0);
     color: white;
     font-weight: bold;
     text-align: center;

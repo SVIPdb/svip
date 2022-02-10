@@ -145,33 +145,35 @@ class Variant(models.Model):
     def stage(self):
 
         if self.curation_associations.count() > 0:
-            if self.curation_associations.first().curation_evidences.count() > 0:
-                evidence = self.curation_associations.first().curation_evidences.first()
 
-                if evidence.revised_reviews.all().count() == 3:
-                    if evidence.revised_reviews.filter(agree=True).count() == 3:
-                        return 'fully_reviewed'
-                    else:
-                        return 'on_hold'
+            for association in self.curation_associations.all():
+                if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+                    evidence = association.curation_evidences.first()
 
-                if hasattr(evidence, 'annotation2'):
-                    return 'to_review_again'
-
-                if evidence.reviews.count() == 3:
-                    if hasattr(evidence, 'annotation1'):
-                        if evidence.reviews.filter(
-                            annotated_effect=self.annotation1.effect,
-                            annotated_tier=self.annotation1.tier
-                        ).count() == 3:
+                    if evidence.revised_reviews.all().count() == 3:
+                        if evidence.revised_reviews.filter(agree=True).count() == 3:
                             return 'fully_reviewed'
                         else:
-                            return 'conflicting_reviews'
+                            return 'on_hold'
 
-                if evidence.reviews.count() == 2:
-                    return '2_reviews'
+                    if hasattr(evidence, 'annotation2'):
+                        return 'to_review_again'
 
-                if evidence.reviews.count() == 1:
-                    return '1_review'
+                    if evidence.reviews.count() == 3:
+                        if hasattr(evidence, 'annotation1'):
+                            if evidence.reviews.filter(
+                                annotated_effect=self.annotation1.effect,
+                                annotated_tier=self.annotation1.tier
+                            ).count() == 3:
+                                return 'fully_reviewed'
+                            else:
+                                return 'conflicting_reviews'
+
+                    if evidence.reviews.count() == 2:
+                        return '2_reviews'
+
+                    if evidence.reviews.count() == 1:
+                        return '1_review'
 
         for curation in self.curations.all():
             if curation.status == 'submitted':

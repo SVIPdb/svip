@@ -261,7 +261,7 @@ export default {
                     message: `You are about to submit permanently the reviews for each of the ${this.evidence_counter} evidences of this variant. Are you sure?`,
                     button: {
                         yes: 'Submit permanently',
-                        no: 'Continue to review'
+                        no: 'Cancel'
                     },
                     /**
                      * Callback Function
@@ -504,7 +504,7 @@ export default {
 }
 
 .submitted-bar {
-    background-color: rgb(194, 71, 0);
+    background-color: rgb(194, 45, 0);
     color: white;
     font-weight: bold;
     text-align: center;
