@@ -162,8 +162,8 @@ class Variant(models.Model):
                     if evidence.reviews.count() == 3:
                         if hasattr(evidence, 'annotation1'):
                             if evidence.reviews.filter(
-                                annotated_effect=self.annotation1.effect,
-                                annotated_tier=self.annotation1.tier
+                                annotated_effect=evidence.annotation1.effect,
+                                annotated_tier=evidence.annotation1.tier
                             ).count() == 3:
                                 return 'fully_reviewed'
                             else:

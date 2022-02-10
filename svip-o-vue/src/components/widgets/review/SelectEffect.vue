@@ -344,11 +344,13 @@ export default {
         // Watch if use is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload)
 
+        // Check that this page is appropriate regarding current review stage of variant
         if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
             this.not_submitted = true
         } else if (['1_review', '2_reviews', 'conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
             this.already_reviewed = true
         }
+
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -392,14 +394,8 @@ export default {
                 })
         },
         prefillAnnotations(diseases) {
-
-            if (diseases.length === 0) {
-                this.not_submitted = true
-            }
-
             diseases.map(disease => {
                 let evidences_expanders = []
-
                 disease.evidences.map(evidence => {
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === 'undefined') {
@@ -409,7 +405,6 @@ export default {
                             this.annotateNonClinicalEvidence(evidence)
                         }
                     }
-
                     evidences_expanders.push(false)
                 })
 

@@ -35,19 +35,19 @@
                                                     v-if="evidence.typeOfEvidence === 'Prognostic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-prognostic-outcome>
                                                 <select-diagnostic-outcome 
                                                     v-if="evidence.typeOfEvidence === 'Diagnostic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-diagnostic-outcome>
                                                 <select-predictive-therapeutic-outcome
                                                     v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
@@ -55,13 +55,13 @@
                                                     v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)"
                                                     v-model="evidence.currentReview.annotatedTier"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-tier>
                                                 <select-therapeutic-tier
                                                     v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                     v-model="evidence.currentReview.annotatedTier"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-therapeutic-tier>
                                             </b-row>
                                         </b-col>
@@ -97,7 +97,7 @@
                                         </b-col>
                                         <b-col cols="4">
                                             <b-textarea
-                                                :disabled="evidence.currentReview.status || submitted"
+                                                :disabled="evidence.currentReview.status || not_annotated || submitted"
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
@@ -144,13 +144,17 @@
             </b-card>
         </div>
         <div class="float-right">
-        <b-button  variant="warning" @click="submitReviews(true)" :disabled="submitted">
+        <b-button  variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
             Finish later
         </b-button>
-        <b-button class="footer-btn" @click="submitOptions()" :disabled="submitted">
+        <!--<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">-->
+        <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
             Submit review
         </b-button>
         </div>
+        <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
+            THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
+        </b-navbar-text>
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted">
             YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
         </b-navbar-text>
@@ -203,12 +207,21 @@ export default {
             channel: new BroadcastChannel("curation-update"),
             expander_array: [],
             evidence_counter: 0,
+
+            not_annotated: false,
             submitted: false
         };
     },
     created() {
         // Watch if use is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload)
+
+        // Check that this page is appropriate regarding current review stage of variant
+        if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
+            this.not_annotated = true
+        } else if (['conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
+            this.submitted = true
+        }
 
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
