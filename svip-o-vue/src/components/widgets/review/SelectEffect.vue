@@ -341,6 +341,9 @@ export default {
     },
     mounted() {},
     created() {
+        // Watch if use is going to leave the page
+        window.addEventListener('beforeunload', this.beforeWindowUnload)
+
         if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
             this.not_submitted = true
         } else if (['1_review', '2_reviews', 'conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
@@ -365,6 +368,13 @@ export default {
         })
     },
     methods: {
+        beforeWindowUnload(e) {
+            console.log('beforeWindowUnload is run')
+            // Cancel the event
+            e.preventDefault()
+            // Chrome requires returnValue to be set
+            e.returnValue = ''
+        },
         getReviewData() {
             const params={
                 reviewer: this.user.user_id,

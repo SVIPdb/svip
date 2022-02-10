@@ -207,7 +207,7 @@ export default {
         };
     },
     created() {
-        // Watch if whether is going to leave the page
+        // Watch if use is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload)
 
         this.channel.onmessage = () => {
@@ -229,25 +229,7 @@ export default {
             user: "currentUser"
         })
     },
-    beforeRouteLeave (to, from, next) {
-        console.log('beforeRouteLeave is run')
-        this.$dialog.confirm('Do you want to proceed?')
-        .then(function () {
-            next(false);
-        })
-        .catch(function () {
-            next(false);
-        });
-    },
     methods: {
-        confirmLeave() {
-            //return window.confirm('Do you really want to leave? You have unsaved changes.')
-            return this.submitOptions()
-        },
-        confirmStayInDirtyForm() {
-            //return this.form_dirty && !this.confirmLeave()
-            return true && !this.confirmLeave()
-        },
         beforeWindowUnload(e) {
             console.log('beforeWindowUnload is run')
             // Cancel the event
