@@ -1,17 +1,19 @@
 <template>
-    <div class="container-fluid">
-        <!-- Ivo : To change? -->
-        <CuratorVariantInformations :variant="variant" :disease_id="disease_id"/>
+    <div>
+        <div class="container-fluid">
+            <!-- Ivo : To change? -->
+            <CuratorVariantInformations :variant="variant" :disease_id="disease_id"/>
 
-        <!-- Ivo : Change name to "VariantSummaryReview"? -->
-        <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
+            <!-- Ivo : Change name to "VariantSummaryReview"? -->
+            <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
 
-        <div v-for="(disease) in diseases" :key="disease">
-            <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
+            <div v-for="(disease) in diseases" :key="disease" :annotated="annotated" :not-reviewed="not_reviewed">
+                <modify-review :raw_disease="disease.evidences" :label="disease.disease" @annotated="updateAnnotations"/>
+            </div>
+            <b-button class="float-right" @click="submitAnnotations">
+                Submit annotation
+            </b-button>
         </div>
-        <b-button class="float-right" @click="submitAnnotations">
-            Submit annotation
-        </b-button>
         <b-navbar-text v-if="not_reviewed" class="fixed-bottom submitted-bar" align="center">
             THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.
         </b-navbar-text>
@@ -76,16 +78,9 @@ export default {
 
         // Check that this page is appropriate regarding current review stage of variant
         if (['none', 'loaded', 'ongoing_curation', '0_review', '1_review', '2_reviews'].includes(this.variant.stage)) {
-            this.not_annotated = true
+            this.not_reviewed = true
         } else if (['to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
-            this.submitted = true
-        }
-
-        // Check that this page is appropriate regarding current review stage of variant
-        if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
-            this.not_annotated = true
-        } else if (['conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
-            this.submitted = true
+            this.annotated = true
         }
     },
     mounted() {
@@ -197,5 +192,13 @@ export default {
 {
     opacity: 0;
     max-height: 0;
+}
+
+.submitted-bar {
+    background-color: rgb(194, 45, 0);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.4rem;
 }
 </style>

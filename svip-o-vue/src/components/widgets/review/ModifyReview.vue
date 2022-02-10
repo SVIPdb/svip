@@ -273,7 +273,9 @@ export default {
     props: {
         raw_disease: {type: Array, required: false},
         //disease: {type: Object, required: false},
-        label: {type: String, required: false}
+        label: {type: String, required: false},
+        annotated: {type: Boolean, required: true},
+        not_reviewed: {type: Boolean, required: true}
     },
     methods: {
         pubmedURL,
