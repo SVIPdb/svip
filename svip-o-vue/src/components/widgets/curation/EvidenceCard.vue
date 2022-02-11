@@ -254,7 +254,7 @@ const full_fields = [
         sortable: true
     },
     {
-        key: "escat_score",
+        key: `short_escat_score`,
         label: "ESCAT score",
         sortable: true
     },
@@ -569,7 +569,7 @@ export default {
     align-items: center;
 }
 .pub-status > .fa-icon {
-  margin-right: 0.4rem;
+    margin-right: 0.4rem;
 }
 
 .action-tray {
@@ -589,7 +589,7 @@ export default {
 }
 
 .submitted-bar {
-    background-color: rgb(194, 71, 0);
+    background-color: rgb(194, 45, 0);
     color: white;
     font-weight: bold;
     text-align: center;

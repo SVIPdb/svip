@@ -571,6 +571,12 @@ class CurationEntry(SVIPModel):
 
     objects = CurationEntryManager()
 
+    def short_escat_score(self):
+        if self.escat_score == None:
+            return 'Unavailable'
+        else:
+            return self.escat_score.split(':')[0]
+
     def owner_name(self):
         if not self.owner:
             return "N/A"

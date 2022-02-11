@@ -239,6 +239,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         'tier_level',
         'tier_level_criteria',
         'escat_score',
+        'short_escat_score',
         'type_of_evidence',
     )
 
