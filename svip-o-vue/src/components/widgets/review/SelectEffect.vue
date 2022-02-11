@@ -532,11 +532,9 @@ export default {
                 })
             })
 
-            //if (typeof this.diseases[0]['evidences'][0]['curator']['id'] === 'undefined') {
             HTTP.post(`/sib_annotations_1`, evidences_data)
                 .then((response) => {
                     console.log(`response: ${response.data}`)
-                    console.log(response.data)
                     if (notify) {
                         this.$snotify.success("Your curation(s) have been submitted to be reviewed");
                     }

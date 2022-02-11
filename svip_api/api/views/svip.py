@@ -13,6 +13,7 @@ from hgvs.exceptions import HGVSParseError
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth.models import User
 
 from api.models import (
     VariantInSVIP, Sample,
@@ -299,17 +300,21 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
 
-class CurationReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = CurationReviewSerializer
-    model = CurationReview
-
-    def get_queryset(self):
-        queryset = CurationReview.objects.all()
-        return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        #kwargs["many"] = True
-        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
+class CurationReviewView(APIView):
+    def post(self, request, *args, **kwargs):
+        for obj in request.data:
+            if 'id' in obj:
+                review = CurationReview.objects.get(id=obj['id'])
+            else:
+                review = CurationReview()
+            review.curation_evidence = CurationEvidence.objects.get(id=obj['curation_evidence'])
+            review.annotated_effect = obj['annotated_effect']
+            review.annotated_tier = obj['annotated_tier']
+            review.comment = obj['comment']
+            review.draft = obj['draft']
+            review.reviewer = User.objects.get(id=obj['reviewer'])
+            review.save()
+        return Response(data='Submitted reviews are succesfully saved')
 
 
 class RevisedReviewViewSet(viewsets.ModelViewSet):

@@ -284,7 +284,7 @@ export default {
                 })
                 .catch((err) => {
                     log.warn(err);
-                    //this.$snotify.error("Failed to fetch data");
+                    this.$snotify.error("Failed to fetch data");
                 })
         },
         displayIcon(status) {
@@ -404,6 +404,8 @@ export default {
                 return false
             }
 
+            let evidences_data = []
+
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
@@ -411,42 +413,62 @@ export default {
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
+                        let evidence_obj = {}
                         if (evidence.id in this.selfReviewedEvidences) {
-                            let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
-                                .then((response) => {
-                                    this.getReviewData()
-                                    this.submitted = true
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                            evidence_obj = this.reviewParams(evidence, draft, this.selfReviewedEvidences[evidence.id])
                         } else {
-                            //newReviews.push(this.reviewParams(evidence));
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
-                                .then((response) => {
-                                    this.getReviewData()
-                                    this.submitted = true
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                            evidence_obj = this.reviewParams(evidence, draft)
                         }
+
+                        evidences_data.push(evidence_obj)
+
+                        //if (evidence.id in this.selfReviewedEvidences) {
+                        //    let reviewID = this.selfReviewedEvidences[evidence.id]
+                        //    HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
+                        //        .then((response) => {
+                        //            this.getReviewData()
+                        //            this.submitted = true
+                        //        })
+                        //        .catch((err) => {
+                        //            log.warn(err);
+                        //            this.$snotify.error("Failed to submit review");
+                        //        })
+                        //} else {
+                        //    //newReviews.push(this.reviewParams(evidence));
+                        //    HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
+                        //        .then((response) => {
+                        //            this.getReviewData()
+                        //            this.submitted = true
+                        //        })
+                        //        .catch((err) => {
+                        //            log.warn(err);
+                        //            this.$snotify.error("Failed to submit review");
+                        //        })
+                        //}
                     }
                 })
             })
 
-            if (draft) {
-                this.$snotify.success("Your review is saved as a draft.");
-            } else {
-                this.$snotify.success("Your reviews for this variant have been submitted.");
-            }
+            HTTP.post(`/reviews`, evidences_data)
+                .then((response) => {
+                    console.log(`response: ${response.data}`)
+                    if (draft) {
+                        this.$snotify.success("Your review is saved as a draft.");
+                    } else {
+                        this.$snotify.success("Your reviews for this variant have been submitted.");
+                    }
+                    this.getReviewData()
+                    this.submitted = true
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to submit review");
+                })
+
             // Reset fields
             this.isEditMode = false;
         },
-        reviewParams(evidence, draft) {
+        reviewParams(evidence, draft, id = null) {
             // prepare a JSON containing parameters for CurationReview model
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
@@ -455,6 +477,9 @@ export default {
                 annotated_tier: evidence.currentReview.annotatedTier,
                 comment: evidence.currentReview.comment,
                 draft: draft
+            }
+            if (id !== null) {
+                singleReviewJSON['id'] = id
             }
             return singleReviewJSON
         }
