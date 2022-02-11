@@ -133,8 +133,8 @@ router.register(r'summary_draft', views.SummaryDraftViewSet,
 router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
                 basename='gene_summary_draft')
 
-router.register(r'sib_annotations_1', views.SIBAnnotation1ViewSet,
-                basename='sib_annotations_1')
+#router.register(r'sib_annotations_1', views.SIBAnnotation1View,
+#                basename='sib_annotations_1')
 router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
                 basename='sib_annotations_2')
 
@@ -143,6 +143,7 @@ urlpatterns = [
     path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
     path('update_variant_summary', views.svip.UpdateVariantSummary.as_view(), name='update_variant_summary'),
     path('update_gene_summary', views.svip.UpdateGeneSummary.as_view(), name='update_gene_summary'),
+    path('sib_annotations_1', views.svip.SIBAnnotation1View.as_view(), name='sib_annotations_1'),
     path('', include(router.urls)),
     path('', include(genes_router.urls)),
     path('', include(variants_router.urls)),

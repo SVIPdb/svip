@@ -449,26 +449,19 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SIBAnnotation1Serializer
-
-    def get_queryset(self):
-        queryset = SIBAnnotation1.objects.all()
-        return queryset
-
-        #print(f"query params: {self.request.query_params} ")
-
-        #variant = self.request.query_params.get('variant')
-        #owner = self.request.query_params.get('owner')
-
-        #queryset = SummaryComment.objects.all()
-
-        # if variant is not None:
-        #    queryset = queryset.filter(variant=variant)
-
-        # if owner is not None:
-        #    queryset = queryset.filter(owner=owner)
+class SIBAnnotation1View(APIView):
+    def post(self, request, *args, **kwargs):
+        for obj in request.data:
+            if 'id' in obj:
+                annotation = SIBAnnotation1.objects.get(id=obj['id'])
+            else:
+                annotation = SIBAnnotation1()
+            annotation.evidence = CurationEvidence.objects.get(id=obj['evidence'])
+            annotation.effect = obj['effect']
+            annotation.tier = obj['tier']
+            annotation.draft = False
+            annotation.save()
+        return Response(data='Submitted annotations are succesfully saved')
 
 
 class SIBAnnotation2ViewSet(viewsets.ModelViewSet):

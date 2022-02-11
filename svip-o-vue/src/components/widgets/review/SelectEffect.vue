@@ -371,7 +371,6 @@ export default {
     },
     methods: {
         beforeWindowUnload(e) {
-            console.log('beforeWindowUnload is run')
             // Cancel the event
             e.preventDefault()
             // Chrome requires returnValue to be set
@@ -464,7 +463,6 @@ export default {
             evidence.curator = {}
             evidence.curator.annotatedEffect = trustedCuration['effect']
             evidence.curator.annotatedTier = this.tier_fields[this.tier_fields.length - trustedCuration['tier_score']]
-            console.log('clinical: ', evidence.curator.annotatedTier)
         },
         annotateNonClinicalEvidence(evidence) {
             let effects = {}
@@ -512,46 +510,42 @@ export default {
             evidence.curator = {}
             evidence.curator.annotatedEffect = trustedCuration['effect']
             evidence.curator.annotatedTier = this.all_fields[evidence.typeOfEvidence]["tier_criteria"][this.all_fields[evidence.typeOfEvidence]["tier_criteria"].length - trustedCuration['tier_score']]
-            console.log('non clinical: ', evidence.curator.annotatedTier)
         },
         submitCurations(notify) {
+
+            let evidences_data = []
+
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
-                    this.submitOneEvidence(evidence)
+
+                    let evidence_obj = {
+                        'effect': evidence.curator.annotatedEffect,
+                        'tier': evidence.curator.annotatedTier,
+                        'evidence': evidence.id
+                    }
+
+                    if (typeof evidence.curator.id !== 'undefined') {
+                        evidence_obj['id'] = evidence.curator.id
+                    }
+
+                    evidences_data.push(evidence_obj)
                 })
             })
-            if (notify) {
-                this.$snotify.success("Your curation(s) has been submitted to be reviewed");
-            }
-        },
-        submitOneEvidence(evidence) {
-            const annotation = {
-                'effect': evidence.curator.annotatedEffect,
-                'tier': evidence.curator.annotatedTier,
-                'evidence': evidence.id
-            }
 
-            // check whether an SIBAnnotation1 instance already exists in the DB
-            if (typeof evidence.curator.id === 'undefined') {
-                HTTP.post(`/sib_annotations_1/`, annotation)
-                    .then((response) => {
-                        console.log(`response: ${response}`)
-                    })
-                    .catch((err) => {
-                        log.warn(err);
-                        this.$snotify.error("Failed to submit curation");
-                    })
-            } else {
-                HTTP.put(`/sib_annotations_1/${evidence.curator.id}/`, annotation)
-                    .then((response) => {
-                        console.log(`response: ${response}`)
-                    })
-                    .catch((err) => {
-                        log.warn(err);
-                        this.$snotify.error("Failed to submit curation");
-                    })
-            }
-        }
+            //if (typeof this.diseases[0]['evidences'][0]['curator']['id'] === 'undefined') {
+            HTTP.post(`/sib_annotations_1`, evidences_data)
+                .then((response) => {
+                    console.log(`response: ${response.data}`)
+                    console.log(response.data)
+                    if (notify) {
+                        this.$snotify.success("Your curation(s) have been submitted to be reviewed");
+                    }
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to submit curation");
+                })
+        },
     },
 };
 </script>
