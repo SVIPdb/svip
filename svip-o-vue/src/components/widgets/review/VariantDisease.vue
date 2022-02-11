@@ -421,30 +421,6 @@ export default {
                         }
 
                         evidences_data.push(evidence_obj)
-
-                        //if (evidence.id in this.selfReviewedEvidences) {
-                        //    let reviewID = this.selfReviewedEvidences[evidence.id]
-                        //    HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
-                        //        .then((response) => {
-                        //            this.getReviewData()
-                        //            this.submitted = true
-                        //        })
-                        //        .catch((err) => {
-                        //            log.warn(err);
-                        //            this.$snotify.error("Failed to submit review");
-                        //        })
-                        //} else {
-                        //    //newReviews.push(this.reviewParams(evidence));
-                        //    HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
-                        //        .then((response) => {
-                        //            this.getReviewData()
-                        //            this.submitted = true
-                        //        })
-                        //        .catch((err) => {
-                        //            log.warn(err);
-                        //            this.$snotify.error("Failed to submit review");
-                        //        })
-                        //}
                     }
                 })
             })
