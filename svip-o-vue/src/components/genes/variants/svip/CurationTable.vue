@@ -70,6 +70,7 @@ export default {
                 {key: "drugs", label: "Drugs", sortable: true, formatter: (x) => x.join(", ")},
                 {key: "tier_level_criteria", label: "Tier Criteria", sortable: true},
                 {key: "tier_level", label: "Tier Level", sortable: true},
+                {key: "short_escat_score", label: "ESCAT score", sortable: true},
                 {key: "mutation_origin", label: "Mutation Origin", sortable: true},
                 {key: "support", label: "Support", sortable: true},
                 {key: "references", label: "References", sortable: false},

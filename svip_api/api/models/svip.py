@@ -405,7 +405,6 @@ class CurationEvidence(models.Model):
                 effect_of_variant.append(effect_obj)
         return effect_of_variant
 
-
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
     ('saved', 'saved'),
@@ -571,6 +570,12 @@ class CurationEntry(SVIPModel):
         return [x.icd_o_topo for x in self.disease.icdotopoapidisease_set.all()]
 
     objects = CurationEntryManager()
+
+    def short_escat_score(self):
+        if self.escat_score == None:
+            return 'Unavailable'
+        else:
+            return self.escat_score.split(':')[0]
 
     def owner_name(self):
         if not self.owner:

@@ -250,7 +250,7 @@ router.beforeEach((to, from, next) => {
     }
 
     let origin = from.fullPath
-    if (origin.includes('/review/') || (origin.substr(origin.length - 7) === '/submit')) {
+    if (origin.includes('/review/') || (origin.substring(origin.length - 7) === '/submit')) {
         if (confirm("If you leave the page, all your entries will be lost. Leave anyway?") === true) {
             redirect()
         } else {

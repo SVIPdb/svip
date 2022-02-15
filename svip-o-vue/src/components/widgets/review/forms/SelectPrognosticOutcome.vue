@@ -3,8 +3,7 @@
         <option>Good outcome</option>
         <option>Poor outcome</option>
         <option>Intermediate</option>
-        <option>Unclear</option>
-        <option>Context-dependent</option>
+        <option>Not associated with prognosis</option>
     </b-form-select>
 </template>
 

@@ -35,27 +35,34 @@
                                                     v-if="evidence.typeOfEvidence === 'Prognostic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-prognostic-outcome>
                                                 <select-diagnostic-outcome 
                                                     v-if="evidence.typeOfEvidence === 'Diagnostic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-diagnostic-outcome>
                                                 <select-predictive-therapeutic-outcome
                                                     v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                     v-model="evidence.currentReview.annotatedEffect"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <select-tier 
+                                                <select-tier
+                                                    v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)"
                                                     v-model="evidence.currentReview.annotatedTier"
                                                     @input="onChange(evidence.curator, evidence.currentReview)"
-                                                    :disabled="submitted"
+                                                    :disabled="not_annotated || submitted"
                                                 ></select-tier>
+                                                <select-therapeutic-tier
+                                                    v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
+                                                    v-model="evidence.currentReview.annotatedTier"
+                                                    @input="onChange(evidence.curator, evidence.currentReview)"
+                                                    :disabled="not_annotated || submitted"
+                                                ></select-therapeutic-tier>
                                             </b-row>
                                         </b-col>
                                         <b-col cols="1" align="center">
@@ -90,7 +97,7 @@
                                         </b-col>
                                         <b-col cols="4">
                                             <b-textarea
-                                                :disabled="evidence.currentReview.status || submitted"
+                                                :disabled="evidence.currentReview.status || not_annotated || submitted"
                                                 class="summary-box" 
                                                 rows="3"
                                                 placeholder="Comment..."
@@ -137,13 +144,17 @@
             </b-card>
         </div>
         <div class="float-right">
-        <b-button  variant="warning" @click="submitReviews(true)" :disabled="submitted">
+        <b-button  variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
             Finish later
         </b-button>
-        <b-button class="footer-btn" @click="submitOptions()" :disabled="submitted">
+        <!--<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">-->
+        <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
             Submit review
         </b-button>
         </div>
+        <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
+            THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
+        </b-navbar-text>
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted">
             YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
         </b-navbar-text>
@@ -161,6 +172,7 @@ import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPro
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
 import SelectPredictiveTherapeuticOutcome from "@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome";
 import SelectTier from "@/components/widgets/review/forms/SelectTier";
+import SelectTherapeuticTier from "@/components/widgets/review/forms/SelectTherapeuticTier";
 import { mapGetters } from "vuex";
 
 const log = ulog("VariantDisease");
@@ -169,6 +181,7 @@ export default {
     name: "VariantDisease",
     components: {
         SelectTier,
+        SelectTherapeuticTier,
         BIcon,
         BIconSquare,
         BIconCheckSquareFill,
@@ -194,12 +207,21 @@ export default {
             channel: new BroadcastChannel("curation-update"),
             expander_array: [],
             evidence_counter: 0,
+
+            not_annotated: false,
             submitted: false
         };
     },
     created() {
-        // Watch if whether is going to leave the page
+        // Watch if use is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload)
+
+        // Check that this page is appropriate regarding current review stage of variant
+        if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
+            this.not_annotated = true
+        } else if (['conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(this.variant.stage)) {
+            this.submitted = true
+        }
 
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
@@ -220,25 +242,7 @@ export default {
             user: "currentUser"
         })
     },
-    beforeRouteLeave (to, from, next) {
-        console.log('beforeRouteLeave is run')
-        this.$dialog.confirm('Do you want to proceed?')
-        .then(function () {
-            next(false);
-        })
-        .catch(function () {
-            next(false);
-        });
-    },
     methods: {
-        confirmLeave() {
-            //return window.confirm('Do you really want to leave? You have unsaved changes.')
-            return this.submitOptions()
-        },
-        confirmStayInDirtyForm() {
-            //return this.form_dirty && !this.confirmLeave()
-            return true && !this.confirmLeave()
-        },
         beforeWindowUnload(e) {
             console.log('beforeWindowUnload is run')
             // Cancel the event
@@ -252,7 +256,7 @@ export default {
                     message: `You are about to submit permanently the reviews for each of the ${this.evidence_counter} evidences of this variant. Are you sure?`,
                     button: {
                         yes: 'Submit permanently',
-                        no: 'Continue to review'
+                        no: 'Cancel'
                     },
                     /**
                      * Callback Function
@@ -280,7 +284,7 @@ export default {
                 })
                 .catch((err) => {
                     log.warn(err);
-                    //this.$snotify.error("Failed to fetch data");
+                    this.$snotify.error("Failed to fetch data");
                 })
         },
         displayIcon(status) {
@@ -400,6 +404,8 @@ export default {
                 return false
             }
 
+            let evidences_data = []
+
             // iterate over every review
             this.diseases.map(disease => {
                 disease.evidences.map(evidence => {
@@ -407,42 +413,38 @@ export default {
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !== "Not yet annotated" && evidence.currentReview.annotatedTier !== "Not yet annotated"
                     ) {
+                        let evidence_obj = {}
                         if (evidence.id in this.selfReviewedEvidences) {
-                            let reviewID = this.selfReviewedEvidences[evidence.id]
-                            HTTP.put(`/reviews/${reviewID}/`, this.reviewParams(evidence, draft))
-                                .then((response) => {
-                                    this.getReviewData()
-                                    this.submitted = true
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                            evidence_obj = this.reviewParams(evidence, draft, this.selfReviewedEvidences[evidence.id])
                         } else {
-                            //newReviews.push(this.reviewParams(evidence));
-                            HTTP.post(`/reviews/`, this.reviewParams(evidence, draft))
-                                .then((response) => {
-                                    this.getReviewData()
-                                    this.submitted = true
-                                })
-                                .catch((err) => {
-                                    log.warn(err);
-                                    this.$snotify.error("Failed to submit review");
-                                })
+                            evidence_obj = this.reviewParams(evidence, draft)
                         }
+
+                        evidences_data.push(evidence_obj)
                     }
                 })
             })
 
-            if (draft) {
-                this.$snotify.success("Your review is saved as a draft.");
-            } else {
-                this.$snotify.success("Your reviews for this variant have been submitted.");
-            }
+            HTTP.post(`/reviews`, evidences_data)
+                .then((response) => {
+                    console.log(`response: ${response.data}`)
+                    if (draft) {
+                        this.$snotify.success("Your review is saved as a draft.");
+                    } else {
+                        this.$snotify.success("Your reviews for this variant have been submitted.");
+                    }
+                    this.getReviewData()
+                    this.submitted = true
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    this.$snotify.error("Failed to submit review");
+                })
+
             // Reset fields
             this.isEditMode = false;
         },
-        reviewParams(evidence, draft) {
+        reviewParams(evidence, draft, id = null) {
             // prepare a JSON containing parameters for CurationReview model
             const singleReviewJSON = {
                 curation_evidence: evidence.id,
@@ -451,6 +453,9 @@ export default {
                 annotated_tier: evidence.currentReview.annotatedTier,
                 comment: evidence.currentReview.comment,
                 draft: draft
+            }
+            if (id !== null) {
+                singleReviewJSON['id'] = id
             }
             return singleReviewJSON
         }
@@ -495,7 +500,7 @@ export default {
 }
 
 .submitted-bar {
-    background-color: rgb(194, 71, 0);
+    background-color: rgb(194, 45, 0);
     color: white;
     font-weight: bold;
     text-align: center;

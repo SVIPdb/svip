@@ -29,22 +29,47 @@
 
                         <template v-slot:cell(sib_annotation)="data">
                             <div class="pb-2" @change="handleEffect" v-bind:id="`effect-${data.item.id}`">
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Prognostic')"
-                                               :options="prognosticOutcomeOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_outcome" v-if="index.includes('Diagnostic')"
-                                               :options="diagnosticOutcomeOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_outcome"
-                                               v-if="index.includes('Predictive / Therapeutic')"
-                                               :options="predictiveOutcomeOptions" class="form-control"></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_outcome" 
+                                    v-if="index.includes('Prognostic')"
+                                    :options="prognosticOutcomeOptions" 
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_outcome" 
+                                    v-if="index.includes('Diagnostic')"
+                                    :options="diagnosticOutcomeOptions" 
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_outcome"
+                                    v-if="index.includes('Predictive / Therapeutic')"
+                                    :options="predictiveOutcomeOptions" 
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
                             </div>
                             <div class="pt-2" @change="handleTier" v-bind:id="`tier-${data.item.id}`">
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Prognostic')"
-                                               :options="trustOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_trust" v-if="index.includes('Diagnostic')"
-                                               :options="trustOptions" class="form-control"></b-form-select>
-                                <b-form-select v-model="data.item.sib_annotation_trust"
-                                               v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
-                                               class="form-control"></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_trust" v-if="index.includes('Prognostic')"
+                                    :options="trustOptions" 
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_trust" v-if="index.includes('Diagnostic')"
+                                    :options="trustOptions" 
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
+                                <b-form-select 
+                                    v-model="data.item.sib_annotation_trust"
+                                    v-if="index.includes('Predictive / Therapeutic')" :options="trustOptions"
+                                    class="form-control"
+                                    :disabled="not_reviewed || annotated"
+                                ></b-form-select>
                             </div>
                             <input class='invisible' v-model="data.item.sib_annotation_outcome" @change="annotationEdited(data.item)" />
                         </template>
@@ -80,8 +105,9 @@
                                     variant="info"
                                     size="sm"
                                     block
+                                    :disabled="not_reviewed || annotated"
                                 >
-                                    <icon name="plus"/>
+                                <icon name="plus"/>
                                     Add publication
                                 </b-button>
                                 <!--<b-button
@@ -273,7 +299,10 @@ export default {
     props: {
         raw_disease: {type: Array, required: false},
         //disease: {type: Object, required: false},
-        label: {type: String, required: false}
+        label: {type: String, required: false},
+
+        annotated: {type: Boolean, required: false},
+        not_reviewed: {type: Boolean, required: false}
     },
     methods: {
         pubmedURL,

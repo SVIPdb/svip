@@ -1,5 +1,8 @@
 <template>
     <div class="container-fluid">
+
+        <span class="warning-top">oklm</span>
+
         <!-- Ivo : To change? -->
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
@@ -194,4 +197,10 @@ export default {
     border-bottom: dotted 1px #555;
     padding-bottom: 2px;
 }
+
+/*.warning-top {
+    background-color: red;
+    height: 2rem;
+    font-weight: bold;
+}*/
 </style>

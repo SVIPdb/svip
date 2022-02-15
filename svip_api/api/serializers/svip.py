@@ -507,6 +507,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'tier_level_criteria',
             'tier_level',
             'escat_score',
+            'short_escat_score',
             'mutation_origin',
             'associated_mendelian_diseases',
             'summary',
