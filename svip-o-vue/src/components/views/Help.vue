@@ -1,8 +1,15 @@
 <template>
     <div class="mycontainer">
+        <b-container v-if="!loaded" fluid class="container">
+            <b-spinner type="grow"/>
+            <b-spinner type="grow" />
+            <b-spinner type="grow" />
+        </b-container>
         <object
             type="text/html"
             :data="documentation_url"
+            @load="loaded = true"
+            @progress="loaded = false"
         />
     </div>
 </template>
@@ -39,6 +46,7 @@ export default {
     // components: {TableOfContents},
     data() {
         return {
+            loaded: false,
             documentation_url: `${process.env.VUE_APP_DOCUMENTATION_URL}`
         };
     },
@@ -52,6 +60,10 @@ export default {
 </script>
 
 <style scoped>
+.container {
+    text-align: center;
+    margin: 20px;
+}
 .section { margin-bottom: 3em; }
 
 .section .sec-header { position: relative; margin-top: -90px; padding-top: 90px; }
