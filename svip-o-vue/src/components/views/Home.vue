@@ -29,7 +29,7 @@
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else>{{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : ''}}</span>
+                            <span v-else>{{ nbGenes.toLocaleString() }} {{ $t('test2') }}{{ nbGenes !== 1 ? 's' : ''}}</span>
                         </h3>
                         <span class="text-muted">{{ nbGenesSVIP }} with SVIP data</span>
                     </div>

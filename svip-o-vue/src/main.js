@@ -31,6 +31,7 @@ import Expander from "@/components/widgets/Expander";
 import VueConfirmDialog from 'vue-confirm-dialog'
 
 import store from "./store";
+import i18n from '@/i18n'
 
 // enables the asyncComputed key, allowing computed properties to return promises
 Vue.use(AsyncComputed);
@@ -77,6 +78,7 @@ export default new Vue({
     el: "#app",
     router,
     store,
+    i18n,
     components: {
         App
     },
