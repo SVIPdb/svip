@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
 
-        <span class="warning-top">oklm</span>
+        <!--<span class="warning-top">test</span>-->
 
         <!-- Ivo : To change? -->
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
