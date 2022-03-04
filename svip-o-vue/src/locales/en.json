@@ -1,4 +1,18 @@
 {
-  "test": "Gene",
-  "test2": "some english text"
+  "contact us": "contact us",
+  "Gene": "Gene",
+  "Please check your connection and then": "Please check your connection and then",
+  "The SVIP API is not available.": "The SVIP API is not available.",
+  "with SVIP data": "with SVIP data",
+  "curation entries": "curation entries",
+  "an SPHN Infrastructure Development project": "an SPHN Infrastructure Development project",
+  "Variant": "Variant",
+  "variants": "variants",
+  "Oncogene": "Oncogene",
+  "Entrez ID": "Entrez ID",
+  "Ensembl Gene ID": "Ensembl Gene ID",
+  "UniProtKB ID": "UniProtKB ID",
+  "Clear": "Clear",
+  "show only SVIP variants": "show only SVIP variants",
+  "show only variants for which SVIP-specific data exists": "show only variants for which SVIP-specific data exists"
 }
