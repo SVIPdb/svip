@@ -6,10 +6,10 @@
                 <b-nav-item @click="scrollIntoView" href="#project">{{ $t("Project")}}</b-nav-item>
                 <b-nav-item @click="scrollIntoView" href="#partners">{{ $t("Partners")}}</b-nav-item>
                 <b-nav-item @click="scrollIntoView" href="#team">{{ $t("Team")}}</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#contact">Contact</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#events">Events</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#disclaimer">Disclaimer &amp; License</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#references">References</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#contact">{{ $t("Contact")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#events">{{ $t("Events")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#disclaimer">{{ $t("Disclaimer & License")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#references">{{ $t("References")}}</b-nav-item>
             </b-nav>
         </div>
 
@@ -25,8 +25,8 @@
                                 <br>
                                 <br>
                                 <h1>Swiss Variant Interpretation Platform</h1>
-                                <p class="lead">A one-stop shop for clinical interpretation of variants in oncology</p>
-                                <p>The Swiss Variant Interpretation Platform for Oncology (SVIP-O) aims at providing a centralized,
+                                <p class="lead">{{ $t("A one-stop shop for clinical interpretation of variants in oncology")}}</p>
+                                <p>{{ $t("The Swiss Variant Interpretation Platform for Oncology (SVIP-O) aims at providing a centralized,")}}
                                     joint, and curated database for clinical somatic variants coming from Swiss hospitals and
                                     related institutions (e.g. pathology institutes).</p>
                             </div>

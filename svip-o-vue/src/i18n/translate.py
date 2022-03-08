@@ -40,8 +40,9 @@ def substrings_outside_of_curly_braces(string):
 
 def replace_in_file(path_of_file_to_translate, html_lines, element, original_string):
   new_string = '{{ $t("%s")}}' % (original_string)
+
   for idx, line in enumerate(html_lines):
-    patterns_in_line = len(re.findall(original_string, line))
+    patterns_in_line = len(re.findall(re.escape(original_string), line))
     for i in range(patterns_in_line):
 
       temp_lines = html_lines
@@ -67,7 +68,7 @@ def replace_in_file(path_of_file_to_translate, html_lines, element, original_str
         html_doc.close()
         print('Text is replaced.')
         return True
-  print("The string was not found. This is unexpected.")
+  print("!!! UNEXPECTED: Failed to replace string in component !!!")
 
 
 def get_strings(path_of_file_to_translate, soup, html_lines):

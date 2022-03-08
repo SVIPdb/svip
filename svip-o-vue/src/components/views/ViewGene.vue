@@ -32,7 +32,7 @@
 
                 <table class="gene-info-items">
                     <tr>
-                        <td class="text-right row-label">{{ $t("Entrez ID") }}</td>
+                        <td class="text-right row-label">{{ $t("Enter ID") }}</td>
                         <td>
                             <a
                                 :href=" `https://www.ncbi.nlm.nih.gov/gene/?term=${ gene.entrez_id }%5Buid%5D`"
