@@ -14,5 +14,9 @@
   "UniProtKB ID": "UniProtKB ID",
   "Clear": "Clear",
   "show only SVIP variants": "show only SVIP variants",
-  "show only variants for which SVIP-specific data exists": "show only variants for which SVIP-specific data exists"
+  "show only variants for which SVIP-specific data exists": "show only variants for which SVIP-specific data exists",
+  "Not Authorized": "Not Authorized",
+  "return to homepage": "return to homepage",
+  "You may only access this page if you're a curator or reviewer.": "You may only access this page if you're a curator or reviewer.",
+  "Show Details": "Show Details"
 }

@@ -21,25 +21,25 @@
                 <div v-if="loadingStats === 'error'" class="section stats row justify-content-md-center">
                     <div class="text-center text-muted font-italic">
                         <icon name="exclamation-triangle" scale="3" class="blinking" style="vertical-align: text-bottom; margin-bottom: 5px; color: #e7c28b;" /><br />
-                        {{ $t('The SVIP API is not available.') }}<br />
-                        {{ $t("Please check your connection and then") }}<a href="mailto:feedback@svip.ch">{{ $t('contact us') }}</a>.
+                        {{ $t("The SVIP API is not available.") }}<br />
+                        {{ $t("Please check your connection and then") }}<a href="mailto:feedback@svip.ch">{{ $t("contact us") }}</a>.
                     </div>
                 </div>
                 <div v-else class="section stats row justify-content-md-center">
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else>{{ nbGenes.toLocaleString() }} {{ $t('Gene') }}{{ nbGenes !== 1 ? 's' : ''}}</span>
+                            <span v-else>{{ nbGenes.toLocaleString() }} {{ $t("Gene") }}{{ nbGenes !== 1 ? 's' : ''}}</span>
                         </h3>
-                        <span class="text-muted">{{ nbGenesSVIP }} {{ $t('with SVIP data') }}</span>
+                        <span class="text-muted">{{ nbGenesSVIP }} {{ $t("with SVIP data") }}</span>
                     </div>
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else>{{ nbVariants.toLocaleString() }} {{ $t('Variant') }}{{ nbVariants !== 1 ? 's' : ''}}</span>
+                            <span v-else>{{ nbVariants.toLocaleString() }} {{ $t("Variant") }}{{ nbVariants !== 1 ? 's' : ''}}</span>
                         </h3>
-                        <div class="text-muted">{{ nbVariantsSVIP }} {{ $t('with SVIP data') }}</div>
-                        <div class="text-muted">{{ nbSvipCurations }} {{ $t('curation entries') }}</div>
+                        <div class="text-muted">{{ nbVariantsSVIP }} {{ $t("with SVIP data") }}</div>
+                        <div class="text-muted">{{ nbSvipCurations }} {{ $t("curation entries") }}</div>
                     </div>
                 </div>
             </div>
