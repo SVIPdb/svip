@@ -89,7 +89,6 @@ def replace_in_file(path_of_file_to_translate, soup, html_lines, template_elemen
   for idx, line in enumerate(html_lines):
     patterns_in_line = len(re.findall(re.escape(original_string),line))
     for i in range(patterns_in_line):
-      print('pattern found')
       temp_lines = html_lines
       original_line = html_lines[idx]
       new_line = original_line.replace(original_string, new_string, i+1).replace(new_string, original_string, i)

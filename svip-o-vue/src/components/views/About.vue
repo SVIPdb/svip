@@ -48,25 +48,25 @@
                                         {{ $t("provide information of heterogeneous quality.")}}<br>
                                         {{ $t("Swiss hospitals and SIB have decided to join forces to develop a common infrastructure")}}
                                         {{ $t("allowing hospitals to share and unify the clinical interpretation of the genetic variants")}}
-                                        {{ $t("identified in their patients all over Switzerland.")}}<br>
+                                        {{ $t("{{ $t("identified")}} in their patients all over Switzerland.")}}<br>
                                         {{ $t("This consensus annotation of variants will also be accessible to researchers, as having")}}
                                         {{ $t("access to variants detected in patients with well-characterized and clinically-validated")}}
                                         {{ $t("phenotypic information is critical to better understand disease aetiology and reliably")}}
                                         {{ $t("identify new drug targets.")}}<br>
                                         {{ $t("The SVIP project was launched in 2017, with the support of the Swiss Personalized Health")}}
-                                        Network (SPHN, <a href="http://www.sphn.ch">www.sphn.ch</a>) and BioMedIT initiatives.
+                                        {{ $t("Network (SPHN,")}} <a href="http://www.sphn.ch">www.sphn.ch</a>{{ $t(") and BioMedIT initiatives.")}}
                                     </p>
                                 </div>
 
-                                <h3>SVIP workflow</h3>
+                                <h3>{{ $t("SVIP workflow")}}</h3>
                                 <div class="text-justify">
-                                    <p>The principle of the project is that hospitals feed the system with all variants they
-                                        identify in their patients when using NGS for diagnosis. For variants already annotated in
-                                        the database, annotations will be merged, and discrepancies will be solved by a clinical
-                                        panel composed of experts from the partnering hospitals. For variants without previous
-                                        annotation, manual curation supported by bioinformatics tools will provide a draft
-                                        annotation and likely clinical interpretation, which will also be validated by the clinical
-                                        expert panel.
+                                    <p>{{ $t("The principle of the project is that hospitals feed the system with all variants they")}}
+                                        {{ $t("identify in their patients when using NGS for diagnosis. For variants already annotated in")}}
+                                        {{ $t("the database, annotations will be merged, and discrepancies will be solved by a clinical")}}
+                                        {{ $t("panel composed of experts from the partnering hospitals. For variants without previous")}}
+                                        {{ $t("annotation, manual curation supported by bioinformatics tools will provide a draft")}}
+                                        {{ $t("annotation and likely clinical interpretation, which will also be validated by the clinical")}}
+                                        {{ $t("expert panel.")}}
                                     </p>
                                 </div>
                                 <div class="container-fluid-compact">
@@ -74,45 +74,45 @@
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
-                                                <div class="card-title-gradient gradient-1">Joint repository</div>
+                                                <div class="card-title-gradient gradient-1">{{ $t("Joint repository")}}</div>
                                                 <div class="card-body">
-                                                    <p>Shared between all partner hospitals with single point of entry</p>
+                                                    <p>{{ $t("Shared between all partner hospitals with single point of entry")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100  small">
-                                                <div class="card-title-gradient gradient-2">Posting of variants</div>
+                                                <div class="card-title-gradient gradient-2">{{ $t("Posting of variants")}}</div>
                                                 <div class="card-body">
-                                                    <p>To avoid unnecessary manual labor and increase efficiency</p>
+                                                    <p>{{ $t("To avoid unnecessary manual labor and increase efficiency")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
-                                                <div class="card-title-gradient gradient-3">Validation of clinical variants</div>
+                                                <div class="card-title-gradient gradient-3">{{ $t("Validation of clinical variants")}}</div>
                                                 <div class="card-body">
-                                                    <p>By manual curation (SIB) and clinical experts consensus (hospitals)</p>
+                                                    <p>{{ $t("By manual curation (SIB) and clinical experts consensus (hospitals)")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
-                                                <div class="card-title-gradient gradient-4">Common annotation</div>
+                                                <div class="card-title-gradient gradient-4">{{ $t("Common annotation")}}</div>
                                                 <div class="card-body">
-                                                    <p>Approved by all partners, ensuring consistent assessment of pathogenicity</p>
+                                                    <p>{{ $t("Approved by all partners, ensuring consistent assessment of pathogenicity")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
-                                                <div class="card-title-gradient gradient-5">Discrepancy management</div>
+                                                <div class="card-title-gradient gradient-5">{{ $t("Discrepancy management")}}</div>
                                                 <div class="card-body">
-                                                    <p>To solve conflicting annotations between labs when new variants are
+                                                    <p>{{ $t("To solve conflicting annotations between labs when new variants are")}}
                                                         identified</p>
                                                 </div>
                                             </div>
