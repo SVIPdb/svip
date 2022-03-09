@@ -48,7 +48,7 @@
                                         {{ $t("provide information of heterogeneous quality.")}}<br>
                                         {{ $t("Swiss hospitals and SIB have decided to join forces to develop a common infrastructure")}}
                                         {{ $t("allowing hospitals to share and unify the clinical interpretation of the genetic variants")}}
-                                        {{ $t("{{ $t("identified")}} in their patients all over Switzerland.")}}<br>
+                                        {{ $t("identified in their patients all over Switzerland.")}}<br>
                                         {{ $t("This consensus annotation of variants will also be accessible to researchers, as having")}}
                                         {{ $t("access to variants detected in patients with well-characterized and clinically-validated")}}
                                         {{ $t("phenotypic information is critical to better understand disease aetiology and reliably")}}
@@ -113,32 +113,32 @@
                                                 <div class="card-title-gradient gradient-5">{{ $t("Discrepancy management")}}</div>
                                                 <div class="card-body">
                                                     <p>{{ $t("To solve conflicting annotations between labs when new variants are")}}
-                                                        identified</p>
+                                                        {{ $t("identified")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- /.col-md-2 -->
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
-                                                <div class="card-title-gradient gradient-6">Feedback mechanism</div>
+                                                <div class="card-title-gradient gradient-6">{{ $t("Feedback mechanism")}}</div>
                                                 <div class="card-body">
-                                                    <p>In case pathogenicity changes over time</p>
+                                                    <p>{{ $t("In case pathogenicity changes over time")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <h3>SVIP to support also translational research</h3>
+                                <h3>{{ $t("SVIP to support also translational research")}}</h3>
                                 <div class="text-justify">
-                                    <p>SVIP will incorporate variant information from other similar projects such as ClinVar,
-                                        ClinGen, CIViC, OncoKB, and PMKB, to facilitate the prioritization of variants by molecular
-                                        pathologists, to become the Swiss one-stop shop for the interpretation of somatic variants,
-                                        enabling faster and more robust prioritisation.<br>
-                                        The consensus annotation of variants will also be accessible to researchers, as having
-                                        access to variants detected in patients with well-characterized and clinically-validated
-                                        phenotypic information is critical to better understand disease aetiology and reliably
-                                        identify new drug targets.
+                                    <p>{{ $t("SVIP will incorporate variant information from other similar projects such as ClinVar,")}}
+                                        {{ $t("ClinGen, CIViC, OncoKB, and PMKB, to facilitate the prioritization of variants by molecular")}}
+                                        {{ $t("pathologists, to become the Swiss one-stop shop for the interpretation of somatic variants,")}}
+                                        {{ $t("enabling faster and more robust prioritisation.")}}<br>
+                                        {{ $t("The consensus annotation of variants will also be accessible to researchers, as having")}}
+                                        {{ $t("access to variants detected in patients with well-characterized and clinically-validated")}}
+                                        {{ $t("phenotypic information is critical to better understand disease aetiology and reliably")}}
+                                        {{ $t("identify new drug targets.")}}
                                     </p>
                                 </div>
                             </div>
@@ -150,11 +150,11 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>Our Partners</h1>
-                                <p class="lead">A national network of medical institutions committed to a joint goal</p>
-                                <p class="mb-5">This program has been made possible thanks to the commitment and strong support of
-                                    Swiss hospitals, institutes and medical societies who have agreed to share their know-how and
-                                    expertise for the benefit of the patients.</p>
+                                <h1>{{ $t("Our Partners")}}</h1>
+                                <p class="lead">{{ $t("A national network of medical institutions committed to a joint goal")}}</p>
+                                <p class="mb-5">{{ $t("This program has been made possible thanks to the commitment and strong support of")}}
+                                    {{ $t("Swiss hospitals, institutes and medical societies who have agreed to share their know-how and")}}
+                                    {{ $t("expertise for the benefit of the patients.")}}</p>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <ul>

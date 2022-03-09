@@ -67,10 +67,8 @@ def check_str_validity(path_of_file_to_translate, soup, html_lines, template_ele
   already_translated = str_to_replace[:7] == '{{ $t("'
   is_variable = ((str_to_replace[:2] == "{{") and (str_to_replace[-2:] == "}}"))
   no_letter = not bool(re.search('[a-zA-Z]', str_to_replace))
-  if already_translated or is_variable or no_letter:
-    # This segment was already translated.
-    pass
-  else:
+  if not ( already_translated or is_variable or no_letter ):
+    # String content is eligible for a translation. Prompt the developer to decide.
     print('\n')
     acceptStr = ""
     while acceptStr not in ["Y", "y", "N", "n"]:
@@ -84,32 +82,56 @@ def check_str_validity(path_of_file_to_translate, soup, html_lines, template_ele
         print("Wrong command.")
 
 
+def inner_HTML_is_changed(temp_text, file_text):
+  # Make sure it is not the wrong segment that was replaced.
+  if substrings_outside_of_curly_braces(temp_text) == substrings_outside_of_curly_braces(file_text):
+    # A variable was replaced instead of relevent text
+    return False
+  if substrings_outside_of_tag(temp_text) == substrings_outside_of_tag(file_text):
+    # Tag code was replaced instead of relevent text
+    return False
+  return True
+
+
+def is_appropriate_line(searched_str, line):
+  outside_of_tag = False
+  outside_of_curly_braces = False
+  for substring in substrings_outside_of_tag(line):
+    if searched_str in substring:
+      outside_of_tag = True
+  for substring in substrings_outside_of_curly_braces(line):
+    if searched_str in substring:
+      outside_of_curly_braces = True
+  if outside_of_tag and outside_of_curly_braces:
+    return True
+  else:
+    return False
+
+
 def replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, original_string):
   new_string = '{{ $t("%s")}}' % (original_string)
   for idx, line in enumerate(html_lines):
-    patterns_in_line = len(re.findall(re.escape(original_string),line))
-    for i in range(patterns_in_line):
-      temp_lines = html_lines
-      original_line = html_lines[idx]
-      new_line = original_line.replace(original_string, new_string, i+1).replace(new_string, original_string, i)
-      temp_lines[idx] = new_line
-      temp_doc = open(f"{I18N_DIR}/temp.html", "r+")
-      temp_doc.write("".join(temp_lines))
-      temp_doc.close()
-      temp_doc = open(f"{I18N_DIR}/temp.html", "r+")
-      temp_soup = BeautifulSoup(temp_doc, 'html.parser')
-      temp_text = temp_soup.find_all()[0].text
-      temp_doc.close()
-      if substrings_outside_of_curly_braces(temp_text) == substrings_outside_of_curly_braces(template_element.text):
-        # the wrong segment has been replaced because the innerHTML text is the same. Try replacing next pattern
-        pass
-      else:
-        html_doc = open(path_of_file_to_translate, "r+")
-        html_doc.write("".join(temp_lines))
-        html_doc.close()
-        print('Text is replaced.')
-        add_to_json(original_string)
-        return True
+    if is_appropriate_line(original_string, line):
+      patterns_in_line = len(re.findall(re.escape(original_string),line))
+      for i in range(patterns_in_line):
+        temp_lines = html_lines
+        original_line = html_lines[idx]
+        new_line = original_line.replace(original_string, new_string, i+1).replace(new_string, original_string, i)
+        temp_lines[idx] = new_line
+        temp_doc = open(f"{I18N_DIR}/temp.html", "r+")
+        temp_doc.write("".join(temp_lines))
+        temp_doc.close()
+        temp_doc = open(f"{I18N_DIR}/temp.html", "r+")
+        temp_soup = BeautifulSoup(temp_doc, 'html.parser')
+        temp_text = temp_soup.find_all()[0].text
+        temp_doc.close()
+        if inner_HTML_is_changed(temp_text, template_element.text) :
+          html_doc = open(path_of_file_to_translate, "r+")
+          html_doc.write("".join(temp_lines))
+          html_doc.close()
+          print('Text is replaced.')
+          add_to_json(original_string)
+          return True
   # No line in was matching the innerHTML -> HTML line probably contains a tag (doesn't appear in template_element.text)
   print('This pattern is actually splitted into several segments in the HTML (see next suggested segments).')
   for line in html_lines:
