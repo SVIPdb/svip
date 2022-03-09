@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 I18N_DIR = os.path.join(BASE_DIR, 'i18n')
 LOCALES_DIR = os.path.join(BASE_DIR, 'locales')
 
+
 def add_to_json(newStr):
   json_doc = open(f"{LOCALES_DIR}/en.json", "r+")
   json_lines = json_doc.readlines()
@@ -37,17 +38,14 @@ def substrings_outside_of_curly_braces(string):
       strings_of_interest.append(gross_substrings[i])
   return strings_of_interest
 
+
 def substrings_outside_of_tag(string):
   strings_of_interest = []
   gross_substrings = re.split("<(.+?)>", string)
-  
   # get rid of odd indexes values (those found between curly braces)
   for i in range(len(gross_substrings)):
     if i % 2 == 0:
       strings_of_interest.append(gross_substrings[i])
-      
-  #print(gross_substrings)
-  #print(strings_of_interest)
   return strings_of_interest
 
 
