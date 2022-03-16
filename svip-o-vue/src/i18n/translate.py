@@ -133,8 +133,9 @@ def replace_in_file(path_of_file_to_translate, soup, template_element, original_
   
   html_doc = open(path_of_file_to_translate, "r+")
   html_lines = html_doc.readlines()
+  html_soup = BeautifulSoup(html_doc, 'html.parser')
   html_doc.close()
-  
+
   new_string = '{{ $t("%s")}}' % (original_string)
   for idx, line in enumerate(html_lines):
     if is_appropriate_line(original_string, line):
@@ -158,26 +159,26 @@ def replace_in_file(path_of_file_to_translate, soup, template_element, original_
           #print('Text is replaced.')
           add_to_json(original_string)
           return True
-        else:
-          print("innerHTML not changed")
   # No line in was matching the innerHTML -> HTML line probably contains a tag (doesn't appear in template_element.text)
-  output_str(original_string)
-  print('This pattern is actually splitted into several segments in the HTML (see next suggested segments).')
+  #output_str(original_string)
+  #print('This pattern is actually splitted into several segments in the HTML.')
   for line in html_lines:
     if contains_splitted_string(original_string, line):
-      print(f"SUBSTRING: \n{line}")
       for substring in substrings_outside_of_tag(line):
         for clean_substring in substrings_outside_of_curly_braces(substring):
           check_str_validity(path_of_file_to_translate, soup, template_element, clean_substring)
       return True
-  print("!!! UNEXPECTED: Failed to replace string in component !!!\n")
+  spliced_substring = original_string[:-1]
+  if check_str_validity(path_of_file_to_translate, soup, template_element, spliced_substring):
+    return True
   return False
-
 
 
 def iterate_through_substrings(path_of_file_to_translate, soup, template_element, string):
   for str_to_replace in substrings_outside_of_curly_braces(string):
     if not check_str_validity(path_of_file_to_translate, soup, template_element, str_to_replace):
+      output_str(str_to_replace)
+      print("!!! UNEXPECTED: Failed to replace string in component !!!")
       return False
   return True
 
