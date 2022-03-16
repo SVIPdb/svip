@@ -165,7 +165,7 @@
                                     <li><i><a href="http://sgpath.ch">{{ $t("Swiss Society of Pathology")}}</a></i></li>
                                 </ul>
                                 <ul>
-                                    <li><i><a href="https://www.unibas.ch/en/Focal-areas/{{ $t("{{ $t("Personalized")}}")}}-Health-Basel.html">{{ $t("Personalized")}}
+                                    <li><i><a href="https://www.unibas.ch/en/Focal-areas/Personalized-Health-Basel.html">{{ $t("Personalized")}}
                                         {{ $t("Health Basel")}}</a></i></li>
                                 </ul>
                                 <ul>

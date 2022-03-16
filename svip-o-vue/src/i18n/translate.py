@@ -1,4 +1,4 @@
-import os, re
+import os, re, copy
 from bs4 import BeautifulSoup
 
 ASK_CONFIRMATION = False
@@ -52,6 +52,15 @@ def substrings_outside_of_tag(string):
   return strings_of_interest
 
 
+def substrings_inside_of_tag(string):
+  strings_of_interest = []
+  gross_substrings = re.split("<(.+?)>", string)
+  # get rid of odd indexes values (those found between curly braces)
+  for i in range(len(gross_substrings)):
+    if i % 2 == 1:
+      strings_of_interest.append(gross_substrings[i])
+  return strings_of_interest
+
 def contains_splitted_string(inner_HTML, line):
   for char in inner_HTML:
     if len(line) == 0:
@@ -65,7 +74,7 @@ def contains_splitted_string(inner_HTML, line):
   return True
 
 
-def check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace):
+def check_str_validity(path_of_file_to_translate, soup, template_element, str_to_replace):
   str_to_replace = str_to_replace.lstrip().rstrip()
   already_translated = str_to_replace[:7] == '{{ $t("'
   if ('"' in str_to_replace) and (not already_translated):
@@ -88,7 +97,7 @@ def check_str_validity(path_of_file_to_translate, soup, html_lines, template_ele
           #print("Skipped.")
           break
         elif acceptStr in ["Y", "y"]:
-          return replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
+          return replace_in_file(path_of_file_to_translate, soup, template_element, str_to_replace)
         else:
           print("Wrong command.")
   return True
@@ -120,16 +129,21 @@ def is_appropriate_line(searched_str, line):
     return False
 
 
-def replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, original_string):
+def replace_in_file(path_of_file_to_translate, soup, template_element, original_string):
+  
+  html_doc = open(path_of_file_to_translate, "r+")
+  html_lines = html_doc.readlines()
+  html_doc.close()
+  
   new_string = '{{ $t("%s")}}' % (original_string)
   for idx, line in enumerate(html_lines):
     if is_appropriate_line(original_string, line):
       patterns_in_line = len(re.findall(re.escape(original_string),line))
       for i in range(patterns_in_line):
-        temp_lines = html_lines
+        temp_lines = copy.copy(html_lines)
         original_line = html_lines[idx]
-        new_line = original_line.replace(original_string, new_string, i+1).replace(new_string, original_string, i)
-        temp_lines[idx] = new_line
+        new_line = temp_lines[idx].replace(original_string, new_string, i+1).replace(new_string, original_string, i)
+        temp_lines[idx] = temp_lines[idx].replace(original_string, new_string, i+1).replace(new_string, original_string, i)
         temp_doc = open(f"{I18N_DIR}/temp.html", "r+")
         temp_doc.write("".join(temp_lines))
         temp_doc.close()
@@ -137,41 +151,44 @@ def replace_in_file(path_of_file_to_translate, soup, html_lines, template_elemen
         temp_soup = BeautifulSoup(temp_doc, 'html.parser')
         temp_text = temp_soup.find_all()[0].text
         temp_doc.close()
-        if inner_HTML_is_changed(temp_text, template_element.text) :
+        if inner_HTML_is_changed(temp_text, template_element.text) and substrings_inside_of_tag(new_line) == substrings_inside_of_tag(original_line):
           html_doc = open(path_of_file_to_translate, "r+")
           html_doc.write("".join(temp_lines))
           html_doc.close()
           #print('Text is replaced.')
           add_to_json(original_string)
           return True
+        else:
+          print("innerHTML not changed")
   # No line in was matching the innerHTML -> HTML line probably contains a tag (doesn't appear in template_element.text)
   output_str(original_string)
   print('This pattern is actually splitted into several segments in the HTML (see next suggested segments).')
   for line in html_lines:
     if contains_splitted_string(original_string, line):
+      print(f"SUBSTRING: \n{line}")
       for substring in substrings_outside_of_tag(line):
         for clean_substring in substrings_outside_of_curly_braces(substring):
-          check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, clean_substring)
+          check_str_validity(path_of_file_to_translate, soup, template_element, clean_substring)
       return True
   print("!!! UNEXPECTED: Failed to replace string in component !!!\n")
   return False
 
 
 
-def iterate_through_substrings(path_of_file_to_translate, soup, html_lines, template_element, string):
+def iterate_through_substrings(path_of_file_to_translate, soup, template_element, string):
   for str_to_replace in substrings_outside_of_curly_braces(string):
-    if not check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace):
+    if not check_str_validity(path_of_file_to_translate, soup, template_element, str_to_replace):
       return False
   return True
 
-def get_strings(path_of_file_to_translate, soup, html_lines):
+def get_strings(path_of_file_to_translate, soup):
   template_element = soup.find_all()[0]
   innerHTML = template_element.text
   # check presence of letters in substring:
   if bool(re.search('[a-zA-Z]', innerHTML)):
     strings = innerHTML.split('\n')
     for string in strings:
-      if not iterate_through_substrings(path_of_file_to_translate, soup, html_lines, template_element, string):
+      if not iterate_through_substrings(path_of_file_to_translate, soup, template_element, string):
         break
 
 def get_file_path():
@@ -183,11 +200,7 @@ def get_file_path():
   soup = BeautifulSoup(html_doc, 'html.parser')
   html_doc.close()
 
-  html_doc = open(path_of_file_to_translate, "r+")
-  html_lines = html_doc.readlines()
-  html_doc.close()
-
-  get_strings(path_of_file_to_translate, soup, html_lines)
+  get_strings(path_of_file_to_translate, soup)
 
 
 get_file_path()
