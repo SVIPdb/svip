@@ -1,11 +1,14 @@
 import os, re
 from bs4 import BeautifulSoup
 
+ASK_CONFIRMATION = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 I18N_DIR = os.path.join(BASE_DIR, 'i18n')
 LOCALES_DIR = os.path.join(BASE_DIR, 'locales')
 
+def output_str(string):
+  print(f'"{string}"')
 
 def add_to_json(newStr):
   json_doc = open(f"{LOCALES_DIR}/en.json", "r+")
@@ -14,7 +17,7 @@ def add_to_json(newStr):
     substrings = line.split('"')
     if len(substrings) > 1:
       if newStr == substrings[1]:
-        print('String was already stored.')
+        #print('String was already stored.')
         break
   else:
     commaNeeded = json_lines[-2]
@@ -26,7 +29,7 @@ def add_to_json(newStr):
     json_doc.truncate()
     json_doc.write(content)
     json_doc.close()
-    print('Added to en.json')
+    #print('Added to en.json')
 
 
 def substrings_outside_of_curly_braces(string):
@@ -65,21 +68,28 @@ def contains_splitted_string(inner_HTML, line):
 def check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace):
   str_to_replace = str_to_replace.lstrip().rstrip()
   already_translated = str_to_replace[:7] == '{{ $t("'
-  is_variable = ((str_to_replace[:2] == "{{") and (str_to_replace[-2:] == "}}"))
-  no_letter = not bool(re.search('[a-zA-Z]', str_to_replace))
-  if not ( already_translated or is_variable or no_letter ):
-    # String content is eligible for a translation. Prompt the developer to decide.
-    print('\n')
-    acceptStr = ""
-    while acceptStr not in ["Y", "y", "N", "n"]:
-      acceptStr = input(f'Translate "{str_to_replace}" ? y/n: ')
-      if acceptStr in ["N", "n"]:
-        print("Skipped.")
-        break
-      elif acceptStr in ["Y", "y"]:
-        replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
-      else:
-        print("Wrong command.")
+  if ('"' in str_to_replace) and (not already_translated):
+    output_str(str_to_replace)
+    print("!!! The string contains double quotes. Replace it manually.\n")
+  else:
+    is_variable = ((str_to_replace[:2] == "{{") and (str_to_replace[-2:] == "}}"))
+    no_letter = not bool(re.search('[a-zA-Z]', str_to_replace))
+    if not ( already_translated or is_variable or no_letter ):
+      # String content is eligible for a translation. Prompt the developer to decide.
+      #print('\n')
+      acceptStr = ""
+      while acceptStr not in ["Y", "y", "N", "n"]:
+        if ASK_CONFIRMATION:
+          acceptStr = input(f'Translate "{str_to_replace}" ? y/n: ')
+        else:
+          acceptStr = "y"
+        if acceptStr in ["N", "n"]:
+          #print("Skipped.")
+          break
+        elif acceptStr in ["Y", "y"]:
+          replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
+        else:
+          print("Wrong command.")
 
 
 def inner_HTML_is_changed(temp_text, file_text):
@@ -129,10 +139,11 @@ def replace_in_file(path_of_file_to_translate, soup, html_lines, template_elemen
           html_doc = open(path_of_file_to_translate, "r+")
           html_doc.write("".join(temp_lines))
           html_doc.close()
-          print('Text is replaced.')
+          #print('Text is replaced.')
           add_to_json(original_string)
           return True
   # No line in was matching the innerHTML -> HTML line probably contains a tag (doesn't appear in template_element.text)
+  output_str(original_string)
   print('This pattern is actually splitted into several segments in the HTML (see next suggested segments).')
   for line in html_lines:
     if contains_splitted_string(original_string, line):
@@ -140,7 +151,7 @@ def replace_in_file(path_of_file_to_translate, soup, html_lines, template_elemen
         for clean_substring in substrings_outside_of_curly_braces(substring):
           check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, clean_substring)
       return True
-  print("!!! UNEXPECTED: Failed to replace string in component !!!")
+  print("!!! UNEXPECTED: Failed to replace string in component !!!\n")
 
 
 def get_strings(path_of_file_to_translate, soup, html_lines):
@@ -153,14 +164,12 @@ def get_strings(path_of_file_to_translate, soup, html_lines):
       for str_to_replace in substrings_outside_of_curly_braces(string):
         check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
 
-  print('\n')
-
 
 def get_file_path():
-  
+
   gross_path = input("Enter the path of file to translate :\n")
   path_of_file_to_translate = os.path.join(BASE_DIR, gross_path.split("src/")[1])
-  
+
   html_doc = open(path_of_file_to_translate, "r+")
   soup = BeautifulSoup(html_doc, 'html.parser')
   html_doc.close()

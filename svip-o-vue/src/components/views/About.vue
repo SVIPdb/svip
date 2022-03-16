@@ -54,7 +54,7 @@
                                         {{ $t("phenotypic information is critical to better understand disease aetiology and reliably")}}
                                         {{ $t("identify new drug targets.")}}<br>
                                         {{ $t("The SVIP project was launched in 2017, with the support of the Swiss Personalized Health")}}
-                                        {{ $t("Network (SPHN,")}} <a href="http://www.sphn.ch">www.sphn.ch</a>{{ $t(") and BioMedIT initiatives.")}}
+                                        {{ $t("Network (SPHN,")}} <a href="http://www.sphn.ch">{{ $t("www.sphn.ch")}}</a>{{ $t(") and BioMedIT initiatives.")}}
                                     </p>
                                 </div>
 
