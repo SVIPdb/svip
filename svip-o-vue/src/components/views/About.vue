@@ -24,7 +24,7 @@
                                 </div>
                                 <br>
                                 <br>
-                                <h1>Swiss Variant Interpretation Platform</h1>
+                                <h1>{{ $t("Swiss Variant Interpretation Platform")}}</h1>
                                 <p class="lead">{{ $t("A one-stop shop for clinical interpretation of variants in oncology")}}</p>
                                 <p>{{ $t("The Swiss Variant Interpretation Platform for Oncology (SVIP-O) aims at providing a centralized,")}}
                                     {{ $t("joint, and curated database for clinical somatic variants coming from Swiss hospitals and")}}
@@ -158,21 +158,21 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <ul>
-                                    <li><i><a href="http://www.sgmp.uzh.ch/home.html">Swiss Society of Molecular Pathology</a></i>
+                                    <li><i><a href="http://www.sgmp.uzh.ch/home.html">{{ $t("Swiss Society of Molecular Pathology")}}</a></i>
                                     </li>
                                 </ul>
                                 <ul>
-                                    <li><i><a href="http://sgpath.ch">Swiss Society of Pathology</a></i></li>
+                                    <li><i><a href="http://sgpath.ch">{{ $t("Swiss Society of Pathology")}}</a></i></li>
                                 </ul>
                                 <ul>
-                                    <li><i><a href="https://www.unibas.ch/en/Focal-areas/Personalized-Health-Basel.html">Personalized
-                                        Health Basel</a></i></li>
+                                    <li><i><a href="https://www.unibas.ch/en/Focal-areas/{{ $t("{{ $t("Personalized")}}")}}-Health-Basel.html">{{ $t("Personalized")}}
+                                        {{ $t("Health Basel")}}</a></i></li>
                                 </ul>
                                 <ul>
-                                    <li><i><a href="https://www.ksbl.ch/home">Kantonsspital Baselland</a></i></li>
+                                    <li><i><a href="https://www.ksbl.ch/home">{{ $t("Kantonsspital Baselland")}}</a></i></li>
                                 </ul>
                                 <ul>
-                                    <li><i><a href="https://www.insel.ch">Bern University Hospital</a></i></li>
+                                    <li><i><a href="https://www.insel.ch">{{ $t("Bern University Hospital")}}</a></i></li>
                                 </ul>
                                 <ul>
                                     <li><i><a href="http://www.dbmr.unibe.ch">Department for BioMedical Research</a> and <a

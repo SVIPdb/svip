@@ -8,7 +8,7 @@ I18N_DIR = os.path.join(BASE_DIR, 'i18n')
 LOCALES_DIR = os.path.join(BASE_DIR, 'locales')
 
 def output_str(string):
-  print(f'"{string}"')
+  print(f'\n"{string}"')
 
 def add_to_json(newStr):
   json_doc = open(f"{LOCALES_DIR}/en.json", "r+")
@@ -71,6 +71,7 @@ def check_str_validity(path_of_file_to_translate, soup, html_lines, template_ele
   if ('"' in str_to_replace) and (not already_translated):
     output_str(str_to_replace)
     print("!!! The string contains double quotes. Replace it manually.\n")
+    return False
   else:
     is_variable = ((str_to_replace[:2] == "{{") and (str_to_replace[-2:] == "}}"))
     no_letter = not bool(re.search('[a-zA-Z]', str_to_replace))
@@ -87,9 +88,10 @@ def check_str_validity(path_of_file_to_translate, soup, html_lines, template_ele
           #print("Skipped.")
           break
         elif acceptStr in ["Y", "y"]:
-          replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
+          return replace_in_file(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
         else:
           print("Wrong command.")
+  return True
 
 
 def inner_HTML_is_changed(temp_text, file_text):
@@ -152,7 +154,15 @@ def replace_in_file(path_of_file_to_translate, soup, html_lines, template_elemen
           check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, clean_substring)
       return True
   print("!!! UNEXPECTED: Failed to replace string in component !!!\n")
+  return False
 
+
+
+def iterate_through_substrings(path_of_file_to_translate, soup, html_lines, template_element, string):
+  for str_to_replace in substrings_outside_of_curly_braces(string):
+    if not check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace):
+      return False
+  return True
 
 def get_strings(path_of_file_to_translate, soup, html_lines):
   template_element = soup.find_all()[0]
@@ -161,9 +171,8 @@ def get_strings(path_of_file_to_translate, soup, html_lines):
   if bool(re.search('[a-zA-Z]', innerHTML)):
     strings = innerHTML.split('\n')
     for string in strings:
-      for str_to_replace in substrings_outside_of_curly_braces(string):
-        check_str_validity(path_of_file_to_translate, soup, html_lines, template_element, str_to_replace)
-
+      if not iterate_through_substrings(path_of_file_to_translate, soup, html_lines, template_element, string):
+        break
 
 def get_file_path():
 
