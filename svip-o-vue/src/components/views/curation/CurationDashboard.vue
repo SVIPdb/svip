@@ -3,7 +3,7 @@
         <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
             <ReviewNotificationCard v-if="REVIEW_ENABLED"
-                :items="on_request.items" :fields="review.fields" :loading="review.loading"
+                :items="reviews" :fields="review.fields" :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
                 :error="on_request.error"
@@ -112,35 +112,33 @@ export default {
         };
     },
     mounted() {
-        HTTP.get(`/reviews`).then((response) => {          
+        HTTP.get(`/curation_reviews`).then((response) => {
+            //console.log("\nREVIEWS :\n")
+            //console.log(response)
             //this.reviews = response.data.results
-            const reviews = response.data.results
-            //this.reviews = response.data.results.map((x) => ({
-            //    gene_id: x.variant && x.variant.gene.id,
-            //    variant_id: x.variant && x.variant.id,
-            //    'gene_name': x.variant && x.variant.gene.symbol,
-            //    'variant': x.variant && x.variant.name,
-            //    'hgvs': x.variant && x.variant.hgvs_c,
-            //    'disease': x.disease_name,
-            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
-            //    'deadline': 'n/a',
-            //    'requester': x.submission.requestor,
-            //    'curator': []
-            //}));
 
-            //this.reviews = response.data.results.map((x) => ({
-            //    gene_id: x.variant && x.variant.gene.id,
-            //    variant_id: x.variant && x.variant.id,
-            //    'gene_name': x.variant && x.variant.gene.symbol,
-            //    'variant': x.variant && x.variant.name,
-            //    'hgvs': x.variant && x.variant.hgvs_c,
-            //    'disease': x.disease_name,
-            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
-            //    'deadline': 'n/a',
-            //    'requester': x.submission.requestor,
-            //    'curator': []
-            //}));
+            let results = response.data.results
+            results.map((x) => console.log(x))
+
+            //console.log(response.data.results)
+
+            this.reviews = response.data.results.map((x) => ({
+                gene_id: x.variant && x.variant.gene.id,
+                variant_id: x.variant && x.variant.id,
+                'gene_name': x.variant && x.variant.gene.symbol,
+                'variant': x.variant && x.variant.name,
+                'hgvs': x.variant && x.variant.hgvs_c,
+                'disease': x.disease_name,
+                'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                'deadline': 'n/a',
+                //'requester': x.submission.requestor,
+                'requester': "",
+                'curator': []
+            }));
             
+            console.log("\nREVIEWS :\n")
+            console.log(this.reviews)
+
         });
     },
     methods: {

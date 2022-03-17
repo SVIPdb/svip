@@ -25,6 +25,7 @@ from .svip import (
     SummaryDraftViewSet,
     GeneSummaryDraftViewSet,
     CurationReviewView,
+    CurationReviewViewSet,
     RevisedReviewViewSet,
     SIBAnnotation1View,
     SIBAnnotation2ViewSet

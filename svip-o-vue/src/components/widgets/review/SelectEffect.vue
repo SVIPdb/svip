@@ -532,6 +532,8 @@ export default {
                 })
             })
 
+            console.log(evidences_data)
+
             HTTP.post(`/sib_annotations_1`, evidences_data)
                 .then((response) => {
                     console.log(`response: ${response.data}`)

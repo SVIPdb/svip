@@ -317,6 +317,18 @@ class CurationReviewView(APIView):
         return Response(data='Submitted reviews are succesfully saved')
 
 
+class CurationReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = CurationReviewSerializer
+    model = CurationReview
+
+    def get_queryset(self):
+        queryset = CurationReview.objects.all()
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
+
+
 class RevisedReviewViewSet(viewsets.ModelViewSet):
     serializer_class = RevisedReviewSerializer
     model = RevisedReview
