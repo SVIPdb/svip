@@ -588,7 +588,7 @@ class DashboardReviews(APIView):
                     'gene_name': var.gene.symbol,
                     'variant': var.name,
                     'hgvs': var.hgvs_c,
-                    'disease': association.disease.name,
+                    'disease': association.disease.name if association.disease else None,
                     'status': 'Ongoing',
                     'deadline': 'n/a',
                     'requester': '',

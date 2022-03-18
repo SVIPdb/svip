@@ -112,6 +112,7 @@ export default {
         };
     },
     mounted() {
+        console.log('flag')
         HTTP.get(`/dashboard_reviews`).then((response) => {
             console.log("REVIEWS :")
             console.log(response.data.reviews
