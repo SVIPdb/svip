@@ -17,7 +17,7 @@
         <b-collapse is-nav id="nav_collapse">
             <b-navbar-nav>
                 <b-nav-item
-                    v-if="user && user.groups.indexOf('curators') != -1"
+                    v-if="user && (user.groups.indexOf('curators') != -1 || user.groups.indexOf('clinicians') != -1)"
                     :to="{ name: 'curation-dashboard' }"
                 >Dashboard
                 </b-nav-item>

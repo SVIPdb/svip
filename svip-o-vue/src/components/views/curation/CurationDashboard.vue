@@ -16,7 +16,7 @@
         </div>
 
         <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
-        <div v-if="checkInRole('curators')">
+        <div v-if="checkInRole('curators') || checkInRole('reviewers')">
             <!-- TBC: request queue -->
             <OnRequestEntries
                 :isCurator="checkInRole('curators')"
