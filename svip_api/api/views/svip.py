@@ -469,11 +469,14 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
 class SIBAnnotation1View(APIView):
     def post(self, request, *args, **kwargs):
         for obj in request.data:
+            evidence = CurationEvidence.objects.get(id=obj['evidence'])
             if 'id' in obj:
                 annotation = SIBAnnotation1.objects.get(id=obj['id'])
+            elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
+                annotation = SIBAnnotation1.objects.get(evidence=evidence)
             else:
                 annotation = SIBAnnotation1()
-            annotation.evidence = CurationEvidence.objects.get(id=obj['evidence'])
+            annotation.evidence = evidence
             annotation.effect = obj['effect']
             annotation.tier = obj['tier']
             annotation.draft = False
