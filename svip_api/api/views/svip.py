@@ -556,6 +556,53 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
 # ================================================================================================================
 
 
+def review_count(var):
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        return evidence.reviews.count()
+    else:
+        return 0
+
+def reviews(var):
+    reviews = []
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        if evidence.reviews.count() > 0:
+            for review in evidence.reviews.all():
+                reviews.append(review.match())
+    return reviews
+
+class DashboardReviews(APIView):
+    def get(self, request):
+        results = []
+        var_ids = []
+        for association in CurationAssociation.objects.all():
+            var = association.variant
+            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation', 'fully_reviewed']) and (var.id not in var_ids):
+                variant_obj = {
+                    'gene_id':  var.gene.id,
+                    'variant_id': var.id,
+                    'gene_name': var.gene.symbol,
+                    'variant': var.name,
+                    'hgvs': var.hgvs_c,
+                    'disease': var.disease_name,
+                    #'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
+                    'status': 'Ongoing',
+                    'deadline': 'n/a',
+                    'requester': '',
+                    'curator': [],
+                    'review_count': review_count(var),
+                    'reviews': reviews(var),
+                    'stage': var.stage
+                }
+                results.append(variant_obj)
+                var_ids.append(var.id)
+        return Response(
+                data={
+                    "reviews": results
+                }
+            )
+
 class ReviewDataView(APIView):
 
     # when user accesses the review page, return the json data
