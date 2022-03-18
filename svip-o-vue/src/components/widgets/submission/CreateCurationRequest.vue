@@ -6,7 +6,7 @@
             </b-checkbox>
         </b-form-group>
 
-        <b-form-group label="Requestor" v-if="for_curation_request">
+        <b-form-group label="Email address of the requestor" v-if="for_curation_request">
             <b-input type="text" name="requestor" v-model="requestor" @input="modelChanged" />
         </b-form-group>
 
