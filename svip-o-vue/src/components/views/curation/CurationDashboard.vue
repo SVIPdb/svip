@@ -112,34 +112,11 @@ export default {
         };
     },
     mounted() {
-        console.log('flag')
         HTTP.get(`/dashboard_reviews`).then((response) => {
-            console.log("\nREVIEWS :\n")
-            console.log(response)
-            //this.reviews = response.data.results
-
-            //let results = response.data.results
-            //results.map((x) => console.log(x))
-
-            ////console.log(response.data.results)
-
-            //this.reviews = response.data.results.map((x) => ({
-            //    gene_id: x.variant && x.variant.gene.id,
-            //    variant_id: x.variant && x.variant.id,
-            //    'gene_name': x.variant && x.variant.gene.symbol,
-            //    'variant': x.variant && x.variant.name,
-            //    'hgvs': x.variant && x.variant.hgvs_c,
-            //    'disease': x.disease_name,
-            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
-            //    'deadline': 'n/a',
-            //    //'requester': x.submission.requestor,
-            //    'requester': "",
-            //    'curator': []
-            //}));
-            
-            //console.log("\nREVIEWS :\n")
-            //console.log(this.reviews)
-
+            console.log("REVIEWS :")
+            console.log(response.data.reviews
+            )
+            this.reviews = response.data.reviews
         });
     },
     methods: {
