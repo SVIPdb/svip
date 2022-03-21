@@ -40,7 +40,7 @@
 
         <div v-else style="text-align: center; margin-top: 3em;">
             <h1>Not Authorized</h1>
-            <p>You may only access this page if you're a curator or reviewer.</p>
+            <p>You may only see the curation tables if you are a curator.</p>
             <router-link to="/">return to homepage</router-link>
         </div>
     </div>
