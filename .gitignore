@@ -24,4 +24,4 @@ svip_api/api/views/beacon_v2.py
 .0
 svip-o-vue/src/components/help/json/convert.py
 
-svip_api/docs/site*
+svip_api/docs/site
