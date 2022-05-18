@@ -37,6 +37,12 @@
             </div>
         </b-card-header>
 
+        <div style="margin: 25px 10px;">
+                        <b-button variant="info" @click="submitAll" style="height: 34px;" :disabled="already_submitted">
+                            Submit to review
+                        </b-button>
+                    </div>
+
         <b-card-body class="p-0">
             <PagedTable
                 id="evidence_table"
@@ -64,6 +70,7 @@
                 </template>
 
                 <template v-slot:cell(extra_variants)="data">
+                    <div>{{apiUrl}}</div>
                     <span v-if="data.value">
                         <span v-for="(variant, idx) in data.value" :key="variant.id">
                             <span v-if="idx > 0">, </span>
@@ -149,9 +156,7 @@
 
                 <template v-slot:extra_commands>
                     <div style="margin-bottom: 10px; margin-right: 10px;">
-                        <b-button variant="info" @click="submitAll" style="height: 34px;" :disabled="already_submitted">
-                            Submit to review
-                        </b-button>
+                        
                     </div>
                 </template>
             </PagedTable>

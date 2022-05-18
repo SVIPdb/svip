@@ -6,7 +6,7 @@
                 <p>{{ pageError.message }}</p>
             </b-col>
         </b-row>
-        <b-row v-else-if="!checkInRole('curators') && !checkInRole('reviewers')">
+        <b-row v-else-if="!checkInRole('curators') && !checkInRole('clinicians')">
             <b-col class="page-error">
                 <h1>Not Authorized</h1>
                 <p>You may only access this page if you're a curator or reviewer.</p>

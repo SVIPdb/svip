@@ -39,9 +39,8 @@
         </div>
 
         <div v-else style="text-align: center; margin-top: 3em;">
-            <h1>Not Authorized</h1>
-            <p>You may only see the curation tables if you are a curator.</p>
-            <router-link to="/">return to homepage</router-link>
+
+            <router-link to="/"  class="text-uppercase">Return to homepage</router-link>
         </div>
     </div>
 </template>
@@ -113,9 +112,9 @@ export default {
     },
     mounted() {
         console.log('flag')
-        HTTP.get(`/dashboard_reviews`).then((response) => {
+        HTTP.get(`/dashboard_reviews`).then((response) => {  /// HERE!!!!!
             console.log("REVIEWS :")
-            console.log(response.data.reviews
+            console.log(JSON.stringify(response.data.reviews)
             )
             this.reviews = response.data.reviews
         });

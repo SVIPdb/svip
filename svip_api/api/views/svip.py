@@ -66,19 +66,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-            .select_related('variant')
-            .prefetch_related(
-                Prefetch('diseaseinsvip_set', queryset=(
-                    DiseaseInSVIP.objects
-                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                    .prefetch_related(
-                        'sample_set'
-                    )
-                )),
-                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-            )
-        )
+             .select_related('variant')
+             .prefetch_related(
+                 Prefetch('diseaseinsvip_set', queryset=(
+                     DiseaseInSVIP.objects
+                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                     .prefetch_related(
+                         'sample_set'
+                     )
+                 )),
+                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+             )
+             )
 
         return q
 
@@ -265,7 +265,6 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "changed": result
         })
 
-
     @action(detail=True)
     def history(self, request, pk):
         entry = CurationEntry.objects.get(id=pk)
@@ -307,7 +306,8 @@ class CurationReviewView(APIView):
                 review = CurationReview.objects.get(id=obj['id'])
             else:
                 review = CurationReview()
-            review.curation_evidence = CurationEvidence.objects.get(id=obj['curation_evidence'])
+            review.curation_evidence = CurationEvidence.objects.get(
+                id=obj['curation_evidence'])
             review.annotated_effect = obj['annotated_effect']
             review.annotated_tier = obj['annotated_tier']
             review.comment = obj['comment']
@@ -566,14 +566,36 @@ def review_count(var):
     else:
         return 0
 
+
 def reviews(var):
     reviews = []
+    reviewers = []
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        if evidence.reviews.count() > 0:
+            print()
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! REVIEWS')
+            print()
+            for review in evidence.reviews.all():
+                reviewers.append(review.reviewer_id)
+                reviews.append(review.match())
+    print(reviewers)
+    return reviews
+
+
+def reviewers(var):
+    reviewers = []
+    reviewers_id = []
     if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
         evidence = var.curation_associations.first().curation_evidences.first()
         if evidence.reviews.count() > 0:
             for review in evidence.reviews.all():
-                reviews.append(review.match())
-    return reviews
+                reviewers.append(review.reviewer)
+                reviewers_id.append(review.reviewer_id)
+
+    print(reviewers)
+    return reviewers_id
+
 
 class DashboardReviews(APIView):
     def get(self, request):
@@ -581,7 +603,8 @@ class DashboardReviews(APIView):
         var_ids = []
         for association in CurationAssociation.objects.all():
             var = association.variant
-            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation', 'fully_reviewed']) and (var.id not in var_ids):
+
+            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
                 variant_obj = {
                     'gene_id':  var.gene.id,
                     'variant_id': var.id,
@@ -595,15 +618,17 @@ class DashboardReviews(APIView):
                     'curator': [],
                     'review_count': review_count(var),
                     'reviews': reviews(var),
-                    'stage': var.stage
+                    'stage': var.stage,
+                    'reviewers_id': reviewers(var)
                 }
                 results.append(variant_obj)
                 var_ids.append(var.id)
         return Response(
-                data={
-                    "reviews": results
-                }
-            )
+            data={
+                "reviews": results
+            }
+        )
+
 
 class ReviewDataView(APIView):
 
@@ -612,7 +637,7 @@ class ReviewDataView(APIView):
 
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
-        
+
         if request.data.get('only_clinical') == False:
             only_clinical = False
         else:
@@ -629,9 +654,9 @@ class ReviewDataView(APIView):
 
         for curation in variant.curations.filter(status="submitted"):
 
-            #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-            ## check that a disease is indicated for the curation entry being saved
-            #if curation.disease:
+            # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+            # check that a disease is indicated for the curation entry being saved
+            # if curation.disease:
 
             associations = CurationAssociation.objects.filter(
                 variant=variant).filter(disease=curation.disease)
@@ -663,7 +688,8 @@ class ReviewDataView(APIView):
                     )
                     new_evidence.save()
 
-                evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                evidence = association.curation_evidences.filter(
+                    type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                 curation.curation_evidences.add(evidence)
 
             curation.save()
@@ -700,7 +726,7 @@ class UpdateVariantSummary(APIView):
         var_id = kwargs.get('var_id')
         summary = request.data.get('summary')
         summary_draft_id = request.data.get('summary_draft_id')
-        
+
         summary_draft = SummaryDraft.objects.get(id=summary_draft_id)
 
         if var_id == None:

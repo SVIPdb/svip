@@ -72,13 +72,15 @@
                                             <b-row class="justify-content-center">
 
                                                 <span v-for="(review, review_idx) in evidence.reviews" :key="'review' + review_idx">
-                                                    <span v-if="review.status !== null">
+                                                    
+                                                    <span v-if="review.status !== null"> 
                                                         <b-icon
                                                             class="h4 mb-2 m-1" :style="displayColor(review.status)"
                                                             :icon="displayIcon(review.status)"
                                                         ></b-icon>
                                                     </span>
                                                 </span>
+                                               
 
                                                 <b-icon class="h4 mb-2 m-1"
                                                         :style="displayColor(evidence.currentReview.status)"
@@ -112,25 +114,25 @@
                                     <div v-if="expander_array[idx].evidences[index]">
                                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <b-row align-v="center" v-for="(curation, i) in evidence.curations" :key="'curation' + i">
-                                                <b-col class="border p-2">PMID:
+                                                <b-col class="p-2">PMID:
                                                     <b-link target="_blank" active
                                                             :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                         {{ curation.pmid }}
                                                     </b-link>
                                                 </b-col>
-                                                <b-col class="border p-2">{{ curation.effect }}</b-col>
-                                                <b-col class="border p-2">{{ curation.tier }}</b-col>
-                                                <b-col class="border p-2">
+                                                <b-col class="p-2">"{{ curation.effect }}"</b-col>
+                                                <b-col class="p-2">{{ curation.tier }}</b-col>
+                                                <b-col class="p-2">
                                                     Support: {{ curation.support }}
                                                 </b-col>
-                                                <b-col class="border p-2">
+                                                <b-col class="p-2">
                                                     <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
                                                             target="_blank"
                                                             alt="Link to evidence">Curation entry #{{ curation.id }}
                                                     </b-link>
                                                 </b-col>
 
-                                                <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
+                                                <b-col class="p-2" cols="6">{{ curation.comment }}</b-col>
                                             </b-row>
                                         </b-card-footer>
                                     </div>
@@ -266,10 +268,15 @@ export default {
                         if (confirm) {
                             // save as a draft
                             this.submitReviews(false)
+                            
+                            
                         }
                     }
                 }
             )
+
+            
+            
         },
         getReviewData() {
             const params={
@@ -432,9 +439,16 @@ export default {
                         this.$snotify.success("Your review is saved as a draft.");
                     } else {
                         this.$snotify.success("Your reviews for this variant have been submitted.");
+
+                        // setTimeout(function(){
+                        // window.location.href = "/curation/dashboard";
+                        // }, 2000);
+
                     }
                     this.getReviewData()
                     this.submitted = true
+
+                    
                 })
                 .catch((err) => {
                     log.warn(err);
@@ -443,6 +457,7 @@ export default {
 
             // Reset fields
             this.isEditMode = false;
+            
         },
         reviewParams(evidence, draft, id = null) {
             // prepare a JSON containing parameters for CurationReview model

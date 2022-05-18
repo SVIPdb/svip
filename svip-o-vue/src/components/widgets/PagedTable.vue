@@ -9,7 +9,7 @@
 
             <div v-if="showFilters" class="badges">
                 <span :class="`badge badge-primary filter-${k}`" :key="k"
-                    v-for="[k,v] in Object.entries(filters).filter(x => x[1])">
+                    v-for="[k, v] in Object.entries(filters).filter(x => x[1])">
                     {{ desnakify(v) }}
                     <button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
                         @click="filters[k] = ''">
@@ -20,7 +20,7 @@
 
             <div v-if="showSearch" class="search-box" style="margin-left: 10px;">
                 <b-input-group size="sm">
-                    <b-form-input v-model="search" debounce="300" placeholder="Type to Search"/>
+                    <b-form-input v-model="search" debounce="300" placeholder="Type to Search" />
                     <b-input-group-append>
                         <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
                     </b-input-group-append>
@@ -29,8 +29,7 @@
         </div>
 
         <b-table :class="$attrs.responsive && 'mb-0'" ref="table" v-bind="$attrs" :items="provider"
-            :current-page="currentPage" :per-page="perPage" :filter="packedFilters"
-        >
+            :current-page="currentPage" :per-page="perPage" :filter="packedFilters">
             <slot v-for="(_, name) in $slots" :name="name" :slot="name" />
             <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
                 <slot :name="name" v-bind="slotData" />
@@ -43,16 +42,16 @@
             </template>
         </b-table>
 
-        <div v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
-            <slot name="extra_commands" />
 
-            <b-pagination
-                v-if="totalRows > perPage"
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-            />
+        <div  v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
+            <slot name="extra_commands" />
+            <b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows" :per-page="perPage"
+                aria-controls="my-table" />
+            <span class="ml-2">Items per page:</span>
+            <b-form-select class="numPerPage ml-2 mb-4" v-model="perPage" :options="pageOptions" style="width: 10%" />
         </div>
+
+
     </div>
 </template>
 
@@ -100,7 +99,11 @@ export default {
             totalRows: 0,
             search: '',
             loading: true,
-            filters: {}
+            filters: {},
+            pageOptions: [5, 10, 20, 50, {
+                value: Number.MAX_SAFE_INTEGER,
+                text: "All"
+            }],
         };
     },
     computed: {
@@ -110,7 +113,7 @@ export default {
                 ...this.filters, ...(this.extraFilters || {})
             };
         },
-        slotsUsed () {
+        slotsUsed() {
             return !!this.$slots.extra_commands || (this.totalRows > this.perPage);
         },
     },
@@ -141,7 +144,7 @@ export default {
 
             this.loading = true;
 
-            return HTTP.get(ctx.apiUrl, {params}).then(res => {
+            return HTTP.get(ctx.apiUrl, { params }).then(res => {
                 this.totalRows = res.data.count;
                 this.loading = false;
                 this.$emit('data-loaded', res.data);

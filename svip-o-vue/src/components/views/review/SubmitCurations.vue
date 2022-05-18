@@ -1,12 +1,11 @@
 <template>
     <div class="container-fluid">
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
-
         <ModifyVariantSummary :variant="variant" :comments="summary.comments"/>
-
         <SelectEffect :variant="variant" :entryIDs="entryIDs"/>
     </div>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";

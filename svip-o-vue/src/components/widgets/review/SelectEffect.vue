@@ -12,31 +12,34 @@
                             <transition name="slide-fade">
                                 <div v-if="expander_array[idx].disease">
                                     <b-card-text class="p-2 m-0">
-                                        <b-row align-v="center">
-                                            <b-col align="center" cols="3">
+                                        <b-row align-v="center" align-h="left">
+                                            <b-col align="left" cols="3" class="ml-4">
                                                 <expander v-model="expander_array[idx].evidences[index]"/>
                                                 {{ evidence.fullType }}
                                             </b-col>
-                                            <b-col cols="5">
+                                            <b-col cols="2" align="center">
                                                 <p class="mb-2" v-for="(effect,i) in evidence.effectOfVariant" :key="i">
                                                     {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
                                                 </p>
                                             </b-col>
-                                            <b-col cols="3">
-                                                <div v-if="evidence.curator">
-                                                    <b-row class="p-2">
+                                            <b-col cols="6" align="center">
+                                                <div v-if="evidence.curator" >
+                                                    <b-row class="p-1 d-flex justify-content-end flex-row no-wrap">
                                                         <select-prognostic-outcome v-if="evidence.typeOfEvidence === 'Prognostic'"
                                                                                 v-model="evidence.curator.annotatedEffect"
                                                                                 :disabled="not_submitted || already_reviewed"
+                                                                                class="m-1 d-inline w-25"
                                                         ></select-prognostic-outcome>
                                                         <select-diagnostic-outcome v-if="evidence.typeOfEvidence === 'Diagnostic'"
                                                                                 v-model="evidence.curator.annotatedEffect"
                                                                                 :disabled="not_submitted || already_reviewed"
+                                                                                class="m-1 d-inline w-25"
                                                         ></select-diagnostic-outcome>
                                                         <select-predictive-therapeutic-outcome
                                                             v-if="evidence.typeOfEvidence === 'Predictive / Therapeutic'"
                                                             v-model="evidence.curator.annotatedEffect"
                                                             :disabled="not_submitted || already_reviewed"
+                                                            class="m-1 d-inline w-25"
                                                         ></select-predictive-therapeutic-outcome>
                                                         <select-various-outcome
                                                             v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
@@ -44,18 +47,21 @@
                                                             :evidenceType='evidence.typeOfEvidence'
                                                             fieldType='effect'
                                                             :disabled="not_submitted || already_reviewed"
-                                                        ></select-various-outcome>
-                                                    </b-row>
-                                                    <b-row class="p-2">
-                                                        <select-tier
+                                                            class="m-1 d-inline w-25" 
+                                                        > </select-various-outcome >
+
+                                
+                                                                                                                <select-tier
                                                             v-if="['Prognostic', 'Diagnostic'].includes(evidence.typeOfEvidence)" 
                                                             v-model="evidence.curator.annotatedTier"
                                                             :disabled="not_submitted || already_reviewed"
+                                                            class="m-1 d-inline w-50"
                                                         />
                                                         <select-therapeutic-tier
                                                             v-if="['Predictive / Therapeutic'].includes(evidence.typeOfEvidence)" 
                                                             v-model="evidence.curator.annotatedTier"
                                                             :disabled="not_submitted || already_reviewed"
+                                                            class="m-1 d-inline w-50"
                                                         />
                                                         <select-various-outcome
                                                             v-if="!['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(evidence.typeOfEvidence)"
@@ -63,6 +69,7 @@
                                                             :evidenceType='evidence.typeOfEvidence'
                                                             fieldType='tier'
                                                             :disabled="not_submitted || already_reviewed"
+                                                            class="m-1 d-inline w-50"
                                                         />
                                                     </b-row>
                                                 </div>

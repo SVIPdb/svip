@@ -46,17 +46,34 @@
             :class="cardCustomClass ? customClass : ''"
             :style="customBgColor && `background-color: ${customBgColor} !important`"
         >
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between flex-wrap">
+                <div class="d-flex justify-content-between align-items-center" >
                 <div class="p-2 font-weight-bold">
                     {{title}}
 
-                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" :items="[
-                        { label: '0 review', value: 0, variant: 'light' },
-                        { label: '1 review', value: 1, variant: 'danger' },
-                        { label: '2 reviews', value: 2, variant: 'warning' },
-                        { label: '3 reviews', value: 3, variant: 'success' },
+                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusReviewFilter" :items="[
+                        // { label: '0 review', value: 0, variant: 'light' },
+                        // { label: '1 review', value: 1, variant: 'danger' },
+                        // { label: '2 reviews', value: 2, variant: 'warning' },
+                        // { label: '3 reviews', value: 3, variant: 'success' },
+                        { label: 'In process', value: 'process', variant: 'warning' },
+                        { label: 'On-hold', value: 'onhold', variant: 'danger' },
+                        { label: 'Approved', value: 'finished', variant: 'success' },
                         { label: 'All', value: 'all', variant: 'info' }
                     ]" />
+                </div>
+                    <b-form-checkbox
+                    v-if="isReviewer"
+                    class="ml-4"
+      id="checkbox-1"
+      v-model="statusMineReviewer"
+      name="checkbox-1"
+      value="mine"
+      unchecked-value="not_mine"
+    >
+      My reviews
+    </b-form-checkbox>
+
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
@@ -161,7 +178,7 @@
         <b-card-body v-if="isReviewer" class="p-0">
             <b-table
                 class="mb-0"
-                :items="filteredItems" :fields="fields"
+                :items="filteredReviewItems" :fields="fields"
                 :filter="filter"
                 :sort-by.sync="sortBy" :sort-desc="true"
                 :busy="loading"
@@ -363,6 +380,7 @@ export default {
             myFilter: "all",
             statusFilter: "all",
             statusReviewFilter: "all",
+            statusMineReviewer: 'not_mine',
             // Days left limits (Should be reviewed!)
             daysLeft: {
                 min: 2,
@@ -474,11 +492,32 @@ export default {
         },
         filteredReviewItems() {
             let items = this.items;
-
-            if (this.statusReviewFilter !== "all") {
-                items = items.filter(element => element.review_count === this.statusFilter);
+            if (this.statusMineReviewer === 'mine') {
+                items = items.filter(item => item.reviewers_id.includes(this.user.user_id))
             }
+
+            if (this.statusReviewFilter === 'onhold') {
+                items = items.filter(item => {
+                return item.review_count === 3 && item.reviews.reduce((a, b) => a + b, 0) <= 1 ? true : false
+            })
+
+            }
+                if (this.statusReviewFilter === 'finished') {
+                items = items.filter(item => {
+                return  item.review_count === 3 && item.reviews.reduce((a, b) => a + b, 0) >= 2 ? true : false
+            })
+
+            }
+                if (this.statusReviewFilter === 'process') {
+                items = items.filter(item =>  item.review_count !== 3 )
+            }
+
+            // if (this.statusReviewFilter !== "all") {
+            //     items = items.filter(element => element.review_count === this.statusReviewFilter);
+            // }
+            return items
         },
+
         myCurations() {
             return this.items.filter(element => element.curator.some(x => x.id === this.user.user_id));
         },
