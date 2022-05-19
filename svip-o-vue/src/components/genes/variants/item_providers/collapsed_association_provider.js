@@ -18,30 +18,29 @@ export function makeCollapsedAssociationProvider(metaUpdate = null) {
         const params = {
             page_size: ctx.perPage,
             page: ctx.currentPage,
-            ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
-            ...(filter_params && filter_params)
+            ordering: (ctx.sortDesc ? "-" : "") + ctx.sortBy,
+            ...(filter_params && filter_params),
         };
 
-        return HTTP.get(ctx.apiUrl, {params}).then(res => {
+        return HTTP.get(ctx.apiUrl, { params }).then((res) => {
             // invoke the metadata updated callback, if available
             if (metaUpdate) {
                 metaUpdate({
-                    count: res.data.count
-                })
+                    count: res.data.count,
+                });
             }
 
             // rewrite some fields into what the front-end's expecting
             // fixme: should these be migrated to the tables themselves?
-            return res.data.results.map(a => ({
+            return res.data.results.map((a) => ({
                 ...a,
                 disease: titleCase(a.disease),
                 drug_labels: normalizeItemList(a.drug_labels),
                 publications: a.publications.map(parsePublicationURL),
                 /* silly hack: we make all the details panels expanded, and just expand/collapse their contents so we can animate them */
                 _showDetails: true,
-                _animatedDetails: false
-            })
-            )
+                _animatedDetails: false,
+            }));
         });
-    }
+    };
 }

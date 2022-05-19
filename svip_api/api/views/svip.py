@@ -573,9 +573,7 @@ def reviews(var):
     if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
         evidence = var.curation_associations.first().curation_evidences.first()
         if evidence.reviews.count() > 0:
-            print()
-            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! REVIEWS')
-            print()
+
             for review in evidence.reviews.all():
                 reviewers.append(review.reviewer_id)
                 reviews.append(review.match())

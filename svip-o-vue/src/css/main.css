@@ -4,7 +4,9 @@ html {
 }
 
 /* navbar tweaking to reduce dead space */
-.svip-navbar { padding: 8px 20px; }
+.svip-navbar {
+    padding: 8px 20px;
+}
 
 body {
     margin-bottom: 60px; /* Margin bottom by footer height */
@@ -77,14 +79,16 @@ input.vs__search::placeholder {
 }
 
 /* removes bootstrap 4's icons in invalid form elems (the red border is enough) */
-.was-validated .custom-select:invalid, .custom-select.is-invalid {
+.was-validated .custom-select:invalid,
+.custom-select.is-invalid {
     /*
     for select controls: unfortunately bootstrap packs both the select icon and error icon into the same background declaration,
     so we need to retain the select icon (below) while excluding the error icon.
      */
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
 }
-.form-control.is-invalid, .was-validated .form-control:invalid {
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
     background-image: none;
 }
 
@@ -99,11 +103,18 @@ input.vs__search::placeholder {
 }
 
 /* add a bit of padding on the lefthand side to make it feel less close to the left edge */
-.table th:first-child { padding-left: 14px; }
+.table th:first-child {
+    padding-left: 14px;
+}
 
-.table td:first-child { padding-left: 15px; }
+.table td:first-child {
+    padding-left: 15px;
+}
 
-.container-fluid > .card, .card.top-level { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+.container-fluid > .card,
+.card.top-level {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
 .card-body.top-level {
     /* allows tables in cards to be flush with their border, which imo looks nicer */
@@ -136,9 +147,14 @@ input.vs__search::placeholder {
 }
 
 /* label styles */
-.unavailable { font-style: italic; color: #ccc; }
+.unavailable {
+    font-style: italic;
+    color: #ccc;
+}
 
-.bold { font-weight: bold; }
+.bold {
+    font-weight: bold;
+}
 
 /* plot-specific styles */
 .sig-legend {
@@ -176,7 +192,10 @@ input.vs__search::placeholder {
 
 /* general table styles */
 .empty-table-msg {
-    text-align: center; color: #777; font-size: 18px; padding: 10px 5px 5px;
+    text-align: center;
+    color: #777;
+    font-size: 18px;
+    padding: 10px 5px 5px;
     font-style: italic;
 }
 
@@ -239,10 +258,18 @@ input.vs__search::placeholder {
     -webkit-animation: blink-animation 1s infinite;
 }
 @keyframes blink-animation {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.2;
+    }
+    to {
+        opacity: 1;
+    }
 }
 @-webkit-keyframes blink-animation {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.2;
+    }
+    to {
+        opacity: 1;
+    }
 }

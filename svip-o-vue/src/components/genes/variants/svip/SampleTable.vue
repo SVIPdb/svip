@@ -1,7 +1,7 @@
 <template>
     <b-card-text>
         <b-table
-            v-if="(groups && groups.includes('clinicians'))"
+            v-if="groups && groups.includes('clinicians')"
             :fields="fields"
             :items="sample_provider"
             :small="true"
@@ -17,7 +17,7 @@
                     :href="`${entry.value}?subject=Regarding Sample ID ${entry.item.sample_id}`"
                     size="sm"
                     variant="info"
-                >Contact
+                    >Contact
                 </b-button>
             </template>
 
@@ -25,14 +25,16 @@
                 <a
                     href="javascript:void(0);"
                     @click.stop="() => changeSubpanel(entry, 'tumor')"
-                >{{ entry.value }}</a>
+                    >{{ entry.value }}</a
+                >
             </template>
 
             <template v-slot:cell(panel)="entry">
                 <a
                     href="javascript:void(0);"
                     @click.stop="() => changeSubpanel(entry, 'sequencing')"
-                >{{ entry.value }}</a>
+                    >{{ entry.value }}</a
+                >
             </template>
 
             <template v-slot:empty="scope">
@@ -40,13 +42,20 @@
             </template>
 
             <template v-slot:row-details="entry">
-                <div v-if="entry.item.curSubtable === 'tumor'" class="sample-subtable tumor-subtable">
+                <div
+                    v-if="entry.item.curSubtable === 'tumor'"
+                    class="sample-subtable tumor-subtable"
+                >
                     <table>
                         <tr>
-                            <th v-for="field in tumor_fields" :key="field.key">{{ field.label }}</th>
+                            <th v-for="field in tumor_fields" :key="field.key">
+                                {{ field.label }}
+                            </th>
                         </tr>
                         <tr>
-                            <td v-for="field in tumor_fields" :key="field.key">{{ entry.item[field.key] || '-' }}</td>
+                            <td v-for="field in tumor_fields" :key="field.key">
+                                {{ entry.item[field.key] || "-" }}
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -56,13 +65,19 @@
                 >
                     <table>
                         <tr>
-                            <th v-for="field in sequencing_fields" :key="field.key">{{ field.label }}</th>
+                            <th
+                                v-for="field in sequencing_fields"
+                                :key="field.key"
+                            >
+                                {{ field.label }}
+                            </th>
                         </tr>
                         <tr>
                             <td
                                 v-for="field in sequencing_fields"
                                 :key="field.key"
-                            >{{ entry.item[field.key] || '-' }}
+                            >
+                                {{ entry.item[field.key] || "-" }}
                             </td>
                         </tr>
                     </table>
@@ -87,9 +102,9 @@ import { makeSampleProvider } from "@/components/genes/variants/item_providers/s
 export default {
     name: "SampleTable",
     props: {
-        variant: {required: true, type: Object},
-        row: {required: true, type: Object},
-        groups: {required: true, type: Array}
+        variant: { required: true, type: Object },
+        row: { required: true, type: Object },
+        groups: { required: true, type: Array },
     },
     data() {
         return {
@@ -101,51 +116,71 @@ export default {
             perPage: 10,
 
             fields: [
-                {key: "disease_name", label: "Disease", sortable: true},
-                {key: "sample_id", label: "Sample ID", sortable: true},
-                {key: "year_of_birth", label: "Year of birth", sortable: true},
-                {key: "gender", label: "Gender", sortable: true},
-                {key: "hospital", label: "Institution", sortable: true},
-                {key: "medical_service", label: "Department", sortable: true},
-                {key: "contact", label: "Contact", sortable: true},
+                { key: "disease_name", label: "Disease", sortable: true },
+                { key: "sample_id", label: "Sample ID", sortable: true },
+                {
+                    key: "year_of_birth",
+                    label: "Year of birth",
+                    sortable: true,
+                },
+                { key: "gender", label: "Gender", sortable: true },
+                { key: "hospital", label: "Institution", sortable: true },
+                { key: "medical_service", label: "Department", sortable: true },
+                { key: "contact", label: "Contact", sortable: true },
                 {
                     key: "provider_annotation",
                     label: "Provider Annotation",
-                    sortable: true
+                    sortable: true,
                 },
 
                 {
                     key: "sample_tissue",
                     label: "Tumor Sample",
-                    sortable: true
+                    sortable: true,
                 } /* links to tumor details */,
                 {
                     key: "panel",
                     label: "Sequencing Panel",
-                    sortable: true
-                } /* links to sequencing details */
+                    sortable: true,
+                } /* links to sequencing details */,
             ],
 
             tumor_fields: [
-                {key: "tumor_purity", label: "Tumor Purity", sortable: true},
-                {key: "tnm_stage", label: "TNM Stage", sortable: true},
-                {key: "sample_type", label: "Sample Type", sortable: true},
-                {key: "sample_site", label: "Sample Site", sortable: true},
-                {key: "specimen_type", label: "Specimen Type", sortable: true},
-                {key: "allele_frequency", label: "Tumor AF", sortable: true}
+                { key: "tumor_purity", label: "Tumor Purity", sortable: true },
+                { key: "tnm_stage", label: "TNM Stage", sortable: true },
+                { key: "sample_type", label: "Sample Type", sortable: true },
+                { key: "sample_site", label: "Sample Site", sortable: true },
+                {
+                    key: "specimen_type",
+                    label: "Specimen Type",
+                    sortable: true,
+                },
+                { key: "allele_frequency", label: "Tumor AF", sortable: true },
             ],
 
             sequencing_fields: [
-                {key: "sequencing_date", label: "Sequencing Date", sortable: true},
-                {key: "platform", label: "Platform", sortable: true},
-                {key: "panel", label: "Sequencing Panel", sortable: true},
-                {key: "coverage", label: "Coverage", sortable: true},
-                {key: "calling_strategy", label: "Calling Strategy", sortable: true},
-                {key: "caller", label: "Caller", sortable: true},
-                {key: "aligner", label: "Aligner", sortable: true},
-                {key: "software", label: "Software", sortable: true},
-                {key: "software_version", label: "Software Version", sortable: true}
-            ]
+                {
+                    key: "sequencing_date",
+                    label: "Sequencing Date",
+                    sortable: true,
+                },
+                { key: "platform", label: "Platform", sortable: true },
+                { key: "panel", label: "Sequencing Panel", sortable: true },
+                { key: "coverage", label: "Coverage", sortable: true },
+                {
+                    key: "calling_strategy",
+                    label: "Calling Strategy",
+                    sortable: true,
+                },
+                { key: "caller", label: "Caller", sortable: true },
+                { key: "aligner", label: "Aligner", sortable: true },
+                { key: "software", label: "Software", sortable: true },
+                {
+                    key: "software_version",
+                    label: "Software Version",
+                    sortable: true,
+                },
+            ],
         };
     },
     methods: {
@@ -161,16 +196,16 @@ export default {
                     ? !entry.item._showDetails
                     : true;
             entry.item.curSubtable = subpanel_id;
-        }
+        },
     },
     computed: {
         sample_provider() {
             return makeSampleProvider(this.metaUpdated, {
                 _showDetails: false,
-                curSubtable: null
+                curSubtable: null,
             });
-        }
-    }
+        },
+    },
 };
 </script>
 

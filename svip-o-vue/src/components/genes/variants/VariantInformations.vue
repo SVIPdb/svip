@@ -13,8 +13,8 @@
                 <template v-slot:cell(gene)="row">
                     <router-link
                         class="font-weight-bold"
-                        :to="{ name: 'gene', params: { gene_id: row.item.id }}"
-                    >{{ row.item.gene.symbol }}
+                        :to="{ name: 'gene', params: { gene_id: row.item.id } }"
+                        >{{ row.item.gene.symbol }}
                     </router-link>
                 </template>
                 <template v-slot:cell(name)="data">
@@ -22,19 +22,25 @@
                 </template>
                 <template v-slot:cell(hgvs_c)="data">
                     <p class="mb-0">
-                        <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
+                        <span class="text-muted"
+                            >{{ data.value.split(":")[0] }}:</span
+                        >
                         {{ data.value.split(":")[1] }}
                     </p>
                 </template>
                 <template v-slot:cell(hgvs_p)="data">
                     <p class="mb-0">
-                        <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
+                        <span class="text-muted"
+                            >{{ data.value.split(":")[0] }}:</span
+                        >
                         {{ data.value.split(":")[1] }}
                     </p>
                 </template>
                 <template v-slot:cell(hgvs_g)="data">
                     <p class="mb-0">
-                        <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
+                        <span class="text-muted"
+                            >{{ data.value.split(":")[0] }}:</span
+                        >
                         {{ data.value.split(":")[1] }}
                     </p>
                 </template>
@@ -42,7 +48,7 @@
                     <a
                         v-for="rsid in data.value"
                         :key="rsid"
-                        :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
+                        :href="'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
                         target="_blank"
                     >
                         rs{{ rsid }}
@@ -51,7 +57,9 @@
                 </template>
                 <template v-slot:cell(position)="row">
                     <p class="mb-0">
-                        <span class="text-muted transcript-id">{{ row.item.reference_name }}:</span>
+                        <span class="text-muted transcript-id"
+                            >{{ row.item.reference_name }}:</span
+                        >
                         {{ var_position }}
                     </p>
                 </template>
@@ -73,26 +81,26 @@ export default {
     props: {
         variant: {
             type: Object,
-            required: true
+            required: true,
         },
         fields: {
             type: Array,
-            required: true
+            required: true,
         },
         theadClass: {
             type: String,
             required: false,
-            default: ""
+            default: "",
         },
         tbodyClass: {
             type: String,
             required: false,
-            default: ""
-        }
+            default: "",
+        },
     },
     data() {
         return {
-            showCurationTool: false
+            showCurationTool: false,
         };
     },
     computed: {
@@ -104,7 +112,10 @@ export default {
                         4
                     )}%`;
                 } else if (this.variant.mv_info.exac) {
-                    return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+                    return `ExAC: ${round(
+                        this.variant.mv_info.exac.af * 100.0,
+                        4
+                    )}%`;
                 }
             }
 
@@ -112,10 +123,9 @@ export default {
         },
         var_position() {
             return var_to_position(this.variant);
-        }
-    }
+        },
+    },
 };
 </script>
 
-<style>
-</style>
+<style></style>

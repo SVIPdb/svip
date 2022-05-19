@@ -24,16 +24,16 @@ export default {
         state: { type: Boolean },
         multiple: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
-        allowCreate: { type: Boolean, default: false }
+        allowCreate: { type: Boolean, default: false },
     },
     data() {
         return {
-            drugs: []
+            drugs: [],
         };
     },
     created() {
-        HTTP.get("/genes").then(response => {
-            this.drugs = response.data.results.map(x =>
+        HTTP.get("/genes").then((response) => {
+            this.drugs = response.data.results.map((x) =>
                 titleCase(x[this.label])
             );
         });
@@ -41,8 +41,8 @@ export default {
     methods: {
         update(newValue) {
             this.$emit("input", newValue);
-        }
-    }
+        },
+    },
 };
 </script>
 

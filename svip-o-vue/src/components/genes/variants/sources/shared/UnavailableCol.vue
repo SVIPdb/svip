@@ -6,11 +6,9 @@
 export default {
     name: "UnavailableCol",
     props: {
-        row: {type: Object, required: true}
-    }
-}
+        row: { type: Object, required: true },
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

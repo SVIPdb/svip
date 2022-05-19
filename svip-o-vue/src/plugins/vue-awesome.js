@@ -32,7 +32,7 @@ import "vue-awesome/icons/pen-alt";
 import "vue-awesome/icons/history";
 import "vue-awesome/icons/comment";
 import "vue-awesome/icons/search";
-import 'vue-awesome/icons/question-circle';
+import "vue-awesome/icons/question-circle";
 
 import Icon from "vue-awesome/components/Icon";
 

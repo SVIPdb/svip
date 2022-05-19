@@ -1,64 +1,139 @@
 <template>
     <div>
-        <div v-for="(review, idx) in diseases" :key="'disease'+ idx">
+        <div v-for="(review, idx) in diseases" :key="'disease' + idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="expander_array[idx].disease"/>
+                    <expander v-model="expander_array[idx].disease" />
                     {{ review.disease }}
                 </h6>
-                <div v-for="(evidence, index) in review.evidences" :key="'evidence' + index">
+                <div
+                    v-for="(evidence, index) in review.evidences"
+                    :key="'evidence' + index"
+                >
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="expander_array[idx].disease">
                                 <b-card-text class="p-2 m-0">
                                     <b-row align-v="center">
                                         <b-col align="center" cols="2">
-                                            <expander v-model="expander_array[idx].evidences[index]"/>
+                                            <expander
+                                                v-model="
+                                                    expander_array[idx]
+                                                        .evidences[index]
+                                                "
+                                            />
                                             {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
-                                            <p class="mb-2" v-for="(effect, effect_idx) in evidence.effectOfVariant" :key="'effect' + effect_idx">
-                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                            <p
+                                                class="mb-2"
+                                                v-for="(
+                                                    effect, effect_idx
+                                                ) in evidence.effectOfVariant"
+                                                :key="'effect' + effect_idx"
+                                            >
+                                                {{ effect.label }}:
+                                                {{
+                                                    effect.count
+                                                        ? effect.count
+                                                        : "no"
+                                                }}
+                                                evidence(s)
                                             </p>
                                         </b-col>
                                         <b-col cols="2">
                                             <!--Final curators' annotation:-->
                                             <b-row class="p-2">
-                                                <b-input v-model="evidence.finalAnnotation.annotatedEffect" readonly/>
+                                                <b-input
+                                                    v-model="
+                                                        evidence.finalAnnotation
+                                                            .annotatedEffect
+                                                    "
+                                                    readonly
+                                                />
                                             </b-row>
                                             <b-row class="p-2">
-                                                <b-input v-model="evidence.finalAnnotation.annotatedTier" readonly/>
+                                                <b-input
+                                                    v-model="
+                                                        evidence.finalAnnotation
+                                                            .annotatedTier
+                                                    "
+                                                    readonly
+                                                />
                                             </b-row>
                                         </b-col>
 
                                         <b-col cols="6">
-                                            <ReviewAgreementComment :value="evidence.newReview" @input="review => evidence.newReview = review"/>
+                                            <ReviewAgreementComment
+                                                :value="evidence.newReview"
+                                                @input="
+                                                    (review) =>
+                                                        (evidence.newReview =
+                                                            review)
+                                                "
+                                            />
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
                                 <transition name="slide-fade">
-                                    <div v-if="expander_array[idx].evidences[index]">
-                                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
-                                            <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
-                                                <b-col class="border p-2">PMID:
-                                                    <b-link target="_blank" active
-                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
+                                    <div
+                                        v-if="
+                                            expander_array[idx].evidences[index]
+                                        "
+                                    >
+                                        <b-card-footer
+                                            class="pt-0 pb-0 pl-3 pr-3 fluid"
+                                        >
+                                            <b-row
+                                                align-v="center"
+                                                v-for="(
+                                                    curation, i
+                                                ) in evidence.curations"
+                                                :key="i"
+                                            >
+                                                <b-col class="border p-2"
+                                                    >PMID:
+                                                    <b-link
+                                                        target="_blank"
+                                                        active
+                                                        :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`"
+                                                    >
                                                         {{ curation.pmid }}
                                                     </b-link>
                                                 </b-col>
-                                                <b-col class="border p-2">{{ curation.effect }}</b-col>
-                                                <b-col class="border p-2">{{ curation.tier }}</b-col>
+                                                <b-col class="border p-2">{{
+                                                    curation.effect
+                                                }}</b-col>
+                                                <b-col class="border p-2">{{
+                                                    curation.tier
+                                                }}</b-col>
                                                 <b-col class="border p-2">
-                                                    Support: {{ curation.support }}
+                                                    Support:
+                                                    {{ curation.support }}
                                                 </b-col>
                                                 <b-col class="border p-2">
-                                                    <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
-                                                            target="_blank"
-                                                            alt="Link to evidence">Curation entry #{{ curation.id }}
+                                                    <b-link
+                                                        :to="{
+                                                            name: 'view-evidence',
+                                                            params: {
+                                                                action: curation.id,
+                                                            },
+                                                        }"
+                                                        target="_blank"
+                                                        alt="Link to evidence"
+                                                        >Curation entry #{{
+                                                            curation.id
+                                                        }}
                                                     </b-link>
                                                 </b-col>
 
-                                                <b-col class="border p-2" cols="6">{{ curation.comment }}</b-col>
+                                                <b-col
+                                                    class="border p-2"
+                                                    cols="6"
+                                                    >{{
+                                                        curation.comment
+                                                    }}</b-col
+                                                >
                                             </b-row>
                                         </b-card-footer>
                                     </div>
@@ -66,7 +141,7 @@
                             </div>
                         </transition>
                     </b-card-body>
-                    <hr v-if="expander_array[idx].disease"/>
+                    <hr v-if="expander_array[idx].disease" />
                 </div>
             </b-card>
         </div>
@@ -79,9 +154,14 @@
 <script>
 /* eslint-disable */
 // import fields from "@/data/curation/evidence/fields.js";
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import {BIcon, BIconSquare, BIconCheckSquareFill, BIconXSquareFill} from "bootstrap-vue";
+import {
+    BIcon,
+    BIconSquare,
+    BIconCheckSquareFill,
+    BIconXSquareFill,
+} from "bootstrap-vue";
 import ulog from "ulog";
 import SelectPrognosticOutcome from "@/components/widgets/review/forms/SelectPrognosticOutcome";
 import SelectDiagnosticOutcome from "@/components/widgets/review/forms/SelectDiagnosticOutcome";
@@ -103,10 +183,10 @@ export default {
         SelectPrognosticOutcome,
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
-        ReviewAgreementComment
+        ReviewAgreementComment,
     },
     props: {
-        variant: {type: Object, required: false},
+        variant: { type: Object, required: false },
     },
     data() {
         return {
@@ -119,7 +199,7 @@ export default {
             error: null,
             channel: new BroadcastChannel("curation-update"),
             showDisease: true,
-            expander_array: []
+            expander_array: [],
         };
     },
     created() {
@@ -131,126 +211,127 @@ export default {
         this.prognosticOutcomeSelected = this.prognosticOutcomePredicted;
 
         // TODO: this pulls a vaguely relevant curation entry, but it'll obviously be replaced later with a real reference
-        HTTP.get(`/curation_entries?variant__gene__symbol=NRAS&page_size=1`).then((response) => {
+        HTTP.get(
+            `/curation_entries?variant__gene__symbol=NRAS&page_size=1`
+        ).then((response) => {
             this.sample_curation_id = response.data.results[0].id;
         });
 
-        this.getReviewData()
+        this.getReviewData();
     },
     computed: {
         ...mapGetters({
-            user: "currentUser"
-        })
+            user: "currentUser",
+        }),
     },
     methods: {
         getReviewData() {
-            const params={
+            const params = {
                 reviewer: this.user.user_id,
                 var_id: this.variant.id,
-            }
+            };
             HTTP.post(`/review_data`, params)
                 .then((response) => {
-                    this.diseases = response.data.review_data
+                    this.diseases = response.data.review_data;
                     this.detectOwnReviews();
                 })
                 .catch((err) => {
                     log.warn(err);
                     //this.$snotify.error("Failed to fetch data");
-                })
+                });
         },
         displayIcon(status) {
             if (status === true) {
-                return "check-square-fill"
+                return "check-square-fill";
             }
             if (status === false) {
-                return "x-square-fill"
+                return "x-square-fill";
             }
-            return "square"
+            return "square";
         },
         displayColor(status) {
             if (status === true) {
-                return "color:blue;"
+                return "color:blue;";
             }
             if (status === false) {
-                return "color:red;"
+                return "color:red;";
             }
-            return ""
+            return "";
         },
         detectOwnReviews() {
             // iterate over every review to prefill inputs with current user's past reviews
             this.diseases.map((disease, i) => {
+                let evidences_expanders = [];
 
-                let evidences_expanders = []
-
-                disease.evidences.map(evidence => {
-
-                    evidence.reviews.map(review => {
+                disease.evidences.map((evidence) => {
+                    evidence.reviews.map((review) => {
                         if (review.reviewer_id === this.user.user_id) {
                             const myReview = {
-                                'annotatedEffect': review.annotatedEffect,
-                                'annotatedTier': review.annotatedTier,
-                                'comment': review.comment
-                            }
-                            evidence['myReview'] = myReview
+                                annotatedEffect: review.annotatedEffect,
+                                annotatedTier: review.annotatedTier,
+                                comment: review.comment,
+                            };
+                            evidence["myReview"] = myReview;
                         }
-                    })
+                    });
 
-                    evidence.revised_reviews.map(rr => {
+                    evidence.revised_reviews.map((rr) => {
                         if (rr.reviewer_id === this.user.user_id) {
                             const newReview = {
-                                "reviewer_id": this.user.user_id,
-                                "agreement": rr.agreement,
-                                'comment': rr.comment
-                            }
-                            evidence['newReview'] = newReview
+                                reviewer_id: this.user.user_id,
+                                agreement: rr.agreement,
+                                comment: rr.comment,
+                            };
+                            evidence["newReview"] = newReview;
                         }
                         // store the evidence ID so when the user submit it, the request is a patch
-                        this.selfReviewedEvidences[evidence.id] = rr.id
-                    })
+                        this.selfReviewedEvidences[evidence.id] = rr.id;
+                    });
 
-                    if (typeof evidence['newReview'] === 'undefined') {
+                    if (typeof evidence["newReview"] === "undefined") {
                         const newReview = {
-                            "reviewer_id": this.user.user_id,
-                            "agreement": 'I agree.',
-                            'agree': true,
-                            'comment': ''
-                        }
-                        evidence["newReview"] = newReview
+                            reviewer_id: this.user.user_id,
+                            agreement: "I agree.",
+                            agree: true,
+                            comment: "",
+                        };
+                        evidence["newReview"] = newReview;
                     }
 
-                    evidences_expanders.push(false)
-
-                })
+                    evidences_expanders.push(false);
+                });
 
                 this.expander_array.push({
-                    'disease': true,
-                    'evidences': evidences_expanders
-                })
-            })
+                    disease: true,
+                    evidences: evidences_expanders,
+                });
+            });
         },
         missingComment() {
-        // return true if a same evidence doesn't match the curators annotation and has not been given a comment
+            // return true if a same evidence doesn't match the curators annotation and has not been given a comment
             for (var i = 0; i < this.diseases.length; i++) {
-                const disease = this.diseases[i]
+                const disease = this.diseases[i];
                 for (var j = 0; j < disease["evidences"].length; j++) {
-                    const evidence = disease["evidences"][j]
+                    const evidence = disease["evidences"][j];
                     if (evidence.newReview.agreement === "I don't agree.") {
-                    // review doesn't match curator's annotation
+                        // review doesn't match curator's annotation
                         const regExp = /[a-zA-Z]/g;
-                        if (evidence.newReview.comment === null || ! regExp.test(evidence.newReview.comment)) {
-                        // no letter was found in the comment
-                            return true
+                        if (
+                            evidence.newReview.comment === null ||
+                            !regExp.test(evidence.newReview.comment)
+                        ) {
+                            // no letter was found in the comment
+                            return true;
                         }
                     }
                 }
             }
-            return false
+            return false;
         },
         submitReviews() {
-
             //if (this.missingComment()) {
             //    this.$snotify.error(
-            //        "Please enter a comment for every review conflicting with that of curators", 
+            //        "Please enter a comment for every review conflicting with that of curators",
             //        "",
             //        { timeout: 5000 }
             //    );
@@ -258,34 +339,38 @@ export default {
             //}
 
             // iterate over every review
-            this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
-
+            this.diseases.map((disease) => {
+                disease.evidences.map((evidence) => {
                     if (evidence.id in this.selfReviewedEvidences) {
-                        console.log('REREVIEWED')
-                        let reviewID = this.selfReviewedEvidences[evidence.id]
-                        HTTP.put(`/revised_reviews/${reviewID}/`, this.reviewParams(evidence))
+                        console.log("REREVIEWED");
+                        let reviewID = this.selfReviewedEvidences[evidence.id];
+                        HTTP.put(
+                            `/revised_reviews/${reviewID}/`,
+                            this.reviewParams(evidence)
+                        )
                             .then((response) => {
-                                this.getReviewData()
+                                this.getReviewData();
                             })
                             .catch((err) => {
                                 log.warn(err);
                                 this.$snotify.error("Failed to submit review");
-                            })
+                            });
                     } else {
-                        console.log('FIRST REVIEW')
-                        HTTP.post(`/revised_reviews/`, this.reviewParams(evidence))
+                        console.log("FIRST REVIEW");
+                        HTTP.post(
+                            `/revised_reviews/`,
+                            this.reviewParams(evidence)
+                        )
                             .then((response) => {
-                                this.getReviewData()
+                                this.getReviewData();
                             })
                             .catch((err) => {
                                 log.warn(err);
                                 this.$snotify.error("Failed to submit review");
-                            })
-
+                            });
                     }
-                })
-            })
+                });
+            });
 
             this.$snotify.success("Your review has been saved");
             // Reset fields
@@ -297,10 +382,11 @@ export default {
                 curation_evidence: evidence.id,
                 reviewer: this.user.user_id,
                 comment: evidence.newReview.comment,
-                agree: evidence.newReview.agreement === 'I agree.'? true: false
-            }
-            return singleReviewJSON
-        }
+                agree:
+                    evidence.newReview.agreement === "I agree." ? true : false,
+            };
+            return singleReviewJSON;
+        },
     },
 };
 </script>

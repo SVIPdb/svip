@@ -1,9 +1,13 @@
 <template>
     <div class="container-fluid">
-        <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
+        <div>
+            <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
-            <ReviewNotificationCard v-if="REVIEW_ENABLED"
-                :items="reviews" :fields="review.fields" :loading="review.loading"
+            <ReviewNotificationCard
+                v-if="REVIEW_ENABLED"
+                :items="reviews"
+                :fields="review.fields"
+                :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
                 :error="on_request.error"
@@ -30,7 +34,9 @@
                 @itemsloaded="onRequestItemsLoaded"
             />
 
-            <EvidenceCard has-header include-gene-var
+            <EvidenceCard
+                has-header
+                include-gene-var
                 header-title="CURATION ENTRIES"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
@@ -38,15 +44,16 @@
             />
         </div>
 
-        <div v-else style="text-align: center; margin-top: 3em;">
-
-            <router-link to="/"  class="text-uppercase">Return to homepage</router-link>
+        <div v-else style="text-align: center; margin-top: 3em">
+            <router-link to="/" class="text-uppercase"
+                >Return to homepage</router-link
+            >
         </div>
     </div>
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 import ReviewNotificationCard from "@/components/widgets/curation/ReviewNotificationCard";
 import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
@@ -65,16 +72,14 @@ import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 import OnRequestEntries from "@/components/widgets/curation/OnRequestEntries";
 
-import {
-    abbreviatedName
-} from "@/utils";
+import { abbreviatedName } from "@/utils";
 
 export default {
     name: "CurationDashboard",
     components: {
         OnRequestEntries,
         EvidenceCard,
-        ReviewNotificationCard
+        ReviewNotificationCard,
     },
     data() {
         return {
@@ -85,14 +90,14 @@ export default {
             on_request: {
                 loading: false,
                 fields: fields_on_request,
-                items: []
+                items: [],
             },
 
             // REVIEW FAKE DATA
             review: {
                 loading: false,
                 fields: fields_review,
-                items: []
+                items: [],
             },
 
             reviews: [],
@@ -111,12 +116,12 @@ export default {
         };
     },
     mounted() {
-        console.log('flag')
-        HTTP.get(`/dashboard_reviews`).then((response) => {  /// HERE!!!!!
-            console.log("REVIEWS :")
-            console.log(JSON.stringify(response.data.reviews)
-            )
-            this.reviews = response.data.reviews
+        console.log("flag");
+        HTTP.get(`/dashboard_reviews`).then((response) => {
+            /// HERE!!!!!
+            console.log("REVIEWS :");
+            console.log(JSON.stringify(response.data.reviews));
+            this.reviews = response.data.reviews;
         });
     },
     methods: {
@@ -125,7 +130,7 @@ export default {
             this.on_request.items = items;
             this.on_request.loading = false;
         },
-    }
+    },
 };
 </script>
 

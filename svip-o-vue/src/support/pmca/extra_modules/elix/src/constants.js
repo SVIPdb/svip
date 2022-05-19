@@ -1,6 +1,6 @@
 /**
  * Constants used by Elix mixins and components
- * 
+ *
  * Sharing these constants allows for greater consistency in things such as user
  * interface timings.
  *

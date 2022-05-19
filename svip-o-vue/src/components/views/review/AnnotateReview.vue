@@ -1,21 +1,28 @@
 <template>
     <div class="container-fluid">
-
         <!--<span class="warning-top">test</span>-->
 
         <!-- Ivo : To change? -->
-        <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
+        <CuratorVariantInformations
+            :variant="variant"
+            :disease_id="disease_id"
+        />
 
         <!-- Ivo : Change name to "VariantSummaryReview"? -->
         <VariantSummary :variant="variant" />
 
-        <div v-if="['to_review_again', 'on_hold', 'fully_reviewed'].includes(variant.stage)">
-            <SecondReviewCycle :variant="variant"/>
+        <div
+            v-if="
+                ['to_review_again', 'on_hold', 'fully_reviewed'].includes(
+                    variant.stage
+                )
+            "
+        >
+            <SecondReviewCycle :variant="variant" />
         </div>
         <div v-else>
-            <VariantDisease :variant="variant"/>
+            <VariantDisease :variant="variant" />
         </div>
-
     </div>
 </template>
 <script>
@@ -27,10 +34,10 @@ import { HTTP } from "@/router/http";
 import VariantSummary from "@/components/widgets/review/VariantSummary";
 import VariantDisease from "@/components/widgets/review/VariantDisease";
 import SecondReviewCycle from "@/components/widgets/review/SecondReviewCycle";
-import ulog from 'ulog';
+import ulog from "ulog";
 import BroadcastChannel from "broadcast-channel";
 
-const log = ulog('Review:AnnotateReview');
+const log = ulog("Review:AnnotateReview");
 
 export default {
     name: "AnnotateReview",
@@ -38,7 +45,7 @@ export default {
         VariantSummary,
         VariantDisease,
         SecondReviewCycle,
-        CuratorVariantInformations
+        CuratorVariantInformations,
     },
     data() {
         return {
@@ -47,8 +54,8 @@ export default {
             reference: "",
             loadingVariomes: false,
             variomes: null,
-            used_references: {}
-        }
+            used_references: {},
+        };
     },
     created() {
         this.refreshReferences();
@@ -61,7 +68,7 @@ export default {
     computed: {
         ...mapGetters({
             variant: "variant",
-            gene: "gene"
+            gene: "gene",
         }),
         disease_id() {
             return parseInt(this.$route.params.disease_id);
@@ -79,9 +86,9 @@ export default {
         desnakify,
         refreshReferences() {
             // get a list of used references so we can tell the user if they're about to use one that's been used already
-            HTTP.get('/curation_entries/all_references').then((response) => {
+            HTTP.get("/curation_entries/all_references").then((response) => {
                 this.used_references = response.data.references;
-            })
+            });
         },
         addEvidence() {
             let route = this.$router.resolve({
@@ -90,9 +97,9 @@ export default {
                     gene_id: this.$route.params.gene_id,
                     variant_id: this.$route.params.variant_id,
                     disease_id: this.$route.params.disease_id,
-                    action: 'add'
+                    action: "add",
                 },
-                query: { source: this.source, reference: this.reference }
+                query: { source: this.source, reference: this.reference },
             });
             window.open(route.href, "_blank");
         },
@@ -108,31 +115,33 @@ export default {
             HTTP.get(`variomes_single_ref`, {
                 params: {
                     id: this.reference.trim(),
-                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`
-                }
+                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
+                },
             })
-                .then(response => {
+                .then((response) => {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
                 .catch((err) => {
                     log.warn(err);
                     this.variomes = {
-                        error: "Couldn't retrieve publication info, try again later."
+                        error: "Couldn't retrieve publication info, try again later.",
                     };
                     // this.loadingVariomes = false;
                 });
-        }
+        },
     },
     beforeRouteEnter(to, from, next) {
         const { variant_id } = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", { variant_id: variant_id }).then(({ gene, variant }) => {
-            to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
-            next();
-        });
-    }
+        store
+            .dispatch("getGeneVariant", { variant_id: variant_id })
+            .then(({ gene, variant }) => {
+                to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
+                next();
+            });
+    },
 };
 </script>
 

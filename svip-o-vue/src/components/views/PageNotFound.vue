@@ -11,12 +11,21 @@
 
 <script>
 export default {
-    name: "PageNotFound"
-}
+    name: "PageNotFound",
+};
 </script>
 
 <style scoped>
-.not-found { padding-top: 3em; text-align: center; font-style: italic; color: #777; font-size: large; }
+.not-found {
+    padding-top: 3em;
+    text-align: center;
+    font-style: italic;
+    color: #777;
+    font-size: large;
+}
 
-.not-found h1 { color: black; font-size: 72px; }
+.not-found h1 {
+    color: black;
+    font-size: 72px;
+}
 </style>

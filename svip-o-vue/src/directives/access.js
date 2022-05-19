@@ -7,7 +7,7 @@ import store from "@/store";
  * @returns {boolean} true if they have the given role, false otherwise
  */
 export function checkInRole(role) {
-    if (role === 'active') {
+    if (role === "active") {
         // just check if they have valid login data at all
         return !!store.getters.jwtData;
     } else {
@@ -28,5 +28,5 @@ export default {
 
         // ...and fire off one refresh just to get us up-to-date
         refreshPermissions(el, binding);
-    }
+    },
 };

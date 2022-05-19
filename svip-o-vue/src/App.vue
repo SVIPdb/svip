@@ -5,7 +5,7 @@
         <vue-confirm-dialog></vue-confirm-dialog>
 
         <!-- content -->
-        <router-view style="margin: 90px auto 200px auto"/>
+        <router-view style="margin: 90px auto 200px auto" />
 
         <nav-footer></nav-footer>
     </div>
@@ -14,41 +14,43 @@
 <script>
 import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
-import '@/components/widgets/StyledLabels';
-import ProgressManager from '@/support/progress';
+import "@/components/widgets/StyledLabels";
+import ProgressManager from "@/support/progress";
 
 export let np_manager = null;
 
 export default {
-    components: {navHeader, navFooter},
+    components: { navHeader, navFooter },
     name: "App",
     computed: {
         year() {
             return new Date().getFullYear();
-        }
+        },
     },
     mounted() {
         if (!np_manager) {
-            np_manager = ProgressManager({ parent: '.ajax-loader-bar' });
+            np_manager = ProgressManager({ parent: ".ajax-loader-bar" });
         }
     },
     watch: {
-        '$route': {
+        $route: {
             handler: (to) => {
                 // page title logic:
                 // if 'to' is not falsey, check if its 'title' attribute is a function; if it is, invoke it
                 // if 'title' is not a function, but isn't falsey, just use the 'title' attribute as-is
                 // if 'to' or to.title's resolved value is falsey, default to the string 'SVIP-O'
                 if (!to || !to.meta || !to.meta.title) {
-                    document.title = 'SVIP-O';
+                    document.title = "SVIP-O";
                     return;
                 }
 
-                document.title = (to.meta.title instanceof Function && to.meta.title(to)) || to.meta.title;
+                document.title =
+                    (to.meta.title instanceof Function && to.meta.title(to)) ||
+                    to.meta.title;
             },
-            immediate: true
-        }
-    }
+            immediate: true,
+        },
+    },
 };
 </script>
 

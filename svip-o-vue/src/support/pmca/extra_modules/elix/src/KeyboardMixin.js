@@ -1,5 +1,5 @@
-import { merge } from './updates.js';
-import * as symbols from './symbols.js';
+import { merge } from "./updates.js";
+import * as symbols from "./symbols.js";
 /**
  * Manages keyboard handling for a component.
  *
@@ -37,63 +37,65 @@ import * as symbols from './symbols.js';
  */
 
 export default function KeyboardMixin(Base) {
-  // The class prototype added by the mixin.
-  class Keyboard extends Base {
-    constructor() {
-      // @ts-ignore
-      super();
-      this.addEventListener('keydown', async event => {
-        this[symbols.raiseChangeEvents] = true; // For use with FocusVisibleMixin.
+    // The class prototype added by the mixin.
+    class Keyboard extends Base {
+        constructor() {
+            // @ts-ignore
+            super();
+            this.addEventListener("keydown", async (event) => {
+                this[symbols.raiseChangeEvents] = true; // For use with FocusVisibleMixin.
 
-        if (!this.state.focusVisible) {
-          // The user may have begun interacting with this element using the
-          // mouse/touch, but has now begun using the keyboard, so show focus.
-          this.setState({
-            focusVisible: true
-          });
+                if (!this.state.focusVisible) {
+                    // The user may have begun interacting with this element using the
+                    // mouse/touch, but has now begun using the keyboard, so show focus.
+                    this.setState({
+                        focusVisible: true,
+                    });
+                }
+
+                const handled = this[symbols.keydown](event);
+
+                if (handled) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+
+                await Promise.resolve();
+                this[symbols.raiseChangeEvents] = false;
+            });
         }
 
-        const handled = this[symbols.keydown](event);
+        get defaultState() {
+            return Object.assign(super.defaultState, {
+                tabindex: "0",
+            });
+        }
+        /**
+         * See the [symbols](symbols#keydown) documentation for details.
+         */
 
-        if (handled) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
+        [symbols.keydown](event) {
+            if (super[symbols.keydown]) {
+                return super[symbols.keydown](event);
+            }
+
+            return false;
         }
 
-        await Promise.resolve();
-        this[symbols.raiseChangeEvents] = false;
-      });
-    }
-
-    get defaultState() {
-      return Object.assign(super.defaultState, {
-        tabindex: '0'
-      });
-    }
-    /**
-     * See the [symbols](symbols#keydown) documentation for details.
-     */
-
-
-    [symbols.keydown](event) {
-      if (super[symbols.keydown]) {
-        return super[symbols.keydown](event);
-      }
-
-      return false;
-    }
-
-    get updates() {
-      const originalTabIndex = this.state.original && this.state.original.attributes.tabindex;
-      const tabindex = originalTabIndex !== undefined ? originalTabIndex : this.state.tabindex;
-      return merge(super.updates, {
-        attributes: {
-          tabindex
+        get updates() {
+            const originalTabIndex =
+                this.state.original && this.state.original.attributes.tabindex;
+            const tabindex =
+                originalTabIndex !== undefined
+                    ? originalTabIndex
+                    : this.state.tabindex;
+            return merge(super.updates, {
+                attributes: {
+                    tabindex,
+                },
+            });
         }
-      });
     }
 
-  }
-
-  return Keyboard;
+    return Keyboard;
 }

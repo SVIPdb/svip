@@ -1,5 +1,5 @@
 module.exports = {
-    chainWebpack: config => {
+    chainWebpack: (config) => {
         config.module
             .rule("i18n")
             .resourceQuery(/blockType=i18n/)
@@ -8,5 +8,5 @@ module.exports = {
             .loader("@kazupon/vue-i18n-loader");
     },
     runtimeCompiler: true,
-    transpileDependencies: [/\bvue-awesome\b/]
+    transpileDependencies: [/\bvue-awesome\b/],
 };

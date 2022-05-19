@@ -1,6 +1,6 @@
 /**
  * Utilities for working with scrolling.
- * 
+ *
  * @module defaultScrollTarget
  */
 
@@ -19,38 +19,47 @@
  * @returns {Element}
  */
 export function defaultScrollTarget(element) {
-  const root = element.shadowRoot;
-  const slot = root && root.querySelector('slot:not([name])');
-  const scrollingParent = slot && slot.parentNode instanceof Element && getScrollableElement(slot.parentNode);
-  return scrollingParent || element;
+    const root = element.shadowRoot;
+    const slot = root && root.querySelector("slot:not([name])");
+    const scrollingParent =
+        slot &&
+        slot.parentNode instanceof Element &&
+        getScrollableElement(slot.parentNode);
+    return scrollingParent || element;
 }
 /**
  * If the given element can be scrolled, return that. If not, return the closest
  * ancestor that can be scrolled. If no such ancestor is found, return null.
- * 
+ *
  * @param {Element} element
  * @returns {Element|null}
  */
 
 export function getScrollableElement(element) {
-  // We test against DocumentFragment below instead of ShadowRoot, because the
-  // polyfill doesn't define the latter, and instead uses the former. In native
-  // Shadow DOM, a ShadowRoot is a subclass of DocumentFragment, so the same
-  // test works then too.
-  if (element instanceof DocumentFragment) {
-    // Didn't find a scrollable ancestor.
-    return null;
-  }
+    // We test against DocumentFragment below instead of ShadowRoot, because the
+    // polyfill doesn't define the latter, and instead uses the former. In native
+    // Shadow DOM, a ShadowRoot is a subclass of DocumentFragment, so the same
+    // test works then too.
+    if (element instanceof DocumentFragment) {
+        // Didn't find a scrollable ancestor.
+        return null;
+    }
 
-  const style = getComputedStyle(element);
-  const overflowX = style.overflowX;
-  const overflowY = style.overflowY;
+    const style = getComputedStyle(element);
+    const overflowX = style.overflowX;
+    const overflowY = style.overflowY;
 
-  if (overflowX === 'scroll' || overflowX === 'auto' || overflowY === 'scroll' || overflowY === 'auto') {
-    // Found an element that can scroll.
-    return element;
-  } // Keep looking higher in the hierarchy for a scrollable ancestor.
+    if (
+        overflowX === "scroll" ||
+        overflowX === "auto" ||
+        overflowY === "scroll" ||
+        overflowY === "auto"
+    ) {
+        // Found an element that can scroll.
+        return element;
+    } // Keep looking higher in the hierarchy for a scrollable ancestor.
 
-
-  return element.parentNode instanceof Element ? getScrollableElement(element.parentNode) : null;
+    return element.parentNode instanceof Element
+        ? getScrollableElement(element.parentNode)
+        : null;
 }

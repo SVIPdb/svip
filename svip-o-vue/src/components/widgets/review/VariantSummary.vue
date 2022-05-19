@@ -10,31 +10,67 @@
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea class="summary-box" v-model="summary" rows="3" readonly />
+                            <b-textarea
+                                class="summary-box"
+                                v-model="summary"
+                                rows="3"
+                                readonly
+                            />
                         </b-card-text>
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
-                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">Your comment :</b-col>
-                                <b-col v-if="!isEditMode && summaryComment !== ''" class="text-justify">
+                                <b-col
+                                    v-if="isEditMode || summaryComment !== ''"
+                                    md="auto"
+                                    class="font-weight-bold"
+                                    >Your comment :</b-col
+                                >
+                                <b-col
+                                    v-if="!isEditMode && summaryComment !== ''"
+                                    class="text-justify"
+                                >
                                     {{ summaryComment }}
                                 </b-col>
                                 <b-col v-if="isEditMode">
-                                    <b-textarea v-model="summaryComment" class="summary-box" rows="3" />
+                                    <b-textarea
+                                        v-model="summaryComment"
+                                        class="summary-box"
+                                        rows="3"
+                                    />
                                 </b-col>
                                 <b-col v-if="!isEditMode">
-                                    <b-button v-if="summaryComment === ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
+                                    <b-button
+                                        v-if="summaryComment === ''"
+                                        @click="isEditMode = true"
+                                        variant="success"
+                                        class="float-right centered-icons"
+                                    >
                                         Comment summary
                                     </b-button>
-                                    <b-button v-if="summaryComment !== ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
+                                    <b-button
+                                        v-if="summaryComment !== ''"
+                                        @click="isEditMode = true"
+                                        variant="success"
+                                        class="float-right centered-icons"
+                                    >
                                         Modify comment
                                     </b-button>
                                 </b-col>
                                 <b-col v-if="isEditMode" md="auto">
-                                    <b-button @click="saveSummaryComment" :disabled="summaryComment === ''" variant="success" class="centered-icons">
+                                    <b-button
+                                        @click="saveSummaryComment"
+                                        :disabled="summaryComment === ''"
+                                        variant="success"
+                                        class="centered-icons"
+                                    >
                                         Save comment
                                     </b-button>
-                                    <b-button @click="deleteSummaryComment" variant="danger" class="centered-icons mt-2">
+                                    <b-button
+                                        @click="deleteSummaryComment"
+                                        variant="danger"
+                                        class="centered-icons mt-2"
+                                    >
                                         Delete comment
                                     </b-button>
                                 </b-col>
@@ -51,19 +87,17 @@
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
-import ulog from 'ulog';
-import {mapGetters} from "vuex";
+import ulog from "ulog";
+import { mapGetters } from "vuex";
 
-const log = ulog('VariantSummary');
+const log = ulog("VariantSummary");
 
 export default {
     name: "VariantSummary",
-    components: {
-
-    },
+    components: {},
     props: {
         variant: { type: Object, required: false },
-        isOpen: { type: Boolean, required: false, default: false }
+        isOpen: { type: Boolean, required: false, default: false },
     },
     data() {
         return {
@@ -87,26 +121,28 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        if(this.isOpen){
+        if (this.isOpen) {
             this.showSummary = true;
         }
     },
     computed: {
         ...mapGetters({
-            user: "currentUser"
-        })
+            user: "currentUser",
+        }),
     },
     methods: {
         getSummaryComment() {
             // get already existing summary comment for this variant and user (if exists)
-            HTTP.get(`/summary_comments/?variant=${this.variant.id}&owner=${this.user.user_id}`).then((response) => {
-                const results = response.data.results
+            HTTP.get(
+                `/summary_comments/?variant=${this.variant.id}&owner=${this.user.user_id}`
+            ).then((response) => {
+                const results = response.data.results;
 
                 if (results.length > 0) {
-                    this.serverSummaryComment = results[0]
-                    this.summaryComment = results[0].content
+                    this.serverSummaryComment = results[0];
+                    this.summaryComment = results[0].content;
                 } else {
-                    this.serverSummaryComment = null
+                    this.serverSummaryComment = null;
                 }
             });
         },
@@ -115,9 +151,8 @@ export default {
             const summaryCommentJSON = {
                 content: this.summaryComment,
                 owner: this.user.user_id,
-                variant: this.variant.id
-            }
-
+                variant: this.variant.id,
+            };
 
             if (this.serverSummaryComment === null) {
                 // summaryComment doesn't already exist (for this user and variant): post new
@@ -129,11 +164,16 @@ export default {
                     })
                     .catch((err) => {
                         log.warn(err);
-                        this.$snotify.error("Failed to post new summary comment");
-                    })
+                        this.$snotify.error(
+                            "Failed to post new summary comment"
+                        );
+                    });
             } else {
                 // summaryComment already exists: modify it
-                HTTP.patch(`/summary_comments/${this.serverSummaryComment.id}`, {content: this.summaryComment})
+                HTTP.patch(
+                    `/summary_comments/${this.serverSummaryComment.id}`,
+                    { content: this.summaryComment }
+                )
                     .then(() => {
                         this.getSummaryComment();
                         this.isEditMode = false;
@@ -142,15 +182,17 @@ export default {
                     .catch((err) => {
                         log.warn(err);
                         this.$snotify.error("Failed to update your comment");
-                    })
+                    });
             }
         },
         deleteSummaryComment() {
             // send a delete request only if SummaryComment instance exists in the server
             if (this.serverSummaryComment !== null) {
-                HTTP.delete(`/summary_comments/${this.serverSummaryComment.id}/`)
+                HTTP.delete(
+                    `/summary_comments/${this.serverSummaryComment.id}/`
+                )
                     .then(() => {
-                        this.serverSummaryComment = null
+                        this.serverSummaryComment = null;
                         this.summaryComment = "";
                         this.isEditMode = false;
                         this.$snotify.success("Your comment has been deleted");
@@ -158,14 +200,14 @@ export default {
                     .catch((err) => {
                         log.warn(err);
                         this.$snotify.error("Failed to delete your comment");
-                    })
+                    });
             } else {
                 this.summaryComment = "";
                 this.isEditMode = false;
                 this.$snotify.success("Your comment has been deleted");
             }
-        }
-    }
+        },
+    },
 };
 </script>
 

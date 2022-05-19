@@ -7,7 +7,7 @@ Vue.component("optional", {
     <td :class="{unavailable: !val}">
         <span v-if="val"><slot></slot></span>
         <span v-else>unavailable</span>
-    </td>`
+    </td>`,
 });
 
 // add &#x200b; in between transcript and change if you want it to wrap there
@@ -18,13 +18,13 @@ Vue.component("inline-coordinates", {
 		<span v-else class="unavailable">unavailable</span>
 </span>`,
     data() {
-        return {truncated: true};
+        return { truncated: true };
     },
     methods: {
         clicked() {
             this.truncated = !this.truncated;
-        }
-    }
+        },
+    },
 });
 
 // add &#x200b; in between transcript and change if you want it to wrap there
@@ -33,14 +33,13 @@ Vue.component("wrapping-coordinates", {
     template: `<span>
 		<span v-if="val.change" class="coordinates"><span class="text-muted transcript-id">{{val.transcript}}:</span>&#x200b;{{val.change}}</span>
 		<span v-else class="unavailable">unavailable</span>
-</span>`
+</span>`,
 });
-
 
 Vue.component("coordinates", {
     props: ["val"],
     template: `
     <optional :val="val">
         <wrapping-coordinates v-if="val" :val="val" />
-    </optional>`
+    </optional>`,
 });

@@ -3,28 +3,43 @@
         <b-card class="shadow-sm mb-3" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="showSummary"/>
+                    <expander v-model="showSummary" />
                     Variant Summary
                 </h6>
 
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea class="summary-box" v-model="summary" rows="3"/>
+                            <b-textarea
+                                class="summary-box"
+                                v-model="summary"
+                                rows="3"
+                            />
                         </b-card-text>
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col cols="10">
-                                    <div v-for="(comment,index) in comments" :key="index">
-                                        <b-alert :show="comment.content !== null" variant="light">
-                                            <b>{{ comment.reviewer }}</b>: <p>{{ comment.content }}</p>
+                                    <div
+                                        v-for="(comment, index) in comments"
+                                        :key="index"
+                                    >
+                                        <b-alert
+                                            :show="comment.content !== null"
+                                            variant="light"
+                                        >
+                                            <b>{{ comment.reviewer }}</b
+                                            >:
+                                            <p>{{ comment.content }}</p>
                                         </b-alert>
                                     </div>
-
                                 </b-col>
                                 <b-col cols="2" align-self="start">
-                                    <b-button variant="success" block class="centered-icons">
+                                    <b-button
+                                        variant="success"
+                                        block
+                                        class="centered-icons"
+                                    >
                                         Save modifications
                                     </b-button>
                                 </b-col>
@@ -49,8 +64,8 @@ export default {
     name: "ModifyVariantSummary",
     components: {},
     props: {
-        variant: {type: Object, required: false},
-        comments: {type: Array, required: true}
+        variant: { type: Object, required: false },
+        comments: { type: Array, required: true },
     },
     data() {
         return {
@@ -85,8 +100,8 @@ export default {
             this.summaryComment = "";
             this.isEditMode = false;
             this.$snotify.success("Your comment has been deleted");
-        }
-    }
+        },
+    },
 };
 </script>
 

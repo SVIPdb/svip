@@ -1,7 +1,10 @@
 <template>
     <b-link @click="row.toggleDetails">
         <!--    <icon :name="row.detailsShowing ? 'chevron-down' : 'chevron-right'"></icon>-->
-        <icon name="chevron-right" :class="`link ${row.detailsShowing ? 'activated' : ''}`"/>
+        <icon
+            name="chevron-right"
+            :class="`link ${row.detailsShowing ? 'activated' : ''}`"
+        />
     </b-link>
 </template>
 
@@ -9,9 +12,9 @@
 export default {
     name: "RowExpander",
     props: {
-        row: {type: Object, required: true}
-    }
-}
+        row: { type: Object, required: true },
+    },
+};
 </script>
 
 <style scoped>

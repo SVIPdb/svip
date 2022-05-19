@@ -5,9 +5,15 @@
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
                     Gene Summary
-                    <div v-if="date !== null" class="update">Last update: 
+                    <div v-if="date !== null" class="update">
+                        Last update:
                         <b class="date">
-                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
+                            {{
+                                new Intl.DateTimeFormat("en-GB", {
+                                    dateStyle: "long",
+                                    timeStyle: "short",
+                                }).format(date)
+                            }}
                         </b>
                     </div>
                 </h6>
@@ -15,7 +21,14 @@
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea id='gene-summary' class="summary-box" v-model="summary" rows="3" readonly v-bind:style="{ height: textboxHeight }" />
+                            <b-textarea
+                                id="gene-summary"
+                                class="summary-box"
+                                v-model="summary"
+                                rows="3"
+                                readonly
+                                v-bind:style="{ height: textboxHeight }"
+                            />
                         </b-card-text>
                     </div>
                 </transition>
@@ -27,16 +40,14 @@
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
 import BroadcastChannel from "broadcast-channel";
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
     name: "GeneSummary",
-    components: {
-
-    },
+    components: {},
     props: {
         gene: { type: Object, required: false },
-        isOpen: { type: Boolean, required: false, default: false }
+        isOpen: { type: Boolean, required: false, default: false },
     },
     data() {
         return {
@@ -50,7 +61,7 @@ export default {
             summaryComment: "",
             serverSummaryComment: null,
             date: null,
-            textboxHeight: '2rem'
+            textboxHeight: "2rem",
         };
     },
     created() {
@@ -59,33 +70,37 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        if(this.isOpen){
+        if (this.isOpen) {
             this.showSummary = true;
         }
 
         if (this.gene.summary_date) {
-            this.date = new Date(this.gene.summary_date)
+            this.date = new Date(this.gene.summary_date);
         }
     },
     mounted() {
-        const totalHeight = document.getElementById('gene-summary').scrollHeight
-        const maxHeight = this.convertRemToPixels(14)
+        const totalHeight =
+            document.getElementById("gene-summary").scrollHeight;
+        const maxHeight = this.convertRemToPixels(14);
         if (totalHeight > maxHeight) {
-            this.textboxHeight = maxHeight + 'px'
+            this.textboxHeight = maxHeight + "px";
         } else {
-            this.textboxHeight = totalHeight + 'px'
+            this.textboxHeight = totalHeight + "px";
         }
     },
     computed: {
         ...mapGetters({
-            user: "currentUser"
-        })
+            user: "currentUser",
+        }),
     },
     methods: {
-        convertRemToPixels(rem) {    
-            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-        }
-    }
+        convertRemToPixels(rem) {
+            return (
+                rem *
+                parseFloat(getComputedStyle(document.documentElement).fontSize)
+            );
+        },
+    },
 };
 </script>
 
@@ -122,7 +137,7 @@ export default {
 .update {
     right: 1rem;
     position: absolute;
-    display: inline-block
+    display: inline-block;
 }
 
 .date {

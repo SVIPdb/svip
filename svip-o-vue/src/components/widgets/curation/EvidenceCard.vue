@@ -8,13 +8,27 @@
         >
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
-                    {{headerTitle}}
+                    {{ headerTitle }}
                     <b-button-group class="ml-3">
-                        <b-button size="sm" :variant="filterCurator ? 'primary' : 'light'" @click="filterCurator = true">My Curations</b-button>
-                        <b-button size="sm" :variant="!filterCurator ? 'primary' : 'light'" @click="filterCurator = false">All Curations</b-button>
+                        <b-button
+                            size="sm"
+                            :variant="filterCurator ? 'primary' : 'light'"
+                            @click="filterCurator = true"
+                            >My Curations</b-button
+                        >
+                        <b-button
+                            size="sm"
+                            :variant="!filterCurator ? 'primary' : 'light'"
+                            @click="filterCurator = false"
+                            >All Curations</b-button
+                        >
                     </b-button-group>
 
-                    <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" default-variant="light"
+                    <FilterButtons
+                        v-if="cardFilterOption"
+                        class="ml-3"
+                        v-model="statusFilter"
+                        default-variant="light"
                         selected-variant="primary"
                         :items="[
                             { label: 'Draft', value: 'draft' },
@@ -22,76 +36,120 @@
                             { label: 'Submitted', value: 'submitted' },
                             { label: 'Unreviewed', value: 'unreviewed' },
                             { label: 'Reviewed', value: 'reviewed' },
-                            { label: 'All', value: 'all' }
+                            { label: 'All', value: 'all' },
                         ]"
                     />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
-                        <b-form-input v-model="filter" debounce="300" placeholder="Type to Search"></b-form-input>
+                        <b-form-input
+                            v-model="filter"
+                            debounce="300"
+                            placeholder="Type to Search"
+                        ></b-form-input>
                         <b-input-group-append>
-                            <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
+                            <b-button
+                                variant="primary"
+                                size="sm"
+                                @click="filter = ''"
+                                >Clear</b-button
+                            >
                         </b-input-group-append>
                     </b-input-group>
                 </div>
             </div>
         </b-card-header>
 
-        <div style="margin: 25px 10px;">
-                        <b-button variant="info" @click="submitAll" style="height: 34px;" :disabled="already_submitted">
-                            Submit to review
-                        </b-button>
-                    </div>
+        <div style="margin: 25px 10px">
+            <b-button
+                variant="info"
+                @click="submitAll"
+                style="height: 34px"
+                :disabled="already_submitted"
+            >
+                Submit to review
+            </b-button>
+        </div>
 
         <b-card-body class="p-0">
             <PagedTable
                 id="evidence_table"
                 ref="paged_table"
                 class="mb-0"
-                :thead-class="`${!hasHeader && 'bg-primary text-light'} unwrappable-header`"
+                :thead-class="`${
+                    !hasHeader && 'bg-primary text-light'
+                } unwrappable-header`"
                 primary-key="id"
                 :tbody-tr-class="rowClass"
                 :fields="fields"
-                sort-by="created_on" sort-desc
-                show-empty empty-text="There seems to be an error"
+                sort-by="created_on"
+                sort-desc
+                show-empty
+                empty-text="There seems to be an error"
                 :small="small"
                 :external-search="filter"
                 :apiUrl="apiUrl"
                 :postMapper="colorCurationRows"
-                :extraFilters="statusFilter !== 'all' ? { status: statusFilter } : null"
+                :extraFilters="
+                    statusFilter !== 'all' ? { status: statusFilter } : null
+                "
                 :responsive="true"
             >
-
                 <template v-slot:cell(variant__gene__symbol)="data">
-                    <b><router-link :to="`/gene/${data.item.variant.gene.id}`">{{ data.item.variant.gene.symbol }}</router-link></b>
+                    <b
+                        ><router-link
+                            :to="`/gene/${data.item.variant.gene.id}`"
+                            >{{ data.item.variant.gene.symbol }}</router-link
+                        ></b
+                    >
                 </template>
                 <template v-slot:cell(variant__name)="data">
-                    <router-link :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`">{{ data.item.variant.name }}</router-link>
+                    <router-link
+                        :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`"
+                        >{{ data.item.variant.name }}</router-link
+                    >
                 </template>
 
                 <template v-slot:cell(extra_variants)="data">
-                    <div>{{apiUrl}}</div>
+                    <div>{{ apiUrl }}</div>
                     <span v-if="data.value">
-                        <span v-for="(variant, idx) in data.value" :key="variant.id">
+                        <span
+                            v-for="(variant, idx) in data.value"
+                            :key="variant.id"
+                        >
                             <span v-if="idx > 0">, </span>
-                            <router-link :to="`/gene/${variant.gene.id}/variant/${variant.id}`" target="_blank">{{ variant.description }}</router-link>
+                            <router-link
+                                :to="`/gene/${variant.gene.id}/variant/${variant.id}`"
+                                target="_blank"
+                                >{{ variant.description }}</router-link
+                            >
                         </span>
                     </span>
                 </template>
 
-                <template v-slot:cell(created_on)="data">{{ simpleDateTime(data.value).date }}</template>
+                <template v-slot:cell(created_on)="data">{{
+                    simpleDateTime(data.value).date
+                }}</template>
 
                 <template v-slot:cell(status)="data">
-                  <span class="pub-status">
-                    <icon :class="setClass(data.value)" :name="setIcon(data.value)" v-b-tooltip.hover :title="data.value"/>
-                    {{ titleCase(data.value) }}
-                  </span>
+                    <span class="pub-status">
+                        <icon
+                            :class="setClass(data.value)"
+                            :name="setIcon(data.value)"
+                            v-b-tooltip.hover
+                            :title="data.value"
+                        />
+                        {{ titleCase(data.value) }}
+                    </span>
                 </template>
 
                 <template v-slot:cell(references)="data">
-                    <VariomesLitPopover :pubmeta="{ pmid: data.value }"
+                    <VariomesLitPopover
+                        :pubmeta="{ pmid: data.value }"
                         :variant="data.item.variant && data.item.variant.name"
-                        :gene="data.item.variant && data.item.variant.gene.symbol"
+                        :gene="
+                            data.item.variant && data.item.variant.gene.symbol
+                        "
                         :disease="data.item.disease && data.item.disease.name"
                     />
                 </template>
@@ -106,27 +164,33 @@
 
                 <template v-slot:cell(owner_name)="data">
                     <pass :name="abbreviatedName(data.value)">
-                        <span slot-scope="{ name }" v-b-tooltip.hover="name.name">{{ name.abbrev }}</span>
+                        <span
+                            slot-scope="{ name }"
+                            v-b-tooltip.hover="name.name"
+                            >{{ name.abbrev }}</span
+                        >
                     </pass>
                 </template>
 
                 <template v-slot:cell(action)="data">
                     <span class="action-tray">
-                        <b-button v-if="data.item.status !== 'submitted'"
+                        <b-button
+                            v-if="data.item.status !== 'submitted'"
                             target="_blank"
                             class="centered-icons"
                             size="sm"
                             :href="editEntryURL(data.item)"
-                            style="min-width: 75px;"
+                            style="min-width: 75px"
                         >
                             <icon name="pen-alt" />Edit
                         </b-button>
-                        <b-button v-else
+                        <b-button
+                            v-else
                             target="_blank"
                             class="centered-icons"
                             size="sm"
                             :href="editEntryURL(data.item)"
-                            style="min-width: 75px;"
+                            style="min-width: 75px"
                         >
                             <icon name="eye" />View
                         </b-button>
@@ -149,15 +213,18 @@
                             <icon name="history" label="History" />
                         </b-button>
                     </span>
-                    <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="already_submitted">
-                    THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.
-                </b-navbar-text>
+                    <b-navbar-text
+                        class="fixed-bottom submitted-bar"
+                        align="center"
+                        v-if="already_submitted"
+                    >
+                        THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN
+                        SUBMITTED.
+                    </b-navbar-text>
                 </template>
 
                 <template v-slot:extra_commands>
-                    <div style="margin-bottom: 10px; margin-right: 10px;">
-                        
-                    </div>
+                    <div style="margin-bottom: 10px; margin-right: 10px"></div>
                 </template>
             </PagedTable>
 
@@ -171,7 +238,10 @@
                 :title="`Entry #${history_entry_id} History`"
             >
                 <div>
-                    <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
+                    <EvidenceHistory
+                        v-if="history_entry_id"
+                        :entry_id="history_entry_id"
+                    />
                     <div v-else>Error: no curation entry selected</div>
                 </div>
             </b-modal>
@@ -188,25 +258,23 @@ import BroadcastChannel from "broadcast-channel";
 import { abbreviatedName, simpleDateTime, titleCase } from "@/utils";
 import EvidenceHistory from "@/components/widgets/curation/EvidenceHistory";
 import { mapGetters } from "vuex";
-import dayjs from 'dayjs';
-import ulog from 'ulog';
+import dayjs from "dayjs";
+import ulog from "ulog";
 import FilterButtons from "@/components/widgets/curation/FilterButtons";
-import router from '@/router';
+import router from "@/router";
 
-const log = ulog('Curation:EvidenceCard');
+const log = ulog("Curation:EvidenceCard");
 
 const DateTimeField = {
     props: {
-        datetime: { required: true }
+        datetime: { required: true },
     },
     render() {
         const fullDate = dayjs(this.datetime).format("h:mm a");
         const parsed = simpleDateTime(this.datetime);
 
-        return (
-            <span v-b-tooltip={fullDate}>{parsed.date}</span>
-        );
-    }
+        return <span v-b-tooltip={fullDate}>{parsed.date}</span>;
+    },
 };
 
 // used by the citations browser
@@ -219,75 +287,75 @@ const full_fields = [
     {
         key: "id",
         label: "ID",
-        sortable: true
+        sortable: true,
     },
     {
         key: "references",
         label: "Reference",
-        sortable: true
+        sortable: true,
     },
     {
         key: "type_of_evidence",
         label: "Type of evidence",
-        sortable: true
+        sortable: true,
     },
     {
         key: "disease__name",
         label: "Disease",
         sortable: true,
-        formatter: (x, k, obj) => obj.disease && obj.disease.name
+        formatter: (x, k, obj) => obj.disease && obj.disease.name,
     },
     {
         key: "drugs",
         label: "Drugs",
         sortable: true,
-        formatter: x => x.join(", ")
+        formatter: (x) => x.join(", "),
     },
     {
         key: "effect",
         label: "Effect",
-        sortable: true
+        sortable: true,
     },
     {
         key: "tier_level_criteria",
         label: "Tier criteria",
-        sortable: false
+        sortable: false,
     },
     {
         key: "tier_level",
         label: "Tier level",
-        sortable: true
+        sortable: true,
     },
     {
         key: `short_escat_score`,
         label: "ESCAT score",
-        sortable: true
+        sortable: true,
     },
     {
         key: "extra_variants",
         label: "Other Variants",
-        sortable: true
+        sortable: true,
     },
     {
         key: "owner_name",
         label: "Curator",
-        sortable: true
+        sortable: true,
     },
     {
         key: "created_on",
         label: "Created on",
-        sortable: true
+        sortable: true,
     },
     {
         key: "last_modified",
         label: "Modified",
-        sortable: true
+        sortable: true,
     },
     {
         key: "action",
         label: "",
-        sortable: false
-    }
+        sortable: false,
+    },
 ];
 
 // used by the queue of pending/in progress/complete citations
@@ -296,65 +364,71 @@ const dashboard_fields = [
         key: "variant__gene__symbol",
         label: "Gene",
         sortable: true,
-        formatter: (x, k, obj) => obj.variant.gene.symbol
+        formatter: (x, k, obj) => obj.variant.gene.symbol,
     },
     {
         key: "variant__name",
         label: "Variant",
         sortable: true,
-        formatter: (x, k, obj) => obj.variant.name
+        formatter: (x, k, obj) => obj.variant.name,
     },
     {
         key: "disease__name",
         label: "Disease",
         sortable: true,
-        formatter: (x, k, obj) => obj.disease && obj.disease.name
+        formatter: (x, k, obj) => obj.disease && obj.disease.name,
     },
     {
         key: "references",
         label: "Reference",
-        sortable: true
+        sortable: true,
     },
     {
         key: "id",
         label: "ID",
-        sortable: true
+        sortable: true,
     },
     {
         key: "type_of_evidence",
         label: "Type of evidence",
-        sortable: true
+        sortable: true,
     },
     {
         key: "status",
         label: "Status",
-        sortable: true
+        sortable: true,
     },
     {
         key: "owner_name",
         label: "Curator",
-        sortable: true
+        sortable: true,
     },
     {
         key: "created_on",
         label: "Created",
-        sortable: true
+        sortable: true,
     },
     {
         key: "last_modified",
         label: "Modified",
-        sortable: true
+        sortable: true,
     },
     {
         key: "action",
         label: "",
-        sortable: false
-    }
+        sortable: false,
+    },
 ];
 
 export default {
     name: "EvidenceCard",
-    components: { EvidenceHistory, VariomesLitPopover, PagedTable, DateTimeField, FilterButtons },
+    components: {
+        EvidenceHistory,
+        VariomesLitPopover,
+        PagedTable,
+        DateTimeField,
+        FilterButtons,
+    },
     props: {
         variant: { type: Object, required: false },
         disease_id: { type: Number, required: false },
@@ -365,7 +439,11 @@ export default {
         onlySubmitted: { type: Boolean, required: false, default: false },
         notSubmitted: { type: Boolean, required: false, default: false },
         hasHeader: { type: Boolean, default: false },
-        headerTitle: { type: String, required: false, default: "Curation Entries" },
+        headerTitle: {
+            type: String,
+            required: false,
+            default: "Curation Entries",
+        },
         cardHeaderBg: { type: String, required: false, default: "light" },
         cardTitleVariant: { type: String, required: false, default: "primary" },
         cardFilterOption: { type: Boolean, default: true },
@@ -377,8 +455,8 @@ export default {
             history_entry_id: null,
             filter: null,
             selected: {},
-            statusFilter: 'all',
-            already_submitted: false
+            statusFilter: "all",
+            already_submitted: false,
         };
     },
     created() {
@@ -388,16 +466,18 @@ export default {
             }
         };
 
-        if ([
-            '0_review', 
-            '1_review', 
-            '2_reviews', 
-            'conflicting_reviews', 
-            'to_review_again', 
-            'on_hold', 
-            'fully_reviewed'
-        ].includes(this.variant.stage)) {
-            this.already_submitted = true
+        if (
+            [
+                "0_review",
+                "1_review",
+                "2_reviews",
+                "conflicting_reviews",
+                "to_review_again",
+                "on_hold",
+                "fully_reviewed",
+            ].includes(this.variant.stage)
+        ) {
+            this.already_submitted = true;
         }
     },
     computed: {
@@ -411,9 +491,9 @@ export default {
                     {
                         key: "submit_box",
                         label: "",
-                        sortable: false
+                        sortable: false,
                     },
-                    ...fields
+                    ...fields,
                 ];
             }
 
@@ -423,15 +503,15 @@ export default {
                         key: "variant__gene__symbol",
                         label: "Gene",
                         sortable: true,
-                        formatter: (x, k, obj) => obj.variant.gene.symbol
+                        formatter: (x, k, obj) => obj.variant.gene.symbol,
                     },
                     {
                         key: "variant__name",
                         label: "Variant",
                         sortable: true,
-                        formatter: (x, k, obj) => obj.variant.name
+                        formatter: (x, k, obj) => obj.variant.name,
                     },
-                    ...fields
+                    ...fields,
                 ];
             }
 
@@ -443,7 +523,7 @@ export default {
             }
 
             return this.variant.svip_data.diseases.find(
-                element => element.disease_id === this.disease_id
+                (element) => element.disease_id === this.disease_id
             );
         },
         apiUrl() {
@@ -453,8 +533,8 @@ export default {
                 this.filterCurator && `owner=${this.userID}`,
                 // FIXME: these two are mutually exclusive
                 this.onlySubmitted && `status=submitted`,
-                this.notSubmitted && `status_ne=submitted`
-            ].filter(x => x);
+                this.notSubmitted && `status_ne=submitted`,
+            ].filter((x) => x);
 
             return `/curation_entries${params ? "?" + params.join("&") : ""}`;
         },
@@ -462,12 +542,12 @@ export default {
             return {
                 variant: this.variant && this.variant.name,
                 gene: this.variant && this.variant.gene.symbol,
-                disease: this.disease && this.disease.name
+                disease: this.disease && this.disease.name,
             };
         },
         selectedCount() {
             return Object.keys(this.selected).length;
-        }
+        },
     },
     methods: {
         titleCase,
@@ -498,8 +578,7 @@ export default {
         toggleSelected(id, isChecked) {
             if (!isChecked) {
                 this.$delete(this.selected, id);
-            }
-            else {
+            } else {
                 this.$set(this.selected, id, true);
             }
         },
@@ -524,11 +603,10 @@ export default {
             // TODO: set the status of all the selected entries to 'submitted'
             HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
                 .then(() => {
-
                     // add request to change the status of the variant
 
                     router.push({
-                        name: "submit-curation"
+                        name: "submit-curation",
                     });
                 })
                 .catch((err) => {
@@ -537,17 +615,18 @@ export default {
                 });
         },
         submitAll() {
-            const prompt = "Are you sure that you want to submit the entries of this variant?\n\nYou will no longer be able to edit your entries after submitting them!"
+            const prompt =
+                "Are you sure that you want to submit the entries of this variant?\n\nYou will no longer be able to edit your entries after submitting them!";
             if (confirm(prompt)) {
-                const params = {var_id : this.variant.id}
+                const params = { var_id: this.variant.id };
                 HTTP.post(`/curation_ids`, params)
                     .then((response) => {
-                        this.selected = response.data
+                        this.selected = response.data;
                         this.submitRequest();
                     })
                     .catch((err) => {
                         log.warn(err);
-                    })
+                    });
             }
         },
         showHistory(entry_id) {
@@ -556,14 +635,14 @@ export default {
         },
         colorCurationRows(data) {
             // maps each row to a color variant based on its status (e.g., drafts are gray)
-            return data.map(x => {
+            return data.map((x) => {
                 if (x.status === "draft") {
                     x._rowVariant = "light";
                 }
                 return x;
             });
-        }
-    }
+        },
+    },
 };
 </script>
 

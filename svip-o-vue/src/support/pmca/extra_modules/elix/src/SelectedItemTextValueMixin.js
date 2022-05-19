@@ -17,60 +17,64 @@
  * @module SelectedItemTextValueMixin
  */
 export default function SelectedItemTextValueMixin(Base) {
-  // The class prototype added by the mixin.
-  class SelectedItemTextValue extends Base {
-    componentDidUpdate(previousState) {
-      if (super.componentDidUpdate) {
-        super.componentDidUpdate(previousState);
-      }
+    // The class prototype added by the mixin.
+    class SelectedItemTextValue extends Base {
+        componentDidUpdate(previousState) {
+            if (super.componentDidUpdate) {
+                super.componentDidUpdate(previousState);
+            }
 
-      const items = this.items;
+            const items = this.items;
 
-      if (this.state.pendingValue && items) {
-        const index = indexOfItemWithText(items, this.state.pendingValue);
-        this.setState({
-          selectedIndex: index,
-          pendingValue: null
-        });
-      }
+            if (this.state.pendingValue && items) {
+                const index = indexOfItemWithText(
+                    items,
+                    this.state.pendingValue
+                );
+                this.setState({
+                    selectedIndex: index,
+                    pendingValue: null,
+                });
+            }
+        }
+        /**
+         * The text content of the selected item.
+         *
+         * Setting this value to a string will attempt to select the first list item
+         * whose text content match that string. Setting this to a string not matching
+         * any list item will result in no selection.
+         *
+         * @type {string}
+         */
+
+        get value() {
+            return this.selectedItem == null ||
+                this.selectedItem.textContent == null
+                ? ""
+                : this.selectedItem.textContent;
+        }
+
+        set value(text) {
+            const items = this.items;
+
+            if (items === null) {
+                // No items yet, save and try again later.
+                this.setState({
+                    pendingValue: text,
+                });
+            } else {
+                // Select the index of the indicate text, if found.
+                const selectedIndex = indexOfItemWithText(items, text);
+                this.setState({
+                    selectedIndex,
+                });
+            }
+        }
     }
-    /**
-     * The text content of the selected item.
-     *
-     * Setting this value to a string will attempt to select the first list item
-     * whose text content match that string. Setting this to a string not matching
-     * any list item will result in no selection.
-     *
-     * @type {string}
-     */
 
-
-    get value() {
-      return this.selectedItem == null || this.selectedItem.textContent == null ? '' : this.selectedItem.textContent;
-    }
-
-    set value(text) {
-      const items = this.items;
-
-      if (items === null) {
-        // No items yet, save and try again later.
-        this.setState({
-          pendingValue: text
-        });
-      } else {
-        // Select the index of the indicate text, if found.
-        const selectedIndex = indexOfItemWithText(items, text);
-        this.setState({
-          selectedIndex
-        });
-      }
-    }
-
-  }
-
-  return SelectedItemTextValue;
+    return SelectedItemTextValue;
 }
 
 function indexOfItemWithText(items, text) {
-  return items.findIndex(item => item.textContent === text);
+    return items.findIndex((item) => item.textContent === text);
 }

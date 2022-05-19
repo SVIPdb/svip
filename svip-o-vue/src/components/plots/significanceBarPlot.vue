@@ -2,16 +2,29 @@
     <div>
         <svg ref="thechart" class="sig-bar-chart">
             <g v-for="d in layout" :key="d.k">
-                <rect class="bar" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
+                <rect
+                    class="bar"
+                    :x="d.x"
+                    :y="d.y"
+                    :width="d.width"
+                    :height="d.height"
+                    :fill="d.c"
+                ></rect>
             </g>
         </svg>
 
         <b-tooltip :target="() => $refs.thechart" placement="top">
-            <div v-for="d in this.formattedData" :key="d.name" style="text-align: left;">
+            <div
+                v-for="d in this.formattedData"
+                :key="d.name"
+                style="text-align: left"
+            >
                 <svg width="10" height="10" class="legend-swatch">
                     <rect width="10" height="10" :fill="d.color"></rect>
                 </svg>
-                <span><b>{{ d.name }}:</b> {{ d.count.toLocaleString() }}</span>
+                <span
+                    ><b>{{ d.name }}:</b> {{ d.count.toLocaleString() }}</span
+                >
             </div>
         </b-tooltip>
     </div>
@@ -38,8 +51,8 @@ const colorMap = d3
             "Reduced Sensitivity",
             "Sensitivity/Response",
             "resistant",
-            "sensitive"
-        ].map(x => x.toLowerCase())
+            "sensitive",
+        ].map((x) => x.toLowerCase())
     );
 
 export default {
@@ -48,7 +61,7 @@ export default {
             width: 300,
             height: 25,
             color: "#C00",
-            padding: 1
+            padding: 1,
         };
     },
     props: ["data"],
@@ -58,7 +71,7 @@ export default {
     methods: {},
     computed: {
         formattedData: function () {
-            return _.sortBy(this.data, x => -x.count).map((d) => {
+            return _.sortBy(this.data, (x) => -x.count).map((d) => {
                 let name;
 
                 if (d.name === "NA") {
@@ -72,21 +85,21 @@ export default {
                 return {
                     name: name,
                     count: d.count,
-                    color: colorMap(name.toLowerCase())
+                    color: colorMap(name.toLowerCase()),
                 };
             });
         },
         layout: function () {
-            const total = d3.sum(this.formattedData, d => d.count);
+            const total = d3.sum(this.formattedData, (d) => d.count);
             this.x.domain([0, 1.0]).range([0, this.width]);
 
             return this.formattedData.map((d, i) => {
-                const prop = x => x / total;
+                const prop = (x) => x / total;
                 const xpos =
                     i > 0
-                        ? d3.sum(this.formattedData.slice(0, i), p =>
-                            this.x(prop(p.count))
-                        )
+                        ? d3.sum(this.formattedData.slice(0, i), (p) =>
+                              this.x(prop(p.count))
+                          )
                         : 0;
 
                 return {
@@ -96,11 +109,11 @@ export default {
                     y: 0,
                     c: d.color,
                     width: this.x(prop(d.count)),
-                    height: this.height
+                    height: this.height,
                 };
             });
-        }
-    }
+        },
+    },
 };
 </script>
 

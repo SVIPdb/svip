@@ -1,5 +1,7 @@
 <template>
-    <a :href="url" target="_blank" v-b-popover.html.hover="pubmedPopover">{{ title }}</a>
+    <a :href="url" target="_blank" v-b-popover.html.hover="pubmedPopover">{{
+        title
+    }}</a>
 </template>
 
 <script>
@@ -10,17 +12,17 @@ const parser = new DOMParser();
 
 export default {
     name: "PubmedPopover",
-    props: {pubmeta: {type: Object, required: true}},
+    props: { pubmeta: { type: Object, required: true } },
     data() {
-        if (this.pubmeta.hasOwnProperty('pmid') && this.pubmeta.pmid) {
+        if (this.pubmeta.hasOwnProperty("pmid") && this.pubmeta.pmid) {
             // extract the PMID and convert it to a url, then return a { url, title } object
             const parsedPMID = parseInt(this.pubmeta.pmid.replace("PMID:", ""));
 
             return {
                 url: `http://www.ncbi.nlm.nih.gov/pubmed/${parsedPMID}`,
                 title: parsedPMID,
-                pmid: parsedPMID
-            }
+                pmid: parsedPMID,
+            };
         }
 
         // otherwise, it's a regular pubmeta object
@@ -42,7 +44,7 @@ export default {
 
             if (!itemData) {
                 if (!isNaN(this.pmid)) {
-                    store.dispatch('getPubmedInfo', {pmid: this.pmid});
+                    store.dispatch("getPubmedInfo", { pmid: this.pmid });
                 }
             }
         }, 1000);
@@ -54,34 +56,34 @@ export default {
 
             if (!itemData) {
                 if (!isNaN(pmid)) {
-                    store.dispatch('getPubmedInfo', {pmid});
+                    store.dispatch("getPubmedInfo", { pmid });
                     return `<i>No PubMed data found or loaded for this citation, try again in a little bit.</i>`;
                 } else {
-                    return '';
+                    return "";
                 }
             }
 
             // console.log("Item data: ", JSON.parse(JSON.stringify(itemData)));
 
-            let authorList = itemData.authors.map(n => n.name);
+            let authorList = itemData.authors.map((n) => n.name);
             if (authorList.length > 5) {
-                authorList = authorList.slice(0, 5).concat("et al.")
+                authorList = authorList.slice(0, 5).concat("et al.");
             }
 
             // parse title as HTML, since apparently people like to embed html in their titles...
-            const parsedTitle = parser.parseFromString(itemData.title, 'text/html');
+            const parsedTitle = parser.parseFromString(
+                itemData.title,
+                "text/html"
+            );
 
             return `
 <div>
 <h6 style="font-weight: bold;">${parsedTitle.body.innerText}</h6>
-<i>${authorList.join('; ')}</i>
+<i>${authorList.join("; ")}</i>
 </div>`;
-
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

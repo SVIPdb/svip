@@ -1,6 +1,6 @@
-import ulog from 'ulog';
+import ulog from "ulog";
 
-const log = ulog('Base64Mixin');
+const log = ulog("Base64Mixin");
 
 export default {
     keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
@@ -61,8 +61,8 @@ export default {
         if (base64test.exec(input)) {
             log.error(
                 "There were invalid base64 characters in the input text.\n" +
-                "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
-                "Expect errors in decoding."
+                    "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
+                    "Expect errors in decoding."
             );
         }
         input = input.replace(/[^A-Za-z0-9+/=]/g, "");
@@ -91,5 +91,5 @@ export default {
         } while (i < input.length);
 
         return output;
-    }
+    },
 };

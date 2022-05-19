@@ -1,24 +1,55 @@
 <template>
     <div class="tissue-dist-row">
-        <h5 style="margin-bottom: 0.75em;">Tissue Distribution</h5>
+        <h5 style="margin-bottom: 0.75em">Tissue Distribution</h5>
 
         <div ref="thechart" class="disease-holster">
-            <div v-for="(bar) in bars" :key="bar.name" class="disease-row">
+            <div v-for="bar in bars" :key="bar.name" class="disease-row">
                 <div class="disease-name">{{ bar.name }}</div>
-                <svg :id="`disease-chart_${bar.name}`" :ref="`disease-chart_${bar.name}`" class="sig-bar-chart"
-                    :viewBox="`0 0 300 ${barHeight}`" preserveAspectRatio="none" :style="`height: ${barHeight}`">
+                <svg
+                    :id="`disease-chart_${bar.name}`"
+                    :ref="`disease-chart_${bar.name}`"
+                    class="sig-bar-chart"
+                    :viewBox="`0 0 300 ${barHeight}`"
+                    preserveAspectRatio="none"
+                    :style="`height: ${barHeight}`"
+                >
                     <g v-for="d in bar.sections" :key="d.k">
-                        <rect class="bar" :x="d.x" :y="0" :width="d.width" :height="d.height" :fill="d.c"></rect>
+                        <rect
+                            class="bar"
+                            :x="d.x"
+                            :y="0"
+                            :width="d.width"
+                            :height="d.height"
+                            :fill="d.c"
+                        ></rect>
                     </g>
                 </svg>
 
-                <b-tooltip :target="() => getDocument().getElementById(`disease-chart_${bar.name}`)" placement="bottom">
-                    <div v-for="(disease) in getDiseasesForTissue(bar.name)" :key="disease.name"
-                        style="text-align: left;">
+                <b-tooltip
+                    :target="
+                        () =>
+                            getDocument().getElementById(
+                                `disease-chart_${bar.name}`
+                            )
+                    "
+                    placement="bottom"
+                >
+                    <div
+                        v-for="disease in getDiseasesForTissue(bar.name)"
+                        :key="disease.name"
+                        style="text-align: left"
+                    >
                         <svg width="10" height="10" class="legend-swatch">
-                            <rect width="10" height="10" :fill="diseaseColors(disease.name)"></rect>
+                            <rect
+                                width="10"
+                                height="10"
+                                :fill="diseaseColors(disease.name)"
+                            ></rect>
                         </svg>
-                        <span><b>{{ disease.name }}:</b> {{ disease.count.toLocaleString() }}</span>
+                        <span
+                            ><b>{{ disease.name }}:</b>
+                            {{ disease.count.toLocaleString() }}</span
+                        >
                     </div>
                 </b-tooltip>
             </div>
@@ -36,7 +67,7 @@ export default {
         return {
             width: 300,
             barHeight: 25,
-            padding: 1
+            padding: 1,
         };
     },
     props: ["tissue_counts"],
@@ -45,33 +76,38 @@ export default {
             return document;
         },
         getDiseasesForTissue(tissue_name) {
-            return this.tissue_counts.find(x => x.name === tissue_name).diseases;
-        }
+            return this.tissue_counts.find((x) => x.name === tissue_name)
+                .diseases;
+        },
     },
     computed: {
         diseases() {
-            return _.flatten(this.tissue_counts.map(x => x.diseases))
+            return _.flatten(this.tissue_counts.map((x) => x.diseases));
         },
         diseaseColors() {
-            const disease_names = this.diseases.map(x => x.name);
-            return d3
-                .scaleOrdinal(d3.schemeSet3)
-                .domain(disease_names);
+            const disease_names = this.diseases.map((x) => x.name);
+            return d3.scaleOrdinal(d3.schemeSet3).domain(disease_names);
         },
         bars() {
-            const maxWidth = _.max(this.tissue_counts.map(x => x.count));
+            const maxWidth = _.max(this.tissue_counts.map((x) => x.count));
 
             return this.tissue_counts.map((curTissue) => {
                 const total = curTissue.count;
-                const x = d3.scaleLinear()
+                const x = d3
+                    .scaleLinear()
                     .domain([0, 1.0])
                     .range([0, (total / maxWidth) * this.width]);
 
                 return {
                     name: curTissue.name,
                     sections: curTissue.diseases.map((d, i) => {
-                        const prop = x => x / total;
-                        const xpos = i > 0 ? d3.sum(this.tissue_counts.slice(0, i), p => x(prop(p.count))) : 0;
+                        const prop = (x) => x / total;
+                        const xpos =
+                            i > 0
+                                ? d3.sum(this.tissue_counts.slice(0, i), (p) =>
+                                      x(prop(p.count))
+                                  )
+                                : 0;
 
                         return {
                             v: d.count,
@@ -80,16 +116,16 @@ export default {
                             y: 0,
                             c: this.diseaseColors(d.name),
                             width: x(prop(d.count)),
-                            height: this.barHeight
+                            height: this.barHeight,
                         };
-                    })
+                    }),
                 };
             });
         },
         totalHeight() {
             return this.bars.length * this.barHeight;
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -104,7 +140,8 @@ export default {
 }
 
 .disease-holster .disease-row {
-    display: flex; flex-direction: row;
+    display: flex;
+    flex-direction: row;
     margin-bottom: 0.25em;
 }
 

@@ -1,11 +1,11 @@
-import * as symbols from './symbols.js';
+import * as symbols from "./symbols.js";
 /** @type {any} */
 
-const slotchangeFiredKey = Symbol('slotchangeFired');
+const slotchangeFiredKey = Symbol("slotchangeFired");
 /**
  * Defines a component's content as the flattened set of nodes assigned to a
  * slot.
- * 
+ *
  * This mixin defines a component's `symbols.content` property as the flattened
  * set of nodes assigned to a slot, typically the default slot.
  *
@@ -51,101 +51,104 @@ const slotchangeFiredKey = Symbol('slotchangeFired');
  */
 
 export default function SlotContentMixin(Base) {
-  // The class prototype added by the mixin.
-  class SlotContent extends Base {
-    componentDidMount() {
-      if (super.componentDidMount) {
-        super.componentDidMount();
-      } // Listen to changes on the default slot.
+    // The class prototype added by the mixin.
+    class SlotContent extends Base {
+        componentDidMount() {
+            if (super.componentDidMount) {
+                super.componentDidMount();
+            } // Listen to changes on the default slot.
 
+            const slot = this[symbols.contentSlot];
 
-      const slot = this[symbols.contentSlot];
+            if (slot) {
+                slot.addEventListener("slotchange", async () => {
+                    // Although slotchange isn't generally a user-driven event, it's
+                    // impossible for us to know whether a change in slot content is going
+                    // to result in effects that the host of this element can predict.
+                    // To be on the safe side, we raise any change events that come up
+                    // during the processing of this event.
+                    this[symbols.raiseChangeEvents] = true; // Note that the event has fired. We use this flag in the
+                    // normalization promise below.
 
-      if (slot) {
-        slot.addEventListener('slotchange', async () => {
-          // Although slotchange isn't generally a user-driven event, it's
-          // impossible for us to know whether a change in slot content is going
-          // to result in effects that the host of this element can predict.
-          // To be on the safe side, we raise any change events that come up
-          // during the processing of this event.
-          this[symbols.raiseChangeEvents] = true; // Note that the event has fired. We use this flag in the
-          // normalization promise below.
+                    this[slotchangeFiredKey] = true; // The polyfill seems to be able to trigger slotchange during
+                    // rendering, which shouldn't happen in native Shadow DOM. We try to
+                    // defend against this by deferring updating state. This feels hacky.
 
-          this[slotchangeFiredKey] = true; // The polyfill seems to be able to trigger slotchange during
-          // rendering, which shouldn't happen in native Shadow DOM. We try to
-          // defend against this by deferring updating state. This feels hacky.
+                    if (!this[symbols.rendering]) {
+                        assignedNodesChanged(this);
+                    } else {
+                        Promise.resolve().then(() => {
+                            assignedNodesChanged(this);
+                        });
+                    }
 
-          if (!this[symbols.rendering]) {
-            assignedNodesChanged(this);
-          } else {
-            Promise.resolve().then(() => {
-              assignedNodesChanged(this);
+                    await Promise.resolve();
+                    this[symbols.raiseChangeEvents] = false;
+                }); // Chrome and the polyfill will fire slotchange with the initial content,
+                // but Safari won't. We wait to see whether the event fires. (We'd prefer
+                // to synchronously call assignedNodesChanged, but then if a subsequent
+                // slotchange fires, we won't know whether it's an initial one or not.)
+                // We do our best to normalize the behavior so the component always gets
+                // a chance to process its initial content.
+                //
+                // TODO: We filed WebKit bug
+                // https://bugs.webkit.org/show_bug.cgi?id=169718 to resolve this, which
+                // Apple fixed. We've verified in Safari Tech Preview that, with that
+                // fix, unit tests pass with the code below removed. When the fix lands
+                // in production (best guess: June 2019), this code can be removed.
+
+                Promise.resolve().then(() => {
+                    if (!this[slotchangeFiredKey]) {
+                        // The event didn't fire, so we're most likely in Safari.
+                        // Update our notion of the component content.
+                        this[symbols.raiseChangeEvents] = true;
+                        this[slotchangeFiredKey] = true;
+                        assignedNodesChanged(this);
+                        this[symbols.raiseChangeEvents] = false;
+                    }
+                });
+            }
+        }
+        /**
+         * See [symbols.contentSlot](symbols#contentSlot).
+         */
+
+        get [symbols.contentSlot]() {
+            const slot =
+                this.shadowRoot &&
+                this.shadowRoot.querySelector("slot:not([name])");
+
+            if (!this.shadowRoot || !slot) {
+                /* eslint-disable no-console */
+                console.warn(
+                    `SlotContentMixin expects ${this.constructor.name} to define a shadow tree that includes a default (unnamed) slot.\nSee https://elix.org/documentation/SlotContentMixin.`
+                );
+            }
+
+            return slot;
+        }
+
+        get defaultState() {
+            return Object.assign(super.defaultState, {
+                content: null,
             });
-          }
-
-          await Promise.resolve();
-          this[symbols.raiseChangeEvents] = false;
-        }); // Chrome and the polyfill will fire slotchange with the initial content,
-        // but Safari won't. We wait to see whether the event fires. (We'd prefer
-        // to synchronously call assignedNodesChanged, but then if a subsequent
-        // slotchange fires, we won't know whether it's an initial one or not.)
-        // We do our best to normalize the behavior so the component always gets
-        // a chance to process its initial content.
-        //
-        // TODO: We filed WebKit bug
-        // https://bugs.webkit.org/show_bug.cgi?id=169718 to resolve this, which
-        // Apple fixed. We've verified in Safari Tech Preview that, with that
-        // fix, unit tests pass with the code below removed. When the fix lands
-        // in production (best guess: June 2019), this code can be removed.
-
-        Promise.resolve().then(() => {
-          if (!this[slotchangeFiredKey]) {
-            // The event didn't fire, so we're most likely in Safari.
-            // Update our notion of the component content.
-            this[symbols.raiseChangeEvents] = true;
-            this[slotchangeFiredKey] = true;
-            assignedNodesChanged(this);
-            this[symbols.raiseChangeEvents] = false;
-          }
-        });
-      }
-    }
-    /**
-     * See [symbols.contentSlot](symbols#contentSlot).
-     */
-
-
-    get [symbols.contentSlot]() {
-      const slot = this.shadowRoot && this.shadowRoot.querySelector('slot:not([name])');
-
-      if (!this.shadowRoot || !slot) {
-        /* eslint-disable no-console */
-        console.warn(`SlotContentMixin expects ${this.constructor.name} to define a shadow tree that includes a default (unnamed) slot.\nSee https://elix.org/documentation/SlotContentMixin.`);
-      }
-
-      return slot;
+        }
     }
 
-    get defaultState() {
-      return Object.assign(super.defaultState, {
-        content: null
-      });
-    }
-
-  }
-
-  return SlotContent;
+    return SlotContent;
 } // The nodes assigned to the given component have changed.
 // Update the component's state to reflect the new content.
 
 function assignedNodesChanged(component) {
-  const slot = component[symbols.contentSlot];
-  const content = slot ? slot.assignedNodes({
-    flatten: true
-  }) : null; // Make immutable.
+    const slot = component[symbols.contentSlot];
+    const content = slot
+        ? slot.assignedNodes({
+              flatten: true,
+          })
+        : null; // Make immutable.
 
-  Object.freeze(content);
-  component.setState({
-    content
-  });
+    Object.freeze(content);
+    component.setState({
+        content,
+    });
 }

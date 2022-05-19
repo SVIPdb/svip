@@ -1,7 +1,7 @@
 import { HTTP, HTTProot } from "@/router/http";
-import ulog from 'ulog';
+import ulog from "ulog";
 
-const log = ulog('Store:users');
+const log = ulog("Store:users");
 
 // FIXME: we currently store the JWT access/refresh tokens in localstorage, but this might make us vulnerable to
 //  an XSS attack through our dependencies...i mean, i don't really know if any of this is "secure" if we can't
@@ -19,8 +19,10 @@ export const USING_JWT_COOKIE = false;
 // initial state
 const state = {
     currentJWT: JWT_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt") : null,
-    currentRefreshJWT: JWT_REFRESH_IN_LOCALSTORAGE ? localStorage.getItem("user-jwt-refresh") : null,
-    dataViaCookie: null
+    currentRefreshJWT: JWT_REFRESH_IN_LOCALSTORAGE
+        ? localStorage.getItem("user-jwt-refresh")
+        : null,
+    dataViaCookie: null,
 };
 
 // enums
@@ -28,7 +30,7 @@ export const TokenErrors = {
     NONE_FOUND: 0,
     EXPIRED: 1,
     NO_REFRESH_TOKEN: 2,
-    REFRESH_EXPIRED: 3
+    REFRESH_EXPIRED: 3,
 };
 
 // getters
@@ -37,18 +39,26 @@ const getters = {
     jwtRefresh: (state) => state.currentRefreshJWT,
 
     jwtData: (state, getters) => {
-        return USING_JWT_COOKIE ? state.dataViaCookie : (
-            state.currentJWT ? JSON.parse(atob(getters.jwt.split('.')[1])) : null
-        );
+        return USING_JWT_COOKIE
+            ? state.dataViaCookie
+            : state.currentJWT
+            ? JSON.parse(atob(getters.jwt.split(".")[1]))
+            : null;
     },
-    jwtExp: (state, getters) => getters.jwtData ? getters.jwtData.exp : null,
-    jwtSubject: (state, getters) => getters.jwtData ? getters.jwtData.sub : null,
-    jwtIssuer: (state, getters) => getters.jwtData ? getters.jwtData.iss : null,
+    jwtExp: (state, getters) => (getters.jwtData ? getters.jwtData.exp : null),
+    jwtSubject: (state, getters) =>
+        getters.jwtData ? getters.jwtData.sub : null,
+    jwtIssuer: (state, getters) =>
+        getters.jwtData ? getters.jwtData.iss : null,
 
-    username: (state, getters) => getters.jwtData ? getters.jwtData.username : null,
-    userID: (state, getters) => getters.jwtData ? getters.jwtData.user_id : null,
-    groups: (state, getters) => getters.jwtData ? getters.jwtData.groups : null,
-    firstName: (state, getters) => getters.jwtData ? getters.jwtData.first_name : null,
+    username: (state, getters) =>
+        getters.jwtData ? getters.jwtData.username : null,
+    userID: (state, getters) =>
+        getters.jwtData ? getters.jwtData.user_id : null,
+    groups: (state, getters) =>
+        getters.jwtData ? getters.jwtData.groups : null,
+    firstName: (state, getters) =>
+        getters.jwtData ? getters.jwtData.first_name : null,
 
     currentUser: (state, getters) => {
         if (!getters.jwtData) {
@@ -59,119 +69,128 @@ const getters = {
             username: getters.username,
             first_name: getters.firstName,
             user_id: getters.userID,
-            groups: getters.groups
+            groups: getters.groups,
         };
-    }
+    },
 };
 
 // actions
 const actions = {
-    login({commit}, {username, password}) {
+    login({ commit }, { username, password }) {
+        return HTTProot.post(`token/`, { username, password }).then(
+            (response) => {
+                const { access, refresh } = response.data;
 
-        return HTTProot.post(`token/`, {username, password}).then(response => {
-            const {access, refresh} = response.data;
+                // TODO: extract and decode the JWT from the response, populate structure below
+                commit("LOGIN", { access, refresh });
 
-            // TODO: extract and decode the JWT from the response, populate structure below
-            commit("LOGIN", {access, refresh});
-
-            return true;
-        });
+                return true;
+            }
+        );
     },
 
-    async checkCredentials({commit, getters, dispatch}) {
+    async checkCredentials({ commit, getters, dispatch }) {
         if (USING_JWT_COOKIE) {
-            return await HTTProot.get('token/info/').then((response) => {
-                log.debug("JWT got: ", response);
-                commit("LOGIN_VIA_COOKIE", response.data);
-                return {valid: true};
-            }).catch((err) => {
-                // FIXME: depending on the error we should return different statuses, but this is fine for now
-                log.warn("Cookie-based auth failed: ", err);
-                // we should also clear any stale auth data, since we're not authed
-                commit("LOGOUT");
-                return {valid: false, reason: TokenErrors.NONE_FOUND};
-            });
+            return await HTTProot.get("token/info/")
+                .then((response) => {
+                    log.debug("JWT got: ", response);
+                    commit("LOGIN_VIA_COOKIE", response.data);
+                    return { valid: true };
+                })
+                .catch((err) => {
+                    // FIXME: depending on the error we should return different statuses, but this is fine for now
+                    log.warn("Cookie-based auth failed: ", err);
+                    // we should also clear any stale auth data, since we're not authed
+                    commit("LOGOUT");
+                    return { valid: false, reason: TokenErrors.NONE_FOUND };
+                });
         } else {
             // we need a jwt if it's being stored
             const jwt = getters.jwt;
             const jwtRefresh = getters.jwtRefresh;
 
             if (!jwt) {
-                return {valid: false, reason: TokenErrors.NONE_FOUND};
+                return { valid: false, reason: TokenErrors.NONE_FOUND };
             }
 
             // now verify that it's not expired
             // log.debug("expiration: ", getters.jwtExp);
-            if (getters.jwtExp && Math.floor(Date.now() / 1000) >= getters.jwtExp) {
+            if (
+                getters.jwtExp &&
+                Math.floor(Date.now() / 1000) >= getters.jwtExp
+            ) {
                 // if it's expired, we should first attempt to refresh it with the current token
                 return dispatch("refresh")
                     .then((response) => {
                         return response;
-                    }).catch(() => {
+                    })
+                    .catch(() => {
                         // oops, we failed to do that, too
-                        return {valid: false, reason: TokenErrors.EXPIRED};
+                        return { valid: false, reason: TokenErrors.EXPIRED };
                     });
             }
 
             // if we're here, it means everything is good, so process the login and annotate our requests with the token
-            commit("LOGIN", {access: jwt, refresh: jwtRefresh});
-            return {valid: true};
+            commit("LOGIN", { access: jwt, refresh: jwtRefresh });
+            return { valid: true };
         }
     },
 
-    checkPermissions() { // params: ({commit}, {permissions, condition = 'all'})
+    checkPermissions() {
+        // params: ({commit}, {permissions, condition = 'all'})
         return new Promise((resolve) => {
             // FIXME: think of a meaningful way to verify this in the client
             resolve(true);
         });
     },
 
-    refresh({commit, getters}) {
+    refresh({ commit, getters }) {
         const jwtRefresh = getters.jwtRefresh;
 
         // ...but if we can't even do that, we can't proceed
         if (!jwtRefresh) {
-            return {valid: false, reason: TokenErrors.NO_REFRESH_TOKEN};
+            return { valid: false, reason: TokenErrors.NO_REFRESH_TOKEN };
         }
 
         log.debug("Attempting refresh with token: ", jwtRefresh);
 
-        return HTTProot.post(`token/refresh/`, {refresh: jwtRefresh}).then(response => {
+        return HTTProot.post(`token/refresh/`, { refresh: jwtRefresh })
+            .then((response) => {
+                // vm.$snotify.info(`Refreshed access token`);
+                log.debug("Refreshed access token");
 
-            // vm.$snotify.info(`Refreshed access token`);
-            log.debug("Refreshed access token");
+                // replace the existing token with the new one if we succeed
+                const { access } = response.data;
 
-            // replace the existing token with the new one if we succeed
-            const {access} = response.data;
+                // TODO: extract and decode the JWT from the response, populate structure below
+                commit("LOGIN", { access });
 
-            // TODO: extract and decode the JWT from the response, populate structure below
-            commit("LOGIN", {access});
-
-            return {valid: true};
-        }).catch((err) => {
-            log.warn(err);
-            return {valid: false, reason: TokenErrors.REFRESH_EXPIRED}
-        });
+                return { valid: true };
+            })
+            .catch((err) => {
+                log.warn(err);
+                return { valid: false, reason: TokenErrors.REFRESH_EXPIRED };
+            });
     },
 
-    async logout({commit}) {
+    async logout({ commit }) {
         log.debug("Beginning log out...");
 
         // we need to tell the server that we're going away so it can clear our cookie for us
-        await HTTProot.post('token/invalidate/');
+        await HTTProot.post("token/invalidate/");
 
         log.debug("...done");
 
         delete HTTP.defaults.headers.common["Authorization"];
         commit("LOGOUT");
-        return {status: 'done'};
-    }
+        return { status: "done" };
+    },
 };
 
 // mutations
 const mutations = {
     LOGIN(state, payload) {
-        const {access, refresh} = payload;
+        const { access, refresh } = payload;
         state.currentJWT = access;
         if (JWT_IN_LOCALSTORAGE) {
             localStorage.setItem("user-jwt", access);
@@ -204,12 +223,12 @@ const mutations = {
         if (JWT_REFRESH_IN_LOCALSTORAGE) {
             localStorage.removeItem("user-jwt-refresh");
         }
-    }
+    },
 };
 
 export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

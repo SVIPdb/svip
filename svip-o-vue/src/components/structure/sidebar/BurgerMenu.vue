@@ -1,5 +1,9 @@
 <template>
-    <div id="burger" :class="{ 'active' : isBurgerActive }" @click.prevent="toggle">
+    <div
+        id="burger"
+        :class="{ active: isBurgerActive }"
+        @click.prevent="toggle"
+    >
         <slot>
             <button type="button" class="burger-button" title="Menu">
                 <span class="hidden">Toggle menu</span>
@@ -18,13 +22,13 @@ export default {
     computed: {
         isBurgerActive() {
             return state.isNavOpen;
-        }
+        },
     },
     methods: {
         toggle() {
             mutations.TOGGLE_NAV();
-        }
-    }
+        },
+    },
 };
 </script>
 <style>
@@ -64,8 +68,8 @@ button:focus {
     width: auto;
     margin-top: -1px;
     transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1),
-    opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
-    background-color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+        background-color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .burger-bar--1 {

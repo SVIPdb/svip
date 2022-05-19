@@ -1,7 +1,7 @@
-import Vue from 'vue';
+import Vue from "vue";
 
 export const state = Vue.observable({
-    isNavOpen: false
+    isNavOpen: false,
 });
 
 export const mutations = {
@@ -10,10 +10,10 @@ export const mutations = {
     },
     TOGGLE_NAV(state) {
         state.isNavOpen = !state.isNavOpen;
-    }
+    },
 };
 
 export default {
     state,
-    mutations
+    mutations,
 };
