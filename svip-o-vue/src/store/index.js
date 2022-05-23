@@ -10,6 +10,6 @@ export default new Vuex.Store({
     modules: {
         users,
         genes,
-        site
-    }
+        site,
+    },
 });

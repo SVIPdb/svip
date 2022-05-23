@@ -13,9 +13,10 @@ Then, run the following:
 `npm version {major|minor}`
 
 This will do the following:
-- bump the version number in `package.json`,
-- create a new commit containing just the new version number, and
-- add a new tag in the repo that corresponds to the version.
+
+-   bump the version number in `package.json`,
+-   create a new commit containing just the new version number, and
+-   add a new tag in the repo that corresponds to the version.
 
 ## Populating the Releases Page
 
@@ -29,7 +30,6 @@ Now, you'll have to add an entry to the list in `src/components/views/Releases.v
 commit log that we created in the last step:
 
 `import v100_commits from '@/data/releases/v100_commits.js';`
-
 
 Second, we'll need to add an entry to the `relreases` key in `data()`; it'll look something like this:
 

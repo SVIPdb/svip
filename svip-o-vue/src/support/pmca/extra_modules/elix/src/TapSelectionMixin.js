@@ -1,6 +1,6 @@
-import { merge } from './updates.js';
-import * as symbols from './symbols.js';
-import { indexOfItemContainingTarget } from './utilities.js';
+import { merge } from "./updates.js";
+import * as symbols from "./symbols.js";
+import { indexOfItemContainingTarget } from "./utilities.js";
 /**
  * Maps a tap/mousedown on a list item to selection of that item
  *
@@ -29,56 +29,61 @@ import { indexOfItemContainingTarget } from './utilities.js';
  */
 
 export default function TapSelectionMixin(Base) {
-  // The class prototype added by the mixin.
-  return class TapSelection extends Base {
-    constructor() {
-      // @ts-ignore
-      super();
-      this.addEventListener('mousedown', event => {
-        // Only process events for the main (usually left) button.
-        if (event.button !== 0) {
-          return;
+    // The class prototype added by the mixin.
+    return class TapSelection extends Base {
+        constructor() {
+            // @ts-ignore
+            super();
+            this.addEventListener("mousedown", (event) => {
+                // Only process events for the main (usually left) button.
+                if (event.button !== 0) {
+                    return;
+                }
+
+                this[symbols.raiseChangeEvents] = true;
+                this[symbols.click](event);
+                this[symbols.raiseChangeEvents] = false;
+            });
         }
 
-        this[symbols.raiseChangeEvents] = true;
-        this[symbols.click](event);
-        this[symbols.raiseChangeEvents] = false;
-      });
-    }
+        [symbols.click](event) {
+            // In some situations, the event target will not be the child which was
+            // originally clicked on. E.g., if the item clicked on is a button, the
+            // event seems to be raised in phase 2 (AT_TARGET) — but the event target
+            // will be the component, not the item that was clicked on. Instead of
+            // using the event target, we get the first node in the event's composed
+            // path.
+            // @ts-ignore
+            const target = event.composedPath
+                ? event.composedPath()[0]
+                : event.target; // Find which item was clicked on and, if found, select it. For elements
+            // which don't require a selection, a background click will determine
+            // the item was null, in which we case we'll remove the selection.
 
-    [symbols.click](event) {
-      // In some situations, the event target will not be the child which was
-      // originally clicked on. E.g., if the item clicked on is a button, the
-      // event seems to be raised in phase 2 (AT_TARGET) — but the event target
-      // will be the component, not the item that was clicked on. Instead of
-      // using the event target, we get the first node in the event's composed
-      // path.
-      // @ts-ignore
-      const target = event.composedPath ? event.composedPath()[0] : event.target; // Find which item was clicked on and, if found, select it. For elements
-      // which don't require a selection, a background click will determine
-      // the item was null, in which we case we'll remove the selection.
+            const targetIndex = indexOfItemContainingTarget(this.items, target);
+            const selectionRequired =
+                this.state && this.state.selectionRequired;
 
-      const targetIndex = indexOfItemContainingTarget(this.items, target);
-      const selectionRequired = this.state && this.state.selectionRequired;
-
-      if (targetIndex >= 0 || !selectionRequired && this.selectedIndex !== targetIndex) {
-        this.selectedIndex = targetIndex;
-        event.stopPropagation();
-      }
-    }
-
-    get updates() {
-      return merge(super.updates, {
-        style: {
-          'touch-action': 'manipulation',
-          // for iOS Safari
-          '-moz-user-select': 'none',
-          '-ms-user-select': 'none',
-          '-webkit-user-select': 'none',
-          'user-select': 'none'
+            if (
+                targetIndex >= 0 ||
+                (!selectionRequired && this.selectedIndex !== targetIndex)
+            ) {
+                this.selectedIndex = targetIndex;
+                event.stopPropagation();
+            }
         }
-      });
-    }
 
-  };
+        get updates() {
+            return merge(super.updates, {
+                style: {
+                    "touch-action": "manipulation",
+                    // for iOS Safari
+                    "-moz-user-select": "none",
+                    "-ms-user-select": "none",
+                    "-webkit-user-select": "none",
+                    "user-select": "none",
+                },
+            });
+        }
+    };
 }

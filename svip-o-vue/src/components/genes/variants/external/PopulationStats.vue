@@ -6,7 +6,12 @@
             </div>
 
             <div class="card-body top-level">
-                <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
+                <b-table
+                    :fields="fields"
+                    :items="items"
+                    :sort-by.sync="sortBy"
+                    :sort-desc="false"
+                >
                     <template v-slot:cell(actions)="row">
                         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
                         <b-button size="sm" @click.stop="row.toggleDetails">
@@ -23,7 +28,7 @@
 </template>
 
 <script>
-import round from 'lodash/round';
+import round from "lodash/round";
 
 /*
 // NOTE: will be used if we report ethnicity-specific stats
@@ -42,17 +47,17 @@ const sources = [
     {
         name: "ExAC",
         key: "exac",
-        freq_path: x => x.af,
-        count_path: x => x.ac.ac,
-        total_path: x => x.an.an_adj
+        freq_path: (x) => x.af,
+        count_path: (x) => x.ac.ac,
+        total_path: (x) => x.an.an_adj,
     },
     {
         name: "gnomAD",
         key: "gnomad_genome",
-        freq_path: x => x.af.af,
-        count_path: x => x.ac.ac,
-        total_path: x => x.an.an
-    }
+        freq_path: (x) => x.af.af,
+        count_path: (x) => x.ac.ac,
+        total_path: (x) => x.an.an,
+    },
 ];
 
 export default {
@@ -60,7 +65,7 @@ export default {
     data() {
         return {
             sortBy: "",
-            items: sources.map(source => ({
+            items: sources.map((source) => ({
                 source: source.name,
                 frequency: this.mvInfo[source.key]
                     ? source.freq_path(this.mvInfo[source.key]).toExponential()
@@ -71,13 +76,13 @@ export default {
                 total: this.mvInfo[source.key]
                     ? source.total_path(this.mvInfo[source.key])
                     : null,
-                consequence: "N/A"
+                consequence: "N/A",
             })),
             fields: [
                 {
                     key: "source",
                     label: "Source",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "count",
@@ -86,18 +91,19 @@ export default {
                             ? `${x.toLocaleString()} / ${v.total.toLocaleString()}`
                             : "-",
                     label: "# Observed",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "frequency",
                     label: "Percent",
-                    formatter: x => x && !isNaN(x) ? `${round(x * 100.0, 4)}%` : '-',
-                    sortable: true
-                }
-            ]
+                    formatter: (x) =>
+                        x && !isNaN(x) ? `${round(x * 100.0, 4)}%` : "-",
+                    sortable: true,
+                },
+            ],
         };
     },
-    props: ["mvInfo"]
+    props: ["mvInfo"],
 };
 </script>
 

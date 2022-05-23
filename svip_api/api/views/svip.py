@@ -13,6 +13,7 @@ from hgvs.exceptions import HGVSParseError
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth.models import User
 
 from api.models import (
     VariantInSVIP, Sample,
@@ -65,19 +66,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-            .select_related('variant')
-            .prefetch_related(
-                Prefetch('diseaseinsvip_set', queryset=(
-                    DiseaseInSVIP.objects
-                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                    .prefetch_related(
-                        'sample_set'
-                    )
-                )),
-                # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-            )
-        )
+             .select_related('variant')
+             .prefetch_related(
+                 Prefetch('diseaseinsvip_set', queryset=(
+                     DiseaseInSVIP.objects
+                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                     .prefetch_related(
+                         'sample_set'
+                     )
+                 )),
+                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+             )
+             )
 
         return q
 
@@ -238,6 +239,8 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         'support',
         'tier_level',
         'tier_level_criteria',
+        'escat_score',
+        'short_escat_score',
         'type_of_evidence',
     )
 
@@ -261,7 +264,6 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             "input": entryIDs,
             "changed": result
         })
-
 
     @action(detail=True)
     def history(self, request, pk):
@@ -297,6 +299,24 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
 
+class CurationReviewView(APIView):
+    def post(self, request, *args, **kwargs):
+        for obj in request.data:
+            if 'id' in obj:
+                review = CurationReview.objects.get(id=obj['id'])
+            else:
+                review = CurationReview()
+            review.curation_evidence = CurationEvidence.objects.get(
+                id=obj['curation_evidence'])
+            review.annotated_effect = obj['annotated_effect']
+            review.annotated_tier = obj['annotated_tier']
+            review.comment = obj['comment']
+            review.draft = obj['draft']
+            review.reviewer = User.objects.get(id=obj['reviewer'])
+            review.save()
+        return Response(data='Submitted reviews are succesfully saved')
+
+
 class CurationReviewViewSet(viewsets.ModelViewSet):
     serializer_class = CurationReviewSerializer
     model = CurationReview
@@ -306,7 +326,6 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-        #kwargs["many"] = True
         return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
@@ -447,26 +466,22 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-class SIBAnnotation1ViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SIBAnnotation1Serializer
-
-    def get_queryset(self):
-        queryset = SIBAnnotation1.objects.all()
-        return queryset
-
-        #print(f"query params: {self.request.query_params} ")
-
-        #variant = self.request.query_params.get('variant')
-        #owner = self.request.query_params.get('owner')
-
-        #queryset = SummaryComment.objects.all()
-
-        # if variant is not None:
-        #    queryset = queryset.filter(variant=variant)
-
-        # if owner is not None:
-        #    queryset = queryset.filter(owner=owner)
+class SIBAnnotation1View(APIView):
+    def post(self, request, *args, **kwargs):
+        for obj in request.data:
+            evidence = CurationEvidence.objects.get(id=obj['evidence'])
+            if 'id' in obj:
+                annotation = SIBAnnotation1.objects.get(id=obj['id'])
+            elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
+                annotation = SIBAnnotation1.objects.get(evidence=evidence)
+            else:
+                annotation = SIBAnnotation1()
+            annotation.evidence = evidence
+            annotation.effect = obj['effect']
+            annotation.tier = obj['tier']
+            annotation.draft = False
+            annotation.save()
+        return Response(data='Submitted annotations are succesfully saved')
 
 
 class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
@@ -544,16 +559,83 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
 # ================================================================================================================
 
 
+def review_count(var):
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        return evidence.reviews.count()
+    else:
+        return 0
+
+
+def reviews(var):
+    reviews = []
+    reviewers = []
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        if evidence.reviews.count() > 0:
+
+            for review in evidence.reviews.all():
+                reviewers.append(review.reviewer_id)
+                reviews.append(review.match())
+    print(reviewers)
+    return reviews
+
+
+def reviewers(var):
+    reviewers = []
+    reviewers_id = []
+    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
+        evidence = var.curation_associations.first().curation_evidences.first()
+        if evidence.reviews.count() > 0:
+            for review in evidence.reviews.all():
+                reviewers.append(review.reviewer)
+                reviewers_id.append(review.reviewer_id)
+
+    print(reviewers)
+    return reviewers_id
+
+
+class DashboardReviews(APIView):
+    def get(self, request):
+        results = []
+        var_ids = []
+        for association in CurationAssociation.objects.all():
+            var = association.variant
+
+            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
+                variant_obj = {
+                    'gene_id':  var.gene.id,
+                    'variant_id': var.id,
+                    'gene_name': var.gene.symbol,
+                    'variant': var.name,
+                    'hgvs': var.hgvs_c,
+                    'disease': association.disease.name if association.disease else None,
+                    'status': 'Ongoing',
+                    'deadline': 'n/a',
+                    'requester': '',
+                    'curator': [],
+                    'review_count': review_count(var),
+                    'reviews': reviews(var),
+                    'stage': var.stage,
+                    'reviewers_id': reviewers(var)
+                }
+                results.append(variant_obj)
+                var_ids.append(var.id)
+        return Response(
+            data={
+                "reviews": results
+            }
+        )
+
+
 class ReviewDataView(APIView):
 
     # when user accesses the review page, return the json data
     def post(self, request, *args, **kwargs):
 
-        print('review_data')
-
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
-        
+
         if request.data.get('only_clinical') == False:
             only_clinical = False
         else:
@@ -570,9 +652,9 @@ class ReviewDataView(APIView):
 
         for curation in variant.curations.filter(status="submitted"):
 
-            #if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-            ## check that a disease is indicated for the curation entry being saved
-            #if curation.disease:
+            # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+            # check that a disease is indicated for the curation entry being saved
+            # if curation.disease:
 
             associations = CurationAssociation.objects.filter(
                 variant=variant).filter(disease=curation.disease)
@@ -604,7 +686,8 @@ class ReviewDataView(APIView):
                     )
                     new_evidence.save()
 
-                evidence = association.curation_evidences.filter(type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+                evidence = association.curation_evidences.filter(
+                    type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
                 curation.curation_evidences.add(evidence)
 
             curation.save()
@@ -641,7 +724,7 @@ class UpdateVariantSummary(APIView):
         var_id = kwargs.get('var_id')
         summary = request.data.get('summary')
         summary_draft_id = request.data.get('summary_draft_id')
-        
+
         summary_draft = SummaryDraft.objects.get(id=summary_draft_id)
 
         if var_id == None:

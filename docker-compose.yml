@@ -61,7 +61,6 @@ services:
     container_name: svip_api
     # image: "svip_api:latest"
     build: ./svip_api
-    restart: unless-stopped
     hostname: api
     volumes:
       - ./svip_api:/app
@@ -92,7 +91,6 @@ services:
       - PYTHONUNBUFFERED=1
     env_file:
       - .env
-    restart: unless-stopped
 
   frontend:
     container_name: svip_frontend

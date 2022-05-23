@@ -46,11 +46,32 @@ git submodule update --init --recursive
 
 ## Configure your environment
 
+### Make sure you are in the `docker` group
+
+```bash
+usermod -aG docker <username>
+```
+
 ### Make the `seqrepo` database available locally
 
 ```bash
+sudo mkdir -m 777 -p /usr/local/share/seqrepo
 cd seqrepo
 make
+```
+
+### Create a `.env` file from the template
+
+```bash
+cp .env.TEMPLATE .env
+```
+
+### Set proper values in your `.env` file.
+
+```bash
+...
+BIOONTOLOGY_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ONCOKB_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 ### Download the harvester resources
@@ -58,21 +79,13 @@ make
 To download the harvester resources you need to have an access token to onkokb as well as for bioontology.
 
 ```bash
-cd g2p-aggregator/data
-make
-```
-
-Also add the access tokens to your `.env` file.
-
-```bash
-BIOONTOLOGY_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-ONCOKB_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+./dc_harvester.sh build harvester
+./dc_harvester.sh run --rm harvester /bin/sh -c 'cd /data; make'
 ```
 
 ### Populate the VEP cache
 
 ```bash
-./dc_harvester.sh build harvester
 ./dc_harvester.sh run --rm harvester /bin/sh -c 'scripts/populate_vep_cache.sh'
 ```
 

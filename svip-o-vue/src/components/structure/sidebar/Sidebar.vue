@@ -1,6 +1,10 @@
 <template>
     <div class="sidebar">
-        <div class="sidebar-backdrop" @click="closeSidebarPanel" v-if="isPanelOpen"></div>
+        <div
+            class="sidebar-backdrop"
+            @click="closeSidebarPanel"
+            v-if="isPanelOpen"
+        ></div>
         <transition name="slide">
             <div v-if="isPanelOpen" class="sidebar-panel">
                 <slot></slot>
@@ -9,20 +13,20 @@
     </div>
 </template>
 <script>
-import store from '@/store';
+import store from "@/store";
 
 export default {
     name: "Sidebar",
     methods: {
         closeSidebarPanel() {
             store.commit("TOGGLE_NAV");
-        }
+        },
     },
     computed: {
         isPanelOpen() {
             return store.state.site.isNavOpen;
-        }
-    }
+        },
+    },
 };
 </script>
 <style>

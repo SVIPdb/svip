@@ -68,12 +68,8 @@
                     ]
                 },
                 "Variant identification": {
-                    "effect": [
-                        "Unknown"
-                    ],
-                    "tier_criteria": [
-                        "None"
-                    ]
+                    "effect": ["Unknown"],
+                    "tier_criteria": ["None"]
                 }
             }
         },

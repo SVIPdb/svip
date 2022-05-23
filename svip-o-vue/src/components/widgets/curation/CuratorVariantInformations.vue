@@ -12,40 +12,63 @@
                 <template v-slot:cell(gene)="row">
                     <router-link
                         class="font-weight-bold"
-                        :to="{ name: 'gene', params: { gene_id: row.item.gene.id }}"
+                        :to="{
+                            name: 'gene',
+                            params: { gene_id: row.item.gene.id },
+                        }"
                         target="_blank"
-                    >{{ row.item.gene.symbol }}
+                        >{{ row.item.gene.symbol }}
                     </router-link>
                 </template>
                 <template v-slot:cell(name)="data">
                     <router-link
                         class="font-weight-bold"
-                        :to="{ name: 'variant', params: { gene_id: data.item.gene.id, variant_id: data.item.id }}"
+                        :to="{
+                            name: 'variant',
+                            params: {
+                                gene_id: data.item.gene.id,
+                                variant_id: data.item.id,
+                            },
+                        }"
                         target="_blank"
-                    >{{ data.value }}</router-link>
+                        >{{ data.value }}</router-link
+                    >
                 </template>
                 <template v-slot:cell(hgvs_c)="data">
                     <p class="mb-0">
-                        <span class="text-muted">{{ data.value.split(":")[0] }}:</span>
+                        <span class="text-muted"
+                            >{{ data.value.split(":")[0] }}:</span
+                        >
                         {{ data.value.split(":")[1] }}
                     </p>
                 </template>
                 <template v-slot:cell(disease)>{{ disease_name }}</template>
-                <template v-slot:cell(pathogenicity)>{{ pathogenicity }}</template>
-                <template v-slot:cell(clinical_significance)>{{ clinical_significance }}</template>
+                <template v-slot:cell(pathogenicity)>{{
+                    pathogenicity
+                }}</template>
+                <template v-slot:cell(clinical_significance)>{{
+                    clinical_significance
+                }}</template>
                 <template v-slot:cell(additional_var)>
-                    <div v-for="item in additionalVariants" :key="item">
+                    <div
+                        v-for="(item, index) in additionalVariants"
+                        :key="index"
+                    >
                         <router-link
                             class="font-weight-bold"
-                            :to="{ name: 'gene', params: { gene_id: item.gene.id }}"
+                            :to="{
+                                name: 'gene',
+                                params: {
+                                    gene_id: additionalVariants[index].gene.id,
+                                },
+                            }"
                             target="_blank"
-                        >{{ item.gene.symbol }}
+                            >{{ item.gene.symbol }}
                         </router-link>
                     </div>
                 </template>
 
-                <template v-if="multiple" v-slot:custom-footer>
-                </template>
+                <template v-if="multiple" v-slot:custom-footer> </template>
             </b-table>
             <div v-else class="m-2">
                 <b-spinner small />
@@ -63,16 +86,16 @@ export default {
     name: "CuratorVariantInformations",
     props: {
         variant: {
-            required: true
+            required: true,
         },
         disease_id: {
             type: Number,
-            required: false
+            required: false,
         },
         multiple: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     data() {
         return {
@@ -83,7 +106,7 @@ export default {
             disease_name: null,
             pathogenicity: null,
             clinical_significance: null,
-            channel: new BroadcastChannel("curation-update")
+            channel: new BroadcastChannel("curation-update"),
         };
     },
     created() {
@@ -92,17 +115,17 @@ export default {
         this.channel.onmessage = () => {
             this.refresh();
         };
-        this.getRows()
+        this.getRows();
     },
     methods: {
         refresh() {
-            HTTP.get(this.variantInfoUrl).then(response => {
-                const { disease, pathogenic, clinical_significance } = response.data;
+            HTTP.get(this.variantInfoUrl).then((response) => {
+                const { disease, pathogenic, clinical_significance } =
+                    response.data;
                 this.disease_name = disease && disease.name;
                 this.pathogenicity = pathogenic;
                 this.clinical_significance = clinical_significance;
             });
-
         },
         apiUrl() {
             const params = [
@@ -111,39 +134,41 @@ export default {
                 this.filterCurator && `owner=${this.userID}`,
                 // FIXME: these two are mutually exclusive
                 this.onlySubmitted && `status=submitted`,
-                this.notSubmitted && `status_ne=submitted`
-            ].filter(x => x);
+                this.notSubmitted && `status_ne=submitted`,
+            ].filter((x) => x);
 
             return `/curation_entries${params ? "?" + params.join("&") : ""}`;
         },
         getRows() {
-            HTTP.get(this.apiUrl()).then(res => {
-                const additionalVariants = []
-                const IDs = []
-                console.log(res.data.results)
-                res.data.results.map(curation => {
-                    curation.extra_variants.map(extra_var => {
-                        if (!IDs.includes(extra_var.id)) {
-                            additionalVariants.push(extra_var)
-                            IDs.push(extra_var.id)
-                        }
-                    })
+            HTTP.get(this.apiUrl())
+                .then((res) => {
+                    const additionalVariants = [];
+                    const IDs = [];
+                    //console.log(res.data.results)
+                    res.data.results.map((curation) => {
+                        curation.extra_variants.map((extra_var) => {
+                            if (!IDs.includes(extra_var.id)) {
+                                additionalVariants.push(extra_var);
+                                IDs.push(extra_var.id);
+                            }
+                        });
+                    });
+                    this.additionalVariants = additionalVariants;
                 })
-                this.additionalVariants = additionalVariants;
-            }).catch(err => {
-                this.loading = { error: err };
-            });
-        }
+                .catch((err) => {
+                    this.loading = { error: err };
+                });
+        },
     },
     computed: {
         visibleFields() {
             fields.push({
-                "key": "additional_var",
-                "label": "Additional variants",
-                "sortable": false
-            })
-            return (!this.disease_id)
-                ? fields.filter(x => x.key !== 'disease')
+                key: "additional_var",
+                label: "Additional variants",
+                sortable: false,
+            });
+            return !this.disease_id
+                ? fields.filter((x) => x.key !== "disease")
                 : fields;
         },
         variantInfoUrl() {
@@ -151,18 +176,21 @@ export default {
                 return null;
             }
 
-            return `/variants/${this.variant.id}/curation_summary${ this.disease_id ? `?disease_id=${this.disease_id}` : ''}`;
+            return `/variants/${this.variant.id}/curation_summary${
+                this.disease_id ? `?disease_id=${this.disease_id}` : ""
+            }`;
         },
         var_position() {
-            if (!this.variant) { return null; }
+            if (!this.variant) {
+                return null;
+            }
             return var_to_position(this.variant);
         },
         allVariants() {
-            return [this.variant, ...this.extraVariants]
-        }
-    }
+            return [this.variant, ...this.extraVariants];
+        },
+    },
 };
 </script>
 
-<style>
-</style>
+<style></style>

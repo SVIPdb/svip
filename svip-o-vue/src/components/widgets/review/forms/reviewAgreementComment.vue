@@ -3,7 +3,10 @@
         <b-row>
             <b-col cols="4">
                 <b-row class="p-2">
-                    <SelectAgreement v-model="review.agreement" @input="change" />
+                    <SelectAgreement
+                        v-model="review.agreement"
+                        @input="change"
+                    />
                 </b-row>
             </b-col>
 
@@ -29,30 +32,30 @@ import SelectAgreement from "@/components/widgets/review/forms/SelectAgreement";
 
 export default {
     components: {
-        SelectAgreement 
+        SelectAgreement,
     },
     props: {
-        value: { type: Object, required: true }
+        value: { type: Object, required: true },
     },
     data() {
         return {
-            review: this.value
+            review: this.value,
         };
     },
     computed: {
         commentDisabled() {
             return this.review.agreement === "I agree.";
-        }
+        },
     },
     methods: {
         change() {
-            this.$emit('input', this.review);
-        }
+            this.$emit("input", this.review);
+        },
     },
     watch: {
         value(newValue) {
             this.review = newValue;
-        }
-    }
+        },
+    },
 };
 </script>

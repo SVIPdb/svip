@@ -2,23 +2,28 @@
     <!-- footer -->
     <footer class="footer">
         <div class="container-fluid">
-            <div class="row" style="width: 100%;">
+            <div class="row" style="width: 100%">
                 <div class="col-lg-3 col-sm-12 text-center version-info">
                     <div class="align-bottom">
-                        <a :href="serverURL" target="_blank">SVIPdb</a> {{appVersion}} ({{releaseName}})
+                        <a :href="serverURL" target="_blank">SVIPdb</a>
+                        {{ appVersion }} ({{ releaseName }})
                         <div class="feedback">
                             <anchor-router-link
-                                :to="{name: 'about', hash: '#disclaimer'}"
+                                :to="{ name: 'about', hash: '#disclaimer' }"
                                 :scrollOptions="{
                                     container: 'body',
                                     duration: 700,
-                                    easing: 'ease'}">
+                                    easing: 'ease',
+                                }"
+                            >
                                 Disclaimer &amp; License
                             </anchor-router-link>
                         </div>
                         <div class="feedback">
-                            Questions or Comments:<br/>
-                            <a href="mailto:feedback@svip.ch">feedback@svip.ch</a>
+                            Questions or Comments:<br />
+                            <a href="mailto:feedback@svip.ch"
+                                >feedback@svip.ch</a
+                            >
                         </div>
                     </div>
                 </div>
@@ -28,19 +33,35 @@
                         <div class="row align-items-center">
                             <div class="col-lg-4 col-sm-12 text-center">
                                 <a href="https://www.ethz.ch" target="_blank">
-                                    <img src="../../assets/logos/eth_logo_small.png" alt="ETH" class="footer_logo"/>
+                                    <img
+                                        src="../../assets/logos/eth_logo_small.png"
+                                        alt="ETH"
+                                        class="footer_logo"
+                                    />
                                 </a>
                             </div>
                             <div class="col-lg-4 col-sm-12 text-center">
-                                <a href="https://www.sib.swiss/" target="_blank">
-                                    <img src="../../assets/logos/sib_logo_medium_titled.png" alt="SIB"
-                                        class="footer_logo"/>
+                                <a
+                                    href="https://www.sib.swiss/"
+                                    target="_blank"
+                                >
+                                    <img
+                                        src="../../assets/logos/sib_logo_medium_titled.png"
+                                        alt="SIB"
+                                        class="footer_logo"
+                                    />
                                 </a>
                             </div>
                             <div class="col-lg-4 col-sm-12 text-center">
-                                <a href="https://www.hes-so.ch/" target="_blank">
-                                    <img src="../../assets/logos/logo-hes-so-noir-433.png" alt="HES-SO"
-                                        class="footer_logo"/>
+                                <a
+                                    href="https://www.hes-so.ch/"
+                                    target="_blank"
+                                >
+                                    <img
+                                        src="../../assets/logos/logo-hes-so-noir-433.png"
+                                        alt="HES-SO"
+                                        class="footer_logo"
+                                    />
                                 </a>
                             </div>
                         </div>
@@ -53,23 +74,25 @@
 
 <script>
 import { appVersion, releaseName, serverURL } from "../../app_config";
-import AnchorRouterLink from 'vue-anchor-router-link'
+import AnchorRouterLink from "vue-anchor-router-link";
 
 export default {
     name: "navFooter",
     components: {
-        AnchorRouterLink
+        AnchorRouterLink,
     },
     data() {
         return {
-            serverURL, appVersion, releaseName
-        }
+            serverURL,
+            appVersion,
+            releaseName,
+        };
     },
     computed: {
         year() {
             return new Date().getFullYear();
-        }
-    }
+        },
+    },
 };
 </script>
 

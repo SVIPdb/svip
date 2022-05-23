@@ -4,9 +4,7 @@
         "Short description": "Disease name according to the ICD-O ontology",
         "Example": "?",
         "Complete description": "Disease name according to the International Classification of Disease for Oncology (ICD-O3)",
-        "Reference": [
-            "https://codes.iarc.fr/"
-        ]
+        "Reference": ["https://codes.iarc.fr/"]
     },
     {
         "Field": "# of samples",
@@ -45,9 +43,7 @@
         "Short description": "Potential clinical actionability of the variant in a given disease.",
         "Example": "Predictive",
         "Complete description": "Potential clinical actionability of the variant in given disease. Three types of clinical significance evidences are available according to guidelines.\n- Predictive (therapeutic): variant that indicates sensitivity or resistance to a specific therapy.\n- Prognostic: variant that predicts the course of a disease.\n- Diagnostic: variant that supports the diagnosis of a disease.",
-        "Reference": [
-            "AMP/ASCO/CAPS guidelines (with our own definitions)"
-        ]
+        "Reference": ["AMP/ASCO/CAPS guidelines (with our own definitions)"]
     },
     {
         "Field": "Status",

@@ -5,7 +5,7 @@
         @after-enter="afterEnter"
         @leave="leave"
     >
-        <slot/>
+        <slot />
     </transition>
 </template>
 
@@ -18,9 +18,9 @@ export default {
             const width = getComputedStyle(element).width;
 
             element.style.width = width;
-            element.style.position = 'absolute';
-            element.style.visibility = 'hidden';
-            element.style.height = 'auto';
+            element.style.position = "absolute";
+            element.style.visibility = "hidden";
+            element.style.height = "auto";
 
             const height = getComputedStyle(element).height;
 
@@ -44,7 +44,7 @@ export default {
         },
 
         afterEnter(element) {
-            element.style.height = 'auto';
+            element.style.height = "auto";
         },
 
         leave(element) {
@@ -61,8 +61,8 @@ export default {
                 element.style.height = 0;
             });
         },
-    }
-}
+    },
+};
 </script>
 
 <style scoped>
@@ -71,9 +71,13 @@ export default {
     overflow: hidden;
 }
 
-.expand-enter-active { transition: height 500ms ease-in-out; }
+.expand-enter-active {
+    transition: height 500ms ease-in-out;
+}
 
-.expand-leave-active { transition: height 300ms ease-in-out; }
+.expand-leave-active {
+    transition: height 300ms ease-in-out;
+}
 
 .expand-enter,
 .expand-leave-to {

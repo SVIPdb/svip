@@ -506,6 +506,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'effect',
             'tier_level_criteria',
             'tier_level',
+            'escat_score',
+            'short_escat_score',
             'mutation_origin',
             'associated_mendelian_diseases',
             'summary',
@@ -527,7 +529,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         extra_kwargs = {
             # ensure that DRF knows the 'comment' and 'summary' fields aren't required.
             'comment': {'required': False, 'allow_blank': True},
-            'summary': {'required': False, 'allow_blank': True}
+            'summary': {'required': False, 'allow_blank': True},
+            'escat_score': {'required': False, 'allow_blank': True}
         }
 
 

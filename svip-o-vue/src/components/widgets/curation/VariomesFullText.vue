@@ -1,6 +1,7 @@
 <template>
-    <div style="width: 100%;">
-        <div ref="bodytext"> <!-- :style="`height: 20rem; overflow-y:scroll; resize: vertical;`" -->
+    <div style="width: 100%">
+        <div ref="bodytext">
+            <!-- :style="`height: 20rem; overflow-y:scroll; resize: vertical;`" -->
             <b-overlay :show="loading" rounded="sm">
                 <b-container
                     fluid
@@ -8,15 +9,19 @@
                     v-if="variomes && pubData && !variomes.error"
                     @mouseup="citable && getSelectionText()"
                     @contextmenu="citable && handleRightClick($event)"
-                    style="height: 600px;"
+                    style="height: 600px"
                 >
-                    <pmca-element ref="pmcaElem" style="width: 100%;" />
+                    <pmca-element ref="pmcaElem" style="width: 100%" />
                 </b-container>
                 <div
                     v-else-if="variomes && (variomes.error || !pubData)"
                     class="text-center text-muted font-italic"
                 >
-                    <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
+                    <icon
+                        name="exclamation-triangle"
+                        scale="3"
+                        style="vertical-align: text-bottom; margin-bottom: 5px"
+                    /><br />
                     We couldn't load the abstract due to a technical issue
                 </div>
                 <div v-else class="text-center">
@@ -25,16 +30,20 @@
             </b-overlay>
         </div>
 
-        <div v-if="variomes && pubData && !variomes.error" class="ml-3 pt-1 border-top">
+        <div
+            v-if="variomes && pubData && !variomes.error"
+            class="ml-3 pt-1 border-top"
+        >
             <small>
                 Source:
-                <b-link v-bind="pubmedURL(pubData.id)">{{pubData.id}}</b-link>
+                <b-link v-bind="pubmedURL(pubData.id)">{{ pubData.id }}</b-link>
 
                 <span v-if="pmcViewerUrl">
-                <span class="d-inline-block ml-1 mr-1">|</span>
-                <b-link :href="pmcViewerUrl" class="bold" target="_blank">view full text on Variomes
-                    <b-icon-box-arrow-up-right />
-                </b-link>
+                    <span class="d-inline-block ml-1 mr-1">|</span>
+                    <b-link :href="pmcViewerUrl" class="bold" target="_blank"
+                        >view full text on Variomes
+                        <b-icon-box-arrow-up-right />
+                    </b-link>
                 </span>
             </small>
         </div>
@@ -45,21 +54,21 @@
 import { pubmedURL } from "@/utils";
 import { BIconBoxArrowUpRight } from "bootstrap-vue";
 
-import '@/support/pmca/pmca-element';
+import "@/support/pmca/pmca-element";
 
 export default {
     name: "VariomesFullText",
     components: { BIconBoxArrowUpRight },
     props: {
         variomes: { required: true },
-        citable: { type: Boolean, default: false }
+        citable: { type: Boolean, default: false },
     },
     data() {
         return {
             selection: null,
             tries: 0,
-            loading: false
-        }
+            loading: false,
+        };
     },
     mounted() {
         const pmcaElem = this.$refs.pmcaElem;
@@ -74,20 +83,23 @@ export default {
     },
     computed: {
         pubData() {
-            return (
-                this.variomes && this.variomes.publications && this.variomes.publications.length > 0 &&
+            return this.variomes &&
+                this.variomes.publications &&
+                this.variomes.publications.length > 0 &&
                 !this.variomes.publications[0].error
-            )
                 ? this.variomes.publications[0]
                 : null;
         },
         pmcViewerUrl() {
-            if (!this.pubData || this.pubData.collection !== 'pmc') {
+            if (!this.pubData || this.pubData.collection !== "pmc") {
                 return null;
             }
 
-            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace('PMC', '')}`
-        }
+            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace(
+                "PMC",
+                ""
+            )}`;
+        },
     },
     methods: {
         pubmedURL,
@@ -99,14 +111,20 @@ export default {
             }
         },
         loadPMC(pmcid) {
-            if (this.$refs.pmcaElem && this.$refs.pmcaElem.fillViewerWithIdAndOptions) {
+            if (
+                this.$refs.pmcaElem &&
+                this.$refs.pmcaElem.fillViewerWithIdAndOptions
+            ) {
                 this.loading = true;
-                this.$refs.pmcaElem.fillViewerWithIdAndOptions(pmcid, {service: "httpscandy"}).finally(() => {
-                    // console.log("done loading!");
-                    this.loading = false;
-                });
-            }
-            else {
+                this.$refs.pmcaElem
+                    .fillViewerWithIdAndOptions(pmcid, {
+                        service: "httpscandy",
+                    })
+                    .finally(() => {
+                        // console.log("done loading!");
+                        this.loading = false;
+                    });
+            } else {
                 if (this.tries < 3) {
                     // console.warn(`Unable to load PMCID ${pmcid} due to the viewer not existing, trying again in 300ms... (remaining tries: ${3 - this.tries}`);
                     this.tries += 1;
@@ -114,18 +132,15 @@ export default {
                         this.loadPMC(pmcid);
                     }, 300);
                 }
-
             }
         },
         handleRightClick(event) {
             event.stopPropagation();
             event.preventDefault();
-            this.$emit('showmenu', { event, selection: this.selection });
-        }
-    }
-}
+            this.$emit("showmenu", { event, selection: this.selection });
+        },
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -9,20 +9,18 @@
 <script>
 export default {
     name: "SelectDiagnosticOutcome",
-    props: ['value'],
+    props: ["value"],
     computed: {
         selection: {
             get() {
-                return this.value
+                return this.value;
             },
             set(value) {
-                this.$emit('input', value)
+                this.$emit("input", value);
             },
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

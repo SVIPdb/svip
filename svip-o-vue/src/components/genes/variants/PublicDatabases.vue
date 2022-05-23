@@ -5,7 +5,12 @@
         </div>
 
         <div class="card-body top-level">
-            <b-table :fields="fields" :items="items" :sort-by.sync="sortBy" :sort-desc="false">
+            <b-table
+                :fields="fields"
+                :items="items"
+                :sort-by.sync="sortBy"
+                :sort-desc="false"
+            >
                 <template v-slot:cell(actions)="row">
                     <!--
                     <div class="details-tray" style="text-align: right;">
@@ -20,9 +25,16 @@
                 </template>
 
                 <template v-slot:cell(source)="row">
-                    <div style="display: flex; align-items: center;">
-                        <SourceIcon :name="row.item.source.name" :size="20" :margin-right="8" :no-tip="true"/>
-                        <a :href="row.item.variant_url" target="_blank">{{ row.item.source.display_name }}</a>
+                    <div style="display: flex; align-items: center">
+                        <SourceIcon
+                            :name="row.item.source.name"
+                            :size="20"
+                            :margin-right="8"
+                            :no-tip="true"
+                        />
+                        <a :href="row.item.variant_url" target="_blank">{{
+                            row.item.source.display_name
+                        }}</a>
                     </div>
                 </template>
 
@@ -32,9 +44,13 @@
                         :is="data.item.colum_parts.diseases"
                         :row="data"
                     />
-                    <span
-                        v-else
-                    >{{ Object.keys(data.item.diseases).length }} disease{{ Object.keys(data.item.diseases).length !== 1 ? "s" : "" }}</span>
+                    <span v-else
+                        >{{ Object.keys(data.item.diseases).length }} disease{{
+                            Object.keys(data.item.diseases).length !== 1
+                                ? "s"
+                                : ""
+                        }}</span
+                    >
                 </template>
 
                 <template v-slot:cell(association_count)="data">
@@ -43,7 +59,11 @@
                         :is="data.item.colum_parts.publication_count"
                         :row="data"
                     />
-                    <span v-else>{{ data.value.toLocaleString() }} evidence{{ data.value !== 1 ? "s" : "" }}</span>
+                    <span v-else
+                        >{{ data.value.toLocaleString() }} evidence{{
+                            data.value !== 1 ? "s" : ""
+                        }}</span
+                    >
                 </template>
 
                 <template v-slot:cell(clinical)="data">
@@ -52,7 +72,10 @@
                         :is="data.item.colum_parts.clinical"
                         :row="data"
                     />
-                    <evidenceTypesBarPlot v-else :data="data.item.evidence_types"/>
+                    <evidenceTypesBarPlot
+                        v-else
+                        :data="data.item.evidence_types"
+                    />
                 </template>
 
                 <template v-slot:cell(scores)="data">
@@ -61,7 +84,11 @@
                         :is="data.item.colum_parts.scores"
                         :row="data"
                     />
-                    <score-plot v-else :scores="data.item.scores" :source-name="data.item.source.name"></score-plot>
+                    <score-plot
+                        v-else
+                        :scores="data.item.scores"
+                        :source-name="data.item.source.name"
+                    ></score-plot>
                 </template>
 
                 <template v-slot:row-details="row">
@@ -77,10 +104,9 @@
                 </template>
             </b-table>
 
-            <div
-                v-if="sourcesNotFound.length > 0"
-                class="var-not-found"
-            >No data available for this variant in {{ sourcesNotFound.map(x => x.display_name).join(", ") }}
+            <div v-if="sourcesNotFound.length > 0" class="var-not-found">
+                No data available for this variant in
+                {{ sourcesNotFound.map((x) => x.display_name).join(", ") }}
             </div>
         </div>
     </div>
@@ -104,33 +130,33 @@ import ClinvarPubCountCol from "@/components/genes/variants/sources/clinvar/Clin
 
 const overrides = {
     civic: {
-        details_part: CivicRowDetails
+        details_part: CivicRowDetails,
     },
     cosmic: {
         colum_parts: {
             clinical: UnavailableCol,
             publication_count: CosmicPubCountCol,
-            scores: UnavailableCol
+            scores: UnavailableCol,
         },
-        details_part: CosmicRowDetails
+        details_part: CosmicRowDetails,
     },
     oncokb: {
-        details_part: OncoKBRowDetails
+        details_part: OncoKBRowDetails,
     },
     clinvar: {
         details_part: ClinvarRowDetails,
         colum_parts: {
             clinical: SignificanceBarPlot,
             publication_count: ClinvarPubCountCol,
-            scores: UnavailableCol
-        }
-    }
+            scores: UnavailableCol,
+        },
+    },
 };
 
 export default {
     name: "VariantPublicDatabases",
-    components: {SourceIcon, scorePlot, evidenceTypesBarPlot},
-    props: {variant: {type: Object, required: true}},
+    components: { SourceIcon, scorePlot, evidenceTypesBarPlot },
+    props: { variant: { type: Object, required: true } },
     data() {
         return {
             sortBy: "source",
@@ -138,41 +164,41 @@ export default {
                 {
                     key: "actions",
                     label: "",
-                    sortable: false
+                    sortable: false,
                 },
                 {
                     key: "source",
                     label: "Source",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "diseases",
                     label: "Diseases",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "association_count",
                     label: "Database Evidences",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "clinical",
                     label: "Clinical Significance / Interpretation",
                     sortable: false,
-                    class: "d-none d-md-table-cell"
+                    class: "d-none d-md-table-cell",
                 },
                 {
                     key: "scores",
                     label: "Evidence Levels",
                     sortable: false,
-                    class: "d-none d-lg-table-cell"
-                }
-            ]
+                    class: "d-none d-lg-table-cell",
+                },
+            ],
         };
     },
     computed: {
         items() {
-            return this.variant.variantinsource_set.map(vis => {
+            return this.variant.variantinsource_set.map((vis) => {
                 return {
                     ...vis,
                     _showDetails: false,
@@ -182,29 +208,31 @@ export default {
                         : null,
                     details_part: overrides.hasOwnProperty(vis.source.name)
                         ? overrides[vis.source.name].details_part
-                        : null
+                        : null,
                 };
             });
         },
         sourcesNotFound() {
             // we're sure sources exists because we populated it from the store
             return store.state.genes.sources.filter(
-                x =>
+                (x) =>
                     x.num_variants > 0 && // remove sources that have no variants across the board
                     !x.no_associations && // remove sources that shouldn't appear to have variants
-                    !this.variant.variantinsource_set.find(y => x.name === y.source.name)
+                    !this.variant.variantinsource_set.find(
+                        (y) => x.name === y.source.name
+                    )
             );
-        }
+        },
     },
     methods: {
         rowHasPart(row, part) {
             return row.item.colum_parts && row.item.colum_parts[part];
         },
-        normalizeItemList
+        normalizeItemList,
     },
     created() {
         store.dispatch("getSources");
-    }
+    },
 };
 </script>
 

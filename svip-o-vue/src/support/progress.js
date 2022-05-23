@@ -1,8 +1,8 @@
 import * as NProgress from "nprogress";
 
-import ulog from 'ulog';
+import ulog from "ulog";
 
-const log = ulog('Support:progress');
+const log = ulog("Support:progress");
 
 // the duration between one request ending and another starting which should be considered part of the same session
 const CATCHUP_DURATION = 600;
@@ -25,19 +25,18 @@ export default (options) => {
         start: (ctx) => {
             if (inflight > 0) {
                 manager.inc();
-            }
-            else {
+            } else {
                 manager.start();
             }
 
             inflight += 1;
 
-            log.debug(`start(${ctx ? ctx : ''}): Inflight: ${inflight}`);
+            log.debug(`start(${ctx ? ctx : ""}): Inflight: ${inflight}`);
         },
         done: (ctx) => {
             inflight -= 1;
 
-            log.debug(`done(${ctx ? ctx : ''}): Inflight: ${inflight}`);
+            log.debug(`done(${ctx ? ctx : ""}): Inflight: ${inflight}`);
 
             if (inflight < 0) {
                 log.info("Inflight became less than 0!: ", inflight);
@@ -52,6 +51,6 @@ export default (options) => {
                     }
                 }, CATCHUP_DURATION);
             }
-        }
-    }
-}
+        },
+    };
+};

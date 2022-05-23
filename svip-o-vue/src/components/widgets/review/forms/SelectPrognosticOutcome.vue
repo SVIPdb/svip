@@ -3,28 +3,25 @@
         <option>Good outcome</option>
         <option>Poor outcome</option>
         <option>Intermediate</option>
-        <option>Unclear</option>
-        <option>Context-dependent</option>
+        <option>Not associated with prognosis</option>
     </b-form-select>
 </template>
 
 <script>
 export default {
     name: "SelectPrognosticOutcome",
-    props: ['value'],
+    props: ["value"],
     computed: {
         selection: {
             get() {
-                return this.value
+                return this.value;
             },
             set(value) {
-                this.$emit('input', value)
+                this.$emit("input", value);
             },
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

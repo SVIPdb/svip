@@ -1,6 +1,12 @@
 <template>
     <!-- Navbar -->
-    <b-navbar toggleable="md" type="dark" variant="primary" fixed="top" class="svip-navbar">
+    <b-navbar
+        toggleable="md"
+        type="dark"
+        variant="primary"
+        fixed="top"
+        class="svip-navbar"
+    >
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-navbar-brand>
@@ -17,14 +23,18 @@
         <b-collapse is-nav id="nav_collapse">
             <b-navbar-nav>
                 <b-nav-item
-                    v-if="user && user.groups.indexOf('curators') != -1"
+                    v-if="
+                        user &&
+                        (user.groups.indexOf('curators') != -1 ||
+                            user.groups.indexOf('clinicians') != -1)
+                    "
                     :to="{ name: 'curation-dashboard' }"
-                >Dashboard
+                    >Dashboard
                 </b-nav-item>
                 <b-nav-item
                     v-if="user && user.groups.indexOf('submitters') != -1"
                     :to="{ name: 'submit-variants' }"
-                >Submit Variants
+                    >Submit Variants
                 </b-nav-item>
                 <b-nav-item :to="'/help'">Help</b-nav-item>
                 <b-nav-item :to="'/about'">About</b-nav-item>
@@ -37,12 +47,14 @@
                 <b-navbar-nav v-if="user" right>
                     <b-nav-text class="login-name">
                         logged in as
-                        <router-link to="/user-info">{{ user.username }}</router-link>
+                        <router-link to="/user-info">{{
+                            user.username
+                        }}</router-link>
                         -
                     </b-nav-text>
                     <b-nav-item>
                         <a class="pointer" @click="logout()">
-                            <icon name="sign-out-alt"/>
+                            <icon name="sign-out-alt" />
                             log out
                         </a>
                     </b-nav-item>
@@ -51,9 +63,12 @@
                     <b-nav-item v-if="$router.currentRoute !== '/login'">
                         <router-link
                             class="pointer"
-                            :to="{name: 'login', params: { nextRoute: whereFromHere }}"
+                            :to="{
+                                name: 'login',
+                                params: { nextRoute: whereFromHere },
+                            }"
                         >
-                            <icon name="sign-in-alt"/>
+                            <icon name="sign-in-alt" />
                             log in
                         </router-link>
                     </b-nav-item>
@@ -61,7 +76,10 @@
             </b-navbar-nav>
         </b-collapse>
 
-        <div class="ajax-loader-bar" style="position: relative; z-index: 1035;"></div>
+        <div
+            class="ajax-loader-bar"
+            style="position: relative; z-index: 1035"
+        ></div>
     </b-navbar>
 </template>
 
@@ -77,13 +95,13 @@ export default {
             return loginDisabled;
         },
         ...mapGetters({
-            user: "currentUser"
+            user: "currentUser",
         }),
         whereFromHere() {
             // if we're at the login page, go home after logging in.
             // if we're anywhere else, return to that page after we're done
             return this.$route.path !== "/login" ? this.$route.path : "/";
-        }
+        },
     },
     methods: {
         logout() {
@@ -92,8 +110,8 @@ export default {
                 // refresh the current page
                 this.$router.go();
             });
-        }
-    }
+        },
+    },
 };
 </script>
 

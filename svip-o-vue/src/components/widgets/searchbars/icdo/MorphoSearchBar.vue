@@ -2,8 +2,12 @@
     <v-select
         id="my-select"
         :class="[state === false ? 'invalidated' : '']"
-        :options="terms" :value="value" @input="update"
-        :multiple="multiple" :taggable="allowCreate" :push-tags="allowCreate"
+        :options="terms"
+        :value="value"
+        @input="update"
+        :multiple="multiple"
+        :taggable="allowCreate"
+        :push-tags="allowCreate"
         :disabled="disabled"
         label="term"
         :filter-by="filterBy"
@@ -30,16 +34,16 @@ export default {
     name: "MorphoSearchBar",
     props: {
         value: {},
-        state: {type: Boolean},
-        multiple: {type: Boolean, default: false},
-        disabled: {type: Boolean, default: false},
-        allowCreate: {type: Boolean, default: false},
+        state: { type: Boolean },
+        multiple: { type: Boolean, default: false },
+        disabled: { type: Boolean, default: false },
+        allowCreate: { type: Boolean, default: false },
     },
     data() {
         return {
             terms: [],
-            loadingTerms: false
-        }
+            loadingTerms: false,
+        };
     },
     created() {
         this.refreshTerms();
@@ -48,30 +52,37 @@ export default {
         titleCase,
         refreshTerms() {
             this.loadingTerms = true;
-            HTTP.get('/icdo_morpho?page_size=9999').then(response => {
-                this.terms = response.data.results;
-            }).finally(() => {
-                this.loadingTerms = false;
-            });
+            HTTP.get("/icdo_morpho?page_size=9999")
+                .then((response) => {
+                    this.terms = response.data.results;
+                })
+                .finally(() => {
+                    this.loadingTerms = false;
+                });
         },
         update(newValue) {
-            this.$emit('input', newValue);
+            this.$emit("input", newValue);
         },
         filterBy(option, label, search) {
             const isearch = search.toLowerCase();
             return (
                 (option.term && option.term.toLowerCase().includes(isearch)) ||
-                (option.cell_type_code && option.cell_type_code.toLowerCase().includes(isearch))
+                (option.cell_type_code &&
+                    option.cell_type_code.toLowerCase().includes(isearch))
             );
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style scoped>
-#my-select >>> .vs__dropdown-toggle { padding: 24px; }
-.invalidated >>> .vs__dropdown-toggle  {
+#my-select >>> .vs__dropdown-toggle {
+    padding: 24px;
+}
+.invalidated >>> .vs__dropdown-toggle {
     border-color: #e74c3c !important;
 }
-.user_created { font-style: italic; }
+.user_created {
+    font-style: italic;
+}
 </style>

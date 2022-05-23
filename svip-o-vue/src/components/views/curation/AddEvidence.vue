@@ -6,23 +6,29 @@
                 <p>{{ pageError.message }}</p>
             </b-col>
         </b-row>
-        <b-row v-else-if="!checkInRole('curators') && !checkInRole('reviewers')">
+        <b-row
+            v-else-if="!checkInRole('curators') && !checkInRole('clinicians')"
+        >
             <b-col class="page-error">
                 <h1>Not Authorized</h1>
-                <p>You may only access this page if you're a curator or reviewer.</p>
+                <p>
+                    You may only access this page if you're a curator or
+                    reviewer.
+                </p>
                 <router-link to="/">return to homepage</router-link>
             </b-col>
         </b-row>
         <div v-else>
-        <!--<div v-if="pageError">-->
+            <!--<div v-if="pageError">-->
             <CuratorVariantInformations :variant="fullVariant" />
 
             <b-row v-if="isVariomesPMC">
-                <VariomesFullText v-if="isVariomesPMC"
+                <VariomesFullText
+                    v-if="isVariomesPMC"
                     :variomes="variomes"
                     citable
                     @showmenu="handleRightClick"
-                    style="margin-bottom: 1.5em;"
+                    style="margin-bottom: 1.5em"
                 />
             </b-row>
 
@@ -34,11 +40,12 @@
                     ===========================================================================================================
                     -->
 
-                    <VariomesAbstract v-if="!isVariomesPMC"
+                    <VariomesAbstract
+                        v-if="!isVariomesPMC"
                         :variomes="variomes"
                         citable
                         @showmenu="handleRightClick"
-                        style="margin-bottom: 1.5em;"
+                        style="margin-bottom: 1.5em"
                     />
 
                     <!--
@@ -46,18 +53,30 @@
                     === MAIN FORM
                     =======================================================================================================
                     -->
-                    <div v-bind:class="{ unduplicated: !duplicated }" style="margin-bottom: 0.5em; color:red; text-align: center;">
+                    <div
+                        v-bind:class="{ unduplicated: !duplicated }"
+                        style="
+                            margin-bottom: 0.5em;
+                            color: red;
+                            text-align: center;
+                        "
+                    >
                         DUPLICATED
                     </div>
 
                     <b-card
-                        no-body style="margin-bottom: 1.5em;"
-                        v-bind:border-variant="duplicated? 'danger': ''"
+                        no-body
+                        style="margin-bottom: 1.5em"
+                        v-bind:border-variant="duplicated ? 'danger' : ''"
                         v-bind:class="{ duplicated: duplicated }"
                     >
                         <b-card-body>
                             <b-container fluid>
-                                <ValidationObserver ref="observer" tag="b-form" @submit.prevent>
+                                <ValidationObserver
+                                    ref="observer"
+                                    tag="b-form"
+                                    @submit.prevent
+                                >
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="variant"
@@ -109,7 +128,7 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.icdo_topo"
-                                        :enabled="!!(form.icdo_morpho)"
+                                        :enabled="!!form.icdo_morpho"
                                         label="ICD-O Topo Codes"
                                         inner-id="icdo_topo"
                                     >
@@ -131,7 +150,8 @@
                                     >
                                         <SearchBar
                                             id="variants-combination"
-                                            variants-only hide-svip-toggle
+                                            variants-only
+                                            hide-svip-toggle
                                             multiple
                                             v-model="form.extra_variants"
                                             :disabled="isViewOnly"
@@ -154,15 +174,23 @@
                                             :state="checkValidity(props, false)"
                                         >
                                             <optgroup
-                                                v-for="(group, index) in evidence_types.groups"
+                                                v-for="(
+                                                    group, index
+                                                ) in evidence_types.groups"
                                                 :key="index"
                                                 :label="group.name"
                                             >
                                                 <option
-                                                    v-for="(option,n) in Object.keys(group.options)"
+                                                    v-for="(
+                                                        option, n
+                                                    ) in Object.keys(
+                                                        group.options
+                                                    )"
                                                     :key="n"
                                                     :value="option"
-                                                >{{ option }}</option>
+                                                >
+                                                    {{ option }}
+                                                </option>
                                             </optgroup>
                                         </b-form-select>
                                     </ValidatedFormField>
@@ -170,7 +198,12 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.drugs"
-                                        :enabled="form.type_of_evidence === 'Predictive / Therapeutic' || form.type_of_evidence === 'Response to drug'"
+                                        :enabled="
+                                            form.type_of_evidence ===
+                                                'Predictive / Therapeutic' ||
+                                            form.type_of_evidence ===
+                                                'Response to drug'
+                                        "
                                         label="For which drug?"
                                         inner-id="drug"
                                         required
@@ -188,7 +221,10 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.interactions"
-                                        :enabled="form.type_of_evidence === 'Interaction'"
+                                        :enabled="
+                                            form.type_of_evidence ===
+                                            'Interaction'
+                                        "
                                         label="For which interactor?"
                                         inner-id="interactions"
                                         required
@@ -206,7 +242,9 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.effect"
-                                        :enabled="form.type_of_evidence !== 'Excluded'"
+                                        :enabled="
+                                            form.type_of_evidence !== 'Excluded'
+                                        "
                                         label="Effect of the variant"
                                         inner-id="effect"
                                         required
@@ -223,7 +261,9 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.tier_criteria"
-                                        :enabled="form.type_of_evidence !== 'Excluded'"
+                                        :enabled="
+                                            form.type_of_evidence !== 'Excluded'
+                                        "
                                         label="Select a Tier or Functional criteria"
                                         inner-id="tier_criteria"
                                         required
@@ -239,8 +279,28 @@
 
                                     <ValidatedFormField
                                         v-slot="props"
+                                        :modeled="form.escat_score"
+                                        :enabled="
+                                            form.type_of_evidence !== 'Excluded'
+                                        "
+                                        label="ESCAT Score"
+                                        inner-id="escat_score"
+                                    >
+                                        <b-form-select
+                                            id="escat_score"
+                                            v-model="form.escat_score"
+                                            :disabled="isViewOnly"
+                                            :options="escat_scores"
+                                            :state="checkValidity(props, true)"
+                                        />
+                                    </ValidatedFormField>
+
+                                    <ValidatedFormField
+                                        v-slot="props"
                                         :modeled="form.mutation_origin"
-                                        :enabled="form.type_of_evidence !== 'Excluded'"
+                                        :enabled="
+                                            form.type_of_evidence !== 'Excluded'
+                                        "
                                         label="Origin of the mutation"
                                         inner-id="mutation_origin"
                                     >
@@ -248,21 +308,35 @@
                                             id="mutation_origin"
                                             v-model="form.mutation_origin"
                                             :disabled="isViewOnly"
-                                            :options="['Somatic', 'Germline', 'Both somatic and germline', 'Unknown']"
+                                            :options="[
+                                                'Somatic',
+                                                'Germline',
+                                                'Both somatic and germline',
+                                                'Unknown',
+                                            ]"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
 
                                     <ValidatedFormField
                                         v-slot="props"
-                                        :modeled="form.associated_mendelian_diseases"
-                                        :enabled="form.mutation_origin === 'Germline' || form.mutation_origin === 'Both somatic and germline'"
+                                        :modeled="
+                                            form.associated_mendelian_diseases
+                                        "
+                                        :enabled="
+                                            form.mutation_origin ===
+                                                'Germline' ||
+                                            form.mutation_origin ===
+                                                'Both somatic and germline'
+                                        "
                                         label="Associated Mendelian disease(s)"
                                         inner-id="associated_mendelian_diseases"
                                     >
                                         <b-form-input
                                             id="associated_mendelian_diseases"
-                                            v-model="form.associated_mendelian_diseases"
+                                            v-model="
+                                                form.associated_mendelian_diseases
+                                            "
                                             :disabled="isViewOnly"
                                             :state="checkValidity(props)"
                                         />
@@ -271,7 +345,9 @@
                                     <ValidatedFormField
                                         v-slot="props"
                                         :modeled="form.support"
-                                        :enabled="form.type_of_evidence !== 'Excluded'"
+                                        :enabled="
+                                            form.type_of_evidence !== 'Excluded'
+                                        "
                                         label="Support"
                                         inner-id="support"
                                         required
@@ -280,7 +356,12 @@
                                             id="support"
                                             v-model="form.support"
                                             :disabled="isViewOnly"
-                                            :options="['Strong', 'Moderate', 'Low', 'Other']"
+                                            :options="[
+                                                'Strong',
+                                                'Moderate',
+                                                'Low',
+                                                'Other',
+                                            ]"
                                             :state="checkValidity(props)"
                                         />
                                     </ValidatedFormField>
@@ -291,7 +372,9 @@
                                         label="Complementary information"
                                         sublabel="(viewable by everyone)"
                                         inner-id="summary"
-                                        :required="form.type_of_evidence === 'Excluded'"
+                                        :required="
+                                            form.type_of_evidence === 'Excluded'
+                                        "
                                     >
                                         <b-form-textarea
                                             id="summary"
@@ -309,7 +392,9 @@
                                         label="Personal comment"
                                         sublabel="(viewable by you and other curators)"
                                         inner-id="comment"
-                                        :required="form.type_of_evidence === 'Excluded'"
+                                        :required="
+                                            form.type_of_evidence === 'Excluded'
+                                        "
                                     >
                                         <b-form-textarea
                                             id="comment"
@@ -327,15 +412,26 @@
                                         label-cols-lg="3"
                                     >
                                         <span
-                                            v-if="form.annotations && form.annotations.length > 0"
+                                            v-if="
+                                                form.annotations &&
+                                                form.annotations.length > 0
+                                            "
                                         >
                                             <b-input-group
-                                                v-for="(annotation,index) in form.annotations"
+                                                v-for="(
+                                                    annotation, index
+                                                ) in form.annotations"
                                                 :key="index"
                                                 class="mt-3"
                                             >
                                                 <b-form-textarea
-                                                    style="background-color: rgb(243,243,243)"
+                                                    style="
+                                                        background-color: rgb(
+                                                            243,
+                                                            243,
+                                                            243
+                                                        );
+                                                    "
                                                     rows="3"
                                                     disabled
                                                     :value="annotation"
@@ -344,7 +440,11 @@
                                                 <b-input-group-append>
                                                     <b-button
                                                         variant="danger"
-                                                        @click="removeAnnotation(index)"
+                                                        @click="
+                                                            removeAnnotation(
+                                                                index
+                                                            )
+                                                        "
                                                     >
                                                         <icon name="minus" />
                                                     </b-button>
@@ -352,9 +452,11 @@
                                             </b-input-group>
                                         </span>
                                         <b-input-group v-else>
-                                            <i
-                                                class="text-muted"
-                                            >(Select text in the citation summary and right-click to add a textual evidence.)</i>
+                                            <i class="text-muted"
+                                                >(Select text in the citation
+                                                summary and right-click to add a
+                                                textual evidence.)</i
+                                            >
                                         </b-input-group>
                                     </b-form-group>
                                 </ValidationObserver>
@@ -378,9 +480,14 @@
                         target="_blank"
                         v-if="!isViewOnly"
                         v-bind:class="{ duplicated: duplicated }"
-                    >Duplicate</b-button>
+                        >Duplicate</b-button
+                    >
 
-                    <b-card class="shadow-sm mb-3" header-bg-variant="white" no-body>
+                    <b-card
+                        class="shadow-sm mb-3"
+                        header-bg-variant="white"
+                        no-body
+                    >
                         <h5 slot="header" class="d-flex align-items-center">
                             Actions
                             <b-link
@@ -389,41 +496,68 @@
                                 aria-controls="action"
                                 @click="showAction = !showAction"
                             >
-                                <icon :name="showAction ? 'chevron-down' : 'chevron-right'" />
+                                <icon
+                                    :name="
+                                        showAction
+                                            ? 'chevron-down'
+                                            : 'chevron-right'
+                                    "
+                                />
                             </b-link>
                         </h5>
 
                         <b-card-body class="p-0 m-0">
-                            <b-collapse id="action" v-model="showAction" class="m-3">
+                            <b-collapse
+                                id="action"
+                                v-model="showAction"
+                                class="m-3"
+                            >
                                 <ul class="submission_properties">
                                     <li>
                                         <icon class="mr-1" name="newspaper" />
                                         {{ source }}:
                                         <span class="value">
-                                            <b-link v-bind="pubmedURL(reference)">{{ reference }}</b-link>
+                                            <b-link
+                                                v-bind="pubmedURL(reference)"
+                                                >{{ reference }}</b-link
+                                            >
                                         </span>
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="key" />Status:
-                                        <span class="value">{{this.form.status || '-'}}</span>
+                                        <span class="value">{{
+                                            this.form.status || "-"
+                                        }}</span>
                                     </li>
                                     <li>
-                                        <icon class="mr-1" name="user" />Creator:
-                                        <span class="value">{{this.form.owner_name || '-'}}</span>
+                                        <icon
+                                            class="mr-1"
+                                            name="user"
+                                        />Creator:
+                                        <span class="value">{{
+                                            this.form.owner_name || "-"
+                                        }}</span>
                                     </li>
                                     <li>
-                                        <icon class="mr-1" name="calendar" />Last modification:
-                                        <span
-                                            class="value"
-                                        >{{this.form.last_modified || '-'}}</span>
+                                        <icon
+                                            class="mr-1"
+                                            name="calendar"
+                                        />Last modification:
+                                        <span class="value">{{
+                                            this.form.last_modified || "-"
+                                        }}</span>
                                     </li>
                                     <li>
-                                        <icon class="mr-1" name="history" />History:
+                                        <icon
+                                            class="mr-1"
+                                            name="history"
+                                        />History:
                                         <span class="value">
                                             <b-link
                                                 v-if="form.id"
                                                 @click="showHistory()"
-                                            >show revisions</b-link>
+                                                >show revisions</b-link
+                                            >
                                         </span>
                                     </li>
                                 </ul>
@@ -433,17 +567,29 @@
                                         <b-link
                                             id="delete-btn"
                                             class="text-danger"
-                                            :disabled="!form.id || form.status === 'submitted'"
+                                            :disabled="
+                                                !form.id ||
+                                                form.status === 'submitted'
+                                            "
                                             @click="onDelete()"
                                         >
-                                            <icon class="mr-1" name="trash" />Delete
+                                            <icon
+                                                class="mr-1"
+                                                name="trash"
+                                            />Delete
                                         </b-link>
                                         <b-button
                                             class="ml-auto"
                                             variant="outline-success"
                                             @click="onSubmitDraft"
-                                            :disabled="form.status === 'submitted'"
-                                        >{{is_saved ? "Update" : "Save"}} Draft</b-button>
+                                            :disabled="
+                                                form.status === 'submitted'
+                                            "
+                                            >{{
+                                                is_saved ? "Update" : "Save"
+                                            }}
+                                            Draft</b-button
+                                        >
                                     </div>
 
                                     <b-button
@@ -452,7 +598,8 @@
                                         variant="success"
                                         :disabled="form.status === 'submitted'"
                                         @click="onSubmit"
-                                    >Save Evidence</b-button>
+                                        >Save Evidence</b-button
+                                    >
                                 </div>
                             </b-collapse>
                         </b-card-body>
@@ -467,22 +614,42 @@
                                 aria-controls="statistic"
                                 @click="showStat = !showStat"
                             >
-                                <icon :name="showStat ? 'chevron-down' : 'chevron-right'" />
+                                <icon
+                                    :name="
+                                        showStat
+                                            ? 'chevron-down'
+                                            : 'chevron-right'
+                                    "
+                                />
                             </b-link>
                         </h5>
 
                         <b-card-body class="p-0 m-0">
-                            <b-collapse id="statistic" v-model="showStat" class="m-3">
+                            <b-collapse
+                                id="statistic"
+                                v-model="showStat"
+                                class="m-3"
+                            >
                                 <div
-                                    v-if="variomes && variomes.publications && variomes.publications.length > 0"
+                                    v-if="
+                                        variomes &&
+                                        variomes.publications &&
+                                        variomes.publications.length > 0
+                                    "
                                 >
                                     <b-link
-                                        v-for="(entry, idx) in keywordSet" :key="idx"
+                                        v-for="(entry, idx) in keywordSet"
+                                        :key="idx"
                                         v-bind="pubmedURL(entry.url)"
                                     >
-                                        <b-badge
-                                            :class="entry.class"
-                                        >{{ entry.label }}{{ entry.count !== undefined ? ` (${entry.count})` : ''}}</b-badge>
+                                        <b-badge :class="entry.class"
+                                            >{{ entry.label
+                                            }}{{
+                                                entry.count !== undefined
+                                                    ? ` (${entry.count})`
+                                                    : ""
+                                            }}</b-badge
+                                        >
                                     </b-link>
                                 </div>
                                 <div
@@ -492,11 +659,18 @@
                                     <icon
                                         name="exclamation-triangle"
                                         scale="1.5"
-                                        style="vertical-align: text-bottom; margin-right: 5px;"
-                                    />An error occurred while retrieving this reference
+                                        style="
+                                            vertical-align: text-bottom;
+                                            margin-right: 5px;
+                                        "
+                                    />An error occurred while retrieving this
+                                    reference
                                 </div>
                                 <div v-else class="text-center">
-                                    <b-spinner label="Spinning" variant="primary" />loading...
+                                    <b-spinner
+                                        label="Spinning"
+                                        variant="primary"
+                                    />loading...
                                 </div>
                             </b-collapse>
                         </b-card-body>
@@ -519,7 +693,7 @@
                 size="lg"
                 :title="`Entry #${form.id || '???'} History`"
             >
-                <div style="padding-bottom: 6em;">
+                <div style="padding-bottom: 6em">
                     <EvidenceHistory v-if="form.id" :entry_id="form.id" />
                     <div v-else>Error: no curation entry selected</div>
                 </div>
@@ -544,13 +718,13 @@ import dayjs from "dayjs";
 // import DiseaseSearchBar from "@/components/widgets/searchbars/DiseaseSearchBar";
 import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
 import { pubmedURL } from "@/utils";
-import ulog from 'ulog';
+import ulog from "ulog";
 import InteractorSearchBar from "@/components/widgets/searchbars/InteractorSearchBar";
 import VariomesFullText from "@/components/widgets/curation/VariomesFullText";
 import MorphoSearchBar from "@/components/widgets/searchbars/icdo/MorphoSearchBar";
 import TopoSearchBar from "@/components/widgets/searchbars/icdo/TopoSearchBar";
 
-const log = ulog('Curation:AddEvidence')
+const log = ulog("Curation:AddEvidence");
 
 // create a lookup for effects and tier criteria based on the evidence type
 const evidence_attrs = Object.values(evidence_types.groups)
@@ -562,7 +736,7 @@ const tier_criteria_parser = /(?<tier_level_criteria>.+) \((?<tier_level>.+)\)/;
 
 extend("required", {
     ...required,
-    message: "This field is required"
+    message: "This field is required",
 });
 
 export default {
@@ -579,10 +753,10 @@ export default {
         SearchBar,
         DrugSearchBar,
         CuratorVariantInformations,
-        ValidationObserver
+        ValidationObserver,
     },
     props: {
-        forceViewOnly: { type: Boolean, default: false }
+        forceViewOnly: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -595,12 +769,12 @@ export default {
             options: [
                 {
                     name: "Add textual evidence",
-                    slug: "annotate"
+                    slug: "annotate",
                 },
                 {
                     name: "Copy selection",
-                    slug: "copy"
-                }
+                    slug: "copy",
+                },
             ],
             required: true,
             enableRequired: false,
@@ -615,6 +789,20 @@ export default {
             reference: null, // the PMID of the reference, populated like 'source' above
             variomes: null,
 
+            escat_scores: [
+                "",
+                "I-A: associated with improved outcome (prospective, randomised)",
+                "I-B: associated with improved outcome (prospective, non-randomised)",
+                "I-C: associated with improved outcome (across tumour types or basket)",
+                "II-A: associated with antitumour activity, magnitude of benefit unknown (retrospective studies)",
+                "II-B: associated with antitumour activity, magnitude of benefit unknown (prospective clinical trials)",
+                "III-A: suspected to improve outcome (clinical benefit demonstrated)",
+                "III-B: suspected to improve outcome (has a similar predicted functional impact)",
+                "IV-A: pre-clinical evidence of actionability (drug sensitivity in preclinical in vitro or in vivo models)",
+                "IV-B: pre-clinical evidence of actionability (actionability predicted in silico)",
+                "V: associated with objective response",
+                "X: lack of evidence",
+            ],
             form: {
                 // these fields are empty or populated on submission/load
                 id: null,
@@ -632,13 +820,14 @@ export default {
                 interactions: [],
                 effect: null,
                 tier_criteria: null,
+                escat_score: null,
                 mutation_origin: null,
                 associated_mendelian_diseases: null,
                 support: null,
                 summary: null,
                 comment: null,
-                annotations: []
-            }
+                annotations: [],
+            },
         };
     },
     methods: {
@@ -668,7 +857,7 @@ export default {
                 }
 
                 this.$snotify.info("Added selection to annotations", {
-                    position: "centerBottom"
+                    position: "centerBottom",
                 });
                 this.form.annotations.push(this.selection);
             }
@@ -680,6 +869,7 @@ export default {
             this.form.drugs = [];
             this.form.effect = null;
             this.form.tier_criteria = null;
+            this.form.escat_score = null;
         },
         loadVariomeData() {
             // FIXME: we should ensure that we have a variant before we fire this off somehow...
@@ -688,18 +878,22 @@ export default {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                     disease: this.computedDisease && this.computedDisease.name,
-                    collection: (this.reference && this.reference.includes("PMC")) ? 'pmc' : (this.reference && this.reference.includes("NCT")) ? 'ct' : undefined,
-                    hl_fields: 'title,abstract'
-                }
+                    collection:
+                        this.reference && this.reference.includes("PMC")
+                            ? "pmc"
+                            : this.reference && this.reference.includes("NCT")
+                            ? "ct"
+                            : undefined,
+                    hl_fields: "title,abstract",
+                },
             })
-                .then(response => {
+                .then((response) => {
                     this.variomes = response.data;
                 })
-                .catch(err => {
+                .catch((err) => {
                     log.error(err);
                     this.variomes = {
-                        error:
-                            "Couldn't retrieve publication info, try again later."
+                        error: "Couldn't retrieve publication info, try again later.",
                     };
                 });
         },
@@ -719,12 +913,13 @@ export default {
             const { action } = this.$route.params;
 
             if (action === "add" || action === "duplicate") {
-                const { source, reference, variant_id, payload } = this.$route.query;
+                const { source, reference, variant_id, payload } =
+                    this.$route.query;
 
                 if (!source || !reference) {
                     this.pageError = {
                         message:
-                            "Required querystring params 'source' and/or 'reference' are missing."
+                            "Required querystring params 'source' and/or 'reference' are missing.",
                     };
                     return;
                 }
@@ -736,7 +931,10 @@ export default {
                 HTTP.get(`/variants/${variant_id}?simple=true`)
                     .then((response) => {
                         const variant = response.data;
-                        this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+                        this.variant = {
+                            ...variant,
+                            label: `${variant.description} (${variant.hgvs_c})`,
+                        };
 
                         // depends on this.variant being set, so we'll load it once we succeed
                         this.loadVariomeData();
@@ -751,25 +949,24 @@ export default {
                             this.$router.replace({
                                 name: "add-evidence",
                                 params: {
-                                    ...this.$route.params
-                                }
+                                    ...this.$route.params,
+                                },
                             });
                             this.duplicated = true;
                         }
                     })
                     .catch((err) => {
                         this.pageError = {
-                            message: err.toString()
+                            message: err.toString(),
                         };
                     });
-            }
-            else {
+            } else {
                 HTTP.get(`/curation_entries/${action}`)
-                    .then(response => {
+                    .then((response) => {
                         this.rehydrate(response.data); // populates source, reference from the response
                         this.loadVariomeData(); // and finally load the data
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         if (err.response && err.response.status === 404) {
                             // the curation entry doesn't exist, so we redirect to the 404 page
                             this.$router.push({ name: "not-found" });
@@ -797,7 +994,10 @@ export default {
             } = data;
 
             const extra_variants = formatted_variants;
-            this.variant = {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+            this.variant = {
+                ...variant,
+                label: `${variant.description} (${variant.hgvs_c})`,
+            };
 
             // repopulate the form, which will bind the elements in the page
             this.form = {
@@ -807,21 +1007,22 @@ export default {
                     ? `${tier_level_criteria} (${tier_level})`
                     : tier_level_criteria,
                 annotations: annotations || [],
-                last_modified: dayjs(last_modified).format("DD.MM.YYYY, h:mm a")
+                last_modified:
+                    dayjs(last_modified).format("DD.MM.YYYY, h:mm a"),
             };
 
             // also populate source and ID, which we need to populate the publication info
             [this.source, this.reference] = references.trim().split(":");
         },
-        getPayload(duplicating=false) {
+        getPayload(duplicating = false) {
             // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
             const matched = tier_criteria_parser.exec(this.form.tier_criteria);
             const { tier_level, tier_level_criteria } = matched
                 ? matched.groups
                 : {
-                    tier_level: null,
-                    tier_level_criteria: this.form.tier_criteria
-                };
+                      tier_level: null,
+                      tier_level_criteria: this.form.tier_criteria,
+                  };
 
             const payload = {
                 // disease: this.form.disease, // this.form.disease.id,
@@ -829,7 +1030,11 @@ export default {
                 icdo_topo: this.form.icdo_topo,
                 variant: { id: this.variant.id },
                 extra_variants: this.form.extra_variants
-                    ? this.form.extra_variants.map(x => x.id.toString().includes('_') ? x.id.split("_")[1] : x.id)
+                    ? this.form.extra_variants.map((x) =>
+                          x.id.toString().includes("_")
+                              ? x.id.split("_")[1]
+                              : x.id
+                      )
                     : [], // selected plus the other ones
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: this.form.drugs || [],
@@ -837,8 +1042,10 @@ export default {
                 effect: this.form.effect,
                 tier_level_criteria: tier_level_criteria,
                 tier_level: tier_level,
+                escat_score: this.form.escat_score,
                 mutation_origin: this.form.mutation_origin,
-                associated_mendelian_diseases: this.form.associated_mendelian_diseases,
+                associated_mendelian_diseases:
+                    this.form.associated_mendelian_diseases,
                 summary: this.form.summary,
                 support: this.form.support,
                 comment: this.form.comment,
@@ -856,7 +1063,7 @@ export default {
         async submit(isDraft) {
             // always validate 'variant', even if it's a draft, since it's critical
             if (!this.variant) {
-                this.$snotify.error("Variant must be specified to save")
+                this.$snotify.error("Variant must be specified to save");
                 return;
             }
             // manually validate all the fields before we go any further
@@ -879,7 +1086,7 @@ export default {
                 ? HTTP.put(`/curation_entries/${this.form.id}`, payload)
                 : HTTP.post(`/curation_entries/`, payload)
             )
-                .then(result => {
+                .then((result) => {
                     this.duplicated = false;
                     this.$snotify.success(
                         `${isDraft ? "Draft" : "Entry"} ${
@@ -902,8 +1109,8 @@ export default {
                             name: "add-evidence",
                             params: {
                                 ...this.$route.params,
-                                action: result.data.id
-                            }
+                                action: result.data.id,
+                            },
                         });
                     }
                 })
@@ -925,7 +1132,9 @@ export default {
                             return;
                         }
                         if (err.response.status >= 500) {
-                            this.$snotify.error("Server error occurred while saving");
+                            this.$snotify.error(
+                                "Server error occurred while saving"
+                            );
                         }
                     }
 
@@ -943,17 +1152,17 @@ export default {
                 name: "add-evidence",
                 params: {
                     ...this.$route.params,
-                    action: "duplicate"
+                    action: "duplicate",
                 },
                 query: {
                     source,
                     reference,
                     variant_id: this.variant.id,
-                    payload: JSON.stringify(this.getPayload(true))
-                }
+                    payload: JSON.stringify(this.getPayload(true)),
+                },
             }).href;
 
-            window.open(targetUrl, '_blank');
+            window.open(targetUrl, "_blank");
         },
         onSubmitDraft() {
             this.submit(true); // true for 'isDraft'
@@ -964,7 +1173,7 @@ export default {
         onDelete() {
             if (confirm("Are you sure that you want to delete this entry?")) {
                 HTTP.delete(`/curation_entries/${this.form.id}`).then(
-                    result => {
+                    (result) => {
                         // refresh curation lists on other pages
                         this.channel.postMessage(
                             `Deleted ID ${result.data.id}`
@@ -974,7 +1183,7 @@ export default {
                         this.form.id = null;
                         this.pageError = {
                             title: "Entry Deleted",
-                            message: "You may now close this window/tab."
+                            message: "You may now close this window/tab.",
                         };
                     }
                 );
@@ -987,7 +1196,7 @@ export default {
         },
         showHistory() {
             this.$refs["history-modal"].show();
-        }
+        },
     },
     asyncComputed: {
         fullVariant() {
@@ -999,97 +1208,128 @@ export default {
                 return this.variant;
             }
 
-            const variant_id = this.variant.id.toString().includes("_") ? this.variant.id.split("_")[1] : this.variant.id;
+            const variant_id = this.variant.id.toString().includes("_")
+                ? this.variant.id.split("_")[1]
+                : this.variant.id;
 
             return HTTP.get(`/variants/${variant_id}?simple=true`)
                 .then((response) => {
                     const variant = response.data;
-                    return {...variant, label: `${variant.description} (${variant.hgvs_c})` };
+                    return {
+                        ...variant,
+                        label: `${variant.description} (${variant.hgvs_c})`,
+                    };
                 })
                 .catch((err) => {
                     this.$snotify.error(err.toString());
                 });
-        }
+        },
     },
     computed: {
         computedDisease() {
             // a curation entry is now a combination of morpho/topo terms
 
             return {
-                name: this.form.icdo_morpho && this.form.icdo_morpho.term
+                name: this.form.icdo_morpho && this.form.icdo_morpho.term,
             };
         },
         keywordSet() {
-            if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
-                return []
+            if (
+                !this.variomes ||
+                !this.variomes.publications[0] ||
+                !this.variomes.publications[0].details
+            ) {
+                return [];
             }
 
             const { gene, variant, disease } = {
                 gene: this.variomes.normalized_query.genes[0].preferred_term,
-                variant: this.variomes.normalized_query.variants[0].preferred_term,
-                disease: this.variomes.normalized_query.diseases && this.variomes.normalized_query.diseases[0].preferred_term
+                variant:
+                    this.variomes.normalized_query.variants[0].preferred_term,
+                disease:
+                    this.variomes.normalized_query.diseases &&
+                    this.variomes.normalized_query.diseases[0].preferred_term,
             };
             const counts = this.variomes.publications[0].details.query_details;
 
             return [
-                gene && counts.query_gene_count && {
-                    class: "bg-gene",
-                    url: `?term=${gene}[Title/Abstract]`,
-                    label: gene,
-                    count: counts.query_gene_count.all
-                },
-                variant && counts.query_variant_count && {
-                    class: "bg-variant",
-                    url: `?term=${variant}[Title/Abstract]`,
-                    label: variant,
-                    count: counts.query_variant_count.all
-                },
-                disease && counts.query_disease_count && {
-                    class: "bg-disease",
-                    url: `?term=${disease}[Title/Abstract]`,
-                    label: disease,
-                    count: counts.query_disease_count.all
-                },
-                gene && variant && disease && {
-                    class: "bg-primary",
-                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
-                    label: `${gene} + ${variant} + ${disease}`
-                },
-                gene && variant && {
-                    class: "bg-info",
-                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
-                    label: `${gene} + ${variant}`
-                }
-            ].filter(x => x);
+                gene &&
+                    counts.query_gene_count && {
+                        class: "bg-gene",
+                        url: `?term=${gene}[Title/Abstract]`,
+                        label: gene,
+                        count: counts.query_gene_count.all,
+                    },
+                variant &&
+                    counts.query_variant_count && {
+                        class: "bg-variant",
+                        url: `?term=${variant}[Title/Abstract]`,
+                        label: variant,
+                        count: counts.query_variant_count.all,
+                    },
+                disease &&
+                    counts.query_disease_count && {
+                        class: "bg-disease",
+                        url: `?term=${disease}[Title/Abstract]`,
+                        label: disease,
+                        count: counts.query_disease_count.all,
+                    },
+                gene &&
+                    variant &&
+                    disease && {
+                        class: "bg-primary",
+                        url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
+                        label: `${gene} + ${variant} + ${disease}`,
+                    },
+                gene &&
+                    variant && {
+                        class: "bg-info",
+                        url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
+                        label: `${gene} + ${variant}`,
+                    },
+            ].filter((x) => x);
         },
         effects() {
-            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+            return this.form.type_of_evidence &&
+                evidence_attrs[this.form.type_of_evidence]
                 ? evidence_attrs[this.form.type_of_evidence].effect
                 : [];
         },
         tier_criteria() {
-            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+            return this.form.type_of_evidence &&
+                evidence_attrs[this.form.type_of_evidence]
                 ? evidence_attrs[this.form.type_of_evidence].tier_criteria
+                : [];
+        },
+        escat_score() {
+            return this.form.type_of_evidence &&
+                evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].escat_score
                 : [];
         },
         is_saved() {
             return this.form.id != null;
         },
         isViewOnly() {
-            return this.form.id && this.form.status === "submitted" || this.forceViewOnly;
+            return (
+                (this.form.id && this.form.status === "submitted") ||
+                this.forceViewOnly
+            );
         },
         isVariomesPMC() {
             return (
-                this.variomes && this.variomes.publications && this.variomes.publications[0].collection === 'pmc'
-            )
-        }
+                this.variomes &&
+                this.variomes.publications &&
+                this.variomes.publications[0].collection === "pmc"
+            );
+        },
     },
     mounted() {
         this.load();
     },
     watch: {
         // $route: "load"
-    }
+    },
 };
 </script>
 
@@ -1151,14 +1391,17 @@ export default {
 }
 
 .duplicated {
-    background-color: rgb( 247, 237, 217 );
+    background-color: rgb(247, 237, 217);
 }
 
 .v-select {
     background-color: white !important;
 }
 
-.form-control, .form-control:focus, .custom-select, .custom-select:focus {
+.form-control,
+.form-control:focus,
+.custom-select,
+.custom-select:focus {
     color: black;
 }
 </style>

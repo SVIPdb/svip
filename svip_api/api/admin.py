@@ -63,6 +63,7 @@ class CurationEntryAdmin(SimpleHistoryAdmin):
         'effect',
         'tier_level_criteria',
         'tier_level',
+        'escat_score',
         'mutation_origin',
         'associated_mendelian_diseases',
         'summary',

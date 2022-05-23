@@ -1,9 +1,13 @@
 <template>
     <div class="container-fluid">
-        <div><!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
+        <div>
+            <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
-            <ReviewNotificationCard v-if="REVIEW_ENABLED"
-                :items="on_request.items" :fields="review.fields" :loading="review.loading"
+            <ReviewNotificationCard
+                v-if="REVIEW_ENABLED"
+                :items="reviews"
+                :fields="review.fields"
+                :loading="review.loading"
                 :isReviewer="true"
                 title="REVIEWS"
                 :error="on_request.error"
@@ -16,7 +20,7 @@
         </div>
 
         <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
-        <div v-if="checkInRole('curators')">
+        <div v-if="checkInRole('curators') || checkInRole('reviewers')">
             <!-- TBC: request queue -->
             <OnRequestEntries
                 :isCurator="checkInRole('curators')"
@@ -30,7 +34,9 @@
                 @itemsloaded="onRequestItemsLoaded"
             />
 
-            <EvidenceCard has-header include-gene-var
+            <EvidenceCard
+                has-header
+                include-gene-var
                 header-title="CURATION ENTRIES"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
@@ -38,16 +44,16 @@
             />
         </div>
 
-        <div v-else style="text-align: center; margin-top: 3em;">
-            <h1>Not Authorized</h1>
-            <p>You may only access this page if you're a curator or reviewer.</p>
-            <router-link to="/">return to homepage</router-link>
+        <div v-else style="text-align: center; margin-top: 3em">
+            <router-link to="/" class="text-uppercase"
+                >Return to homepage</router-link
+            >
         </div>
     </div>
 </template>
 
 <script>
-import {HTTP} from "@/router/http";
+import { HTTP } from "@/router/http";
 import ReviewNotificationCard from "@/components/widgets/curation/ReviewNotificationCard";
 import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
 import { checkInRole } from "@/directives/access";
@@ -66,16 +72,14 @@ import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 import OnRequestEntries from "@/components/widgets/curation/OnRequestEntries";
 
-import {
-    abbreviatedName
-} from "@/utils";
+import { abbreviatedName } from "@/utils";
 
 export default {
     name: "CurationDashboard",
     components: {
         OnRequestEntries,
         EvidenceCard,
-        ReviewNotificationCard
+        ReviewNotificationCard,
     },
     data() {
         return {
@@ -86,14 +90,14 @@ export default {
             on_request: {
                 loading: false,
                 fields: fields_on_request,
-                items: []
+                items: [],
             },
 
             // REVIEW FAKE DATA
             review: {
                 loading: false,
                 fields: fields_review,
-                items: []
+                items: [],
             },
 
             reviews: [],
@@ -112,35 +116,12 @@ export default {
         };
     },
     mounted() {
-        HTTP.get(`/reviews`).then((response) => {          
-            //this.reviews = response.data.results
-            const reviews = response.data.results
-            //this.reviews = response.data.results.map((x) => ({
-            //    gene_id: x.variant && x.variant.gene.id,
-            //    variant_id: x.variant && x.variant.id,
-            //    'gene_name': x.variant && x.variant.gene.symbol,
-            //    'variant': x.variant && x.variant.name,
-            //    'hgvs': x.variant && x.variant.hgvs_c,
-            //    'disease': x.disease_name,
-            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
-            //    'deadline': 'n/a',
-            //    'requester': x.submission.requestor,
-            //    'curator': []
-            //}));
-
-            //this.reviews = response.data.results.map((x) => ({
-            //    gene_id: x.variant && x.variant.gene.id,
-            //    variant_id: x.variant && x.variant.id,
-            //    'gene_name': x.variant && x.variant.gene.symbol,
-            //    'variant': x.variant && x.variant.name,
-            //    'hgvs': x.variant && x.variant.hgvs_c,
-            //    'disease': x.disease_name,
-            //    'status': x.all_curations_count > 0 ? 'Ongoing' : 'Not assigned',
-            //    'deadline': 'n/a',
-            //    'requester': x.submission.requestor,
-            //    'curator': []
-            //}));
-            
+        console.log("flag");
+        HTTP.get(`/dashboard_reviews`).then((response) => {
+            /// HERE!!!!!
+            console.log("REVIEWS :");
+            console.log(JSON.stringify(response.data.reviews));
+            this.reviews = response.data.reviews;
         });
     },
     methods: {
@@ -149,7 +130,7 @@ export default {
             this.on_request.items = items;
             this.on_request.loading = false;
         },
-    }
+    },
 };
 </script>
 

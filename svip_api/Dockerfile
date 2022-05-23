@@ -2,7 +2,7 @@ FROM python:3.7
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y postgresql-client
+RUN apt update && apt install -y postgresql-client
 
 # copy in base requirements since they're always used, allowing us to cache them
 COPY requirements.txt ./

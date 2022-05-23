@@ -35,18 +35,20 @@
                         <td class="text-right row-label">Entrez ID</td>
                         <td>
                             <a
-                                :href=" `https://www.ncbi.nlm.nih.gov/gene/?term=${ gene.entrez_id }%5Buid%5D`"
+                                :href="`https://www.ncbi.nlm.nih.gov/gene/?term=${gene.entrez_id}%5Buid%5D`"
                                 target="_blank"
-                            >{{ gene.entrez_id }}</a>
+                                >{{ gene.entrez_id }}</a
+                            >
                         </td>
                     </tr>
                     <tr>
                         <td class="text-right row-label">Ensembl Gene ID</td>
                         <td>
                             <a
-                                :href=" `http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${ gene.ensembl_gene_id }`"
+                                :href="`http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${gene.ensembl_gene_id}`"
                                 target="_blank"
-                            >{{ gene.ensembl_gene_id }}</a>
+                                >{{ gene.ensembl_gene_id }}</a
+                            >
                         </td>
                     </tr>
                     <tr>
@@ -54,10 +56,11 @@
                         <td>
                             <a
                                 v-if="gene.uniprot_ids"
-                                :href=" `https://www.uniprot.org/uniprot/${ gene.uniprot_ids[0] }`"
+                                :href="`https://www.uniprot.org/uniprot/${gene.uniprot_ids[0]}`"
                                 target="_blank"
                                 class="mr-3"
-                            >{{ gene.uniprot_ids[0] }}</a>
+                                >{{ gene.uniprot_ids[0] }}</a
+                            >
                         </td>
                     </tr>
                 </table>
@@ -70,9 +73,16 @@
             <div class="col">
                 <b-form-group label-cols="2" label="Filter">
                     <b-input-group>
-                        <b-form-input v-model="currentFilter.search" placeholder="Type to Search"/>
+                        <b-form-input
+                            v-model="currentFilter.search"
+                            placeholder="Type to Search"
+                        />
                         <b-input-group-append>
-                            <b-btn :disabled="!currentFilter.search" @click="currentFilter.search = ''">Clear</b-btn>
+                            <b-btn
+                                :disabled="!currentFilter.search"
+                                @click="currentFilter.search = ''"
+                                >Clear</b-btn
+                            >
                         </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
@@ -82,10 +92,8 @@
                 <b-checkbox v-model="showOnlySVIP">
                     <span id="show-svip-vars">show only SVIP variants</span>
                 </b-checkbox>
-                <b-tooltip
-                    target="show-svip-vars"
-                    placement="top"
-                >show only variants for which SVIP-specific data exists
+                <b-tooltip target="show-svip-vars" placement="top"
+                    >show only variants for which SVIP-specific data exists
                 </b-tooltip>
             </div>
         </div>
@@ -101,32 +109,47 @@
                 :per-page="perPage"
             >
                 <template v-slot:cell(in_svip)="data">
-                    <SourceIcon v-if="data.item.in_svip" name="svip" :size="22" :margin-right="0"/>
+                    <SourceIcon
+                        v-if="data.item.in_svip"
+                        name="svip"
+                        :size="22"
+                        :margin-right="0"
+                    />
                 </template>
 
                 <template v-slot:cell(hgvs_c)="data">
-                    <inline-coordinates :val="data.value"/>
+                    <inline-coordinates :val="data.value" />
                 </template>
 
                 <template v-slot:cell(hgvs_p)="data">
-                    <inline-coordinates :val="data.value"/>
+                    <inline-coordinates :val="data.value" />
                 </template>
 
                 <template v-slot:cell(hgvs_g)="data">
-                    <inline-coordinates :val="data.value"/>
+                    <inline-coordinates :val="data.value" />
                 </template>
 
                 <template v-slot:cell(sources)="data">
-                    <div style="white-space: nowrap;">
-                        <SourceIcon v-for="x in data.value" :key="x" :name="x"/>
+                    <div style="white-space: nowrap">
+                        <SourceIcon
+                            v-for="x in data.value"
+                            :key="x"
+                            :name="x"
+                        />
                     </div>
                 </template>
 
                 <template v-slot:cell(action)="data">
                     <b-button
                         size="sm"
-                        :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}"
-                    >Show Details
+                        :to="{
+                            name: 'variant',
+                            params: {
+                                gene_id: $route.params.gene_id,
+                                variant_id: data.item.id,
+                            },
+                        }"
+                        >Show Details
                     </b-button>
                 </template>
             </b-table>
@@ -148,22 +171,22 @@ import { makeVariantProvider } from "@/components/genes/variants/item_providers/
 import { change_from_hgvs } from "@/utils";
 import SourceIcon from "@/components/widgets/SourceIcon";
 import GeneSummary from "@/components/widgets/GeneSummary";
-import ulog from 'ulog';
+import ulog from "ulog";
 
-const log = ulog('ViewGene');
+const log = ulog("ViewGene");
 
 export default {
     components: {
         SourceIcon,
-        GeneSummary
+        GeneSummary,
     },
-    name: 'ViewGene',
+    name: "ViewGene",
     data() {
         return {
             currentFilter: {
                 search: "",
                 in_svip: store.state.genes.showOnlySVIP,
-                gene: this.$route.params.gene_id
+                gene: this.$route.params.gene_id,
             },
             currentPage: 1,
             perPage: 20,
@@ -174,24 +197,24 @@ export default {
                     key: "in_svip",
                     label: "",
                     sortable: false,
-                    thStyle: "width: 22px;"
+                    thStyle: "width: 22px;",
                 },
                 {
                     key: "name",
                     label: "Name",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "hgvs_c",
                     label: "HGVS coding",
-                    formatter: x => change_from_hgvs(x, true),
-                    sortable: true
+                    formatter: (x) => change_from_hgvs(x, true),
+                    sortable: true,
                 },
                 {
                     key: "hgvs_p",
                     label: "HGVS protein",
-                    formatter: x => change_from_hgvs(x, true),
-                    sortable: true
+                    formatter: (x) => change_from_hgvs(x, true),
+                    sortable: true,
                 },
                 /*
                 {
@@ -204,13 +227,13 @@ export default {
                 {
                     key: "hgvs_g",
                     label: "HGVS genomic",
-                    formatter: x => change_from_hgvs(x, true),
-                    sortable: true
+                    formatter: (x) => change_from_hgvs(x, true),
+                    sortable: true,
                 },
                 {
                     key: "sources",
                     label: "Sources",
-                    sortable: true
+                    sortable: true,
                 },
                 /*
                 {
@@ -223,17 +246,17 @@ export default {
                 {
                     key: "action",
                     label: "",
-                    sortable: false
-                }
+                    sortable: false,
+                },
             ],
-            sortBy: "hgvs_g"
+            sortBy: "hgvs_g",
         };
     },
     computed: {
         ...mapGetters({
             gene: "currentGene",
             variants: "variants",
-            geneVariants: "geneVariants"
+            geneVariants: "geneVariants",
         }),
         showOnlySVIP: {
             get() {
@@ -241,8 +264,8 @@ export default {
             },
             set(value) {
                 this.currentFilter.in_svip = value;
-                store.dispatch("toggleShowSVIP", {showOnlySVIP: value});
-            }
+                store.dispatch("toggleShowSVIP", { showOnlySVIP: value });
+            },
         },
         synonyms() {
             return this.gene.aliases ? this.gene.aliases.join(", ") : "";
@@ -252,30 +275,33 @@ export default {
         },
         variant_provider() {
             return makeVariantProvider(this.metaUpdated);
-        }
+        },
     },
     methods: {
-        metaUpdated({count}) {
+        metaUpdated({ count }) {
             this.totalRows = count;
         },
-        makeVariantProvider
+        makeVariantProvider,
     },
     beforeRouteEnter(to, from, next) {
         if (to.params.gene_id !== "new") {
             // ask the store to get 1) the gene data, and 2) all the variants for this gene (for now)
-            store.dispatch("getGene", {gene_id: to.params.gene_id}).then(() => {
-                // annotate the title w/the gene name
-                to.meta.title = `SVIP-O: ${store.state.genes.currentGene.symbol}`;
-                next();
-            }).catch((err) => {
-                log.warn(err);
-                next({ name: 'not-found', params: { '0': to.path } });
-            });
+            store
+                .dispatch("getGene", { gene_id: to.params.gene_id })
+                .then(() => {
+                    // annotate the title w/the gene name
+                    to.meta.title = `SVIP-O: ${store.state.genes.currentGene.symbol}`;
+                    next();
+                })
+                .catch((err) => {
+                    log.warn(err);
+                    next({ name: "not-found", params: { 0: to.path } });
+                });
         }
     },
     created() {
         this.currentFilter.gene = this.$route.params.gene_id;
-    }
+    },
 };
 </script>
 

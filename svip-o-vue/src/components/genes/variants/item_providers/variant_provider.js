@@ -17,19 +17,19 @@ export function makeVariantProvider(metaUpdate = null) {
         const params = {
             page_size: ctx.perPage,
             page: ctx.currentPage,
-            ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
-            ...(filter_params && filter_params)
+            ordering: (ctx.sortDesc ? "-" : "") + ctx.sortBy,
+            ...(filter_params && filter_params),
         };
 
-        return HTTP.get(ctx.apiUrl, {params}).then(res => {
+        return HTTP.get(ctx.apiUrl, { params }).then((res) => {
             // invoke the metadata updated callback, if available
             if (metaUpdate) {
                 metaUpdate({
-                    count: res.data.count
-                })
+                    count: res.data.count,
+                });
             }
 
             return res.data.results;
         });
-    }
+    };
 }

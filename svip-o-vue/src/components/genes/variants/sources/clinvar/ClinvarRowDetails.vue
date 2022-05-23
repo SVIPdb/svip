@@ -4,16 +4,25 @@
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
                     Diseases
-                    <i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the
-                        table</i>
-                    <span class="float-right badge badge-primary filter-phenotype__term"
-                        v-if="currentFilter.phenotype__term" style="font-size: 13px">
-						{{ titleCase(currentFilter.phenotype__term) }}
-						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
-                            @click="currentFilter.phenotype__term = ''">
-								<span aria-hidden="true">&times;</span>
-						</button>
-					</span>
+                    <i class="float-right" v-if="!currentFilter.phenotype__term"
+                        >click on a disease to filter the table</i
+                    >
+                    <span
+                        class="float-right badge badge-primary filter-phenotype__term"
+                        v-if="currentFilter.phenotype__term"
+                        style="font-size: 13px"
+                    >
+                        {{ titleCase(currentFilter.phenotype__term) }}
+                        <button
+                            type="button"
+                            class="close small ml-3"
+                            aria-label="Close"
+                            style="font-size: 14px"
+                            @click="currentFilter.phenotype__term = ''"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </span>
                 </h6>
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
@@ -23,9 +32,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="d in row.item.diseases" :key="d.disease"
+                        <tr
+                            v-for="d in row.item.diseases"
+                            :key="d.disease"
                             @click="currentFilter.phenotype__term = d.disease"
-                            :class="currentFilter.phenotype__term === d.disease ? 'pointer table-active' : 'pointer'">
+                            :class="
+                                currentFilter.phenotype__term === d.disease
+                                    ? 'pointer table-active'
+                                    : 'pointer'
+                            "
+                        >
                             <td>{{ titleCase(d.disease) }}</td>
                             <td>{{ d.count.toLocaleString() }}</td>
                         </tr>
@@ -38,32 +54,57 @@
 
         <div class="col-xl-9 col-8 col-sm-12">
             <b-card>
-                <RowDetailsHeader name="Diseases" :total-rows="totalRows" v-model="currentFilter"/>
+                <RowDetailsHeader
+                    name="Diseases"
+                    :total-rows="totalRows"
+                    v-model="currentFilter"
+                />
 
                 <b-table
-                    :fields="fields" class="table-sm filter-table" :api-url="row.item.associations_url"
+                    :fields="fields"
+                    class="table-sm filter-table"
+                    :api-url="row.item.associations_url"
                     :items="assocation_provider"
-                    :per-page="perPage" :current-page="currentPage" :filter="packedFilter"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    :filter="packedFilter"
                 >
                     <template v-slot:cell(disease)="c">
-                        <a v-if="c.item.evidence_url" :href="c.item.evidence_url" target="_blank">{{ c.value }}</a>
+                        <a
+                            v-if="c.item.evidence_url"
+                            :href="c.item.evidence_url"
+                            target="_blank"
+                            >{{ c.value }}</a
+                        >
                         <span v-else>{{ c.value }}</span>
                     </template>
-                    <template v-slot:cell(drug)="c">{{ normalizeItemList(c.value) }}</template>
+                    <template v-slot:cell(drug)="c">{{
+                        normalizeItemList(c.value)
+                    }}</template>
                     <template v-slot:cell(publications)="c">
                         <template v-for="(p, i) in c.value">
                             <VariomesLitPopover
-                                :pubmeta="p" :variant="variant.name" :gene="variant.gene.symbol"
+                                :pubmeta="p"
+                                :variant="variant.name"
+                                :gene="variant.gene.symbol"
                                 :disease="c.item.disease"
                                 :key="`${i}_link`"
                             />
-                            <span :key="`${i}_comma`" v-if=" i < c.item.publications .length - 1">, </span>
+                            <span
+                                :key="`${i}_comma`"
+                                v-if="i < c.item.publications.length - 1"
+                                >,
+                            </span>
                         </template>
                     </template>
                 </b-table>
 
-                <b-pagination v-if="totalRows > perPage" v-model="currentPage" :total-rows="totalRows"
-                    :per-page="perPage"/>
+                <b-pagination
+                    v-if="totalRows > perPage"
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                />
             </b-card>
         </div>
     </div>
@@ -71,22 +112,22 @@
 
 <script>
 import { normalizeItemList, titleCase } from "@/utils";
-import { makeAssociationProvider } from '@/components/genes/variants/item_providers/association_provider';
+import { makeAssociationProvider } from "@/components/genes/variants/item_providers/association_provider";
 import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
 import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
 
 export default {
     name: "ClinvarRowDetails",
-    components: {RowDetailsHeader, VariomesLitPopover},
+    components: { RowDetailsHeader, VariomesLitPopover },
     props: {
-        row: {type: Object, required: true},
-        variant: {type: Object, required: true}
+        row: { type: Object, required: true },
+        variant: { type: Object, required: true },
     },
     data() {
         return {
             currentFilter: {
-                phenotype__term: '',
-                search: ''
+                phenotype__term: "",
+                search: "",
             },
             currentPage: 1,
             perPage: 20,
@@ -95,7 +136,7 @@ export default {
                 {
                     key: "disease",
                     label: "Disease",
-                    sortable: true
+                    sortable: true,
                 },
                 // {
                 // 	key: "evidence_type",
@@ -105,25 +146,25 @@ export default {
                 {
                     key: "clinical_significance",
                     label: "Interpretation",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "evidence_level",
                     label: "Assertion Criteria",
-                    sortable: true
+                    sortable: true,
                 },
                 {
                     key: "extras.num_submissions",
                     label: "# of Submissions",
-                    sortable: true
+                    sortable: true,
                 },
                 // {
                 // 	key: "publications",
                 // 	label: "References",
                 // 	sortable: false
                 // },
-            ]
-        }
+            ],
+        };
     },
     computed: {
         packedFilter() {
@@ -131,23 +172,21 @@ export default {
         },
         assocation_provider() {
             return makeAssociationProvider(this.metaUpdated, {
-                'disease': 'phenotype__term',
-                'contexts': 'environmentalcontext__description',
-                'extras.num_submissions': 'extras__num_submissions'
+                disease: "phenotype__term",
+                contexts: "environmentalcontext__description",
+                "extras.num_submissions": "extras__num_submissions",
             });
-        }
+        },
     },
     methods: {
-        metaUpdated({count}) {
+        metaUpdated({ count }) {
             this.totalRows = count;
         },
         makeAssociationProvider,
         normalizeItemList,
-        titleCase
-    }
-}
+        titleCase,
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

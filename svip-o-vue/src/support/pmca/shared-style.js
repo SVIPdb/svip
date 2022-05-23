@@ -1,4 +1,4 @@
-const sharedStyle = document.createElement('dom-module');
+const sharedStyle = document.createElement("dom-module");
 sharedStyle.innerHTML = `<template>
     <style>
 
@@ -169,4 +169,4 @@ sharedStyle.innerHTML = `<template>
 
     </style>
   </template>`;
-sharedStyle.register('shared-style');
+sharedStyle.register("shared-style");
