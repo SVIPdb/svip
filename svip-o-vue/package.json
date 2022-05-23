@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "@polymer/polymer": "^3.4.1",
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "axios-auth-refresh": "^1.0.7",
         "bootstrap-vue": "^2.15.0",
         "broadcast-channel": "^2.3.4",
