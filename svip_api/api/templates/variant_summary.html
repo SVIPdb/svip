@@ -1,0 +1,358 @@
+
+<!doctype html>
+
+{% load static %}
+    <script src="{% static 'script.js' %}"></script>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Variant summary</title>
+
+    <style>
+        .variant-header {
+    margin-bottom: 0;
+        }
+        .variant-header td,
+        .variant-header th {
+    vertical-align: text-bottom;
+    padding: 1rem;
+}
+
+table {
+            display: block;
+            width: 70%;
+            margin: auto;
+        }
+        tr {
+            padding: 6px 6px;
+        }
+        th {
+            vertical-align: top;
+            color: darkcyan;
+            margin-right: 0;
+            width: 150px;
+            text-align: left;
+            padding: 4px;
+        }
+        td {
+            width: 500px;
+            padding: 4px;
+        }
+
+.header_title {
+    margin: 30px auto;
+    color:darkcyan;
+    text-align: center;
+}
+
+.title {
+    color: darkcyan;
+}
+
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: whitesmoke;
+  color: black;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 8px 0;
+}
+
+a {
+  color:darkcyan;
+}
+
+.center { text-align: center; }
+
+.container {
+  width: 95%;
+  max-width: 1220px;
+  margin: 0 auto;
+}
+
+.sec {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  position: relative;
+}
+
+.sec__number {
+color: darkcyan;
+  font-size: 2vw;
+  font-weight: 600;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  text-align: center;
+  height: calc(10vw + 20px);
+  transition: all 0.2s ease-in;
+}
+
+.sec__content {
+  border-top: 2px solid darkcyan;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-gap: 1px;
+  padding: 15px 0;
+}
+
+.sec__content .title {
+  font-weight: 600
+}
+
+.sec__content .sec_inner_content {
+  line-height: 26px;
+}
+
+@media (max-width: 600px) {
+  .sec__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .sec__content .sec_inner_content {
+    font-size: 15px;
+  }
+}
+
+.form-container {
+    display: flex;
+    width: 70%;
+    flex-direction: row;
+    margin:auto;
+
+}
+
+.button2 {
+    background-color: dimgrey;
+}
+
+
+
+button {
+    margin-right: 10px;
+    background-color: darkcyan;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 150px;
+}
+
+
+    </style>
+  </head>
+  <body>
+
+    <pdf:barcode value="{{ wellplate_code }}" checksum="0" type="code39" humanreadable="1" barwidth="0.75" />
+    <h1 class="header_title">Variant {{ variant.name }} Summary</h1>
+    <br/>
+    <table  class="table">
+        <tr>
+            <th>Gene name</th>
+            <td>{{ variant.gene }}</td>
+        </tr>
+        <tr>
+            <th>HGVS.c</th>
+            <td>{{ hgvs_c }}</td>
+        </tr>
+        <tr>
+            <th>HGVS.p</th>
+            <td>{{ hgvs_p }}</td>
+        </tr>
+        <tr>
+            <th>HGVS.g</th>
+            <td>{{ hgvs_g }}</td>
+        </tr>
+        <tr>
+            <th>dbSNP</th>
+                <td>
+                    {% for id in variant.dbsnp_ids %}
+                    <a href="https://www.ncbi.nlm.nih.gov/snp/{{id}}"  target="_blank">rs{{ id }}</a>
+                    <br/>
+                    {% endfor %}
+                </td>
+        </tr>
+        <tr>
+            <th>Position</th>
+            <td>{{ position }}</td>
+        </tr>
+        <tr>
+            <th>Allele Frequency</th>
+            <td>{{ allele_frequency }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{{ variant.public_stage }}</td>
+        </tr>
+        <tr>
+            <th>SVIP Confidence</th>
+            <td>     {% for score in scores %} 
+                {% if variant.confidence < score %}
+                &#9734;
+                {% else %}
+                &#9733;
+                {% endif %}
+                {% endfor %}
+        </td>
+        </tr>
+    </table>
+
+</div> 
+<br/>
+<br/>
+<br/>
+
+<div class="form-container">
+    <form method="get">
+        <button type="submit"
+          name="owner" 
+          value="own" 
+          role="button">
+          My entries
+        </button>
+        <button type="submit"
+        name="owner" 
+        value="all" 
+        role="button">
+        All entries
+      </button>
+        </form>
+        </div>
+
+        <div class="form-container">
+            <form method="get">
+                <button class='button2' type="submit"
+                  name="if_pdf" 
+                  value="pdf" 
+                  role="button">
+                  Download as PDF
+                </button>
+
+                </form>
+                </div>
+
+
+
+<div class="container">
+    <h1 class="center header_title">Curation entries for {{ variant.name }}</h1>
+    <br/>
+
+    {% for entry in curation_entries %}
+
+    <article class="sec">
+        <div class="sec__number">{{ entry.pk }}</div>
+        <div class="sec__content">
+          <div class="title">Disease</div>
+          <div class="sec_inner_content">
+            <p>{{entry.disease }}</p>
+            </div>
+
+            <div class="title">Summary</div>
+          <div class="sec_inner_content">
+            <p>{{entry.summary }}</p>
+            </div>
+            <div class="title">Reference</div>
+            <div class="sec_inner_content">
+              <p>{{entry.references}}</p>  
+          </div>
+          <div class="title">Type of evidence</div>
+          <div class="sec_inner_content">
+            <p>{{entry.type_of_evidence}}</p>  
+        </div>
+
+        <div class="title">Drugs</div>
+        <div class="sec_inner_content">
+            {% for drug in entry.drugs %}
+            <p>{{drug}}</p>  
+            {% endfor %}
+          
+      </div>
+
+      <div class="title">Effect</div>
+      <div class="sec_inner_content">
+        <p>{{entry.effect}}</p>  
+    </div>
+
+    <div class="title">Tier criteria</div>
+    <div class="sec_inner_content">
+      <p>{{entry.tier_level_criteria}}</p>  
+  </div>
+
+  <div class="title">Tier level</div>
+  <div class="sec_inner_content">
+    {% if entry.tier_level %}
+    <p>{{entry.tier_level}}</p>  
+    {% else %}
+    <p>Unavailable</p>  
+    {% endif %}
+</div>
+
+<div class="title">ESCAT score</div>
+<div class="sec_inner_content">
+{% if entry.escat_score %}
+<p>{{entry.escat_score}}</p>  
+{% else %}
+<p>Unavailable</p>  
+{% endif %}
+</div>
+
+<div class="title">Curator</div>
+<div class="sec_inner_content">
+  <p>{{entry.owner}}</p>  
+</div>
+
+<div class="title">Support</div>
+<div class="sec_inner_content">
+    <p>{{entry.support}}</p>  
+</div>
+
+<div class="title">Created on</div>
+<div class="sec_inner_content">
+    <p>{{entry.created_on}}</p>  
+</div>
+
+<div class="title">Last modified</div>
+<div class="sec_inner_content">
+    <p>{{entry.last_modified }}</p>  
+</div>
+
+<div class="title">Status</div>
+<div class="sec_inner_content">
+    <p>{{entry.status }}</p>  
+</div>
+
+{%  if user == entry.owner and entry.comment %} 
+
+<div class="title" style="color:brown">My comment</div>
+<div class="sec_inner_content">
+    <p>{{entry.comment }}</p>  
+</div>
+{% endif %}
+        </div>
+      </article>
+    {% endfor %}
+
+  </div>
+
+  <div id="editor"></div>
+</body>
+</html>
+

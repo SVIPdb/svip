@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <title>Variant summary</title>
+    <style>
+        body {
+            font-size: 2;
+        }
+        .header_title {
+            text-align: center;
+            margin: auto;
+            color: darkcyan
+        }
+
+        table {
+            display: block;
+            width: 70%;
+            margin: auto;
+        }
+        tr {
+            padding: 2px 2px;
+        }
+        th {
+            vertical-align: top;
+            color: darkcyan;
+            margin-right: 0;
+            width: 150px;
+            text-align: left;
+        }
+        td {
+            width: 500px;
+        }
+        @page {
+        margin: 2cm;
+        }
+    </style>
+  </head>
+  <body>
+    <h1 class="header_title">Variant {{ variant.name }} Summary</h1>
+    <br/>
+<table  class="table">
+    <tr>
+        <th>Gene name</th>
+        <td>{{ variant.gene }}</td>
+    </tr>
+    <tr>
+        <th>HGVS.c</th>
+        <td>{{ hgvs_c }}</td>
+    </tr>
+    <tr>
+        <th>HGVS.p</th>
+        <td>{{ hgvs_p }}</td>
+    </tr>
+    <tr>
+        <th>HGVS.g</th>
+        <td>{{ hgvs_g }}</td>
+    </tr>
+    <tr>
+        <th>dbSNP</th>
+            <td>
+                {% for id in variant.dbsnp_ids %}
+                <a href="https://www.ncbi.nlm.nih.gov/snp/{{id}}"  target="_blank">rs{{ id }}</a>
+                <br/>
+                {% endfor %}
+            </td>
+    </tr>
+    <tr>
+        <th>Position</th>
+        <td>{{ position }}</td>
+    </tr>
+    <tr>
+        <th>Allele Frequency</th>
+        <td>{{ allele_frequency }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ variant.public_stage }}</td>
+    </tr>
+    <tr>
+        <th>SVIP Confidence</th>
+        <td>      {% for score in scores %} 
+            {% if variant.confidence < score %}
+            &#9734;
+            {% else %}
+            &#9733;
+            {% endif %}
+            {% endfor %}
+    </td>
+    </tr>
+</table>
+</div> 
+<br/>
+<br/>
+<h1 class="center header_title">Curation entries for {{ variant.name }}</h1>
+{% for entry in curation_entries %}
+<hr/>
+<br>
+<table class="table2">
+    <tr>
+        <th>Curation ID</th>
+        <td>{{ entry.pk }}</td>
+    </tr>
+    <tr> <th>Disease</th>
+        <td>{{ entry.disease }}</td></tr>
+    <tr> <th>Summary</th>
+        <td>{{ entry.summary }}</td></tr>
+    <tr> <th>Reference</th>
+        <td>{{entry.references}} </td></tr>
+        <tr>
+            <th></th>
+            <td></td>
+        </tr>
+        <tr>
+            <th>Type of evidence</th>
+            <td>{{entry.type_of_evidence}}</td>
+        </tr>
+
+        <tr>
+            <th>Drugs</th>
+            <td>    {% for drug in entry.drugs %}
+                <p>{{drug}}</p>  
+                {% endfor %}</td>
+        </tr>
+
+        <tr>
+            <th>Effect</th>
+            <td>{{entry.effect}}</td>
+        </tr>
+
+        <tr>
+            <th>Tier criteria</th>
+            <td>{{entry.effect}}</td>
+        </tr>
+
+        <tr>
+            <th>Tier level</th>
+            <td>   
+                 {% if entry.tier_level %}
+                <p>{{entry.tier_level}}</p>  
+                {% else %}
+                <p>Unavailable</p>  
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+        <th>ESCAT score</th>
+        <td>   
+             {% if entry.escat_score %}
+            <p>{{entry.escat_score}}</p>  
+            {% else %}
+            <p>Unavailable</p>  
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Curator</th>
+        <td>   
+            {{entry.owner}}
+        </td>
+    </tr>
+    <tr>
+        <th>Support</th>
+        <td>   
+            {{entry.support}}
+        </td>
+    </tr>
+    <tr>
+        <th>Created on</th>
+        <td>   
+            {{entry.created_on}}
+        </td>
+    </tr>
+    <tr>
+        <th>Last modified</th>
+        <td>   
+            {{entry.last_modified }}
+        </td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>   
+            {{entry.status }}
+        </td>
+    </tr>
+    {%  if user == entry.owner and entry.comment %} 
+    <tr>
+        <th  style="color:brown" >My comment</th>
+        <td><p>{{entry.comment }}</p>  </td>
+    </tr>
+{% endif %}
+</table>
+{% endfor %}
+  </div>
+</body>
+</html>
+

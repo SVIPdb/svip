@@ -176,6 +176,14 @@
                 v-access="'curators'"
                 class="paginator-holster mini-inset-tray"
             >
+                <a
+                    target="_blank"
+                    class="mr-2"
+                    :href="`http://localhost:8085/api/v1/variant_summary/${variant.id}`"
+                >
+                    Show variant curations summary</a
+                >
+
                 <b-button
                     v-access="'curators'"
                     class="centered-icons"
@@ -254,11 +262,11 @@ export default {
             // FIXME: (which, incidentally, aren't even being displayed right now...maybe we just remove this?)
             svip_entry_tabs: this.variant.svip_data
                 ? this.variant.svip_data.diseases.reduce((acc, x) => {
-                      // map each entry in the SVIP table by ID to a selected tab for that entry (e.g., evidence or samples)
-                      // by default, it'll be the first tab (evidence)
-                      acc[x.name] = 0;
-                      return acc;
-                  }, {})
+                    // map each entry in the SVIP table by ID to a selected tab for that entry (e.g., evidence or samples)
+                    // by default, it'll be the first tab (evidence)
+                    acc[x.name] = 0;
+                    return acc;
+                }, {})
                 : {},
             sortBy: "name",
         };
@@ -359,6 +367,13 @@ export default {
                 ...x,
             }));
         },
+        hrefToSUmmary() {
+            return (
+                "http://localhost:8085/api/v1/variant_summary/?owner=all" +
+                this.variant.id
+            );
+        },
+
         totalPatients() {
             return this.variant.svip_data.diseases.reduce(
                 (acc, x) => acc + x.nb_patients,

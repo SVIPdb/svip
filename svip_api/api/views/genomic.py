@@ -1,6 +1,7 @@
+from django.shortcuts import render
 import django_filters
 from django.db.models import Prefetch, Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django_filters import rest_framework as df_filters
 from django_filters.filterset import FilterSet
 # Create your views here.
@@ -21,6 +22,57 @@ from api.serializers import (AssociationSerializer,
 # svip data endpoints
 from api.serializers.genomic_svip import OnlySVIPVariantSerializer
 from api.shared import clinical_significance, pathogenic
+import re
+from api.utils import render_to_pdf
+
+
+def change_from_hgvs(x):
+    if not x or not ":" in x:
+        return x
+    return x.split(":")[1]
+
+
+def var_to_position(variant):
+    r = r'.*:g\.([0-9]+)(.*)$'
+    if (not variant.hgvs_g or not variant.chromosome or not re.match(r, variant.hgvs_g)):
+        return None
+    return "chr" + variant.chromosome + ":" + re.sub(r'.*(:g\.)(?![0-9]+)?', '', variant.hgvs_g, 2)
+
+
+def VariantSummaryView(request, pk: int):
+    from api.models import CurationEntry
+    variant = Variant.objects.get(id=pk)
+    # authed_set = CurationEntry.objects.filter(owner=request.user)
+    authed_set = CurationEntry.objects.all()
+    if request.GET.get('owner') == 'own':
+        authed_set = CurationEntry.objects.filter(owner=request.user)
+    curation_entries = authed_set.filter(
+        Q(extra_variants=variant) | Q(variant=variant))
+    allele_frequency = 'unavailable'
+    if variant.mv_info:
+        if variant.mv_info['gnomad_genome']:
+            allele_frequency = "gnomAD: " + str(
+                round(variant.mv_info['gnomad_genome']['af']['af'] * 100.0, 4)) + '%'
+        elif variant.mv_info['exac']:
+            allele_frequency = "ExAC: " + str(
+                round(variant.mv_info['exac']['af'] * 100.0, 4))
+    context = {'pk': pk,
+               'variant': variant,
+               'curation_entries': curation_entries,
+               'allele_frequency': allele_frequency,
+               'hgvs_c': change_from_hgvs(variant.hgvs_c),
+               'hgvs_p': change_from_hgvs(variant.hgvs_p),
+               'hgvs_g': change_from_hgvs(variant.hgvs_g),
+               'position': var_to_position(variant),
+               'scores': [1, 2, 3],
+               "user": request.user}
+    html = render(request, 'variant_summary.html', context)
+    pdf = render_to_pdf('variant_summary_pdf.html', context)
+    # return render(request, 'variant_summary.html', context)
+    if request.GET.get('if_pdf'):
+        return pdf
+    else:
+        return html
 
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
