@@ -12,7 +12,7 @@
         .header_title {
             text-align: center;
             margin: auto;
-            color: darkcyan
+            color: rgb(45,62,79)
         }
 
         table {
@@ -25,7 +25,7 @@
         }
         th {
             vertical-align: top;
-            color: darkcyan;
+            color: rgb(45,62,79);
             margin-right: 0;
             width: 150px;
             text-align: left;
@@ -105,7 +105,7 @@
     </tr>
     <tr> <th>Disease</th>
         <td>{{ entry.disease }}</td></tr>
-    <tr> <th>Summary</th>
+    <tr> <th>Complementary information</th>
         <td>{{ entry.summary }}</td></tr>
     <tr> <th>Reference</th>
         <td>{{entry.references}} </td></tr>
@@ -185,12 +185,12 @@
             {{entry.status }}
         </td>
     </tr>
-    {%  if user == entry.owner and entry.comment %} 
+  
     <tr>
-        <th  style="color:brown" >My comment</th>
+        <th>Personal comment</th>
         <td><p>{{entry.comment }}</p>  </td>
     </tr>
-{% endif %}
+
 </table>
 {% endfor %}
   </div>

@@ -15,6 +15,7 @@ MIDDLEWARE += [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
+
 if USE_NPLUSONE:
     INSTALLED_APPS += ['nplusone.ext.django']
     MIDDLEWARE += ['nplusone.ext.django.NPlusOneMiddleware']

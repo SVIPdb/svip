@@ -176,13 +176,19 @@
                 v-access="'curators'"
                 class="paginator-holster mini-inset-tray"
             >
-                <a
-                    target="_blank"
-                    class="mr-2"
-                    :href="`http://localhost:8085/api/v1/variant_summary/${variant.id}`"
+                <b-button
+                    v-access="'curators'"
+                    class="centered-icons mr-2"
+                    size="sm"
+                    style="width: 200px"
+                    variant="info"
+                    :to="{
+                        name: 'svipinfo',
+                        params: { gene_id: gene.id, variant_id: variant.id },
+                    }"
                 >
-                    Show variant curations summary</a
-                >
+                    Svip Information Summary
+                </b-button>
 
                 <b-button
                     v-access="'curators'"

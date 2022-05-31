@@ -33,6 +33,8 @@ const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
 const SubmitCurations = () =>
     import("@/components/views/review/SubmitCurations");
+const SvipInfoSummary = () =>
+    import("@/components/views/SvipInfoSummary");    
 
 const log = ulog("Router:index");
 
@@ -59,6 +61,15 @@ function remapGeneSymbol(to, from, next) {
 const router = new Router({
     mode: "history",
     routes: [
+        {
+            path: "/svipinfo/:gene_id/:variant_id",
+            name: "svipinfo",
+            component: SvipInfoSummary,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: (to) => `SVIP-O: Svip Summary ${to.params.variant_id}`,
+            },
+        },
         {
             path: "/gene/:gene_id",
             name: "gene",

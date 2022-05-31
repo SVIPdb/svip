@@ -45,7 +45,8 @@ def VariantSummaryView(request, pk: int):
     # authed_set = CurationEntry.objects.filter(owner=request.user)
     authed_set = CurationEntry.objects.all()
     if request.GET.get('owner') == 'own':
-        authed_set = CurationEntry.objects.filter(owner=request.user)
+        authed_set = CurationEntry.objects.filter(
+            owner=request.GET.get('user'))
     curation_entries = authed_set.filter(
         Q(extra_variants=variant) | Q(variant=variant))
     allele_frequency = 'unavailable'
@@ -66,6 +67,7 @@ def VariantSummaryView(request, pk: int):
                'position': var_to_position(variant),
                'scores': [1, 2, 3],
                "user": request.user}
+
     html = render(request, 'variant_summary.html', context)
     pdf = render_to_pdf('variant_summary_pdf.html', context)
     # return render(request, 'variant_summary.html', context)

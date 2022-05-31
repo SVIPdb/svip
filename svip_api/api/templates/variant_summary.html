@@ -2,7 +2,7 @@
 <!doctype html>
 
 {% load static %}
-    <script src="{% static 'script.js' %}"></script>
+   
 
 <html lang="en">
   <head>
@@ -20,6 +20,8 @@
     padding: 1rem;
 }
 
+
+
 table {
             display: block;
             width: 70%;
@@ -30,7 +32,7 @@ table {
         }
         th {
             vertical-align: top;
-            color: darkcyan;
+            color: rgb(45,62,79);
             margin-right: 0;
             width: 150px;
             text-align: left;
@@ -43,12 +45,12 @@ table {
 
 .header_title {
     margin: 30px auto;
-    color:darkcyan;
+    color:rgb(45,62,79);
     text-align: center;
 }
 
 .title {
-    color: darkcyan;
+    color: rgb(45,62,79);
 }
 
 
@@ -88,7 +90,7 @@ a {
 }
 
 .sec__number {
-color: darkcyan;
+color: rgb(45,62,79);
   font-size: 2vw;
   font-weight: 600;
   padding: 0 20px;
@@ -100,7 +102,7 @@ color: darkcyan;
 }
 
 .sec__content {
-  border-top: 2px solid darkcyan;
+  border-top: 2px solid rgb(45,62,79);
   display: grid;
   grid-template-columns: 1fr 4fr;
   grid-gap: 1px;
@@ -139,11 +141,9 @@ color: darkcyan;
     background-color: dimgrey;
 }
 
-
-
 button {
     margin-right: 10px;
-    background-color: darkcyan;
+    background-color: rgb(45,62,79);
   border: none;
   color: white;
   padding: 10px;
@@ -161,7 +161,7 @@ button {
   </head>
   <body>
 
-    <pdf:barcode value="{{ wellplate_code }}" checksum="0" type="code39" humanreadable="1" barwidth="0.75" />
+    <div class="container">
     <h1 class="header_title">Variant {{ variant.name }} Summary</h1>
     <br/>
     <table  class="table">
@@ -215,39 +215,12 @@ button {
         </tr>
     </table>
 
-</div> 
+   
+</div>
 <br/>
 <br/>
 <br/>
 
-<div class="form-container">
-    <form method="get">
-        <button type="submit"
-          name="owner" 
-          value="own" 
-          role="button">
-          My entries
-        </button>
-        <button type="submit"
-        name="owner" 
-        value="all" 
-        role="button">
-        All entries
-      </button>
-        </form>
-        </div>
-
-        <div class="form-container">
-            <form method="get">
-                <button class='button2' type="submit"
-                  name="if_pdf" 
-                  value="pdf" 
-                  role="button">
-                  Download as PDF
-                </button>
-
-                </form>
-                </div>
 
 
 
@@ -265,7 +238,7 @@ button {
             <p>{{entry.disease }}</p>
             </div>
 
-            <div class="title">Summary</div>
+            <div class="title">Complementary information</div>
           <div class="sec_inner_content">
             <p>{{entry.summary }}</p>
             </div>
@@ -339,20 +312,21 @@ button {
     <p>{{entry.status }}</p>  
 </div>
 
-{%  if user == entry.owner and entry.comment %} 
 
-<div class="title" style="color:brown">My comment</div>
+<div class="title">Personal comment</div>
 <div class="sec_inner_content">
     <p>{{entry.comment }}</p>  
 </div>
-{% endif %}
+
         </div>
       </article>
     {% endfor %}
 
   </div>
+</div>
 
   <div id="editor"></div>
+  <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
 
