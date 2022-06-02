@@ -24,6 +24,7 @@ from api.serializers.genomic_svip import OnlySVIPVariantSerializer
 from api.shared import clinical_significance, pathogenic
 import re
 from api.utils import render_to_pdf
+import datetime
 
 
 def change_from_hgvs(x):
@@ -40,15 +41,19 @@ def var_to_position(variant):
 
 
 def VariantSummaryView(request, pk: int):
+    date = datetime.datetime.now()
     from api.models import CurationEntry
+    from api.models.genomic import Gene
     variant = Variant.objects.get(id=pk)
-    # authed_set = CurationEntry.objects.filter(owner=request.user)
+    gene = Gene.objects.filter(symbol=variant.gene.symbol)
+    gene_summary = gene[0].summary if gene[0].summary else 'unavailable'
     authed_set = CurationEntry.objects.all()
     if request.GET.get('owner') == 'own':
         authed_set = CurationEntry.objects.filter(
             owner=request.GET.get('user'))
     curation_entries = authed_set.filter(
         Q(extra_variants=variant) | Q(variant=variant))
+
     allele_frequency = 'unavailable'
     if variant.mv_info:
         if variant.mv_info['gnomad_genome']:
@@ -59,6 +64,7 @@ def VariantSummaryView(request, pk: int):
                 round(variant.mv_info['exac']['af'] * 100.0, 4))
     context = {'pk': pk,
                'variant': variant,
+               "gene_summary": gene_summary,
                'curation_entries': curation_entries,
                'allele_frequency': allele_frequency,
                'hgvs_c': change_from_hgvs(variant.hgvs_c),
@@ -66,12 +72,14 @@ def VariantSummaryView(request, pk: int):
                'hgvs_g': change_from_hgvs(variant.hgvs_g),
                'position': var_to_position(variant),
                'scores': [1, 2, 3],
-               "user": request.user}
+               "user": request.user,
+               "date": date,
+               "if_pdf": "html"}
 
     html = render(request, 'variant_summary.html', context)
-    pdf = render_to_pdf('variant_summary_pdf.html', context)
-    # return render(request, 'variant_summary.html', context)
     if request.GET.get('if_pdf'):
+        context["if_pdf"] = 'pdf'
+        pdf = render_to_pdf('variant_summary_pdf.html', context)
         return pdf
     else:
         return html

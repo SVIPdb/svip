@@ -113,4 +113,8 @@ button {
     margin: auto;
     align-items: center;
 }
+
+.bg-primary {
+    background-color: rgb(45, 62, 79);
+}
 </style>

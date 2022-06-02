@@ -1,9 +1,6 @@
 
 <!doctype html>
 
-{% load static %}
-   
-
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -83,86 +80,11 @@ a {
   margin: 0 auto;
 }
 
-.sec {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  position: relative;
-}
-
-.sec__number {
-color: rgb(45,62,79);
-  font-size: 2vw;
-  font-weight: 600;
-  padding: 0 20px;
-  position: sticky;
-  top: 0;
-  text-align: center;
-  height: calc(10vw + 20px);
-  transition: all 0.2s ease-in;
-}
-
-.sec__content {
-  border-top: 2px solid rgb(45,62,79);
-  display: grid;
-  grid-template-columns: 1fr 4fr;
-  grid-gap: 1px;
-  padding: 15px 0;
-}
-
-.sec__content .title {
-  font-weight: 600
-}
-
-.sec__content .sec_inner_content {
-  line-height: 26px;
-}
-
-@media (max-width: 600px) {
-  .sec__content {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 576px) {
-  .sec__content .sec_inner_content {
-    font-size: 15px;
-  }
-}
-
-.form-container {
-    display: flex;
-    width: 70%;
-    flex-direction: row;
-    margin:auto;
-
-}
-
-.button2 {
-    background-color: dimgrey;
-}
-
-button {
-    margin-right: 10px;
-    background-color: rgb(45,62,79);
-  border: none;
-  color: white;
-  padding: 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 150px;
-}
-
-
     </style>
   </head>
   <body>
-
     <div class="container">
-    <h1 class="header_title">Variant {{ variant.name }} Summary</h1>
+    <h2 class="header_title">Variant {{ variant.name }} Summary</h2>
     <br/>
     <table  class="table">
         <tr>
@@ -203,6 +125,10 @@ button {
             <td>{{ variant.public_stage }}</td>
         </tr>
         <tr>
+            <th>Gene Summary</th>
+            <td>{{ gene_summary }}</td>
+        </tr>
+        <tr>
             <th>SVIP Confidence</th>
             <td>     {% for score in scores %} 
                 {% if variant.confidence < score %}
@@ -214,119 +140,126 @@ button {
         </td>
         </tr>
     </table>
-
-   
 </div>
 <br/>
 <br/>
 <br/>
-
-
-
-
 <div class="container">
-    <h1 class="center header_title">Curation entries for {{ variant.name }}</h1>
+    <h2 class="center header_title">Curation entries for {{ variant.name }}</h2>
     <br/>
 
     {% for entry in curation_entries %}
+    <hr/>
+    <br>
+    <table class="table2">
+        <tr>
+            <th>Curation ID</th>
+            <td>{{ entry.pk }}</td>
+        </tr>
+        <tr> <th>Disease</th>
+            <td>{{ entry.disease }}</td></tr>
+        <tr> <th>Complementary information</th>
+            <td>{{ entry.summary }}</td></tr>
+        <tr> <th>Reference</th>
+            <td>{{entry.references}} </td></tr>
+            <tr>
+                <th></th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Type of evidence</th>
+                <td>{{entry.type_of_evidence}}</td>
+            </tr>
+    
+            <tr>
+                <th>Drugs</th>
+                <td>    {% for drug in entry.drugs %}
+                    <p>{{drug}}</p>  
+                    {% endfor %}</td>
+            </tr>
+    
+            <tr>
+                <th>Effect</th>
+                <td>{{entry.effect}}</td>
+            </tr>
+    
+            <tr>
+                <th>Tier criteria</th>
+                <td>{{entry.effect}}</td>
+            </tr>
+    
+            <tr>
+                <th>Tier level</th>
+                <td>   
+                     {% if entry.tier_level %}
+                    <p>{{entry.tier_level}}</p>  
+                    {% else %}
+                    <p>Unavailable</p>  
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+            <th>ESCAT score</th>
+            <td>   
+                 {% if entry.escat_score %}
+                <p>{{entry.escat_score}}</p>  
+                {% else %}
+                <p>Unavailable</p>  
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Curator</th>
+            <td>   
+                {{entry.owner}}
+            </td>
+        </tr>
+        <tr>
+            <th>Support</th>
+            <td>   
+                {{entry.support}}
+            </td>
+        </tr>
+        <tr>
+            <th>Created on</th>
+            <td>   
+                {{entry.created_on}}
+            </td>
+        </tr>
+        <tr>
+            <th>Last modified</th>
+            <td>   
+                {{entry.last_modified }}
+            </td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>   
+                {{entry.status }}
+            </td>
+        </tr>
+        <tr>
+            <th>Textual evidences</th>
+            <td> {% for i in entry.annotations %}
+                
+                <p>{{ i }}</p> 
 
-    <article class="sec">
-        <div class="sec__number">{{ entry.pk }}</div>
-        <div class="sec__content">
-          <div class="title">Disease</div>
-          <div class="sec_inner_content">
-            <p>{{entry.disease }}</p>
-            </div>
-
-            <div class="title">Complementary information</div>
-          <div class="sec_inner_content">
-            <p>{{entry.summary }}</p>
-            </div>
-            <div class="title">Reference</div>
-            <div class="sec_inner_content">
-              <p>{{entry.references}}</p>  
-          </div>
-          <div class="title">Type of evidence</div>
-          <div class="sec_inner_content">
-            <p>{{entry.type_of_evidence}}</p>  
-        </div>
-
-        <div class="title">Drugs</div>
-        <div class="sec_inner_content">
-            {% for drug in entry.drugs %}
-            <p>{{drug}}</p>  
-            {% endfor %}
-          
-      </div>
-
-      <div class="title">Effect</div>
-      <div class="sec_inner_content">
-        <p>{{entry.effect}}</p>  
-    </div>
-
-    <div class="title">Tier criteria</div>
-    <div class="sec_inner_content">
-      <p>{{entry.tier_level_criteria}}</p>  
-  </div>
-
-  <div class="title">Tier level</div>
-  <div class="sec_inner_content">
-    {% if entry.tier_level %}
-    <p>{{entry.tier_level}}</p>  
-    {% else %}
-    <p>Unavailable</p>  
-    {% endif %}
-</div>
-
-<div class="title">ESCAT score</div>
-<div class="sec_inner_content">
-{% if entry.escat_score %}
-<p>{{entry.escat_score}}</p>  
-{% else %}
-<p>Unavailable</p>  
-{% endif %}
-</div>
-
-<div class="title">Curator</div>
-<div class="sec_inner_content">
-  <p>{{entry.owner}}</p>  
-</div>
-
-<div class="title">Support</div>
-<div class="sec_inner_content">
-    <p>{{entry.support}}</p>  
-</div>
-
-<div class="title">Created on</div>
-<div class="sec_inner_content">
-    <p>{{entry.created_on}}</p>  
-</div>
-
-<div class="title">Last modified</div>
-<div class="sec_inner_content">
-    <p>{{entry.last_modified }}</p>  
-</div>
-
-<div class="title">Status</div>
-<div class="sec_inner_content">
-    <p>{{entry.status }}</p>  
-</div>
-
-
-<div class="title">Personal comment</div>
-<div class="sec_inner_content">
-    <p>{{entry.comment }}</p>  
-</div>
-
-        </div>
-      </article>
+                {% endfor %}
+             </td>
+            </tr>
+        <tr>
+            <th>Personal comment</th>
+            <td><p>{{entry.comment }}</p>  </td>
+        </tr>
+    
+    </table>
     {% endfor %}
 
   </div>
 </div>
 
   <div id="editor"></div>
-  <script src="{% static 'script.js' %}"></script>
+
 </body>
 </html>
 
