@@ -34,6 +34,10 @@ body {
             width: 500px;
         }
 
+        .subsection_header {
+            color: rgb(45,62,79)
+        }
+
         @page {
     margin: 2cm;
     margin-top: 2.5cm;
@@ -49,12 +53,14 @@ body {
     </style>
   </head>
   <body>
-  <div id="header_content">
+  <div id="header_content" class="center">
     <img  height="40"  src="data:image/png;base64,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" alt="Svip logo">
-    <h4 class="header_title">Variant {{ variant.name }} Summary</h4>
+    
   </div>
     <br/>
     <div class="container" >
+        <br/>
+        <h1 class="center header_title" >SVIP Information Summary</h1>
         <br/>
 <table  class="table">
     <tr>
@@ -95,10 +101,6 @@ body {
         <td>{{ variant.public_stage }}</td>
     </tr>
     <tr>
-        <th>Gene Summary</th>
-        <td>{{ gene_summary }}</td>
-    </tr>
-    <tr>
         <th>SVIP Confidence</th>
         <td>      {% for score in scores %} 
             {% if variant.confidence < score %}
@@ -113,7 +115,6 @@ body {
 </div>
 </div> 
 <br/>
-<br/>
 <h1 class="center header_title">Curation entries for {{ variant.name }}</h1>
 {% for entry in curation_entries %}
 <hr/>
@@ -125,8 +126,7 @@ body {
     </tr>
     <tr> <th>Disease</th>
         <td>{{ entry.disease }}</td></tr>
-    <tr> <th>Complementary information</th>
-        <td>{{ entry.summary }}</td></tr>
+
     <tr> <th>Reference</th>
         <td>{{entry.references}} </td></tr>
         <tr>
@@ -205,20 +205,25 @@ body {
             {{entry.status }}
         </td>
     </tr>
-    <tr>
-            <th>Textual evidences</th>
-            <td> {% for i in entry.annotations %}
-                
-                <p>{{ i }}</p> 
-
-                {% endfor %}
-             </td>
-        </tr>
-    <tr>
-        <th>Personal comment</th>
-        <td><p>{{entry.comment }}</p>  </td>
-    </tr>
+    
 </table>
+
+ <h4 class="subsection_header" >Gene Summary</h4>
+<p>{{gene_summary }}</p> 
+
+<h4 class="subsection_header" >Complementary information</h4>
+<p>{{ entry.summary }} </p> 
+
+<h4 class="subsection_header" >Personal comment</h4>
+<p>{{entry.comment }}</p>
+
+<h4>Textual evidences</h4>
+<ul>
+    {% for i in entry.annotations %}  
+                <li>{{ i }}</li> 
+                {% endfor %}
+</ul>
+
 {% endfor %}
   </div>
   <div id="footer_content">

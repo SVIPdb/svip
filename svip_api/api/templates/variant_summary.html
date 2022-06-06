@@ -84,9 +84,9 @@ a {
   </head>
   <body>
     <div class="container">
-    <h2 class="header_title">Variant {{ variant.name }} Summary</h2>
+    <h3 class="header_title">Variant {{ variant.name }} Summary</h3>
     <br/>
-    <table  class="table">
+    <table  class="table2">
         <tr>
             <th>Gene name</th>
             <td>{{ variant.gene }}</td>
@@ -142,118 +142,121 @@ a {
     </table>
 </div>
 <br/>
-<br/>
+
 <br/>
 <div class="container">
-    <h2 class="center header_title">Curation entries for {{ variant.name }}</h2>
+    <h3 class="center header_title">Curation entries for {{ variant.name }}</h3>
     <br/>
 
     {% for entry in curation_entries %}
-    <hr/>
-    <br>
-    <table class="table2">
+<hr/>
+<br>
+<table class="table2">
+    <tr>
+        <th>Curation ID</th>
+        <td>{{ entry.pk }}</td>
+    </tr>
+    <tr> <th>Disease</th>
+        <td>{{ entry.disease }}</td></tr>
+
+    <tr> <th>Reference</th>
+        <td>{{entry.references}} </td></tr>
         <tr>
-            <th>Curation ID</th>
-            <td>{{ entry.pk }}</td>
+            <th></th>
+            <td></td>
         </tr>
-        <tr> <th>Disease</th>
-            <td>{{ entry.disease }}</td></tr>
-        <tr> <th>Complementary information</th>
-            <td>{{ entry.summary }}</td></tr>
-        <tr> <th>Reference</th>
-            <td>{{entry.references}} </td></tr>
-            <tr>
-                <th></th>
-                <td></td>
-            </tr>
-            <tr>
-                <th>Type of evidence</th>
-                <td>{{entry.type_of_evidence}}</td>
-            </tr>
-    
-            <tr>
-                <th>Drugs</th>
-                <td>    {% for drug in entry.drugs %}
-                    <p>{{drug}}</p>  
-                    {% endfor %}</td>
-            </tr>
-    
-            <tr>
-                <th>Effect</th>
-                <td>{{entry.effect}}</td>
-            </tr>
-    
-            <tr>
-                <th>Tier criteria</th>
-                <td>{{entry.effect}}</td>
-            </tr>
-    
-            <tr>
-                <th>Tier level</th>
-                <td>   
-                     {% if entry.tier_level %}
-                    <p>{{entry.tier_level}}</p>  
-                    {% else %}
-                    <p>Unavailable</p>  
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-            <th>ESCAT score</th>
+        <tr>
+            <th>Type of evidence</th>
+            <td>{{entry.type_of_evidence}}</td>
+        </tr>
+
+        <tr>
+            <th>Drugs</th>
+            <td>    {% for drug in entry.drugs %}
+                <p>{{drug}}</p>  
+                {% endfor %}</td>
+        </tr>
+
+        <tr>
+            <th>Effect</th>
+            <td>{{entry.effect}}</td>
+        </tr>
+
+        <tr>
+            <th>Tier criteria</th>
+            <td>{{entry.effect}}</td>
+        </tr>
+
+        <tr>
+            <th>Tier level</th>
             <td>   
-                 {% if entry.escat_score %}
-                <p>{{entry.escat_score}}</p>  
+                 {% if entry.tier_level %}
+                <p>{{entry.tier_level}}</p>  
                 {% else %}
                 <p>Unavailable</p>  
                 {% endif %}
             </td>
         </tr>
         <tr>
-            <th>Curator</th>
-            <td>   
-                {{entry.owner}}
-            </td>
-        </tr>
-        <tr>
-            <th>Support</th>
-            <td>   
-                {{entry.support}}
-            </td>
-        </tr>
-        <tr>
-            <th>Created on</th>
-            <td>   
-                {{entry.created_on}}
-            </td>
-        </tr>
-        <tr>
-            <th>Last modified</th>
-            <td>   
-                {{entry.last_modified }}
-            </td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>   
-                {{entry.status }}
-            </td>
-        </tr>
-        <tr>
-            <th>Textual evidences</th>
-            <td> {% for i in entry.annotations %}
-                
-                <p>{{ i }}</p> 
-
-                {% endfor %}
-             </td>
-            </tr>
-        <tr>
-            <th>Personal comment</th>
-            <td><p>{{entry.comment }}</p>  </td>
-        </tr>
+        <th>ESCAT score</th>
+        <td>   
+             {% if entry.escat_score %}
+            <p>{{entry.escat_score}}</p>  
+            {% else %}
+            <p>Unavailable</p>  
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Curator</th>
+        <td>   
+            {{entry.owner}}
+        </td>
+    </tr>
+    <tr>
+        <th>Support</th>
+        <td>   
+            {{entry.support}}
+        </td>
+    </tr>
+    <tr>
+        <th>Created on</th>
+        <td>   
+            {{entry.created_on}}
+        </td>
+    </tr>
+    <tr>
+        <th>Last modified</th>
+        <td>   
+            {{entry.last_modified }}
+        </td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>   
+            {{entry.status }}
+        </td>
+    </tr>
     
-    </table>
-    {% endfor %}
+</table>
+
+ <h4 class="subsection_header" >Gene Summary</h4>
+<p>{{gene_summary }}</p> 
+
+<h4 class="subsection_header" >Complementary information</h4>
+<p>{{ entry.summary }} </p> 
+
+<h4 class="subsection_header" >Personal comment</h4>
+<p>{{entry.comment }}</p>
+
+<h4>Textual evidences</h4>
+<ul>
+    {% for i in entry.annotations %}  
+                <li>{{ i }}</li> 
+                {% endfor %}
+</ul>
+
+{% endfor %}
 
   </div>
 </div>
