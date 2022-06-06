@@ -5,7 +5,7 @@
             <div class="row" style="width: 100%;">
                 <div class="col-lg-3 col-sm-12 text-center version-info">
                     <div class="align-bottom">
-                        <a :href="serverURL" target="_blank">SVIPdb</a> {{appVersion}} ({{releaseName}})
+                        <a :href="serverURL" target="_blank">{{ $t("SVIPdb")}}</a> {{appVersion}} ({{releaseName}})
                         <div class="feedback">
                             <anchor-router-link
                                 :to="{name: 'about', hash: '#disclaimer'}"
@@ -13,12 +13,12 @@
                                     container: 'body',
                                     duration: 700,
                                     easing: 'ease'}">
-                                Disclaimer &amp; License
+                                {{ $t("Disclaimer &amp; License")}}
                             </anchor-router-link>
                         </div>
                         <div class="feedback">
-                            Questions or Comments:<br/>
-                            <a href="mailto:feedback@svip.ch">feedback@svip.ch</a>
+                            {{ $t("Questions or Comments:")}}<br/>
+                            <a href="mailto:feedback@svip.ch">{{ $t("feedback@svip.ch")}}</a>
                         </div>
                     </div>
                 </div>

@@ -10,8 +10,8 @@
                 <div class="p-2 font-weight-bold">
                     {{headerTitle}}
                     <b-button-group class="ml-3">
-                        <b-button size="sm" :variant="filterCurator ? 'primary' : 'light'" @click="filterCurator = true">My Curations</b-button>
-                        <b-button size="sm" :variant="!filterCurator ? 'primary' : 'light'" @click="filterCurator = false">All Curations</b-button>
+                        <b-button size="sm" :variant="filterCurator ? 'primary' : 'light'" @click="filterCurator = true">{{ $t("My Curations")}}</b-button>
+                        <b-button size="sm" :variant="!filterCurator ? 'primary' : 'light'" @click="filterCurator = false">{{ $t("All Curations")}}</b-button>
                     </b-button-group>
 
                     <FilterButtons v-if="cardFilterOption" class="ml-3" v-model="statusFilter" default-variant="light"
@@ -30,7 +30,7 @@
                     <b-input-group size="sm" class="p-1">
                         <b-form-input v-model="filter" debounce="300" placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
-                            <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
+                            <b-button variant="primary" size="sm" @click="filter = ''">{{ $t("Clear")}}</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -112,7 +112,7 @@
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px;"
                         >
-                            <icon name="pen-alt" />Edit
+                            <icon name="pen-alt" />{{ $t("Edit")}}
                         </b-button>
                         <b-button v-else
                             target="_blank"
@@ -121,7 +121,7 @@
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px;"
                         >
-                            <icon name="eye" />View
+                            <icon name="eye" />{{ $t("View")}}
                         </b-button>
 
                         <b-button
@@ -143,14 +143,14 @@
                         </b-button>
                     </span>
                     <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="already_submitted">
-                    THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.
+                    {{ $t("THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.")}}
                 </b-navbar-text>
                 </template>
 
                 <template v-slot:extra_commands>
                     <div style="margin-bottom: 10px; margin-right: 10px;">
                         <b-button variant="info" @click="submitAll" style="height: 34px;" :disabled="already_submitted">
-                            Submit to review
+                            {{ $t("Submit to review")}}
                         </b-button>
                     </div>
                 </template>
@@ -167,7 +167,7 @@
             >
                 <div>
                     <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
-                    <div v-else>Error: no curation entry selected</div>
+                    <div v-else>{{ $t("Error: no curation entry selected")}}</div>
                 </div>
             </b-modal>
         </b-card-body>

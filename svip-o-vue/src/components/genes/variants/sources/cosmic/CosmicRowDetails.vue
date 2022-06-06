@@ -8,9 +8,9 @@
             -->
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Diseases
-                    <i class="float-right" v-if="!currentFilter.phenotype__term">click on a disease to filter the
-                        table</i>
+                    {{ $t("Diseases")}}
+                    <i class="float-right" v-if="!currentFilter.phenotype__term">{{ $t("click on a disease to filter the")}}
+                        {{ $t("table")}}</i>
                     <span class="float-right badge badge-primary filter-phenotype__term" v-else>
 						{{ desnakify(currentFilter.phenotype__term) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
@@ -23,8 +23,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Disease</th>
-                            <th># of Samples</th>
+                            <th>{{ $t("Disease")}}</th>
+                            <th>{{ $t("# of Samples")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,9 +45,9 @@
             -->
             <b-card style="margin-top: 1em;">
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Tissue Types
-                    <i class="float-right" v-if="!currentFilter.environmentalcontext__description">click on a tissue
-                        type to filter the table</i>
+                    {{ $t("Tissue Types")}}
+                    <i class="float-right" v-if="!currentFilter.environmentalcontext__description">{{ $t("click on a tissue")}}
+                        {{ $t("type to filter the table")}}</i>
                     <span class="float-right badge badge-primary filter-environmentalcontext__description" v-else>
 						{{ desnakify(currentFilter.environmentalcontext__description) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
@@ -59,8 +59,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Tissue Type</th>
-                            <th># of Samples</th>
+                            <th>{{ $t("Tissue Type")}}</th>
+                            <th>{{ $t("# of Samples")}}</th>
                         </tr>
                     </thead>
                     <tbody>

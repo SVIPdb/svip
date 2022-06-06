@@ -18,7 +18,7 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <p class="mb-2" v-for="(effect, effect_idx) in evidence.effectOfVariant" :key="'effect' + effect_idx">
-                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} {{ $t("evidence(s)")}}
                                             </p>
                                         </b-col>
                                         <b-col cols="2">
@@ -40,7 +40,7 @@
                                     <div v-if="expander_array[idx].evidences[index]">
                                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <b-row align-v="center" v-for="(curation,i) in evidence.curations" :key="i">
-                                                <b-col class="border p-2">PMID:
+                                                <b-col class="border p-2">{{ $t("PMID:")}}
                                                     <b-link target="_blank" active
                                                             :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                         {{ curation.pmid }}
@@ -49,12 +49,12 @@
                                                 <b-col class="border p-2">{{ curation.effect }}</b-col>
                                                 <b-col class="border p-2">{{ curation.tier }}</b-col>
                                                 <b-col class="border p-2">
-                                                    Support: {{ curation.support }}
+                                                    {{ $t("Support:")}} {{ curation.support }}
                                                 </b-col>
                                                 <b-col class="border p-2">
                                                     <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
                                                             target="_blank"
-                                                            alt="Link to evidence">Curation entry #{{ curation.id }}
+                                                            alt="Link to evidence">{{ $t("Curation entry #")}}{{ curation.id }}
                                                     </b-link>
                                                 </b-col>
 
@@ -71,7 +71,7 @@
             </b-card>
         </div>
         <b-button class="float-right" @click="submitReviews()">
-            Submit review
+            {{ $t("Submit review")}}
         </b-button>
     </div>
 </template>

@@ -1,23 +1,23 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
 
-        <option>Tier IA: Included in Professional Guidelines</option>
+        <option>{{ $t("Tier IA: Included in Professional Guidelines")}}</option>
         <option>
-            Tier IB: Well-powered studies with consensus from experts in the field
+            {{ $t("Tier IB: Well-powered studies with consensus from experts in the field")}}
         </option>
-        <option>Tier IIC: Multiples small published studies with some consensus
+        <option>{{ $t("Tier IIC: Multiples small published studies with some consensus")}}
         </option>
-        <option>Tier IID: Clinical trial</option>
-        <option>Tier IID: Pre-clinical trial</option>
-        <option>Tier IID: Population study</option>
-        <option>Tier IID: Small published study</option>
-        <option>Tier IID: Case reports</option>
-        <option>Tier III: No convincing published evidence of drugs effect</option>
-        <option>Tier III: Author statement</option>
+        <option>{{ $t("Tier IID: Clinical trial")}}</option>
+        <option>{{ $t("Tier IID: Pre-clinical trial")}}</option>
+        <option>{{ $t("Tier IID: Population study")}}</option>
+        <option>{{ $t("Tier IID: Small published study")}}</option>
+        <option>{{ $t("Tier IID: Case reports")}}</option>
+        <option>{{ $t("Tier III: No convincing published evidence of drugs effect")}}</option>
+        <option>{{ $t("Tier III: Author statement")}}</option>
         <option>
-            Tier IV: Reported evidence supportive of benign/likely benign effect
+            {{ $t("Tier IV: Reported evidence supportive of benign/likely benign effect")}}
         </option>
-        <option>Other criteria</option>
+        <option>{{ $t("Other criteria")}}</option>
 
     </b-form-select>
 </template>

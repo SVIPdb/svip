@@ -39,9 +39,9 @@
         </div>
 
         <div v-else style="text-align: center; margin-top: 3em;">
-            <h1>Not Authorized</h1>
-            <p>You may only access this page if you're a curator or reviewer.</p>
-            <router-link to="/">return to homepage</router-link>
+            <h1>{{ $t("Not Authorized")}}</h1>
+            <p>{{ $t("You may only access this page if you're a curator or reviewer.")}}</p>
+            <router-link to="/">{{ $t("return to homepage")}}</router-link>
         </div>
     </div>
 </template>

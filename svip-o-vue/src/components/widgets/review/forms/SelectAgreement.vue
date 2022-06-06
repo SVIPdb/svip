@@ -1,7 +1,7 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <option>I agree.</option>
-        <option>I don't agree.</option>
+        <option>{{ $t("I agree.")}}</option>
+        <option>{{ $t("I don't agree.")}}</option>
     </b-form-select>
 </template>
 

@@ -1,9 +1,9 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <option>Good outcome</option>
-        <option>Poor outcome</option>
-        <option>Intermediate</option>
-        <option>Not associated with prognosis</option>
+        <option>{{ $t("Good outcome")}}</option>
+        <option>{{ $t("Poor outcome")}}</option>
+        <option>{{ $t("Intermediate")}}</option>
+        <option>{{ $t("Not associated with prognosis")}}</option>
     </b-form-select>
 </template>
 

@@ -2,16 +2,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-9 offset-1 mt-1">
-                <h1>Releases</h1>
-                <p>The current SVIP release is <b>{{ appVersion }} ({{ releaseName }})</b>. The full changelog with each version is listed below.</p>
+                <h1>{{ $t("Releases")}}</h1>
+                <p>{{ $t("The current SVIP release is")}} <b>{{ appVersion }} ({{ releaseName }})</b>{{ $t(". The full changelog with each version is listed below.")}}</p>
 
                 <div v-for="(release, code) in releases" class="release" :key="code">
-                    <h3>v{{ code }} - {{ release.name }}</h3>
+                    <h3>{{ $t("v")}}{{ code }} - {{ release.name }}</h3>
                     <p>{{ release.summary }}</p>
 
                     <div class="release-body">
                         <div v-if="release.changes">
-                            <h4><expander v-model="release.significant">Significant Changes</expander></h4>
+                            <h4><expander v-model="release.significant">{{ $t("Significant Changes")}}</expander></h4>
 
                             <b-collapse :visible="release.significant">
                                 <ul class="changelog">
@@ -21,7 +21,7 @@
                         </div>
 
                         <div v-if="release.changelog">
-                            <h4><expander v-model="release.full">Full Changelist ({{ release.changelog.length }} commits)</expander></h4>
+                            <h4><expander v-model="release.full">{{ $t("Full Changelist (")}}{{ release.changelog.length }} {{ $t("commits)")}}</expander></h4>
 
                             <b-collapse :visible="release.full">
                                 <ul class="changelog">

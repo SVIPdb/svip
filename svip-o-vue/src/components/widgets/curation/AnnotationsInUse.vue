@@ -7,7 +7,7 @@
             :to="`/curation/entry/${x.id}`"
             target="_blank"
         >
-            Entry #{{ x.id }}
+            {{ $t("Entry #")}}{{ x.id }}
         </b-button>
     </div>
 </template>

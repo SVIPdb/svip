@@ -40,10 +40,10 @@
                                     <b-col cols="2">
                                         <b-button-group>
                                             <b-button :disabled="!source || !reference" class="custom-unrounded centered-icons" variant="info" @click="viewCitation">
-                                                <icon name="eye" /> View Abstract
+                                                <icon name="eye" /> {{ $t("View Abstract")}}
                                             </b-button>
                                             <b-button :disabled="!source || !reference" type="submit" class="custom-border-right centered-icons" variant="success" @click="addEvidence" target="_blank">
-                                                <icon name="plus" /> Create Entry
+                                                <icon name="plus" /> {{ $t("Create Entry")}}
                                             </b-button>
                                         </b-button-group>
                                     </b-col>
@@ -55,7 +55,7 @@
                                             <icon name="exclamation-triangle" scale="2.5" />
                                         </template>
                                         <template>
-                                            This reference has already been used in other entries:
+                                            {{ $t("This reference has already been used in other entries:")}}
 
                                             <EntriesInUse :annotation-used="annotationUsed" />
                                         </template>

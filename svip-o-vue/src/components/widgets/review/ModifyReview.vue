@@ -20,7 +20,7 @@
                         </template>
 
                         <template v-slot:cell(list_of_evidences)="data">
-                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}: {{ outcome.nb_evidence }} evidence(s)<br/>
+                            <p v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}: {{ outcome.nb_evidence }} {{ $t("evidence(s)")}}<br/>
                             </p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
                             <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
@@ -89,7 +89,7 @@
                                     <small class="justify-around">{{
                                             review.comment
                                         }}
-                                        <b-btn variant="primary" block class="mt-3" v-if="review.comment" :href="`mailto:${review.reviewer_mail}?cc=curate@svip.ch&from=curate@svip.ch&subject=Review%20of%20disease:${label}%20${variant.description}&body=${review.comment}%0D---%0DView%20online:%20${fullUrl}` ">Reply by mail</b-btn></small>
+                                        <b-btn variant="primary" block class="mt-3" v-if="review.comment" :href="`mailto:${review.reviewer_mail}?cc=curate@svip.ch&from=curate@svip.ch&subject=Review%20of%20disease:${label}%20${variant.description}&body=${review.comment}%0D---%0DView%20online:%20${fullUrl}` ">{{ $t("Reply by mail")}}</b-btn></small>
                                 </b-col>
                             </b-row>
                         </template>
@@ -108,7 +108,7 @@
                                     :disabled="not_reviewed || annotated"
                                 >
                                 <icon name="plus"/>
-                                    Add publication
+                                    {{ $t("Add publication")}}
                                 </b-button>
                                 <!--<b-button
                                     v-b-modal="addNoteID"
@@ -131,14 +131,14 @@
                                      class="mb-0 text-justify" style="background-color: #f3f3f3;">
 
                                 <template v-slot:cell(evidence_link)="data">
-                                    <span>Evidence : </span>
+                                    <span>{{ $t("Evidence :")}} </span>
                                     <b-link :to="$route.fullPath + '/entry/' + data.item.evidence_link" target="_blank">
                                         {{ data.item.evidence_link }}
                                     </b-link>
                                 </template>
 
                                 <template v-slot:cell(pmid_link)="data">
-                                    <span>PMID : </span>
+                                    <span>{{ $t("PMID :")}} </span>
                                     <b-link v-bind="pubmedURL(data.item.pmid_link)" target="_blank">
                                         {{ data.item.pmid_link }}
                                     </b-link>
@@ -163,7 +163,7 @@
                                             target="_blank"
                                         >
                                             <icon name="pen-alt"/>
-                                            Edit
+                                            {{ $t("Edit")}}
                                         </b-button>
                                         <b-button
                                             @click="deleteEntry(data.item.evidence_link, index, data)"
@@ -173,7 +173,7 @@
                                             size="sm"
                                         >
                                             <icon name="trash"/>
-                                            Delete
+                                            {{ $t("Delete")}}
                                         </b-button>
                                     </div>
                                 </template>
@@ -227,13 +227,13 @@
                                                     class="custom-unrounded centered-icons" variant="info"
                                                     @click="viewCitation">
                                                 <icon name="eye"/>
-                                                View Abstract
+                                                {{ $t("View Abstract")}}
                                             </b-button>
                                             <b-button :disabled="!source || !reference" type="submit"
                                                     class="custom-border-right centered-icons" variant="success"
                                                     @click="addEvidence" target="_blank">
                                                 <icon name="plus"/>
-                                                Create Entry
+                                                {{ $t("Create Entry")}}
                                             </b-button>
                                         </b-button-group>
                                     </b-col>
@@ -245,7 +245,7 @@
                                             <icon name="exclamation-triangle" scale="2.5"/>
                                         </template>
                                         <template>
-                                            This reference has already been used in other entries:
+                                            {{ $t("This reference has already been used in other entries:")}}
 
                                             <div class="mt-1 text-left">
                                                 <b-button pill class="mr-1 mb-1" variant="primary" size="sm"
@@ -253,7 +253,7 @@
                                                         :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
                                                         target="_blank"
                                                 >
-                                                    Entry #{{ x.id }}
+                                                    {{ $t("Entry #")}}{{ x.id }}
                                                 </b-button>
                                             </div>
                                         </template>

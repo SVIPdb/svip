@@ -45,7 +45,7 @@
                         :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
                         target="_blank"
                     >
-                        rs{{ rsid }}
+                        {{ $t("rs")}}{{ rsid }}
                         <icon name="external-link-alt"></icon>
                     </a>
                 </template>
@@ -57,7 +57,7 @@
                 </template>
                 <template slot="frequency">
                     <span v-if="allele_frequency">{{ allele_frequency }}</span>
-                    <span v-else class="unavailable">unavailable</span>
+                    <span v-else class="unavailable">{{ $t("unavailable")}}</span>
                 </template>
             </b-table>
         </b-card-body>

@@ -59,7 +59,7 @@
                             alt="SPHN: Swiss Personalized Health Network"
                         />
                     </a>
-                    <div style="padding-top: 2em;">an SPHN Infrastructure Development project</div>
+                    <div style="padding-top: 2em;">{{ $t("an SPHN Infrastructure Development project")}}</div>
                 </div>
             </div>
         </div>

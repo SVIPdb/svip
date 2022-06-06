@@ -18,7 +18,7 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <p class="mb-2" v-for="(effect, effect_idx) in evidence.effectOfVariant" :key="'effect' + effect_idx">
-                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} evidence(s)
+                                                {{ effect.label }}: {{ effect.count ? effect.count : 'no' }} {{ $t("evidence(s)")}}
                                             </p>
                                         </b-col>
                                         <b-col cols="2">
@@ -67,7 +67,7 @@
                                         </b-col>
                                         <b-col cols="1" align="center">
                                             <b-row class="justify-content-center">
-                                                Review status
+                                                {{ $t("Review status")}}
                                             </b-row>
                                             <b-row class="justify-content-center">
 
@@ -112,7 +112,7 @@
                                     <div v-if="expander_array[idx].evidences[index]">
                                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <b-row align-v="center" v-for="(curation, i) in evidence.curations" :key="'curation' + i">
-                                                <b-col class="border p-2">PMID:
+                                                <b-col class="border p-2">{{ $t("PMID:")}}
                                                     <b-link target="_blank" active
                                                             :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                         {{ curation.pmid }}
@@ -121,12 +121,12 @@
                                                 <b-col class="border p-2">{{ curation.effect }}</b-col>
                                                 <b-col class="border p-2">{{ curation.tier }}</b-col>
                                                 <b-col class="border p-2">
-                                                    Support: {{ curation.support }}
+                                                    {{ $t("Support:")}} {{ curation.support }}
                                                 </b-col>
                                                 <b-col class="border p-2">
                                                     <b-link :to="{ name: 'view-evidence', params: { action: curation.id } }"
                                                             target="_blank"
-                                                            alt="Link to evidence">Curation entry #{{ curation.id }}
+                                                            alt="Link to evidence">{{ $t("Curation entry #")}}{{ curation.id }}
                                                     </b-link>
                                                 </b-col>
 
@@ -145,18 +145,18 @@
         </div>
         <div class="float-right">
         <b-button  variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
-            Finish later
+            {{ $t("Finish later")}}
         </b-button>
         <!--<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">-->
         <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
-            Submit review
+            {{ $t("Submit review")}}
         </b-button>
         </div>
         <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
-            THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
+            {{ $t("THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.")}}
         </b-navbar-text>
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted">
-            YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
+            {{ $t("YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.")}}
         </b-navbar-text>
     </div>
 </template>

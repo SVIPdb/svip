@@ -21,14 +21,14 @@
 				<div v-else-if="variomes && error" class="d-flex align-items-center">
                     <icon name="exclamation-triangle" scale="2" style="color: #c6af89;" />
                     <div class="ml-2">
-                        Couldn't retrieve publication info, try again later.
+                        {{ $t("Couldn't retrieve publication info, try again later.")}}
                     </div>
                 </div>
                 <span v-else-if="!parsedPMID">
-                    <b>external link to:</b> {{ pubmeta.url }}
+                    <b>{{ $t("external link to:")}}</b> {{ pubmeta.url }}
                 </span>
 				<span v-else class="variomes-loading">
-                    <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> loading...
+                    <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px;" /> {{ $t("loading...")}}
 				</span>
 			</template>
 		</b-popover>

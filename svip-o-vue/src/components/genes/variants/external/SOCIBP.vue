@@ -3,7 +3,7 @@
         <div class="card mt-3 top-level">
             <div class="card-header">
                 <div class="card-title">
-                    SOCIBP Samples
+                    {{ $t("SOCIBP Samples")}}
                     <div class="float-right align-middle">
                         <a :href="`https://socibp.nexus.ethz.ch/cbioportal`" target="_blank">
                             <icon name="external-link-alt"/>
@@ -23,7 +23,7 @@
                 </b-table>
             </div>
             <div v-else class="card-body text-muted errorbox">
-                SOCIBP is currently unavailable, please try again later.
+                {{ $t("SOCIBP is currently unavailable, please try again later.")}}
             </div>
         </div>
     </div>

@@ -16,7 +16,7 @@
                             {{author + (index < pubData.authors.length-1 ? ', ' : '')}}
                         </b-link>
                     </p>
-                    <b>Abstract</b>
+                    <b>{{ $t("Abstract")}}</b>
                     <p class="text-justify" v-html="pubData.abstract_highlight" />
                 </b-container>
                 <div
@@ -24,21 +24,21 @@
                     class="text-center text-muted font-italic"
                 >
                     <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" /><br />
-                    We couldn't load the abstract due to a technical issue
+                    {{ $t("We couldn't load the abstract due to a technical issue")}}
                 </div>
                 <div v-else class="text-center">
-                    <b-spinner label="Spinning" variant="primary" /> Loading
+                    <b-spinner label="Spinning" variant="primary" /> {{ $t("Loading")}}
                 </div>
             </div>
 
             <div v-if="variomes && pubData && !variomes.error" class="ml-3 pt-1 border-top">
                 <small>
-                    Source:
+                    {{ $t("Source:")}}
                     <b-link v-bind="pubmedURL(pubData.id)">{{pubData.id}}</b-link>
 
                     <span v-if="pmcViewerUrl">
                         <span class="d-inline-block ml-1 mr-1">|</span>
-                        <b-link :href="pmcViewerUrl" class="bold" target="_blank">view full text on Variomes
+                        <b-link :href="pmcViewerUrl" class="bold" target="_blank">{{ $t("view full text on Variomes")}}
                             <b-icon-box-arrow-up-right />
                         </b-link>
                         </span>

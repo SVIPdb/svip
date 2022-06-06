@@ -126,7 +126,7 @@
                     <b-button
                         size="sm"
                         :to="{name: 'variant', params: { gene_id: $route.params.gene_id, variant_id: data.item.id}}"
-                    >Show Details
+                    >{{ $t("Show Details")}}
                     </b-button>
                 </template>
             </b-table>

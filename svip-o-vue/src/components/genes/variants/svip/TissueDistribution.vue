@@ -1,6 +1,6 @@
 <template>
     <div class="tissue-dist-row">
-        <h5 style="margin-bottom: 0.75em;">Tissue Distribution</h5>
+        <h5 style="margin-bottom: 0.75em;">{{ $t("Tissue Distribution")}}</h5>
 
         <div ref="thechart" class="disease-holster">
             <div v-for="(bar) in bars" :key="bar.name" class="disease-row">

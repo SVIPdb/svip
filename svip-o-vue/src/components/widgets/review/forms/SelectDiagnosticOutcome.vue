@@ -1,8 +1,8 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <option>Associated with diagnosis</option>
-        <option>Not associated with diagnosis</option>
-        <option>Other</option>
+        <option>{{ $t("Associated with diagnosis")}}</option>
+        <option>{{ $t("Not associated with diagnosis")}}</option>
+        <option>{{ $t("Other")}}</option>
     </b-form-select>
 </template>
 

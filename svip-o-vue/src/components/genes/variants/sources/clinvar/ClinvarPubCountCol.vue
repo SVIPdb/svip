@@ -1,5 +1,5 @@
 <template>
-    <span>{{ totalSubmissions.toLocaleString() }} submission{{ totalSubmissions !== 1 ? "s" : "" }}</span>
+    <span>{{ totalSubmissions.toLocaleString() }} {{ $t("submission")}}{{ totalSubmissions !== 1 ? "s" : "" }}</span>
 </template>
 
 <script>

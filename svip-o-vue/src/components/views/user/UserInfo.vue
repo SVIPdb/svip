@@ -1,7 +1,7 @@
 <template>
     <div class="trunk">
         <div v-if="user">
-            <h3>Information for "{{ user.username }}"</h3>
+            <h3>{{ $t("Information for") }}'{{ user.username }}'</h3>
 
             <div class="user-info">
                 <dl>
@@ -13,7 +13,9 @@
 
                     <dt>Groups</dt>
                     <dd>
-                        <span v-for="(group, idx) in user.groups" :key="group"><span v-if="idx !== 0">, </span>{{ group }}</span>
+                        <span v-for="(group, idx) in user.groups" :key="group"
+                            ><span v-if="idx !== 0">, </span>{{ group }}</span
+                        >
                     </dd>
 
                     <dt>Login Expires In</dt>
@@ -24,7 +26,7 @@
 
         <div v-else class="not-logged-in">
             You must be logged in to view your user information.
-            <hr style="width: 75%"/>
+            <hr style="width: 75%" />
             <router-link to="login">log in</router-link>
         </div>
     </div>
@@ -33,28 +35,28 @@
 <script>
 import { mapGetters } from "vuex";
 import { millisecondsToStr } from "@/utils";
-import store from '@/store';
-import ulog from 'ulog';
+import store from "@/store";
+import ulog from "ulog";
 
-const log = ulog('Store:UserInfo');
+const log = ulog("Store:UserInfo");
 
 export default {
     name: "UserInfo",
     data() {
         return {
-            currentTime: Date.now()
+            currentTime: Date.now(),
         };
     },
     computed: {
         ...mapGetters({
-            user: "currentUser"
-        })
+            user: "currentUser",
+        }),
     },
     methods: {
         remaining(curTime) {
-            const diff = (store.getters.jwtExp * 1000) - curTime;
-            return (diff >= 0) ? millisecondsToStr(diff) : "expired!";
-        }
+            const diff = store.getters.jwtExp * 1000 - curTime;
+            return diff >= 0 ? millisecondsToStr(diff) : "expired!";
+        },
     },
     created() {
         store.dispatch("checkCredentials").then((result) => {
@@ -63,13 +65,15 @@ export default {
 
         setInterval(() => {
             this.currentTime = Date.now();
-        }, 1000)
-    }
-}
+        }, 1000);
+    },
+};
 </script>
 
 <style scoped>
-.trunk { width: 600px; }
+.trunk {
+    width: 600px;
+}
 
 .user-info {
     margin-top: 1em;
@@ -89,7 +93,9 @@ dt {
     text-align: right;
 }
 
-dt::after { content: ': '; }
+dt::after {
+    content: ": ";
+}
 
 dd {
     padding-left: 10px;
@@ -98,6 +104,8 @@ dd {
 
 .not-logged-in {
     color: #777;
-    font-size: 20px; text-align: center; font-style: oblique;
+    font-size: 20px;
+    text-align: center;
+    font-style: oblique;
 }
 </style>

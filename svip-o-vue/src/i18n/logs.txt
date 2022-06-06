@@ -1,0 +1,1381 @@
+
+1) Filename:   /Users/aesche/git/svip/svip-o-vue/src/App.vue
+
+2) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/PublicDatabases.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+3) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/VariantInformations.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+4) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/SVIPInfo.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+5) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/svip/TissueDistribution.vue
+Text is replaced.
+Added to en.json
+
+6) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/svip/EvidenceTable.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+7) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/svip/SampleTable.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+
+8) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/svip/CurationTable.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+9) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/clinvar/ClinvarRowDetails.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+10) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/clinvar/ClinvarPubCountCol.vue
+Text is replaced.
+Added to en.json
+
+11) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/clinvar/SignificanceBarPlot.vue
+
+12) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/civic/CivicRowDetails.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+13) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/cosmic/CosmicPubCountCol.vue
+Text is replaced.
+Added to en.json
+
+14) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/cosmic/CosmicSignificanceCol.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+15) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/cosmic/CosmicRowDetails.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+16) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/shared/RowDetailsHeader.vue
+Text is replaced.
+String was already stored.
+
+17) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/shared/UnavailableCol.vue
+Text is replaced.
+String was already stored.
+
+18) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/sources/oncokb/OncoKBRowDetails.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+19) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/external/VariantExternalInfo.vue
+
+20) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/external/Pathogenicity.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+21) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/external/SwissPO.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+22) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/external/PopulationStats.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+23) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/genes/variants/external/SOCIBP.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+24) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/ViewVariant.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+25) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/Home.vue
+Text is replaced.
+String was already stored.
+
+26) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/PageNotFound.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+27) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/Statistics.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+28) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/Help.vue
+
+29) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/DebugPage.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+30) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/Releases.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+"). The full changelog with each version is listed below."
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+31) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/ViewGene.vue
+Text is replaced.
+String was already stored.
+
+32) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/About.vue
+
+"Department for BioMedical Research and Institute of Pathology, Bern"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathology, Ber"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathology, Be"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathology, B"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathology,"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathology"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Patholog"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Patholo"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pathol"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Patho"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Path"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pat"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of Pa"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of P"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute of"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute o"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institute"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institut"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Institu"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Instit"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Insti"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Inst"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and Ins"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and In"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and I"
+This pattern is actually splitted into several segments in the HTML.
+
+"Department for BioMedical Research and"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+"Valérie Barbié is head of Clinical Bioinformatics at SIB,"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics at SIB"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics at SI"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics at S"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics at"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics a"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatics"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformatic"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformati"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinformat"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinforma"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinform"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinfor"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinfo"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioinf"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioin"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bioi"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bio"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical Bi"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical B"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinical"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinica"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clinic"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clini"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Clin"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Cli"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of Cl"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of C"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head of"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head o"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is head"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is hea"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is he"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is h"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié is"
+This pattern is actually splitted into several segments in the HTML.
+
+"Valérie Barbié i"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+"eHealth Summit 2018 Bern,"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+"Technologies and Translational Research Conference ETH Zürich, Switzerland"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switzerlan"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switzerla"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switzerl"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switzer"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switze"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Switz"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Swit"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Swi"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, Sw"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich, S"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich,"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zürich"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Züric"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Züri"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zür"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Zü"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH Z"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ETH"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference ET"
+This pattern is actually splitted into several segments in the HTML.
+
+"Technologies and Translational Research Conference E"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+"Forum Personalised Healthcare Conference Lausanne, Switzerland"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switzerlan"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switzerla"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switzerl"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switzer"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switze"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Switz"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Swit"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Swi"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, Sw"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne, S"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne,"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausanne"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausann"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausan"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lausa"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Laus"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference Lau"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference La"
+This pattern is actually splitted into several segments in the HTML.
+
+"Forum Personalised Healthcare Conference L"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+
+"Disclaimer & License"
+This pattern is actually splitted into several segments in the HTML.
+
+"The Swiss Variant Interpretation Platform for Oncology (SVIP-O) accessible at www.svip.ch has"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+"the Clinical Bioinformatics Group of the SIB Swiss Institute of Bioinformatics ("SIB"), the"
+!!! The string contains double quotes. Replace it manually.
+
+
+"                                the Clinical Bioinformatics Group of the SIB Swiss Institute of Bioinformatics ("SIB"), the"
+!!! UNEXPECTED: Failed to replace string in component !!!
+
+33) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/curation/CurationDashboard.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+34) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/curation/AnnotateVariant.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+35) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/curation/AddEvidence.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+36) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/user/Login.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+37) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/user/UserInfo.vue
+
+"Information for ""
+!!! The string contains double quotes. Replace it manually.
+
+
+"Information for ""
+!!! UNEXPECTED: Failed to replace string in component !!!
+
+38) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/review/ViewReview.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+39) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/review/SubmitCurations.vue
+
+40) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/review/AnnotateReview.vue
+
+41) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/views/submission/SubmitVariants.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+"on the "Submission Queue" tab below."
+!!! The string contains double quotes. Replace it manually.
+
+
+"                    on the "Submission Queue" tab below."
+!!! UNEXPECTED: Failed to replace string in component !!!
+
+42) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/structure/navfooter.vue
+Text is replaced.
+Added to en.json
+
+"Disclaimer & License"
+This pattern is actually splitted into several segments in the HTML.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+43) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/structure/navheader.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+44) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/structure/sidebar/BurgerMenu.vue
+Text is replaced.
+Added to en.json
+
+45) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/structure/sidebar/Sidebar.vue
+
+46) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/VariomesLitPopover.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+47) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/MessageWithIcon.vue
+
+48) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/PubmedPopover.vue
+
+49) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/RowExpander.vue
+
+50) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/PagedTable.vue
+Text is replaced.
+String was already stored.
+
+51) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/VariantSummary.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+52) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/GeneSummary.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+53) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/SourceIcon.vue
+
+54) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/Expander.vue
+
+55) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/TransitionExpand.vue
+
+56) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/sortIcon.vue
+
+57) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/CommentList.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+58) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/ValidatedFormField.vue
+
+59) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/ReviewNotificationCard.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+60) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/VariomesSearch.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+61) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/EvidenceCard.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+62) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/VariomesFullText.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+63) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/VariantInSVIPHistory.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+64) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/NotificationCard.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+65) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/EvidenceHistory.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+66) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/CurationVariantSummary.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+67) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/AnnotationsInUse.vue
+Text is replaced.
+Added to en.json
+
+68) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/VariomesAbstract.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+69) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/CurationGeneSummary.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+70) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/OnRequestEntries.vue
+
+71) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/FilterButtons.vue
+
+72) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/curation/CuratorVariantInformations.vue
+
+73) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/DrugSearchBar.vue
+
+74) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/SearchBar.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+75) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/InteractorSearchBar.vue
+
+76) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/GeneSearchBar.vue
+
+77) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/DiseaseSearchBar.vue
+
+78) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/icdo/TopoSearchBar.vue
+
+79) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/searchbars/icdo/MorphoSearchBar.vue
+
+80) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/SelectEffect.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+81) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/ModifyReview.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+82) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/ModifyVariantSummary.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+
+83) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/VariantDisease.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+84) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/VariantSummary.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+85) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/SecondReviewCycle.vue
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+86) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectTier.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+87) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectDiagnosticOutcome.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+88) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectPrognosticOutcome.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+89) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/reviewAgreementComment.vue
+
+90) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectTherapeuticTier.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+Text is replaced.
+String was already stored.
+
+91) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectAgreement.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+92) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectVariousOutcome.vue
+
+93) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+
+94) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/submission/CreateCurationRequest.vue
+Text is replaced.
+Added to en.json
+
+95) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/submission/SubmissionQueue.vue
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+Text is replaced.
+String was already stored.
+Text is replaced.
+Added to en.json
+Text is replaced.
+Added to en.json
+
+96) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/widgets/debug/WrappedSelect.vue
+
+97) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/help/TableOfContents.vue
+Text is replaced.
+Added to en.json
+
+98) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/genderBarPlot.vue
+Text is replaced.
+String was already stored.
+
+99) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/evidenceTypesDisplay.vue
+
+100) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/ageDistribution.vue
+Text is replaced.
+String was already stored.
+
+101) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/genderBalance.vue
+
+102) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/significanceBarPlot.vue
+
+103) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/genderPlot.vue
+Text is replaced.
+String was already stored.
+
+104) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/scorePlot.vue
+
+105) Filename:   /Users/aesche/git/svip/svip-o-vue/src/components/plots/evidenceTypesBarPlot.vue

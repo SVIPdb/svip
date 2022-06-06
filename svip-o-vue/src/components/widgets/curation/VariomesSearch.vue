@@ -3,9 +3,9 @@
         <b-row class="textmining-paginator">
             <b-col>
                 <expander v-model="isSearchParamsVisible" />&nbsp;
-                <b>Results:</b>&nbsp;
+                <b>{{ $t("Results:")}}</b>&nbsp;
                 <span v-if="loadingVariomes">
-                    <b-spinner small /> loading...
+                    <b-spinner small /> {{ $t("loading...")}}
                 </span>
                 <span v-else>{{ totalRows && totalRows.toLocaleString() }}</span>
             </b-col>
@@ -23,7 +23,7 @@
                 <b-input-group size="sm">
                     <b-form-input v-model="search" debounce="300" placeholder="Type to Search"/>
                     <b-input-group-append>
-                        <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
+                        <b-btn :disabled="!search" @click="search = ''">{{ $t("Clear")}}</b-btn>
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
@@ -31,9 +31,9 @@
             <b-col class="my-1 pager-search" md="2">
                 <b-select v-model="filterCollection">
                     <b-select-option :value="null">---</b-select-option>
-                    <b-select-option :value="'medline'">medline</b-select-option>
-                    <b-select-option :value="'pmc'">PMC</b-select-option>
-                    <b-select-option :value="'ct'">CT</b-select-option>
+                    <b-select-option :value="'medline'">{{ $t("medline")}}</b-select-option>
+                    <b-select-option :value="'pmc'">{{ $t("PMC")}}</b-select-option>
+                    <b-select-option :value="'ct'">{{ $t("CT")}}</b-select-option>
                 </b-select>
             </b-col>
         </b-row>
@@ -41,7 +41,7 @@
         <b-collapse :visible="isSearchParamsVisible">
             <b-row class="search-params" align-v="center">
                 <b-col class="d-inline-flex align-items-center">
-                    <b>Disease:</b>
+                    <b>{{ $t("Disease:")}}</b>
                     <v-select style="background: white; width: 450px; margin-left: 10px;" v-model="disease" placeholder="select a disease to query"
                         :options="pub_diseases" label="name" :clearable="true"
                     >
@@ -80,7 +80,7 @@
                 <template v-slot:table-busy>
                     <div class="text-center text-danger my-2">
                         <b-spinner class="align-middle" small style="margin-right: 5px;" />
-                        <strong>Loading...</strong>
+                        <strong>{{ $t("Loading...")}}</strong>
                     </div>
                 </template>
 
@@ -89,7 +89,7 @@
                 </template>
 
                 <template v-slot:cell(id)="row">
-                    <VariomesLitPopover
+                    <{{ $t("Variomes")}}LitPopover
                         :pubmeta="{ pmid: row.item.id }"
                         :variant="preferredTerms.variant"
                         :gene="preferredTerms.gene"
@@ -121,11 +121,11 @@
                                 <template v-slot:title>
                                     <div class="d-flex align-items-center">
                                         <icon name="exclamation-triangle" scale="1.1" class="mr-1 mt-1" />
-                                        <div>Reference in Use</div>
+                                        <div>{{ $t("Reference in Use")}}</div>
                                     </div>
                                 </template>
                                 <template>
-                                This reference is already in use by:
+                                {{ $t("This reference is already in use by:")}}
                                 <EntriesInUse :annotation-used="used_ref" />
                                 </template>
                             </b-popover>
@@ -156,7 +156,7 @@
                                     <span class="text-white pl-1">{{querydetails.query_disease_count.all}}</span>
                                 </li>
                             </ul>
-                            <span v-else>count data unavailable</span>
+                            <span v-else>{{ $t("count data unavailable")}}</span>
                         </pass>
                     </b-tooltip>
                 </template>
@@ -164,7 +164,7 @@
                 <template v-slot:row-details="data">
                     <TransitionExpand>
                         <div v-if="data.item._showDetails" class="sample-subtable tumor-subtable">
-                            <h5>Facets</h5>
+                            <h5>{{ $t("Facets")}}</h5>
 
                             <ul>
                                 <li v-for="(data, facet_name) in data.item.details.facet_details" :key="facet_name">
@@ -188,7 +188,7 @@
                 <b-alert show variant="info" class="d-flex align-items-center justify-content-between mb-0">
                     <icon name="star" style="flex: 0 1;" class="mr-1" />
                     <div class="d-flex align-items-center">
-                        For multi-variant search, batch querying, and many other features, see the official interface:
+                        {{ $t("For multi-variant search, batch querying, and many other features, see the official interface:")}}
                         <a class="ml-1" :href="`https://candy.hesge.ch/Variomes/?genvars=${variant.gene.symbol} (${variant.name})`" target="_blank">Variomes</a>
                         <icon class="ml-1" name="external-link-alt" />
                     </div>

@@ -26,10 +26,10 @@
             </div>
             <div v-else-if="error" class="text-center text-muted font-italic">
                 <icon name="exclamation-triangle" scale="3" style="vertical-align: text-bottom; margin-bottom: 5px;" />
-                <div>We couldn't load the comments due to a technical issue</div>
+                <div>{{ $t("We couldn't load the comments due to a technical issue")}}</div>
             </div>
             <div v-else-if="comments.length === 0">
-                <h5 class="text-center font-italic" style="color: #777;">~ no comments yet ~</h5>
+                <h5 class="text-center font-italic" style="color: #777;">{{ $t("~ no comments yet ~")}}</h5>
             </div>
             <div v-else style="margin: 0 auto; text-align: center;">
                 <b-spinner />
@@ -60,8 +60,8 @@
 
             <b-textarea ref="commentbox" v-model="comment_text" style="width: 100%; margin: 0.5em 0;" />
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5em;">
-                <span class="text-muted">commenting as <b>{{ username }}</b></span>
-                <b-button variant="info" size="sm" @click="addComment" :disabled="!comment_text">Add Comment</b-button>
+                <span class="text-muted">{{ $t("commenting as")}} <b>{{ username }}</b></span>
+                <b-button variant="info" size="sm" @click="addComment" :disabled="!comment_text">{{ $t("Add Comment")}}</b-button>
             </div>
         </div>
     </div>

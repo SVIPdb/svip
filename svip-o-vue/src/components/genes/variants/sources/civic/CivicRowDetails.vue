@@ -3,9 +3,9 @@
         <div class="col-xl-3 col-4 d-none d-xl-block">
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Diseases
-                    <i class="float-right" v-if="!currentFilter.disease">click on a disease to filter the evidences
-                        table</i>
+                    {{ $t("Diseases")}}
+                    <i class="float-right" v-if="!currentFilter.disease">{{ $t("click on a disease to filter the evidences")}}
+                        {{ $t("table")}}</i>
                     <span class="float-right badge badge-primary" v-if="currentFilter.disease" style="font-size: 13px">
 						{{ titleCase(currentFilter.disease) }}
 						<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
@@ -17,8 +17,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Disease</th>
-                            <th># of Occcurences</th>
+                            <th>{{ $t("Disease")}}</th>
+                            <th>{{ $t("# of Occcurences")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,7 +65,7 @@
                             <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
                             <b-button size="sm" small
                                 @click.stop="row.item._animatedDetails = !row.item._animatedDetails">
-                                {{ row.item._animatedDetails ? "Hide" : "Show" }} {{ row.item.collapsed_count }} Item(s)
+                                {{ row.item._animatedDetails ? "Hide" : "Show" }} {{ row.item.collapsed_count }} {{ $t("Item(s)")}}
                             </b-button>
                         </div>
                     </template>
@@ -77,7 +77,7 @@
                                     <b-table class="sample-subtable-table" sort-by="url" :fields="evidenceChildFields"
                                         :items="row.item.children">
                                         <template v-slot:cell(url)="c">
-                                            <a :href="c.value">EID {{ c.value.split("/")[11] }}</a>
+                                            <a :href="c.value">{{ $t("EID")}} {{ c.value.split("/")[11] }}</a>
                                         </template>
 
                                         <template v-slot:cell(publications)="c">

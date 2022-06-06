@@ -6,19 +6,25 @@
                     <table class="table variant-header">
                         <tr>
                             <th></th>
-                            <th>Gene Name</th>
-                            <th>Variant</th>
+                            <th>{{ $t("Gene Name") }}</th>
+                            <th>{{ $t("Variant") }}</th>
 
-                            <th>HGVS.c</th>
-                            <th class="d-none d-sm-table-cell">HGVS.p</th>
-                            <th class="d-none d-sm-table-cell">HGVS.g</th>
+                            <th>{{ $t("HGVS.c") }}</th>
+                            <th class="d-none d-sm-table-cell">
+                                {{ $t("HGVS.p") }}
+                            </th>
+                            <th class="d-none d-sm-table-cell">
+                                {{ $t("HGVS.g") }}
+                            </th>
 
-                            <th :class="hiddenCols">dbSNP</th>
+                            <th :class="hiddenCols">{{ $t("dbSNP") }}</th>
                             <!-- <th>Molecular consequence</th> -->
-                            <th :class="hiddenCols">Position</th>
-                            <th :class="hiddenCols">Allele Frequency</th>
-                            <th>Status</th>
-                            <th>SVIP Confidence</th>
+                            <th :class="hiddenCols">{{ $t("Position") }}</th>
+                            <th :class="hiddenCols">
+                                {{ $t("Allele Frequency") }}
+                            </th>
+                            <th>{{ $t("Status") }}</th>
+                            <th>{{ $t("SVIP Confidence") }}</th>
                             <th></th>
                             <!--- for actions -->
                         </tr>
@@ -29,22 +35,36 @@
                             </td>
                             <td>
                                 <b>
-                                    <router-link :to="'/gene/' + gene_id">{{ variant.gene.symbol }}</router-link>
+                                    <router-link :to="'/gene/' + gene_id">{{
+                                        variant.gene.symbol
+                                    }}</router-link>
                                 </b>
                             </td>
                             <td>
                                 <b>{{ variant.name }}</b>
                             </td>
 
-                            <coordinates :val="hgvs_c_pos"/>
-                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_p_pos"/>
-                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_g_pos"/>
+                            <coordinates :val="hgvs_c_pos" />
+                            <coordinates
+                                class="d-none d-sm-table-cell"
+                                :val="hgvs_p_pos"
+                            />
+                            <coordinates
+                                class="d-none d-sm-table-cell"
+                                :val="hgvs_g_pos"
+                            />
 
-                            <optional :class="hiddenCols" :val="variant.dbsnp_ids">
+                            <optional
+                                :class="hiddenCols"
+                                :val="variant.dbsnp_ids"
+                            >
                                 <a
                                     v-for="rsid in variant.dbsnp_ids"
                                     :key="rsid"
-                                    :href=" 'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
+                                    :href="
+                                        'https://www.ncbi.nlm.nih.gov/snp/' +
+                                        rsid
+                                    "
                                     target="_blank"
                                 >
                                     rs{{ rsid }}
@@ -55,27 +75,40 @@
                             <!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
                             <optional :class="hiddenCols" :val="var_position">
-                                <span class="text-muted transcript-id">{{ variant.reference_name }}:</span>
+                                <span class="text-muted transcript-id"
+                                    >{{ variant.reference_name }}:</span
+                                >
                                 &#x200b;{{ var_position }}
                             </optional>
 
                             <td :class="hiddenCols">
-                                <span v-if="allele_frequency">{{ allele_frequency }}</span>
-                                <span v-else class="unavailable">unavailable</span>
+                                <span v-if="allele_frequency">{{
+                                    allele_frequency
+                                }}</span>
+                                <span v-else class="unavailable">{{
+                                    $t("unavailable")
+                                }}</span>
                             </td>
 
-                            <td>{{this.variant.public_stage}}</td>
+                            <td>{{ this.variant.public_stage }}</td>
                             <td>
                                 <icon
-                                    v-for="score in [1,2,3]"
+                                    v-for="score in [1, 2, 3]"
                                     :key="score"
-                                    :name="variant.confidence < score ? 'regular/star' : 'star'"
+                                    :name="
+                                        variant.confidence < score
+                                            ? 'regular/star'
+                                            : 'star'
+                                    "
                                     style="margin-right: 5px"
                                 />
                             </td>
 
                             <td>
-                                <div class="details-tray" style="text-align: right;">
+                                <div
+                                    class="details-tray"
+                                    style="text-align: right"
+                                >
                                     <!--
                                     <b-button
                                         size="sm"
@@ -83,14 +116,20 @@
                                     >{{ showAliases ? "Hide" : "Show" }} Aliases</b-button>
                                     -->
 
-                                    <b-button class="discuss-btn" v-access="'curators'" v-if="commentsEnabled" @click="toggleNav">
+                                    <b-button
+                                        class="discuss-btn"
+                                        v-access="'curators'"
+                                        v-if="commentsEnabled"
+                                        @click="toggleNav"
+                                    >
                                         <!--
                                         <div class="icon-composer">
                                             <icon name="comment" scale="1.4" />
                                             <span class="overlay">{{ commentCount }}</span>
-                                        </div> Discuss
+                                        </div> {{ $t("Discuss")}}
                                         -->
-                                        <icon name="comment" scale="1.4" /> Discuss
+                                        <icon name="comment" scale="1.4" />
+                                        Discuss
                                     </b-button>
                                 </div>
                             </td>
@@ -101,7 +140,12 @@
                                 <td></td>
                                 <td colspan="9">
                                     <div class="aliases-list">
-                                        <div v-for="(x) in variant.gene.aliases" :key="x">{{ x }}</div>
+                                        <div
+                                            v-for="x in variant.gene.aliases"
+                                            :key="x"
+                                        >
+                                            {{ x }}
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -115,15 +159,26 @@
             <VariantSummary :variant="variant" class="variant-summary" />
 
             <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
-            <variant-public-databases :variant="variant"></variant-public-databases>
+            <variant-public-databases
+                :variant="variant"
+            ></variant-public-databases>
 
             <b-row v-access="'curators'">
                 <b-col>
                     <b-card class="shadow-sm mt-3" align="left" no-body>
                         <b-card-body class="p-0 text-center">
                             <b-row no-gutters>
-                                <b-col v-for="(item,index) in linkItems" :key="index">
-                                    <b-button squared block variant="outline-secondary" :href="item.link" target="_blank">
+                                <b-col
+                                    v-for="(item, index) in linkItems"
+                                    :key="index"
+                                >
+                                    <b-button
+                                        squared
+                                        block
+                                        variant="outline-secondary"
+                                        :href="item.link"
+                                        target="_blank"
+                                    >
                                         {{ item.source }}
                                         <icon name="external-link-alt"></icon>
                                     </b-button>
@@ -135,12 +190,21 @@
             </b-row>
         </div>
 
-        <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras"/>
+        <VariantExternalInfo
+            :variant="variant"
+            :mvInfo="variant.mv_info"
+            :extras="all_extras"
+        />
 
         <!-- invisible things are down here -->
         <Sidebar v-access="'curators'" v-if="commentsEnabled">
-            <h4 style="border-bottom: solid 1px #ccc; padding-bottom: 15px;">Comments on {{ variant.description }}</h4>
-            <CommentList :variant_id="variant.id" @commented="getCommentCount" />
+            <h4 style="border-bottom: solid 1px #ccc; padding-bottom: 15px">
+                {{ $t("Comments on") }} {{ variant.description }}
+            </h4>
+            <CommentList
+                :variant_id="variant.id"
+                @commented="getCommentCount"
+            />
         </Sidebar>
     </div>
 </template>
@@ -167,13 +231,13 @@ import { HTTP } from "@/router/http";
 export default {
     name: "ViewVariant",
     components: {
-        CommentList, 
-        Sidebar, 
-        VariantExternalInfo, 
-        variantPublicDatabases, 
+        CommentList,
+        Sidebar,
+        VariantExternalInfo,
+        variantPublicDatabases,
         variantSvip,
         GeneSummary,
-        VariantSummary
+        VariantSummary,
     },
     data() {
         return {
@@ -181,22 +245,22 @@ export default {
             linkItems,
             commentCount: null,
             commentsEnabled,
-            hiddenCols: "d-none d-lg-table-cell"
+            hiddenCols: "d-none d-lg-table-cell",
         };
     },
     created() {
         this.getCommentCount();
     },
     watch: {
-        '$route': () => {
+        $route: () => {
             this.getCommentCount();
-        }
+        },
     },
     computed: {
         ...mapGetters({
             variant: "variant",
             gene: "gene",
-            user: "currentUser"
+            user: "currentUser",
         }),
         synonyms() {
             if (this.gene.geneAliases === undefined) return "";
@@ -235,12 +299,15 @@ export default {
                         4
                     )}%`;
                 } else if (this.variant.mv_info.exac) {
-                    return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
+                    return `ExAC: ${round(
+                        this.variant.mv_info.exac.af * 100.0,
+                        4
+                    )}%`;
                 }
             }
 
             return null;
-        }
+        },
     },
     methods: {
         desnakify,
@@ -250,24 +317,28 @@ export default {
         getCommentCount() {
             this.commentCount = null;
 
-            if (!this.user  || !this.user.groups.includes('curators')) {
+            if (!this.user || !this.user.groups.includes("curators")) {
                 return;
             }
 
-            return HTTP.get(`/comments?variant=${this.$route.params.variant_id}&page_size=9999`).then((response) => {
+            return HTTP.get(
+                `/comments?variant=${this.$route.params.variant_id}&page_size=9999`
+            ).then((response) => {
                 this.commentCount = response.data.count;
-            })
-        }
+            });
+        },
     },
     beforeRouteEnter(to, from, next) {
-        const {variant_id} = to.params;
+        const { variant_id } = to.params;
 
         // ask the store to populate detailed information about this variant
-        store.dispatch("getGeneVariant", {variant_id: variant_id}).then(({ gene, variant }) => {
-            to.meta.title = `SVIP-O: ${gene.symbol} ${variant.name}`;
-            next();
-        });
-    }
+        store
+            .dispatch("getGeneVariant", { variant_id: variant_id })
+            .then(({ gene, variant }) => {
+                to.meta.title = `SVIP-O: ${gene.symbol} ${variant.name}`;
+                next();
+            });
+    },
 };
 </script>
 
@@ -326,9 +397,12 @@ export default {
     bottom: 1px;
 }
 .icon-composer .overlay {
-    position: absolute; color: #839596;
-    left: 6px; top: 4px;
-    font-size: 13px; font-weight: bold;
+    position: absolute;
+    color: #839596;
+    left: 6px;
+    top: 4px;
+    font-size: 13px;
+    font-weight: bold;
     text-align: center;
 }
 </style>

@@ -4,7 +4,7 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
-                    Variant Summary
+                    {{ $t("Variant Summary")}}
                 </h6>
 
                 <transition name="slide-fade">
@@ -15,7 +15,7 @@
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
-                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">Your comment :</b-col>
+                                <b-col v-if="isEditMode || summaryComment !== ''" md="auto" class="font-weight-bold">{{ $t("Your comment :")}}</b-col>
                                 <b-col v-if="!isEditMode && summaryComment !== ''" class="text-justify">
                                     {{ summaryComment }}
                                 </b-col>
@@ -24,18 +24,18 @@
                                 </b-col>
                                 <b-col v-if="!isEditMode">
                                     <b-button v-if="summaryComment === ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Comment summary
+                                        {{ $t("Comment summary")}}
                                     </b-button>
                                     <b-button v-if="summaryComment !== ''" @click="isEditMode = true" variant="success" class="float-right centered-icons">
-                                        Modify comment
+                                        {{ $t("Modify comment")}}
                                     </b-button>
                                 </b-col>
                                 <b-col v-if="isEditMode" md="auto">
                                     <b-button @click="saveSummaryComment" :disabled="summaryComment === ''" variant="success" class="centered-icons">
-                                        Save comment
+                                        {{ $t("Save comment")}}
                                     </b-button>
                                     <b-button @click="deleteSummaryComment" variant="danger" class="centered-icons mt-2">
-                                        Delete comment
+                                        {{ $t("Delete comment")}}
                                     </b-button>
                                 </b-col>
                             </b-row>

@@ -2,7 +2,7 @@
     <div class="card mt-3">
         <div class="card-header">
             <div class="card-title">
-                SVIP Information
+                {{ $t("SVIP Information")}}
             </div>
         </div>
 
@@ -31,7 +31,7 @@
                 <template v-slot:cell(pathogenic)="data">
                     <div>
                         <span v-if="data.value">{{ data.value }}</span>
-                        <span v-else class="unavailable">unavailable</span>
+                        <span v-else class="unavailable">{{ $t("unavailable")}}</span>
                     </div>
                 </template>
 
@@ -39,7 +39,7 @@
                     <pass :summary="curationSummary(data.item)">
                         <div slot-scope="{ summary }">
                             <span v-if="summary && summary.last_modified">
-                                <b v-b-tooltip.hover="summary.modified_by.name">{{ summary.modified_by.abbrev }}</b> on
+                                <b v-b-tooltip.hover="summary.modified_by.name">{{ summary.modified_by.abbrev }}</b> {{ $t("on")}}
                                 <b v-b-tooltip.hover="summary.last_modified.time">{{ summary.last_modified.date }}</b>
                             </span>
                         </div>
@@ -64,7 +64,7 @@
                         <b-button v-access="'curators'" class="centered-icons" size="sm"
                             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id }}"
                         >
-                            <icon name="tools" /> Curate
+                            <icon name="tools" /> {{ $t("Curate")}}
                         </b-button>
                     </div>
                 </template>
@@ -79,18 +79,18 @@
                                     :class="`svip-details-tabs selected-tab-${svip_entry_tabs[row.item.name]}`"
                                 >
                                     <b-tab active>
-                                        <template v-slot:title>Evidence <b-badge class="text-center">{{ row.item.evidencesNum }}</b-badge></template>
+                                        <template v-slot:title>{{ $t("Evidence")}} <b-badge class="text-center">{{ row.item.evidencesNum }}</b-badge></template>
                                         <EvidenceTable :variant="variant" :row="row" :diseaseName="row.item.name" @evidencesNum="displayEvidencesNum"/>
                                         <!--<EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />-->
                                     </b-tab>
 
                                     <b-tab v-if="groups && groups.includes('clinicians')">
-                                        <template v-slot:title>Samples <b-badge class="text-center">{{ row.item.nb_patients }}</b-badge></template>
+                                        <template v-slot:title>{{ $t("Samples")}} <b-badge class="text-center">{{ row.item.nb_patients }}</b-badge></template>
                                         <SampleTable :variant="variant" :row="row" :groups="groups"/>
                                     </b-tab>
 
                                     <b-tab v-if="groups && groups.includes('curators')">
-                                        <template v-slot:title>Curation <b-badge class="text-center">{{ entries.pending.length }}</b-badge></template>
+                                        <template v-slot:title>{{ $t("Curation")}} <b-badge class="text-center">{{ entries.pending.length }}</b-badge></template>
                                         <CurationTable :variant="variant" :row="row" :entries="entries.pending" />
                                     </b-tab>
                                 </b-tabs>

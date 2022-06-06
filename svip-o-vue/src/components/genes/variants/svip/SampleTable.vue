@@ -17,7 +17,7 @@
                     :href="`${entry.value}?subject=Regarding Sample ID ${entry.item.sample_id}`"
                     size="sm"
                     variant="info"
-                >Contact
+                >{{ $t("Contact")}}
                 </b-button>
             </template>
 
@@ -36,7 +36,7 @@
             </template>
 
             <template v-slot:empty="scope">
-                <div class="empty-table-msg">- no samples -</div>
+                <div class="empty-table-msg">{{ $t("- no samples -")}}</div>
             </template>
 
             <template v-slot:row-details="entry">

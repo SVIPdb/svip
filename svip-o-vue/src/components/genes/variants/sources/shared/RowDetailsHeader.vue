@@ -17,7 +17,7 @@
             <b-input-group size="sm">
                 <b-form-input v-model="value.search" placeholder="Type to Search"/>
                 <b-input-group-append>
-                    <b-btn :disabled="!value.search" @click="value.search = ''">Clear</b-btn>
+                    <b-btn :disabled="!value.search" @click="value.search = ''">{{ $t("Clear")}}</b-btn>
                 </b-input-group-append>
             </b-input-group>
         </div>

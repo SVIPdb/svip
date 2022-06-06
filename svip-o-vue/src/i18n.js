@@ -22,6 +22,7 @@ function loadLocaleMessages () {
       messages[locale].validations = validationMessages[locale]
     }
   })
+  console.log(messages)
   return messages
 }
 

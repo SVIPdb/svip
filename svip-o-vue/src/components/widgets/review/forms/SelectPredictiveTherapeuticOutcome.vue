@@ -1,12 +1,12 @@
 <template>
     <b-form-select v-model="selection" class="form-control">
-        <option>Sensitive (in vitro)</option>
-        <option>Responsive</option>
-        <option>Resistant (in vitro)</option>
-        <option>Reduced sensivity</option>
-        <option>Not responsive</option>
-        <option>Adverse response</option>
-        <option>Other</option>
+        <option>{{ $t("Sensitive (in vitro)")}}</option>
+        <option>{{ $t("Responsive")}}</option>
+        <option>{{ $t("Resistant (in vitro)")}}</option>
+        <option>{{ $t("Reduced sensivity")}}</option>
+        <option>{{ $t("Not responsive")}}</option>
+        <option>{{ $t("Adverse response")}}</option>
+        <option>{{ $t("Other")}}</option>
     </b-form-select>
 </template>
 
