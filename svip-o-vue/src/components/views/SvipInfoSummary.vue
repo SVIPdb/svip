@@ -30,7 +30,6 @@
         <div v-html="owner === 'own' ? ownTemplate : template"></div>
     </div>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import { HTTP } from "@/router/http";
@@ -42,6 +41,8 @@ export default {
             ownTemplate: null,
             variant_id: "",
             owner: "all",
+            loaded: false,
+            url: `/variant_summary/${this.$route.params.variant_id}`,
         };
     },
     computed: {
@@ -52,10 +53,8 @@ export default {
     methods: {},
     mounted() {
         const regex = /id="djDebug"/;
-        const regex1 = /id="editor"/;
         console.log(this);
         this.variant_id = this.$route.params.variant_id;
-
         HTTP.get(`/variant_summary/${this.$route.params.variant_id}`).then(
             (response) => {
                 this.template = response.data.replace(
@@ -64,7 +63,6 @@ export default {
                 );
             }
         );
-
         HTTP.get(
             `/variant_summary/${this.$route.params.variant_id}?owner=own&user=${this.user.user_id}`
         ).then((response) => {
@@ -77,7 +75,6 @@ export default {
     },
 };
 </script>
-
 <style scoped>
 .form-container {
     display: flex;
@@ -113,8 +110,19 @@ button {
     margin: auto;
     align-items: center;
 }
-
 .bg-primary {
     background-color: rgb(45, 62, 79);
+}
+.mycontainer {
+    position: absolute;
+    top: -12px;
+    /* margin: 90px 0px 0px 0px; */
+    padding: 0px;
+    width: 100%;
+    height: calc(100%);
+}
+.mycontainer object {
+    width: 100%;
+    height: calc(100% - 218px);
 }
 </style>

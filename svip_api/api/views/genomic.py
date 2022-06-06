@@ -79,7 +79,7 @@ def VariantSummaryView(request, pk: int):
     html = render(request, 'variant_summary.html', context)
     if request.GET.get('if_pdf'):
         context["if_pdf"] = 'pdf'
-        pdf = render_to_pdf('variant_summary_pdf.html', context)
+        pdf = render_to_pdf('variant_summary.html', context)
         return pdf
     else:
         return html
