@@ -74,11 +74,11 @@ def VariantSummaryView(request, pk: int):
                'scores': [1, 2, 3],
                "user": request.user,
                "date": date,
-               "if_pdf": "html"}
+               "format": "html"}
 
     html = render(request, 'variant_summary.html', context)
-    if request.GET.get('if_pdf'):
-        context["if_pdf"] = 'pdf'
+    if request.GET.get('format') == 'pdf':
+        context["format"] = 'pdf'
         pdf = render_to_pdf('variant_summary.html', context)
         return pdf
     else:

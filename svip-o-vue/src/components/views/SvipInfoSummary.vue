@@ -1,33 +1,23 @@
 <template>
     <div>
         <div class="form-container">
-            <button
-                class="button2"
-                type="submit"
-                name="if_pdf"
-                value="pdf"
-                role="button"
-            >
-                <a
-                    class="link"
-                    target="_blank"
-                    :href="`http://localhost:8085/api/v1/variant_summary/${variant_id}?if_pdf=pdf`"
-                    >Download as PDF</a
-                >
-            </button>
+            <b-button variant="info" 
+            target="_blank" 
+            @click="downloadSummaryAsPdf">
+                Download as PDF
+            </b-button>
             <b-form-checkbox
                 size="lg"
                 class="ml-4"
-                id="checkbox-1"
-                v-model="owner"
-                name="checkbox-1"
-                value="own"
-                unchecked-value="all"
+                v-model="show_only_my_entries"
+                @click=""
             >
-                Show my entries
+                Show only my entries
             </b-form-checkbox>
         </div>
-        <div v-html="owner === 'own' ? ownTemplate : template"></div>
+        <div class="mycontainer">
+        <object :data="summaryBlob" class="summaryContent" type="text/html"></object>
+        </div>
     </div>
 </template>
 <script>
@@ -37,12 +27,10 @@ export default {
     name: "SvipInfoSummary",
     data() {
         return {
-            template: null,
-            ownTemplate: null,
-            variant_id: "",
-            owner: "all",
+            summaryBlob: null,
+            variant_id: null,
+            show_only_my_entries: false,
             loaded: false,
-            url: `/variant_summary/${this.$route.params.variant_id}`,
         };
     },
     computed: {
@@ -50,28 +38,44 @@ export default {
             user: "currentUser",
         }),
     },
-    methods: {},
-    mounted() {
-        const regex = /id="djDebug"/;
-        console.log(this);
-        this.variant_id = this.$route.params.variant_id;
-        HTTP.get(`/variant_summary/${this.$route.params.variant_id}`).then(
-            (response) => {
-                this.template = response.data.replace(
-                    regex,
-                    "style='display: none'"
-                );
+    methods: {
+        async getSummaryAsBlob(format='html') {
+            console.log('function getSummaryAsBlob')
+            try {
+                const response = await HTTP.get(`/variant_summary/${this.variant_id}`, {
+                    params: {
+                        // change this to format
+                        format,
+                        onlyOwned: this.show_only_my_entries 
+                    },
+                    headers: { 
+                        'Content-Type': format === 'pdf' ? 'application/pdf' : 'text/html' 
+                    },
+                    responseType: 'blob',
+                })
+                const contentType = await response.headers['content-type']
+                const data = await response.data
+                return window.URL.createObjectURL(new Blob([data], { type: contentType }))
+        
+                 
+            } catch(err) {
+                console.error(err)
             }
-        );
-        HTTP.get(
-            `/variant_summary/${this.$route.params.variant_id}?owner=own&user=${this.user.user_id}`
-        ).then((response) => {
-            console.log(response.data);
-            this.ownTemplate = response.data.replace(
-                regex,
-                "style='display: none'"
-            );
-        });
+        },
+          async downloadSummaryAsPdf() {
+            const pdf = await this.getSummaryAsBlob('pdf')
+            const anchor = document.createElement('a');
+            anchor.href = pdf
+            anchor.target = '_blank'
+            anchor.click();
+        }
+    },
+    async mounted() {
+        console.log('mounted')
+        this.variant_id = this.$route.params.variant_id
+        this.summaryBlob = await this.getSummaryAsBlob()
+        console.log(this.summaryBlob)
+       
     },
 };
 </script>
@@ -115,7 +119,7 @@ button {
 }
 .mycontainer {
     position: absolute;
-    top: -12px;
+   
     /* margin: 90px 0px 0px 0px; */
     padding: 0px;
     width: 100%;
@@ -124,5 +128,9 @@ button {
 .mycontainer object {
     width: 100%;
     height: calc(100% - 218px);
+}
+
+.summaryConntent {
+    width: 100%;
 }
 </style>
