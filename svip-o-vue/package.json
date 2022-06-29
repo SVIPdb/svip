@@ -20,6 +20,7 @@
         "d3": "^5.16.0",
         "dayjs": "^1.8.28",
         "isotope-layout": "^3.0.6",
+        "json-loader": "^0.5.7",
         "lodash": "^4.17.20",
         "ngl": "2.0.0-dev.37",
         "nprogress": "^0.2.0",
@@ -64,6 +65,7 @@
         "sass": "^1.26.8",
         "sass-loader": "^8.0.2",
         "vue-cli-plugin-bootstrap-vue": "~0.6.0",
-        "vue-template-compiler": "^2.6.11"
+        "vue-template-compiler": "^2.6.11",
+        "yaml-loader": "^0.8.0"
     }
 }

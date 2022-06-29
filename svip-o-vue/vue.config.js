@@ -25,6 +25,15 @@ module.exports = {
             // args[0]['process.env']['VUE_APP_LASTCOMMITDATETIME'] = JSON.stringify(gitRevisionPlugin.lastcommitdatetime())
             return args
         })
+        config.module
+            .rule('i18n-loader')
+            .test(/.\.yaml$/)
+            .use('json')
+                .loader('json-loader')
+            .end()
+            .use('yaml')
+                .loader('yaml-loader')
+            .end();
     },
     devServer: {
         disableHostCheck: true
