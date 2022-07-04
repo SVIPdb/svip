@@ -10,13 +10,17 @@
                 size="lg"
                 class="ml-4"
                 v-model="show_only_my_entries"
-                @click=""
+                @change="updateSummary"
             >
                 Show only my entries
             </b-form-checkbox>
         </div>
+
+
         <div class="mycontainer">
-        <object :data="summaryBlob" class="summaryContent" type="text/html"></object>
+            <div class="border1">
+        <object :data="summaryBlob" type="text/html"></object>
+        </div>
         </div>
     </div>
 </template>
@@ -40,13 +44,13 @@ export default {
     },
     methods: {
         async getSummaryAsBlob(format='html') {
-            console.log('function getSummaryAsBlob')
             try {
                 const response = await HTTP.get(`/variant_summary/${this.variant_id}`, {
                     params: {
                         // change this to format
-                        format,
-                        onlyOwned: this.show_only_my_entries 
+                        format: format,
+                        onlyOwned: this.show_only_my_entries,
+                        user: this.user.user_id
                     },
                     headers: { 
                         'Content-Type': format === 'pdf' ? 'application/pdf' : 'text/html' 
@@ -61,7 +65,10 @@ export default {
             } catch(err) {
                 console.error(err)
             }
+        },  async updateSummary() {
+            this.summaryBlob = await this.getSummaryAsBlob('html')
         },
+
           async downloadSummaryAsPdf() {
             const pdf = await this.getSummaryAsBlob('pdf')
             const anchor = document.createElement('a');
@@ -71,12 +78,10 @@ export default {
         }
     },
     async mounted() {
-        console.log('mounted')
         this.variant_id = this.$route.params.variant_id
         this.summaryBlob = await this.getSummaryAsBlob()
-        console.log(this.summaryBlob)
-       
-    },
+    }
+  
 };
 </script>
 <style scoped>
@@ -102,11 +107,6 @@ button {
     width: 150px;
 }
 
-.link {
-    color: aliceblue;
-    text-decoration: none;
-}
-
 .form-container {
     display: flex;
     width: 70%;
@@ -114,23 +114,26 @@ button {
     margin: auto;
     align-items: center;
 }
-.bg-primary {
-    background-color: rgb(45, 62, 79);
-}
 .mycontainer {
-    position: absolute;
-   
-    /* margin: 90px 0px 0px 0px; */
-    padding: 0px;
-    width: 100%;
-    height: calc(100%);
-}
-.mycontainer object {
-    width: 100%;
-    height: calc(100% - 218px);
+    margin: 60px auto; 
+    width: 80%;
+    height: auto;
 }
 
-.summaryConntent {
-    width: 100%;
+.border1 {
+    border: 1px gray dotted;
+    padding: 20px;
+    display: flex;
+    height: auto;
 }
+.mycontainer object {
+    margin: 0px auto; 
+    border: 1px gray dotted;
+    width: 100%;
+    height: max-content;
+    min-height: 800px;
+}
+
+
+
 </style>

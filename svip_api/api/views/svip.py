@@ -577,7 +577,7 @@ def reviews(var):
             for review in evidence.reviews.all():
                 reviewers.append(review.reviewer_id)
                 reviews.append(review.match())
-    print(reviewers)
+
     return reviews
 
 
@@ -591,7 +591,6 @@ def reviewers(var):
                 reviewers.append(review.reviewer)
                 reviewers_id.append(review.reviewer_id)
 
-    print(reviewers)
     return reviewers_id
 
 
