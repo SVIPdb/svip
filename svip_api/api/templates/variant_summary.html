@@ -39,7 +39,7 @@ table {
             padding: 2px;
         }
 .header_title {
-    margin: 30px auto;
+    margin: 20px auto 10px auto;
     color:rgb(45,62,79);
     text-align: center;
 }
@@ -156,7 +156,7 @@ body {
             <th>SVIP Confidence</th>
             <td>     {% for score in scores %} 
                 {% if variant.confidence < score %}
-                &#x2606;
+        
                 {% else %}
                 &#9733;
                 {% endif %}
@@ -169,16 +169,12 @@ body {
 <br/>
 
 <div class="container">
-
     {% if curation_entries %}
     <h2 class="center header_title">Curation entries for {{ variant.name }}</h2>
     {% endif %}
-    <br/>
     {% for entry in curation_entries %}
-<hr class='line'/>
-<br>
 <table class="table2">
-    <h3  class="center header_title" > Curation ID: {{ entry.pk }}</h3>
+    <h3 class="center header_title" > Curation ID: {{ entry.pk }}</h3>
     <tr> <th>Disease</th>
         <td>{{ entry.disease }}</td></tr>
     <tr> <th>Reference</th>
@@ -276,6 +272,11 @@ body {
 <p>unavailable</p>
 {% endif %}
 </div>
+{% if format != 'pdf'%} 
+<br/>
+<hr class='line'/>
+<br/>
+{% endif %}
 {% endfor %}
   </div>
 </div>
