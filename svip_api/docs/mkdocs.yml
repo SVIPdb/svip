@@ -11,11 +11,9 @@ extra_css:
   - css/default.css
 nav:
   - Home: index.md
-  - Variant info: variant_info.md
-  - SVIP Overview: svip_info.md
-  - SVIP Samples: svip_samples.md
-  - SVIP Curation: svip_curation.md
-  - Public databases: public_info.md
+  - Gene page: gene_page.md
+  - Variant page: variant_page.md
+  - Curation page: curation_page.md
 plugins:
   - include-markdown
 markdown_extensions:
