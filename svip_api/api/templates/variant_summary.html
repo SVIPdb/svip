@@ -46,6 +46,12 @@ table {
 .title {
     color: rgb(45,62,79);
 }
+
+.link {
+    text-decoration: none;
+    transition: color ease 1100ms;
+    
+}
 *,
 *::before,
 *::after {
@@ -73,9 +79,29 @@ a {
 }
 .float_text {
     display: block;
-            width: 70%;
-            margin: auto;   
+    width: 70%;
+    margin: auto;   
 }
+
+
+
+
+.link:hover {
+    color: 	#0D6EFD
+}
+
+.arrow {
+  border: solid darkcyan;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
     </style>
 
 {% if format == 'pdf'%} 
@@ -108,7 +134,10 @@ body {
   </div>
   {% endif %}
     <div class="container">
-    <h2 class="header_title">Variant {{ variant.name }} Summary</h2>
+    <h2 class="header_title">
+    <a href="{{ href }}" target="_blank" class="link">Variant {{ variant.name }} Summary</a>
+    </h2>
+        
     <br/>
     <table  class="table2">
         <tr>
@@ -150,7 +179,9 @@ body {
         </tr>
         <tr>
             <th>Gene Summary</th>
-            <td>{{ gene_summary }}</td>
+            <td>{{ gene_summary }} 
+                
+                </td>
         </tr>
         <tr>
             <th>SVIP Confidence</th>
@@ -170,8 +201,11 @@ body {
 
 <div class="container">
     {% if curation_entries %}
-    <h2 class="center header_title">Curation entries for {{ variant.name }}</h2>
+   <h2 class="center header_title">Curation entries for {{ variant.name }}</h2> 
+
+
     {% endif %}
+
     {% for entry in curation_entries %}
 <table class="table2">
     <h3 class="center header_title" > Curation ID: {{ entry.pk }}</h3>
@@ -255,8 +289,15 @@ body {
 </table>
 <br/>
 <div  class="float_text">
- <h4 class="subsection_header" >Gene Summary</h4>
+ <h4 class="subsection_header"><a href="{{ gene_href }}" target="_blank" class="link">Gene Summary</a></h4>
 <p>{{gene_summary }}</p> 
+<br/>
+
+        
+    
+      
+     
+                
 <h4 class="subsection_header" >Complementary information</h4>
 <p>{{ entry.summary }} </p> 
 <h4 class="subsection_header" >Personal comment</h4>

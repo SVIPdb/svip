@@ -25,6 +25,7 @@ from api.shared import clinical_significance, pathogenic
 import re
 from api.utils import render_to_pdf
 import datetime
+import json
 
 
 def change_from_hgvs(x):
@@ -41,6 +42,8 @@ def var_to_position(variant):
 
 
 def VariantSummaryView(request, pk: int):
+    referer = request.META['HTTP_REFERER']
+
     date = datetime.datetime.now()
     user = request.user
     if request.user.is_authenticated:
@@ -52,6 +55,10 @@ def VariantSummaryView(request, pk: int):
     gene = Gene.objects.filter(symbol=variant.gene.symbol)
     gene_summary = gene[0].summary if gene[0].summary else 'unavailable'
     authed_set = CurationEntry.objects.all()
+    href = "/".join([referer[:-1], "curation", "gene",
+                    str(gene[0].id), "variant", str(variant.id)])
+    gene_href = '/'.join([referer[:-1],  "gene",
+                          str(gene[0].id)])
     if request.GET.get('onlyOwned') == 'true':
         authed_set = CurationEntry.objects.filter(
             owner=request.GET.get('user'))
@@ -78,6 +85,8 @@ def VariantSummaryView(request, pk: int):
                'scores': [1, 2, 3],
                "user": request.user,
                "date": date,
+               "href": href,
+               "gene_href": gene_href,
                "format": "html"}
 
     html = render(request, 'variant_summary.html', context)
