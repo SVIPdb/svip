@@ -10,7 +10,7 @@ This section reports the importance of the variant in the context of diagnosis, 
 
 Field|Possible values|Description
 ---|---|---
-Disease|All ICD-O codes|International Classification of Diseases for Oncology (ICD-O)
+Disease|All ICD-O codes|International Classification of Diseases<br>  for Oncology (ICD-O)
 Effect of the variant| Associated with diagnosis<br>  Not associated with diagnosis<br> Other
 Tier criteria|Tier IA|Included in professional guidelines
 |Tier IB|Well-powered studies with consensus from experts in the field
@@ -64,9 +64,9 @@ Drug||International Nonproprietary Names<br>  (INN),  IUPAC|INN is the source fo
 Effect of the variant||Sensitive (in vitro)|Results from in vitro experiments are reported in this<br>  section only if they have been performed<br>  with a clinically relevant drug. <br> For other drugs, see section "Biological relevance",<br>  subsection "Response to drug".
 ||Responsive|Used to report the response to drug in patients.
 ||Resistant (in vitro)|Results from in vitro experiments are reported<br>  in this section only if they have been performed<br>  with a clinically relevant drug. <br> For other drugs, see section "Biological relevance",<br>  subsection "Response to drug".
-||Reduced sensitivity|Used to report the response to drug in patients in a clinical setting.
-||Not responsive|Used to report the response to drug in patients in a clinical setting.
-||Adverse response|Used to report the response to drug in patients in a clinical setting.
+||Reduced sensitivity|Used to report the response to drug in patients<br>  in a clinical setting.
+||Not responsive|Used to report the response to drug in patients<br>  in a clinical setting.
+||Adverse response|Used to report the response to drug in patients<br>  in a clinical setting.
 ||Other|If none of the above apply
 Tier criteria|Tier I: variants with<br>  strong clinical significance;|Tier IA|Included in Professional Guidelines 
 ||Tier IB|Well-powered studies with consensus from experts in the field
