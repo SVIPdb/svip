@@ -22,6 +22,11 @@ body {
 /* styles for the footer, including version info and attribution logos */
 footer {
     padding: 20px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    
 }
 
 footer .version-info {
@@ -30,7 +35,6 @@ footer .version-info {
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-right: solid 1px #ccc;
 }
 

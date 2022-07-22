@@ -6,12 +6,13 @@
 
         <!-- content -->
         <router-view style="margin: 90px auto 200px auto" />
-
-        <nav-footer></nav-footer>
+        
+        <nav-footer v-if="!isHelp" ></nav-footer>
     </div>
 </template>
 
 <script>
+
 import navHeader from "@/components/structure/navheader";
 import navFooter from "@/components/structure/navfooter";
 import "@/components/widgets/StyledLabels";
@@ -26,8 +27,12 @@ export default {
         year() {
             return new Date().getFullYear();
         },
+        isHelp() {
+        return this.$route.name === 'help'
+  }
     },
     mounted() {
+        
         if (!np_manager) {
             np_manager = ProgressManager({ parent: ".ajax-loader-bar" });
         }
