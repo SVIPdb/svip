@@ -32,12 +32,12 @@ For each variant, the following information is available:
 
 Field|Source|Description
 --- | --- | ---
-Disease | International Classification of Diseases for Oncology (ICD-O)|ICD-O morphologic and topographic terms of the disease, as provided by the SVIP partner
+Disease | International<br> Classification of<br> Diseases for Oncology<br> (ICD-O)|ICD-O morphologic and topographic terms of the disease,<br> as provided by the SVIP partner
 Nb of Samples | | Number of VCF files provided by the partners containing this variant in the disease of interest
 Age Distribution ||Distribution of the age of the patients when their sample was analyzed
 Gender Balance ||Gender distribution of the patients’ samples
 Pathogenicity ||Pathogenicity optionally provided by the medical expert
-Clinical Significance||Summary of the various evidences grouped by type: predictive/therapeutic, diagnostic, prognostic
+Clinical Significance||Summary of the various evidences grouped by type:<br> predictive/therapeutic, diagnostic, prognostic
 
 A click on the green arrow on the left of the disease name allows to see all manual annotations associated with the variant in this specific disease.
 
