@@ -8,10 +8,10 @@ _N.B:_ SVIP uses GRCh37 as genomic reference sequence.
 Field |	Source |	Description
 --- | --- | ---
 Gene name|HGNC|Gene name according to the HUGO Gene Nomenclature Committee (https://www.genenames.org/)
-Variant|Various|For many variants affecting the protein sequence, we choose the name that is the most frequently found in the literature or the second half of the HGVS expression using For many variants affecting the protein sequence, we choose the name that is the most frequently found in the literature or the second half of the HGVS expression using<br>• the amino acid one-letter code (e.g. V600E) or, if not present<br>• the coding change (e.g. c.1799T>A) or, if not present <br>• the genomic change (e.g. 140453136A>T)
-HGVS.g|VEP|HGVS nomenclature with a linear genomic reference sequence. SVIP first displays the RefSeq reference sequence. 
-HGVS.p|VEP|HGVS nomenclature with a protein reference sequence, if applicable. SVIP first displays the RefSeq reference sequence.
-HGVS.c|VEP|HGVS nomenclature with a coding DNA reference sequence, if applicable. SVIP first displays the RefSeq reference sequence. By default, we display the Matched Annotation from NCBI and EMBL-EBI (MANE) Select transcript, but all HGVS expressions are stored in the database, allowing searches with any expression.  
+Variant|Various|For many variants affecting the protein sequence, we choose the name that is the most frequently<br/> found in the literature or the second half of the HGVS expression using<br>• the amino acid one-letter code (e.g. V600E) or, if not present<br>• the coding change (e.g. c.1799T>A) or, if not present <br>• the genomic change (e.g. 140453136A>T)
+HGVS.g|VEP|HGVS nomenclature with a linear genomic reference sequence. <br>SVIP first displays the RefSeq reference sequence. 
+HGVS.p|VEP|HGVS nomenclature with a protein reference sequence, if applicable. <br>SVIP first displays the RefSeq reference sequence.
+HGVS.c|VEP|HGVS nomenclature with a coding DNA reference sequence, if applicable.<br> SVIP first displays the RefSeq reference sequence. <br>By default, we display the Matched Annotation from NCBI and EMBL-EBI (MANE) Select transcript,<br> but all HGVS expressions are stored in the database,<br> allowing searches with any expression.  
 dbSNP|VEP|Single Nucleotide Polymorphism Database identifier.
 Position||Variant genomic position
 Allele frequency|VEP|Frequency of the variant in gnomAD exomes combined population.
