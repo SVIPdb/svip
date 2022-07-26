@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
 from django.urls import include, path, re_path
 from django.views.static import serve
 from drf_yasg import openapi
@@ -116,12 +117,12 @@ urlpatterns = [
 
 # serve static files from the dev server
 # (in deployments, this is handled by a proxy frontend, e.g. nginx)
-urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # enables the django debug toolbar
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns = [
-        path('api/v1/__debug__/', include(debug_toolbar.urls)),
+# if settings.DEBUG:
+#     import debug_toolbar
+#     urlpatterns = [
+#         path('api/v1/__debug__/', include(debug_toolbar.urls)),
 
-    ] + urlpatterns
+#     ] + urlpatterns

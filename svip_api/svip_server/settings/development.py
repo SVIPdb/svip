@@ -3,7 +3,7 @@ import logging
 
 from .base import *
 
-DEBUG = False
+DEBUG = True
 # if true, annotates all db requests with N+1 checking logic (expensive, not that reliable)
 USE_NPLUSONE = False
 
@@ -11,9 +11,9 @@ INSTALLED_APPS += [
 
 ]
 
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
-]
+# MIDDLEWARE += [
+#     'debug_toolbar.middleware.DebugToolbarMiddleware'
+# ]
 
 
 if USE_NPLUSONE:
