@@ -1,5 +1,6 @@
 <template>
     <div class="card mt-3">
+        <!-- <div>{{items}}</div> -->
         <div class="card-header">
             <div class="card-title">Publicly Available Information</div>
         </div>
@@ -67,11 +68,13 @@
                 </template>
 
                 <template v-slot:cell(clinical)="data">
+                    <!-- <div>{{data.item.evidence_types}}</div> -->
                     <component
                         v-if="rowHasPart(data, 'clinical')"
                         :is="data.item.colum_parts.clinical"
                         :row="data"
                     />
+                    
                     <evidenceTypesBarPlot
                         v-else
                         :data="data.item.evidence_types"
@@ -79,6 +82,7 @@
                 </template>
 
                 <template v-slot:cell(scores)="data">
+
                     <component
                         v-if="rowHasPart(data, 'scores')"
                         :is="data.item.colum_parts.scores"
@@ -109,7 +113,9 @@
                 {{ sourcesNotFound.map((x) => x.display_name).join(", ") }}
             </div>
         </div>
+
     </div>
+    
 </template>
 
 <script>

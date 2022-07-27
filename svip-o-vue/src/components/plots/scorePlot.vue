@@ -28,10 +28,10 @@
                     :x="d.x + boxWidth / 2.0"
                     :y="height + 14"
                     text-anchor="middle"
-                    font-size="11"
+                    font-size="9"
                     class="rating-label"
                 >
-                    {{ d.k }}
+                    {{ d.k.replace('ier', '. ')  }}
                 </text>
             </g>
 
@@ -78,6 +78,14 @@ const source_levels = {
         { level: "R1", c: "#be382a", range_key: "#df8c7f" },
         { level: "R2", c: "#d78579", range_key: "#88281e" },
     ],
+    svip: [
+        { level: "Tier IA", c: "#5cb05e", range_key: "#007AFF" }, 
+        { level: "Tier IB", c: "#30578c", range_key: "#0d5832" },
+        { level: "Tier IIC", c: "#7597b5", range_key: "#cfcfcf" },
+        { level: "Tier IID", c: "#6e3a77", range_key:  "#b0930b" },
+        { level: "Tier III", c: "#444441", range_key: "#df8c7f" },
+        { level: "Tier IV", c: "#7597b5", range_key: "#88281e"  },
+    ]
 };
 
 // constructs a linear color scale using any level with a 'range_key' value as an anchor in the interpolation
@@ -98,7 +106,7 @@ const color_scales = Object.entries(source_levels).reduce(
 
 export default {
     data() {
-        const boxWidth = 25;
+        const boxWidth = 35;
         return {
             boxWidth,
             width: boxWidth * source_levels[this.sourceName].length,

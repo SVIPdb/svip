@@ -47,10 +47,14 @@ import * as _ from "lodash";
 
 const evidence_types = [
     "Predictive",
+    "Predictive / Therapeutic",
     "Diagnostic",
     "Prognostic",
     "Predisposing",
+    "Function",
     "Functional",
+    "Interaction",
+    "Variant identification"
 ];
 
 const colorMap = d3.scaleOrdinal(d3.schemeSet3).domain(evidence_types);

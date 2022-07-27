@@ -1,5 +1,6 @@
 <template>
     <div class="card mt-3">
+        <!-- <div>{{svip_entries}}</div> -->
         <div class="card-header">
             <div class="card-title">SVIP Information</div>
         </div>
@@ -11,7 +12,7 @@
                 :items="svip_entries"
                 :sort-by.sync="sortBy"
                 :sort-desc="false"
-                style="margin-bottom: 0"
+                style="margin-bottom: 0; overflow-x: scroll;"
                 show-empty
                 ref="table"
             >
@@ -38,6 +39,18 @@
                         <span v-if="data.value">{{ data.value }}</span>
                         <span v-else class="unavailable">unavailable</span>
                     </div>
+                </template>
+
+                 <template v-slot:cell(clinical_significance)="data">
+                    <evidenceTypesBarPlotVue :data="parseClinEvidencesForPlot(splitCurationEntries(data).pending)"></evidenceTypesBarPlotVue>
+                </template>
+
+                <template v-slot:cell(evidence_levels)="data">
+                        <score-plot
+                        :scores="parseClinEvidencesForPlot(splitCurationEntries(data).pending, filed='tier_level')"
+                        :source-name="'svip'"
+                    ></score-plot>
+                    
                 </template>
 
                 <template v-slot:cell(last_modified)="data">
@@ -94,6 +107,7 @@
 
                 <template v-slot:row-details="row">
                     <div class="row-details">
+                        
                         <pass :entries="splitCurationEntries(row)">
                             <b-card
                                 no-body
@@ -226,6 +240,10 @@ import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
 import CurationTable from "@/components/genes/variants/svip/CurationTable";
 import SampleTable from "@/components/genes/variants/svip/SampleTable";
 import dayjs from "dayjs";
+import evidenceTypesBarPlotVue from "../../plots/evidenceTypesBarPlot.vue";
+import scorePlot from "../../plots/scorePlot.vue";
+
+
 
 const NoSVIPInfo = {
     name: "NoSVIPInfo",
@@ -251,13 +269,16 @@ const NoSVIPInfo = {
 export default {
     name: "SVIPInfo",
     components: {
-        SampleTable,
-        EvidenceTable,
-        CurationTable,
-        ageDistribution,
-        genderPlot,
-        NoSVIPInfo,
-    }, // TissueDistribution
+    SampleTable,
+    EvidenceTable,
+    CurationTable,
+    ageDistribution,
+    genderPlot,
+    NoSVIPInfo,
+    evidenceTypesBarPlotVue,
+    scorePlot
+
+}, // TissueDistribution
     props: {
         variant: { type: Object, required: true },
         gene: { type: String, required: true },
@@ -278,6 +299,27 @@ export default {
         };
     },
     methods: {
+        parseClinEvidencesForPlot(entries, field='type_of_evidence') {
+            let dataMap = new Map();
+            for (const entry of entries) {
+                if (entry[field]) {
+                    if (!dataMap.has(entry[field])) {
+                    dataMap.set(entry[field], 1)
+                }   else {
+                    dataMap.set(entry[field], dataMap.get(entry[field]) + 1)
+                }
+                } 
+            }
+            if (field === 'type_of_evidence') {
+                return Array.from(dataMap, function (entry) {
+                return { name: entry[0], count: entry[1] }
+                    });
+            } else {
+                return Object.fromEntries(dataMap)
+            }
+            
+
+        },
         displayEvidencesNum(evidencesNum) {
             // update the number of evidences calculated inside the child component
             this.svip_entries
@@ -347,6 +389,7 @@ export default {
         ...mapGetters({
             user: "currentUser",
         }),
+        
         svip_entries() {
             if (
                 !this.variant ||
@@ -433,6 +476,13 @@ export default {
                     label: "Clinical Significance",
                     sortable: false,
                     class: "d-none d-lg-table-cell",
+                },
+
+                                {
+                    key: "evidence_levels",
+                    label: "Evidence Levels",
+                    sortable: false,
+                    class: "d-none d-md-table-cell",
                 },
                 //{
                 //    key: "status",
