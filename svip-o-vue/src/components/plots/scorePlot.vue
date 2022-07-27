@@ -31,7 +31,7 @@
                     font-size="9"
                     class="rating-label"
                 >
-                    {{ d.k.replace('ier', '. ')  }}
+                    {{ d.k.replace('Tier', '')  }}
                 </text>
             </g>
 
@@ -106,7 +106,7 @@ const color_scales = Object.entries(source_levels).reduce(
 
 export default {
     data() {
-        const boxWidth = 35;
+        const boxWidth = 22;
         return {
             boxWidth,
             width: boxWidth * source_levels[this.sourceName].length,
