@@ -402,11 +402,11 @@
                 </template>
 
                 <template v-slot:cell(action)="row"   >
+          
                     
                     <!-- Ivo : replace v-access="'curators'" with v-access="'reviewers'" -->
                     <b-button
-                        v-if="!(row.item.review_count === 3 &&
-                        row.item.reviews.reduce((a, b) => a + b, 0) >= 2)"
+                        v-if="!(row.item.review_count === 3 || row.item.reviewers_id.includes(user.user_id))"
                         class="centered-icons"
                         size="sm"
                         style="width: 100px"
