@@ -91,15 +91,19 @@
                             class="ml-3"
                             v-model="statusReviewFilter"
                             :items="[
-                                // { label: '0 review', value: 0, variant: 'light' },
-                                // { label: '1 review', value: 1, variant: 'danger' },
-                                // { label: '2 reviews', value: 2, variant: 'warning' },
-                                // { label: '3 reviews', value: 3, variant: 'success' },
+
+
+                                {
+                                    label: 'New',
+                                    value: 'new',
+                                    variant: 'info',
+                                },
                                 {
                                     label: 'In process',
                                     value: 'process',
                                     variant: 'warning',
                                 },
+
                                 {
                                     label: 'On-hold',
                                     value: 'onhold',
@@ -110,7 +114,7 @@
                                     value: 'finished',
                                     variant: 'success',
                                 },
-                                { label: 'All', value: 'all', variant: 'info' },
+                                { label: 'All', value: 'all', variant: 'secondary' },
                             ]"
                         />
                     </div>
@@ -710,9 +714,11 @@ export default {
                 items = items.filter((item) => item.review_count !== 3);
             }
 
-            // if (this.statusReviewFilter !== "all") {
-            //     items = items.filter(element => element.review_count === this.statusReviewFilter);
-            // }
+            if (this.statusReviewFilter === "new") {
+                items = items.filter((item) => item.review_count === 0);
+            }
+
+
             return items;
         },
 

@@ -118,9 +118,9 @@ export default {
     mounted() {
         console.log("flag");
         HTTP.get(`/dashboard_reviews`).then((response) => {
-            /// HERE!!!!!
-            // console.log("REVIEWS :");
-            // console.log(JSON.stringify(response.data.reviews));
+          
+            //console.log("REVIEWS :");
+             //console.log(JSON.stringify(response.data.reviews));
             this.reviews = response.data.reviews;
         });
     },
