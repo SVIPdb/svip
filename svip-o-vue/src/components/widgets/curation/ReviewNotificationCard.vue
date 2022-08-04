@@ -83,8 +83,18 @@
         >
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="p-2 font-weight-bold">
+                    <div class="p-2">
+                        <span class="font-weight-bold">
                         {{ title }}
+                        </span>
+
+                       
+  <b-dropdown id="dropdown-1" :text='review_cycle' class="ml-3" variant="secondary" size="sm" v-model="review_cycle">
+    <b-dropdown-item  @click="review_cycle='First review cycle'">First review cycle</b-dropdown-item>
+    <b-dropdown-item @click="review_cycle='Second review cycle'">Second review cycle</b-dropdown-item>
+
+  </b-dropdown>
+
 
                         <FilterButtons
                             v-if="cardFilterOption"
@@ -105,8 +115,8 @@
                                 },
 
                                 {
-                                    label: 'On-hold',
-                                    value: 'onhold',
+                                    label: `${review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'}`,
+                                    value: 'conflicting',
                                     variant: 'danger',
                                 },
                                 {
@@ -130,6 +140,7 @@
                         My reviews
                     </b-form-checkbox>
                 </div>
+
                 <div>
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
@@ -561,6 +572,7 @@ export default {
     },
     data() {
         return {
+            review_cycle: "First review cycle",
             customClass: "customClass",
             // Custom settings for the visual
             settings: {
@@ -694,7 +706,7 @@ export default {
                 );
             }
 
-            if (this.statusReviewFilter === "onhold") {
+            if (this.statusReviewFilter === "conflicting") {
                 items = items.filter((item) => {
                     return (
                         item.review_count === 3 &&
@@ -718,6 +730,11 @@ export default {
                 items = items.filter((item) => item.review_count === 0);
             }
 
+            if (this.review_cycle === 'First review cycle') {
+                return items.filter(item => item.stage !== 'to_review_again')
+            } else {
+                return items.filter(item => item.stage === 'to_review_again')
+            }
 
             return items;
         },
@@ -735,6 +752,10 @@ export default {
                 !!this.$slots.extra_commands || this.totalRows > this.perPage
             );
         },
+
+        review_cycle_title() {
+            return 'First review cycle'
+        }
     },
 };
 </script>

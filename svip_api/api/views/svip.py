@@ -616,7 +616,8 @@ class DashboardReviews(APIView):
                     'review_count': review_count(var),
                     'reviews': reviews(var),
                     'stage': var.stage,
-                    'reviewers_id': reviewers(var)
+                    'reviewers_id': reviewers(var),
+                    'stage': var.stage
                 }
                 results.append(variant_obj)
                 var_ids.append(var.id)
