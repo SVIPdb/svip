@@ -29,7 +29,7 @@ class Source(models.Model):
     display_name = models.TextField(null=False)
 
     no_associations = models.BooleanField(default=False,
-        help_text="Indicates that this source doesn't contain evidence. If true, filters this source out from variantinsource queries")
+                                          help_text="Indicates that this source doesn't contain evidence. If true, filters this source out from variantinsource queries")
 
     def num_variants(self):
         return VariantInSource.objects.filter(source=self).count()
@@ -37,25 +37,31 @@ class Source(models.Model):
     def __str__(self):
         return "%s (%s, id: %s)" % (self.display_name, self.name, self.id)
 
+
 class GeneManager(models.Manager):
     def get_by_natural_key(self, symbol):
         return self.get(symbol=symbol)
+
 
 class Gene(models.Model):
     entrez_id = models.BigIntegerField(unique=True, db_index=True)
     ensembl_gene_id = models.TextField(db_index=True)
     symbol = models.TextField(unique=True, db_index=True)
-    uniprot_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
+    uniprot_ids = ArrayField(
+        base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
     location = models.TextField(null=True)
-    
+
     summary = models.TextField(null=True, blank=True)
     summary_date = models.DateTimeField(null=True)
 
     # this object is used as a set; to add an entry: sources = jsonb_set(sources, '{newfield}', null, TRUE)
-    sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
+    sources = ArrayField(base_field=models.TextField(),
+                         null=True, verbose_name="Sources")
 
-    aliases = ArrayField(base_field=models.TextField(), default=list, null=True)
-    prev_symbols = ArrayField(base_field=models.TextField(), default=list, null=True)
+    aliases = ArrayField(base_field=models.TextField(),
+                         default=list, null=True)
+    prev_symbols = ArrayField(
+        base_field=models.TextField(), default=list, null=True)
 
     # sources = ArrayField(
     #     base_field=ForeignKey(to=Source, to_field='name', on_delete=DB_CASCADE), default=list)
@@ -72,23 +78,26 @@ class Gene(models.Model):
 class VariantManager(models.Manager):
     def get_by_natural_key(self, description, hgvs_g):
         return self.get(description=description, hgvs_g=hgvs_g)
-    
-    
+
 
 class Variant(models.Model):
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
-    name = models.TextField(null=False, db_index=True, verbose_name="Variant Name")
+    name = models.TextField(null=False, db_index=True,
+                            verbose_name="Variant Name")
     description = models.TextField(null=True, db_index=True)
 
     biomarker_type = models.TextField(null=True)
-    so_hierarchy = ArrayField(base_field=models.CharField(max_length=15), null=True, verbose_name="Hierarchy of SO IDs")
-    soid = models.TextField(null=True, verbose_name="Sequence Ontology ID", default="")
+    so_hierarchy = ArrayField(base_field=models.CharField(
+        max_length=15), null=True, verbose_name="Hierarchy of SO IDs")
+    soid = models.TextField(
+        null=True, verbose_name="Sequence Ontology ID", default="")
     so_name = models.TextField(null=True, db_index=True)
 
     reference_name = models.TextField(null=True)  # e.g., GRCh37
     refseq = models.TextField(null=True)  # an NCBI refseq id
-    isoform = models.TextField(null=True)  # not clear, but typically an ensembl transcript accession ID
+    # not clear, but typically an ensembl transcript accession ID
+    isoform = models.TextField(null=True)
 
     # position and change data
     chromosome = models.CharField(max_length=10, null=True)
@@ -104,12 +113,16 @@ class Variant(models.Model):
     somatic_status = models.TextField(null=True)
 
     # external references
-    dbsnp_ids = ArrayField(base_field=models.TextField(), null=True, verbose_name="UniProt IDs")
-    myvariant_hg19 = models.TextField(null=True, verbose_name="=MyVariant.info URL (hg19)")
-    mv_info = JSONField(null=True)  # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
+    dbsnp_ids = ArrayField(base_field=models.TextField(),
+                           null=True, verbose_name="UniProt IDs")
+    myvariant_hg19 = models.TextField(
+        null=True, verbose_name="=MyVariant.info URL (hg19)")
+    # optional info pulled from myvariant.info; see normalizers.myvariant_enricher
+    mv_info = JSONField(null=True)
 
     # we should be able to compute this from api_source
-    sources = ArrayField(base_field=models.TextField(), null=True, verbose_name="Sources")
+    sources = ArrayField(base_field=models.TextField(),
+                         null=True, verbose_name="Sources")
 
     # stores errors, exceptions encountered while crawling
     crawl_status = JSONField(null=True)
@@ -147,14 +160,12 @@ class Variant(models.Model):
                 else:
                     return False
 
-
-
     class Meta:
         indexes = [
             models.Index(fields=['gene', 'name']),
             models.Index(fields=['gene', 'name', 'hgvs_c']),
         ]
-    
+
     @property
     def stage(self):
 
@@ -190,13 +201,20 @@ class Variant(models.Model):
             if curation.status == 'submitted':
                 return '0_review'
 
-        if self.curations.all().count() > 0 :
+        if self.curations.all().count() > 0:
             return 'ongoing_curation'
 
         if self.curation_request.all().count() > 0:
             return 'loaded'
 
         return 'none'
+
+    @property
+    def priority(self):
+        if self.stage() == 'conflicting_reviews':
+            return 1
+        else:
+            return 2
 
     @property
     def public_stage(self):
@@ -226,6 +244,7 @@ class Variant(models.Model):
         }
         return confidence_dict[self.public_stage]
 
+
 class VariantInSource(models.Model):
     """
     Represents the entry that a specific source (say, CIViC) has for a variant. This includes source-specific variant-
@@ -235,7 +254,8 @@ class VariantInSource(models.Model):
     variant = ForeignKey(to=Variant, on_delete=DB_CASCADE, db_index=True)
     source = ForeignKey(to=Source, on_delete=DB_CASCADE, db_index=True)
 
-    variant_url = models.TextField(null=True, verbose_name="Variant's URL for this source")
+    variant_url = models.TextField(
+        null=True, verbose_name="Variant's URL for this source")
     # this holds source-specific values like COSMIC's variant-level FATHMM predictions/scores
     extras = JSONField(null=True, verbose_name="Source-specific extra data")
 
@@ -306,10 +326,10 @@ class VariantInSource(models.Model):
         # this is used to render the 'diseases/tissues' visualization on the variant details page
         pairs = (
             self.association_set
-                .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
-                .exclude(disease__isnull=True, context__isnull=True)
-                .annotate(count=Count('environmentalcontext__description'))
-                .distinct().order_by('disease')
+            .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
+            .exclude(disease__isnull=True, context__isnull=True)
+            .annotate(count=Count('environmentalcontext__description'))
+            .distinct().order_by('disease')
         )
         return (
             {x[0]: {y['context']: y['count'] for y in x[1]}}
@@ -369,10 +389,12 @@ class Association(models.Model):
     Represents the connection between a Variant and its Phenotypes, Evidences, and EnvironmentalContexts for a specific
     source. There is one Association per pairing of variant, (sets of) phenotypes, and (sets of) contexts.
     """
-    variant_in_source = ForeignKey(to=VariantInSource, on_delete=DB_CASCADE, null=False)
+    variant_in_source = ForeignKey(
+        to=VariantInSource, on_delete=DB_CASCADE, null=False)
 
     # FIXME: move this to VariantInSource
-    source_url = models.TextField(null=True, verbose_name="URL of the variant's entry in the source")
+    source_url = models.TextField(
+        null=True, verbose_name="URL of the variant's entry in the source")
     source = models.TextField()
 
     # temporary field to log exactly what we're getting from the server
@@ -382,8 +404,10 @@ class Association(models.Model):
     drug_labels = models.TextField(null=True)
     drug_interaction_type = models.TextField(null=True)
 
-    variant_name = models.TextField(null=True)  # here for debugging, remove if it's always the name as Variant__name
-    source_link = models.TextField(null=True, verbose_name="URL of the association's entry in the source")
+    # here for debugging, remove if it's always the name as Variant__name
+    variant_name = models.TextField(null=True)
+    source_link = models.TextField(
+        null=True, verbose_name="URL of the association's entry in the source")
 
     # these are modeled after CIViC, with the other sources' ratings shoehorned into these fields
     evidence_type = models.TextField(null=True, choices=EVIDENCE_TYPES)
@@ -394,7 +418,8 @@ class Association(models.Model):
     # stores errors, exceptions encountered while crawling
     crawl_status = JSONField(null=True)
     # stores extra data that doesn't fit into the association structure
-    extras = JSONField(null=True, verbose_name="Association-specific extra data")
+    extras = JSONField(
+        null=True, verbose_name="Association-specific extra data")
 
 
 class CollapsedAssociation(models.Model):
@@ -409,7 +434,8 @@ class CollapsedAssociation(models.Model):
     transform and/or aggregate fields in the client (e.g., the contexts field, which is a concatenation of all the
     EnvironmentalContext.description values for this Association).
     """
-    variant_in_source = ForeignKey(to=VariantInSource, null=False, on_delete=models.DO_NOTHING)
+    variant_in_source = ForeignKey(
+        to=VariantInSource, null=False, on_delete=models.DO_NOTHING)
 
     disease = models.TextField(blank=True, null=True)
     evidence_type = models.TextField(blank=True, null=True)
@@ -418,7 +444,8 @@ class CollapsedAssociation(models.Model):
     drug_labels = models.TextField(blank=True, null=True)
     contexts = models.TextField(blank=True, null=True)
     evidence_levels = models.TextField(blank=True, null=True)
-    publications = ArrayField(base_field=models.TextField(), blank=True, null=True, verbose_name="Publication URLs")
+    publications = ArrayField(base_field=models.TextField(
+    ), blank=True, null=True, verbose_name="Publication URLs")
     children = JSONField(blank=True, null=True)
     collapsed_count = models.BigIntegerField(blank=True, null=True)
 
@@ -434,7 +461,8 @@ class Phenotype(models.Model):
 
     source = models.TextField(null=True)
     term = models.TextField(null=True)
-    pheno_id = models.TextField(null=True)  # just called 'id' in the original object
+    # just called 'id' in the original object
+    pheno_id = models.TextField(null=True)
     family = models.TextField(null=True)
     description = models.TextField(null=True)
 
@@ -443,7 +471,8 @@ class Evidence(models.Model):
     association = ForeignKey(to=Association, on_delete=DB_CASCADE)
 
     # originally under association.evidence[].info.publications[]
-    publications = ArrayField(base_field=models.TextField(), null=True, verbose_name="Publication URLs")
+    publications = ArrayField(base_field=models.TextField(
+    ), null=True, verbose_name="Publication URLs")
 
     # originally under association.evidence[].evidenceType.sourceName
     evidenceType_sourceName = models.TextField(null=True)
@@ -456,6 +485,7 @@ class EnvironmentalContext(models.Model):
 
     source = models.TextField(null=True)
     term = models.TextField(null=True)
-    envcontext_id = models.TextField(null=True)  # just called 'id' in the original object
+    # just called 'id' in the original object
+    envcontext_id = models.TextField(null=True)
     usan_stem = models.TextField(null=True)
     description = models.TextField()

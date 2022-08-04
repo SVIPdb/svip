@@ -86,8 +86,13 @@ export default {
                 return "Not assigned";
             } else if (stage === "ongoing_curation") {
                 return "Ongoing";
-            } else {
-                return "Complete";
+                
+            } else if (stage === 'conflicting_reviews') {
+                    return 'To be recurated'
+                }
+            
+            else {
+                return "Completed";
             }
         },
         fetchRequestedVariants() {

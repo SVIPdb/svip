@@ -46,10 +46,12 @@
                         class="ml-3"
                         v-model="statusFilter"
                         :items="[
-                            { label: 'Not assigned', variant: 'danger' },
+                            { label: 'To be recurated',  variant: 'danger' },
+                            { label: 'Not assigned', variant: 'secondary' },
                             { label: 'Ongoing', variant: 'warning' },
                             { label: 'Complete', variant: 'success' },
                             { label: 'All', value: 'all', variant: 'info' },
+                            
                         ]"
                     />
                 </div>
@@ -71,6 +73,9 @@
                 </div>
             </div>
         </b-card-header>
+
+
+
         <b-card-header
             v-if="isReviewer"
             class="p-1"
@@ -208,16 +213,20 @@
                         size="sm"
                         style="width: 100px"
                         variant="info"
-                        :to="{
-                            name: 'annotate-variant',
+                        :to=" row.item.stage !== 'conflicting_reviews' ?
+                            {name: 'annotate-variant',
                             params: {
                                 gene_id: row.item.gene_id,
                                 variant_id: row.item.variant_id,
                             },
-                        }"
+                        } : {name: 'view-review',
+                            params: {
+                                gene_id: row.item.gene_id,
+                                variant_id: row.item.variant_id,
+                            }}"
                         target="_blank"
                     >
-                        <icon name="pen-alt" /> Curate
+                        <icon name="pen-alt" /> {{ row.item.stage !== 'conflicting_reviews' ? 'Curate' : 'Recurate'}}
                     </b-button>
                 </template>
 
@@ -533,9 +542,10 @@ export default {
             },
             // Mapping between status and classes
             curationStatus: {
-                "Not assigned": "danger",
+                "Not assigned": "secondary",
                 Ongoing: "warning",
-                Complete: "success",
+                Completed: "success",
+                "To be recurated": "danger"
             },
 
             // pagination controls

@@ -1,6 +1,8 @@
 <template>
     <div class="container-fluid">
         <div>
+            
+            <!-- <div>{{user}}</div> -->
             <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
             <ReviewNotificationCard
@@ -8,7 +10,8 @@
                 :items="reviews"
                 :fields="review.fields"
                 :loading="review.loading"
-                :isReviewer="true"
+                :isReviewer="user.groups.includes('clinicians') ? true : false"
+                :isCurator="false"  
                 title="REVIEWS"
                 :error="on_request.error"
                 defaultSortBy="days_left"
@@ -71,6 +74,7 @@ import fields_to_be_discussed from "@/data/curation/to_be_discussed/fields.json"
 import nonsvip_variants from "@/data/curation/nonsvip_variants/items.json";
 import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.json";
 import OnRequestEntries from "@/components/widgets/curation/OnRequestEntries";
+import { mapGetters } from "vuex";
 
 import { abbreviatedName } from "@/utils";
 
@@ -81,6 +85,11 @@ export default {
         EvidenceCard,
         ReviewNotificationCard,
     },
+    computed: {
+        ...mapGetters({
+            user: "currentUser",
+        })
+        },
     data() {
         return {
             // Ivo - orignial : REVIEW_ENABLED: false,
@@ -119,8 +128,8 @@ export default {
         console.log("flag");
         HTTP.get(`/dashboard_reviews`).then((response) => {
           
-            console.log("REVIEWS :");
-             console.log(JSON.stringify(response.data.reviews));
+            //console.log("REVIEWS :");
+             //console.log(JSON.stringify(response.data.reviews));
             this.reviews = response.data.reviews;
         });
     },
@@ -131,6 +140,8 @@ export default {
             this.on_request.loading = false;
         },
     },
+
+   
 };
 </script>
 

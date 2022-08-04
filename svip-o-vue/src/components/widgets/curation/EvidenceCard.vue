@@ -173,6 +173,7 @@
                 </template>
 
                 <template v-slot:cell(action)="data">
+               
                     <span class="action-tray">
                         <b-button
                             v-if="data.item.status !== 'submitted'"
@@ -471,7 +472,7 @@ export default {
                 "0_review",
                 "1_review",
                 "2_reviews",
-                "conflicting_reviews",
+                "conflicting_reviews", // "conflicting_reviews"
                 "to_review_again",
                 "on_hold",
                 "fully_reviewed",

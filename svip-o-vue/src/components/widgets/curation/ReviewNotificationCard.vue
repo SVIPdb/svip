@@ -1,4 +1,5 @@
 <template>
+
     <b-card class="shadow-sm mb-3" align="left" no-body>
         <b-card-header
             v-if="isCurator"
@@ -44,13 +45,31 @@
                     <FilterButtons
                         v-if="cardFilterOption"
                         class="ml-3"
-                        v-model="statusFilter"
-                        :items="[
-                            { label: 'Not assigned', variant: 'danger' },
-                            { label: 'Ongoing', variant: 'warning' },
-                            { label: 'Complete', variant: 'success' },
-                            { label: 'All', value: 'all', variant: 'info' },
-                        ]"
+                        v-model="statusReviewFilter"
+                                        :items="[
+                                {
+                                    label: 'New',
+                                    value: 'new',
+                                    variant: 'info',
+                                },
+                                {
+                                    label: 'In process',
+                                    value: 'process',
+                                    variant: 'warning',
+                                },
+
+                                {
+                                    label: `${review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'}`,
+                                    value: 'conflicting',
+                                    variant: 'danger',
+                                },
+                                {
+                                    label: 'Approved',
+                                    value: 'finished',
+                                    variant: 'success',
+                                },
+                                { label: 'All', value: 'all', variant: 'secondary' },
+                            ]"
                     />
                 </div>
                 <div>
@@ -71,6 +90,8 @@
                 </div>
             </div>
         </b-card-header>
+
+
         <b-card-header
             v-if="isReviewer"
             class="p-1"
@@ -101,8 +122,6 @@
                             class="ml-3"
                             v-model="statusReviewFilter"
                             :items="[
-
-
                                 {
                                     label: 'New',
                                     value: 'new',
@@ -161,10 +180,14 @@
         </b-card-header>
 
         <b-card-body v-if="isCurator" class="p-0">
+
+        <div>
+ 
+        </div>
             <b-table
                 v-if="!error"
                 class="mb-0"
-                :items="filteredItems"
+                :items="filteredReviewItems"
                 :fields="fields"
                 :filter="filter"
                 :sort-by.sync="sortBy"
@@ -244,15 +267,17 @@
                     </span>
                 </template>
 
-                <template v-slot:cell(action)="row">
+                <template v-slot:cell(action)="row" >
+                    
                     <b-button
+                    v-if="row.stage === 'conflicting_reviews'"
                         v-access="'curators'"
                         class="centered-icons"
                         size="sm"
                         style="width: 100px"
                         variant="info"
                         :to="{
-                            name: 'annotate-variant',
+                            name: 'view-review',
                             params: {
                                 gene_id: row.item.gene_id,
                                 variant_id: row.item.variant_id,
@@ -260,7 +285,7 @@
                         }"
                         target="_blank"
                     >
-                        <icon name="pen-alt" /> Curate
+                        <icon name="pen-alt" /> Re-curate
                     </b-button>
                 </template>
 
@@ -675,6 +700,18 @@ export default {
                 this.currentPage = 1;
             }
         },
+
+                statusReviewFilter(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
+        },
+
+        statusMineReviewer(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.currentPage = 1;
+            }
+        },
     },
     computed: {
         ...mapGetters({
@@ -700,6 +737,13 @@ export default {
         },
         filteredReviewItems() {
             let items = this.items;
+
+            if (this.myFilter !== "all") {
+                items = items.filter((x) =>
+                    x.curator.some((y) => y.id === this.user.user_id)
+                );
+            }
+
             if (this.statusMineReviewer === "mine") {
                 items = items.filter((item) =>
                     item.reviewers_id.includes(this.user.user_id)
@@ -709,8 +753,7 @@ export default {
             if (this.statusReviewFilter === "conflicting") {
                 items = items.filter((item) => {
                     return (
-                        item.review_count === 3 &&
-                        item.reviews.reduce((a, b) => a + b, 0) <= 1
+                        item.stage === 'conflicting_reviews'
                     );
                 });
             }
