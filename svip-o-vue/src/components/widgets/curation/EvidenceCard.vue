@@ -60,18 +60,19 @@
             </div>
         </b-card-header>
 
-        <div style="margin: 25px 10px">
+        <div style="margin: 25px 10px" v-if="!isDashboard">
             <b-button
                 variant="info"
                 @click="submitAll"
                 style="height: 34px"
-                :disabled="already_submitted"
+                :disabled="already_submitted || variant.svip_data === null"
             >
                 Submit to review
             </b-button>
         </div>
 
         <b-card-body class="p-0">
+         
             <PagedTable
                 id="evidence_table"
                 ref="paged_table"

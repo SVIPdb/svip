@@ -38,6 +38,7 @@
             />
 
             <EvidenceCard
+                isDashboard="true"
                 has-header
                 include-gene-var
                 header-title="CURATION ENTRIES"
