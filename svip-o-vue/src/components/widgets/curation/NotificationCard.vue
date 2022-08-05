@@ -49,7 +49,7 @@
                             { label: 'To be recurated',  variant: 'danger' },
                             { label: 'Not assigned', variant: 'secondary' },
                             { label: 'Ongoing', variant: 'warning' },
-                            { label: 'Complete', variant: 'success' },
+                            { label: 'Completed', variant: 'success' },
                             { label: 'All', value: 'all', variant: 'info' },
                             
                         ]"
