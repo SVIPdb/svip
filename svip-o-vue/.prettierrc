@@ -1,0 +1,7 @@
+{
+    "bracketSameLine": true,
+    "semi": true,
+    "arrowParens": "avoid",
+    "htmlWhitespaceSensitivity": "ignore",
+    "singleAttributePerLine": true
+}

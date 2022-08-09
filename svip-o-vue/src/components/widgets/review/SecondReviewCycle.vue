@@ -8,8 +8,7 @@
                 </h6>
                 <div
                     v-for="(evidence, index) in review.evidences"
-                    :key="'evidence' + index"
-                >
+                    :key="'evidence' + index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="expander_array[idx].disease">
@@ -20,8 +19,7 @@
                                                 v-model="
                                                     expander_array[idx]
                                                         .evidences[index]
-                                                "
-                                            />
+                                                " />
                                             {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
@@ -30,8 +28,7 @@
                                                 v-for="(
                                                     effect, effect_idx
                                                 ) in evidence.effectOfVariant"
-                                                :key="'effect' + effect_idx"
-                                            >
+                                                :key="'effect' + effect_idx">
                                                 {{ effect.label }}:
                                                 {{
                                                     effect.count
@@ -49,8 +46,7 @@
                                                         evidence.finalAnnotation
                                                             .annotatedEffect
                                                     "
-                                                    readonly
-                                                />
+                                                    readonly />
                                             </b-row>
                                             <b-row class="p-2">
                                                 <b-input
@@ -58,8 +54,7 @@
                                                         evidence.finalAnnotation
                                                             .annotatedTier
                                                     "
-                                                    readonly
-                                                />
+                                                    readonly />
                                             </b-row>
                                         </b-col>
 
@@ -67,11 +62,10 @@
                                             <ReviewAgreementComment
                                                 :value="evidence.newReview"
                                                 @input="
-                                                    (review) =>
+                                                    review =>
                                                         (evidence.newReview =
                                                             review)
-                                                "
-                                            />
+                                                " />
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
@@ -79,34 +73,30 @@
                                     <div
                                         v-if="
                                             expander_array[idx].evidences[index]
-                                        "
-                                    >
+                                        ">
                                         <b-card-footer
-                                            class="pt-0 pb-0 pl-3 pr-3 fluid"
-                                        >
+                                            class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <b-row
                                                 align-v="center"
                                                 v-for="(
                                                     curation, i
                                                 ) in evidence.curations"
-                                                :key="i"
-                                            >
-                                                <b-col class="border p-2"
-                                                    >PMID:
+                                                :key="i">
+                                                <b-col class="border p-2">
+                                                    PMID:
                                                     <b-link
                                                         target="_blank"
                                                         active
-                                                        :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`"
-                                                    >
+                                                        :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                         {{ curation.pmid }}
                                                     </b-link>
                                                 </b-col>
-                                                <b-col class="border p-2">{{
-                                                    curation.effect
-                                                }}</b-col>
-                                                <b-col class="border p-2">{{
-                                                    curation.tier
-                                                }}</b-col>
+                                                <b-col class="border p-2">
+                                                    {{ curation.effect }}
+                                                </b-col>
+                                                <b-col class="border p-2">
+                                                    {{ curation.tier }}
+                                                </b-col>
                                                 <b-col class="border p-2">
                                                     Support:
                                                     {{ curation.support }}
@@ -120,8 +110,8 @@
                                                             },
                                                         }"
                                                         target="_blank"
-                                                        alt="Link to evidence"
-                                                        >Curation entry #{{
+                                                        alt="Link to evidence">
+                                                        Curation entry #{{
                                                             curation.id
                                                         }}
                                                     </b-link>
@@ -129,11 +119,9 @@
 
                                                 <b-col
                                                     class="border p-2"
-                                                    cols="6"
-                                                    >{{
-                                                        curation.comment
-                                                    }}</b-col
-                                                >
+                                                    cols="6">
+                                                    {{ curation.comment }}
+                                                </b-col>
                                             </b-row>
                                         </b-card-footer>
                                     </div>
@@ -158,8 +146,8 @@ import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import {
     BIcon,
-    BIconSquare,
     BIconCheckSquareFill,
+    BIconSquare,
     BIconXSquareFill,
 } from "bootstrap-vue";
 import ulog from "ulog";
@@ -202,7 +190,7 @@ export default {
             expander_array: [],
         };
     },
-    created() {
+    mounted() {
         this.channel.onmessage = () => {
             if (this.$refs.paged_table) {
                 this.$refs.paged_table.refresh();
@@ -213,7 +201,7 @@ export default {
         // TODO: this pulls a vaguely relevant curation entry, but it'll obviously be replaced later with a real reference
         HTTP.get(
             `/curation_entries?variant__gene__symbol=NRAS&page_size=1`
-        ).then((response) => {
+        ).then(response => {
             this.sample_curation_id = response.data.results[0].id;
         });
 
@@ -231,11 +219,11 @@ export default {
                 var_id: this.variant.id,
             };
             HTTP.post(`/review_data`, params)
-                .then((response) => {
+                .then(response => {
                     this.diseases = response.data.review_data;
                     this.detectOwnReviews();
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     //this.$snotify.error("Failed to fetch data");
                 });
@@ -263,8 +251,8 @@ export default {
             this.diseases.map((disease, i) => {
                 let evidences_expanders = [];
 
-                disease.evidences.map((evidence) => {
-                    evidence.reviews.map((review) => {
+                disease.evidences.map(evidence => {
+                    evidence.reviews.map(review => {
                         if (review.reviewer_id === this.user.user_id) {
                             const myReview = {
                                 annotatedEffect: review.annotatedEffect,
@@ -275,7 +263,7 @@ export default {
                         }
                     });
 
-                    evidence.revised_reviews.map((rr) => {
+                    evidence.revised_reviews.map(rr => {
                         if (rr.reviewer_id === this.user.user_id) {
                             const newReview = {
                                 reviewer_id: this.user.user_id,
@@ -339,8 +327,8 @@ export default {
             //}
 
             // iterate over every review
-            this.diseases.map((disease) => {
-                disease.evidences.map((evidence) => {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
                     if (evidence.id in this.selfReviewedEvidences) {
                         console.log("REREVIEWED");
                         let reviewID = this.selfReviewedEvidences[evidence.id];
@@ -348,10 +336,10 @@ export default {
                             `/revised_reviews/${reviewID}/`,
                             this.reviewParams(evidence)
                         )
-                            .then((response) => {
+                            .then(response => {
                                 this.getReviewData();
                             })
-                            .catch((err) => {
+                            .catch(err => {
                                 log.warn(err);
                                 this.$snotify.error("Failed to submit review");
                             });
@@ -361,10 +349,10 @@ export default {
                             `/revised_reviews/`,
                             this.reviewParams(evidence)
                         )
-                            .then((response) => {
+                            .then(response => {
                                 this.getReviewData();
                             })
-                            .catch((err) => {
+                            .catch(err => {
                                 log.warn(err);
                                 this.$snotify.error("Failed to submit review");
                             });

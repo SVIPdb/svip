@@ -1,11 +1,9 @@
-from datetime import datetime
-from rest_framework.response import Response
-from rest_framework.views import APIView
+import django_filters
 import hgvs.assemblymapper
 import hgvs.dataproviders.uta
 import hgvs.normalizer
-import django_filters
 import hgvs.parser
+from django.contrib.auth.models import User
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
@@ -13,7 +11,8 @@ from hgvs.exceptions import HGVSParseError
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.models import (
     VariantInSVIP, Sample,
@@ -23,24 +22,21 @@ from api.models import (
     Gene
 )
 from api.models.svip import (
-    SubmittedVariant, SubmittedVariantBatch, CurationRequest, CurationEvidence,
-    SummaryComment, CurationReview, CurationAssociation, CurationEvidence, SIBAnnotation1,
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview, CurationAssociation,
+    CurationEvidence, SIBAnnotation1,
     SIBAnnotation2, SummaryDraft, GeneSummaryDraft, RevisedReview
 )
-
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation1Serializer,
-    SIBAnnotation2Serializer, SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer,
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation2Serializer,
+    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer,
     CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
-
-
 # ================================================================================================================
 # === Variant Aggregation
 # ================================================================================================================
@@ -338,7 +334,7 @@ class RevisedReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-        #kwargs["many"] = True
+        # kwargs["many"] = True
         return super(RevisedReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
@@ -442,7 +438,8 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter,)
     filter_fields = (
-        'disease_in_svip__disease', 'sample_id', 'year_of_birth', 'gender', 'hospital', 'medical_service', 'provider_annotation',
+        'disease_in_svip__disease', 'sample_id', 'year_of_birth', 'gender', 'hospital', 'medical_service',
+        'provider_annotation',
         'sample_tissue', 'tumor_purity', 'tnm_stage', 'sample_type', 'sample_site', 'specimen_type', 'sequencing_date',
         'panel', 'coverage', 'calling_strategy', 'caller', 'aligner', 'software', 'software_version', 'platform',
         'contact',
@@ -603,7 +600,7 @@ class DashboardReviews(APIView):
 
             if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
                 variant_obj = {
-                    'gene_id':  var.gene.id,
+                    'gene_id': var.gene.id,
                     'variant_id': var.id,
                     'gene_name': var.gene.symbol,
                     'variant': var.name,
@@ -612,7 +609,8 @@ class DashboardReviews(APIView):
                     'status': 'Ongoing',
                     'deadline': 'n/a',
                     'requester': '',
-                    'curator': [],
+                    'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
+                                var.curations.distinct('owner')],
                     'review_count': review_count(var),
                     'reviews': reviews(var),
                     'stage': var.stage,
@@ -650,7 +648,7 @@ class ReviewDataView(APIView):
         else:
             svip_var = matching_svip_var[0]
 
-        for curation in variant.curations.filter(status="submitted"):
+        for curation in variant.curation_entries.filter(status="submitted"):
 
             # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
             # check that a disease is indicated for the curation entry being saved
@@ -713,7 +711,7 @@ class CurationIds(APIView):
         var_id = request.data.get('var_id')
         curations = {}
 
-        for curation in Variant.objects.get(id=var_id).curations.all():
+        for curation in Variant.objects.get(id=var_id).curation_entries.all():
             curations[curation.id] = True
 
         return Response(data=curations)

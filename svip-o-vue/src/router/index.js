@@ -1,5 +1,4 @@
 import Vue from "vue";
-import VueConfirmDialog from "vue-confirm-dialog";
 import Router from "vue-router";
 import store from "@/store";
 import { TokenErrors } from "@/store/modules/users";
@@ -7,12 +6,12 @@ import { checkInRole } from "@/directives/access";
 import { np_manager } from "@/App";
 
 import ulog from "ulog";
+// Preload about to successfully scroll to the disclaimer section from home page
+import About from "@/components/views/About";
 
 // lazy-load routes rather than directly importing them
 const Home = () => import("@/components/views/Home");
 const Releases = () => import("@/components/views/Releases");
-// Preload about to successfully scroll to the disclaimer section from home page
-import About from "@/components/views/About";
 // const About = () => import("@/components/views/About");
 const Help = () => import("@/components/views/Help");
 const ViewGene = () => import("@/components/views/ViewGene");
@@ -25,6 +24,8 @@ const CurationDashboard = () =>
 const AnnotateVariant = () =>
     import("@/components/views/curation/AnnotateVariant");
 const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
+const SecondReviewCycle = () =>
+    import("@/components/widgets/review/SecondReviewCycle");
 const ViewReview = () => import("@/components/views/review/ViewReview");
 const AddEvidence = () => import("@/components/views/curation/AddEvidence");
 const SubmitVariants = () =>
@@ -33,8 +34,7 @@ const DebugPage = () => import("@/components/views/DebugPage");
 const PageNotFound = () => import("@/components/views/PageNotFound");
 const SubmitCurations = () =>
     import("@/components/views/review/SubmitCurations");
-const SvipInfoSummary = () =>
-    import("@/components/views/SvipInfoSummary");    
+const SvipInfoSummary = () => import("@/components/views/SvipInfoSummary");
 
 const log = ulog("Router:index");
 
@@ -67,7 +67,7 @@ const router = new Router({
             component: SvipInfoSummary,
             // beforeEnter: remapGeneSymbol,
             meta: {
-                title: (to) => `SVIP-O: Svip Summary ${to.params.variant_id}`,
+                title: to => `SVIP-O: Svip Summary ${to.params.variant_id}`,
             },
         },
         {
@@ -76,7 +76,7 @@ const router = new Router({
             component: ViewGene,
             // beforeEnter: remapGeneSymbol,
             meta: {
-                title: (to) => `SVIP-O: Gene ${to.params.gene_id}`,
+                title: to => `SVIP-O: Gene ${to.params.gene_id}`,
             },
         },
         {
@@ -186,6 +186,17 @@ const router = new Router({
             },
         },
         {
+            path: "/second_review/gene/:gene_id/variant/:variant_id",
+            name: "second-review",
+            component: SecondReviewCycle,
+            // beforeEnter: remapGeneSymbol,
+            meta: {
+                title: "SVIP-O: Second Review",
+                requiresAuth: true,
+                roles: ["clinicians"],
+            },
+        },
+        {
             path: "/curation/gene/:gene_id/variant/:variant_id/submit",
             name: "submit-curation",
             component: SubmitCurations,
@@ -239,7 +250,7 @@ router.beforeEach((to, from, next) => {
             np_manager.start(`transition: ${to.name}`);
         }
 
-        if (to.matched.some((record) => record.meta.requiresAuth)) {
+        if (to.matched.some(record => record.meta.requiresAuth)) {
             // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
             // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
 
@@ -247,7 +258,7 @@ router.beforeEach((to, from, next) => {
                 return record.meta.roles ? acc.concat(record.meta.roles) : acc;
             }, []);
 
-            store.dispatch("checkCredentials").then((result) => {
+            store.dispatch("checkCredentials").then(result => {
                 if (
                     !result.valid &&
                     (result.reason === TokenErrors.EXPIRED ||
@@ -266,7 +277,7 @@ router.beforeEach((to, from, next) => {
                     });
                 } else if (
                     possibleRoles &&
-                    !possibleRoles.some((x) => checkInRole(x))
+                    !possibleRoles.some(x => checkInRole(x))
                 ) {
                     log.warn("Roles check failed!");
                     next({

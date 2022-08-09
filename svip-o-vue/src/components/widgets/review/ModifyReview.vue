@@ -19,8 +19,7 @@
                             index !== 'Prognostic' ? 'hidden_header' : ''
                         "
                         class="mb-0"
-                        :bordered="true"
-                    >
+                        :bordered="true">
                         <template v-slot:cell(type_of_evidence)="row">
                             <row-expander :row="row" class="mr-2" />
                             <span>{{ index }}</span>
@@ -29,13 +28,14 @@
                         <template v-slot:cell(list_of_evidences)="data">
                             <p
                                 v-for="(outcome, index) in data.item.outcome"
-                                :key="index"
-                            >
+                                :key="index">
                                 {{ outcome.label }}:
-                                {{ outcome.nb_evidence }} evidence(s)<br />
+                                {{ outcome.nb_evidence }} evidence(s)
+                                <br />
                             </p>
                             <!-- Ivo : better to not include the number of evidences in the object and compute it here?
-                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }} ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
+                            <span v-for="(outcome, index) in data.item.outcome" :key="index">{{ outcome.label }}
+                            ({{ Object.keys(data.item.evidence).length }} evidence(s))<br /></span>
                             -->
                         </template>
 
@@ -43,22 +43,23 @@
                             <div
                                 class="pb-2"
                                 @change="handleEffect"
-                                v-bind:id="`effect-${data.item.id}`"
-                            >
+                                v-bind:id="`effect-${data.item.id}`">
                                 <b-form-select
                                     v-model="data.item.sib_annotation_outcome"
                                     v-if="index.includes('Prognostic')"
                                     :options="prognosticOutcomeOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                                 <b-form-select
                                     v-model="data.item.sib_annotation_outcome"
                                     v-if="index.includes('Diagnostic')"
                                     :options="diagnosticOutcomeOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                                 <b-form-select
                                     v-model="data.item.sib_annotation_outcome"
                                     v-if="
@@ -68,28 +69,30 @@
                                     "
                                     :options="predictiveOutcomeOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                             </div>
                             <div
                                 class="pt-2"
                                 @change="handleTier"
-                                v-bind:id="`tier-${data.item.id}`"
-                            >
+                                v-bind:id="`tier-${data.item.id}`">
                                 <b-form-select
                                     v-model="data.item.sib_annotation_trust"
                                     v-if="index.includes('Prognostic')"
                                     :options="trustOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                                 <b-form-select
                                     v-model="data.item.sib_annotation_trust"
                                     v-if="index.includes('Diagnostic')"
                                     :options="trustOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                                 <b-form-select
                                     v-model="data.item.sib_annotation_trust"
                                     v-if="
@@ -99,14 +102,14 @@
                                     "
                                     :options="trustOptions"
                                     class="form-control"
-                                    :disabled="not_reviewed || annotated"
-                                ></b-form-select>
+                                    :disabled="
+                                        not_reviewed || annotated
+                                    "></b-form-select>
                             </div>
                             <input
                                 class="invisible"
                                 v-model="data.item.sib_annotation_outcome"
-                                @change="annotationEdited(data.item)"
-                            />
+                                @change="annotationEdited(data.item)" />
                         </template>
 
                         <template v-slot:cell(reviewer_annotation)="data">
@@ -114,8 +117,7 @@
                                 <b-col
                                     cols="4"
                                     v-for="(review, index) in data.item.reviews"
-                                    :key="index"
-                                >
+                                    :key="index">
                                     <h5 class="mb-3">
                                         <b-icon
                                             v-if="
@@ -127,13 +129,11 @@
                                                         .sib_annotation_trust
                                             "
                                             style="color: blue"
-                                            icon="check-square-fill"
-                                        ></b-icon>
+                                            icon="check-square-fill"></b-icon>
                                         <b-icon
                                             v-else
                                             style="color: red"
-                                            icon="x-square-fill"
-                                        ></b-icon>
+                                            icon="x-square-fill"></b-icon>
                                         {{ review.reviewer }}
                                     </h5>
                                     <p
@@ -142,8 +142,7 @@
                                             data.item.sib_annotation_outcome
                                                 ? 'text-danger bold'
                                                 : null
-                                        "
-                                    >
+                                        ">
                                         {{ review.reviewer_annotation_outcome }}
                                     </p>
                                     <p
@@ -152,21 +151,21 @@
                                             data.item.sib_annotation_trust
                                                 ? 'text-danger bold'
                                                 : null
-                                        "
-                                    >
+                                        ">
                                         {{ review.reviewer_annotation_trust }}
                                     </p>
-                                    <small class="justify-around"
-                                        >{{ review.comment }}
+                                    <small class="justify-around">
+                                        {{ review.comment }}
+
                                         <b-btn
                                             variant="primary"
                                             block
                                             class="mt-3"
                                             v-if="review.comment"
-                                            :href="`mailto:${review.reviewer_mail}?cc=curate@svip.ch&from=curate@svip.ch&subject=Review%20of%20disease:${label}%20${variant.description}&body=${review.comment}%0D---%0DView%20online:%20${fullUrl}`"
-                                            >Reply by mail</b-btn
-                                        ></small
-                                    >
+                                            :href="`mailto:${review.reviewer_mail}?cc=curate@svip.ch&from=curate@svip.ch&subject=Review%20of%20disease:${label}%20${variant.description}&body=${review.comment}%0D---%0DView%20online:%20${fullUrl}`">
+                                            Reply by mail
+                                        </b-btn>
+                                    </small>
                                 </b-col>
                             </b-row>
                         </template>
@@ -182,23 +181,10 @@
                                     variant="info"
                                     size="sm"
                                     block
-                                    :disabled="not_reviewed || annotated"
-                                >
+                                    :disabled="not_reviewed || annotated">
                                     <icon name="plus" />
                                     Add publication
                                 </b-button>
-                                <!--<b-button
-                                    v-b-modal="addNoteID"
-                                    
-                                    target="_blank"
-                                    class="centered-icons"
-                                    variant="primary"
-                                    size="sm"
-                                    block
-                                >
-                                    <icon name="plus"/>
-                                    Clinical input
-                                </b-button>-->
                             </div>
                         </template>
 
@@ -209,28 +195,25 @@
                                 :fields="footer"
                                 thead-class="thead-footer"
                                 class="mb-0 text-justify"
-                                style="background-color: #f3f3f3"
-                            >
+                                style="background-color: #f3f3f3">
                                 <template v-slot:cell(evidence_link)="data">
-                                    <span>Evidence : </span>
+                                    <span>Evidence :</span>
                                     <b-link
                                         :to="
                                             $route.fullPath +
                                             '/entry/' +
                                             data.item.evidence_link
                                         "
-                                        target="_blank"
-                                    >
+                                        target="_blank">
                                         {{ data.item.evidence_link }}
                                     </b-link>
                                 </template>
 
                                 <template v-slot:cell(pmid_link)="data">
-                                    <span>PMID : </span>
+                                    <span>PMID :</span>
                                     <b-link
                                         v-bind="pubmedURL(data.item.pmid_link)"
-                                        target="_blank"
-                                    >
+                                        target="_blank">
                                         {{ data.item.pmid_link }}
                                     </b-link>
                                 </template>
@@ -240,14 +223,14 @@
                                 </template>
 
                                 <template v-slot:cell(evidence_comment)="data">
-                                    <span>{{
-                                        data.item.evidence_comment
-                                    }}</span>
+                                    <span>
+                                        {{ data.item.evidence_comment }}
+                                    </span>
                                 </template>
 
                                 <template v-slot:cell(actions)="data">
                                     <div align="center">
-                                        <b-button
+                                        <!-- <b-button
                                             :href="
                                                 editEntryURL(
                                                     data.item.evidence_link
@@ -261,7 +244,7 @@
                                         >
                                             <icon name="pen-alt" />
                                             Edit
-                                        </b-button>
+                                        </b-button> -->
                                         <b-button
                                             @click="
                                                 deleteEntry(
@@ -273,8 +256,7 @@
                                             class="mt-2 centered-icons"
                                             variant="danger"
                                             style="width: 110px"
-                                            size="sm"
-                                        >
+                                            size="sm">
                                             <icon name="trash" />
                                             Delete
                                         </b-button>
@@ -294,8 +276,7 @@
                 title="Add/modify a note"
                 class="modal-add-evidence"
                 size="lg"
-                :hide-footer="true"
-            >
+                :hide-footer="true">
                 <b-card no-body>
                     <b-textarea class="summary-box" v-model="note" rows="3" />
                 </b-card>
@@ -308,16 +289,14 @@
             title="Add a new evidence"
             class="modal-add-evidence"
             size="lg"
-            :hide-footer="true"
-        >
+            :hide-footer="true">
             <b-card no-body>
                 <b-tabs
                     card
                     justified
                     nav-wrapper-class="bg-primary"
                     nav-class="text-white"
-                    active-nav-item-class="font-weight-bolder"
-                >
+                    active-nav-item-class="font-weight-bolder">
                     <b-tab title="Enter your reference" active>
                         <b-card-body>
                             <b-container>
@@ -327,16 +306,14 @@
                                             required
                                             class="custom-border-left"
                                             v-model="source"
-                                            :options="['PMID']"
-                                        />
+                                            :options="['PMID']" />
                                     </b-col>
                                     <b-col cols="6">
                                         <b-form-input
                                             v-model="reference"
                                             required
                                             placeholder="Type reference"
-                                            class="rounded-0"
-                                        />
+                                            class="rounded-0" />
                                     </b-col>
                                     <b-col cols="2">
                                         <b-button-group>
@@ -346,8 +323,7 @@
                                                 "
                                                 class="custom-unrounded centered-icons"
                                                 variant="info"
-                                                @click="viewCitation"
-                                            >
+                                                @click="viewCitation">
                                                 <icon name="eye" />
                                                 View Abstract
                                             </b-button>
@@ -359,8 +335,7 @@
                                                 class="custom-border-right centered-icons"
                                                 variant="success"
                                                 @click="addEvidence"
-                                                target="_blank"
-                                            >
+                                                target="_blank">
                                                 <icon name="plus" />
                                                 Create Entry
                                             </b-button>
@@ -371,13 +346,11 @@
                                 <transition name="slide-fade" mode="out-in">
                                     <MessageWithIcon
                                         v-if="annotationUsed"
-                                        class="mt-4 mr-5 ml-5"
-                                    >
+                                        class="mt-4 mr-5 ml-5">
                                         <template v-slot:icon>
                                             <icon
                                                 name="exclamation-triangle"
-                                                scale="2.5"
-                                            />
+                                                scale="2.5" />
                                         </template>
                                         <template>
                                             This reference has already been used
@@ -394,8 +367,7 @@
                                                     ) in annotationUsed"
                                                     :key="i"
                                                     :to="`/curation/gene/${x.gene_id}/variant/${x.variant_id}/entry/${x.id}`"
-                                                    target="_blank"
-                                                >
+                                                    target="_blank">
                                                     Entry #{{ x.id }}
                                                 </b-button>
                                             </div>
@@ -408,8 +380,7 @@
                                         <VariomesAbstract
                                             v-if="loadingVariomes"
                                             style="margin-top: 1em"
-                                            :variomes="variomes"
-                                        />
+                                            :variomes="variomes" />
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -463,14 +434,28 @@ export default {
                 this.refreshReferences();
             };
         },
+
         handleEffect(event) {
             const tag_id = event.target.parentNode.id;
             const selectedValue =
-                document.getElementById(tag_id).childNodes[2].value;
+                document.getElementById(tag_id).childNodes[0].value !==
+                undefined
+                    ? document.getElementById(tag_id).childNodes[0].value
+                    : document.getElementById(tag_id).childNodes[1].value !==
+                      undefined
+                    ? document.getElementById(tag_id).childNodes[1].value
+                    : document.getElementById(tag_id).childNodes[2].value;
+            console.log(document.getElementById(tag_id).childNodes);
+            console.log(
+                "selected value",
+                document.getElementById(tag_id).childNodes[0].value
+            );
+            console.log(selectedValue);
             const evidence_id = tag_id.split("-").pop();
+            console.log(evidence_id);
             for (var outcome in this.disease) {
                 const evidence = this.disease[outcome][0];
-                if (evidence.id == parseInt(evidence_id)) {
+                if (evidence.id === parseInt(evidence_id)) {
                     evidence["sib_annotation_outcome"] = selectedValue;
                     this.annotationEdited(evidence);
                 }
@@ -478,12 +463,19 @@ export default {
         },
         handleTier(event) {
             const tag_id = event.target.parentNode.id;
+
             const selectedValue =
-                document.getElementById(tag_id).childNodes[2].value;
+                document.getElementById(tag_id).childNodes[0].value !==
+                undefined
+                    ? document.getElementById(tag_id).childNodes[0].value
+                    : document.getElementById(tag_id).childNodes[1].value !==
+                      undefined
+                    ? document.getElementById(tag_id).childNodes[1].value
+                    : document.getElementById(tag_id).childNodes[2].value;
             const evidence_id = tag_id.split("-").pop();
             for (var outcome in this.disease) {
                 const evidence = this.disease[outcome][0];
-                if (evidence.id == parseInt(evidence_id)) {
+                if (evidence.id === parseInt(evidence_id)) {
                     evidence["sib_annotation_trust"] = selectedValue;
                     this.annotationEdited(evidence);
                 }
@@ -491,13 +483,13 @@ export default {
         },
         makeItems() {
             const evidences = {};
-            this.raw_disease.map((evidence) => {
+            this.raw_disease.map(evidence => {
                 if (!(evidence.fullType in evidences)) {
                     evidences[evidence.fullType] = [];
                 }
                 const evidenceObj = {};
                 evidenceObj["outcome"] = [];
-                evidence.effectOfVariant.map((effect) => {
+                evidence.effectOfVariant.map(effect => {
                     evidenceObj["outcome"].push({
                         label: effect.label,
                         nb_evidence: effect.count,
@@ -527,7 +519,7 @@ export default {
                 }
 
                 evidenceObj["reviews"] = [];
-                evidence.reviews.map((review) => {
+                evidence.reviews.map(review => {
                     if (review.status != null) {
                         evidenceObj["reviews"].push({
                             reviewer: review.reviewer,
@@ -539,7 +531,7 @@ export default {
                     }
                 });
                 evidenceObj["evidence"] = [];
-                evidence.curations.map((curation) => {
+                evidence.curations.map(curation => {
                     evidenceObj["evidence"].push({
                         reject: false,
                         outcome: curation.effect,
@@ -583,10 +575,10 @@ export default {
                         delete this.disease[index];
                         //this.$refs.paged_table.refresh();
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         console.log("ERROR:");
                         console.log(err);
-                        //this.$snotify.error("Failed to delete entry");
+                        this.$snotify.error("Failed to delete entry");
                     });
             }
         },
@@ -635,11 +627,11 @@ export default {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                 },
             })
-                .then((response) => {
+                .then(response => {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.variomes = {
                         error: "Couldn't retrieve publication info, try again later.",
@@ -778,49 +770,63 @@ export default {
 .table td {
     vertical-align: middle;
 }
+
 .hidden_header {
     display: none;
 }
+
 .ten-percent-class {
     width: 10%;
 }
+
 .fifteen-percent-class {
     width: 15%;
 }
+
 .twenty-percent-class {
     width: 20%;
 }
+
 .fourty-five-percent-class {
     width: 45%;
 }
+
 .modal-dialog {
     max-width: 1200px;
 }
+
 .custom-style .dropdown-toggle {
     border-radius: 0 !important;
     height: calc(2.15625rem + 2px) !important;
 }
+
 .custom-unrounded {
     border-radius: 0 !important;
 }
+
 .custom-border-left {
     border-radius: 0.25rem 0 0 0.25rem !important;
 }
+
 .custom-border-right {
     border-radius: 0 0.25rem 0.25rem 0 !important;
 }
+
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {
-    transition: all 0.5s ease;
+    transition: all 1.5s ease;
 }
+
 .slide-fade-leave-active {
     transition: all 0.3s ease;
 }
+
 .slide-fade-enter-to,
 .slide-fade-leave {
     max-height: 120px;
 }
+
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active below version 2.1.8 */ {
     opacity: 0;
@@ -831,10 +837,12 @@ export default {
 table >>> .thead-footer {
     display: none !important;
 }
+
 .action-tray {
     display: flex;
     justify-content: flex-end;
 }
+
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;
@@ -842,10 +850,12 @@ table >>> .thead-footer {
     align-items: center;
     justify-content: center;
 }
+
 .text-small {
     font-size: smaller;
 }
-.invisble {
+
+.invisible {
     display: none;
 }
 </style>

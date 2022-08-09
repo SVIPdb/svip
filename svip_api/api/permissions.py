@@ -2,7 +2,6 @@ from django.http import Http404
 from rest_framework import permissions, status
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-
 # gives view/edit permissions to anyone who's a curator, not just the owner
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -13,6 +12,7 @@ ALLOW_ANY_CURATOR = True
 PUBLIC_VISIBLE_STATUSES = ('reviewed', 'unreviewed')
 
 CURATOR_ALLOWED_ROLES = ('curators', 'clinicians')
+
 
 class IsCurationPermitted(BasePermission):
     """
@@ -40,7 +40,8 @@ class IsCurationPermitted(BasePermission):
             if not is_reading:
                 # curators can only edit their own drafts or saved entries
                 # submitted and reviwed entries are always static to curators
-                return (obj.owner == user or ALLOW_ANY_CURATOR) and obj.status in ('draft', 'saved')
+                return ((obj.owner == user or ALLOW_ANY_CURATOR) and obj.status in (
+                    'draft', 'saved')) or obj.variant.stage == "conflicting_reviews"
             else:
                 # curators can see their own entries and only others' reviewed entries
                 return (obj.owner == user or ALLOW_ANY_CURATOR) or obj.status == 'reviewed'
@@ -97,6 +98,7 @@ class IsSubmitter(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return request.user.groups.filter(name='submitters').exists()
+
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """

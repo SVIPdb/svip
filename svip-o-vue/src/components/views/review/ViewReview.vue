@@ -4,14 +4,12 @@
             <!-- Ivo : To change? -->
             <CuratorVariantInformations
                 :variant="variant"
-                :disease_id="disease_id"
-            />
+                :disease_id="disease_id" />
 
             <!-- Ivo : Change name to "VariantSummaryReview"? -->
             <ModifyVariantSummary
                 :variant="variant"
-                :comments="summary.comments"
-            />
+                :comments="summary.comments" />
 
             <div v-for="disease in diseases" :key="disease">
                 <modify-review
@@ -19,29 +17,26 @@
                     :label="disease.disease"
                     @annotated="updateAnnotations"
                     :annotated="annotated"
-                    :not_reviewed="not_reviewed"
-                />
+                    :not_reviewed="not_reviewed" />
             </div>
+
             <b-button
                 class="float-right"
                 @click="submitAnnotations"
-                :disabled="not_reviewed || annotated"
-            >
+                :disabled="not_reviewed || annotated">
                 Submit annotation
             </b-button>
         </div>
         <b-navbar-text
             v-if="not_reviewed"
             class="fixed-bottom submitted-bar"
-            align="center"
-        >
+            align="center">
             THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.
         </b-navbar-text>
         <b-navbar-text
             class="fixed-bottom submitted-bar"
             align="center"
-            v-if="annotated"
-        >
+            v-if="annotated">
             THIS VARIANT HAS ALREADY BEEN SUBMITTED TO A SECOND ROUND OF
             REVIEWS.
         </b-navbar-text>
@@ -51,14 +46,14 @@
 <script>
 /* eslint-disable */
 import { HTTP } from "@/router/http";
-import { var_to_position } from "@/utils";
-import { BIcon, BIconQuestion, BIconCheck, BIconX } from "bootstrap-vue";
+import { BIcon, BIconCheck, BIconQuestion, BIconX } from "bootstrap-vue";
 import ModifyReview from "@/components/widgets/review/ModifyReview";
 import ulog from "ulog";
 import { mapGetters } from "vuex";
 import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
 import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
 import store from "@/store";
+
 const log = ulog("ViewReview");
 export default {
     name: "ViewReview",
@@ -172,8 +167,8 @@ export default {
             this.annotations[annotation["evidence"]] = annotation;
         },
         submitAnnotations() {
-            for (var evidence_id in this.annotations) {
-                // check wether annotation has an ID field (in that case it means an instance already exists in the DB)
+            for (let evidence_id in this.annotations) {
+                // check if annotation has an ID field (in that case it means an instance already exists in the DB)
                 const annotation = this.annotations[evidence_id];
                 if (typeof annotation.id === "undefined") {
                     HTTP.post("/sib_annotations_2/", annotation)
@@ -220,18 +215,22 @@ export default {
 .table td {
     vertical-align: middle;
 }
+
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {
     transition: all 0.5s ease;
 }
+
 .slide-fade-leave-active {
     transition: all 0.3s ease;
 }
+
 .slide-fade-enter-to,
 .slide-fade-leave {
     max-height: 120px;
 }
+
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active below version 2.1.8 */ {
     opacity: 0;

@@ -197,11 +197,11 @@ class Variant(models.Model):
                     if evidence.reviews.count() == 1:
                         return '1_review'
 
-        for curation in self.curations.all():
+        for curation in self.curation_entries.all():
             if curation.status == 'submitted':
                 return '0_review'
 
-        if self.curations.all().count() > 0:
+        if self.curation_entries.all().count() > 0:
             return 'ongoing_curation'
 
         if self.curation_request.all().count() > 0:

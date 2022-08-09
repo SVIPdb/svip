@@ -1,6 +1,7 @@
 <template>
     <div>
         <div v-if="diseases.length > 0">
+
             <div v-for="(review, idx) in diseases" :key="idx">
                 <b-card class="shadow-sm mb-3" align="left" no-body>
                     <h6
@@ -53,6 +54,10 @@
                                                     <b-row
                                                         class="p-1 d-flex justify-content-end flex-row no-wrap"
                                                     >
+                                                    {{evidence}}
+                                                    <br/>
+                                                     <br/>
+                                                    {{evidence.curator}}
                                                         <select-prognostic-outcome
                                                             v-if="
                                                                 evidence.typeOfEvidence ===

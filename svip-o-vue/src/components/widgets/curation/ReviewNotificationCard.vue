@@ -1,5 +1,4 @@
 <template>
-
     <b-card class="shadow-sm mb-3" align="left" no-body>
         <b-card-header
             v-if="isCurator"
@@ -9,8 +8,7 @@
             :class="cardCustomClass ? customClass : ''"
             :style="
                 customBgColor && `background-color: ${customBgColor} !important`
-            "
-        >
+            ">
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{ title }}
@@ -19,78 +17,81 @@
                         class="ml-3"
                         size="sm"
                         :variant="myFilter !== 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter(user.user_id)"
-                    >
+                        @click="setCustomFilter(user.user_id)">
                         My curations
                         <b-badge
                             pill
-                            :class="myFilter !== 'all' && 'bg-white text-dark'"
-                            >{{ myCurations.length }}</b-badge
-                        >
+                            :class="myFilter !== 'all' && 'bg-white text-dark'">
+                            {{ myCurations.length }}
+                        </b-badge>
                     </b-button>
                     <b-button
                         class="ml-3"
                         size="sm"
                         :variant="myFilter === 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter('all')"
-                    >
+                        @click="setCustomFilter('all')">
                         All curations
                         <b-badge
                             pill
-                            :class="myFilter === 'all' && 'bg-white text-dark'"
-                            >{{ items.length }}</b-badge
-                        >
+                            :class="myFilter === 'all' && 'bg-white text-dark'">
+                            {{ items.length }}
+                        </b-badge>
                     </b-button>
 
                     <FilterButtons
                         v-if="cardFilterOption"
                         class="ml-3"
                         v-model="statusReviewFilter"
-                                        :items="[
-                                {
-                                    label: 'New',
-                                    value: 'new',
-                                    variant: 'info',
-                                },
-                                {
-                                    label: 'In process',
-                                    value: 'process',
-                                    variant: 'warning',
-                                },
+                        :items="[
+                            {
+                                label: 'New',
+                                value: 'new',
+                                variant: 'info',
+                            },
+                            {
+                                label: 'In process',
+                                value: 'process',
+                                variant: 'warning',
+                            },
 
-                                {
-                                    label: `${review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'}`,
-                                    value: 'conflicting',
-                                    variant: 'danger',
-                                },
-                                {
-                                    label: 'Approved',
-                                    value: 'finished',
-                                    variant: 'success',
-                                },
-                                { label: 'All', value: 'all', variant: 'secondary' },
-                            ]"
-                    />
+                            {
+                                label: `${
+                                    review_cycle === 'First review cycle'
+                                        ? 'Conflicting'
+                                        : 'On-hold'
+                                }`,
+                                value: 'conflicting',
+                                variant: 'danger',
+                            },
+                            {
+                                label: 'Approved',
+                                value: 'finished',
+                                variant: 'success',
+                            },
+                            {
+                                label: 'All',
+                                value: 'all',
+                                variant: 'secondary',
+                            },
+                        ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
                             v-model="filter"
-                            placeholder="Type to Search"
-                        ></b-form-input>
+                            placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button
                                 :variant="settings.buttonBg"
                                 size="sm"
-                                @click="filter = ''"
-                                >Clear</b-button
-                            >
+                                @click="filter = ''">
+                                Clear
+                            </b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
             </div>
         </b-card-header>
-
 
         <b-card-header
             v-if="isReviewer"
@@ -100,22 +101,30 @@
             :class="cardCustomClass ? customClass : ''"
             :style="
                 customBgColor && `background-color: ${customBgColor} !important`
-            "
-        >
+            ">
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="p-2">
                         <span class="font-weight-bold">
-                        {{ title }}
+                            {{ title }}
                         </span>
 
-                       
-  <b-dropdown id="dropdown-1" :text='review_cycle' class="ml-3" variant="secondary" size="sm" v-model="review_cycle">
-    <b-dropdown-item  @click="review_cycle='First review cycle'">First review cycle</b-dropdown-item>
-    <b-dropdown-item @click="review_cycle='Second review cycle'">Second review cycle</b-dropdown-item>
-
-  </b-dropdown>
-
+                        <b-dropdown
+                            id="dropdown-1"
+                            :text="review_cycle"
+                            class="ml-3"
+                            variant="secondary"
+                            size="sm"
+                            v-model="review_cycle">
+                            <b-dropdown-item
+                                @click="review_cycle = 'First review cycle'">
+                                First review cycle
+                            </b-dropdown-item>
+                            <b-dropdown-item
+                                @click="review_cycle = 'Second review cycle'">
+                                Second review cycle
+                            </b-dropdown-item>
+                        </b-dropdown>
 
                         <FilterButtons
                             v-if="cardFilterOption"
@@ -134,7 +143,11 @@
                                 },
 
                                 {
-                                    label: `${review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'}`,
+                                    label: `${
+                                        review_cycle === 'First review cycle'
+                                            ? 'Conflicting'
+                                            : 'On-hold'
+                                    }`,
                                     value: 'conflicting',
                                     variant: 'danger',
                                 },
@@ -143,9 +156,12 @@
                                     value: 'finished',
                                     variant: 'success',
                                 },
-                                { label: 'All', value: 'all', variant: 'secondary' },
-                            ]"
-                        />
+                                {
+                                    label: 'All',
+                                    value: 'all',
+                                    variant: 'secondary',
+                                },
+                            ]" />
                     </div>
                     <b-form-checkbox
                         v-if="isReviewer"
@@ -154,8 +170,7 @@
                         v-model="statusMineReviewer"
                         name="checkbox-1"
                         value="mine"
-                        unchecked-value="not_mine"
-                    >
+                        unchecked-value="not_mine">
                         My reviews
                     </b-form-checkbox>
                 </div>
@@ -164,15 +179,14 @@
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
                             v-model="filter"
-                            placeholder="Type to Search"
-                        ></b-form-input>
+                            placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button
                                 :variant="settings.buttonBg"
                                 size="sm"
-                                @click="filter = ''"
-                                >Clear</b-button
-                            >
+                                @click="filter = ''">
+                                Clear
+                            </b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -180,10 +194,7 @@
         </b-card-header>
 
         <b-card-body v-if="isCurator" class="p-0">
-
-        <div>
- 
-        </div>
+            <div></div>
             <b-table
                 v-if="!error"
                 class="mb-0"
@@ -198,24 +209,23 @@
                 show-empty
                 small
                 hover
-                :responsive="true"
-            >
+                :responsive="true">
                 <template v-slot:cell(gene_name)="data">
-                    <b
-                        ><router-link
+                    <b>
+                        <router-link
                             :to="`/gene/${data.item.gene_id}`"
-                            target="_blank"
-                            >{{ data.value }}</router-link
-                        ></b
-                    >
+                            target="_blank">
+                            {{ data.value }}
+                        </router-link>
+                    </b>
                 </template>
 
                 <template v-slot:cell(variant)="data">
                     <router-link
                         :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
-                        target="_blank"
-                        >{{ data.value }}</router-link
-                    >
+                        target="_blank">
+                        {{ data.value }}
+                    </router-link>
                 </template>
 
                 <template v-slot:cell(hgvs)="data">
@@ -225,19 +235,18 @@
                 <template v-slot:cell(deadline)="row">
                     <p
                         v-if="row.item.curated !== 'Complete'"
-                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'"
-                    >
-                        <span class="font-weight-bold">{{
-                            setLetter(row.item.days_left)
-                        }}</span>
+                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
+                        <span class="font-weight-bold">
+                            {{ setLetter(row.item.days_left) }}
+                        </span>
                         ({{ row.item.days_left }} days)
                     </p>
                 </template>
 
                 <template v-slot:cell(review_count)="data">
-                    <b-badge :variant="setBadgeClass(data.value)">{{
-                        data.value
-                    }}</b-badge>
+                    <b-badge :variant="setBadgeClass(data.value)">
+                        {{ data.value }}
+                    </b-badge>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
@@ -250,27 +259,25 @@
                             reviewer.value
                                 ? 'text-success mr-1'
                                 : 'text-danger mr-1'
-                        "
-                    ></icon>
+                        "></icon>
                 </template>
 
                 <template v-slot:cell(curator)="data">
                     <span v-for="(owner, idx) in data.value" :key="owner.name">
-                        <span v-if="idx > 0">, </span>
+                        <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b
                                 slot-scope="{ name }"
-                                v-b-tooltip.hover="name.name"
-                                >{{ name.abbrev }}</b
-                            >
+                                v-b-tooltip.hover="name.name">
+                                {{ name.abbrev }}
+                            </b>
                         </pass>
                     </span>
                 </template>
 
-                <template v-slot:cell(action)="row" >
-                    
+                <template v-slot:cell(action)="row">
                     <b-button
-                    v-if="row.stage === 'conflicting_reviews'"
+                        v-if="row.stage === 'conflicting_reviews'"
                         v-access="'curators'"
                         class="centered-icons"
                         size="sm"
@@ -283,9 +290,9 @@
                                 variant_id: row.item.variant_id,
                             },
                         }"
-                        target="_blank"
-                    >
-                        <icon name="pen-alt" /> Re-curate
+                        target="_blank">
+                        <icon name="pen-alt" />
+                        Re-curate
                     </b-button>
                 </template>
 
@@ -304,23 +311,21 @@
                 <icon
                     name="exclamation-triangle"
                     scale="3"
-                    style="vertical-align: text-bottom; margin-bottom: 5px"
-                /><br />
+                    style="vertical-align: text-bottom; margin-bottom: 5px" />
+                <br />
                 Loading this list failed, please try again later
             </div>
 
             <div
                 v-if="slotsUsed"
-                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`"
-            >
+                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
                 <slot name="extra_commands" />
 
                 <b-pagination
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </div>
         </b-card-body>
 
@@ -337,24 +342,24 @@
                 :current-page="currentPage"
                 show-empty
                 small
-                hover
-            >
+                hover>
                 <template v-slot:cell(gene_name)="data">
-                    <b
-                        ><router-link
+                    {{ items }}
+                    <b>
+                        <router-link
                             :to="`/gene/${data.item.gene_id}`"
-                            target="_blank"
-                            >{{ data.value }}</router-link
-                        ></b
-                    >
+                            target="_blank">
+                            {{ data.value }}
+                        </router-link>
+                    </b>
                 </template>
 
                 <template v-slot:cell(variant)="data">
                     <router-link
                         :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
-                        target="_blank"
-                        >{{ data.value }}</router-link
-                    >
+                        target="_blank">
+                        {{ data.value }}
+                    </router-link>
                 </template>
 
                 <template v-slot:cell(hgvs)="data">
@@ -364,11 +369,10 @@
                 <template v-slot:cell(deadline)="row">
                     <p
                         v-if="row.item.curated !== 'Complete'"
-                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'"
-                    >
-                        <span class="font-weight-bold">{{
-                            setLetter(row.item.days_left)
-                        }}</span>
+                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
+                        <span class="font-weight-bold">
+                            {{ setLetter(row.item.days_left) }}
+                        </span>
                         ({{ row.item.days_left }} days)
                     </p>
                 </template>
@@ -376,8 +380,7 @@
                 <template v-slot:cell(status)="status_obj">
                     <span
                         v-for="(review, i) in status_obj['item']['reviews']"
-                        :key="review + i"
-                    >
+                        :key="review + i">
                         <span v-if="review">
                             <b-icon
                                 style="color: blue"
@@ -388,8 +391,7 @@
                                         user.user_id ===
                                         status_obj['item']['reviewers_id'][i]
                                     ),
-                                }"
-                            ></b-icon>
+                                }"></b-icon>
                         </span>
                         <span v-else>
                             <b-icon
@@ -401,20 +403,19 @@
                                         user.user_id ===
                                         status_obj['item']['reviewers_id'][i]
                                     ),
-                                }"
-                            ></b-icon>
+                                }"></b-icon>
                         </span>
                     </span>
 
                     <span
                         v-for="index in 3 - status_obj['item']['review_count']"
-                        :key="index"
-                    >
+                        :key="index">
                         <b-icon class="h5 m-1" icon="square"></b-icon>
                     </span>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
+                    <div>data!!!</div>
                     <icon
                         v-for="(reviewer, index) in data.value"
                         v-bind:key="index"
@@ -424,29 +425,31 @@
                             reviewer.value
                                 ? 'text-success mr-1'
                                 : 'text-danger mr-1'
-                        "
-                    ></icon>
+                        "></icon>
                 </template>
 
                 <template v-slot:cell(curator)="data">
                     <span v-for="(owner, idx) in data.value" :key="owner.name">
-                        <span v-if="idx > 0">, </span>
+                        <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b
                                 slot-scope="{ name }"
-                                v-b-tooltip.hover="name.name"
-                                >{{ name.abbrev }}</b
-                            >
+                                v-b-tooltip.hover="name.name">
+                                {{ name.abbrev }}
+                            </b>
                         </pass>
                     </span>
                 </template>
 
-                <template v-slot:cell(action)="row"   >
-          
-                    
+                <template v-slot:cell(action)="row">
                     <!-- Ivo : replace v-access="'curators'" with v-access="'reviewers'" -->
                     <b-button
-                        v-if="!(row.item.review_count === 3 || row.item.reviewers_id.includes(user.user_id))"
+                        v-if="
+                            !(
+                                row.item.review_count === 3 ||
+                                row.item.reviewers_id.includes(user.user_id)
+                            )
+                        "
                         class="centered-icons"
                         size="sm"
                         style="width: 100px"
@@ -458,9 +461,27 @@
                                 variant_id: row.item.variant_id,
                             },
                         }"
-                        target="_blank"
-                    >
-                        <icon name="pen-alt" /> Review
+                        target="_blank">
+                        <icon name="pen-alt" />
+                        Review
+                    </b-button>
+
+                    <b-button
+                        v-if="review_cycle === 'Second Review Cycle'"
+                        class="centered-icons"
+                        size="sm"
+                        style="width: 100px"
+                        variant="info"
+                        :to="{
+                            name: 'annotate-review',
+                            params: {
+                                gene_id: row.item.gene_id,
+                                variant_id: row.item.variant_id,
+                            },
+                        }"
+                        target="_blank">
+                        <icon name="pen-alt" />
+                        Second Review
                     </b-button>
                 </template>
 
@@ -478,16 +499,14 @@
 
             <div
                 v-if="slotsUsed"
-                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`"
-            >
+                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
                 <slot name="extra_commands" />
 
                 <b-pagination
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </div>
         </b-card-body>
     </b-card>
@@ -504,8 +523,8 @@ import { mapGetters } from "vuex";
 import FilterButtons from "@/components/widgets/curation/FilterButtons";
 import {
     BIcon,
-    BIconSquare,
     BIconCheckSquareFill,
+    BIconSquare,
     BIconXSquareFill,
 } from "bootstrap-vue";
 
@@ -701,7 +720,7 @@ export default {
             }
         },
 
-                statusReviewFilter(newVal, oldVal) {
+        statusReviewFilter(newVal, oldVal) {
             if (newVal !== oldVal) {
                 this.currentPage = 1;
             }
@@ -723,13 +742,13 @@ export default {
 
             if (this.statusFilter !== "all") {
                 items = items.filter(
-                    (element) => element.review_count === this.statusFilter
+                    element => element.review_count === this.statusFilter
                 );
             }
 
             if (this.myFilter !== "all") {
-                return items.filter((x) =>
-                    x.curator.some((y) => y.id === this.user.user_id)
+                return items.filter(x =>
+                    x.curator.some(y => y.id === this.user.user_id)
                 );
             } else {
                 return items;
@@ -739,26 +758,24 @@ export default {
             let items = this.items;
 
             if (this.myFilter !== "all") {
-                items = items.filter((x) =>
-                    x.curator.some((y) => y.id === this.user.user_id)
+                items = items.filter(x =>
+                    x.curator.some(y => y.id === this.user.user_id)
                 );
             }
 
             if (this.statusMineReviewer === "mine") {
-                items = items.filter((item) =>
+                items = items.filter(item =>
                     item.reviewers_id.includes(this.user.user_id)
                 );
             }
 
             if (this.statusReviewFilter === "conflicting") {
-                items = items.filter((item) => {
-                    return (
-                        item.stage === 'conflicting_reviews'
-                    );
+                items = items.filter(item => {
+                    return item.stage === "conflicting_reviews";
                 });
             }
             if (this.statusReviewFilter === "finished") {
-                items = items.filter((item) => {
+                items = items.filter(item => {
                     return (
                         item.review_count === 3 &&
                         item.reviews.reduce((a, b) => a + b, 0) >= 2
@@ -766,25 +783,25 @@ export default {
                 });
             }
             if (this.statusReviewFilter === "process") {
-                items = items.filter((item) => item.review_count !== 3);
+                items = items.filter(item => item.review_count !== 3);
             }
 
             if (this.statusReviewFilter === "new") {
-                items = items.filter((item) => item.review_count === 0);
+                items = items.filter(item => item.review_count === 0);
             }
 
-            if (this.review_cycle === 'First review cycle') {
-                return items.filter(item => item.stage !== 'to_review_again')
+            if (this.review_cycle === "First review cycle") {
+                return items.filter(item => item.stage !== "to_review_again");
             } else {
-                return items.filter(item => item.stage === 'to_review_again')
+                return items.filter(item => item.stage === "to_review_again");
             }
 
             return items;
         },
 
         myCurations() {
-            return this.items.filter((element) =>
-                element.curator.some((x) => x.id === this.user.user_id)
+            return this.items.filter(element =>
+                element.curator.some(x => x.id === this.user.user_id)
             );
         },
         totalRows() {
@@ -797,8 +814,8 @@ export default {
         },
 
         review_cycle_title() {
-            return 'First review cycle'
-        }
+            return "First review cycle";
+        },
     },
 };
 </script>
