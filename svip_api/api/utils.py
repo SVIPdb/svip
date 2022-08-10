@@ -1,13 +1,10 @@
+from io import BytesIO
 from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
 from django.db.models import Func, Value, F
-
-
-from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
-
 from xhtml2pdf import pisa
 
 
@@ -109,3 +106,9 @@ def json_build_fields(**args):
     return JsonBuildObject(
         *[item for sublist in pairs for item in sublist]
     )
+
+
+class ModelChoice():
+    @classmethod
+    def get_choices(cls):
+        return tuple(cls.__dict__.items())
