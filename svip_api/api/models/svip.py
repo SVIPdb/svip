@@ -458,7 +458,7 @@ class CurationEntryManager(models.Manager):
 
     def get_by_evidence_type_category(self, category):
         qset = self.get_queryset()
-        return qset.filter(type_of_evidence__in=category)
+        return qset.filter(type_of_evidence__in=self.evidence_type_category_lookup[category])
 
     def authed_curation_set(self, user):
         """
@@ -573,6 +573,20 @@ class CurationEntry(SVIPModel):
     )
 
     @property
+    def review_status(self):
+        """
+            Returns the consolidated revew status of this particular curation entriy
+        """
+        review_count = self.curation_reviews.count()
+        acceped_review_count = self.curation_reviews.by_status(REVIEW_STATUS.accepted).count()
+        if review_count == Variant.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < Variant.MIN_ACCEPTED_REVIEW_COUNT:
+            return REVIEW_STATUS.rejected
+        elif acceped_review_count >= Variant.MIN_ACCEPTED_REVIEW_COUNT:
+            return REVIEW_STATUS.accepted
+        else:
+            return REVIEW_STATUS.pending
+
+    @property
     def icdo_morpho(self):
         if not self.disease:
             return None
@@ -653,17 +667,15 @@ class VariantCuration(SVIPModel):
         ordering = ('id',)
 
 
-class REVIEW_STATUS1(ModelChoice):
+class REVIEW_STATUS(ModelChoice):
     pending = 'pending'
     rejected = 'rejected'
     accepted = 'accepted'
 
 
-REVIEW_STATUS = OrderedDict((
-    ('pending', 'pending'),
-    ('rejected', 'rejected'),
-    ('accepted', 'accepted'),
-))
+class CurationReviewManager(models.Manager):
+    def by_status(self, status):
+        return self.get_queryset().filter(status=status)
 
 
 class CurationReview(SVIPModel):
@@ -674,15 +686,16 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
+    related_name = 'curation_reviews'
     curation_entry = ForeignKey(
-        to=CurationEntry, on_delete=DB_CASCADE, null=True)
+        to=CurationEntry, on_delete=DB_CASCADE, null=True, related_name=related_name, )
     reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, related_name=related_name, )
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    status = models.TextField(verbose_name="Review Status", choices=tuple(
-        REVIEW_STATUS.items()), default='pending', db_index=True)
+    status = models.TextField(verbose_name="Review Status", choices=REVIEW_STATUS.get_choices(), default='pending',
+                              db_index=True)
 
     curation_evidence = ForeignKey(
         to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
