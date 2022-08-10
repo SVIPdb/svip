@@ -1,99 +1,6 @@
 <template>
     <b-card class="shadow-sm mb-3" align="left" no-body>
         <b-card-header
-            v-if="isCurator"
-            class="p-1"
-            :header-bg-variant="cardHeaderBg"
-            :header-text-variant="cardTitleVariant"
-            :class="cardCustomClass ? customClass : ''"
-            :style="
-                customBgColor && `background-color: ${customBgColor} !important`
-            ">
-            <div class="d-flex justify-content-between">
-                <div class="p-2 font-weight-bold">
-                    {{ title }}
-
-                    <b-button
-                        class="ml-3"
-                        size="sm"
-                        :variant="myFilter !== 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter(user.user_id)">
-                        My curations
-                        <b-badge
-                            pill
-                            :class="myFilter !== 'all' && 'bg-white text-dark'">
-                            {{ myCurations.length }}
-                        </b-badge>
-                    </b-button>
-                    <b-button
-                        class="ml-3"
-                        size="sm"
-                        :variant="myFilter === 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter('all')">
-                        All curations
-                        <b-badge
-                            pill
-                            :class="myFilter === 'all' && 'bg-white text-dark'">
-                            {{ items.length }}
-                        </b-badge>
-                    </b-button>
-
-                    <FilterButtons
-                        v-if="cardFilterOption"
-                        class="ml-3"
-                        v-model="statusReviewFilter"
-                        :items="[
-                            {
-                                label: 'New',
-                                value: 'new',
-                                variant: 'info',
-                            },
-                            {
-                                label: 'In process',
-                                value: 'process',
-                                variant: 'warning',
-                            },
-
-                            {
-                                label: `${
-                                    review_cycle === 'First review cycle'
-                                        ? 'Conflicting'
-                                        : 'On-hold'
-                                }`,
-                                value: 'conflicting',
-                                variant: 'danger',
-                            },
-                            {
-                                label: 'Approved',
-                                value: 'finished',
-                                variant: 'success',
-                            },
-                            {
-                                label: 'All',
-                                value: 'all',
-                                variant: 'secondary',
-                            },
-                        ]" />
-                </div>
-                <div>
-                    <b-input-group size="sm" class="p-1">
-                        <b-form-input
-                            v-model="filter"
-                            placeholder="Type to Search"></b-form-input>
-                        <b-input-group-append>
-                            <b-button
-                                :variant="settings.buttonBg"
-                                size="sm"
-                                @click="filter = ''">
-                                Clear
-                            </b-button>
-                        </b-input-group-append>
-                    </b-input-group>
-                </div>
-            </div>
-        </b-card-header>
-
-        <b-card-header
             v-if="isReviewer"
             class="p-1"
             :header-bg-variant="cardHeaderBg"
@@ -193,142 +100,6 @@
             </div>
         </b-card-header>
 
-        <b-card-body v-if="isCurator" class="p-0">
-            <div></div>
-            <b-table
-                v-if="!error"
-                class="mb-0"
-                :items="filteredReviewItems"
-                :fields="fields"
-                :filter="filter"
-                :sort-by.sync="sortBy"
-                :sort-desc="true"
-                :busy="loading"
-                :per-page="perPage"
-                :current-page="currentPage"
-                show-empty
-                small
-                hover
-                :responsive="true">
-                <template v-slot:cell(gene_name)="data">
-                    <b>
-                        <router-link
-                            :to="`/gene/${data.item.gene_id}`"
-                            target="_blank">
-                            {{ data.value }}
-                        </router-link>
-                    </b>
-                </template>
-
-                <template v-slot:cell(variant)="data">
-                    <router-link
-                        :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
-                        target="_blank">
-                        {{ data.value }}
-                    </router-link>
-                </template>
-
-                <template v-slot:cell(hgvs)="data">
-                    <p class="mb-0">{{ data.value }}</p>
-                </template>
-
-                <template v-slot:cell(deadline)="row">
-                    <p
-                        v-if="row.item.curated !== 'Complete'"
-                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
-                        <span class="font-weight-bold">
-                            {{ setLetter(row.item.days_left) }}
-                        </span>
-                        ({{ row.item.days_left }} days)
-                    </p>
-                </template>
-
-                <template v-slot:cell(review_count)="data">
-                    <b-badge :variant="setBadgeClass(data.value)">
-                        {{ data.value }}
-                    </b-badge>
-                </template>
-
-                <template v-slot:cell(reviewed)="data">
-                    <icon
-                        v-for="(reviewer, index) in data.value"
-                        v-bind:key="index"
-                        v-b-popover.hover.top="reviewer.label"
-                        :name="reviewer.value ? 'check' : 'times'"
-                        :class="
-                            reviewer.value
-                                ? 'text-success mr-1'
-                                : 'text-danger mr-1'
-                        "></icon>
-                </template>
-
-                <template v-slot:cell(curator)="data">
-                    <span v-for="(owner, idx) in data.value" :key="owner.name">
-                        <span v-if="idx > 0">,</span>
-                        <pass :name="abbreviatedName(owner.name)">
-                            <b
-                                slot-scope="{ name }"
-                                v-b-tooltip.hover="name.name">
-                                {{ name.abbrev }}
-                            </b>
-                        </pass>
-                    </span>
-                </template>
-
-                <template v-slot:cell(action)="row">
-                    <b-button
-                        v-if="row.stage === 'conflicting_reviews'"
-                        v-access="'curators'"
-                        class="centered-icons"
-                        size="sm"
-                        style="width: 100px"
-                        variant="info"
-                        :to="{
-                            name: 'view-review',
-                            params: {
-                                gene_id: row.item.gene_id,
-                                variant_id: row.item.variant_id,
-                            },
-                        }"
-                        target="_blank">
-                        <icon name="pen-alt" />
-                        Re-curate
-                    </b-button>
-                </template>
-
-                <template v-slot:cell(single_action)>
-                    <icon class="mr-1" name="eye" />
-                </template>
-
-                <template v-slot:table-busy>
-                    <div class="text-center my-2">
-                        <b-spinner class="align-middle" small></b-spinner>
-                        <strong class="ml-1">Loading...</strong>
-                    </div>
-                </template>
-            </b-table>
-            <div v-else class="text-center text-muted font-italic m-3">
-                <icon
-                    name="exclamation-triangle"
-                    scale="3"
-                    style="vertical-align: text-bottom; margin-bottom: 5px" />
-                <br />
-                Loading this list failed, please try again later
-            </div>
-
-            <div
-                v-if="slotsUsed"
-                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
-                <slot name="extra_commands" />
-
-                <b-pagination
-                    v-if="totalRows > perPage"
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage" />
-            </div>
-        </b-card-body>
-
         <b-card-body v-if="isReviewer" class="p-0">
             <b-table
                 class="mb-0"
@@ -344,7 +115,6 @@
                 small
                 hover>
                 <template v-slot:cell(gene_name)="data">
-                    {{ items }}
                     <b>
                         <router-link
                             :to="`/gene/${data.item.gene_id}`"
@@ -380,7 +150,7 @@
                 <template v-slot:cell(status)="status_obj">
                     <span
                         v-for="(review, i) in status_obj['item']['reviews']"
-                        :key="review + i">
+                        :key="review + i + Math.random()">
                         <span v-if="review">
                             <b-icon
                                 style="color: blue"
@@ -409,7 +179,7 @@
 
                     <span
                         v-for="index in 3 - status_obj['item']['review_count']"
-                        :key="index">
+                        :key="index + Math.random()">
                         <b-icon class="h5 m-1" icon="square"></b-icon>
                     </span>
                 </template>
@@ -429,7 +199,9 @@
                 </template>
 
                 <template v-slot:cell(curator)="data">
-                    <span v-for="(owner, idx) in data.value" :key="owner.name">
+                    <span
+                        v-for="(owner, idx) in data.value"
+                        :key="owner.name + '_' + idx">
                         <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b

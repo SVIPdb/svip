@@ -62,19 +62,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-             .select_related('variant')
-             .prefetch_related(
-                 Prefetch('diseaseinsvip_set', queryset=(
-                     DiseaseInSVIP.objects
-                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                     .prefetch_related(
-                         'sample_set'
-                     )
-                 )),
-                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-             )
-             )
+            .select_related('variant')
+            .prefetch_related(
+            Prefetch('diseaseinsvip_set', queryset=(
+                DiseaseInSVIP.objects
+                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                    .prefetch_related(
+                    'sample_set'
+                )
+            )),
+            # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+            # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+        )
+        )
 
         return q
 
@@ -135,8 +135,8 @@ class CurationRequestViewSet(viewsets.ModelViewSet):
     serializer_class = CurationRequestSerializer
     queryset = (
         CurationRequest.objects
-        .prefetch_related('variant', 'variant__gene', 'submission')
-        .order_by('-created_on')
+            .prefetch_related('variant', 'variant__gene', 'submission')
+            .order_by('-created_on')
     )
 
 
@@ -272,9 +272,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             'references': {
                 x['references']: x['recs'] for x in (
                     CurationEntry.objects
-                    .select_related('variant', 'variant__gene')
-                    .values('references')
-                    .annotate(recs=ArrayAgg(json_build_fields(
+                        .select_related('variant', 'variant__gene')
+                        .values('references')
+                        .annotate(recs=ArrayAgg(json_build_fields(
                         id='id', variant_id='variant__id', gene_id='variant__gene__id', etype='type_of_evidence'
                     )))
                 )
@@ -285,13 +285,13 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # pre-select variant and gene data to prevent thousands of queries
         return (
             CurationEntry.objects.authed_curation_set(self.request.user)
-            .select_related('owner', 'variant', 'variant__gene', 'disease')
-            .prefetch_related(
+                .select_related('owner', 'variant', 'variant__gene', 'disease')
+                .prefetch_related(
                 'extra_variants',
                 'extra_variants__gene',
                 'disease'
             )
-            .order_by('created_on')
+                .order_by('created_on')
         )
 
 
@@ -392,8 +392,8 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
         'chromosome', 'pos', 'ref', 'alt', 'status'
     )
     ordering_fields = filter_fields + \
-        ('created_on', 'processed_on', 'batch', 'owner',
-         'canonical_only', 'for_curation_request')
+                      ('created_on', 'processed_on', 'batch', 'owner',
+                       'canonical_only', 'for_curation_request')
     search_fields = ('chromosome', 'pos', 'ref', 'alt',)
 
     permission_classes = (IsSubmitter,)
@@ -610,7 +610,7 @@ class DashboardReviews(APIView):
                     'deadline': 'n/a',
                     'requester': '',
                     'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
-                                var.curations.distinct('owner')],
+                                var.curation_entries.distinct('owner')],
                     'review_count': review_count(var),
                     'reviews': reviews(var),
                     'stage': var.stage,

@@ -4,8 +4,7 @@
             v-if="hasHeader"
             class="p-1"
             :header-bg-variant="cardHeaderBg"
-            :header-text-variant="cardTitleVariant"
-        >
+            :header-text-variant="cardTitleVariant">
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{ headerTitle }}
@@ -13,15 +12,15 @@
                         <b-button
                             size="sm"
                             :variant="filterCurator ? 'primary' : 'light'"
-                            @click="filterCurator = true"
-                            >My Curations</b-button
-                        >
+                            @click="filterCurator = true">
+                            My Curations
+                        </b-button>
                         <b-button
                             size="sm"
                             :variant="!filterCurator ? 'primary' : 'light'"
-                            @click="filterCurator = false"
-                            >All Curations</b-button
-                        >
+                            @click="filterCurator = false">
+                            All Curations
+                        </b-button>
                     </b-button-group>
 
                     <FilterButtons
@@ -37,23 +36,21 @@
                             { label: 'Unreviewed', value: 'unreviewed' },
                             { label: 'Reviewed', value: 'reviewed' },
                             { label: 'All', value: 'all' },
-                        ]"
-                    />
+                        ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
                             v-model="filter"
                             debounce="300"
-                            placeholder="Type to Search"
-                        ></b-form-input>
+                            placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button
                                 variant="primary"
                                 size="sm"
-                                @click="filter = ''"
-                                >Clear</b-button
-                            >
+                                @click="filter = ''">
+                                Clear
+                            </b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -65,14 +62,12 @@
                 variant="info"
                 @click="submitAll"
                 style="height: 34px"
-                :disabled="already_submitted || variant.svip_data === null"
-            >
+                :disabled="already_submitted || variant.svip_data === null">
                 Submit to review
             </b-button>
         </div>
 
         <b-card-body class="p-0">
-         
             <PagedTable
                 id="evidence_table"
                 ref="paged_table"
@@ -94,21 +89,19 @@
                 :extraFilters="
                     statusFilter !== 'all' ? { status: statusFilter } : null
                 "
-                :responsive="true"
-            >
+                :responsive="true">
                 <template v-slot:cell(variant__gene__symbol)="data">
-                    <b
-                        ><router-link
-                            :to="`/gene/${data.item.variant.gene.id}`"
-                            >{{ data.item.variant.gene.symbol }}</router-link
-                        ></b
-                    >
+                    <b>
+                        <router-link :to="`/gene/${data.item.variant.gene.id}`">
+                            {{ data.item.variant.gene.symbol }}
+                        </router-link>
+                    </b>
                 </template>
                 <template v-slot:cell(variant__name)="data">
                     <router-link
-                        :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`"
-                        >{{ data.item.variant.name }}</router-link
-                    >
+                        :to="`/gene/${data.item.variant.gene.id}/variant/${data.item.variant.id}`">
+                        {{ data.item.variant.name }}
+                    </router-link>
                 </template>
 
                 <template v-slot:cell(extra_variants)="data">
@@ -116,21 +109,20 @@
                     <span v-if="data.value">
                         <span
                             v-for="(variant, idx) in data.value"
-                            :key="variant.id"
-                        >
-                            <span v-if="idx > 0">, </span>
+                            :key="variant.id">
+                            <span v-if="idx > 0">,</span>
                             <router-link
                                 :to="`/gene/${variant.gene.id}/variant/${variant.id}`"
-                                target="_blank"
-                                >{{ variant.description }}</router-link
-                            >
+                                target="_blank">
+                                {{ variant.description }}
+                            </router-link>
                         </span>
                     </span>
                 </template>
 
-                <template v-slot:cell(created_on)="data">{{
-                    simpleDateTime(data.value).date
-                }}</template>
+                <template v-slot:cell(created_on)="data">
+                    {{ simpleDateTime(data.value).date }}
+                </template>
 
                 <template v-slot:cell(status)="data">
                     <span class="pub-status">
@@ -138,8 +130,7 @@
                             :class="setClass(data.value)"
                             :name="setIcon(data.value)"
                             v-b-tooltip.hover
-                            :title="data.value"
-                        />
+                            :title="data.value" />
                         {{ titleCase(data.value) }}
                     </span>
                 </template>
@@ -151,8 +142,9 @@
                         :gene="
                             data.item.variant && data.item.variant.gene.symbol
                         "
-                        :disease="data.item.disease && data.item.disease.name"
-                    />
+                        :disease="
+                            data.item.disease && data.item.disease.name
+                        " />
                 </template>
 
                 <template v-slot:cell(created_on)="data">
@@ -167,14 +159,13 @@
                     <pass :name="abbreviatedName(data.value)">
                         <span
                             slot-scope="{ name }"
-                            v-b-tooltip.hover="name.name"
-                            >{{ name.abbrev }}</span
-                        >
+                            v-b-tooltip.hover="name.name">
+                            {{ name.abbrev }}
+                        </span>
                     </pass>
                 </template>
 
                 <template v-slot:cell(action)="data">
-               
                     <span class="action-tray">
                         <b-button
                             v-if="data.item.status !== 'submitted'"
@@ -182,9 +173,9 @@
                             class="centered-icons"
                             size="sm"
                             :href="editEntryURL(data.item)"
-                            style="min-width: 75px"
-                        >
-                            <icon name="pen-alt" />Edit
+                            style="min-width: 75px">
+                            <icon name="pen-alt" />
+                            Edit
                         </b-button>
                         <b-button
                             v-else
@@ -192,9 +183,9 @@
                             class="centered-icons"
                             size="sm"
                             :href="editEntryURL(data.item)"
-                            style="min-width: 75px"
-                        >
-                            <icon name="eye" />View
+                            style="min-width: 75px">
+                            <icon name="eye" />
+                            View
                         </b-button>
 
                         <b-button
@@ -202,24 +193,21 @@
                             :disabled="data.item.status === 'submitted'"
                             v-b-tooltip="'Delete'"
                             size="sm"
-                            @click="deleteEntry(data.item.id)"
-                        >
+                            @click="deleteEntry(data.item.id)">
                             <icon name="trash" label="Delete" />
                         </b-button>
                         <b-button
                             class="btn-info"
                             v-b-tooltip="'History'"
                             size="sm"
-                            @click="showHistory(data.item.id)"
-                        >
+                            @click="showHistory(data.item.id)">
                             <icon name="history" label="History" />
                         </b-button>
                     </span>
                     <b-navbar-text
                         class="fixed-bottom submitted-bar"
                         align="center"
-                        v-if="already_submitted"
-                    >
+                        v-if="already_submitted">
                         THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN
                         SUBMITTED.
                     </b-navbar-text>
@@ -237,13 +225,11 @@
                 lazy
                 scrollable
                 size="lg"
-                :title="`Entry #${history_entry_id} History`"
-            >
+                :title="`Entry #${history_entry_id} History`">
                 <div>
                     <EvidenceHistory
                         v-if="history_entry_id"
-                        :entry_id="history_entry_id"
-                    />
+                        :entry_id="history_entry_id" />
                     <div v-else>Error: no curation entry selected</div>
                 </div>
             </b-modal>
@@ -311,7 +297,7 @@ const full_fields = [
         key: "drugs",
         label: "Drugs",
         sortable: true,
-        formatter: (x) => x.join(", "),
+        formatter: x => x.join(", "),
     },
     {
         key: "effect",
@@ -525,7 +511,7 @@ export default {
             }
 
             return this.variant.svip_data.diseases.find(
-                (element) => element.disease_id === this.disease_id
+                element => element.disease_id === this.disease_id
             );
         },
         apiUrl() {
@@ -536,7 +522,7 @@ export default {
                 // FIXME: these two are mutually exclusive
                 this.onlySubmitted && `status=submitted`,
                 this.notSubmitted && `status_ne=submitted`,
-            ].filter((x) => x);
+            ].filter(x => x);
 
             return `/curation_entries${params ? "?" + params.join("&") : ""}`;
         },
@@ -611,7 +597,7 @@ export default {
                         name: "submit-curation",
                     });
                 })
-                .catch((err) => {
+                .catch(err => {
                     this.$snotify.error("Failed to submit entries");
                     log.warn(err);
                 });
@@ -622,11 +608,11 @@ export default {
             if (confirm(prompt)) {
                 const params = { var_id: this.variant.id };
                 HTTP.post(`/curation_ids`, params)
-                    .then((response) => {
+                    .then(response => {
                         this.selected = response.data;
                         this.submitRequest();
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         log.warn(err);
                     });
             }
@@ -637,7 +623,7 @@ export default {
         },
         colorCurationRows(data) {
             // maps each row to a color variant based on its status (e.g., drafts are gray)
-            return data.map((x) => {
+            return data.map(x => {
                 if (x.status === "draft") {
                     x._rowVariant = "light";
                 }
@@ -654,6 +640,7 @@ export default {
     display: flex;
     align-items: center;
 }
+
 .pub-status > .fa-icon {
     margin-right: 0.4rem;
 }
@@ -662,6 +649,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
+
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;

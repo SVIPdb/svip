@@ -1,7 +1,6 @@
 <template>
     <div class="container-fluid">
         <div>
-            
             <!-- <div>{{user}}</div> -->
             <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
@@ -11,15 +10,14 @@
                 :fields="review.fields"
                 :loading="review.loading"
                 :isReviewer="user.groups.includes('clinicians') ? true : false"
-                :isCurator="false"  
+                :isCurator="false"
                 title="REVIEWS"
                 :error="on_request.error"
                 defaultSortBy="days_left"
                 cardHeaderBg="secondary"
                 customBgColor="#1f608f"
                 cardTitleVariant="white"
-                cardFilterOption
-            />
+                cardFilterOption />
         </div>
 
         <!-- Ivo - original : <div v-else-if="checkInRole('curators')"> -->
@@ -34,24 +32,22 @@
                 cardTitleVariant="white"
                 cardCustomClass
                 cardFilterOption
-                @itemsloaded="onRequestItemsLoaded"
-            />
+                @itemsloaded="onRequestItemsLoaded" />
 
             <EvidenceCard
-                isDashboard="true"
+                :isDashboard="true"
                 has-header
                 include-gene-var
                 header-title="CURATION ENTRIES"
                 cardHeaderBg="secondary"
                 cardTitleVariant="white"
-                small
-            />
+                small />
         </div>
 
         <div v-else style="text-align: center; margin-top: 3em">
-            <router-link to="/" class="text-uppercase"
-                >Return to homepage</router-link
-            >
+            <router-link to="/" class="text-uppercase">
+                Return to homepage
+            </router-link>
         </div>
     </div>
 </template>
@@ -77,8 +73,6 @@ import fields_nonsvip_variants from "@/data/curation/nonsvip_variants/fields.jso
 import OnRequestEntries from "@/components/widgets/curation/OnRequestEntries";
 import { mapGetters } from "vuex";
 
-import { abbreviatedName } from "@/utils";
-
 export default {
     name: "CurationDashboard",
     components: {
@@ -89,8 +83,8 @@ export default {
     computed: {
         ...mapGetters({
             user: "currentUser",
-        })
-        },
+        }),
+    },
     data() {
         return {
             // Ivo - orignial : REVIEW_ENABLED: false,
@@ -127,10 +121,9 @@ export default {
     },
     mounted() {
         console.log("flag");
-        HTTP.get(`/dashboard_reviews`).then((response) => {
-          
+        HTTP.get(`/dashboard_reviews`).then(response => {
             //console.log("REVIEWS :");
-             //console.log(JSON.stringify(response.data.reviews));
+            //console.log(JSON.stringify(response.data.reviews));
             this.reviews = response.data.reviews;
         });
     },
@@ -141,8 +134,6 @@ export default {
             this.on_request.loading = false;
         },
     },
-
-   
 };
 </script>
 
