@@ -405,19 +405,18 @@ class CurationEvidence(models.Model):
         return effect_of_variant
 
 
-class CURATION_STATUS1(ModelChoice):
+class CURATION_STATUS(ModelChoice):
     draft = 'draft'
     saved = 'saved'
     submitted = 'submitted'
+    unreviewed = 'unreviewed'
+    reviewed = 'reviewed'
 
 
-CURATION_STATUS = OrderedDict((
-    ('draft', 'draft'),
-    ('saved', 'saved'),
-    ('submitted', 'submitted'),
-    ('unreviewed', 'unreviewed'),
-    ('reviewed', 'reviewed'),
-))
+class REVIEW_STATUS(ModelChoice):
+    pending = 'pending'
+    rejected = 'rejected'
+    accepted = 'accepted'
 
 
 class CurationRequest(SVIPModel):
@@ -516,7 +515,8 @@ class CurationEntry(SVIPModel):
     disease = ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # link a curation entry to curation evidence (usually one, but more if the curation is associated with several drugs)
+    # link a curation entry to curation evidence (usually one, but more if the curation is associated with several
+    # drugs)
     curation_evidences = models.ManyToManyField(
         CurationEvidence, related_name=related_name, default=None)
 
@@ -553,8 +553,8 @@ class CurationEntry(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               null=True, on_delete=models.SET_NULL)
-    status = models.TextField(verbose_name="Curation Status", choices=tuple(
-        CURATION_STATUS.items()), default='draft', db_index=True)
+    status = models.TextField(verbose_name="Curation Status", choices=CURATION_STATUS.get_choices(), default='draft',
+                              db_index=True)
 
     escat_score = models.TextField(
         verbose_name="ESCAT score", null=True, blank=True)
@@ -651,6 +651,12 @@ class VariantCuration(SVIPModel):
 
     class Meta:
         ordering = ('id',)
+
+
+class REVIEW_STATUS1(ModelChoice):
+    pending = 'pending'
+    rejected = 'rejected'
+    accepted = 'accepted'
 
 
 REVIEW_STATUS = OrderedDict((
