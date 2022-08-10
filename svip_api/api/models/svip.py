@@ -20,7 +20,7 @@ from api.models.genomic import Variant, Gene
 from api.models.reference import Disease
 from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
                              PUBLIC_VISIBLE_STATUSES)
-from api.utils import dictfetchall
+from api.utils import dictfetchall, ModelChoice
 
 
 class SVIPTableBase(ModelBase):
@@ -29,6 +29,7 @@ class SVIPTableBase(ModelBase):
 
     Borrowed with modifications from https://stackoverflow.com/a/53374381/346905
     """
+
     def __new__(mcs, name, bases, attrs, **kwargs):
         if name != "SVIPModel":
             class MetaB:
@@ -88,7 +89,7 @@ class VariantInSVIP(models.Model):
     mock SVIP variants file into 'data' for each variant.
     """
 
-    #status = models.TextField(null=True, blank=True)
+    # status = models.TextField(null=True, blank=True)
 
     variant = models.OneToOneField(
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
@@ -121,7 +122,7 @@ class VariantInSVIP(models.Model):
                     delta = current.diff_against(version)
                     for change in delta.changes:
                         if change.field == 'summary':
-                            return self.history.all()[i-1].history_date
+                            return self.history.all()[i - 1].history_date
             return None
 
     def tissue_counts(self):
@@ -200,7 +201,7 @@ class VariantInSVIP(models.Model):
 
                 curations = []
                 for curation in evidence.curation_entries.all():
-                    #print(f"\n\ncuration id: {curation.id}\n\n")
+                    # print(f"\n\ncuration id: {curation.id}\n\n")
                     if curation.tier_level:
                         tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
                     else:
@@ -229,7 +230,8 @@ class VariantInSVIP(models.Model):
                         "comment": review.comment,
                         "draft": review.draft
                     }
-                    if (review.annotated_effect == evidence.annotation1.effect) and (review.annotated_tier == evidence.annotation1.tier):
+                    if (review.annotated_effect == evidence.annotation1.effect) and (
+                            review.annotated_tier == evidence.annotation1.tier):
                         review_obj['status'] = True
                     else:
                         review_obj['status'] = False
@@ -353,7 +355,7 @@ class DiseaseInSVIP(SVIPModel):
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
         verbose_name_plural = "Diseases in SVIP"
-        #unique_together = ('svip_variant', 'disease')
+        # unique_together = ('svip_variant', 'disease')
 
 
 # ================================================================================================================
@@ -403,6 +405,12 @@ class CurationEvidence(models.Model):
         return effect_of_variant
 
 
+class CURATION_STATUS1(ModelChoice):
+    draft = 'draft'
+    saved = 'saved'
+    submitted = 'submitted'
+
+
 CURATION_STATUS = OrderedDict((
     ('draft', 'draft'),
     ('saved', 'saved'),
@@ -446,6 +454,13 @@ class CurationRequest(SVIPModel):
 
 
 class CurationEntryManager(models.Manager):
+    evidence_type_category_lookup = {
+        'diagnostic': ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]}
+
+    def get_by_evidence_type_category(self, category):
+        qset = self.get_queryset()
+        return qset.filter(type_of_evidence__in=category)
+
     def authed_curation_set(self, user):
         """
         Returns a QuerySet of CurationEntry instances that this user should be able to view
@@ -483,8 +498,8 @@ class CurationEntryManager(models.Manager):
 
         result = (
             result
-            .select_related('disease', 'variant', 'variant__gene')
-            .prefetch_related('extra_variants')
+                .select_related('disease', 'variant', 'variant__gene')
+                .prefetch_related('extra_variants')
         )
 
         return result
@@ -581,7 +596,7 @@ class CurationEntry(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def ensure_svip_provenance(self):
@@ -735,7 +750,7 @@ class SubmittedVariantBatch(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
 
@@ -814,7 +829,8 @@ class SubmittedVariant(SVIPModel):
     curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
                                          help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
     requestor = models.TextField(
-        blank=True, null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+        blank=True, null=True,
+        help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
 
     objects = SubmittedVariantManager()
 
@@ -834,7 +850,7 @@ class SubmittedVariant(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def as_vcf_row(self):
@@ -842,7 +858,8 @@ class SubmittedVariant(SVIPModel):
         # QUAL and INFO are both '.', which indicates an empty field(?)
         original_alt = ",".join(
             [x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
-        return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
+        return "\t".join(
+            str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
 # ================================================================================================================
