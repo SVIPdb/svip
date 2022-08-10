@@ -1,6 +1,5 @@
 import itertools
 
-from collections import OrderedDict
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
@@ -10,7 +9,9 @@ from django_db_cascade.deletions import DB_CASCADE
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
 
+from api.models.svip import CURATION_STATUS, REVIEW_STATUS
 from api.utils import dictfetchall
+from svip_api.api.utils import ModelChoice
 
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
@@ -80,7 +81,35 @@ class VariantManager(models.Manager):
         return self.get(description=description, hgvs_g=hgvs_g)
 
 
+class VARIANT_STAGE(ModelChoice):
+    none = 'none'
+    loaded = 'loaded'
+    ongoing_curation = 'ongoing_curation'
+    annotated = 'annotated'
+    ongoing_review = 'ongoing_review'
+    unapproved = 'unapproved'
+    reannotated = 'reannotated'
+    on_hold = 'on_hold'
+    approved = 'approved'
+
+
+# VARIANT_STAGE = OrderedDict((
+#     ('none', 'none'),
+#     ('loaded', 'loaded'),
+#     ('ongoing_curation', 'ongoing_curation'),
+#     ('annotated', 'annotated'),
+#     ('ongoing_review', 'ongoing_review'),
+#     ('unapproved', 'unapproved'),
+#     ('reannotated', 'reannotated'),
+#     ('on_hold', 'on_hold'),
+#     ('approved', 'approved'),
+# ))
+
+
 class Variant(models.Model):
+    # Defines how many reviews must be accepted in order to put the variant into APPROVED stage
+    MIN_ACCEPTED_REVIEW_COUNT = 3
+
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True,
@@ -150,11 +179,12 @@ class Variant(models.Model):
 
     def has_only_matching_reviews(self):
         for association in self.curation_associations.all():
-            if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+            if association.curation_evidences.all().filter(
+                    type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
                 evidence = association.curation_evidences.first()
                 if evidence.reviews.filter(
-                    annotated_effect=evidence.annotation1.effect,
-                    annotated_tier=evidence.annotation1.tier
+                        annotated_effect=evidence.annotation1.effect,
+                        annotated_tier=evidence.annotation1.tier
                 ).count() == 3:
                     return True
                 else:
@@ -168,53 +198,77 @@ class Variant(models.Model):
 
     @property
     def stage(self):
+        _stage = None
 
-        if self.curation_associations.count() > 0:
+        for curation_entry in self.curation_entries.get_by_evidence_type_category('diagnostic'):
+            review_count = curation_entry.curation_reviews.count()
+            acceped_review_count = curation_entry.curation_reviews.by_status(
+                REVIEW_STATUS.accepted).count()
+            if review_count > 0 and review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
+                return VARIANT_STAGE.ongoing_review
+            elif review_count == self.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
+                return VARIANT_STAGE.unapproved
+            elif acceped_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
+                return VARIANT_STAGE.approved
 
-            for association in self.curation_associations.all():
-                if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                    evidence = association.curation_evidences.first()
+        if any([curation_entry.status == CURATION_STATUS.get('submitted') for curation_entry in
+                self.curation_entries.all()]):
+            return VARIANT_STAGE.annotated
+        elif self.curation_entries.all().count() > 0:
+            return VARIANT_STAGE.ongoing_curation
+        elif self.curation_request.all().count() > 0:
+            return VARIANT_STAGE.loaded
 
-                    if evidence.revised_reviews.all().count() == 3:
-                        if evidence.revised_reviews.filter(agree=True).count() == 3:
-                            return 'fully_reviewed'
-                        else:
-                            return 'on_hold'
+        return VARIANT_STAGE.none
 
-                    if hasattr(evidence, 'annotation2'):
-                        return 'to_review_again'
+        # for association in self.curation_associations.all():
+        #     if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+        #         evidence = association.curation_evidences.first()
 
-                    if evidence.reviews.count() == 3:
-                        if hasattr(evidence, 'annotation1'):
-                            if self.has_only_matching_reviews():
-                                return 'fully_reviewed'
-                            else:
-                                return 'conflicting_reviews'
+        #    if evidence.revised_reviews.all().count() == 3:
+        #         if evidence.revised_reviews.filter(agree=True).count() == 3:
+        #             return 'fully_reviewed'
+        #         else:
+        #             return 'on_hold'
 
-                    if evidence.reviews.count() == 2:
-                        return '2_reviews'
+        #     if hasattr(evidence, 'annotation2'):
+        #         return 'to_review_again'
 
-                    if evidence.reviews.count() == 1:
-                        return '1_review'
+        #     if evidence.reviews.count() == 3:
+        #         if hasattr(evidence, 'annotation1'):
+        #             if self.has_only_matching_reviews():
+        #                 return 'fully_reviewed'
+        #             else:
+        #                 return 'conflicting_reviews'
 
-        for curation in self.curation_entries.all():
-            if curation.status == 'submitted':
-                return '0_review'
+        #     if evidence.reviews.count() == 2:
+        #         return '2_reviews'
 
-        if self.curation_entries.all().count() > 0:
-            return 'ongoing_curation'
+        #     if evidence.reviews.count() == 1:
+        #         return '1_review'
 
-        if self.curation_request.all().count() > 0:
-            return 'loaded'
+        # for curation in self.curation_entries.all():
+        #     if curation.status == CURATION_STATUS.get('submitted'):
+        #         return '0_review'
 
-        return 'none'
+        # if self.curation_entries.all().count() > 0:
+        #     return 'ongoing_curation'
 
-    @property
-    def priority(self):
-        if self.stage() == 'conflicting_reviews':
-            return 1
-        else:
-            return 2
+        # if _stage is None:
+        #     raise ValueError('Stage cannot be None')
+
+        # return _stage
+
+    # class VARIANT_STAGE(ModelChoice):
+    #     none = 'none'
+    #     loaded = 'loaded'
+    #     ongoing_curation = 'ongoing_curation'
+    #     annotated = 'annotated'
+    #     ongoing_review = 'ongoing_review'
+    #     unapproved = 'unapproved'
+    #     reannotated = 'reannotated'
+    #     on_hold = 'on_hold'
+    #     approved = 'approved'
 
     @property
     def public_stage(self):
@@ -223,13 +277,13 @@ class Variant(models.Model):
             return 'None'
         elif stage in ['loaded']:
             return 'Loaded'
-        elif stage in ['ongoing_curation']:
+        elif stage in ['ongoing_curation', 'unapproved']:
             return 'In progress'
-        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+        elif stage in ['ongoing_review', 'annotated', 'reannotated']:
             return 'Annotated'
         elif stage in ['on_hold']:
             return 'On hold'
-        elif stage in ['fully_reviewed']:
+        elif stage in ['approved']:
             return 'Approved'
 
     @property
@@ -326,10 +380,10 @@ class VariantInSource(models.Model):
         # this is used to render the 'diseases/tissues' visualization on the variant details page
         pairs = (
             self.association_set
-            .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
-            .exclude(disease__isnull=True, context__isnull=True)
-            .annotate(count=Count('environmentalcontext__description'))
-            .distinct().order_by('disease')
+                .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
+                .exclude(disease__isnull=True, context__isnull=True)
+                .annotate(count=Count('environmentalcontext__description'))
+                .distinct().order_by('disease')
         )
         return (
             {x[0]: {y['context']: y['count'] for y in x[1]}}

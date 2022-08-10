@@ -2,6 +2,8 @@
     <div class="container-fluid">
         <div>
             
+
+
             <!-- <div>{{user}}</div> -->
             <!-- Ivo - original : <div v-if="checkInRole('reviewers')"> -->
             <!-- ON REQUEST - CARD -->
@@ -38,7 +40,7 @@
             />
 
             <EvidenceCard
-                isDashboard="true"
+                :isDashboard="true"
                 has-header
                 include-gene-var
                 header-title="CURATION ENTRIES"

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
@@ -109,3 +110,9 @@ def json_build_fields(**args):
     return JsonBuildObject(
         *[item for sublist in pairs for item in sublist]
     )
+
+
+class ModelChoice():
+    @classmethod
+    def get_choices(cls):
+        return tuple(cls.__dict__.items())

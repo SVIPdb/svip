@@ -21,6 +21,7 @@ from api.models.reference import Disease
 from api.permissions import (ALLOW_ANY_CURATOR, CURATOR_ALLOWED_ROLES,
                              PUBLIC_VISIBLE_STATUSES)
 from api.utils import dictfetchall
+from utils import ModelChoice
 
 
 class SVIPTableBase(ModelBase):
@@ -29,6 +30,7 @@ class SVIPTableBase(ModelBase):
 
     Borrowed with modifications from https://stackoverflow.com/a/53374381/346905
     """
+
     def __new__(mcs, name, bases, attrs, **kwargs):
         if name != "SVIPModel":
             class MetaB:
@@ -88,7 +90,7 @@ class VariantInSVIP(models.Model):
     mock SVIP variants file into 'data' for each variant.
     """
 
-    #status = models.TextField(null=True, blank=True)
+    # status = models.TextField(null=True, blank=True)
 
     variant = models.OneToOneField(
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
@@ -121,7 +123,7 @@ class VariantInSVIP(models.Model):
                     delta = current.diff_against(version)
                     for change in delta.changes:
                         if change.field == 'summary':
-                            return self.history.all()[i-1].history_date
+                            return self.history.all()[i - 1].history_date
             return None
 
     def tissue_counts(self):
@@ -200,7 +202,7 @@ class VariantInSVIP(models.Model):
 
                 curations = []
                 for curation in evidence.curation_entries.all():
-                    #print(f"\n\ncuration id: {curation.id}\n\n")
+                    # print(f"\n\ncuration id: {curation.id}\n\n")
                     if curation.tier_level:
                         tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
                     else:
@@ -229,7 +231,8 @@ class VariantInSVIP(models.Model):
                         "comment": review.comment,
                         "draft": review.draft
                     }
-                    if (review.annotated_effect == evidence.annotation1.effect) and (review.annotated_tier == evidence.annotation1.tier):
+                    if (review.annotated_effect == evidence.annotation1.effect) and (
+                            review.annotated_tier == evidence.annotation1.tier):
                         review_obj['status'] = True
                     else:
                         review_obj['status'] = False
@@ -341,10 +344,8 @@ class DiseaseInSVIP(SVIPModel):
     # a null disease means that the samples or curation entries associated with this variant belong to an
     # unknown or unspecified disease.
     disease = ForeignKey(to=Disease, null=True, on_delete=DB_CASCADE)
-
     status = models.TextField(default="Loaded")
     score = models.IntegerField(default=0)
-
     objects = DiseaseInSVIPManager()
 
     def name(self):
@@ -353,7 +354,7 @@ class DiseaseInSVIP(SVIPModel):
     class Meta(SVIPModel.Meta):
         verbose_name = "Disease in SVIP"
         verbose_name_plural = "Diseases in SVIP"
-        #unique_together = ('svip_variant', 'disease')
+        # unique_together = ('svip_variant', 'disease')
 
 
 # ================================================================================================================
@@ -403,13 +404,24 @@ class CurationEvidence(models.Model):
         return effect_of_variant
 
 
-CURATION_STATUS = OrderedDict((
-    ('draft', 'draft'),
-    ('saved', 'saved'),
-    ('submitted', 'submitted'),
-    ('unreviewed', 'unreviewed'),
-    ('reviewed', 'reviewed'),
-))
+class CURATION_STATUS(ModelChoice):
+    draft = 'draft'
+    saved = 'saved'
+    submitted = 'submitted'
+
+    # curation status ends at submitted
+
+    # unreviewed = 'unreviewed'
+    # reviewed = 'reviewed'
+
+
+# CURATION_STATUS = OrderedDict((
+#     ('draft', 'draft'),
+#     ('saved', 'saved'),
+#     ('submitted', 'submitted'),
+#     ('unreviewed', 'unreviewed'),
+#     ('reviewed', 'reviewed'),
+# ))
 
 
 class CurationRequest(SVIPModel):
@@ -446,6 +458,14 @@ class CurationRequest(SVIPModel):
 
 
 class CurationEntryManager(models.Manager):
+    evidence_type_category_lookup = {
+        'diagnostic': ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]
+    }
+
+    def get_by_evidence_type_category(self, category):
+        qset = self.get_queryset()
+        return qset.filter(type_of_evidence__in=category)
+
     def authed_curation_set(self, user):
         """
         Returns a QuerySet of CurationEntry instances that this user should be able to view
@@ -483,8 +503,8 @@ class CurationEntryManager(models.Manager):
 
         result = (
             result
-            .select_related('disease', 'variant', 'variant__gene')
-            .prefetch_related('extra_variants')
+                .select_related('disease', 'variant', 'variant__gene')
+                .prefetch_related('extra_variants')
         )
 
         return result
@@ -538,8 +558,8 @@ class CurationEntry(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               null=True, on_delete=models.SET_NULL)
-    status = models.TextField(verbose_name="Curation Status", choices=tuple(
-        CURATION_STATUS.items()), default='draft', db_index=True)
+    status = models.TextField(verbose_name="Curation Status",
+                              choices=CURATION_STATUS.get_choices(), default='draft', db_index=True)
 
     escat_score = models.TextField(
         verbose_name="ESCAT score", null=True, blank=True)
@@ -556,6 +576,22 @@ class CurationEntry(SVIPModel):
         excluded_fields=('created_on', 'last_modified'),
         cascade_delete_history=True
     )
+
+    @property
+    def review_status(self):
+        """
+        Returns the consolidated revew status of this particular curation entriy
+        """
+        review_count = self.curation_reviews.count()
+        acceped_review_count = self.curation_reviews.by_status(
+            REVIEW_STATUS.accepted).count()
+
+        if review_count == Variant.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < Variant.MIN_ACCEPTED_REVIEW_COUNT:
+            return REVIEW_STATUS.rejected
+        elif acceped_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
+            return REVIEW_STATUS.accepted
+        else:
+            return REVIEW_STATUS.pending
 
     @property
     def icdo_morpho(self):
@@ -581,7 +617,7 @@ class CurationEntry(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def ensure_svip_provenance(self):
@@ -638,11 +674,22 @@ class VariantCuration(SVIPModel):
         ordering = ('id',)
 
 
-REVIEW_STATUS = OrderedDict((
-    ('pending', 'pending'),
-    ('rejected', 'rejected'),
-    ('accepted', 'accepted'),
-))
+class CurationReviewManager(models.Manager):
+    def by_status(self, status):
+        return self.get_queryset().filter(status=status)
+
+
+class REVIEW_STATUS(ModelChoice):
+    pending = 'pending'
+    rejected = 'rejected'
+    accepted = 'accepted'
+
+
+# REVIEW_STATUS = OrderedDict((
+#     ('pending', 'pending'),
+#     ('rejected', 'rejected'),
+#     ('accepted', 'accepted'),
+# ))
 
 
 class CurationReview(SVIPModel):
@@ -653,15 +700,16 @@ class CurationReview(SVIPModel):
     - If all three pass, the curation entry is considered 'reviewed' and finalized.
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
+    related_name = 'curation_reviews'
     curation_entry = ForeignKey(
-        to=CurationEntry, on_delete=DB_CASCADE, null=True)
+        to=CurationEntry, on_delete=DB_CASCADE, related_name=related_name, null=True)
     reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
+        settings.AUTH_USER_MODEL, related_name=related_name, on_delete=DB_CASCADE)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    status = models.TextField(verbose_name="Review Status", choices=tuple(
-        REVIEW_STATUS.items()), default='pending', db_index=True)
+    status = models.TextField(verbose_name="Review Status", choices=REVIEW_STATUS.get_choices(
+    ), default='pending', db_index=True)
 
     curation_evidence = ForeignKey(
         to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
@@ -735,7 +783,7 @@ class SubmittedVariantBatch(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
 
@@ -814,7 +862,8 @@ class SubmittedVariant(SVIPModel):
     curation_disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True,
                                          help_text='If for_curation_request is true, identifies the disease to which the new curation request should be associated')
     requestor = models.TextField(
-        blank=True, null=True, help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
+        blank=True, null=True,
+        help_text='If for_curation_request is true, identifies who asked for this variant to be submitted')
 
     objects = SubmittedVariantManager()
 
@@ -834,7 +883,7 @@ class SubmittedVariant(SVIPModel):
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
-                    self.owner.last_name)).strip()
+                               self.owner.last_name)).strip()
         return fullname if fullname else self.owner.username
 
     def as_vcf_row(self):
@@ -842,7 +891,8 @@ class SubmittedVariant(SVIPModel):
         # QUAL and INFO are both '.', which indicates an empty field(?)
         original_alt = ",".join(
             [x.strip() for x in self.alt.strip("[]").replace("None", ".").split(",")])
-        return "\t".join(str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
+        return "\t".join(
+            str(x) for x in [self.chromosome, self.pos, self.id, self.ref, original_alt, '.', 'PASS', '.']) + "\n"
 
 
 # ================================================================================================================
