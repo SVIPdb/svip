@@ -1,8 +1,8 @@
 from django.test import TestCase
 
 class ModelTests(TestCase):
-    def test_model_coice_class(self):
-      """ Testing the Model Choice Class"""
+    def test_model_choice_class(self):
+      """ Testing the Model Choice Class """
       from api.utils import ModelChoice
       class MyModelChoice(ModelChoice):
         prop1='Prop1'
@@ -13,3 +13,5 @@ class ModelTests(TestCase):
         ('prop1', 'Prop1'),
         ('prop2', 'Prop2')
       ])
+
+
