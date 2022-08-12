@@ -8,8 +8,7 @@
                 </h6>
                 <div
                     v-for="(evidence, index) in review.evidences"
-                    :key="'evidence' + index"
-                >
+                    :key="'evidence' + index">
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="expander_array[idx].disease">
@@ -20,8 +19,7 @@
                                                 v-model="
                                                     expander_array[idx]
                                                         .evidences[index]
-                                                "
-                                            />
+                                                " />
                                             {{ evidence.fullType }}
                                         </b-col>
                                         <b-col cols="2">
@@ -30,8 +28,7 @@
                                                 v-for="(
                                                     effect, effect_idx
                                                 ) in evidence.effectOfVariant"
-                                                :key="'effect' + effect_idx"
-                                            >
+                                                :key="'effect' + effect_idx">
                                                 {{ effect.label }}:
                                                 {{
                                                     effect.count
@@ -48,8 +45,7 @@
                                                         evidence.curator
                                                             .annotatedEffect
                                                     "
-                                                    readonly
-                                                />
+                                                    readonly />
                                             </b-row>
                                             <b-row class="p-2">
                                                 <b-input
@@ -57,8 +53,7 @@
                                                         evidence.curator
                                                             .annotatedTier
                                                     "
-                                                    readonly
-                                                />
+                                                    readonly />
                                             </b-row>
                                         </b-col>
                                         <b-col cols="2">
@@ -81,8 +76,7 @@
                                                     :disabled="
                                                         not_annotated ||
                                                         submitted
-                                                    "
-                                                ></select-prognostic-outcome>
+                                                    "></select-prognostic-outcome>
                                                 <select-diagnostic-outcome
                                                     v-if="
                                                         evidence.typeOfEvidence ===
@@ -101,8 +95,7 @@
                                                     :disabled="
                                                         not_annotated ||
                                                         submitted
-                                                    "
-                                                ></select-diagnostic-outcome>
+                                                    "></select-diagnostic-outcome>
                                                 <select-predictive-therapeutic-outcome
                                                     v-if="
                                                         evidence.typeOfEvidence ===
@@ -121,8 +114,7 @@
                                                     :disabled="
                                                         not_annotated ||
                                                         submitted
-                                                    "
-                                                ></select-predictive-therapeutic-outcome>
+                                                    "></select-predictive-therapeutic-outcome>
                                             </b-row>
                                             <b-row class="p-2">
                                                 <select-tier
@@ -147,8 +139,7 @@
                                                     :disabled="
                                                         not_annotated ||
                                                         submitted
-                                                    "
-                                                ></select-tier>
+                                                    "></select-tier>
                                                 <select-therapeutic-tier
                                                     v-if="
                                                         evidence.typeOfEvidence ===
@@ -167,31 +158,28 @@
                                                     :disabled="
                                                         not_annotated ||
                                                         submitted
-                                                    "
-                                                ></select-therapeutic-tier>
+                                                    "></select-therapeutic-tier>
                                             </b-row>
                                         </b-col>
                                         <b-col cols="1" align="center">
                                             <b-row
-                                                class="justify-content-center"
-                                            >
+                                                class="justify-content-center">
                                                 Review status
                                             </b-row>
                                             <b-row
-                                                class="justify-content-center"
-                                            >
+                                                class="justify-content-center">
                                                 <span
                                                     v-for="(
                                                         review, review_idx
                                                     ) in evidence.reviews"
-                                                    :key="'review' + review_idx"
-                                                >
+                                                    :key="
+                                                        'review' + review_idx
+                                                    ">
                                                     <span
                                                         v-if="
                                                             review.status !==
                                                             null
-                                                        "
-                                                    >
+                                                        ">
                                                         <b-icon
                                                             class="h4 mb-2 m-1"
                                                             :style="
@@ -203,8 +191,7 @@
                                                                 displayIcon(
                                                                     review.status
                                                                 )
-                                                            "
-                                                        ></b-icon>
+                                                            "></b-icon>
                                                     </span>
                                                 </span>
 
@@ -223,21 +210,18 @@
                                                                 .currentReview
                                                                 .status
                                                         )
-                                                    "
-                                                ></b-icon>
+                                                    "></b-icon>
 
                                                 <span
                                                     v-for="(
                                                         review, key
                                                     ) in evidence.reviews"
-                                                    :key="key"
-                                                >
+                                                    :key="key">
                                                     <span
                                                         v-if="
                                                             review.status ===
                                                             null
-                                                        "
-                                                    >
+                                                        ">
                                                         <b-icon
                                                             class="h4 mb-2 m-1"
                                                             :style="
@@ -249,8 +233,7 @@
                                                                 displayIcon(
                                                                     review.status
                                                                 )
-                                                            "
-                                                        ></b-icon>
+                                                            "></b-icon>
                                                     </span>
                                                 </span>
                                             </b-row>
@@ -269,9 +252,7 @@
                                                 v-model="
                                                     evidence.currentReview
                                                         .comment
-                                                "
-                                            >
-                                            </b-textarea>
+                                                "></b-textarea>
                                         </b-col>
                                     </b-row>
                                 </b-card-text>
@@ -280,36 +261,30 @@
                                     <div
                                         v-if="
                                             expander_array[idx].evidences[index]
-                                        "
-                                    >
+                                        ">
                                         <b-card-footer
-                                            class="pt-0 pb-0 pl-3 pr-3 fluid"
-                                        >
+                                            class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <b-row
                                                 align-v="center"
                                                 v-for="(
                                                     curation, i
                                                 ) in evidence.curations"
-                                                :key="'curation' + i"
-                                            >
-                                                <b-col class="p-2"
-                                                    >PMID:
+                                                :key="'curation' + i">
+                                                <b-col class="p-2">
+                                                    PMID:
                                                     <b-link
                                                         target="_blank"
                                                         active
-                                                        :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`"
-                                                    >
+                                                        :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                         {{ curation.pmid }}
                                                     </b-link>
                                                 </b-col>
-                                                <b-col class="p-2"
-                                                    >"{{
-                                                        curation.effect
-                                                    }}"</b-col
-                                                >
-                                                <b-col class="p-2">{{
-                                                    curation.tier
-                                                }}</b-col>
+                                                <b-col class="p-2">
+                                                    "{{ curation.effect }}"
+                                                </b-col>
+                                                <b-col class="p-2">
+                                                    {{ curation.tier }}
+                                                </b-col>
                                                 <b-col class="p-2">
                                                     Support:
                                                     {{ curation.support }}
@@ -323,16 +298,16 @@
                                                             },
                                                         }"
                                                         target="_blank"
-                                                        alt="Link to evidence"
-                                                        >Curation entry #{{
+                                                        alt="Link to evidence">
+                                                        Curation entry #{{
                                                             curation.id
                                                         }}
                                                     </b-link>
                                                 </b-col>
 
-                                                <b-col class="p-2" cols="6">{{
-                                                    curation.comment
-                                                }}</b-col>
+                                                <b-col class="p-2" cols="6">
+                                                    {{ curation.comment }}
+                                                </b-col>
                                             </b-row>
                                         </b-card-footer>
                                     </div>
@@ -348,31 +323,27 @@
             <b-button
                 variant="warning"
                 @click="submitReviews(true)"
-                :disabled="not_annotated || submitted"
-            >
+                :disabled="not_annotated || submitted">
                 Finish later
             </b-button>
             <!--<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">-->
             <b-button
                 class="footer-btn"
                 @click="submitOptions()"
-                :disabled="not_annotated"
-            >
+                :disabled="not_annotated">
                 Submit review
             </b-button>
         </div>
         <b-navbar-text
             v-if="not_annotated"
             class="fixed-bottom submitted-bar"
-            align="center"
-        >
+            align="center">
             THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
         </b-navbar-text>
         <b-navbar-text
             class="fixed-bottom submitted-bar"
             align="center"
-            v-if="submitted"
-        >
+            v-if="submitted">
             YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
         </b-navbar-text>
     </div>
@@ -385,8 +356,8 @@ import { HTTP } from "@/router/http";
 import BroadcastChannel from "broadcast-channel";
 import {
     BIcon,
-    BIconSquare,
     BIconCheckSquareFill,
+    BIconSquare,
     BIconXSquareFill,
 } from "bootstrap-vue";
 import ulog from "ulog";
@@ -464,7 +435,7 @@ export default {
         // TODO: this pulls a vaguely relevant curation entry, but it'll obviously be replaced later with a real reference
         HTTP.get(
             `/curation_entries?variant__gene__symbol=NRAS&page_size=1`
-        ).then((response) => {
+        ).then(response => {
             this.sample_curation_id = response.data.results[0].id;
         });
 
@@ -494,7 +465,7 @@ export default {
                  * Callback Function
                  * @param {Boolean} confirm
                  */
-                callback: (confirm) => {
+                callback: confirm => {
                     if (confirm) {
                         // save as a draft
                         this.submitReviews(false);
@@ -508,12 +479,17 @@ export default {
                 var_id: this.variant.id,
             };
             HTTP.post(`/review_data`, params)
-                .then((response) => {
+                .then(response => {
                     //this.diseases = response.data.review_data
+
+                    console.log(
+                        "review_data",
+                        JSON.stringify(response.data.review_data)
+                    );
                     this.detectOwnReviews(response.data.review_data);
                     this.changeReviewStatusCheckboxes(this.diseases);
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.$snotify.error("Failed to fetch data");
                 });
@@ -544,8 +520,8 @@ export default {
                 curatorValues.annotatedTier === reviewerValues.annotatedTier;
         },
         changeReviewStatusCheckboxes() {
-            this.diseases.map((disease) => {
-                disease.evidences.map((evidence) => {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
                     this.onChange(evidence.curator, evidence.currentReview);
                 });
             });
@@ -554,10 +530,10 @@ export default {
             let evidence_counter = 0;
 
             // iterate over every review to prefill inputs with current user's past reviews
-            diseases.map((disease) => {
+            diseases.map(disease => {
                 let evidences_expanders = [];
 
-                disease.evidences.map((evidence) => {
+                disease.evidences.map(evidence => {
                     evidence.reviews.map((review, index) => {
                         if (review.reviewer_id === this.user.user_id) {
                             if (review.draft === false) {
@@ -642,8 +618,8 @@ export default {
             let evidences_data = [];
 
             // iterate over every review
-            this.diseases.map((disease) => {
-                disease.evidences.map((evidence) => {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
                     if (
                         // check that dropdown options have been selected
                         evidence.currentReview.annotatedEffect !==
@@ -668,7 +644,7 @@ export default {
             });
 
             HTTP.post(`/reviews`, evidences_data)
-                .then((response) => {
+                .then(response => {
                     console.log(`response: ${response.data}`);
                     if (draft) {
                         this.$snotify.success(
@@ -686,7 +662,7 @@ export default {
                     this.getReviewData();
                     this.submitted = true;
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.$snotify.error("Failed to submit review");
                 });

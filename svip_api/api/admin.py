@@ -1,12 +1,11 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant, 
+from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant,
                         SubmittedVariantBatch)
-
-from api.models.svip import (SummaryComment, CurationAssociation, CurationEvidence, CurationReview,
+from api.models.svip import (SummaryComment, CurationReview,
                              SIBAnnotation1, SIBAnnotation2, SummaryDraft, CurationRequest, RevisedReview
-                            )
+                             )
 
 admin.site.register(SummaryComment)
 admin.site.register(SummaryDraft)
@@ -17,12 +16,12 @@ admin.site.register(SIBAnnotation2)
 admin.site.register(CurationRequest)
 
 
-@admin.register(CurationAssociation)
-class CurationAssociationAdmin(admin.ModelAdmin):
-    list_display = ('variant', 'variant_id', 'disease')
-
-    def variant_id(self, obj):
-        return obj.variant.id
+# @admin.register(CurationAssociation)
+# class CurationAssociationAdmin(admin.ModelAdmin):
+#     list_display = ('variant', 'variant_id', 'disease')
+#
+#     def variant_id(self, obj):
+#         return obj.variant.id
 
 
 class CurationsInlineAdmin(admin.TabularInline):
@@ -31,10 +30,10 @@ class CurationsInlineAdmin(admin.TabularInline):
     extra = 0
 
 
-@admin.register(CurationEvidence)
-class CurationEvidenceAdmin(admin.ModelAdmin):
-    fields = ['association', 'type_of_evidence', 'drug']
-    #inlines = [CurationsInlineAdmin]
+# @admin.register(CurationEvidence)
+# class CurationEvidenceAdmin(admin.ModelAdmin):
+#     fields = ['association', 'type_of_evidence', 'drug']
+#     #inlines = [CurationsInlineAdmin]
 
 
 @admin.register(Variant)

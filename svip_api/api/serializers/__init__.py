@@ -11,13 +11,14 @@ from .genomic import (
     CollapsedAssociationSerializer,
     PhenotypeSerializer,
     EvidenceSerializer,
-    EnvironmentalContextSerializer,
+    EnvironmentalContextSerializer
 )
-from api.serializers.genomic_svip import (
+from .genomic_svip import (
     FullVariantSerializer,
     OnlySVIPVariantSerializer
 )
-
+from .icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
+from .reference import (DiseaseSerializer, DrugSerializer)
 from .svip import (
     VariantInSVIPSerializer,
     SampleSerializer,

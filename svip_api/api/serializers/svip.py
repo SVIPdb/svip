@@ -22,8 +22,8 @@ from api.models.svip import (
     CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
     SummaryDraft, GeneSummaryDraft, RevisedReview
 )
-from api.serializers import SimpleVariantSerializer, SimpleGeneSerializer
-from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
+from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
+from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
 from api.utils import field_is_empty, format_variant, model_field_null
@@ -346,6 +346,26 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
         instance.save()
 
 
+class CurationReviewSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(CurationReviewSerializer, self).__init__(
+            *args, **kwargs)
+
+    class Meta:
+        model = CurationReview
+        fields = '__all__'
+
+
+class RevisedReviewSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(RevisedReviewSerializer, self).__init__(
+            *args, **kwargs)
+
+    class Meta:
+        model = RevisedReview
+        fields = '__all__'
+
+
 class CurationEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
 
@@ -353,6 +373,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     #     allow_empty=False, many=True, queryset=Variant.objects.all(),
     #     style={'base_template': 'input.html'}
     # )
+    curation_reviews = CurationReviewSerializer(many=True)
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
@@ -512,15 +533,14 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'comment',
             'references',
             'annotations',
-
             'created_on',
             'last_modified',
             'owner',
             'owner_name',
             'formatted_variants',
             'status',
+            'curation_reviews'
 
-            'curation_evidences',
         )
 
         extra_kwargs = {
@@ -734,7 +754,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     def get_review_count(obj):
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
             evidence = obj.curation_associations.first().curation_evidences.first()
-            return evidence.reviews.count()
+            return evidence.curation_reviews.count()
         else:
             return 0
 
@@ -743,8 +763,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
         reviews = []
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
             evidence = obj.curation_associations.first().curation_evidences.first()
-            if evidence.reviews.count() > 0:
-                for review in evidence.reviews.all():
+            if evidence.curation_reviews.count() > 0:
+                for review in evidence.curation_reviews.all():
                     reviews.append(review.match())
         return reviews
 
@@ -872,39 +892,4 @@ class SummaryDraftSerializer(serializers.ModelSerializer):
 class GeneSummaryDraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneSummaryDraft
-        fields = '__all__'
-
-
-# class CurationReviewListSerializer(serializers.ListSerializer):
-#    def update(self, instance, validated_data):
-
-
-# class CurationReviewSerializer(serializers.ModelSerializer):
-
-#    def __init__(self, *args, **kwargs):
-#        many = kwargs.pop('many', True)
-#        super(CurationReviewSerializer, self).__init__(
-#            many=many, *args, **kwargs)
-
-#    class Meta:
-#        model = CurationReview
-#        fields = '__all__'
-
-class CurationReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(CurationReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = CurationReview
-        fields = '__all__'
-
-
-class RevisedReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(RevisedReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = RevisedReview
         fields = '__all__'

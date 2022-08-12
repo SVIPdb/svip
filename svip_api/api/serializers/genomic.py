@@ -12,6 +12,7 @@ from api.models.genomic import CollapsedAssociation
 # --- site management serializers
 # -----------------------------------------------------------------------------
 
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -116,6 +117,9 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     sources = serializers.SerializerMethodField()
     gene = GeneSerializer(read_only=True)
 
+    from api.serializers.svip import CurationEntrySerializer
+    curation_entries = CurationEntrySerializer(many=True)
+
     def get_sources(self, obj):
         return sorted(obj.sources) if obj.sources else None
 
@@ -142,6 +146,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('stage')
         fields.append('public_stage')
         fields.append('confidence')
+        fields.append('curation_entries')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
 
         # FIXME: add sources collection here, from VariantInSource
