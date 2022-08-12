@@ -22,17 +22,16 @@ from api.models import (
     Gene
 )
 from api.models.svip import (
-    SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview, CurationAssociation,
-    CurationEvidence, SIBAnnotation1,
-    SIBAnnotation2, SummaryDraft, GeneSummaryDraft, RevisedReview
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview,
+    SummaryDraft, GeneSummaryDraft, RevisedReview
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation2Serializer,
-    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer,
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SubmittedVariantSerializer,
+    CurationRequestSerializer, SummaryCommentSerializer,
     CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
 )
 from api.support.history import make_history_response
@@ -302,8 +301,8 @@ class CurationReviewView(APIView):
                 review = CurationReview.objects.get(id=obj['id'])
             else:
                 review = CurationReview()
-            review.curation_evidence = CurationEvidence.objects.get(
-                id=obj['curation_evidence'])
+            review.curation_evidence = CurationEntry.objects.get(
+                id=obj['curation_entry'])
             review.annotated_effect = obj['annotated_effect']
             review.annotated_tier = obj['annotated_tier']
             review.comment = obj['comment']
@@ -463,31 +462,32 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-class SIBAnnotation1View(APIView):
-    def post(self, request, *args, **kwargs):
-        for obj in request.data:
-            evidence = CurationEvidence.objects.get(id=obj['evidence'])
-            if 'id' in obj:
-                annotation = SIBAnnotation1.objects.get(id=obj['id'])
-            elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
-                annotation = SIBAnnotation1.objects.get(evidence=evidence)
-            else:
-                annotation = SIBAnnotation1()
-            annotation.evidence = evidence
-            annotation.effect = obj['effect']
-            annotation.tier = obj['tier']
-            annotation.draft = False
-            annotation.save()
-        return Response(data='Submitted annotations are succesfully saved')
-
-
-class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SIBAnnotation2Serializer
-
-    def get_queryset(self):
-        queryset = SIBAnnotation2.objects.all()
-        return queryset
+#
+# class SIBAnnotation1View(APIView):
+#     def post(self, request, *args, **kwargs):
+#         for obj in request.data:
+#             evidence = CurationEvidence.objects.get(id=obj['evidence'])
+#             if 'id' in obj:
+#                 annotation = SIBAnnotation1.objects.get(id=obj['id'])
+#             elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
+#                 annotation = SIBAnnotation1.objects.get(evidence=evidence)
+#             else:
+#                 annotation = SIBAnnotation1()
+#             annotation.evidence = evidence
+#             annotation.effect = obj['effect']
+#             annotation.tier = obj['tier']
+#             annotation.draft = False
+#             annotation.save()
+#         return Response(data='Submitted annotations are succesfully saved')
+#
+#
+# class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+#     serializer_class = SIBAnnotation2Serializer
+#
+#     def get_queryset(self):
+#         queryset = SIBAnnotation2.objects.all()
+#         return queryset
 
 
 # ================================================================================================================
@@ -595,123 +595,123 @@ def get_diseases():
     pass
 
 
-class DashboardReviews(APIView):
-    def get(self, request):
-        results = []
-        var_ids = []
+# class DashboardReviews(APIView):
+#     def get(self, request):
+#         results = []
+#         var_ids = []
+#
+#         # for var in Variant.objects.filter(curation_entries__isnull=False):
+#         #         print("stage_new", v.stage)
+#
+#         for association in CurationAssociation.objects.all():
+#             var = association.variant
+#             print("stage_old", var.stage)
+#             print()
+#
+#             if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
+#                 variant_obj = {
+#                     'gene_id': var.gene.id,
+#                     'variant_id': var.id,
+#                     'gene_name': var.gene.symbol,
+#                     'variant': var.name,
+#                     'hgvs': var.hgvs_c,
+#                     'disease': association.disease.name if association.disease else None,
+#                     'status': 'Ongoing',
+#                     'deadline': 'n/a',
+#                     'requester': '',
+#                     'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
+#                                 var.curation_entries.distinct('owner')],
+#                     'review_count': review_count(var),
+#                     'reviews': reviews(var),
+#                     'stage': var.stage,
+#                     'reviewers_id': reviewers(var),
+#
+#                 }
+#                 results.append(variant_obj)
+#                 var_ids.append(var.id)
+#         return Response(
+#             data={
+#                 "reviews": results
+#             }
+#         )
 
-        # for var in Variant.objects.filter(curation_entries__isnull=False):
-        #         print("stage_new", v.stage)
 
-        for association in CurationAssociation.objects.all():
-            var = association.variant
-            print("stage_old", var.stage)
-            print()
-
-            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
-                variant_obj = {
-                    'gene_id': var.gene.id,
-                    'variant_id': var.id,
-                    'gene_name': var.gene.symbol,
-                    'variant': var.name,
-                    'hgvs': var.hgvs_c,
-                    'disease': association.disease.name if association.disease else None,
-                    'status': 'Ongoing',
-                    'deadline': 'n/a',
-                    'requester': '',
-                    'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
-                                var.curation_entries.distinct('owner')],
-                    'review_count': review_count(var),
-                    'reviews': reviews(var),
-                    'stage': var.stage,
-                    'reviewers_id': reviewers(var),
-
-                }
-                results.append(variant_obj)
-                var_ids.append(var.id)
-        return Response(
-            data={
-                "reviews": results
-            }
-        )
-
-
-class ReviewDataView(APIView):
-
-    # when user accesses the review page, return the json data
-    def post(self, request, *args, **kwargs):
-
-        # create VariantInSVIP instance if doesn't exist
-        var_id = request.data.get('var_id')
-
-        if not request.data.get('only_clinical'):
-            only_clinical = False
-        else:
-            only_clinical = True
-
-        variant = Variant.objects.get(id=var_id)
-        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
-        svip_var_exists = bool(len(matching_svip_var))
-        if not svip_var_exists:
-            svip_var = VariantInSVIP(variant=variant)
-            svip_var.save()
-        else:
-            svip_var = matching_svip_var[0]
-
-        for curation in variant.curation_entries.filter(status="submitted"):
-
-            # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-            # check that a disease is indicated for the curation entry being saved
-            # if curation.disease:
-
-            associations = CurationAssociation.objects.filter(
-                variant=variant).filter(disease=curation.disease)
-
-            # check that no association already exists for these parameters
-            if len(associations) == 0:
-                new_association = CurationAssociation(
-                    variant=variant, disease=curation.disease)
-                new_association.save()
-
-            association = CurationAssociation.objects.filter(
-                variant=variant).filter(disease=curation.disease).first()
-
-            if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
-                drugs = curation.drugs
-            else:
-                # add null object to empty list so at least one iteration to create an evidence related to no drug
-                drugs = [None]
-
-            for drug in drugs:
-                evidences = association.curation_evidences.filter(
-                    type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-
-                if len(evidences) == 0:
-                    new_evidence = CurationEvidence(
-                        association=association,
-                        type_of_evidence=curation.type_of_evidence,
-                        drug=drug
-                    )
-                    new_evidence.save()
-
-                evidence = association.curation_evidences.filter(
-                    type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-                curation.curation_evidences.add(evidence)
-
-            curation.save()
-
-        if only_clinical:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(),
-                }
-            )
-        else:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(all_evidence_types=True),
-                }
-            )
+# class ReviewDataView(APIView):
+#
+#     # when user accesses the review page, return the json data
+#     def post(self, request, *args, **kwargs):
+#
+#         # create VariantInSVIP instance if doesn't exist
+#         var_id = request.data.get('var_id')
+#
+#         if not request.data.get('only_clinical'):
+#             only_clinical = False
+#         else:
+#             only_clinical = True
+#
+#         variant = Variant.objects.get(id=var_id)
+#         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
+#         svip_var_exists = bool(len(matching_svip_var))
+#         if not svip_var_exists:
+#             svip_var = VariantInSVIP(variant=variant)
+#             svip_var.save()
+#         else:
+#             svip_var = matching_svip_var[0]
+#
+#         for curation in variant.curation_entries.filter(status="submitted"):
+#
+#             # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
+#             # check that a disease is indicated for the curation entry being saved
+#             # if curation.disease:
+#
+#             associations = CurationAssociation.objects.filter(
+#                 variant=variant).filter(disease=curation.disease)
+#
+#             # check that no association already exists for these parameters
+#             if len(associations) == 0:
+#                 new_association = CurationAssociation(
+#                     variant=variant, disease=curation.disease)
+#                 new_association.save()
+#
+#             association = CurationAssociation.objects.filter(
+#                 variant=variant).filter(disease=curation.disease).first()
+#
+#             if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
+#                 drugs = curation.drugs
+#             else:
+#                 # add null object to empty list so at least one iteration to create an evidence related to no drug
+#                 drugs = [None]
+#
+#             for drug in drugs:
+#                 evidences = association.curation_evidences.filter(
+#                     type_of_evidence=curation.type_of_evidence).filter(drug=drug)
+#
+#                 if len(evidences) == 0:
+#                     new_evidence = CurationEvidence(
+#                         association=association,
+#                         type_of_evidence=curation.type_of_evidence,
+#                         drug=drug
+#                     )
+#                     new_evidence.save()
+#
+#                 evidence = association.curation_evidences.filter(
+#                     type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
+#                 curation.curation_evidences.add(evidence)
+#
+#             curation.save()
+#
+#         if only_clinical:
+#             return Response(
+#                 data={
+#                     "review_data": svip_var.review_data(),
+#                 }
+#             )
+#         else:
+#             return Response(
+#                 data={
+#                     "review_data": svip_var.review_data(all_evidence_types=True),
+#                 }
+#             )
 
 
 class CurationIds(APIView):

@@ -7,7 +7,6 @@ from itertools import chain
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import connection, models
-from django.db.models import Q
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -154,130 +153,130 @@ class VariantInSVIP(models.Model):
         # JSON containing data for VariantDisease.vue
         diseases_dict = []
 
-        for association in self.variant.curation_associations.all().order_by('id'):
-            disease = {}
-
-            if association.disease:
-                disease["disease"] = association.disease.name
-            else:
-                disease["disease"] = 'Unspecified'
-
-            evidences = []
-            for evidence in association.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):
-
-                # delete evidences that don't contain any curation
-                if evidence.curation_entries.all().count() == 0:
-                    if hasattr(evidence, 'annotation1'):
-                        evidence.annotation1.delete()
-                    if hasattr(evidence, 'annotation2'):
-                        evidence.annotation2.delete()
-                    for review in evidence.curation_reviews.all():
-                        review.delete()
-                    for rr in evidence.revised_reviews.all():
-                        rr.delete()
-                    evidence.delete()
-                    break
-
-                evidence_obj = {}
-                evidence_obj["id"] = evidence.id
-                evidence_obj["isOpen"] = False
-                evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
-                evidence_obj["fullType"] = evidence.full_evidence_type()
-                evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
-
-                if hasattr(evidence, 'annotation1'):
-                    evidence_obj["curator"] = {
-                        "id": evidence.annotation1.id,
-                        "annotatedEffect": evidence.annotation1.effect,
-                        "annotatedTier": evidence.annotation1.tier,
-                    }
-                if hasattr(evidence, 'annotation2'):
-                    evidence_obj["finalAnnotation"] = {
-                        "id": evidence.annotation2.id,
-                        "annotatedEffect": evidence.annotation2.effect,
-                        "annotatedTier": evidence.annotation2.tier,
-                        "clinical_input": evidence.annotation2.clinical_input
-                    }
-
-                curations = []
-                for curation in evidence.curation_entries.all():
-                    # print(f"\n\ncuration id: {curation.id}\n\n")
-                    if curation.tier_level:
-                        tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
-                    else:
-                        tier = curation.tier_level_criteria
-
-                    curation_obj = {
-                        "id": curation.id,
-                        "pmid": int(curation.references.split(":")[1]),
-                        "effect": curation.effect,
-                        "support": curation.support,
-                        "comment": curation.comment,
-                        "tier": tier
-                    }
-                    curations.append(curation_obj)
-                evidence_obj["curations"] = curations
-
-                reviews = []
-                for review in evidence.curation_reviews.all():
-                    review_obj = {
-                        "id": review.id,
-                        "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
-                        "reviewer_mail": review.reviewer.email,
-                        "reviewer_id": review.reviewer.id,
-                        "annotatedTier": review.annotated_tier,
-                        "annotatedEffect": review.annotated_effect,
-                        "comment": review.comment,
-                        "draft": review.draft
-                    }
-                    if (review.annotated_effect == evidence.annotation1.effect) and (
-                            review.annotated_tier == evidence.annotation1.tier):
-                        review_obj['status'] = True
-                    else:
-                        review_obj['status'] = False
-                    reviews.append(review_obj)
-
-                # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
-                while len(reviews) < 3:
-                    review_obj = {
-                        "reviewer": "",
-                        "status": None
-                    }
-                    reviews.append(review_obj)
-                evidence_obj["reviews"] = reviews
-
-                revised_reviews = []
-                for rr in evidence.revised_reviews.all():
-                    rr_obj = {
-                        "id": rr.id,
-                        "reviewer": f"{rr.reviewer.first_name} {rr.reviewer.last_name}",
-                        "reviewer_mail": rr.reviewer.email,
-                        'agree': rr.agree,
-                        'comment': rr.comment
-                    }
-                    revised_reviews.append(rr_obj)
-                evidence_obj['revised_reviews'] = revised_reviews
-
-                evidences.append(evidence_obj)
-
-            ordered_evidences = []
-
-            # optional argument defines whether all evidence types should be passed, or only clinical ones
-            all_evidence_types = kwargs.get('all_evidence_types', False)
-
-            if all_evidence_types:
-                for ev in evidences:
-                    ordered_evidences.append(ev)
-            else:
-                for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-                    for matching_evidence in (ev for ev in evidences if ev["typeOfEvidence"] == evidence_type):
-                        ordered_evidences.append(matching_evidence)
-
-            disease["evidences"] = ordered_evidences
-
-            if len(disease["evidences"]) > 0:
-                diseases_dict.append(disease)
-
+        # for entry in self.variant.curation_entries.all().order_by('id'):
+        #     disease = {}
+        #
+        #     if entry.disease:
+        #         disease["disease"] = entry.disease.name
+        #     else:
+        #         disease["disease"] = 'Unspecified'
+        #
+        #     evidences = []
+        #     for evidence in entry.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):
+        #
+        #         # delete evidences that don't contain any curation
+        #         if evidence.curation_entries.all().count() == 0:
+        #             if hasattr(evidence, 'annotation1'):
+        #                 evidence.annotation1.delete()
+        #             if hasattr(evidence, 'annotation2'):
+        #                 evidence.annotation2.delete()
+        #             for review in evidence.curation_reviews.all():
+        #                 review.delete()
+        #             for rr in evidence.revised_reviews.all():
+        #                 rr.delete()
+        #             evidence.delete()
+        #             break
+        #
+        #         evidence_obj = {}
+        #         evidence_obj["id"] = evidence.id
+        #         evidence_obj["isOpen"] = False
+        #         evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
+        #         evidence_obj["fullType"] = evidence.full_evidence_type()
+        #         evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
+        #
+        #         if hasattr(evidence, 'annotation1'):
+        #             evidence_obj["curator"] = {
+        #                 "id": evidence.annotation1.id,
+        #                 "annotatedEffect": evidence.annotation1.effect,
+        #                 "annotatedTier": evidence.annotation1.tier,
+        #             }
+        #         if hasattr(evidence, 'annotation2'):
+        #             evidence_obj["finalAnnotation"] = {
+        #                 "id": evidence.annotation2.id,
+        #                 "annotatedEffect": evidence.annotation2.effect,
+        #                 "annotatedTier": evidence.annotation2.tier,
+        #                 "clinical_input": evidence.annotation2.clinical_input
+        #             }
+        #
+        #         curations = []
+        #         for curation in evidence.curation_entries.all():
+        #             # print(f"\n\ncuration id: {curation.id}\n\n")
+        #             if curation.tier_level:
+        #                 tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
+        #             else:
+        #                 tier = curation.tier_level_criteria
+        #
+        #             curation_obj = {
+        #                 "id": curation.id,
+        #                 "pmid": int(curation.references.split(":")[1]),
+        #                 "effect": curation.effect,
+        #                 "support": curation.support,
+        #                 "comment": curation.comment,
+        #                 "tier": tier
+        #             }
+        #             curations.append(curation_obj)
+        #         evidence_obj["curations"] = curations
+        #
+        #         reviews = []
+        #         for review in evidence.curation_reviews.all():
+        #             review_obj = {
+        #                 "id": review.id,
+        #                 "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+        #                 "reviewer_mail": review.reviewer.email,
+        #                 "reviewer_id": review.reviewer.id,
+        #                 "annotatedTier": review.annotated_tier,
+        #                 "annotatedEffect": review.annotated_effect,
+        #                 "comment": review.comment,
+        #                 "draft": review.draft
+        #             }
+        #             if (review.annotated_effect == evidence.annotation1.effect) and (
+        #                     review.annotated_tier == evidence.annotation1.tier):
+        #                 review_obj['status'] = True
+        #             else:
+        #                 review_obj['status'] = False
+        #             reviews.append(review_obj)
+        #
+        #         # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
+        #         while len(reviews) < 3:
+        #             review_obj = {
+        #                 "reviewer": "",
+        #                 "status": None
+        #             }
+        #             reviews.append(review_obj)
+        #         evidence_obj["reviews"] = reviews
+        #
+        #         revised_reviews = []
+        #         for rr in evidence.revised_reviews.all():
+        #             rr_obj = {
+        #                 "id": rr.id,
+        #                 "reviewer": f"{rr.reviewer.first_name} {rr.reviewer.last_name}",
+        #                 "reviewer_mail": rr.reviewer.email,
+        #                 'agree': rr.agree,
+        #                 'comment': rr.comment
+        #             }
+        #             revised_reviews.append(rr_obj)
+        #         evidence_obj['revised_reviews'] = revised_reviews
+        #
+        #         evidences.append(evidence_obj)
+        #
+        #     ordered_evidences = []
+        #
+        #     # optional argument defines whether all evidence types should be passed, or only clinical ones
+        #     all_evidence_types = kwargs.get('all_evidence_types', False)
+        #
+        #     if all_evidence_types:
+        #         for ev in evidences:
+        #             ordered_evidences.append(ev)
+        #     else:
+        #         for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
+        #             for matching_evidence in (ev for ev in evidences if ev["typeOfEvidence"] == evidence_type):
+        #                 ordered_evidences.append(matching_evidence)
+        #
+        #     disease["evidences"] = ordered_evidences
+        #
+        #     if len(disease["evidences"]) > 0:
+        #         diseases_dict.append(disease)
+        #
         return diseases_dict
 
     class Meta:
@@ -363,46 +362,46 @@ class DiseaseInSVIP(SVIPModel):
 # ================================================================================================================
 
 
-class CurationAssociation(models.Model):
-    """
-    Associate variant to diseases for which curation was given
-    """
-    variant = models.ForeignKey(
-        to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
-    disease = models.ForeignKey(
-        to=Disease, on_delete=models.SET_NULL, null=True, blank=True, related_name='curation_associations')
+# class CurationAssociation(models.Model):
+#     """
+#     Associate variant to diseases for which curation was given
+#     """
+#     variant = models.ForeignKey(
+#         to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
+#     disease = models.ForeignKey(
+#         to=Disease, on_delete=models.SET_NULL, null=True, blank=True, related_name='curation_associations')
 
 
-class CurationEvidence(models.Model):
-    """
-    Link an association between a variant and a disease to an effect (and then to curation entries)
-    """
-    association = models.ForeignKey(
-        to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
-    type_of_evidence = models.TextField(null=True)
-    drug = models.TextField(null=True)
-
-    def full_evidence_type(self):
-        if self.drug:
-            return f"{self.type_of_evidence} - {self.drug.capitalize()}"
-        else:
-            return self.type_of_evidence
-
-    def effect_of_variant(self):
-        effect_of_variant = []
-        for curation in self.curation_entries.all():
-            effect_is_registered = False
-            for effect_obj in effect_of_variant:
-                if effect_obj["label"] == curation.effect:
-                    effect_is_registered = True
-                    effect_obj["count"] += 1
-            if not effect_is_registered:
-                effect_obj = {
-                    "label": curation.effect,
-                    "count": 1
-                }
-                effect_of_variant.append(effect_obj)
-        return effect_of_variant
+# class CurationEvidence(models.Model):
+#     """
+#     Link an association between a variant and a disease to an effect (and then to curation entries)
+#     """
+#     association = models.ForeignKey(
+#         to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
+#     type_of_evidence = models.TextField(null=True)
+#     drug = models.TextField(null=True)
+#
+#     def full_evidence_type(self):
+#         if self.drug:
+#             return f"{self.type_of_evidence} - {self.drug.capitalize()}"
+#         else:
+#             return self.type_of_evidence
+#
+#     def effect_of_variant(self):
+#         effect_of_variant = []
+#         for curation in self.curation_entries.all():
+#             effect_is_registered = False
+#             for effect_obj in effect_of_variant:
+#                 if effect_obj["label"] == curation.effect:
+#                     effect_is_registered = True
+#                     effect_obj["count"] += 1
+#             if not effect_is_registered:
+#                 effect_obj = {
+#                     "label": curation.effect,
+#                     "count": 1
+#                 }
+#                 effect_of_variant.append(effect_obj)
+#         return effect_of_variant
 
 
 class CURATION_STATUS(ModelChoice):
@@ -517,10 +516,9 @@ class CurationEntry(SVIPModel):
 
     # link a curation entry to curation evidence (usually one, but more if the curation is associated with several
     # drugs)
-    curation_evidences = models.ManyToManyField(
-        CurationEvidence, related_name=related_name, default=None)
+    # curation_evidences = models.ManyToManyField(
+    #     CurationEvidence, related_name=related_name, default=None)
 
-    # variants = models.ManyToManyField(to=Variant)
     variant = models.ForeignKey(
         to=Variant, on_delete=DB_CASCADE, related_name=related_name)
     extra_variants = models.ManyToManyField(
@@ -565,8 +563,6 @@ class CurationEntry(SVIPModel):
     request = ForeignKey(to=CurationRequest,
                          on_delete=DB_CASCADE, null=True, blank=True)
 
-    # FIXME: should we also track the review status's in the entry's history? is that even possible?
-    #  it might be: https://django-simple-history.readthedocs.io/en/latest/historical_model.html#adding-additional-fields-to-historical-models
     history = HistoricalRecords(
         excluded_fields=('created_on', 'last_modified'),
         cascade_delete_history=True
@@ -697,8 +693,8 @@ class CurationReview(SVIPModel):
     status = models.TextField(verbose_name="Review Status", choices=REVIEW_STATUS.get_choices(), default='pending',
                               db_index=True)
 
-    curation_evidence = ForeignKey(
-        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name=related_name)
+    # curation_evidence = ForeignKey(
+    #     to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name=related_name)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
     annotated_effect = models.TextField(null=True, blank=True)
@@ -718,8 +714,8 @@ class RevisedReview(models.Model):
     """
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
-    curation_evidence = ForeignKey(
-        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="revised_reviews")
+    curation_entry = ForeignKey(
+        to=CurationEntry, on_delete=DB_CASCADE, null=True, related_name="revised_reviews")
     agree = models.BooleanField()
     comment = models.TextField(default="", null=True, blank=True)
 
@@ -731,7 +727,7 @@ class SIBAnnotation1(models.Model):
     First Annotation of the SIB curators for a specific evidence
     """
     evidence = models.OneToOneField(
-        to=CurationEvidence, related_name="annotation1", on_delete=DB_CASCADE)
+        to=CurationEntry, related_name="annotation1", on_delete=DB_CASCADE)
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
     draft = models.BooleanField(default=False)
@@ -742,7 +738,7 @@ class SIBAnnotation2(models.Model):
     Second Annotation of the SIB curators for a specific evidence
     """
     evidence = models.OneToOneField(
-        to=CurationEvidence, related_name="annotation2", on_delete=DB_CASCADE)
+        to=CurationEntry, related_name="annotation2", on_delete=DB_CASCADE)
     effect = models.TextField(default="Not yet annotated", null=True)
     tier = models.TextField(default="Not yet annotated", null=True)
     clinical_input = models.TextField(null=True)

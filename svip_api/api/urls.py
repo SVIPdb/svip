@@ -121,7 +121,7 @@ router.register(r'submitted_variants',
 router.register(r'submitted_variant_batches',
                 views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
-#router.register(r'curation_reviews', views.ReviewsView, basename='reviews')
+# router.register(r'curation_reviews', views.ReviewsView, basename='reviews')
 router.register(r'revised_reviews', views.RevisedReviewViewSet,
                 basename='revised_reviews')
 
@@ -136,21 +136,21 @@ router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
 
 # router.register(r'sib_annotations_1', views.SIBAnnotation1View,
 #                basename='sib_annotations_1')
-router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
-                basename='sib_annotations_2')
+# router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
+#                 basename='sib_annotations_2')
 
 urlpatterns = [
     path('reviews', views.svip.CurationReviewView.as_view(), name='reviews'),
-    path('dashboard_reviews', views.svip.DashboardReviews.as_view(),
-         name='dashboard_reviews'),
-    path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
+    # path('dashboard_reviews', views.svip.DashboardReviews.as_view(),
+    #      name='dashboard_reviews'),
+    # path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
     path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
     path('update_variant_summary', views.svip.UpdateVariantSummary.as_view(),
          name='update_variant_summary'),
     path('update_gene_summary', views.svip.UpdateGeneSummary.as_view(),
          name='update_gene_summary'),
-    path('sib_annotations_1', views.svip.SIBAnnotation1View.as_view(),
-         name='sib_annotations_1'),
+    # path('sib_annotations_1', views.svip.SIBAnnotation1View.as_view(),
+    #      name='sib_annotations_1'),
     path('variant_summary/<int:pk>',
          views.genomic.VariantSummaryView, name="variant_summary"),
     path('', include(router.urls)),

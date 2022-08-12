@@ -9,11 +9,10 @@ from django_db_cascade.deletions import DB_CASCADE
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
 
-from api.utils import dictfetchall, ModelChoice
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
 # the format below is (actual value, human readable name) tupes
-from models.svip import REVIEW_STATUS, CURATION_STATUS
+from api.utils import dictfetchall, ModelChoice
 
 EVIDENCE_TYPES = [
     ('predictive', 'Predictive'),
@@ -183,27 +182,28 @@ class Variant(models.Model):
     @property
     def stage_new(self):
         if self.curation_entries.all():
-            for curation_entry in self.curation_entries.get_by_evidence_type_category(
-                    'diagnostic'):
-                review_count = curation_entry.curation_reviews.count()
-                acceped_review_count = curation_entry.curation_reviews.by_status(
-                    REVIEW_STATUS.accepted).count()
-                if review_count > 0 and review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
-                    return VARIANT_STAGE.ongoing_review
-                elif review_count == self.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
-                    return VARIANT_STAGE.unapproved
-                elif acceped_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
-                    return VARIANT_STAGE.approved
-
-            if any([curation_entry.status == CURATION_STATUS.get('submitted') for curation_entry in
-                    self.curation_entries.all()]):
-                return VARIANT_STAGE.annotated
-            elif self.curation_entries.all().count() > 0:
-                return VARIANT_STAGE.ongoing_curation
-            elif self.curation_request.all().count() > 0:
-                return VARIANT_STAGE.loaded
-
-            return VARIANT_STAGE.none
+            pass
+            # for curation_entry in self.curation_entries.get_by_evidence_type_category(
+            #         'diagnostic'):
+            #     review_count = curation_entry.curation_reviews.count()
+            #     acceped_review_count = curation_entry.curation_reviews.by_status(
+            #         REVIEW_STATUS.accepted).count()
+            #     if review_count > 0 and review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
+            #         return VARIANT_STAGE.ongoing_review
+            #     elif review_count == self.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
+            #         return VARIANT_STAGE.unapproved
+            #     elif acceped_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
+            #         return VARIANT_STAGE.approved
+            #
+            # if any([curation_entry.status == CURATION_STATUS.get('submitted') for curation_entry in
+            #         self.curation_entries.all()]):
+            #     return VARIANT_STAGE.annotated
+            # elif self.curation_entries.all().count() > 0:
+            #     return VARIANT_STAGE.ongoing_curation
+            # elif self.curation_request.all().count() > 0:
+            #     return VARIANT_STAGE.loaded
+            #
+            # return VARIANT_STAGE.none
 
     @property
     def stage(self):
