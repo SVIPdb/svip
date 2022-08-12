@@ -144,7 +144,7 @@ class CurationEntryFilter(django_filters.FilterSet):
     from api.models.svip import CURATION_STATUS
 
     status_ne = django_filters.ChoiceFilter(
-        field_name='status', choices=tuple(CURATION_STATUS.items()),
+        field_name='status', choices=CURATION_STATUS.get_choices(),
         lookup_expr='iexact', exclude=True
     )
     variant_ref = django_filters.NumberFilter(method='any_variant_ref')

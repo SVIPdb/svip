@@ -110,5 +110,19 @@ def json_build_fields(**args):
 
 class ModelChoice():
     @classmethod
+    def __items(cls):
+        """ 
+        Filter the class properties and created a dict like { property: property_value}
+        Ex.
+        class MyModelChoice(ModelChoice):
+            prop1='Prop1'
+            prop2='Prop2'
+        
+        """
+        return { k: v for k, v in cls.__dict__.items() if not k.startswith('__') }.items()
+        
+
+    @classmethod
     def get_choices(cls):
-        return tuple(cls.__dict__.items())
+        """ Retrns the choices to be used for a model choices field definition"""
+        return [(k, v) for k, v in cls.__items()]
