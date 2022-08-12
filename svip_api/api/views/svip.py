@@ -144,7 +144,7 @@ class CurationEntryFilter(django_filters.FilterSet):
     from api.models.svip import CURATION_STATUS
 
     status_ne = django_filters.ChoiceFilter(
-        field_name='status', choices=tuple(CURATION_STATUS.items()),
+        field_name='status', choices=CURATION_STATUS.get_choices(),
         lookup_expr='iexact', exclude=True
     )
     variant_ref = django_filters.NumberFilter(method='any_variant_ref')
@@ -559,7 +559,7 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
 def review_count(var):
     if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
         evidence = var.curation_associations.first().curation_evidences.first()
-        return evidence.reviews.count()
+        return evidence.curation_reviews.count()
     else:
         return 0
 
@@ -569,9 +569,9 @@ def reviews(var):
     reviewers = []
     if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
         evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.reviews.count() > 0:
+        if evidence.curation_reviews.count() > 0:
 
-            for review in evidence.reviews.all():
+            for review in evidence.curation_reviews.all():
                 reviewers.append(review.reviewer_id)
                 reviews.append(review.match())
 
@@ -583,20 +583,30 @@ def reviewers(var):
     reviewers_id = []
     if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
         evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.reviews.count() > 0:
-            for review in evidence.reviews.all():
+        if evidence.curation_reviews.count() > 0:
+            for review in evidence.curation_reviews.all():
                 reviewers.append(review.reviewer)
                 reviewers_id.append(review.reviewer_id)
 
     return reviewers_id
 
 
+def get_diseases():
+    pass
+
+
 class DashboardReviews(APIView):
     def get(self, request):
         results = []
         var_ids = []
+
+        # for var in Variant.objects.filter(curation_entries__isnull=False):
+        #         print("stage_new", v.stage)
+
         for association in CurationAssociation.objects.all():
             var = association.variant
+            print("stage_old", var.stage)
+            print()
 
             if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
                 variant_obj = {
@@ -615,7 +625,7 @@ class DashboardReviews(APIView):
                     'reviews': reviews(var),
                     'stage': var.stage,
                     'reviewers_id': reviewers(var),
-                    'stage': var.stage
+
                 }
                 results.append(variant_obj)
                 var_ids.append(var.id)
@@ -634,7 +644,7 @@ class ReviewDataView(APIView):
         # create VariantInSVIP instance if doesn't exist
         var_id = request.data.get('var_id')
 
-        if request.data.get('only_clinical') == False:
+        if not request.data.get('only_clinical'):
             only_clinical = False
         else:
             only_clinical = True

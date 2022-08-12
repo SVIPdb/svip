@@ -171,7 +171,7 @@ class VariantInSVIP(models.Model):
                         evidence.annotation1.delete()
                     if hasattr(evidence, 'annotation2'):
                         evidence.annotation2.delete()
-                    for review in evidence.reviews.all():
+                    for review in evidence.curation_reviews.all():
                         review.delete()
                     for rr in evidence.revised_reviews.all():
                         rr.delete()
@@ -219,7 +219,7 @@ class VariantInSVIP(models.Model):
                 evidence_obj["curations"] = curations
 
                 reviews = []
-                for review in evidence.reviews.all():
+                for review in evidence.curation_reviews.all():
                     review_obj = {
                         "id": review.id,
                         "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
@@ -698,7 +698,7 @@ class CurationReview(SVIPModel):
                               db_index=True)
 
     curation_evidence = ForeignKey(
-        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name="reviews")
+        to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name=related_name)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
     annotated_effect = models.TextField(null=True, blank=True)
