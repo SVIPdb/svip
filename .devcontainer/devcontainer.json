@@ -17,13 +17,13 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/app",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"python.analysis.extraPaths": [
-    	"${workspaceFolder}/svip_api"
-  	],
+		// "python.analysis.extraPaths": [
+    // 	"${workspaceFolder}/svip_api"
+  	// ],
 		// "python.testing.unittestArgs": [
 		// 	"-v",
 		// 	"-s",
@@ -33,12 +33,11 @@
 		// ],
 		"python.testing.unittestEnabled": false,
 		"python.testing.pytestArgs": [
-			"./svip_api/api/tests/",
+			"./api/tests/",
 			"--exitfirst",
 			"--verbose"
-		]	,
+		],
 		"python.testing.pytestEnabled": true
-		
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -64,7 +63,7 @@
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
-	"postCreateCommand": "pip install -r ./svip_api/requirements.dev.txt"
+	"postCreateCommand": "pip install -r ./requirements.dev.txt"
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	// "remoteUser": "vscode"
