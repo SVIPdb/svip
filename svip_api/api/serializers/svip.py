@@ -19,8 +19,7 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
-    SummaryDraft, GeneSummaryDraft, RevisedReview
+    CurationRequest, SummaryComment, CurationReview, SummaryDraft, GeneSummaryDraft, RevisedReview
 )
 from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
 from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
@@ -373,7 +372,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     #     allow_empty=False, many=True, queryset=Variant.objects.all(),
     #     style={'base_template': 'input.html'}
     # )
-    curation_reviews = CurationReviewSerializer(many=True)
+    curation_reviews = CurationReviewSerializer(many=True, required=False)
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
@@ -445,8 +444,9 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         return result
 
     def validate(self, data):
+        print('Validating')
         if data['status'] != 'draft':
-            # holds all errors that've been detected so far
+            # holds all errors that have been detected so far
             errors = {}
 
             # TODO: perform more stringent validation
@@ -487,6 +487,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             non_empty_fields_if_excluded = (
                 'summary',
                 'comment'
+
             )
 
             if data['type_of_evidence'] != "Excluded":
@@ -825,34 +826,34 @@ class SampleSerializer(serializers.ModelSerializer):
 # === SIBAnnotation
 # ================================================================================================================
 
-class SIBAnnotation1Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation1
-        fields = ('id', 'evidence', 'effect', 'tier')
-        # extra_kwargs = {
-        #    "content": {
-        #        "required": False,
-        #        "allow_null": True,
-        #    },
-        #    "reviewer": {
-        #        "required": False,
-        #        "allow_null": False,
-        #    }
-        # }
-
-
-class SIBAnnotation2Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation2
-        fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
+# class SIBAnnotation1Serializer(serializers.ModelSerializer):
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#
+#     class Meta:
+#         model = SIBAnnotation1
+#         fields = ('id', 'evidence', 'effect', 'tier')
+#         # extra_kwargs = {
+#         #    "content": {
+#         #        "required": False,
+#         #        "allow_null": True,
+#         #    },
+#         #    "reviewer": {
+#         #        "required": False,
+#         #        "allow_null": False,
+#         #    }
+#         # }
+#
+#
+# class SIBAnnotation2Serializer(serializers.ModelSerializer):
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#
+#     class Meta:
+#         model = SIBAnnotation2
+#         fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
 
 
 # ================================================================================================================

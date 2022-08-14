@@ -117,27 +117,15 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     sources = serializers.SerializerMethodField()
     gene = GeneSerializer(read_only=True)
 
-    from api.serializers.svip import CurationEntrySerializer
+    from api.serializers.svip import CurationEntrySerializer, CurationRequestSerializer
     curation_entries = CurationEntrySerializer(many=True)
+    curation_requests = CurationRequestSerializer(many=True)
 
     def get_sources(self, obj):
         return sorted(obj.sources) if obj.sources else None
 
     class Meta:
         model = Variant
-        # fields = (
-        #     'url',
-        #     'gene',
-        #     'name',
-        #     'description',
-        #     'biomarker_type',
-        #     'so_hierarchy',
-        #     'soid',
-        #     'so_name',
-        #     'sources',
-        #     'association_set'
-        # )
-
         fields = [field.name for field in model._meta.fields]
         fields.append('url')
         fields.append('gene')
@@ -147,9 +135,8 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('public_stage')
         fields.append('confidence')
         fields.append('curation_entries')
+        fields.append('curation_requests')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
-
-        # FIXME: add sources collection here, from VariantInSource
 
 
 class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):
