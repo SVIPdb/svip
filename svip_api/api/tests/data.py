@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from api.models import CurationEntry, Disease, Variant, Gene
 
 
+
 def create_user(user_data={}):
     """Create and return a new user."""
     if user_data:
@@ -120,3 +121,4 @@ def create_curation_entry(**params):
 
     curation_entry = CurationEntry.objects.create(**defaults)
     return curation_entry
+
