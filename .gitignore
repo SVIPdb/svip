@@ -3,6 +3,7 @@
 .history
 .venv
 __pycache__
+.pytest_cache
 /.ipynb_checkpoints
 .vscode
 /svip_db_backups/**/*.dump
