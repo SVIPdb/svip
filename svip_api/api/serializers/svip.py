@@ -373,7 +373,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     #     allow_empty=False, many=True, queryset=Variant.objects.all(),
     #     style={'base_template': 'input.html'}
     # )
-    curation_reviews = CurationReviewSerializer(many=True)
+    curation_reviews = CurationReviewSerializer(many=True, required=False)
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
