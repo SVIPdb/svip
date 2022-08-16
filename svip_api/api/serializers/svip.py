@@ -752,19 +752,19 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
 
     @staticmethod
     def get_review_count(obj):
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-            evidence = obj.curation_associations.first().curation_evidences.first()
-            return evidence.curation_reviews.count()
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            curation_entry = obj.curation_entries.first()
+            return curation_entry.curation_reviews.count()
         else:
             return 0
 
     @staticmethod
     def get_reviews(obj):
         reviews = []
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-            evidence = obj.curation_associations.first().curation_evidences.first()
-            if evidence.curation_reviews.count() > 0:
-                for review in evidence.curation_reviews.all():
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_annotated']:
+            curation_entry = obj.curation_entries.first()
+            if curation_entry.curation_reviews.count() > 0:
+                for review in curation_entry.curation_reviews.all():
                     reviews.append(review.match())
         return reviews
 

@@ -704,8 +704,8 @@ class CurationReview(SVIPModel):
     draft = models.BooleanField(default=False)
 
     def match(self):
-        SIBAnnotation = self.curation_evidence.annotation1
-        return (self.annotated_effect == SIBAnnotation.effect) and (self.annotated_tier == SIBAnnotation.tier)
+        curation_entry = self.curation_entry
+        return (self.annotated_effect == curation_entry.effect) and (self.annotated_tier == curation_entry.tier_level)
 
 
 class RevisedReview(models.Model):

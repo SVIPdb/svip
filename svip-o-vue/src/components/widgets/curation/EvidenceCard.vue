@@ -91,7 +91,6 @@
                 "
                 :responsive="true">
                 <template v-slot:cell(variant__gene__symbol)="data">
-                    {{ data }}
                     <b>
                         <router-link :to="`/gene/${data.item.variant.gene.id}`">
                             {{ data.item.variant.gene.symbol }}

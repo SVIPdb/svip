@@ -5,8 +5,7 @@
         :loading="loading"
         :error="error"
         :title="$attrs.title"
-        v-bind="$attrs"
-    />
+        v-bind="$attrs" />
 </template>
 
 <script>
@@ -56,8 +55,8 @@ const fields_on_request = [
         key: "curator",
         label: "Curator(s)",
         sortable: true,
-        filterByFormatted: (x) =>
-            x.map((z) => abbreviatedName(z.name).abbrev).join(", "),
+        filterByFormatted: x =>
+            x.map(z => abbreviatedName(z.name).abbrev).join(", "),
     },
     {
         key: "action",
@@ -86,12 +85,9 @@ export default {
                 return "Not assigned";
             } else if (stage === "ongoing_curation") {
                 return "Ongoing";
-                
-            } else if (stage === 'conflicting_reviews') {
-                    return 'To be recurated'
-                }
-            
-            else {
+            } else if (stage === "unapproved") {
+                return "To be recurated";
+            } else {
                 return "Completed";
             }
         },
@@ -100,9 +96,9 @@ export default {
             this.error = null;
 
             HTTP.get(`/curation_requests?page_size=100000`)
-                .then((response) => {
+                .then(response => {
                     this.loading = false;
-                    this.items = response.data.results.map((x) => ({
+                    this.items = response.data.results.map(x => ({
                         gene_id: x.variant && x.variant.gene.id,
                         variant_id: x.variant && x.variant.id,
                         gene_name: x.variant && x.variant.gene.symbol,
@@ -121,7 +117,7 @@ export default {
 
                     this.$emit("itemsloaded", this.items);
                 })
-                .catch((err) => {
+                .catch(err => {
                     this.loading = false;
                     this.error = err.message ? err.message : true;
                 });

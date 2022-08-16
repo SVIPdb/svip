@@ -8,8 +8,7 @@
             :class="cardCustomClass ? customClass : ''"
             :style="
                 customBgColor && `background-color: ${customBgColor} !important`
-            "
-        >
+            ">
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{ title }}
@@ -18,27 +17,25 @@
                         class="ml-3"
                         size="sm"
                         :variant="myFilter !== 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter(user.user_id)"
-                    >
+                        @click="setCustomFilter(user.user_id)">
                         My curations
                         <b-badge
                             pill
-                            :class="myFilter !== 'all' && 'bg-white text-dark'"
-                            >{{ myCurations.length }}</b-badge
-                        >
+                            :class="myFilter !== 'all' && 'bg-white text-dark'">
+                            {{ myCurations.length }}
+                        </b-badge>
                     </b-button>
                     <b-button
                         class="ml-3"
                         size="sm"
                         :variant="myFilter === 'all' ? 'primary' : 'light'"
-                        @click="setCustomFilter('all')"
-                    >
+                        @click="setCustomFilter('all')">
                         All curations
                         <b-badge
                             pill
-                            :class="myFilter === 'all' && 'bg-white text-dark'"
-                            >{{ items.length }}</b-badge
-                        >
+                            :class="myFilter === 'all' && 'bg-white text-dark'">
+                            {{ items.length }}
+                        </b-badge>
                     </b-button>
 
                     <FilterButtons
@@ -46,35 +43,30 @@
                         class="ml-3"
                         v-model="statusFilter"
                         :items="[
-                            { label: 'To be recurated',  variant: 'danger' },
+                            { label: 'To be recurated', variant: 'danger' },
                             { label: 'Not assigned', variant: 'secondary' },
                             { label: 'Ongoing', variant: 'warning' },
                             { label: 'Completed', variant: 'success' },
                             { label: 'All', value: 'all', variant: 'info' },
-                            
-                        ]"
-                    />
+                        ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
                             v-model="filter"
-                            placeholder="Type to Search"
-                        ></b-form-input>
+                            placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button
                                 :variant="settings.buttonBg"
                                 size="sm"
-                                @click="filter = ''"
-                                >Clear</b-button
-                            >
+                                @click="filter = ''">
+                                Clear
+                            </b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
             </div>
         </b-card-header>
-
-
 
         <b-card-header
             v-if="isReviewer"
@@ -84,8 +76,7 @@
             :class="cardCustomClass ? customClass : ''"
             :style="
                 customBgColor && `background-color: ${customBgColor} !important`
-            "
-        >
+            ">
             <div class="d-flex justify-content-between">
                 <div class="p-2 font-weight-bold">
                     {{ title }}
@@ -100,22 +91,20 @@
                             { label: '2 reviews', variant: 'warning' },
                             { label: '3 reviews', variant: 'success' },
                             { label: 'All', value: 'all', variant: 'info' },
-                        ]"
-                    />
+                        ]" />
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
                         <b-form-input
                             v-model="filter"
-                            placeholder="Type to Search"
-                        ></b-form-input>
+                            placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button
                                 :variant="settings.buttonBg"
                                 size="sm"
-                                @click="filter = ''"
-                                >Clear</b-button
-                            >
+                                @click="filter = ''">
+                                Clear
+                            </b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -137,24 +126,23 @@
                 show-empty
                 small
                 hover
-                :responsive="true"
-            >
+                :responsive="true">
                 <template v-slot:cell(gene_name)="data">
-                    <b
-                        ><router-link
+                    <b>
+                        <router-link
                             :to="`/gene/${data.item.gene_id}`"
-                            target="_blank"
-                            >{{ data.value }}</router-link
-                        ></b
-                    >
+                            target="_blank">
+                            {{ data.value }}
+                        </router-link>
+                    </b>
                 </template>
 
                 <template v-slot:cell(variant)="data">
                     <router-link
                         :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
-                        target="_blank"
-                        >{{ data.value }}</router-link
-                    >
+                        target="_blank">
+                        {{ data.value }}
+                    </router-link>
                 </template>
 
                 <template v-slot:cell(hgvs)="data">
@@ -164,19 +152,18 @@
                 <template v-slot:cell(deadline)="row">
                     <p
                         v-if="row.item.curated !== 'Complete'"
-                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'"
-                    >
-                        <span class="font-weight-bold">{{
-                            setLetter(row.item.days_left)
-                        }}</span>
+                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
+                        <span class="font-weight-bold">
+                            {{ setLetter(row.item.days_left) }}
+                        </span>
                         ({{ row.item.days_left }} days)
                     </p>
                 </template>
 
                 <template v-slot:cell(status)="data">
-                    <b-badge :variant="setBadgeClass(data.value)">{{
-                        data.value
-                    }}</b-badge>
+                    <b-badge :variant="setBadgeClass(data.value)">
+                        {{ data.value }}
+                    </b-badge>
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
@@ -189,19 +176,18 @@
                             reviewer.value
                                 ? 'text-success mr-1'
                                 : 'text-danger mr-1'
-                        "
-                    ></icon>
+                        "></icon>
                 </template>
 
                 <template v-slot:cell(curator)="data">
                     <span v-for="(owner, idx) in data.value" :key="owner.name">
-                        <span v-if="idx > 0">, </span>
+                        <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b
                                 slot-scope="{ name }"
-                                v-b-tooltip.hover="name.name"
-                                >{{ name.abbrev }}</b
-                            >
+                                v-b-tooltip.hover="name.name">
+                                {{ name.abbrev }}
+                            </b>
                         </pass>
                     </span>
                 </template>
@@ -213,20 +199,30 @@
                         size="sm"
                         style="width: 100px"
                         variant="info"
-                        :to=" row.item.stage !== 'conflicting_reviews' ?
-                            {name: 'annotate-variant',
-                            params: {
-                                gene_id: row.item.gene_id,
-                                variant_id: row.item.variant_id,
-                            },
-                        } : {name: 'view-review',
-                            params: {
-                                gene_id: row.item.gene_id,
-                                variant_id: row.item.variant_id,
-                            }}"
-                        target="_blank"
-                    >
-                        <icon name="pen-alt" /> {{ row.item.stage !== 'conflicting_reviews' ? 'Curate' : 'Recurate'}}
+                        :to="
+                            row.item.stage !== 'unapproved'
+                                ? {
+                                      name: 'annotate-variant',
+                                      params: {
+                                          gene_id: row.item.gene_id,
+                                          variant_id: row.item.variant_id,
+                                      },
+                                  }
+                                : {
+                                      name: 'view-review',
+                                      params: {
+                                          gene_id: row.item.gene_id,
+                                          variant_id: row.item.variant_id,
+                                      },
+                                  }
+                        "
+                        target="_blank">
+                        <icon name="pen-alt" />
+                        {{
+                            row.item.stage !== "unapproved"
+                                ? "Curate"
+                                : "Recurate"
+                        }}
                     </b-button>
                 </template>
 
@@ -245,23 +241,21 @@
                 <icon
                     name="exclamation-triangle"
                     scale="3"
-                    style="vertical-align: text-bottom; margin-bottom: 5px"
-                /><br />
+                    style="vertical-align: text-bottom; margin-bottom: 5px" />
+                <br />
                 Loading this list failed, please try again later
             </div>
 
             <div
                 v-if="slotsUsed"
-                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`"
-            >
+                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
                 <slot name="extra_commands" />
 
                 <b-pagination
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </div>
         </b-card-body>
 
@@ -278,24 +272,23 @@
                 :current-page="currentPage"
                 show-empty
                 small
-                hover
-            >
+                hover>
                 <template v-slot:cell(gene_name)="data">
-                    <b
-                        ><router-link
+                    <b>
+                        <router-link
                             :to="`/gene/${data.item.gene_id}`"
-                            target="_blank"
-                            >{{ data.value }}</router-link
-                        ></b
-                    >
+                            target="_blank">
+                            {{ data.value }}
+                        </router-link>
+                    </b>
                 </template>
 
                 <template v-slot:cell(variant)="data">
                     <router-link
                         :to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
-                        target="_blank"
-                        >{{ data.value }}</router-link
-                    >
+                        target="_blank">
+                        {{ data.value }}
+                    </router-link>
                 </template>
 
                 <template v-slot:cell(hgvs)="data">
@@ -305,11 +298,10 @@
                 <template v-slot:cell(deadline)="row">
                     <p
                         v-if="row.item.curated !== 'Complete'"
-                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'"
-                    >
-                        <span class="font-weight-bold">{{
-                            setLetter(row.item.days_left)
-                        }}</span>
+                        :class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
+                        <span class="font-weight-bold">
+                            {{ setLetter(row.item.days_left) }}
+                        </span>
                         ({{ row.item.days_left }} days)
                     </p>
                 </template>
@@ -317,28 +309,24 @@
                 <template v-slot:cell(status)="status_obj">
                     <span
                         v-for="review in status_obj['item']['reviews']"
-                        :key="review"
-                    >
+                        :key="review">
                         <span v-if="review">
                             <b-icon
                                 style="color: blue"
                                 class="h5 m-1"
-                                icon="check-square-fill"
-                            ></b-icon>
+                                icon="check-square-fill"></b-icon>
                         </span>
                         <span v-else>
                             <b-icon
                                 style="color: red"
                                 class="h5 m-1"
-                                icon="x-square-fill"
-                            ></b-icon>
+                                icon="x-square-fill"></b-icon>
                         </span>
                     </span>
 
                     <span
                         v-for="index in 3 - status_obj['item']['review_count']"
-                        :key="index"
-                    >
+                        :key="index">
                         <b-icon class="h5 m-1" icon="square"></b-icon>
                     </span>
                 </template>
@@ -353,19 +341,18 @@
                             reviewer.value
                                 ? 'text-success mr-1'
                                 : 'text-danger mr-1'
-                        "
-                    ></icon>
+                        "></icon>
                 </template>
 
                 <template v-slot:cell(curator)="data">
                     <span v-for="(owner, idx) in data.value" :key="owner.name">
-                        <span v-if="idx > 0">, </span>
+                        <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b
                                 slot-scope="{ name }"
-                                v-b-tooltip.hover="name.name"
-                                >{{ name.abbrev }}</b
-                            >
+                                v-b-tooltip.hover="name.name">
+                                {{ name.abbrev }}
+                            </b>
                         </pass>
                     </span>
                 </template>
@@ -385,9 +372,9 @@
                                 variant_id: row.item.variant_id,
                             },
                         }"
-                        target="_blank"
-                    >
-                        <icon name="pen-alt" /> Review
+                        target="_blank">
+                        <icon name="pen-alt" />
+                        Review
                     </b-button>
                 </template>
 
@@ -405,16 +392,14 @@
 
             <div
                 v-if="slotsUsed"
-                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`"
-            >
+                :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">
                 <slot name="extra_commands" />
 
                 <b-pagination
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </div>
         </b-card-body>
     </b-card>
@@ -545,7 +530,7 @@ export default {
                 "Not assigned": "secondary",
                 Ongoing: "warning",
                 Completed: "success",
-                "To be recurated": "danger"
+                "To be recurated": "danger",
             },
 
             // pagination controls
@@ -637,13 +622,13 @@ export default {
 
             if (this.statusFilter !== "all") {
                 items = items.filter(
-                    (element) => element.status === this.statusFilter
+                    element => element.status === this.statusFilter
                 );
             }
 
             if (this.myFilter !== "all") {
-                return items.filter((x) =>
-                    x.curator.some((y) => y.id === this.user.user_id)
+                return items.filter(x =>
+                    x.curator.some(y => y.id === this.user.user_id)
                 );
             } else {
                 return items;
@@ -654,13 +639,13 @@ export default {
 
             if (this.statusReviewFilter !== "all") {
                 items = items.filter(
-                    (element) => element.status === this.statusFilter
+                    element => element.status === this.statusFilter
                 );
             }
         },
         myCurations() {
-            return this.items.filter((element) =>
-                element.curator.some((x) => x.id === this.user.user_id)
+            return this.items.filter(element =>
+                element.curator.some(x => x.id === this.user.user_id)
             );
         },
         totalRows() {
