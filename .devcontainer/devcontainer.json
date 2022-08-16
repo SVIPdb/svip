@@ -8,6 +8,7 @@
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
 		"../docker-compose.yml",
+		"../docker-compose.dev.yml",
 		"docker-compose.yml"
 	],
 
@@ -17,27 +18,31 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/app",
+	"workspaceFolder": "/workspace",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		// "python.analysis.extraPaths": [
-    // 	"${workspaceFolder}/svip_api"
-  	// ],
-		// "python.testing.unittestArgs": [
-		// 	"-v",
-		// 	"-s",
-		// 	"./svip_api/api/tests",
-		// 	"-p",
-		// 	"test*.py"
-		// ],
-		"python.testing.unittestEnabled": false,
+		"remote.autoForwardPorts": false,
+		"python.analysis.extraPaths": ["${workspaceFolder}/svip_api/api"],
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": false,
+		"eslint.validate": ["javascript"],
+		"python.formatting.provider": "autopep8",
 		"python.testing.pytestArgs": [
-			"./api/tests/",
+			"./svip_api/api/tests/",
 			"--exitfirst",
 			"--verbose"
 		],
-		"python.testing.pytestEnabled": true
+		"python.testing.pytestEnabled": true,
+		"python.testing.unittestEnabled": false,
+		"[vue]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.codeActionsOnSave": {
+				"source.fixAll.eslint": true
+			}
+		},
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -49,8 +54,15 @@
 		"editorconfig.editorconfig",
 		"hbenl.vscode-test-explorer",
 		"ms-vscode.test-adapter-converter",
-		"littlefoxteam.vscode-python-test-adapter"
+		"littlefoxteam.vscode-python-test-adapter",
+		"ms-azuretools.vscode-docker"
 	],
+
+	"features": {
+    "github-cli": "latest",
+		"git-lfs": "latest"
+		// "docker": "latest"
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
@@ -63,7 +75,7 @@
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
-	"postCreateCommand": "pip install -r ./requirements.dev.txt"
+	"postCreateCommand": "pip install -r ./svip_api/requirements.dev.txt"
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	// "remoteUser": "vscode"

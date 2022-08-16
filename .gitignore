@@ -3,6 +3,7 @@
 .history
 .venv
 __pycache__
+.pytest_cache
 /.ipynb_checkpoints
 .vscode
 /svip_db_backups/**/*.dump
@@ -18,7 +19,6 @@ TODO.md
 /scratch
 
 svip_api/api/views/beacon_v2.py
-# docker-compose.override.yml
 
 # support folder containing project organization files
 .0
