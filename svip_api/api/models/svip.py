@@ -205,7 +205,7 @@ class VariantInSVIP(models.Model):
 
             disease['evidences'].append(entry_obj)
 
-        diseases_dict.append(disease)
+            diseases_dict.append(disease)
         #
         #     evidences = []
         #     for evidence in entry.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):
@@ -426,6 +426,8 @@ class SubmissionEntry(models.Model):
     The entry is generated from all the curation entries of a variant at the moment of their submission.
     """
     related_name = 'submission_entries'
+    curator = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                null=True, on_delete=models.SET_NULL)
     variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, related_name=related_name)
     disease = models.ForeignKey(to=Disease, on_delete=DB_CASCADE, related_name=related_name,
                                 default='Unspecified')
@@ -633,6 +635,7 @@ class CurationEntry(SVIPModel):
             return self.escat_score.split(':')[0]
 
     def owner_name(self):
+
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,

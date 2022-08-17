@@ -87,7 +87,7 @@ export default {
                 return "Ongoing";
             } else if (stage === "unapproved") {
                 return "To be recurated";
-            } else {
+            } else if (stage === "annotated") {
                 return "Completed";
             }
         },

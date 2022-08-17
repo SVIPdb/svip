@@ -2,10 +2,18 @@
     <div class="container-fluid">
         <CuratorVariantInformations
             :variant="variant"
-            :disease_id="disease_id"
-        />
+            :disease_id="disease_id" />
         <ModifyVariantSummary :variant="variant" :comments="summary.comments" />
-        <SelectEffect :variant="variant" :entryIDs="entryIDs" />
+
+        <SelectEffect1 :variant="variant" :entryIDs="entryIDs" />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <SelectEffect :variant="variant" />
     </div>
 </template>
 
@@ -17,6 +25,7 @@ import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
 import SelectEffect from "@/components/widgets/review/SelectEffect";
+import SelectEffect1 from "@/components/widgets/review/SelectEffect1";
 import ulog from "ulog";
 import BroadcastChannel from "broadcast-channel";
 
@@ -28,6 +37,7 @@ export default {
         ModifyVariantSummary,
         SelectEffect,
         CuratorVariantInformations,
+        SelectEffect1,
     },
     props: {
         entryIDs: { type: String },
@@ -48,7 +58,7 @@ export default {
     },
     mounted() {
         HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then(
-            (response) => {
+            response => {
                 const results = response.data.results;
                 this.summary.comments = results;
             }
@@ -83,7 +93,7 @@ export default {
         desnakify,
         refreshReferences() {
             // get a list of used references so we can tell the user if they're about to use one that's been used already
-            HTTP.get("/curation_entries/all_references").then((response) => {
+            HTTP.get("/curation_entries/all_references").then(response => {
                 this.used_references = response.data.references;
             });
         },
@@ -115,11 +125,11 @@ export default {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                 },
             })
-                .then((response) => {
+                .then(response => {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.variomes = {
                         error: "Couldn't retrieve publication info, try again later.",

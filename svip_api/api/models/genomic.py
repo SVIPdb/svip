@@ -183,6 +183,7 @@ class Variant(models.Model):
     @property
     def stage(self):
         for curation_entry in self.curation_entries.get_by_evidence_type_category('diagnostic'):
+
             review_count = curation_entry.curation_reviews.count()
             if review_count:
                 positive_review_count = curation_entry.curation_reviews.by_status('accepted').count()
@@ -194,6 +195,7 @@ class Variant(models.Model):
                     return VARIANT_STAGE.approved
 
         if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
+
             return VARIANT_STAGE.annotated
         elif self.curation_entries.all().count() > 0:
             return VARIANT_STAGE.ongoing_curation
