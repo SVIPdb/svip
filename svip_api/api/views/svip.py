@@ -636,82 +636,40 @@ def get_diseases():
 #         )
 
 
-# class ReviewDataView(APIView):
-#
-#     # when user accesses the review page, return the json data
-#     def post(self, request, *args, **kwargs):
-#
-#         # create VariantInSVIP instance if doesn't exist
-#         var_id = request.data.get('var_id')
-#
-#         if not request.data.get('only_clinical'):
-#             only_clinical = False
-#         else:
-#             only_clinical = True
-#
-#         variant = Variant.objects.get(id=var_id)
-#         matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
-#         svip_var_exists = bool(len(matching_svip_var))
-#         if not svip_var_exists:
-#             svip_var = VariantInSVIP(variant=variant)
-#             svip_var.save()
-#         else:
-#             svip_var = matching_svip_var[0]
-#
-#         for curation in variant.curation_entries.filter(status="submitted"):
-#
-#             # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-#             # check that a disease is indicated for the curation entry being saved
-#             # if curation.disease:
-#
-#             associations = CurationAssociation.objects.filter(
-#                 variant=variant).filter(disease=curation.disease)
-#
-#             # check that no association already exists for these parameters
-#             if len(associations) == 0:
-#                 new_association = CurationAssociation(
-#                     variant=variant, disease=curation.disease)
-#                 new_association.save()
-#
-#             association = CurationAssociation.objects.filter(
-#                 variant=variant).filter(disease=curation.disease).first()
-#
-#             if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
-#                 drugs = curation.drugs
-#             else:
-#                 # add null object to empty list so at least one iteration to create an evidence related to no drug
-#                 drugs = [None]
-#
-#             for drug in drugs:
-#                 evidences = association.curation_evidences.filter(
-#                     type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-#
-#                 if len(evidences) == 0:
-#                     new_evidence = CurationEvidence(
-#                         association=association,
-#                         type_of_evidence=curation.type_of_evidence,
-#                         drug=drug
-#                     )
-#                     new_evidence.save()
-#
-#                 evidence = association.curation_evidences.filter(
-#                     type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-#                 curation.curation_evidences.add(evidence)
-#
-#             curation.save()
-#
-#         if only_clinical:
-#             return Response(
-#                 data={
-#                     "review_data": svip_var.review_data(),
-#                 }
-#             )
-#         else:
-#             return Response(
-#                 data={
-#                     "review_data": svip_var.review_data(all_evidence_types=True),
-#                 }
-#             )
+class ReviewDataView(APIView):
+
+    # when user accesses the review page, return the json data
+    def post(self, request, *args, **kwargs):
+
+        # create VariantInSVIP instance if doesn't exist
+        var_id = request.data.get('var_id')
+
+        if not request.data.get('only_clinical'):
+            only_clinical = False
+        else:
+            only_clinical = True
+
+        variant = Variant.objects.get(id=var_id)
+        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
+        svip_var_exists = bool(len(matching_svip_var))
+        if not svip_var_exists:
+            svip_var = VariantInSVIP(variant=variant)
+            svip_var.save()
+        else:
+            svip_var = matching_svip_var[0]
+
+        if only_clinical:
+            return Response(
+                data={
+                    "review_data": svip_var.review_data(),
+                }
+            )
+        else:
+            return Response(
+                data={
+                    "review_data": svip_var.review_data(all_evidence_types=True),
+                }
+            )
 
 
 class CurationIds(APIView):

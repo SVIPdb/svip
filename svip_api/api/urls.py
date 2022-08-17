@@ -143,7 +143,7 @@ urlpatterns = [
     path('reviews', views.svip.CurationReviewView.as_view(), name='reviews'),
     # path('dashboard_reviews', views.svip.DashboardReviews.as_view(),
     #      name='dashboard_reviews'),
-    # path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
+    path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
     path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
     path('update_variant_summary', views.svip.UpdateVariantSummary.as_view(),
          name='update_variant_summary'),

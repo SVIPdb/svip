@@ -1,19 +1,17 @@
 <template>
     <div>
+        {{ diseases }}
         <div v-if="diseases.length > 0">
-
             <div v-for="(review, idx) in diseases" :key="idx">
                 <b-card class="shadow-sm mb-3" align="left" no-body>
                     <h6
-                        class="bg-primary text-light unwrappable-header p-2 m-0"
-                    >
+                        class="bg-primary text-light unwrappable-header p-2 m-0">
                         <expander v-model="expander_array[idx].disease" />
                         {{ review.disease }}
                     </h6>
                     <div
                         v-for="(evidence, index) in review.evidences"
-                        :key="index"
-                    >
+                        :key="index">
                         <b-card-body class="p-0">
                             <transition name="slide-fade">
                                 <div v-if="expander_array[idx].disease">
@@ -22,14 +20,12 @@
                                             <b-col
                                                 align="left"
                                                 cols="3"
-                                                class="ml-4"
-                                            >
+                                                class="ml-4">
                                                 <expander
                                                     v-model="
                                                         expander_array[idx]
                                                             .evidences[index]
-                                                    "
-                                                />
+                                                    " />
                                                 {{ evidence.fullType }}
                                             </b-col>
                                             <b-col cols="2" align="center">
@@ -38,8 +34,7 @@
                                                     v-for="(
                                                         effect, i
                                                     ) in evidence.effectOfVariant"
-                                                    :key="i"
-                                                >
+                                                    :key="i">
                                                     {{ effect.label }}:
                                                     {{
                                                         effect.count
@@ -52,12 +47,11 @@
                                             <b-col cols="6" align="center">
                                                 <div v-if="evidence.curator">
                                                     <b-row
-                                                        class="p-1 d-flex justify-content-end flex-row no-wrap"
-                                                    >
-                                                    {{evidence}}
-                                                    <br/>
-                                                     <br/>
-                                                    {{evidence.curator}}
+                                                        class="p-1 d-flex justify-content-end flex-row no-wrap">
+                                                        {{ evidence }}
+                                                        <br />
+                                                        <br />
+                                                        {{ evidence.curator }}
                                                         <select-prognostic-outcome
                                                             v-if="
                                                                 evidence.typeOfEvidence ===
@@ -71,8 +65,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-25"
-                                                        ></select-prognostic-outcome>
+                                                            class="m-1 d-inline w-25"></select-prognostic-outcome>
                                                         <select-diagnostic-outcome
                                                             v-if="
                                                                 evidence.typeOfEvidence ===
@@ -86,8 +79,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-25"
-                                                        ></select-diagnostic-outcome>
+                                                            class="m-1 d-inline w-25"></select-diagnostic-outcome>
                                                         <select-predictive-therapeutic-outcome
                                                             v-if="
                                                                 evidence.typeOfEvidence ===
@@ -101,8 +93,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-25"
-                                                        ></select-predictive-therapeutic-outcome>
+                                                            class="m-1 d-inline w-25"></select-predictive-therapeutic-outcome>
                                                         <select-various-outcome
                                                             v-if="
                                                                 ![
@@ -125,9 +116,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-25"
-                                                        >
-                                                        </select-various-outcome>
+                                                            class="m-1 d-inline w-25"></select-various-outcome>
 
                                                         <select-tier
                                                             v-if="
@@ -146,8 +135,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-50"
-                                                        />
+                                                            class="m-1 d-inline w-50" />
                                                         <select-therapeutic-tier
                                                             v-if="
                                                                 [
@@ -164,8 +152,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-50"
-                                                        />
+                                                            class="m-1 d-inline w-50" />
                                                         <select-various-outcome
                                                             v-if="
                                                                 ![
@@ -188,8 +175,7 @@
                                                                 not_submitted ||
                                                                 already_reviewed
                                                             "
-                                                            class="m-1 d-inline w-50"
-                                                        />
+                                                            class="m-1 d-inline w-50" />
                                                     </b-row>
                                                 </div>
                                             </b-col>
@@ -201,34 +187,30 @@
                                                 expander_array[idx].evidences[
                                                     index
                                                 ]
-                                            "
-                                        >
+                                            ">
                                             <b-card-footer
-                                                class="pt-0 pb-0 pl-3 pr-3 fluid"
-                                            >
+                                                class="pt-0 pb-0 pl-3 pr-3 fluid">
                                                 <b-row
                                                     align-v="center"
                                                     v-for="(
                                                         curation, i
                                                     ) in evidence.curations"
-                                                    :key="i"
-                                                >
-                                                    <b-col class="border p-2"
-                                                        >PMID:
+                                                    :key="i">
+                                                    <b-col class="border p-2">
+                                                        PMID:
                                                         <b-link
                                                             target="_blank"
                                                             active
-                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`"
-                                                        >
+                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">
                                                             {{ curation.pmid }}
                                                         </b-link>
                                                     </b-col>
-                                                    <b-col class="border p-2">{{
-                                                        curation.effect
-                                                    }}</b-col>
-                                                    <b-col class="border p-2">{{
-                                                        curation.tier
-                                                    }}</b-col>
+                                                    <b-col class="border p-2">
+                                                        {{ curation.effect }}
+                                                    </b-col>
+                                                    <b-col class="border p-2">
+                                                        {{ curation.tier }}
+                                                    </b-col>
                                                     <b-col class="border p-2">
                                                         Support:
                                                         {{ curation.support }}
@@ -242,8 +224,8 @@
                                                                 },
                                                             }"
                                                             target="_blank"
-                                                            alt="Link to evidence"
-                                                            >Curation entry #{{
+                                                            alt="Link to evidence">
+                                                            Curation entry #{{
                                                                 curation.id
                                                             }}
                                                         </b-link>
@@ -251,11 +233,9 @@
 
                                                     <b-col
                                                         class="border p-2"
-                                                        cols="6"
-                                                        >{{
-                                                            curation.comment
-                                                        }}</b-col
-                                                    >
+                                                        cols="6">
+                                                        {{ curation.comment }}
+                                                    </b-col>
                                                 </b-row>
                                             </b-card-footer>
                                         </div>
@@ -270,24 +250,21 @@
             <b-button
                 class="float-right"
                 @click="submitCurations(true)"
-                :disabled="not_submitted || already_reviewed"
-            >
+                :disabled="not_submitted || already_reviewed">
                 Confirm annotation
             </b-button>
         </div>
         <b-navbar-text
             v-if="not_submitted"
             class="fixed-bottom submitted-bar"
-            align="center"
-        >
+            align="center">
             THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE
             ANNOTATED YET.
         </b-navbar-text>
         <b-navbar-text
             v-if="already_reviewed"
             class="fixed-bottom submitted-bar"
-            align="center"
-        >
+            align="center">
             THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE
             VARIANT HAS ALREADY RECEIVED REVIEW(S).
         </b-navbar-text>
@@ -526,12 +503,11 @@ export default {
             this.not_submitted = true;
         } else if (
             [
-                "1_review",
-                "2_reviews",
-                "conflicting_reviews",
-                "to_review_again",
+                "ongoing_review",
+                "unapproved",
+                "reannotated",
                 "on_hold",
-                "fully_reviewed",
+                "approved",
             ].includes(this.variant.stage)
         ) {
             this.already_reviewed = true;
@@ -547,7 +523,7 @@ export default {
         // TODO: this pulls a vaguely relevant curation entry, but it'll obviously be replaced later with a real reference
         HTTP.get(
             `/curation_entries?variant__gene__symbol=NRAS&page_size=1`
-        ).then((response) => {
+        ).then(response => {
             this.sample_curation_id = response.data.results[0].id;
         });
         this.getReviewData();
@@ -571,19 +547,20 @@ export default {
                 only_clinical: false,
             };
             HTTP.post(`/review_data`, params)
-                .then((response) => {
+                .then(response => {
                     this.diseases = response.data.review_data;
                     this.prefillAnnotations(this.diseases);
+                    console.log("diseases", this.diseases);
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
-                    //this.$snotify.error("Failed to fetch data");
+                    this.$snotify.error("Failed to fetch data");
                 });
         },
         prefillAnnotations(diseases) {
-            diseases.map((disease) => {
+            diseases.map(disease => {
                 let evidences_expanders = [];
-                disease.evidences.map((evidence) => {
+                disease.evidences.map(evidence => {
                     // Check whether SIBAnnotation1 objects already exist in the database
                     if (typeof evidence.curator === "undefined") {
                         if (
@@ -611,7 +588,7 @@ export default {
         },
         annotateClinicalEvidence(evidence) {
             let effects = {};
-            evidence.curations.map((curation) => {
+            evidence.curations.map(curation => {
                 let support_score =
                     this.support_fields.length -
                     this.support_fields.indexOf(curation.support);
@@ -658,7 +635,7 @@ export default {
                     // otherwise break and iterate to next effect
                     const effect_scores = effects[effect];
                     if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                        properties.map((property) => {
+                        properties.map(property => {
                             trustedCuration[property] = effect_scores[property];
                         });
                         break;
@@ -678,7 +655,7 @@ export default {
         },
         annotateNonClinicalEvidence(evidence) {
             let effects = {};
-            evidence.curations.map((curation) => {
+            evidence.curations.map(curation => {
                 // tiers listed first are the most trustable ones (so we attribute a higher score)
                 let tier_score =
                     this.all_fields[evidence.typeOfEvidence]["tier_criteria"]
@@ -715,7 +692,7 @@ export default {
                     // otherwise break and iterate to next effect
                     const effect_scores = effects[effect];
                     if (effect_scores[scores[i]] > trustedCuration[scores[i]]) {
-                        properties.map((property) => {
+                        properties.map(property => {
                             trustedCuration[property] = effect_scores[property];
                         });
                         break;
@@ -737,8 +714,8 @@ export default {
         submitCurations(notify) {
             let evidences_data = [];
 
-            this.diseases.map((disease) => {
-                disease.evidences.map((evidence) => {
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
                     let evidence_obj = {
                         effect: evidence.curator.annotatedEffect,
                         tier: evidence.curator.annotatedTier,
@@ -756,7 +733,7 @@ export default {
             console.log(evidences_data);
 
             HTTP.post(`/sib_annotations_1`, evidences_data)
-                .then((response) => {
+                .then(response => {
                     console.log(`response: ${response.data}`);
                     if (notify) {
                         this.$snotify.success(
@@ -764,7 +741,7 @@ export default {
                         );
                     }
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.$snotify.error("Failed to submit curation");
                 });
