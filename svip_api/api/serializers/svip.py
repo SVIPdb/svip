@@ -379,7 +379,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
     #     allow_empty=False, many=True, queryset=Variant.objects.all(),
     #     style={'base_template': 'input.html'}
     # )
-    curation_reviews = CurationReviewSerializer(many=True, required=False)
+    curation_reviews = CurationReviewSerializer(many=True, required=False, source='curationreview_set')
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
@@ -559,8 +559,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
 class SubmissionEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
-    curation_reviews = CurationReviewSerializer(many=True, required=False)
-    curation_entries = CurationEntrySerializer(many=True)
+    curation_reviews = CurationReviewSerializer(many=True, required=False, source='curationreview_set')
+    curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
     owner = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     disease = DiseaseSerializer(
@@ -570,6 +570,10 @@ class SubmissionEntrySerializer(serializers.ModelSerializer):
         model = SubmissionEntry
         fields = '__all__'
         read_only_fields = ['id']
+
+
+
+
 
 # ================================================================================================================
 # === SVIP Variant Submission

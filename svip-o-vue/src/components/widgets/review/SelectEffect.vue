@@ -396,12 +396,13 @@ export default {
         },
 
         submitCurations(notify) {
-            console.log(this.submissionEntries);
             let submission_data = {
                 user: this.user.user_id,
                 variant: this.variant.id,
                 submission_entries: this.submissionEntries,
             };
+
+            console.log(JSON.stringify(submission_data));
             HTTP.post(`/submission_entries/bulk_submit`, submission_data)
                 .then(response => {
                     console.log(`response: ${response.data}`);
