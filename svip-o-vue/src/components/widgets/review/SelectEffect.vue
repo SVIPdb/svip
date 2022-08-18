@@ -173,16 +173,25 @@
                                                 expander_array[index]
                                                     .curation_entries[idx]
                                             ">
-                                            <b-card-footer
-                                                class="fluid border-bottom">
+                                            <b-card-footer class="fluid">
                                                 <table
-                                                    class="table table-bordered">
-                                                    <th>PMID</th>
-                                                    <th>Effect</th>
-                                                    <th>Tier level</th>
-                                                    <th>Support</th>
-                                                    <th>ID</th>
-                                                    <th>Comment</th>
+                                                    class="table table-responsive-lg">
+                                                    <th class="bg-light">
+                                                        PMID
+                                                    </th>
+                                                    <th class="bg-light">
+                                                        Effect
+                                                    </th>
+                                                    <th class="bg-light">
+                                                        Tier level
+                                                    </th>
+                                                    <th class="bg-light">
+                                                        Support
+                                                    </th>
+                                                    <th class="bg-light">ID</th>
+                                                    <th class="bg-light">
+                                                        Comment
+                                                    </th>
 
                                                     <tr
                                                         v-for="(
@@ -404,17 +413,5 @@ export default {
 <style scoped>
 .pub-status > .fa-icon {
     margin-right: 0.4rem;
-}
-
-.action-tray .btn {
-    margin-left: 5px;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#evidence_table >>> .table {
-    margin-bottom: 0;
 }
 </style>
