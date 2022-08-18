@@ -314,31 +314,20 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
         """Create a new recipe."""
         serializer.save(user=self.request.user)
 
-
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
-        variant = Variant.objects.get(pk=request.data['variant'])
-        owner = User.objects.get(id=request.data['user'])
-
-        for item in request.data['submission_entries']:
-            disease_name = item['disease']
-            for typeName, typeInfo in item["types"].items():
-                submission_entry = SubmissionEntry(variant=variant)
-                if disease_name != 'Unspecified':
-                    submission_entry.disease = Disease.objects.get(pk=typeInfo['diseaseId'])
-                if 'Predictive / Therapeutic' in typeName:
-                    submission_entry.type_of_evidence = typeName.split(' - ')[0]
-                else:
-                    submission_entry.type_of_evidence = typeName
-                submission_entry.drug = typeInfo["drug"]
-                submission_entry.effect = typeInfo["selectedEffect"]
-                submission_entry.tier = typeInfo["selectedTierLevel"]
-                submission_entry.owner = owner
-                submission_entry.save()
-                for entry in typeInfo['curationEntries']:
-                    print(self.request.user)
-                    CurationEntry.objects.filter(pk=entry['id']).update(status='submitted',
-                                                                     submission_entry=submission_entry)
+        for item in request.data:
+            submission_entry = SubmissionEntry(variant=Variant.objects.get(pk=item['variant_id']),
+                                               owner=User.objects.get(id=item['owner_id']),
+                                               drug=item['drug'],
+                                               type_of_evidence=item['type_of_evidence'],
+                                               effect=item['effect'],
+                                               tier=item['tier'],
+                                               disease=Disease.objects.get(id=item['disease_id']))
+            submission_entry.save()
+            for entry_id in item['curation_entries']:
+                CurationEntry.objects.filter(pk=entry_id).update(status='submitted',
+                                                                 submission_entry=submission_entry)
 
         return JsonResponse({
             "message": "Curations were successfully saved!",

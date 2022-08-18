@@ -286,7 +286,10 @@
 /* eslint-disable */
 // import fields from "@/data/curation/evidence/fields.js";
 import { HTTP } from "@/router/http";
-import { aggregateSubmissionEntries } from "../../../helpers/aggregateSubmissionEntries";
+import {
+    aggregateSubmissionEntries,
+    prepareForSubmission,
+} from "../../../helpers/aggregateSubmissionEntries";
 import BroadcastChannel from "broadcast-channel";
 import {
     BIcon,
@@ -381,6 +384,7 @@ export default {
         },
 
         aggregate: aggregateSubmissionEntries,
+        prepareForSubmission: prepareForSubmission,
 
         getExpanderArray() {
             this.submissionEntries.map(entry => {
@@ -396,16 +400,14 @@ export default {
         },
 
         submitCurations(notify) {
-            let submission_data = {
-                user: this.user.user_id,
-                variant: this.variant.id,
-                submission_entries: this.submissionEntries,
-            };
+            let submission_data = prepareForSubmission(
+                this.submissionEntries,
+                this.variant,
+                this.user
+            );
 
-            console.log(JSON.stringify(submission_data));
             HTTP.post(`/submission_entries/bulk_submit`, submission_data)
                 .then(response => {
-                    console.log(`response: ${response.data}`);
                     if (notify) {
                         this.$snotify.success(
                             "Your curation(s) have been submitted to be reviewed"

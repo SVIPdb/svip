@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from rest_framework import status
@@ -31,34 +29,16 @@ class SubmissionEntryApi(TestCase):
     def test_bulk_submit_submission_entry(self):
         variant = create_variant()
         disease = create_disease()
-        payload = {"user": self.user.id,
-                   "variant": variant.id,
-                   "submission_entries": [
-
-                       {"disease": 'Some disease',
-
-                           "types":
-                            {"Predictive / Therapeutic - Fuflomicin":
-                                 {"diseaseId": disease.id,
-                                  "drug": "Fuflomicin",
-                                  "effect": {"Intermediate": 1},
-                                  "tier_level_criteria": {"Small published studies with some consensus": 1},
-                                  "selectedEffect": "Associated with diagnosis",
-                                  "selectedTierLevel": "Reported evidence supportive of benign/likely benign effect",
-                                  "curationEntries": [
-                                      {"pmid": "5545",
-                                       "effect": "Intermediate",
-                                       "tier_level_criteria": "Small published studies with some consensus",
-                                       "support": "Moderate",
-                                       "id": 1214,
-                                       "comment": 'some comment'}
-                                  ],
-
-                                  }
-                             }
-                        }
-                   ]
-                   }
+        payload = [
+            {"owner_id": self.user.id,
+             "variant_id": variant.id,
+             "disease_id": disease.id,
+             "effect": "Associated with diagnosis",
+             "drug": "Fuflomicin",
+             "curation_entries": [1214],
+             "type_of_evidence": "Predictive / Therapeutic - Fuflomicin",
+             "tier": "Reported evidence supportive of benign/likely benign effect"
+             }]
 
         res = self.client.post(URL_BULK_SUBMISSION_ENTRIES, payload, format='json')
 

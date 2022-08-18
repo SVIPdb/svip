@@ -194,11 +194,11 @@ class Variant(models.Model):
                 elif positive_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
                     return VARIANT_STAGE.approved
 
-        if  any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
+        if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
             return VARIANT_STAGE.annotated
-        elif self.curation_entries.all().count() > 0:
+        elif self.curation_entries.count() > 0:
             return VARIANT_STAGE.ongoing_curation
-        elif self.curation_request.all().count() > 0:
+        elif self.curation_request.count() > 0:
             return VARIANT_STAGE.loaded
 
         return 'none'

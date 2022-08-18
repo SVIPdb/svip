@@ -91,3 +91,26 @@ export const aggregateSubmissionEntries = curationEntries => {
         };
     });
 };
+
+export const prepareForSubmission = (submissionEntries, variant, user) => {
+    let result = [];
+    submissionEntries.forEach(entry => {
+        for (const [type, typeInfo] of Object.entries(entry.types)) {
+            result.push({
+                variant_id: variant.id,
+                owner_id: user.user_id,
+                disease_name: entry.disease,
+                disease_id: typeInfo.diseaseId,
+                drug: typeInfo.drug,
+                type_of_evidence: type.includes("Predictive / Therapeutic")
+                    ? type.split(" - ")[0]
+                    : type,
+                effect: typeInfo.selectedEffect,
+                tier: typeInfo.selectedTierLevel,
+                curation_entries: typeInfo.curationEntries.map(i => i.id),
+            });
+        }
+    });
+
+    return result;
+};
