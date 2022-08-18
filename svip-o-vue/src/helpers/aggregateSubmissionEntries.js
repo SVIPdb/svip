@@ -35,6 +35,7 @@ export const aggregateSubmissionEntries = curationEntries => {
     const submissionEntriesMap = {};
 
     curationEntries.forEach(entry => {
+        console.log(entry.disease);
         let disease =
             entry.disease && entry.disease.name
                 ? entry.disease.name
@@ -50,6 +51,7 @@ export const aggregateSubmissionEntries = curationEntries => {
 
         if (!submissionEntriesMap[disease].hasOwnProperty(type_of_evidence)) {
             submissionEntriesMap[disease][type_of_evidence] = {
+                diseaseId: entry.disease ? entry.disease.id : null,
                 drug: entry.drugs.length > 0 ? entry.drugs[0] : null,
                 effect: {},
                 tier_level_criteria: {},

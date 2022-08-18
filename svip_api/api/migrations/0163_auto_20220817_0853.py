@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('drug', models.TextField(null=True)),
                 ('effect', models.TextField(default='Not yet annotated')),
                 ('tier', models.TextField(default='Not yet annotated')),
-                ('disease', models.ForeignKey(default='Unspecified', on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='submission_entries', to='api.Disease')),
+                ('disease', models.ForeignKey(on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='submission_entries', to='api.Disease')),
                 ('variant', models.ForeignKey(on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='submission_entries', to='api.Variant')),
             ],
         ),

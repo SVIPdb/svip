@@ -112,16 +112,18 @@ router.register(r'curation_requests',
 router.register(r'curation_entries', views.CurationEntryViewSet,
                 basename='curation_entries')
 
+
 router.register(r'comments', views.VariantCommentViewSet,
                 basename='variant_comments')
 
 # variants submitted for processing in SVIP
+router.register(r'submission_entries', views.SubmissionEntryViewSet, basename='submission_entries')
 router.register(r'submitted_variants',
                 views.SubmittedVariantViewSet, basename='submitted_variants')
 router.register(r'submitted_variant_batches',
                 views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
-# router.register(r'curation_reviews', views.ReviewsView, basename='reviews')
+
 router.register(r'revised_reviews', views.RevisedReviewViewSet,
                 basename='revised_reviews')
 
@@ -134,10 +136,6 @@ router.register(r'summary_draft', views.SummaryDraftViewSet,
 router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
                 basename='gene_summary_draft')
 
-# router.register(r'sib_annotations_1', views.SIBAnnotation1View,
-#                basename='sib_annotations_1')
-# router.register(r'sib_annotations_2', views.SIBAnnotation2ViewSet,
-#                 basename='sib_annotations_2')
 
 urlpatterns = [
     path('reviews', views.svip.CurationReviewView.as_view(), name='reviews'),
@@ -149,8 +147,7 @@ urlpatterns = [
          name='update_variant_summary'),
     path('update_gene_summary', views.svip.UpdateGeneSummary.as_view(),
          name='update_gene_summary'),
-    # path('sib_annotations_1', views.svip.SIBAnnotation1View.as_view(),
-    #      name='sib_annotations_1'),
+
     path('variant_summary/<int:pk>',
          views.genomic.VariantSummaryView, name="variant_summary"),
     path('', include(router.urls)),

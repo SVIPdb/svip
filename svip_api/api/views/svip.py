@@ -23,7 +23,7 @@ from api.models import (
 )
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview,
-    SummaryDraft, GeneSummaryDraft, RevisedReview
+    SummaryDraft, GeneSummaryDraft, RevisedReview, SubmissionEntry
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
@@ -32,7 +32,8 @@ from api.serializers import (
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SubmittedVariantSerializer,
     CurationRequestSerializer, SummaryCommentSerializer,
-    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
+    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer,
+    SubmissionEntrySerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -292,6 +293,54 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             )
                 .order_by('created_on')
         )
+
+
+class SubmissionEntryViewSet(viewsets.ModelViewSet):
+    """
+    View for manage submission entries
+    """
+    serializer_class = SubmissionEntrySerializer
+    permission_classes = (permissions.IsAuthenticated, IsCurationPermitted)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'disease', 'variant', 'effect', 'drug', 'tier', 'type_of_evidence'
+    )
+    ordering_fields = filter_fields
+    search_fields = filter_fields
+    queryset = SubmissionEntry.objects.all()
+
+
+    @action(detail=False, methods=['POST'])
+    def bulk_submit(self, request):
+        variant = Variant.objects.get(pk=request.data['variant'])
+        for item in request.data['submission_entries']:
+            print(item)
+            disease_name = item['disease']
+            for typeName, typeInfo in item["types"].items():
+                print(typeName, typeInfo)
+                submission_entry = SubmissionEntry(variant=variant)
+                if disease_name != 'Unspecified':
+                    submission_entry.disease = Disease.objects.get(pk=typeInfo['diseaseId'])
+
+                if 'Predictive / Therapeutic' in typeName:
+                    submission_entry.type_of_evidence = typeName.split(' - ')[0]
+                else:
+                    submission_entry.type_of_evidence = typeName
+                submission_entry.drug = typeInfo["drug"]
+                submission_entry.effect = typeInfo["selectedEffect"]
+                submission_entry.tier = typeInfo["selectedTierLevel"]
+                submission_entry.owner = User.objects.get(id=request.data['user'])
+                submission_entry.save()
+                for entry in typeInfo['curationEntries']:
+                    print(self.request.user)
+                    CurationEntry.objects.filter(pk=entry['id']).update(status='submitted',
+                                                                     submission_entry=submission_entry)
+
+        return JsonResponse({
+            "message": "Curations were successfully saved!",
+
+        })
 
 
 class CurationReviewView(APIView):

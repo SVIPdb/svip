@@ -15,7 +15,7 @@
                         v-for="([type, typeInfo], idx) in Object.entries(
                             submissionEntry.types
                         )"
-                        :key="index">
+                        :key="type + index">
                         <b-card-body class="p-0">
                             <transition name="slide-fade">
                                 <div v-if="expander_array[index].disease">
@@ -254,7 +254,28 @@
                     </div>
                 </b-card>
             </div>
+
+            <b-button
+                class="float-right"
+                @click="submitCurations(true)"
+                :disabled="not_submitted || already_reviewed">
+                Confirm annotation
+            </b-button>
         </div>
+        <b-navbar-text
+            v-if="not_submitted"
+            class="fixed-bottom submitted-bar"
+            align="center">
+            THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE
+            ANNOTATED YET.
+        </b-navbar-text>
+        <b-navbar-text
+            v-if="already_reviewed"
+            class="fixed-bottom submitted-bar"
+            align="center">
+            THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE
+            VARIANT HAS ALREADY RECEIVED REVIEW(S).
+        </b-navbar-text>
     </div>
 </template>
 
@@ -300,7 +321,7 @@ export default {
     },
     data() {
         return {
-            submissionEntries: {},
+            submissionEntries: [],
             diseases: [],
             selfReviewedEvidences: {},
             summary: null,
@@ -372,25 +393,13 @@ export default {
         },
 
         submitCurations(notify) {
-            let evidences_data = [];
-
-            this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
-                    let evidence_obj = {
-                        effect: evidence.curator.annotatedEffect,
-                        tier: evidence.curator.annotatedTier,
-                        evidence: evidence.id,
-                    };
-
-                    if (typeof evidence.curator.id !== "undefined") {
-                        evidence_obj["id"] = evidence.curator.id;
-                    }
-
-                    evidences_data.push(evidence_obj);
-                });
-            });
-
-            HTTP.post(`/sib_annotations_1`, evidences_data)
+            console.log(this.submissionEntries);
+            let submission_data = {
+                user: this.user.user_id,
+                variant: this.variant.id,
+                submission_entries: this.submissionEntries,
+            };
+            HTTP.post(`/submission_entries/bulk_submit`, submission_data)
                 .then(response => {
                     console.log(`response: ${response.data}`);
                     if (notify) {

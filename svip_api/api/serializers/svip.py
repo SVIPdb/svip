@@ -20,7 +20,7 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
     CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
-    SummaryDraft, GeneSummaryDraft, RevisedReview
+    SummaryDraft, GeneSummaryDraft, RevisedReview, SubmissionEntry
 )
 from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
 from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
@@ -271,6 +271,9 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
 # === Curation
 # ================================================================================================================
 
+
+
+
 def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, disease_field='disease'):
     """
     Given an instance with a disease:models.ForeignKey(Disease) field (specified by 'disease_field'),
@@ -354,6 +357,9 @@ class CurationReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurationReview
         fields = '__all__'
+
+
+
 
 
 class RevisedReviewSerializer(serializers.ModelSerializer):
@@ -550,6 +556,20 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'escat_score': {'required': False, 'allow_blank': True}
         }
 
+
+class SubmissionEntrySerializer(serializers.ModelSerializer):
+    variant = SimpleVariantSerializer()
+    curation_reviews = CurationReviewSerializer(many=True, required=False)
+    curation_entries = CurationEntrySerializer(many=True)
+    owner = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    disease = DiseaseSerializer(
+        required=False, allow_null=True, read_only=True)
+
+    class Meta:
+        model = SubmissionEntry
+        fields = '__all__'
+        read_only_fields = ['id']
 
 # ================================================================================================================
 # === SVIP Variant Submission

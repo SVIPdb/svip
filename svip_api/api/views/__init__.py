@@ -42,5 +42,6 @@ from .svip import (
     CurationReviewView,
     CurationReviewViewSet,
     RevisedReviewViewSet,
+    SubmissionEntryViewSet
 
 )

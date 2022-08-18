@@ -426,16 +426,21 @@ class SubmissionEntry(models.Model):
     The entry is generated from all the curation entries of a variant at the moment of their submission.
     """
     related_name = 'submission_entries'
-    curator = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                null=True, on_delete=models.SET_NULL)
     variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, related_name=related_name)
-    disease = models.ForeignKey(to=Disease, on_delete=DB_CASCADE, related_name=related_name,
-                                default='Unspecified')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                null=True, on_delete=models.SET_NULL)
+
+    disease = models.ForeignKey(
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
     type_of_evidence = models.TextField(
         verbose_name="Type of evidence")
     drug = models.TextField(null=True)
     effect = models.TextField(default="Not yet annotated")
     tier = models.TextField(default="Not yet annotated")
+
+
+
+
 
     # TODO: calculate stage based on the number of reviews
     def submission_stage(self):
