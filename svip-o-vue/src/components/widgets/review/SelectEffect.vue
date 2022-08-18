@@ -1,7 +1,5 @@
 <template>
     <div>
-        <h1>Aggregation</h1>
-
         <div v-if="submissionEntries.length > 0">
             <div
                 v-for="(submissionEntry, index) in submissionEntries"
