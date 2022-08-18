@@ -1,5 +1,8 @@
 <template>
     <div>
+        {{ not_submitted }}
+        {{ already_reviewed }}
+        {{ variant.stage }}
         <div v-if="submissionEntries.length > 0">
             <div
                 v-for="(submissionEntry, index) in submissionEntries"

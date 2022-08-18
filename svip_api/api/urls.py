@@ -117,7 +117,7 @@ router.register(r'comments', views.VariantCommentViewSet,
                 basename='variant_comments')
 
 # variants submitted for processing in SVIP
-router.register(r'submission_entries', views.SubmissionEntryViewSet, basename='submission_entries')
+router.register(r'submission_entries', views.SubmissionEntryViewSet, basename='submission_entry')
 router.register(r'submitted_variants',
                 views.SubmittedVariantViewSet, basename='submitted_variants')
 router.register(r'submitted_variant_batches',

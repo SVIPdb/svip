@@ -310,6 +310,10 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
     search_fields = filter_fields
     queryset = SubmissionEntry.objects.all()
 
+    def perform_create(self, serializer):
+        """Create a new recipe."""
+        serializer.save(user=self.request.user)
+
 
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):

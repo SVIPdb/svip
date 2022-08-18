@@ -454,15 +454,25 @@ export default {
             }
         };
 
+        //       none = 'none'
+        // loaded = 'loaded'
+        // ongoing_curation = 'ongoing_curation'
+        // annotated = 'annotated'
+        // ongoing_review = 'ongoing_review'
+        // unapproved = 'unapproved'
+        // reannotated = 'reannotated'
+        // on_hold = 'on_hold'
+        // approved = 'approved'
+
         if (
             [
-                "0_review",
-                "1_review",
-                "2_reviews",
-                "conflicting_reviews", // "conflicting_reviews"
-                "to_review_again",
+                "annotated",
+                "ongoing_review",
+                "approved",
+                "unapproved",
+                "reannotated",
                 "on_hold",
-                "fully_reviewed",
+                "on_hold",
             ].includes(this.variant.stage)
         ) {
             this.already_submitted = true;

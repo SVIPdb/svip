@@ -196,6 +196,11 @@
                     <b-button
                         v-access="'curators'"
                         class="centered-icons"
+                        :class="
+                            ['annotated', 'ongoing_review'].includes(
+                                row.item.stage
+                            ) && 'blended'
+                        "
                         size="sm"
                         style="width: 100px"
                         variant="info"
@@ -663,5 +668,9 @@ export default {
 <style>
 .customClass {
     background-color: #c40000 !important;
+}
+
+.blended {
+    opacity: 0.5;
 }
 </style>
