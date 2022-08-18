@@ -5,14 +5,6 @@
             :disease_id="disease_id" />
         <ModifyVariantSummary :variant="variant" :comments="summary.comments" />
 
-        <SelectEffect1 :variant="variant" :entryIDs="entryIDs" />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-
         <SelectEffect :variant="variant" />
     </div>
 </template>
@@ -25,7 +17,6 @@ import { desnakify } from "@/utils";
 import { HTTP } from "@/router/http";
 import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
 import SelectEffect from "@/components/widgets/review/SelectEffect";
-import SelectEffect1 from "@/components/widgets/review/SelectEffect1";
 import ulog from "ulog";
 import BroadcastChannel from "broadcast-channel";
 
@@ -37,7 +28,6 @@ export default {
         ModifyVariantSummary,
         SelectEffect,
         CuratorVariantInformations,
-        SelectEffect1,
     },
     props: {
         entryIDs: { type: String },

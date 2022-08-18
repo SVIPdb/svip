@@ -8,13 +8,25 @@ const aggregateProperty = (type_of_evidence, entry, property) => {
     }
 };
 
-// helps finding the most frequent effect or tier level for prepopulating the forms
+// select curationEntry properties
+const selectCurationEntryProperties = entry => {
+    return {
+        pmid: entry.references.split(":")[1],
+        effect: entry.effect,
+        tier_level_criteria: entry.tier_level_criteria,
+        support: entry.support,
+        id: entry.id,
+        comment: entry.comment,
+    };
+};
+
+// helps to find the most frequent effect or tier level for pre-populating the forms
 
 const findMaximum = obj => {
     let sortedItems = Object.keys(obj)
         .map(key => [key, obj[key]])
         .sort((a, b) => {
-            return a[1] > b[1] ? 1 : -1;
+            return a[1] > b[1] ? -1 : 1;
         });
     return sortedItems[0][0];
 };
@@ -31,17 +43,22 @@ export const aggregateSubmissionEntries = curationEntries => {
         if (!submissionEntriesMap.hasOwnProperty(disease)) {
             submissionEntriesMap[disease] = {};
         }
-        let type_of_evidence = entry.type_of_evidence;
+        let type_of_evidence =
+            entry.drugs.length > 0
+                ? `${entry.type_of_evidence} - ${entry.drugs[0]}`
+                : entry.type_of_evidence;
+
         if (!submissionEntriesMap[disease].hasOwnProperty(type_of_evidence)) {
             submissionEntriesMap[disease][type_of_evidence] = {
+                drug: entry.drugs.length > 0 ? entry.drugs[0] : null,
                 effect: {},
                 tier_level_criteria: {},
-                curationEntries: [entry],
+                curationEntries: [selectCurationEntryProperties(entry)],
             };
         } else {
             submissionEntriesMap[disease][
                 type_of_evidence
-            ].curationEntries.push(entry);
+            ].curationEntries.push(selectCurationEntryProperties(entry));
         }
 
         aggregateProperty(

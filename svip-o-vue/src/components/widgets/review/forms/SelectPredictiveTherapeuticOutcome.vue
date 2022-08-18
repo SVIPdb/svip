@@ -3,7 +3,7 @@
         <option>Sensitive (in vitro)</option>
         <option>Responsive</option>
         <option>Resistant (in vitro)</option>
-        <option>Reduced sensivity</option>
+        <option>Reduced sensitivity</option>
         <option>Not responsive</option>
         <option>Adverse response</option>
         <option>Other</option>
