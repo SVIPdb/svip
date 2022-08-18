@@ -165,7 +165,7 @@
                                             </b-col>
                                         </b-row>
                                     </b-card-text>
-                                    <transition name="slide-fade">
+                                    <transition name="fade">
                                         <div
                                             v-if="
                                                 expander_array[index]
