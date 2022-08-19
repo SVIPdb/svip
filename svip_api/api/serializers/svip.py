@@ -272,8 +272,6 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
 # ================================================================================================================
 
 
-
-
 def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, disease_field='disease'):
     """
     Given an instance with a disease:models.ForeignKey(Disease) field (specified by 'disease_field'),
@@ -357,9 +355,6 @@ class CurationReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurationReview
         fields = '__all__'
-
-
-
 
 
 class RevisedReviewSerializer(serializers.ModelSerializer):
@@ -572,9 +567,6 @@ class SubmissionEntrySerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
-
-
-
 # ================================================================================================================
 # === SVIP Variant Submission
 # ================================================================================================================
@@ -746,6 +738,7 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
 
 class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     gene = SimpleGeneSerializer()
+    curation_entries = CurationEntrySerializer(many=True, required=False)
 
     review_count = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
@@ -803,7 +796,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'hgvs_c',
             'review_count',
             'reviews',
-            'stage'
+            'stage',
+            'curation_entries'
         )
 
 

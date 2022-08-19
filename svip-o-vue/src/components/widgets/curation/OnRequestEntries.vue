@@ -98,6 +98,7 @@ export default {
             HTTP.get(`/curation_requests?page_size=100000`)
                 .then(response => {
                     this.loading = false;
+                    console.log(JSON.stringify(response.data.results));
                     this.items = response.data.results.map(x => ({
                         gene_id: x.variant && x.variant.gene.id,
                         variant_id: x.variant && x.variant.id,
@@ -109,7 +110,14 @@ export default {
                         status: this.calculateStage(x.variant.stage),
                         deadline: "n/a",
                         requester: x.submission.requestor,
-                        curator: [],
+                        curator:
+                            x.variant.curation_entries &&
+                            x.variant.curation_entries.length > 0
+                                ? x.variant.curation_entries.map(i => ({
+                                      name: i.owner_name,
+                                      id: i.owner,
+                                  }))
+                                : [],
                         review_count: x.variant.review_count,
                         reviews: x.variant.reviews,
                         stage: x.variant.stage,
