@@ -1,6 +1,5 @@
 <template>
     <b-card class="shadow-sm mb-3" align="left" no-body>
-        {{ items }}
         <b-card-header
             v-if="isCurator"
             class="p-1"
@@ -138,7 +137,9 @@
                 </template>
 
                 <template v-slot:cell(curator)="data">
-                    <span v-for="(owner, idx) in data.value" :key="owner.name">
+                    <span
+                        v-for="(owner, idx) in data.value"
+                        :key="owner.name + idx">
                         <span v-if="idx > 0">,</span>
                         <pass :name="abbreviatedName(owner.name)">
                             <b
