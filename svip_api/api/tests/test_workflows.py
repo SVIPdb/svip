@@ -41,7 +41,6 @@ class SubmissionEntryApi(TestCase):
              }]
 
         res = self.client.post(URL_BULK_SUBMISSION_ENTRIES, payload, format='json')
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         submission_entries_count = SubmissionEntry.objects.count()

@@ -450,6 +450,7 @@ class SubmissionEntry(models.Model):
 class CURATION_STATUS(ModelChoice):
     draft = 'draft'
     saved = 'saved'
+    ready_for_submission = 'ready_for_submission'
     submitted = 'submitted'
     unreviewed = 'unreviewed'
     reviewed = 'reviewed'

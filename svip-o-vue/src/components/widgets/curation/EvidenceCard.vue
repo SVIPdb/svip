@@ -602,7 +602,6 @@ export default {
             HTTP.post(`/curation_entries/bulk_submit?items=${entryIDs}`)
                 .then(() => {
                     // add request to change the status of the variant
-
                     router.push({
                         name: "submit-curation",
                     });

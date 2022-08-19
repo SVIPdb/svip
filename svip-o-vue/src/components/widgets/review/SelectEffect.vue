@@ -1,7 +1,6 @@
 <template>
     <div>
-        {{ not_submitted }}
-        {{ already_reviewed }}
+        {{ already_in_review }}
         {{ variant.stage }}
         <div v-if="submissionEntries.length > 0">
             <div
@@ -64,8 +63,7 @@
                                                                 typeInfo.selectedEffect
                                                             "
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             class="m-1 d-inline w-25"></select-prognostic-outcome>
                                                         <select-diagnostic-outcome
@@ -77,8 +75,7 @@
                                                                 typeInfo.selectedEffect
                                                             "
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             class="m-1 d-inline w-25"></select-diagnostic-outcome>
                                                         <select-predictive-therapeutic-outcome
@@ -91,8 +88,7 @@
                                                                 typeInfo.selectedEffect
                                                             "
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             class="m-1 d-inline w-25"></select-predictive-therapeutic-outcome>
 
@@ -110,8 +106,7 @@
                                                             "
                                                             fieldType="effect"
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             class="m-1 d-inline w-25"></select-various-outcome>
 
@@ -123,8 +118,7 @@
                                                                 ].includes(type)
                                                             "
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             v-model="
                                                                 typeInfo.selectedTierLevel
@@ -137,8 +131,7 @@
                                                                 )
                                                             "
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             v-model="
                                                                 typeInfo.selectedTierLevel
@@ -159,8 +152,7 @@
                                                             "
                                                             fieldType="tier"
                                                             :disabled="
-                                                                not_submitted ||
-                                                                already_reviewed
+                                                                already_in_review
                                                             "
                                                             class="m-1 d-inline w-50" />
                                                     </b-row>
@@ -261,19 +253,19 @@
             <b-button
                 class="float-right"
                 @click="submitCurations(true)"
-                :disabled="not_submitted || already_reviewed">
+                :disabled="already_in_review">
                 Confirm annotation
             </b-button>
         </div>
+        <!--        <b-navbar-text-->
+        <!--            v-if="not_submitted"-->
+        <!--            class="fixed-bottom submitted-bar"-->
+        <!--            align="center">-->
+        <!--            THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE-->
+        <!--            ANNOTATED YET.-->
+        <!--        </b-navbar-text>-->
         <b-navbar-text
-            v-if="not_submitted"
-            class="fixed-bottom submitted-bar"
-            align="center">
-            THE CURATIONS FOR THIS VARIANT HAVE NOT BEEN SUBMITTED TO BE
-            ANNOTATED YET.
-        </b-navbar-text>
-        <b-navbar-text
-            v-if="already_reviewed"
+            v-if="already_in_review"
             class="fixed-bottom submitted-bar"
             align="center">
             THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE
@@ -334,26 +326,24 @@ export default {
             loading: false,
             error: null,
             channel: new BroadcastChannel("curation-update"),
-            already_reviewed: false,
-            not_submitted: false,
+            already_in_review: false,
             expander_array: [],
         };
     },
     mounted() {
-        this.submissionEntries = this.aggregate(this.variant.curation_entries);
+        this.submissionEntries = this.aggregate(
+            this.variant.curation_entries.filter(
+                item => item.status === "ready_for_submission"
+            )
+        );
         this.getExpanderArray();
     },
     created() {
         // Watch if use is going to leave the page
         window.addEventListener("beforeunload", this.beforeWindowUnload);
-
-        // Check that this page is appropriate regarding current review stage of variant
         if (
-            ["none", "loaded", "ongoing_curation"].includes(this.variant.stage)
-        ) {
-            this.not_submitted = true;
-        } else if (
             [
+                "annotated",
                 "ongoing_review",
                 "unapproved",
                 "reannotated",
@@ -361,7 +351,7 @@ export default {
                 "approved",
             ].includes(this.variant.stage)
         ) {
-            this.already_reviewed = true;
+            this.already_in_review = true;
         }
 
         this.channel.onmessage = () => {

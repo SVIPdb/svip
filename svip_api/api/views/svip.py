@@ -255,7 +255,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # for every ID in items, if it's saved upgrade it to a draft
         entryIDs = [int(x) for x in request.GET['items'].split(",")]
         result = CurationEntry.objects.filter(
-            id__in=entryIDs, status='saved').update(status='submitted')
+            id__in=entryIDs, status='saved').update(status='ready_for_submission')
         return JsonResponse({
             "input": entryIDs,
             "changed": result
