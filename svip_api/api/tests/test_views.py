@@ -11,29 +11,29 @@ from api.models import CurationEntry
 from api.serializers import CurationEntrySerializer
 from api.tests.data import create_curation_entry, create_user
 
+
 class ViewTests(APITestCase):
-  def setUp(self):
-    gene = Gene.objects.create(
-      entrez_id=673,
-      ensembl_gene_id='ENSG00000157764',
-      symbol='BRAF'
-    )
-    variant = Variant.objects.create(
-      gene=gene,
-      name='V600E',
-      description='BRAF V600E'
-    )
+    def setUp(self):
+        gene = Gene.objects.create(
+            entrez_id=673,
+            ensembl_gene_id='ENSG00000157764',
+            symbol='BRAF'
+        )
+        variant = Variant.objects.create(
+            gene=gene,
+            name='V600E',
+            description='BRAF V600E'
+        )
 
-  def test_variant_list(self):
-    """ Test the variant list """
-    url = reverse('variant-list')
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_variant_list(self):
+        """ Test the variant list """
+        url = reverse('variant-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    data = response.json()
-    self.assertEqual(data['count'], 1, "We expect 1 result")
-    self.assertEqual(data['results'][0]['name'], 'V600E', "We expenct the variant name to be 'V600E")
-
+        data = response.json()
+        self.assertEqual(data['count'], 1, "We expect 1 result")
+        self.assertEqual(data['results'][0]['name'], 'V600E', "We expenct the variant name to be 'V600E")
 
 
 # CURATION_ENTRIES_URL = reverse('curation_entries')
@@ -78,4 +78,5 @@ class CurationEntryApiForCurators(TestCase):
         serializer = CurationEntrySerializer(curation_entries, many=True, context={'request': res.wsgi_request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer.data, res.data['results'], )
+
 

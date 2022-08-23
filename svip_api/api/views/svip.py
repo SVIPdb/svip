@@ -310,6 +310,11 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
     search_fields = filter_fields
     queryset = SubmissionEntry.objects.all()
 
+    def get_queryset(self):
+        if self.request.GET.get('variant_id'):
+            return self.queryset.filter(variant=self.request.GET.get('variant_id'))
+        return self.queryset
+
     def perform_create(self, serializer):
         """Create a new recipe."""
         serializer.save(user=self.request.user)
