@@ -30,8 +30,6 @@ class SubmissionEntryApi(TestCase):
 
         self.client.force_authenticate(self.user)
 
-
-
     def test_bulk_submit_submission_entry(self):
         variant = create_variant()
         disease = create_disease()
@@ -73,5 +71,3 @@ class SubmissionEntryApi(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEquals(len(res.data['results']), 1)
         self.assertEquals(res.data['results'][0]['variant']['id'], variant.id)
-
-
