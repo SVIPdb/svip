@@ -117,9 +117,11 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     sources = serializers.SerializerMethodField()
     gene = GeneSerializer(read_only=True)
 
-    from api.serializers.svip import CurationEntrySerializer, CurationRequestSerializer
+    from api.serializers.svip import CurationEntrySerializer, CurationRequestSerializer, SubmissionEntrySerializer
     curation_entries = CurationEntrySerializer(many=True, required=False)
     curation_requests = CurationRequestSerializer(many=True, required=False)
+    submission_entries = SubmissionEntrySerializer(many=True, required=False)
+
 
     def get_sources(self, obj):
         return sorted(obj.sources) if obj.sources else None
@@ -136,6 +138,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('confidence')
         fields.append('curation_entries')
         fields.append('curation_requests')
+        fields.append('submission_entries')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
 
 

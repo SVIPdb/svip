@@ -59,7 +59,6 @@ export default {
     },
     created() {
         this.refreshReferences();
-
         this.channel.onmessage = () => {
             // update the list of references, since we likely added one
             this.refreshReferences();
@@ -133,7 +132,6 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         const { variant_id } = to.params;
-
         // ask the store to populate detailed information about this variant
         store
             .dispatch("getGeneVariant", { variant_id: variant_id })

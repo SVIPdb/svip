@@ -217,6 +217,12 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
                        'hgvs_g', 'so_name', 'sources')
 
     @action(detail=False)
+    def review_process(self, request):
+        variants_for_review = Variant.objects.filter(submission_entries__isnull=False).distinct()
+        serializer = VariantSerializer(variants_for_review, many=True, context={'request': request})
+        return JsonResponse({'results': serializer.data})
+
+    @action(detail=False)
     def autocomplete(self, request):
         """
         Gets a list of variants for which the query term, 'q', occurs in its description.

@@ -98,7 +98,7 @@ export default {
             HTTP.get(`/curation_requests?page_size=100000`)
                 .then(response => {
                     this.loading = false;
-                    console.log(JSON.stringify(response.data.results));
+
                     this.items = response.data.results.map(x => ({
                         gene_id: x.variant && x.variant.gene.id,
                         variant_id: x.variant && x.variant.id,

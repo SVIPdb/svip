@@ -1,7 +1,5 @@
 <template>
 	<div>
-		{{ already_in_review }}
-		{{ variant.stage }}
 		<div v-if="submissionEntries.length > 0">
 			<div v-for="(submissionEntry, index) in submissionEntries" :key="index">
 				<b-card class="shadow-sm mb-3" align="left" no-body>

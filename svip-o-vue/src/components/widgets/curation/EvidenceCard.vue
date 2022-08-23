@@ -454,17 +454,8 @@ export default {
             }
         };
 
-        //       none = 'none'
-        // loaded = 'loaded'
-        // ongoing_curation = 'ongoing_curation'
-        // annotated = 'annotated'
-        // ongoing_review = 'ongoing_review'
-        // unapproved = 'unapproved'
-        // reannotated = 'reannotated'
-        // on_hold = 'on_hold'
-        // approved = 'approved'
 
-        if (
+        if ( this.isLoading &&
             [
                 "annotated",
                 "ongoing_review",
