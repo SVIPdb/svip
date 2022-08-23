@@ -723,8 +723,6 @@ class CurationReview(SVIPModel):
     """
     related_name = 'curation_reviews'
     submission_entry = models.ForeignKey(to=SubmissionEntry, on_delete=DB_CASCADE, related_name=related_name, null=True)
-    curation_entry = ForeignKey(
-        to=CurationEntry, on_delete=DB_CASCADE, null=True, related_name=related_name, )
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, related_name=related_name, )
 
@@ -742,8 +740,8 @@ class CurationReview(SVIPModel):
     draft = models.BooleanField(default=False)
 
     def match(self):
-        curation_entry = self.curation_entry
-        return (self.annotated_effect == curation_entry.effect) and (self.annotated_tier == curation_entry.tier_level)
+        submission_entry = self.submission_entry
+        return (self.annotated_effect == submission_entry.effect) and (self.annotated_tier == submission_entry.tier)
 
 
 class RevisedReview(models.Model):

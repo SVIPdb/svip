@@ -340,25 +340,26 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
         })
 
 
-class CurationReviewView(APIView):
-    def post(self, request, *args, **kwargs):
-        for obj in request.data:
-            if 'id' in obj:
-                review = CurationReview.objects.get(id=obj['id'])
-            else:
-                review = CurationReview()
-            review.curation_evidence = CurationEntry.objects.get(
-                id=obj['curation_entry'])
-            review.annotated_effect = obj['annotated_effect']
-            review.annotated_tier = obj['annotated_tier']
-            review.comment = obj['comment']
-            review.draft = obj['draft']
-            review.reviewer = User.objects.get(id=obj['reviewer'])
-            review.save()
-        return Response(data='Submitted reviews are succesfully saved')
+# class CurationReviewView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         for obj in request.data:
+#             if 'id' in obj:
+#                 review = CurationReview.objects.get(id=obj['id'])
+#             else:
+#                 review = CurationReview()
+#             review.submission_entry = SubmissionEntry.objects.get(
+#                 id=obj['submission_entry'])
+#             review.annotated_effect = obj['annotated_effect']
+#             review.annotated_tier = obj['annotated_tier']
+#             review.comment = obj['comment']
+#             review.draft = obj['draft']
+#             review.reviewer = User.objects.get(id=obj['reviewer'])
+#             review.save()
+#         return Response(data='Submitted reviews are succesfully saved')
 
 
 class CurationReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CurationReviewSerializer
     model = CurationReview
 
@@ -366,8 +367,21 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         queryset = CurationReview.objects.all()
         return queryset
 
-    def get_serializer(self, *args, **kwargs):
-        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
+    @action(detail=False, methods=['POST'])
+    def submit_review(self, request):
+        obj = request.data
+        if 'id' in obj:
+            review = CurationReview.objects.get(id=obj['id'])
+        else:
+            review = CurationReview()
+        review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
+        review.annotated_effect = obj['annotated_effect']
+        review.annotated_tier = obj['annotated_tier']
+        review.comment = obj['comment']
+        review.draft = obj['draft']
+        review.reviewer = User.objects.get(id=obj['reviewer'])
+        review.save()
+        return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
 
 
 class RevisedReviewViewSet(viewsets.ModelViewSet):

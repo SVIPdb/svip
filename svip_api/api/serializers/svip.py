@@ -347,34 +347,9 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
         instance.save()
 
 
-class CurationReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(CurationReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = CurationReview
-        fields = '__all__'
-
-
-class RevisedReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(RevisedReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = RevisedReview
-        fields = '__all__'
-
-
 class CurationEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
 
-    # extra_variants = serializers.PrimaryKeyRelatedField(
-    #     allow_empty=False, many=True, queryset=Variant.objects.all(),
-    #     style={'base_template': 'input.html'}
-    # )
-    curation_reviews = CurationReviewSerializer(many=True, required=False, source='curationreview_set')
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
@@ -518,7 +493,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'icdo_topo',
             'variant',
             'extra_variants',
-
             'type_of_evidence',
             'drugs',
             'interactions',
@@ -540,7 +514,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'owner_name',
             'formatted_variants',
             'status',
-            'curation_reviews'
 
         )
 
@@ -554,7 +527,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
 class SubmissionEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
-    curation_reviews = CurationReviewSerializer(many=True, required=False, source='curationreview_set')
     curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
     owner = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(), queryset=User.objects.all())
@@ -565,6 +537,26 @@ class SubmissionEntrySerializer(serializers.ModelSerializer):
         model = SubmissionEntry
         fields = '__all__'
         read_only_fields = ['id']
+
+
+class CurationReviewSerializer(serializers.ModelSerializer):
+    submission_entry = SubmissionEntrySerializer(required=False, source='submissionentry_set')
+    reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+
+    class Meta:
+        model = CurationReview
+        fields = '__all__'
+        read_only_fields = ['id']
+
+
+class RevisedReviewSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(RevisedReviewSerializer, self).__init__(
+            *args, **kwargs)
+
+    class Meta:
+        model = RevisedReview
+        fields = '__all__'
 
 
 # ================================================================================================================
