@@ -94,13 +94,10 @@ class VariantInSVIP(models.Model):
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
     # variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
-
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
     summary_date = models.DateTimeField(null=True)
-
     objects = VariantInSVIPManager()
-
     history = HistoricalRecords(cascade_delete_history=True)
 
     def calculate_summary_date(self):
@@ -152,60 +149,60 @@ class VariantInSVIP(models.Model):
 
         # JSON containing data for VariantDisease.vue
         diseases_dict = []
-
-        for entry in self.variant.curation_entries.all().order_by('id'):
-
-            if entry.tier_level:
-                tier = f"{entry.tier_level}: {entry.tier_level_criteria}"
-            else:
-                tier = entry.tier_level_criteria
-            disease = {}
-            disease['evidences'] = []
-            if entry.disease:
-                disease["disease"] = entry.disease.name
-            else:
-                disease["disease"] = 'Unspecified'
-            # TODO: fullType was previously in the CurationEvidence model
-            # TODO: reformat this objects
-            entry_obj = {"id": 1, "isOpen": False, "typeOfEvidence": entry.type_of_evidence,
-                         "fullType": entry.type_of_evidence, "effectOfVariant": entry.effect,
-                         "curator": {"annotatedEffect": entry.effect,
-                                     "annotatedTier": entry.tier_level, "curations": [{"id": entry.id,
-                                                                                       "pmid": int(
-                                                                                           entry.references.split(":")[
-                                                                                               1]),
-                                                                                       "effect": entry.effect,
-                                                                                       "support": entry.support,
-                                                                                       "comment": entry.comment,
-                                                                                       "tier": tier}]}}
-            reviews = []
-            for review in entry.curation_reviews.all():
-                review_obj = {
-                    "id": review.id,
-                    "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
-                    "reviewer_mail": review.reviewer.email,
-                    "reviewer_id": review.reviewer.id,
-                    "annotatedTier": review.annotated_tier,
-                    "annotatedEffect": review.annotated_effect,
-                    "comment": review.comment,
-                    "draft": review.draft
-                }
-                if (review.annotated_effect == entry.effect) and (review.annotated_tier == entry.tier_level):
-                    review_obj['status'] = True
-                else:
-                    review_obj['status'] = False
-                reviews.append(review_obj)
-            # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
-            while len(reviews) < 3:
-                review_obj = {
-                    "reviewer": "",
-                    "status": None
-                }
-                reviews.append(review_obj)
-
-            disease['evidences'].append(entry_obj)
-
-            diseases_dict.append(disease)
+        #
+        # for entry in self.variant.curation_entries.all().order_by('id'):
+        #
+        #     if entry.tier_level:
+        #         tier = f"{entry.tier_level}: {entry.tier_level_criteria}"
+        #     else:
+        #         tier = entry.tier_level_criteria
+        #     disease = {}
+        #     disease['evidences'] = []
+        #     if entry.disease:
+        #         disease["disease"] = entry.disease.name
+        #     else:
+        #         disease["disease"] = 'Unspecified'
+        #     # TODO: fullType was previously in the CurationEvidence model
+        #     # TODO: reformat this objects
+        #     entry_obj = {"id": 1, "isOpen": False, "typeOfEvidence": entry.type_of_evidence,
+        #                  "fullType": entry.type_of_evidence, "effectOfVariant": entry.effect,
+        #                  "curator": {"annotatedEffect": entry.effect,
+        #                              "annotatedTier": entry.tier_level, "curations": [{"id": entry.id,
+        #                                                                                "pmid": int(
+        #                                                                                    entry.references.split(":")[
+        #                                                                                        1]),
+        #                                                                                "effect": entry.effect,
+        #                                                                                "support": entry.support,
+        #                                                                                "comment": entry.comment,
+        #                                                                                "tier": tier}]}}
+        #     reviews = []
+        #     for review in entry.curation_reviews.all():
+        #         review_obj = {
+        #             "id": review.id,
+        #             "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
+        #             "reviewer_mail": review.reviewer.email,
+        #             "reviewer_id": review.reviewer.id,
+        #             "annotatedTier": review.annotated_tier,
+        #             "annotatedEffect": review.annotated_effect,
+        #             "comment": review.comment,
+        #             "draft": review.draft
+        #         }
+        #         if (review.annotated_effect == entry.effect) and (review.annotated_tier == entry.tier_level):
+        #             review_obj['status'] = True
+        #         else:
+        #             review_obj['status'] = False
+        #         reviews.append(review_obj)
+        #     # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
+        #     while len(reviews) < 3:
+        #         review_obj = {
+        #             "reviewer": "",
+        #             "status": None
+        #         }
+        #         reviews.append(review_obj)
+        #
+        #     disease['evidences'].append(entry_obj)
+        #
+        #     diseases_dict.append(disease)
         #
         #     evidences = []
         #     for evidence in entry.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):

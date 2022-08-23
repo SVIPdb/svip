@@ -182,11 +182,11 @@ class Variant(models.Model):
 
     @property
     def stage(self):
-        for curation_entry in self.curation_entries.get_by_evidence_type_category('diagnostic'):
+        for submission_entry in self.submission_entries.all():  # TODO: get only clinically relevant entries
 
-            review_count = curation_entry.curation_reviews.count()
+            review_count = submission_entry.curation_reviews.count()
             if review_count:
-                positive_review_count = curation_entry.curation_reviews.by_status('accepted').count()
+                positive_review_count = submission_entry.curation_reviews.by_status('accepted').count()
                 if 0 < review_count < self.REVIEW_COUNT:
                     return VARIANT_STAGE.ongoing_review
                 elif review_count == self.REVIEW_COUNT and positive_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:

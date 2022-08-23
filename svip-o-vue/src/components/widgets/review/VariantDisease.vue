@@ -38,161 +38,202 @@
 												<b-input v-model="type.effect" readonly />
 											</b-row>
 											<b-row class="p-2">
-												<b-input v-model="type.type_of_evidence" readonly />
+												<b-input v-model="type.tier" readonly />
 											</b-row>
 										</b-col>
-										<!--										<b-col cols="2">-->
-										<!--											<b-row class="p-2">-->
-										<!--												<select-prognostic-outcome-->
-										<!--													v-if="evidence.typeOfEvidence === 'Prognostic'"-->
-										<!--													v-model="evidence.currentReview.annotatedEffect"-->
-										<!--													@input="-->
-										<!--														onChange(evidence.curator, evidence.currentReview)-->
-										<!--													"-->
-										<!--													:disabled="-->
-										<!--														not_annotated || submitted-->
-										<!--													"></select-prognostic-outcome>-->
-										<!--												<select-diagnostic-outcome-->
-										<!--													v-if="evidence.typeOfEvidence === 'Diagnostic'"-->
-										<!--													v-model="evidence.currentReview.annotatedEffect"-->
-										<!--													@input="-->
-										<!--														onChange(evidence.curator, evidence.currentReview)-->
-										<!--													"-->
-										<!--													:disabled="-->
-										<!--														not_annotated || submitted-->
-										<!--													"></select-diagnostic-outcome>-->
-										<!--												<select-predictive-therapeutic-outcome-->
-										<!--													v-if="-->
-										<!--														evidence.typeOfEvidence === 'Predictive / Therapeutic'-->
-										<!--													"-->
-										<!--													v-model="evidence.currentReview.annotatedEffect"-->
-										<!--													@input="-->
-										<!--														onChange(evidence.curator, evidence.currentReview)-->
-										<!--													"-->
-										<!--													:disabled="-->
-										<!--														not_annotated || submitted-->
-										<!--													"></select-predictive-therapeutic-outcome>-->
-										<!--											</b-row>-->
-										<!--											<b-row class="p-2">-->
-										<!--												<select-tier-->
-										<!--													v-if="-->
-										<!--														['Prognostic', 'Diagnostic'].includes(-->
-										<!--															evidence.typeOfEvidence-->
-										<!--														)-->
-										<!--													"-->
-										<!--													v-model="evidence.currentReview.annotatedTier"-->
-										<!--													@input="-->
-										<!--														onChange(evidence.curator, evidence.currentReview)-->
-										<!--													"-->
-										<!--													:disabled="not_annotated || submitted"></select-tier>-->
-										<!--												<select-therapeutic-tier-->
-										<!--													v-if="-->
-										<!--														evidence.typeOfEvidence === 'Predictive / Therapeutic'-->
-										<!--													"-->
-										<!--													v-model="evidence.currentReview.annotatedTier"-->
-										<!--													@input="-->
-										<!--														onChange(evidence.curator, evidence.currentReview)-->
-										<!--													"-->
-										<!--													:disabled="-->
-										<!--														not_annotated || submitted-->
-										<!--													"></select-therapeutic-tier>-->
-										<!--											</b-row>-->
-										<!--										</b-col>-->
-										<!--										<b-col cols="1" align="center">-->
-										<!--											<b-row class="justify-content-center">Review status</b-row>-->
-										<!--											<b-row class="justify-content-center">-->
-										<!--												<span-->
-										<!--													v-for="(review, review_idx) in evidence.reviews"-->
-										<!--													:key="'review' + review_idx">-->
-										<!--													<span v-if="review.status !== null">-->
-										<!--														<b-icon-->
-										<!--															class="h4 mb-2 m-1"-->
-										<!--															:style="displayColor(review.status)"-->
-										<!--															:icon="displayIcon(review.status)"></b-icon>-->
-										<!--													</span>-->
-										<!--												</span>-->
+										<b-col cols="2">
+											<b-row class="p-2">
+												<select-prognostic-outcome
+													v-if="type.type_of_evidence === 'Prognostic'"
+													v-model="currentReviews.data[idx][1][index].effect"
+													@input="
+														onChange(
+															{
+																annotatedEffect: type.effect,
+																annotatedTier: type.tier,
+															},
+															currentReviews.data[idx][1][index]
+														)
+													"
+													:disabled="
+														not_annotated || submitted
+													"></select-prognostic-outcome>
+												<select-diagnostic-outcome
+													v-if="type.type_of_evidence === 'Diagnostic'"
+													v-model="currentReviews.data[idx][1][index].effect"
+													@input="
+														onChange(
+															{
+																annotatedEffect: type.effect,
+																annotatedTier: type.tier,
+															},
+															currentReviews.data[idx][1][index]
+														)
+													"
+													:disabled="
+														not_annotated || submitted
+													"></select-diagnostic-outcome>
+												<select-predictive-therapeutic-outcome
+													v-if="
+														type.type_of_evidence === 'Predictive / Therapeutic'
+													"
+													v-model="currentReviews.data[idx][1][index].effect"
+													@input="
+														onChange(
+															{
+																annotatedEffect: type.effect,
+																annotatedTier: type.tier,
+															},
+															currentReviews.data[idx][1][index]
+														)
+													"
+													:disabled="
+														not_annotated || submitted
+													"></select-predictive-therapeutic-outcome>
+											</b-row>
+											<b-row class="p-2">
+												<select-tier
+													v-if="
+														['Prognostic', 'Diagnostic'].includes(
+															type.type_of_evidence
+														)
+													"
+													v-model="currentReviews.data[idx][1][index].tier"
+													@input="
+														onChange(
+															{
+																annotatedEffect: type.effect,
+																annotatedTier: type.tier,
+															},
+															currentReviews.data[idx][1][index]
+														)
+													"
+													:disabled="not_annotated || submitted"></select-tier>
+												<select-therapeutic-tier
+													v-if="
+														type.type_of_evidence === 'Predictive / Therapeutic'
+													"
+													v-model="currentReviews.data[idx][1][index].tier"
+													@input="
+														onChange(
+															{
+																annotatedEffect: type.effect,
+																annotatedTier: type.tier,
+															},
+															currentReviews.data[idx][1][index]
+														)
+													"
+													:disabled="
+														not_annotated || submitted
+													"></select-therapeutic-tier>
+											</b-row>
+										</b-col>
+										<b-col cols="1" align="center">
+											<b-row class="justify-content-center">Review status</b-row>
+											<b-row class="justify-content-center">
+												<span
+													v-for="(review, review_idx) in type.curation_reviews"
+													:key="'review' + review_idx">
+													<span v-if="review.acceptance !== null">
+														<b-icon
+															class="h4 mb-2 m-1"
+															:style="displayColor(review.acceptance)"
+															:icon="displayIcon(review.acceptance)"></b-icon>
+													</span>
+												</span>
 
-										<!--												<b-icon-->
-										<!--													class="h4 mb-2 m-1"-->
-										<!--													:style="displayColor(evidence.currentReview.status)"-->
-										<!--													:icon="-->
-										<!--														displayIcon(evidence.currentReview.status)-->
-										<!--													"></b-icon>-->
+												<b-icon
+													class="h4 mb-2 m-1"
+													:style="
+														displayColor(
+															currentReviews.data[idx][1][index].acceptance
+														)
+													"
+													:icon="
+														displayIcon(
+															currentReviews.data[idx][1][index].acceptance
+														)
+													"></b-icon>
 
-										<!--												<span v-for="(review, key) in evidence.reviews" :key="key">-->
-										<!--													<span v-if="review.status === null">-->
-										<!--														<b-icon-->
-										<!--															class="h4 mb-2 m-1"-->
-										<!--															:style="displayColor(review.status)"-->
-										<!--															:icon="displayIcon(review.status)"></b-icon>-->
-										<!--													</span>-->
-										<!--												</span>-->
-										<!--											</b-row>-->
-										<!--										</b-col>-->
-										<!--										<b-col cols="4">-->
-										<!--											<b-textarea-->
-										<!--												:disabled="-->
-										<!--													evidence.currentReview.status ||-->
-										<!--													not_annotated ||-->
-										<!--													submitted-->
-										<!--												"-->
-										<!--												class="summary-box"-->
-										<!--												rows="3"-->
-										<!--												placeholder="Comment..."-->
-										<!--												v-model="evidence.currentReview.comment"></b-textarea>-->
-										<!--										</b-col>-->
+												<span
+													v-for="(review, key) in type.curation_reviews"
+													:key="key">
+													<span v-if="review.acceptance === null">
+														<b-icon
+															class="h4 mb-2 m-1"
+															:style="displayColor(review.acceptance)"
+															:icon="displayIcon(review.acceptance)"></b-icon>
+													</span>
+												</span>
+											</b-row>
+										</b-col>
+										<b-col cols="3">
+											<b-textarea
+												:disabled="
+													currentReviews.data[idx][1][index].acceptance ||
+													not_annotated ||
+													submitted
+												"
+												class="summary-box"
+												rows="3"
+												placeholder="Comment..."
+												v-model="
+													currentReviews.data[idx][1][index].comment
+												"></b-textarea>
+										</b-col>
 									</b-row>
 								</b-card-text>
 
-								<!--								<transition name="slide-fade">-->
-								<!--									<div v-if="expander_array[idx].evidences[index]">-->
-								<!--										<b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">-->
-								<!--											<b-row-->
-								<!--												align-v="center"-->
-								<!--												v-for="(curation, i) in evidence.curations"-->
-								<!--												:key="'curation' + i">-->
-								<!--												<b-col class="p-2">-->
-								<!--													PMID:-->
-								<!--													<b-link-->
-								<!--														target="_blank"-->
-								<!--														active-->
-								<!--														:href="`https://pubmed.ncbi.nlm.nih.gov/${curation.pmid}`">-->
-								<!--														{{ curation.pmid }}-->
-								<!--													</b-link>-->
-								<!--												</b-col>-->
-								<!--												<b-col class="p-2">"{{ curation.effect }}"</b-col>-->
-								<!--												<b-col class="p-2">-->
-								<!--													{{ curation.tier }}-->
-								<!--												</b-col>-->
-								<!--												<b-col class="p-2">-->
-								<!--													Support:-->
-								<!--													{{ curation.support }}-->
-								<!--												</b-col>-->
-								<!--												<b-col class="p-2">-->
-								<!--													<b-link-->
-								<!--														:to="{-->
-								<!--															name: 'view-evidence',-->
-								<!--															params: {-->
-								<!--																action: curation.id,-->
-								<!--															},-->
-								<!--														}"-->
-								<!--														target="_blank"-->
-								<!--														alt="Link to evidence">-->
-								<!--														Curation entry #{{ curation.id }}-->
-								<!--													</b-link>-->
-								<!--												</b-col>-->
+								<transition name="slide-fade">
+									<div v-if="expander_array[idx].curation_entries[index]">
+										<b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+											<table class="table table-responsive-lg">
+												<th class="bg-light">PMID</th>
+												<th class="bg-light">Effect</th>
+												<th class="bg-light">Tier level</th>
+												<th class="bg-light">Support</th>
+												<th class="bg-light">ID</th>
+												<th class="bg-light">Comment</th>
 
-								<!--												<b-col class="p-2" cols="6">-->
-								<!--													{{ curation.comment }}-->
-								<!--												</b-col>-->
-								<!--											</b-row>-->
-								<!--										</b-card-footer>-->
-								<!--									</div>-->
-								<!--								</transition>-->
+												<tr v-for="(curation, i) in type.curation_entries" :key="i">
+													<td>
+														<b-link
+															target="_blank"
+															active
+															:href="`https://pubmed.ncbi.nlm.nih.gov/${
+																curation.references.split(':')[1]
+															}`">
+															{{ curation.references }}
+														</b-link>
+													</td>
+													<td>{{ curation.effect }}</td>
+													<td>{{ curation.tier_level_criteria }}</td>
+													<td>{{ curation.support }}</td>
+													<td>
+														<b-link
+															:to="{
+																name: 'view-evidence',
+																params: {action: curation.id},
+															}"
+															target="_blank"
+															alt="Link to evidence">
+															Curation entry #{{ curation.id }}
+														</b-link>
+													</td>
+													<td>{{ curation.comment }}</td>
+												</tr>
+											</table>
+										</b-card-footer>
+									</div>
+								</transition>
 							</div>
 						</transition>
 					</b-card-body>
-					<hr v-if="expander_array[idx].disease" />
+					<hr
+						v-if="
+							idx < submissionEntry[1].length - 1 &&
+							!expander_array[idx].curation_entries[index]
+						" />
 				</div>
 			</b-card>
 		</div>
@@ -200,7 +241,7 @@
 			<b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
 				Finish later
 			</b-button>
-			<!--<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">-->
+
 			<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
 				Submit review
 			</b-button>
@@ -253,22 +294,28 @@ export default {
 			selfReviewedEvidences: {},
 			summary: null,
 			history_entry_id: null,
-
 			loading: false,
 			error: null,
 			channel: new BroadcastChannel('curation-update'),
 			expander_array: [],
 			evidence_counter: 0,
-
 			not_annotated: false,
 			submitted: false,
+			currentReviews: {
+				data: [],
+			},
 		};
 	},
 	created() {
 		// Watch if user is going to leave the page
 		window.addEventListener('beforeunload', this.beforeWindowUnload);
 		this.submissionEntries = Object.entries(
-			groupBy(this.variant.submission_entries, item => item.disease.name)
+			groupBy(
+				this.variant.submission_entries.filter(i =>
+					['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
+				),
+				item => item.disease.name
+			)
 		);
 		this.getExpanderArray();
 
@@ -288,13 +335,37 @@ export default {
 				this.$refs.paged_table.refresh();
 			}
 		};
+		this.createCurrentReviews();
 	},
+
 	computed: {
 		...mapGetters({
 			user: 'currentUser',
 		}),
 	},
 	methods: {
+		createCurrentReviews() {
+			let result = this.submissionEntries.map(i => {
+				let types = i[1].map(item => {
+					return {
+						submission_entry: item.id,
+						effect: item.effect,
+						tier: item.tier,
+						type_of_evidence: item.type_of_evidence,
+						reviewer: this.user.user_id,
+						drug: item.drug,
+						disease: item.disease.id,
+						variant: item.variant.id,
+						acceptance: true,
+						comment: null,
+						draft: true,
+					};
+				});
+				return [i[0], types];
+			});
+
+			this.currentReviews.data = result;
+		},
 		getCurationEntriesProperties(curation_entries, property) {
 			let grouped_curation_entries = groupBy(curation_entries, entry => entry[property]);
 			return Object.entries(grouped_curation_entries).map(i => {
@@ -307,10 +378,7 @@ export default {
 				for (const i of entry[1]) {
 					curation_entries.push(false);
 				}
-				this.expander_array.push({
-					disease: true,
-					curation_entries: curation_entries,
-				});
+				this.expander_array.push({disease: true, curation_entries: curation_entries});
 			});
 		},
 		beforeWindowUnload(e) {
@@ -340,46 +408,31 @@ export default {
 			});
 		},
 		getReviewData() {
-			const params = {
-				reviewer: this.user.user_id,
-				var_id: this.variant.id,
-			};
-			HTTP.post(`/review_data`, params)
-				.then(response => {
-					//this.diseases = response.data.review_data
-
-					console.log('review_data', JSON.stringify(response.data.review_data));
-					this.detectOwnReviews(response.data.review_data);
-					this.changeReviewStatusCheckboxes(this.diseases);
-				})
-				.catch(err => {
-					log.warn(err);
-					this.$snotify.error('Failed to fetch data');
-				});
+			// const params = {
+			// 	reviewer: this.user.user_id,
+			// 	var_id: this.variant.id,
+			// };
+			// HTTP.post(`/review_data`, params)
+			// 	.then(response => {
+			// 		console.log('review_data', JSON.stringify(response.data.review_data));
+			// 		this.detectOwnReviews(response.data.review_data);
+			// 		this.changeReviewStatusCheckboxes(this.diseases);
+			// 	})
+			// 	.catch(err => {
+			// 		log.warn(err);
+			// 		this.$snotify.error('Failed to fetch data');
+			// 	});
 		},
-		displayIcon(status) {
-			if (status === true) {
-				return 'check-square-fill';
-			}
-			if (status === false) {
-				return 'x-square-fill';
-			}
-			return 'square';
+		displayIcon(acceptance) {
+			return acceptance === true ? 'check-square-fill' : acceptance === false ? 'x-square-fill' : '';
 		},
-		displayColor(status) {
-			if (status === true) {
-				return 'color:blue;';
-			}
-			if (status === false) {
-				return 'color:red;';
-			}
-			return '';
+		displayColor(acceptance) {
+			return acceptance === true ? 'color:blue;' : acceptance === false ? 'color:red;' : '';
 		},
 		onChange(curatorValues, reviewerValues) {
-			// change review status (true if option matches that of curator, false if doesn't match)
-			reviewerValues.status =
-				curatorValues.annotatedEffect === reviewerValues.annotatedEffect &&
-				curatorValues.annotatedTier === reviewerValues.annotatedTier;
+			reviewerValues.acceptance =
+				curatorValues.annotatedEffect === reviewerValues.effect &&
+				curatorValues.annotatedTier === reviewerValues.tier;
 		},
 		changeReviewStatusCheckboxes() {
 			this.diseases.map(disease => {
@@ -445,21 +498,17 @@ export default {
 			this.evidence_counter = evidence_counter;
 		},
 		missingComment() {
+			const regExp = /[a-zA-Z]/g;
 			// return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
-			for (var i = 0; i < this.diseases.length; i++) {
-				const disease = this.diseases[i];
-				for (var j = 0; j < disease['evidences'].length; j++) {
-					const evidence = disease['evidences'][j];
-					if (!evidence.currentReview.status) {
-						// review doesn't match curator's annotation
-						const regExp = /[a-zA-Z]/g;
-						if (
-							evidence.currentReview.comment === null ||
-							!regExp.test(evidence.currentReview.comment)
-						) {
-							// no letter was found in the comment string
-							return true;
-						}
+			for (const [entry, index] of this.submissionEntries) {
+				for (const [type, i] of entry[1]) {
+					if (
+						(type.effect !== this.currentReview[index][1][i].effect ||
+							type.tier !== this.currentReview[index][1][i].tier) &&
+						(this.currentReview[index][1][i].comment === null ||
+							!regExp.test(this.currentReview[index][1][i].comment))
+					) {
+						return true;
 					}
 				}
 			}
@@ -467,7 +516,6 @@ export default {
 		},
 		submitReviews(draft) {
 			// draft is a boolean that indicates whether the data is to be saved as a draft
-
 			if (!draft && this.missingComment()) {
 				this.$snotify.error(
 					'Please enter a comment for every review conflicting with that of curators',
@@ -476,7 +524,6 @@ export default {
 				);
 				return false;
 			}
-
 			let evidences_data = [];
 
 			// iterate over every review
@@ -510,10 +557,6 @@ export default {
 						this.$snotify.success('Your review is saved as a draft.');
 					} else {
 						this.$snotify.success('Your reviews for this variant have been submitted.');
-
-						// setTimeout(function(){
-						// window.location.href = "/curation/dashboard";
-						// }, 2000);
 					}
 					this.getReviewData();
 					this.submitted = true;

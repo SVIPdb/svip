@@ -655,45 +655,6 @@ def get_diseases():
     pass
 
 
-# class DashboardReviews(APIView):
-#     def get(self, request):
-#         results = []
-#         var_ids = []
-#
-#         # for var in Variant.objects.filter(curation_entries__isnull=False):
-#         #         print("stage_new", v.stage)
-#
-#         for association in CurationAssociation.objects.all():
-#             var = association.variant
-#             print("stage_old", var.stage)
-#             print()
-#
-#             if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
-#                 variant_obj = {
-#                     'gene_id': var.gene.id,
-#                     'variant_id': var.id,
-#                     'gene_name': var.gene.symbol,
-#                     'variant': var.name,
-#                     'hgvs': var.hgvs_c,
-#                     'disease': association.disease.name if association.disease else None,
-#                     'status': 'Ongoing',
-#                     'deadline': 'n/a',
-#                     'requester': '',
-#                     'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
-#                                 var.curation_entries.distinct('owner')],
-#                     'review_count': review_count(var),
-#                     'reviews': reviews(var),
-#                     'stage': var.stage,
-#                     'reviewers_id': reviewers(var),
-#
-#                 }
-#                 results.append(variant_obj)
-#                 var_ids.append(var.id)
-#         return Response(
-#             data={
-#                 "reviews": results
-#             }
-#         )
 
 
 class ReviewDataView(APIView):

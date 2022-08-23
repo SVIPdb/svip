@@ -732,8 +732,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     gene = SimpleGeneSerializer()
     curation_entries = CurationEntrySerializer(many=True, required=False)
 
-    review_count = serializers.SerializerMethodField()
-    reviews = serializers.SerializerMethodField()
+    # review_count = serializers.SerializerMethodField()
+    # reviews = serializers.SerializerMethodField()
 
     def to_internal_value(self, data):
         from api.utils import to_dict
@@ -759,23 +759,23 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
         except ValueError:
             return super().to_internal_value(data)
 
-    @staticmethod
-    def get_review_count(obj):
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-            curation_entry = obj.curation_entries.first()
-            return curation_entry.curation_reviews.count()
-        else:
-            return 0
-
-    @staticmethod
-    def get_reviews(obj):
-        reviews = []
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_annotated']:
-            curation_entry = obj.curation_entries.first()
-            if curation_entry.curation_reviews.count() > 0:
-                for review in curation_entry.curation_reviews.all():
-                    reviews.append(review.match())
-        return reviews
+    # @staticmethod
+    # def get_review_count(obj):
+    #     if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+    #         curation_entry = obj.curation_entries.first()
+    #         return curation_entry.curation_reviews.count()
+    #     else:
+    #         return 0
+    #
+    # @staticmethod
+    # def get_reviews(obj):
+    #     reviews = []
+    #     if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_annotated']:
+    #         curation_entry = obj.curation_entries.first()
+    #         if curation_entry.curation_reviews.count() > 0:
+    #             for review in curation_entry.curation_reviews.all():
+    #                 reviews.append(review.match())
+    #     return reviews
 
     class Meta:
         model = Variant
@@ -786,8 +786,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'description',
             'hgvs_c',
-            'review_count',
-            'reviews',
+            # 'review_count',
+            # 'reviews',
             'stage',
             'curation_entries'
         )
