@@ -525,22 +525,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
         }
 
 
-class SubmissionEntrySerializer(serializers.ModelSerializer):
-    variant = SimpleVariantSerializer()
-    curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
-    owner = serializers.PrimaryKeyRelatedField(
-        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
-    disease = DiseaseSerializer(
-        required=False, allow_null=True, read_only=True)
-
-    class Meta:
-        model = SubmissionEntry
-        fields = '__all__'
-        read_only_fields = ['id']
-
-
 class CurationReviewSerializer(serializers.ModelSerializer):
-    submission_entry = SubmissionEntrySerializer(required=False, source='submissionentry_set')
+    # submission_entry = SubmissionEntrySerializer(required=False, source='submissionentry_set')
     reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
 
     class Meta:
@@ -557,6 +543,21 @@ class RevisedReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = RevisedReview
         fields = '__all__'
+
+
+class SubmissionEntrySerializer(serializers.ModelSerializer):
+    variant = SimpleVariantSerializer()
+    curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
+    curation_reviews = CurationReviewSerializer(many=True, required=False)
+    owner = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    disease = DiseaseSerializer(
+        required=False, allow_null=True, read_only=True)
+
+    class Meta:
+        model = SubmissionEntry
+        fields = '__all__'
+        read_only_fields = ['id']
 
 
 # ================================================================================================================

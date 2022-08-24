@@ -372,8 +372,10 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
-        for obj in request.data:
-            self.__save_review_obj(obj)
+        print('!!!!!!!!!!!!!!!!!!!',request.data)
+        for item in request.data['data']:
+            for obj in item[1]:
+                self.__save_review_obj(obj)
         return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
 
 

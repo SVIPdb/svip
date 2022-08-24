@@ -156,13 +156,14 @@
 													"></b-icon>
 
 												<span
-													v-for="(review, key) in type.curation_reviews"
-													:key="key">
-													<span v-if="review.acceptance === null">
+													v-if="type.curation_reviews.length < 2"
+													v-for="i in 2 - type.curation_reviews.length"
+													:key="i + ' icon'">
+													<span>
 														<b-icon
 															class="h4 mb-2 m-1"
-															:style="displayColor(review.acceptance)"
-															:icon="displayIcon(review.acceptance)"></b-icon>
+															:style="displayColor(null)"
+															:icon="displayIcon(null)"></b-icon>
 													</span>
 												</span>
 											</b-row>
@@ -298,7 +299,6 @@ export default {
 			error: null,
 			channel: new BroadcastChannel('curation-update'),
 			expander_array: [],
-			evidence_counter: 0,
 			not_annotated: false,
 			submitted: false,
 			currentReviews: {
@@ -344,27 +344,12 @@ export default {
 		}),
 	},
 
-	// def __save_review_obj(self, obj):
-	// if 'id' in obj:
-	//     review = CurationReview.objects.get(id=obj['id'])
-	// else:
-	//     review = CurationReview()
-	// review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
-	// review.annotated_effect = obj['annotated_effect']
-	// review.annotated_tier = obj['annotated_tier']
-	// review.comment = obj['comment']
-	// review.draft = obj['draft']
-	// review.reviewer = User.objects.get(id=obj['reviewer'])
-	// review.save()
-	//
-	//
-
 	methods: {
 		createCurrentReviews() {
 			let result = this.submissionEntries.map(i => {
 				let types = i[1].map(item => {
 					return {
-						submission_entry: item.id,
+						submission_entry: parseInt(item.id),
 						effect: item.effect,
 						tier: item.tier,
 						reviewer: this.user.user_id,
@@ -402,7 +387,7 @@ export default {
 		},
 		submitOptions() {
 			this.$confirm({
-				message: `You are about to submit permanently the reviews for each of the ${this.evidence_counter} evidences of this variant. Are you sure?`,
+				message: `You are about to submit permanently the reviews for the evidences of this variant. Are you sure?`,
 				button: {
 					yes: 'Submit permanently',
 					no: 'Cancel',
@@ -414,6 +399,7 @@ export default {
 				callback: confirm => {
 					if (confirm) {
 						// save as a draft
+						alert('submitting!');
 						this.submitReviews(false);
 					}
 				},
@@ -436,7 +422,11 @@ export default {
 			// 	});
 		},
 		displayIcon(acceptance) {
-			return acceptance === true ? 'check-square-fill' : acceptance === false ? 'x-square-fill' : '';
+			return acceptance === true
+				? 'check-square-fill'
+				: acceptance === false
+				? 'x-square-fill'
+				: 'square';
 		},
 		displayColor(acceptance) {
 			return acceptance === true ? 'color:blue;' : acceptance === false ? 'color:red;' : '';
@@ -486,7 +476,7 @@ export default {
 					}
 
 					if (typeof evidence.currentReview === 'undefined') {
-						let currentReviewObj = {
+						evidence['currentReview'] = {
 							id: evidence.id,
 							annotatedEffect: evidence.curator.annotatedEffect,
 							annotatedTier: evidence.curator.annotatedTier,
@@ -494,7 +484,6 @@ export default {
 							status: null,
 							comment: null,
 						};
-						evidence['currentReview'] = currentReviewObj;
 					}
 
 					evidence_counter += 1;
@@ -510,15 +499,17 @@ export default {
 			this.evidence_counter = evidence_counter;
 		},
 		missingComment() {
+			console.log(JSON.stringify(this.submissionEntries));
+
 			const regExp = /[a-zA-Z]/g;
 			// return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
-			for (const [entry, index] of this.submissionEntries) {
-				for (const [type, i] of entry[1]) {
+			for (const [index, entry] of this.submissionEntries.entries()) {
+				for (const [i, type] of entry[1].entries()) {
 					if (
-						(type.effect !== this.currentReview[index][1][i].effect ||
-							type.tier !== this.currentReview[index][1][i].tier) &&
-						(this.currentReview[index][1][i].comment === null ||
-							!regExp.test(this.currentReview[index][1][i].comment))
+						(type.effect !== this.currentReviews.data[index][1][i].effect ||
+							type.tier !== this.currentReviews.data[index][1][i].tier) &&
+						(this.currentReviews.data[index][1][i].comment === null ||
+							!regExp.test(this.currentReviews.data[index][1][i].comment))
 					) {
 						return true;
 					}
@@ -536,33 +527,8 @@ export default {
 				);
 				return false;
 			}
-			let evidences_data = [];
 
-			// iterate over every review
-			this.diseases.map(disease => {
-				disease.evidences.map(evidence => {
-					if (
-						// check that dropdown options have been selected
-						evidence.currentReview.annotatedEffect !== 'Not yet annotated' &&
-						evidence.currentReview.annotatedTier !== 'Not yet annotated'
-					) {
-						let evidence_obj = {};
-						if (evidence.id in this.selfReviewedEvidences) {
-							evidence_obj = this.reviewParams(
-								evidence,
-								draft,
-								this.selfReviewedEvidences[evidence.id]
-							);
-						} else {
-							evidence_obj = this.reviewParams(evidence, draft);
-						}
-
-						evidences_data.push(evidence_obj);
-					}
-				});
-			});
-
-			HTTP.post(`/reviews`, evidences_data)
+			HTTP.post(`/reviews/bulk_submit`, this.currentReviews)
 				.then(response => {
 					console.log(`response: ${response.data}`);
 					if (draft) {
@@ -579,22 +545,7 @@ export default {
 				});
 
 			// Reset fields
-			this.isEditMode = false;
-		},
-		reviewParams(evidence, draft, id = null) {
-			// prepare a JSON containing parameters for CurationReview model
-			const singleReviewJSON = {
-				curation_evidence: evidence.id,
-				reviewer: this.user.user_id,
-				annotated_effect: evidence.currentReview.annotatedEffect,
-				annotated_tier: evidence.currentReview.annotatedTier,
-				comment: evidence.currentReview.comment,
-				draft: draft,
-			};
-			if (id !== null) {
-				singleReviewJSON['id'] = id;
-			}
-			return singleReviewJSON;
+			//this.isEditMode = false;
 		},
 	},
 };
