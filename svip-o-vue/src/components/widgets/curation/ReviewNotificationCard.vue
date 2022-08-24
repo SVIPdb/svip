@@ -1,6 +1,5 @@
 <template>
 	<b-card class="shadow-sm mb-3" align="left" no-body>
-		{{ items }}
 		<b-card-header
 			v-if="isReviewer"
 			class="p-1"
@@ -71,7 +70,7 @@
 						v-model="statusMyReview"
 						name="checkbox-1"
 						value="my"
-						unchecked-value="not_mine">
+						unchecked-value="all">
 						My reviews
 					</b-form-checkbox>
 				</div>
@@ -92,7 +91,7 @@
 		<b-card-body v-if="isReviewer" class="p-0">
 			<b-table
 				class="mb-0"
-				:items="items"
+				:items="filteredReviewItems"
 				:fields="fields"
 				:filter="filter"
 				:sort-by.sync="sortBy"
@@ -390,37 +389,34 @@ export default {
 		}),
 
 		filteredReviewItems() {
-			let items = this.items;
+			let items =
+				this.statusMyReview === 'my'
+					? this.items.filter(item => item.reviewers.includes(this.user.user_id))
+					: this.items;
 
-			if (this.statusMyReview === 'my') {
-				items = items.filter(item => item.reviewers_id.includes(this.user.user_id));
-			}
-
-			if (this.statusReviewFilter === 'conflicting') {
-				items = items.filter(item => {
-					return item.stage === 'conflicting_reviews';
-				});
-			}
-			if (this.statusReviewFilter === 'finished') {
-				items = items.filter(item => {
-					return item.review_count === 3 && item.reviews.reduce((a, b) => a + b, 0) >= 2;
-				});
-			}
-			if (this.statusReviewFilter === 'process') {
-				items = items.filter(item => item.review_count !== 3);
-			}
-
-			if (this.statusReviewFilter === 'new') {
-				items = items.filter(item => item.review_count === 0);
-			}
-
-			if (this.review_cycle === 'First review cycle') {
-				return items.filter(item => item.stage !== 'to_review_again');
-			} else {
-				return items.filter(item => item.stage === 'to_review_again');
+			switch (this.statusReviewFilter) {
+				case 'process':
+					items = items.filter(item => item.review_count !== 3);
+					break;
+				case 'new':
+					items = items.filter(item => item.review_count === 0);
+					break;
+				case 'finished':
+					items = items.filter(item => {
+						return (
+							item.review_count === 3 && item.reviews_summary.reduce((a, b) => a + b, 0) >= 2
+						);
+					});
+					break;
+				case 'conflicting':
+					items = items.filter(item => {
+						return item.stage === 'unapproved';
+					});
 			}
 
-			return items;
+			return this.review_cycle === 'First review cycle'
+				? items.filter(item => item.stage !== 'reannotated')
+				: items.filter(item => item.stage === 'reannotated');
 		},
 
 		totalRows() {

@@ -16,7 +16,7 @@ export const parseVariantsForReview = items => {
 			action: 'No action',
 			reviews_summary: item.reviews_summary,
 			reviewers: item.reviewers,
-			review_cont: item.review_count,
+			review_count: item.review_count,
 		};
 	});
 };

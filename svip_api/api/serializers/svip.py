@@ -526,7 +526,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
 
 class CurationReviewSerializer(serializers.ModelSerializer):
-    # submission_entry = SubmissionEntrySerializer(required=False, source='submissionentry_set')
     reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
 
     class Meta:

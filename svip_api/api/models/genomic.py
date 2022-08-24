@@ -193,7 +193,8 @@ class Variant(models.Model):
                     return VARIANT_STAGE.unapproved
                 elif positive_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
                     return VARIANT_STAGE.approved
-
+        if any([curation_entry.status == 'resubmitted' for curation_entry in self.curation_entries.all()]):
+            return VARIANT_STAGE.reannotated
         if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
             return VARIANT_STAGE.annotated
         elif self.curation_entries.count() > 0:
