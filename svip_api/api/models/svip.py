@@ -725,8 +725,7 @@ class CurationReview(SVIPModel):
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    status = models.TextField(verbose_name="Review Status", choices=REVIEW_STATUS.get_choices(), default='pending',
-                              db_index=True)
+    acceptance = models.BooleanField(default=True)
 
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)

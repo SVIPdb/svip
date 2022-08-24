@@ -343,6 +343,22 @@ export default {
 			user: 'currentUser',
 		}),
 	},
+
+	// def __save_review_obj(self, obj):
+	// if 'id' in obj:
+	//     review = CurationReview.objects.get(id=obj['id'])
+	// else:
+	//     review = CurationReview()
+	// review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
+	// review.annotated_effect = obj['annotated_effect']
+	// review.annotated_tier = obj['annotated_tier']
+	// review.comment = obj['comment']
+	// review.draft = obj['draft']
+	// review.reviewer = User.objects.get(id=obj['reviewer'])
+	// review.save()
+	//
+	//
+
 	methods: {
 		createCurrentReviews() {
 			let result = this.submissionEntries.map(i => {
@@ -351,11 +367,7 @@ export default {
 						submission_entry: item.id,
 						effect: item.effect,
 						tier: item.tier,
-						type_of_evidence: item.type_of_evidence,
 						reviewer: this.user.user_id,
-						drug: item.drug,
-						disease: item.disease.id,
-						variant: item.variant.id,
 						acceptance: true,
 						comment: null,
 						draft: true,

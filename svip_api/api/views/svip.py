@@ -351,12 +351,15 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         else:
             review = CurationReview()
         review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
-        review.annotated_effect = obj['annotated_effect']
-        review.annotated_tier = obj['annotated_tier']
+        review.annotated_effect = obj['effect']
+        review.annotated_tier = obj['tier']
         review.comment = obj['comment']
         review.draft = obj['draft']
         review.reviewer = User.objects.get(id=obj['reviewer'])
+        review.acceptance = obj['acceptance']
         review.save()
+
+
 
     def get_queryset(self):
         queryset = CurationReview.objects.all()

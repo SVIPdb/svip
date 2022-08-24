@@ -94,11 +94,12 @@ class CurationReviewApi(TestCase):
     def test_submit_curation_review(self):
         submission_entry = create_submission_entry()
         payload = {'submission_entry': submission_entry.id,
-                   'annotated_effect': 'Poor outcome',
-                   'annotated_tier': 'IID Tier',
+                   'effect': 'Poor outcome',
+                   'tier': 'IID Tier',
                    'comment': 'Some comment',
                    'draft': True,
-                   'reviewer': self.user.id}
+                   'reviewer': self.user.id,
+                   'acceptance': True}
         res = self.client.post(URL_SUBMIT_CURATION_REVIEW, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
