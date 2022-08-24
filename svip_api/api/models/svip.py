@@ -404,15 +404,14 @@ class DiseaseInSVIP(SVIPModel):
 # === Curation
 # ================================================================================================================
 
-class SUBMISSION_STATUS(ModelChoice):
-    annotation_in_progress = "annotation_in_progress"
-    submitted = "submitted"
-    review_in_progress = "review_in_progress"
-    approved = "approved"
-    to_be_reannotated = "to_be_reannotated"
-    reannotation_in_progress = "reannotation_in_progress"
-    resubmitted = "resubmitted"
-    on_hold = "on_hold"
+
+class SubmissionEntryManager(models.Manager):
+    evidence_type_category_lookup = {
+        'diagnostic': ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]}
+
+    def get_by_evidence_type_category(self, category):
+        qset = self.get_queryset()
+        return qset.filter(type_of_evidence__in=self.evidence_type_category_lookup[category])
 
 
 class SubmissionEntry(models.Model):
@@ -425,7 +424,7 @@ class SubmissionEntry(models.Model):
     related_name = 'submission_entries'
     variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, related_name=related_name)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                null=True, on_delete=models.SET_NULL)
+                              null=True, on_delete=models.SET_NULL)
 
     disease = models.ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
@@ -434,14 +433,6 @@ class SubmissionEntry(models.Model):
     drug = models.TextField(null=True)
     effect = models.TextField(default="Not yet annotated")
     tier = models.TextField(default="Not yet annotated")
-
-
-
-
-
-    # TODO: calculate stage based on the number of reviews
-    def submission_stage(self):
-        return 'annotation_in_progress'
 
 
 class CURATION_STATUS(ModelChoice):

@@ -182,11 +182,10 @@ class Variant(models.Model):
 
     @property
     def stage(self):
-        for submission_entry in self.submission_entries.all():  # TODO: get only clinically relevant entries
-
+        for submission_entry in self.submission_entries.get_by_evidence_type_category('diagnostic'):
             review_count = submission_entry.curation_reviews.count()
             if review_count:
-                positive_review_count = submission_entry.curation_reviews.by_status('accepted').count()
+                positive_review_count = submission_entry.curation_reviews.filter(acceptance=True).count()
                 if 0 < review_count < self.REVIEW_COUNT:
                     return VARIANT_STAGE.ongoing_review
                 elif review_count == self.REVIEW_COUNT and positive_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
@@ -206,17 +205,17 @@ class Variant(models.Model):
     @property
     def public_stage(self):
         stage = self.stage
-        if stage in ['none']:
+        if stage in VARIANT_STAGE.none:
             return 'None'
-        elif stage in ['loaded']:
+        elif stage in VARIANT_STAGE.loaded:
             return 'Loaded'
-        elif stage in ['ongoing_curation']:
+        elif stage in VARIANT_STAGE.ongoing_curation:
             return 'In progress'
-        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+        elif stage in [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved, VARIANT_STAGE.reannotated]:
             return 'Annotated'
-        elif stage in ['on_hold']:
+        elif stage in VARIANT_STAGE.on_hold:
             return 'On hold'
-        elif stage in ['fully_reviewed']:
+        elif stage in VARIANT_STAGE.approved:
             return 'Approved'
 
     @property
