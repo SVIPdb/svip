@@ -239,9 +239,9 @@
 			</b-card>
 		</div>
 		<div class="float-right">
-			<b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
-				Finish later
-			</b-button>
+			<!--			<b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">-->
+			<!--				Finish later-->
+			<!--			</b-button>-->
 
 			<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
 				Submit review
@@ -405,22 +405,6 @@ export default {
 				},
 			});
 		},
-		getReviewData() {
-			// const params = {
-			// 	reviewer: this.user.user_id,
-			// 	var_id: this.variant.id,
-			// };
-			// HTTP.post(`/review_data`, params)
-			// 	.then(response => {
-			// 		console.log('review_data', JSON.stringify(response.data.review_data));
-			// 		this.detectOwnReviews(response.data.review_data);
-			// 		this.changeReviewStatusCheckboxes(this.diseases);
-			// 	})
-			// 	.catch(err => {
-			// 		log.warn(err);
-			// 		this.$snotify.error('Failed to fetch data');
-			// 	});
-		},
 		displayIcon(acceptance) {
 			return acceptance === true
 				? 'check-square-fill'
@@ -536,7 +520,6 @@ export default {
 					} else {
 						this.$snotify.success('Your reviews for this variant have been submitted.');
 					}
-					this.getReviewData();
 					this.submitted = true;
 				})
 				.catch(err => {
