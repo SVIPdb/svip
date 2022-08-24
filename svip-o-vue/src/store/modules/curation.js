@@ -17,7 +17,7 @@ const actions = {
 				commit('SET_VARIANTS_FOR_REVIEW', parseVariantsForReview(res.data.results));
 			})
 			.catch(err => {
-				log.warn(err);
+				console.log(err);
 			});
 	},
 };

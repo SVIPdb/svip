@@ -732,9 +732,11 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
 class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     gene = SimpleGeneSerializer()
     curation_entries = CurationEntrySerializer(many=True, required=False)
+    submission_entries = SubmissionEntrySerializer(many=True, required=False)
 
-    # review_count = serializers.SerializerMethodField()
-    # reviews = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
+    reviews_summary = serializers.SerializerMethodField()
+    reviewers = serializers.SerializerMethodField()
 
     def to_internal_value(self, data):
         from api.utils import to_dict
@@ -760,23 +762,43 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
         except ValueError:
             return super().to_internal_value(data)
 
-    # @staticmethod
-    # def get_review_count(obj):
-    #     if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-    #         curation_entry = obj.curation_entries.first()
-    #         return curation_entry.curation_reviews.count()
-    #     else:
-    #         return 0
-    #
-    # @staticmethod
-    # def get_reviews(obj):
-    #     reviews = []
-    #     if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_annotated']:
-    #         curation_entry = obj.curation_entries.first()
-    #         if curation_entry.curation_reviews.count() > 0:
-    #             for review in curation_entry.curation_reviews.all():
-    #                 reviews.append(review.match())
-    #     return reviews
+    @staticmethod
+    def get_review_count(obj):
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            submission_entry = obj.submission_entries.first()
+            return submission_entry.curation_reviews.count()
+        else:
+            return 0
+
+    @staticmethod
+    def get_reviews_summary(obj):
+        reviews_summary = []
+        number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
+        if number_of_reviews:
+            for i in range(number_of_reviews):
+                positive_reviews_count = 0
+                negative_reviews_count = 0
+                for entry in obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                    if entry.curation_reviews.all()[i].acceptance:
+                        positive_reviews_count += 1
+                    else:
+                        negative_reviews_count += 1
+                if negative_reviews_count >= positive_reviews_count:
+                    reviews_summary.append(False)
+                else:
+                    reviews_summary.append(True)
+
+        return reviews_summary
+
+    @staticmethod
+    def get_reviewers(obj):
+        reviewers = []
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            submission_entry = obj.submission_entries.first()
+            if submission_entry.curation_reviews.count() > 0:
+                for review in submission_entry.curation_reviews.all():
+                    reviewers.append(review.reviewer.id)
+        return reviewers
 
     class Meta:
         model = Variant
@@ -787,10 +809,12 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'description',
             'hgvs_c',
-            # 'review_count',
-            # 'reviews',
+            'review_count',
+            'reviews_summary',
+            'reviewers',
             'stage',
-            'curation_entries'
+            'curation_entries',
+            'submission_entries'
         )
 
 

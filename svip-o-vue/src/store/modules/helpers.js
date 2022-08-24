@@ -14,6 +14,9 @@ export const parseVariantsForReview = items => {
 			status: 'No status',
 			deadline: 'No deadline',
 			action: 'No action',
+			reviews_summary: item.reviews_summary,
+			reviewers: item.reviewers,
+			review_cont: item.review_count,
 		};
 	});
 };

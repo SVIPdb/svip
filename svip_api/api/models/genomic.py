@@ -182,7 +182,8 @@ class Variant(models.Model):
 
     @property
     def stage(self):
-        for submission_entry in self.submission_entries.get_by_evidence_type_category('diagnostic'):
+
+        for submission_entry in self.submission_entries.all():
             review_count = submission_entry.curation_reviews.count()
             if review_count:
                 positive_review_count = submission_entry.curation_reviews.filter(acceptance=True).count()

@@ -22,5 +22,6 @@ from .reference import (DiseaseSerializer, DrugSerializer)
 from .svip import (
     VariantInSVIPSerializer,
     SampleSerializer,
-    CurationEntrySerializer
+    CurationEntrySerializer,
+    VariantInDashboardSerializer
 )

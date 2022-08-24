@@ -346,6 +346,7 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
     model = CurationReview
 
     def __save_review_obj(self, obj):
+
         if 'id' in obj:
             review = CurationReview.objects.get(id=obj['id'])
         else:
@@ -358,8 +359,6 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         review.reviewer = User.objects.get(id=obj['reviewer'])
         review.acceptance = obj['acceptance']
         review.save()
-
-
 
     def get_queryset(self):
         queryset = CurationReview.objects.all()
@@ -647,7 +646,6 @@ def reviewers(var):
 
 def get_diseases():
     pass
-
 
 
 class CurationIds(APIView):

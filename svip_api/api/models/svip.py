@@ -228,15 +228,6 @@ class DiseaseInSVIP(SVIPModel):
 # ================================================================================================================
 
 
-class SubmissionEntryManager(models.Manager):
-    evidence_type_category_lookup = {
-        'diagnostic': ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]}
-
-    def get_by_evidence_type_category(self, category):
-        qset = self.get_queryset()
-        return qset.filter(type_of_evidence__in=self.evidence_type_category_lookup[category])
-
-
 class SubmissionEntry(models.Model):
     """
     The entry that is being annotated and submitted: a unique combination of
@@ -513,17 +504,6 @@ class VariantCuration(SVIPModel):
         ordering = ('id',)
 
 
-class REVIEW_STATUS(ModelChoice):
-    pending = 'pending'
-    rejected = 'rejected'
-    accepted = 'accepted'
-
-
-class CurationReviewManager(models.Manager):
-    def by_status(self, status):
-        return self.get_queryset().filter(status=status)
-
-
 class CurationReview(SVIPModel):
     """
     An assignemt of a curation entry to a reviewer. Typically 3 reviewers are selected, each of whom provides a review.
@@ -541,8 +521,6 @@ class CurationReview(SVIPModel):
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
     acceptance = models.BooleanField(default=True)
 
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
     annotated_effect = models.TextField(null=True, blank=True)
     annotated_tier = models.TextField(null=True, blank=True)
     comment = models.TextField(default="", null=True, blank=True)
