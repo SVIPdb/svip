@@ -372,7 +372,6 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
-        print('!!!!!!!!!!!!!!!!!!!',request.data)
         for item in request.data['data']:
             for obj in item[1]:
                 self.__save_review_obj(obj)
@@ -649,41 +648,6 @@ def reviewers(var):
 def get_diseases():
     pass
 
-
-class ReviewDataView(APIView):
-
-    # when user accesses the review page, return the json data
-    def post(self, request, *args, **kwargs):
-
-        # create VariantInSVIP instance if doesn't exist
-        var_id = request.data.get('var_id')
-
-        if not request.data.get('only_clinical'):
-            only_clinical = False
-        else:
-            only_clinical = True
-
-        variant = Variant.objects.get(id=var_id)
-        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
-        svip_var_exists = bool(len(matching_svip_var))
-        if not svip_var_exists:
-            svip_var = VariantInSVIP(variant=variant)
-            svip_var.save()
-        else:
-            svip_var = matching_svip_var[0]
-
-        if only_clinical:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(),
-                }
-            )
-        else:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(all_evidence_types=True),
-                }
-            )
 
 
 class CurationIds(APIView):

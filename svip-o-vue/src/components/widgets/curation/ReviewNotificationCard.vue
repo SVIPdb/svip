@@ -367,20 +367,6 @@ export default {
 				return 'text-success';
 			}
 		},
-		/**
-		 * @vuese
-		 * Used to set up the correct priority depending on the days left
-		 * @arg `Number` Days left
-		 */
-		setLetter(days_left) {
-			if (days_left <= this.daysLeft.min) {
-				return 'H';
-			} else if (days_left <= this.daysLeft.max) {
-				return 'M';
-			} else {
-				return 'L';
-			}
-		},
 
 		setStatusReviewFilter(filter) {
 			this.statusReviewFilter = filter;

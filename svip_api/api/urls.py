@@ -141,7 +141,7 @@ router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
 
 
 urlpatterns = [
-    path('review_data', views.svip.ReviewDataView.as_view(), name='review_data'),
+
     path('curation_ids', views.svip.CurationIds.as_view(), name='curation_ids'),
     path('update_variant_summary', views.svip.UpdateVariantSummary.as_view(),
          name='update_variant_summary'),
