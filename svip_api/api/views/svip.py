@@ -340,36 +340,12 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
         })
 
 
-# class CurationReviewView(APIView):
-#     def post(self, request, *args, **kwargs):
-#         for obj in request.data:
-#             if 'id' in obj:
-#                 review = CurationReview.objects.get(id=obj['id'])
-#             else:
-#                 review = CurationReview()
-#             review.submission_entry = SubmissionEntry.objects.get(
-#                 id=obj['submission_entry'])
-#             review.annotated_effect = obj['annotated_effect']
-#             review.annotated_tier = obj['annotated_tier']
-#             review.comment = obj['comment']
-#             review.draft = obj['draft']
-#             review.reviewer = User.objects.get(id=obj['reviewer'])
-#             review.save()
-#         return Response(data='Submitted reviews are succesfully saved')
-
-
 class CurationReviewViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CurationReviewSerializer
     model = CurationReview
 
-    def get_queryset(self):
-        queryset = CurationReview.objects.all()
-        return queryset
-
-    @action(detail=False, methods=['POST'])
-    def submit_review(self, request):
-        obj = request.data
+    def __save_review_obj(self, obj):
         if 'id' in obj:
             review = CurationReview.objects.get(id=obj['id'])
         else:
@@ -381,6 +357,20 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         review.draft = obj['draft']
         review.reviewer = User.objects.get(id=obj['reviewer'])
         review.save()
+
+    def get_queryset(self):
+        queryset = CurationReview.objects.all()
+        return queryset
+
+    @action(detail=False, methods=['POST'])
+    def submit_review(self, request):
+        self.__save_review_obj(request.data)
+        return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['POST'])
+    def bulk_submit(self, request):
+        for obj in request.data:
+            self.__save_review_obj(obj)
         return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
 
 
@@ -653,8 +643,6 @@ def reviewers(var):
 
 def get_diseases():
     pass
-
-
 
 
 class ReviewDataView(APIView):
