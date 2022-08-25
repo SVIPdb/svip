@@ -33,8 +33,6 @@
 							{label: 'Draft', value: 'draft'},
 							{label: 'Saved', value: 'saved'},
 							{label: 'Submitted', value: 'submitted'},
-							{label: 'Unreviewed', value: 'unreviewed'},
-							{label: 'Reviewed', value: 'reviewed'},
 							{label: 'All', value: 'all'},
 						]" />
 				</div>

@@ -427,15 +427,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
             # TODO: perform more stringent validation
             # FIXME: for now we'll do validation here, but ideally it should be factored out
-            non_empty_fields = (
-                # 'disease',
-                'variant',
-                'type_of_evidence',
-                # 'effect',
-                # 'tier_level_criteria', # only required if type_of_evidence != 'Excluded'
-                # 'mutation_origin', # no longer requireds
-                # 'support',
-            )
+            non_empty_fields = ('variant', 'type_of_evidence')
 
             empty_fields = [
                 k for k in non_empty_fields if k not in data or data[k] in ('', None)]

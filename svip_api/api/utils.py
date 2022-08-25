@@ -38,6 +38,7 @@ def field_is_empty(data, field, is_array=False):
     """
     if is_array:
         return field not in data or data[field] is None or len(data[field]) == 0
+
     return field not in data or data[field] in (None, '') or data[field].strip() == ''
 
 
@@ -119,8 +120,7 @@ class ModelChoice():
             prop2='Prop2'
         
         """
-        return { k: v for k, v in cls.__dict__.items() if not k.startswith('__') }.items()
-        
+        return {k: v for k, v in cls.__dict__.items() if not k.startswith('__')}.items()
 
     @classmethod
     def get_choices(cls):
