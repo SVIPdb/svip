@@ -527,6 +527,16 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
 class CurationReviewSerializer(serializers.ModelSerializer):
     reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    reviewer_name = serializers.SerializerMethodField()
+    reviewer_email = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_reviewer_name(obj):
+        return obj.reviewer.first_name + " " + obj.reviewer.last_name
+
+    @staticmethod
+    def get_reviewer_email(obj):
+        return obj.reviewer.email
 
     class Meta:
         model = CurationReview
@@ -764,7 +774,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     @staticmethod
     def get_review_count(obj):
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-            submission_entry = obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            submission_entry = obj.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             return submission_entry.curation_reviews.count()
         else:
             return 0
@@ -777,7 +788,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             for i in range(number_of_reviews):
                 positive_reviews_count = 0
                 negative_reviews_count = 0
-                for entry in obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                for entry in obj.submission_entries.filter(
+                        type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
                     if entry.curation_reviews.all()[i].acceptance:
                         positive_reviews_count += 1
                     else:
@@ -793,7 +805,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     def get_reviewers(obj):
         reviewers = []
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-            submission_entry = obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            submission_entry = obj.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             if submission_entry.curation_reviews.count() > 0:
                 for review in submission_entry.curation_reviews.all():
                     reviewers.append(review.reviewer.id)
