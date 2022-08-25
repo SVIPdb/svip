@@ -32,6 +32,16 @@
 												{{ effect.value }} :
 												{{ effect.number ? effect.number : 'no' }} evidence(s)
 											</p>
+											<p
+												class="mb-2"
+												v-for="(effect, effect_idx) in getCurationEntriesProperties(
+													type.curation_entries,
+													'tier_level_criteria'
+												)"
+												:key="'effect' + effect_idx">
+												{{ effect.value }} :
+												{{ effect.number ? effect.number : 'no' }} evidence(s)
+											</p>
 										</b-col>
 										<b-col cols="2">
 											<b-row class="p-2">
@@ -143,6 +153,7 @@
 												</span>
 
 												<b-icon
+													v-if="type.curation_reviews.length < 3"
 													class="h4 mb-2 m-1"
 													:style="
 														displayColor(
@@ -158,8 +169,8 @@
 													"></b-icon>
 
 												<span
-													v-if="type.curation_reviews.length < 2"
-													v-for="i in 2 - type.curation_reviews.length"
+													v-if="type.curation_reviews.length < 3"
+													v-for="i in 3 - type.curation_reviews.length"
 													:key="i + ' icon'">
 													<span>
 														<b-icon
@@ -431,10 +442,8 @@ export default {
 			});
 		},
 		detectOwnReviews() {
-			console.log(this.variant);
 			// Check if the current clinician has already submitted their review
 			if (this.variant.reviewers) {
-				console.log(this.variant.reviewers);
 				if (this.variant.reviewers.includes(this.user.user_id)) {
 					this.submitted = true;
 					return true;

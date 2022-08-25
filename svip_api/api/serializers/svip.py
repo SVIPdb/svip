@@ -764,7 +764,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     @staticmethod
     def get_review_count(obj):
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-            submission_entry = obj.submission_entries.first()
+            submission_entry = obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             return submission_entry.curation_reviews.count()
         else:
             return 0
@@ -793,7 +793,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     def get_reviewers(obj):
         reviewers = []
         if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
-            submission_entry = obj.submission_entries.first()
+            submission_entry = obj.submission_entries.filter(type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             if submission_entry.curation_reviews.count() > 0:
                 for review in submission_entry.curation_reviews.all():
                     reviewers.append(review.reviewer.id)

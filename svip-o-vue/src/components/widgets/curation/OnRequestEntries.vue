@@ -86,7 +86,7 @@ export default {
 				return 'Ongoing';
 			} else if (stage === 'unapproved') {
 				return 'To be recurated';
-			} else if (['annotated', 'ongoing_review', 'approved'].includes(stage)) {
+			} else if (['annotated', 'ongoing_review', 'approved', 'reannotated'].includes(stage)) {
 				return 'Completed';
 			}
 		},

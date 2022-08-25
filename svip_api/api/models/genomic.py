@@ -205,6 +205,8 @@ class Variant(models.Model):
 
         return 'none'
 
+
+
     @property
     def public_stage(self):
         stage = self.stage

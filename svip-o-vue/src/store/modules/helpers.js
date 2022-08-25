@@ -4,6 +4,7 @@ const onlyUnique = (value, index, self) => {
 
 export const parseVariantsForReview = items => {
 	return items.map(item => {
+		console.log(items);
 		return {
 			gene: {id: item.gene.id, symbol: item.gene.symbol},
 			variant: {id: item.id, name: item.name},

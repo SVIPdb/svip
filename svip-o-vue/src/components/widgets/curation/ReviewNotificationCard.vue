@@ -13,21 +13,6 @@
 							{{ title }}
 						</span>
 
-						<b-dropdown
-							id="dropdown-1"
-							:text="review_cycle"
-							class="ml-3"
-							variant="secondary"
-							size="sm"
-							v-model="review_cycle">
-							<b-dropdown-item @click="review_cycle = 'First review cycle'">
-								First review cycle
-							</b-dropdown-item>
-							<b-dropdown-item @click="review_cycle = 'Second review cycle'">
-								Second review cycle
-							</b-dropdown-item>
-						</b-dropdown>
-
 						<FilterButtons
 							v-if="cardFilterOption"
 							class="ml-3"
@@ -45,9 +30,7 @@
 								},
 
 								{
-									label: `${
-										review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'
-									}`,
+									label: 'On-hold',
 									value: 'conflicting',
 									variant: 'danger',
 								},
@@ -172,10 +155,10 @@
 
 				<template v-slot:cell(action)="data">
 					<b-button
-						:disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.variant.stage)"
+						:disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.stage)"
 						class="centered-icons reviewBtn"
 						size="sm"
-						style="width: 100px"
+						style="width: 130px"
 						variant="info"
 						:to="{
 							name: 'annotate-review',
@@ -186,25 +169,7 @@
 						}"
 						target="_blank">
 						<icon name="pen-alt" />
-						Review
-					</b-button>
-
-					<b-button
-						v-if="review_cycle === 'Second Review Cycle'"
-						class="centered-icons reviewBtn"
-						style="width: 100px"
-						size="sm"
-						variant="info"
-						:to="{
-							name: 'annotate-review',
-							params: {
-								gene_id: data.item.gene.id,
-								variant_id: data.item.variant.id,
-							},
-						}"
-						target="_blank">
-						<icon name="pen-alt" />
-						Second Review
+						{{ `${data.item.stage === 'reannotated' ? 'Second review' : 'Review'} ` }}
 					</b-button>
 				</template>
 
@@ -395,7 +360,7 @@ export default {
 				case 'finished':
 					items = items.filter(item => {
 						return (
-							item.review_count === 3 && item.reviews_summary.reduce((a, b) => a + b, 0) >= 2
+							item.review_count === 3 && item.reviews_summary.reduce((a, b) => a + b, 0) === 3
 						);
 					});
 					break;
@@ -405,9 +370,7 @@ export default {
 					});
 			}
 
-			return this.review_cycle === 'First review cycle'
-				? items.filter(item => item.stage !== 'reannotated')
-				: items.filter(item => item.stage === 'reannotated');
+			return items;
 		},
 
 		totalRows() {

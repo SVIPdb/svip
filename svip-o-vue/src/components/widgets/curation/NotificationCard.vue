@@ -132,10 +132,17 @@
 
 				<template v-slot:cell(action)="row">
 					<b-button
+						:disabled="
+							['annotated', 'ongoing_review', 'approved', 'reannotated'].includes(
+								row.item.stage
+							)
+						"
 						v-access="'curators'"
 						class="centered-icons"
 						:class="
-							['annotated', 'ongoing_review', 'approved'].includes(row.item.stage) && 'blended'
+							['annotated', 'ongoing_review', 'approved', 'reannotated'].includes(
+								row.item.stage
+							) && 'blended'
 						"
 						size="sm"
 						style="width: 100px"
