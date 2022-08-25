@@ -146,12 +146,14 @@
 													class="h4 mb-2 m-1"
 													:style="
 														displayColor(
-															currentReviews.data[idx][1][index].acceptance
+															currentReviews.data[idx][1][index].acceptance,
+															detectOwnReviews()
 														)
 													"
 													:icon="
 														displayIcon(
-															currentReviews.data[idx][1][index].acceptance
+															currentReviews.data[idx][1][index].acceptance,
+															detectOwnReviews()
 														)
 													"></b-icon>
 
@@ -243,7 +245,7 @@
 			<!--				Finish later-->
 			<!--			</b-button>-->
 
-			<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated">
+			<b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">
 				Submit review
 			</b-button>
 		</div>
@@ -322,11 +324,7 @@ export default {
 		// Check that this page is appropriate regarding current review stage of variant
 		if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
 			this.not_annotated = true;
-		} else if (
-			['conflicting_reviews', 'to_review_again', 'on_hold', 'fully_reviewed'].includes(
-				this.variant.stage
-			)
-		) {
+		} else if (['approved', 'unapproved', 'on_hold', 'fully_approved'].includes(this.variant.stage)) {
 			this.submitted = true;
 		}
 
@@ -335,6 +333,7 @@ export default {
 				this.$refs.paged_table.refresh();
 			}
 		};
+		this.detectOwnReviews();
 		this.createCurrentReviews();
 	},
 
@@ -346,7 +345,7 @@ export default {
 
 	methods: {
 		createCurrentReviews() {
-			let result = this.submissionEntries.map(i => {
+			this.currentReviews.data = this.submissionEntries.map(i => {
 				let types = i[1].map(item => {
 					return {
 						submission_entry: parseInt(item.id),
@@ -360,9 +359,8 @@ export default {
 				});
 				return [i[0], types];
 			});
-
-			this.currentReviews.data = result;
 		},
+
 		getCurationEntriesProperties(curation_entries, property) {
 			let grouped_curation_entries = groupBy(curation_entries, entry => entry[property]);
 			return Object.entries(grouped_curation_entries).map(i => {
@@ -385,6 +383,7 @@ export default {
 			// Chrome requires returnValue to be set
 			e.returnValue = '';
 		},
+
 		submitOptions() {
 			this.$confirm({
 				message: `You are about to submit permanently the reviews for the evidences of this variant. Are you sure?`,
@@ -405,15 +404,19 @@ export default {
 				},
 			});
 		},
-		displayIcon(acceptance) {
-			return acceptance === true
+		displayIcon(acceptance, ownSubmitted = false) {
+			return acceptance === true && !ownSubmitted
 				? 'check-square-fill'
-				: acceptance === false
+				: acceptance === false && !ownSubmitted
 				? 'x-square-fill'
 				: 'square';
 		},
-		displayColor(acceptance) {
-			return acceptance === true ? 'color:blue;' : acceptance === false ? 'color:red;' : '';
+		displayColor(acceptance, ownSubmitted = false) {
+			return acceptance === true && !ownSubmitted
+				? 'color:blue;'
+				: acceptance === false && !ownSubmitted
+				? 'color:red;'
+				: '';
 		},
 		onChange(curatorValues, reviewerValues) {
 			reviewerValues.acceptance =
@@ -427,60 +430,17 @@ export default {
 				});
 			});
 		},
-		detectOwnReviews(diseases) {
-			let evidence_counter = 0;
-
-			// iterate over every review to prefill inputs with current user's past reviews
-			diseases.map(disease => {
-				let evidences_expanders = [];
-
-				disease.evidences.map(evidence => {
-					evidence.reviews.map((review, index) => {
-						if (review.reviewer_id === this.user.user_id) {
-							if (review.draft === false) {
-								this.submitted = true;
-							}
-							let currentReviewObj = {
-								annotatedEffect: review.annotatedEffect,
-								annotatedTier: review.annotatedTier,
-								comment: review.comment,
-							};
-							evidence['currentReview'] = currentReviewObj;
-
-							// store the evidence ID so when the user submit it, the request is a patch
-							this.selfReviewedEvidences[evidence.id] = review.id;
-
-							// remove the review of current user so it is not displayed twice (already displayed currentReview from the currentReview object)
-							evidence.reviews.splice(index, 1);
-						}
-					});
-
-					if (evidence.reviews.length === 3) {
-						evidence.reviews.splice(2, 1);
-					}
-
-					if (typeof evidence.currentReview === 'undefined') {
-						evidence['currentReview'] = {
-							id: evidence.id,
-							annotatedEffect: evidence.curator.annotatedEffect,
-							annotatedTier: evidence.curator.annotatedTier,
-							reviewer_id: this.user.user_id,
-							status: null,
-							comment: null,
-						};
-					}
-
-					evidence_counter += 1;
-					evidences_expanders.push(false);
-				});
-
-				this.expander_array.push({
-					disease: true,
-					evidences: evidences_expanders,
-				});
-			});
-			this.diseases = diseases;
-			this.evidence_counter = evidence_counter;
+		detectOwnReviews() {
+			console.log(this.variant);
+			// Check if the current clinician has already submitted their review
+			if (this.variant.reviewers) {
+				console.log(this.variant.reviewers);
+				if (this.variant.reviewers.includes(this.user.user_id)) {
+					this.submitted = true;
+					return true;
+				}
+			}
+			return false;
 		},
 		missingComment() {
 			console.log(JSON.stringify(this.submissionEntries));

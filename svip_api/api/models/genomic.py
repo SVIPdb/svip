@@ -84,6 +84,7 @@ class VARIANT_STAGE(ModelChoice):
     reannotated = 'reannotated'
     on_hold = 'on_hold'
     approved = 'approved'
+    fully_approved = 'fully_approved'
 
 
 class VariantManager(models.Manager):

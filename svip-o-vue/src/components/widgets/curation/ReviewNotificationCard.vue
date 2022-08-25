@@ -128,46 +128,36 @@
 					</p>
 				</template>
 
-				<!--				<template v-slot:cell(status)="status_obj">-->
-				<!--					<span-->
-				<!--						v-for="(review, i) in status_obj['item']['reviews']"-->
-				<!--						:key="review + i + Math.random()">-->
-				<!--						<span v-if="review">-->
-				<!--							<b-icon-->
-				<!--								style="color: blue"-->
-				<!--								class="h5 m-1"-->
-				<!--								icon="check-square-fill"-->
-				<!--								:class="{-->
-				<!--									notOwn: !(user.user_id === status_obj['item']['reviewers_id'][i]),-->
-				<!--								}"></b-icon>-->
-				<!--						</span>-->
-				<!--						<span v-else>-->
-				<!--							<b-icon-->
-				<!--								style="color: red"-->
-				<!--								class="h5 m-1"-->
-				<!--								icon="x-square-fill"-->
-				<!--								:class="{-->
-				<!--									notOwn: !(user.user_id === status_obj['item']['reviewers_id'][i]),-->
-				<!--								}"></b-icon>-->
-				<!--						</span>-->
-				<!--					</span>-->
+				<template v-slot:cell(status)="status_obj">
+					<span
+						v-for="(review, i) in status_obj['item']['reviews_summary']"
+						:key="i + ' review_status'">
+						<span v-if="review">
+							<b-icon
+								style="color: blue"
+								class="h5 m-1"
+								icon="check-square-fill"
+								:class="{
+									notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
+								}"></b-icon>
+						</span>
+						<span v-else>
+							<b-icon
+								style="color: red"
+								class="h5 m-1"
+								icon="x-square-fill"
+								:class="{
+									notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
+								}"></b-icon>
+						</span>
+					</span>
 
-				<!--					<span-->
-				<!--						v-for="index in 3 - status_obj['item']['review_count']"-->
-				<!--						:key="index + Math.random()">-->
-				<!--						<b-icon class="h5 m-1" icon="square"></b-icon>-->
-				<!--					</span>-->
-				<!--				</template>-->
-
-				<!--				<template v-slot:cell(reviewed)="data">-->
-				<!--					<div>data!!!</div>-->
-				<!--					<icon-->
-				<!--						v-for="(reviewer, index) in data.value"-->
-				<!--						v-bind:key="index"-->
-				<!--						v-b-popover.hover.top="reviewer.label"-->
-				<!--						:name="reviewer.value ? 'check' : 'times'"-->
-				<!--						:class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"></icon>-->
-				<!--				</template>-->
+					<span
+						v-for="index in 3 - status_obj['item']['review_count']"
+						:key="index + Math.random()">
+						<b-icon class="h5 m-1" icon="square"></b-icon>
+					</span>
+				</template>
 
 				<template v-slot:cell(curators)="data">
 					<span v-for="(owner, idx) in data.item.curators" :key="owner + '_' + idx">
@@ -182,6 +172,7 @@
 
 				<template v-slot:cell(action)="data">
 					<b-button
+						:disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.variant.stage)"
 						class="centered-icons reviewBtn"
 						size="sm"
 						style="width: 100px"

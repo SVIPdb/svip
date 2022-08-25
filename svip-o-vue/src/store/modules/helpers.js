@@ -11,7 +11,6 @@ export const parseVariantsForReview = items => {
 			diseases: item.submission_entries.map(entry => entry.disease.name).filter(onlyUnique),
 			curators: item.curation_entries.map(entry => entry.owner_name).filter(onlyUnique),
 			stage: item.stage,
-			status: 'No status',
 			deadline: 'No deadline',
 			action: 'No action',
 			reviews_summary: item.reviews_summary,
