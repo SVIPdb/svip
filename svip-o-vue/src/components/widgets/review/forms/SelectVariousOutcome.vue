@@ -23,6 +23,7 @@ export default {
 						'Not responsive',
 						'Adverse response',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'FDA/EMA/Swissmedic approved therapy (Tier IA)',
@@ -37,14 +38,16 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
-				Prognostic: {
+				'Prognostic': {
 					effect: [
 						'Good outcome',
 						'Poor outcome',
 						'Intermediate',
 						'Not associated with prognosis',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Included in Professional Guidelines (Tier IA)',
@@ -57,13 +60,15 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
-				Diagnostic: {
+				'Diagnostic': {
 					effect: [
 						'Associated with diagnosis',
 						'Not associated with diagnosis',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Included in Professional Guidelines (Tier IA)',
@@ -76,19 +81,21 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
 				'Variant identification': {
 					effect: ['Unknown'],
 					tier_criteria: ['None'],
 				},
-				Function: {
+				'Function': {
 					effect: [
 						'Gain of function',
 						'Loss of function',
 						'Neomorphic',
 						'Unaltered function',
 						'Dominant negative',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Well-established in vitro study',
@@ -96,6 +103,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
 				'Subcellular location': {
@@ -106,6 +114,7 @@ export default {
 						'New location',
 						'Unaltered location',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Well-established in vitro study',
@@ -113,15 +122,17 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
-				Interaction: {
+				'Interaction': {
 					effect: [
 						'Loss of interaction with known partner(s)',
 						'Decreased interaction with known partner(s)',
 						'Increased interaction with known partner(s)',
 						'New interaction partner(s)',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Well-established in vitro study',
@@ -129,21 +140,24 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
-				Expression: {
+				'Expression': {
 					effect: [
 						'Loss of expression',
 						'Decreased expression',
 						'Increased expression',
 						'Misexpression',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Well-established in vitro study',
 						'Well-established in vivo study',
 						'Author statement',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
 				'Response to drug': {
@@ -153,6 +167,7 @@ export default {
 						'Increased drug response',
 						'Newly acquired drug response',
 						'Other',
+						'Conflicting Evidences',
 					],
 					tier_criteria: [
 						'Well-established in vitro study',
@@ -160,6 +175,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
+						'Conflicting Evidences',
 					],
 				},
 			},
