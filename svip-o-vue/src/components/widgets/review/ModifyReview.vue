@@ -247,7 +247,7 @@ export default {
 				'Author statement',
 				'Reported evidence supportive of benign/likely benign effect',
 				'Other criteria',
-				'Conflicting Evidences',
+				'Not applicable',
 			],
 		};
 	},

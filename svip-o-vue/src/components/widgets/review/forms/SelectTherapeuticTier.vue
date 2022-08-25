@@ -12,7 +12,7 @@
 		<option>No convincing published evidence of drugs effect</option>
 		<option>Reported evidence supportive of benign/likely benign effect</option>
 		<option>Other criteria</option>
-		<option>Conflicting Evidences</option>
+		<option>Not applicable</option>
 	</b-form-select>
 </template>
 

@@ -38,7 +38,7 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Prognostic': {
@@ -60,7 +60,7 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Diagnostic': {
@@ -81,7 +81,7 @@ export default {
 						'No convincing published evidence of drugs effect (Tier III)',
 						'Reported evidence supportive of benign/likely benign effect (Tier IV)',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Variant identification': {
@@ -103,7 +103,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Subcellular location': {
@@ -122,7 +122,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Interaction': {
@@ -140,7 +140,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Expression': {
@@ -157,7 +157,7 @@ export default {
 						'Well-established in vivo study',
 						'Author statement',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 				'Response to drug': {
@@ -175,7 +175,7 @@ export default {
 						'Prediction',
 						'Author statement',
 						'Other criteria',
-						'Conflicting Evidences',
+						'Not applicable',
 					],
 				},
 			},
