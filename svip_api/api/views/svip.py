@@ -321,29 +321,31 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
-        if request.data['update']:
+
+        if isinstance(request.data, dict) and request.data['update']:
             for entry in request.data['data']:
                 submission_entry = SubmissionEntry.objects.filter(pk=entry['id'])
                 submission_entry.update(effect=entry['effect'], tier=entry['tier'])
-
                 for id in entry['curation_entries']:
                     CurationEntry.objects.filter(pk=id).update(status='resubmitted')
-
                 for id in entry['curation_reviews']:
                     CurationReview.objects.get(pk=id).delete()
-
             return JsonResponse({
                 "message": "Your second annotation  was successfully saved!",
 
             })
+
         for item in request.data:
+            disease = None
+            if item['disease_id']:
+                disease = Disease.objects.get(id=item['disease_id'])
             submission_entry = SubmissionEntry(variant=Variant.objects.get(pk=item['variant_id']),
                                                owner=User.objects.get(id=item['owner_id']),
                                                drug=item['drug'],
                                                type_of_evidence=item['type_of_evidence'],
                                                effect=item['effect'],
                                                tier=item['tier'],
-                                               disease=Disease.objects.get(id=item['disease_id']))
+                                               disease=disease)
             submission_entry.save()
 
             for entry_id in item['curation_entries']:
