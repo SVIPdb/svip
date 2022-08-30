@@ -533,34 +533,6 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-#
-# class SIBAnnotation1View(APIView):
-#     def post(self, request, *args, **kwargs):
-#         for obj in request.data:
-#             evidence = CurationEvidence.objects.get(id=obj['evidence'])
-#             if 'id' in obj:
-#                 annotation = SIBAnnotation1.objects.get(id=obj['id'])
-#             elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
-#                 annotation = SIBAnnotation1.objects.get(evidence=evidence)
-#             else:
-#                 annotation = SIBAnnotation1()
-#             annotation.evidence = evidence
-#             annotation.effect = obj['effect']
-#             annotation.tier = obj['tier']
-#             annotation.draft = False
-#             annotation.save()
-#         return Response(data='Submitted annotations are succesfully saved')
-#
-#
-# class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-#     serializer_class = SIBAnnotation2Serializer
-#
-#     def get_queryset(self):
-#         queryset = SIBAnnotation2.objects.all()
-#         return queryset
-
-
 # ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
@@ -620,50 +592,6 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
-
-
-# ================================================================================================================
-# === Review data
-# ================================================================================================================
-
-
-def review_count(var):
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        return evidence.curation_reviews.count()
-    else:
-        return 0
-
-
-def reviews(var):
-    reviews = []
-    reviewers = []
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.curation_reviews.count() > 0:
-
-            for review in evidence.curation_reviews.all():
-                reviewers.append(review.reviewer_id)
-                reviews.append(review.match())
-
-    return reviews
-
-
-def reviewers(var):
-    reviewers = []
-    reviewers_id = []
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.curation_reviews.count() > 0:
-            for review in evidence.curation_reviews.all():
-                reviewers.append(review.reviewer)
-                reviewers_id.append(review.reviewer_id)
-
-    return reviewers_id
-
-
-def get_diseases():
-    pass
 
 
 class CurationIds(APIView):

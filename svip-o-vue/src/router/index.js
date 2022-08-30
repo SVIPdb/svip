@@ -1,42 +1,37 @@
-import Vue from "vue";
-import Router from "vue-router";
-import store from "@/store";
-import { TokenErrors } from "@/store/modules/users";
-import { checkInRole } from "@/directives/access";
-import { np_manager } from "@/App";
+import Vue from 'vue';
+import Router from 'vue-router';
+import store from '@/store';
+import {TokenErrors} from '@/store/modules/users';
+import {checkInRole} from '@/directives/access';
+import {np_manager} from '@/App';
 
-import ulog from "ulog";
+import ulog from 'ulog';
 // Preload about to successfully scroll to the disclaimer section from home page
-import About from "@/components/views/About";
+import About from '@/components/views/About';
 
 // lazy-load routes rather than directly importing them
-const Home = () => import("@/components/views/Home");
-const Releases = () => import("@/components/views/Releases");
+const Home = () => import('@/components/views/Home');
+const Releases = () => import('@/components/views/Releases');
 // const About = () => import("@/components/views/About");
-const Help = () => import("@/components/views/Help");
-const ViewGene = () => import("@/components/views/ViewGene");
-const ViewVariant = () => import("@/components/views/ViewVariant");
-const Login = () => import("@/components/views/user/Login");
-const UserInfo = () => import("@/components/views/user/UserInfo");
-const Statistics = () => import("@/components/views/Statistics");
-const CurationDashboard = () =>
-    import("@/components/views/curation/CurationDashboard");
-const AnnotateVariant = () =>
-    import("@/components/views/curation/AnnotateVariant");
-const AnnotateReview = () => import("@/components/views/review/AnnotateReview");
-const SecondReviewCycle = () =>
-    import("@/components/widgets/review/SecondReviewCycle");
-const ViewReview = () => import("@/components/views/review/ViewReview");
-const AddEvidence = () => import("@/components/views/curation/AddEvidence");
-const SubmitVariants = () =>
-    import("@/components/views/submission/SubmitVariants");
-const DebugPage = () => import("@/components/views/DebugPage");
-const PageNotFound = () => import("@/components/views/PageNotFound");
-const SubmitCurations = () =>
-    import("@/components/views/review/SubmitCurations");
-const SvipInfoSummary = () => import("@/components/views/SvipInfoSummary");
+const Help = () => import('@/components/views/Help');
+const ViewGene = () => import('@/components/views/ViewGene');
+const ViewVariant = () => import('@/components/views/ViewVariant');
+const Login = () => import('@/components/views/user/Login');
+const UserInfo = () => import('@/components/views/user/UserInfo');
+const Statistics = () => import('@/components/views/Statistics');
+const CurationDashboard = () => import('@/components/views/curation/CurationDashboard');
+const AnnotateVariant = () => import('@/components/views/curation/AnnotateVariant');
+const AnnotateReview = () => import('@/components/views/review/AnnotateReview');
+const SecondReviewCycle = () => import('@/components/widgets/review/SecondReviewCycle');
+const ViewReview = () => import('@/components/views/review/ViewReview');
+const AddEvidence = () => import('@/components/views/curation/AddEvidence');
+const SubmitVariants = () => import('@/components/views/submission/SubmitVariants');
+const DebugPage = () => import('@/components/views/DebugPage');
+const PageNotFound = () => import('@/components/views/PageNotFound');
+const SubmitCurations = () => import('@/components/views/review/SubmitCurations');
+const SvipInfoSummary = () => import('@/components/views/SvipInfoSummary');
 
-const log = ulog("Router:index");
+const log = ulog('Router:index');
 
 Vue.use(Router);
 
@@ -59,270 +54,250 @@ function remapGeneSymbol(to, from, next) {
 */
 
 const router = new Router({
-    mode: "history",
-    routes: [
-        {
-            path: "/svipinfo/:gene_id/:variant_id",
-            name: "svipinfo",
-            component: SvipInfoSummary,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: to => `SVIP-O: Svip Summary ${to.params.variant_id}`,
-            },
-        },
-        {
-            path: "/gene/:gene_id",
-            name: "gene",
-            component: ViewGene,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: to => `SVIP-O: Gene ${to.params.gene_id}`,
-            },
-        },
-        {
-            path: "/gene/:gene_id/variant/:variant_id",
-            name: "variant",
-            component: ViewVariant,
-            // beforeEnter: remapGeneSymbol,
-            meta: { title: "SVIP-O: Details" },
-        },
+	mode: 'history',
+	routes: [
+		{
+			path: '/svipinfo/:gene_id/:variant_id',
+			name: 'svipinfo',
+			component: SvipInfoSummary,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: to => `SVIP-O: Svip Summary ${to.params.variant_id}`,
+			},
+		},
+		{
+			path: '/gene/:gene_id',
+			name: 'gene',
+			component: ViewGene,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: to => `SVIP-O: Gene ${to.params.gene_id}`,
+			},
+		},
+		{
+			path: '/gene/:gene_id/variant/:variant_id',
+			name: 'variant',
+			component: ViewVariant,
+			// beforeEnter: remapGeneSymbol,
+			meta: {title: 'SVIP-O: Details'},
+		},
 
-        {
-            path: "/help",
-            name: "help",
-            component: Help,
-            meta: { title: "SVIP-O: Help" },
-        },
+		{
+			path: '/help',
+			name: 'help',
+			component: Help,
+			meta: {title: 'SVIP-O: Help'},
+		},
 
-        {
-            path: "/about",
-            name: "about",
-            component: About,
-            meta: { title: "SVIP-O: About" },
-        },
+		{
+			path: '/about',
+			name: 'about',
+			component: About,
+			meta: {title: 'SVIP-O: About'},
+		},
 
-        {
-            path: "/statistics",
-            name: "statistics",
-            component: Statistics,
-            meta: { title: "SVIP-O: Stats" },
-        },
+		{
+			path: '/statistics',
+			name: 'statistics',
+			component: Statistics,
+			meta: {title: 'SVIP-O: Stats'},
+		},
 
-        {
-            path: "/releases",
-            name: "releases",
-            component: Releases,
-            meta: { title: "SVIP-O: Releases" },
-        },
+		{
+			path: '/releases',
+			name: 'releases',
+			component: Releases,
+			meta: {title: 'SVIP-O: Releases'},
+		},
 
-        {
-            path: "/login",
-            name: "login",
-            component: Login,
-            props: true,
-            meta: { title: "SVIP-O: Login" },
-        },
-        {
-            path: "/user-info",
-            name: "user-info",
-            component: UserInfo,
-            meta: { title: "SVIP-O: Your Profile" },
-        },
-        {
-            path: "/curation/dashboard",
-            name: "curation-dashboard",
-            component: CurationDashboard,
-            meta: {
-                title: "SVIP-O: Dashboard",
-                requiresAuth: true,
-                roles: ["curators", "clinicians"],
-            },
-        },
-        {
-            path: "/curation/gene/:gene_id/variant/:variant_id",
-            name: "annotate-variant",
-            component: AnnotateVariant,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: "SVIP-O: Curate",
-                requiresAuth: true,
-                roles: ["curators", "clinicians"],
-            },
-        },
-        {
-            path: "/curation/entry/:action",
-            name: "add-evidence",
-            component: AddEvidence,
-            meta: {
-                title: "SVIP-O: Edit Curation",
-                requiresAuth: true,
-                roles: ["curators"],
-            },
-        },
-        {
-            // example path where AddEvidence is loaded in view-only mode
-            path: "/curation/entry-readonly/:action",
-            name: "view-evidence",
-            component: AddEvidence,
-            props: {
-                forceViewOnly: true,
-            },
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: "SVIP-O: View Evidence",
-                requiresAuth: true,
-                roles: ["curators", "clinicians"],
-            },
-        },
-        {
-            path: "/review/gene/:gene_id/variant/:variant_id",
-            name: "annotate-review",
-            component: AnnotateReview,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: "SVIP-O: Review",
-                requiresAuth: true,
-                roles: ["clinicians"],
-            },
-        },
-        {
-            path: "/second_review/gene/:gene_id/variant/:variant_id",
-            name: "second-review",
-            component: SecondReviewCycle,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: "SVIP-O: Second Review",
-                requiresAuth: true,
-                roles: ["clinicians"],
-            },
-        },
-        {
-            path: "/curation/gene/:gene_id/variant/:variant_id/submit",
-            name: "submit-curation",
-            component: SubmitCurations,
-            props: true,
-            meta: {
-                requiresAuth: true,
-                roles: ["curators"],
-            },
-        },
-        {
-            path: "/submit-variants",
-            name: "submit-variants",
-            component: SubmitVariants,
-            meta: {
-                title: "SVIP-O: Submit Variants",
-                requiresAuth: true,
-                roles: ["submitters"],
-            },
-        },
+		{
+			path: '/login',
+			name: 'login',
+			component: Login,
+			props: true,
+			meta: {title: 'SVIP-O: Login'},
+		},
+		{
+			path: '/user-info',
+			name: 'user-info',
+			component: UserInfo,
+			meta: {title: 'SVIP-O: Your Profile'},
+		},
+		{
+			path: '/curation/dashboard',
+			name: 'curation-dashboard',
+			component: CurationDashboard,
+			meta: {
+				title: 'SVIP-O: Dashboard',
+				requiresAuth: true,
+				roles: ['curators', 'clinicians'],
+			},
+		},
+		{
+			path: '/curation/gene/:gene_id/variant/:variant_id',
+			name: 'annotate-variant',
+			component: AnnotateVariant,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: 'SVIP-O: Curate',
+				requiresAuth: true,
+				roles: ['curators', 'clinicians'],
+			},
+		},
+		{
+			path: '/curation/entry/:action',
+			name: 'add-evidence',
+			component: AddEvidence,
+			meta: {
+				title: 'SVIP-O: Edit Curation',
+				requiresAuth: true,
+				roles: ['curators'],
+			},
+		},
+		{
+			// example path where AddEvidence is loaded in view-only mode
+			path: '/curation/entry-readonly/:action',
+			name: 'view-evidence',
+			component: AddEvidence,
+			props: {
+				forceViewOnly: true,
+			},
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: 'SVIP-O: View Evidence',
+				requiresAuth: true,
+				roles: ['curators', 'clinicians'],
+			},
+		},
+		{
+			path: '/review/gene/:gene_id/variant/:variant_id',
+			name: 'annotate-review',
+			component: AnnotateReview,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: 'SVIP-O: Review',
+				requiresAuth: true,
+				roles: ['clinicians'],
+			},
+		},
+		{
+			path: '/second_review/gene/:gene_id/variant/:variant_id',
+			name: 'second-review',
+			component: SecondReviewCycle,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: 'SVIP-O: Second Review',
+				requiresAuth: true,
+				roles: ['clinicians'],
+			},
+		},
+		{
+			path: '/curation/gene/:gene_id/variant/:variant_id/submit',
+			name: 'submit-curation',
+			component: SubmitCurations,
+			props: true,
+			meta: {
+				requiresAuth: true,
+				roles: ['curators'],
+			},
+		},
+		{
+			path: '/submit-variants',
+			name: 'submit-variants',
+			component: SubmitVariants,
+			meta: {
+				title: 'SVIP-O: Submit Variants',
+				requiresAuth: true,
+				roles: ['submitters'],
+			},
+		},
 
-        {
-            path: "/review/gene/:gene_id/variant/:variant_id/view",
-            name: "view-review",
-            component: ViewReview,
-            // beforeEnter: remapGeneSymbol,
-            meta: {
-                title: "SVIP-O: Review validation",
-                requiresAuth: true,
-                roles: ["curators"],
-            },
-        },
-        {
-            path: "/debug",
-            name: "debug",
-            component: DebugPage,
-        },
-        {
-            path: "/",
-            name: "home",
-            component: Home,
-        },
+		{
+			path: '/review/gene/:gene_id/variant/:variant_id/view',
+			name: 'view-review',
+			component: ViewReview,
+			// beforeEnter: remapGeneSymbol,
+			meta: {
+				title: 'SVIP-O: Review validation',
+				requiresAuth: true,
+				roles: ['curators'],
+			},
+		},
+		{
+			path: '/debug',
+			name: 'debug',
+			component: DebugPage,
+		},
+		{
+			path: '/',
+			name: 'home',
+			component: Home,
+		},
 
-        { path: "*", name: "not-found", component: PageNotFound },
-    ],
+		{path: '*', name: 'not-found', component: PageNotFound},
+	],
 });
 
 router.beforeEach((to, from, next) => {
-    function redirect() {
-        if (to.name && np_manager) {
-            // Start the route progress bar.
-            np_manager.start(`transition: ${to.name}`);
-        }
+	function redirect() {
+		if (to.name && np_manager) {
+			// Start the route progress bar.
+			np_manager.start(`transition: ${to.name}`);
+		}
 
-        if (to.matched.some(record => record.meta.requiresAuth)) {
-            // only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
-            // (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
+		if (to.matched.some(record => record.meta.requiresAuth)) {
+			// only check credentials if the route includes authorized content; if not, we'll get rejected if we have invalid creds even for public routes
+			// (we'd probably do that by adding a 'requiresAuth' and/or 'groups' fields to the route definitions)
 
-            const possibleRoles = to.matched.reduce((acc, record) => {
-                return record.meta.roles ? acc.concat(record.meta.roles) : acc;
-            }, []);
+			const possibleRoles = to.matched.reduce((acc, record) => {
+				return record.meta.roles ? acc.concat(record.meta.roles) : acc;
+			}, []);
 
-            store.dispatch("checkCredentials").then(result => {
-                if (
-                    !result.valid &&
-                    (result.reason === TokenErrors.EXPIRED ||
-                        result.reason === TokenErrors.REFRESH_EXPIRED) &&
-                    to.name !== "login"
-                ) {
-                    // if our token's expired, go get a new one from the login page,
-                    // remembering where we eventually want to go to as well
-                    next({
-                        name: "login",
-                        params: {
-                            default_error_msg:
-                                "Token expired, please log in again",
-                            nextRoute: to.path,
-                        },
-                    });
-                } else if (
-                    possibleRoles &&
-                    !possibleRoles.some(x => checkInRole(x))
-                ) {
-                    log.warn("Roles check failed!");
-                    next({
-                        name: "login",
-                        params: {
-                            default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(
-                                ", "
-                            )}).`,
-                            nextRoute: to.path,
-                        },
-                    });
-                } else {
-                    next();
-                }
-            });
-        } else {
-            next(); // just let them proceed
-        }
-    }
+			store.dispatch('checkCredentials').then(result => {
+				if (
+					!result.valid &&
+					(result.reason === TokenErrors.EXPIRED ||
+						result.reason === TokenErrors.REFRESH_EXPIRED) &&
+					to.name !== 'login'
+				) {
+					// if our token's expired, go get a new one from the login page,
+					// remembering where we eventually want to go to as well
+					next({
+						name: 'login',
+						params: {
+							default_error_msg: 'Token expired, please log in again',
+							nextRoute: to.path,
+						},
+					});
+				} else if (possibleRoles && !possibleRoles.some(x => checkInRole(x))) {
+					log.warn('Roles check failed!');
+					next({
+						name: 'login',
+						params: {
+							default_error_msg: `You don't have access to that resource (required role(s): ${possibleRoles.join(
+								', '
+							)}).`,
+							nextRoute: to.path,
+						},
+					});
+				} else {
+					next();
+				}
+			});
+		} else {
+			next(); // just let them proceed
+		}
+	}
 
-    let origin = from.fullPath;
-    if (
-        origin.includes("/review/") ||
-        origin.substring(origin.length - 7) === "/submit"
-    ) {
-        if (
-            confirm(
-                "If you leave the page, all your entries will be lost. Leave anyway?"
-            ) === true
-        ) {
-            redirect();
-        } else {
-            next(false);
-        }
-    } else {
-        redirect();
-    }
+	redirect();
 });
 
 router.afterEach((to, from) => {
-    if (from && from.name) {
-        // only complete entries that have a matching navigation start
-        // (coming in from another site will cause router.afterEach to fire, but without a preceding router.beforeEach)
-        np_manager && np_manager.done(`transition complete`);
-    }
+	if (from && from.name) {
+		// only complete entries that have a matching navigation start
+		// (coming in from another site will cause router.afterEach to fire, but without a preceding router.beforeEach)
+		np_manager && np_manager.done(`transition complete`);
+	}
 });
 
 export default router;

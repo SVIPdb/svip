@@ -423,7 +423,6 @@ export default {
 				callback: confirm => {
 					if (confirm) {
 						// save as a draft
-						alert('submitting!');
 						this.submitReviews(false);
 					}
 				},

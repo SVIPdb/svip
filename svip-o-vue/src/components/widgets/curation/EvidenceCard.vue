@@ -551,17 +551,26 @@ export default {
 			return `/curation/entry/${entry.id}`;
 		},
 		deleteEntry(entry_id) {
-			if (confirm('Are you sure that you want to delete this entry?')) {
-				HTTP.delete(`/curation_entries/${entry_id}`)
-					.then(() => {
-						this.channel.postMessage(`Deleted ID ${entry_id}`);
-						this.$snotify.info('Entry deleted!');
-						this.$refs.paged_table.refresh();
-					})
-					.catch(() => {
-						this.$snotify.error('Failed to delete entry');
-					});
-			}
+			this.$confirm({
+				message: `Are you sure that you want to delete this entry?\n\n`,
+				button: {
+					no: 'Cancel',
+					yes: 'Delete',
+				},
+				callback: confirm => {
+					if (confirm) {
+						HTTP.delete(`/curation_entries/${entry_id}`)
+							.then(() => {
+								this.channel.postMessage(`Deleted ID ${entry_id}`);
+								this.$snotify.info('Entry deleted!');
+								this.$refs.paged_table.refresh();
+							})
+							.catch(() => {
+								this.$snotify.error('Failed to delete entry');
+							});
+					}
+				},
+			});
 		},
 		submitRequest() {
 			const entryIDs = Object.keys(this.selected).join(',');
@@ -581,17 +590,27 @@ export default {
 		submitAll() {
 			const prompt =
 				'Are you sure that you want to submit the entries of this variant?\n\nYou will no longer be able to edit your entries after submitting them!';
-			if (confirm(prompt)) {
-				const params = {var_id: this.variant.id};
-				HTTP.post(`/curation_ids`, params)
-					.then(response => {
-						this.selected = response.data;
-						this.submitRequest();
-					})
-					.catch(err => {
-						log.warn(err);
-					});
-			}
+
+			this.$confirm({
+				message: prompt,
+				button: {
+					no: 'Cancel',
+					yes: 'Submit',
+				},
+				callback: confirm => {
+					if (confirm) {
+						const params = {var_id: this.variant.id};
+						HTTP.post(`/curation_ids`, params)
+							.then(response => {
+								this.selected = response.data;
+								this.submitRequest();
+							})
+							.catch(err => {
+								log.warn(err);
+							});
+					}
+				},
+			});
 		},
 		showHistory(entry_id) {
 			this.$refs['history-modal'].show();

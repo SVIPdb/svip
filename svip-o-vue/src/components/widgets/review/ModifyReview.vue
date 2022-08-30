@@ -128,6 +128,42 @@
 								</b-col>
 							</b-row>
 						</template>
+
+						<template v-slot:row-details="row">
+							<transition name="fade">
+								<div>
+									<b-card-footer class="fluid">
+										<table class="table table-responsive-lg">
+											<th class="bg-light">PMID</th>
+											<th class="bg-light">Effect</th>
+											<th class="bg-light">Tier level</th>
+											<th class="bg-light">Support</th>
+											<th class="bg-light">ID</th>
+											<th class="bg-light">Comment</th>
+
+											<tr v-for="(curation, i) in row.item.curation_entries" :key="i">
+												<td>{{ curation.references }}</td>
+												<td>{{ curation.effect }}</td>
+												<td>{{ curation.tier_level_criteria }}</td>
+												<td>{{ curation.support }}</td>
+												<td>
+													<b-link
+														:to="{
+															name: 'view-evidence',
+															params: {action: curation.id},
+														}"
+														target="_blank"
+														alt="Link to evidence">
+														Curation entry #{{ curation.id }}
+													</b-link>
+												</td>
+												<td>{{ curation.comment }}</td>
+											</tr>
+										</table>
+									</b-card-footer>
+								</div>
+							</transition>
+						</template>
 					</b-table>
 				</b-card-text>
 			</transition>
@@ -248,6 +284,7 @@ export default {
 				'Reported evidence supportive of benign/likely benign effect',
 				'Other criteria',
 				'Not applicable',
+				'FDA/EMA/Swissmedic approved therapy for a different tumor type',
 			],
 		};
 	},

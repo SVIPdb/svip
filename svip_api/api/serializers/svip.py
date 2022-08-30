@@ -263,7 +263,6 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'calculate_summary_date',
             'tissue_counts',
             'diseases',
-
         )
 
 
@@ -858,40 +857,6 @@ class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sample
         fields = '__all__'
-
-
-# ================================================================================================================
-# === SIBAnnotation
-# ================================================================================================================
-
-class SIBAnnotation1Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation1
-        fields = ('id', 'evidence', 'effect', 'tier')
-        # extra_kwargs = {
-        #    "content": {
-        #        "required": False,
-        #        "allow_null": True,
-        #    },
-        #    "reviewer": {
-        #        "required": False,
-        #        "allow_null": False,
-        #    }
-        # }
-
-
-class SIBAnnotation2Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation2
-        fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
 
 
 # ================================================================================================================
