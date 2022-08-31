@@ -3,7 +3,7 @@ from random import randint
 from django.contrib.auth import get_user_model
 
 from api.models import CurationEntry, Disease, Variant, Gene
-from api.models.svip import SubmissionEntry
+from api.models.svip import SubmissionEntry, CurationReview
 
 
 def create_user(user_data={}):
@@ -132,3 +132,15 @@ def create_submission_entry(**params):
 
     defaults.update(params)
     return SubmissionEntry.objects.create(**defaults)
+
+
+def create_review(**params):
+    defaults = {'submission_entry': create_submission_entry(),
+                'annotated_effect': 'Poor outcome',
+                'annotated_tier': 'IID Tier',
+                'comment': 'Some comment',
+                'draft': True,
+                'reviewer': create_user(),
+                'acceptance': True}
+    defaults.update(params)
+    return CurationReview.objects.create(**defaults)

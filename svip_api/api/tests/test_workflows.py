@@ -6,13 +6,15 @@ from rest_framework.test import APIClient
 import copy
 
 from api.models.svip import SubmissionEntry, CurationReview
-from api.tests.data import create_user, create_variant, create_disease, create_submission_entry
+from api.tests.data import create_user, create_variant, create_disease, create_submission_entry, create_review
+from api.serializers.svip import CurationReviewSerializer
 
 URL_BULK_SUBMISSION_ENTRIES = 'http://localhost:8085/api/v1/submission_entries/bulk_submit'
 URL_SUBMISSION_ENTRY = reverse('submission_entry-list')
 
 URL_SUBMIT_CURATION_REVIEW = 'http://localhost:8085/api/v1/reviews/submit_review'
 URL_BULK_CURATION_REVIEWS = 'http://localhost:8085/api/v1/reviews/bulk_submit'
+URL_CURATION_REVIEWS = reverse('reviews-list')
 
 
 class SubmissionEntryApi(TestCase):
@@ -133,3 +135,21 @@ class CurationReviewApi(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         curation_reviews_count = CurationReview.objects.count()
         self.assertEqual(curation_reviews_count, 3)
+
+    def test_retrieve_reviews(self):
+        review_1 = create_review()
+        review_2 = create_review(annotated_effect='Some other effect')
+        review_3 = create_review(annotated_tier='Some other tier')
+
+        reviews = CurationReview.objects.all().order_by('id')
+        reviews_count = CurationReview.objects.count()
+
+        res = self.client.get(URL_CURATION_REVIEWS)
+        serializer = CurationReviewSerializer(reviews, many=True, context={'request': res.wsgi_request})
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(reviews_count, 3)
+        self.assertEqual(serializer.data, res.data['results'])
+        self.assertEqual(res.data['results'][1]['comment'], review_1.comment)
+        self.assertEqual(res.data['results'][1]['annotated_effect'], review_2.annotated_effect)
+        self.assertEqual(res.data['results'][2]['annotated_tier'], review_3.annotated_tier)
