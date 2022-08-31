@@ -3,13 +3,16 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+import copy
 
 from api.models.svip import SubmissionEntry, CurationReview
 from api.tests.data import create_user, create_variant, create_disease, create_submission_entry
 
 URL_BULK_SUBMISSION_ENTRIES = 'http://localhost:8085/api/v1/submission_entries/bulk_submit'
 URL_SUBMISSION_ENTRY = reverse('submission_entry-list')
+
 URL_SUBMIT_CURATION_REVIEW = 'http://localhost:8085/api/v1/reviews/submit_review'
+URL_BULK_CURATION_REVIEWS = 'http://localhost:8085/api/v1/reviews/bulk_submit'
 
 
 class SubmissionEntryApi(TestCase):
@@ -106,4 +109,27 @@ class CurationReviewApi(TestCase):
         curation_reviews_count = CurationReview.objects.count()
         self.assertEqual(curation_reviews_count, 1)
 
+    def test_bulk_submit_curation_reviews(self):
+        submission_entry = create_submission_entry()
+        review1 = {'submission_entry': submission_entry.id,
+                   'effect': 'Poor outcome',
+                   'tier': 'IID Tier',
+                   'comment': 'Some comment',
+                   'draft': True,
+                   'reviewer': self.user.id,
+                   'acceptance': True}
 
+        review2 = copy.deepcopy(review1)
+        review3 = copy.deepcopy(review1)
+        review2['effect'] = 'Some other effect'
+        review2['tier'] = 'Some other tier'
+
+        payload = {"data": [
+            ['Some diseases, NOS', [review1]],
+            ['Other diseases, NOS', [review2, review3]]
+        ]}
+
+        res = self.client.post(URL_BULK_CURATION_REVIEWS, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        curation_reviews_count = CurationReview.objects.count()
+        self.assertEqual(curation_reviews_count, 3)
