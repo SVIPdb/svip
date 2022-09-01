@@ -11,6 +11,11 @@ from api.models import CurationEntry
 from api.serializers import CurationEntrySerializer
 from api.tests.data import create_curation_entry, create_user
 
+# CURATION_ENTRIES_URL = reverse('curation_entries')
+URL_CURATION_ENTRIES = 'http://localhost:8085/api/v1/curation_entries'
+URL_SUBMISSION_ENTRIES = reverse('submission_entry-list')
+URL_CURATION_REVIEWS = reverse('reviews-list')
+
 
 class ViewTests(APITestCase):
     def setUp(self):
@@ -36,11 +41,6 @@ class ViewTests(APITestCase):
         self.assertEqual(data['results'][0]['name'], 'V600E', "We expenct the variant name to be 'V600E")
 
 
-# CURATION_ENTRIES_URL = reverse('curation_entries')
-URL_CURATION_ENTRIES = 'http://localhost:8085/api/v1/curation_entries'
-URL_SUBMISSION_ENTRIES = reverse('submission_entry-list')
-
-
 class UnauthorizedRequest(TestCase):
     """
     Test authentication is required to get  data from API.
@@ -53,6 +53,10 @@ class UnauthorizedRequest(TestCase):
 
     def test_auth_required_to_get_submission_entries(self):
         res = self.client.get(URL_SUBMISSION_ENTRIES)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_auth_required_to_get_curation_reviews(self):
+        res = self.client.get(URL_CURATION_REVIEWS)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
