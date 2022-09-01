@@ -37,17 +37,23 @@ class ViewTests(APITestCase):
 
 
 # CURATION_ENTRIES_URL = reverse('curation_entries')
-URL = 'http://localhost:8085/api/v1/curation_entries'
+URL_CURATION_ENTRIES = 'http://localhost:8085/api/v1/curation_entries'
+URL_SUBMISSION_ENTRIES = reverse('submission_entry-list')
 
 
 class UnauthorizedRequest(TestCase):
     """
-    Test authentication and being is required to get the curation entries data from API.
+    Test authentication is required to get  data from API.
     """
 
-    def test_auth_required(self):
-        res = self.client.get(URL)
+    def test_auth_required_to_get_curation_entries(self):
+        res = self.client.get(URL_CURATION_ENTRIES)
+        print(res.status_code)
         self.assertEqual(res.data['results'], [])
+
+    def test_auth_required_to_get_submission_entries(self):
+        res = self.client.get(URL_SUBMISSION_ENTRIES)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class CurationEntryApiForCurators(TestCase):
@@ -73,10 +79,8 @@ class CurationEntryApiForCurators(TestCase):
         create_curation_entry()
         create_curation_entry()
 
-        res = self.client.get(URL)
+        res = self.client.get(URL_CURATION_ENTRIES)
         curation_entries = CurationEntry.objects.all().order_by('-id')
         serializer = CurationEntrySerializer(curation_entries, many=True, context={'request': res.wsgi_request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer.data, res.data['results'], )
-
-
