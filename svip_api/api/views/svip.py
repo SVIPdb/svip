@@ -23,7 +23,7 @@ from api.models import (
 )
 from api.models.svip import (
     SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview,
-    SummaryDraft, GeneSummaryDraft, RevisedReview, SubmissionEntry
+    SummaryDraft, GeneSummaryDraft, SubmissionEntry
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
@@ -32,7 +32,7 @@ from api.serializers import (
 from api.serializers.svip import (
     CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SubmittedVariantSerializer,
     CurationRequestSerializer, SummaryCommentSerializer,
-    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer,
+    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer,
     SubmissionEntrySerializer
 )
 from api.support.history import make_history_response
@@ -393,19 +393,6 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
             for obj in item[1]:
                 self.__save_review_obj(obj)
         return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
-
-
-class RevisedReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = RevisedReviewSerializer
-    model = RevisedReview
-
-    def get_queryset(self):
-        queryset = RevisedReview.objects.all()
-        return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        # kwargs["many"] = True
-        return super(RevisedReviewViewSet, self).get_serializer(*args, **kwargs)
 
 
 # ================================================================================================================

@@ -40,7 +40,6 @@ from .svip import (
     SummaryDraftViewSet,
     GeneSummaryDraftViewSet,
     CurationReviewViewSet,
-    RevisedReviewViewSet,
     SubmissionEntryViewSet
 
 )

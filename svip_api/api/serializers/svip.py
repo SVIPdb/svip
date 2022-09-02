@@ -19,8 +19,8 @@ from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
-    SummaryDraft, GeneSummaryDraft, RevisedReview, SubmissionEntry
+    CurationRequest, SummaryComment, CurationReview,
+    SummaryDraft, GeneSummaryDraft, SubmissionEntry
 )
 from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
 from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
@@ -533,16 +533,6 @@ class CurationReviewSerializer(serializers.ModelSerializer):
         model = CurationReview
         fields = '__all__'
         read_only_fields = ['id']
-
-
-class RevisedReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(RevisedReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = RevisedReview
-        fields = '__all__'
 
 
 class SubmissionEntrySerializer(serializers.ModelSerializer):
