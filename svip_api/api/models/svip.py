@@ -94,13 +94,10 @@ class VariantInSVIP(models.Model):
         to=Variant, on_delete=DB_CASCADE, related_name="variantinsvip")
     # variant = models.OneToOneField(to=Variant, on_delete=DB_CASCADE)
     data = JSONField(default=dict)
-
     # contains a summary from the curators about this variant
     summary = models.TextField(null=True, blank=True)
     summary_date = models.DateTimeField(null=True)
-
     objects = VariantInSVIPManager()
-
     history = HistoricalRecords(cascade_delete_history=True)
 
     def calculate_summary_date(self):
@@ -147,137 +144,6 @@ class VariantInSVIP(models.Model):
             """, [self.id])
 
             return dictfetchall(cursor)
-
-    def review_data(self, *args, **kwargs):
-
-        # JSON containing data for VariantDisease.vue
-        diseases_dict = []
-
-        # for entry in self.variant.curation_entries.all().order_by('id'):
-        #     disease = {}
-        #
-        #     if entry.disease:
-        #         disease["disease"] = entry.disease.name
-        #     else:
-        #         disease["disease"] = 'Unspecified'
-        #
-        #     evidences = []
-        #     for evidence in entry.curation_evidences.all().filter(~Q(type_of_evidence='Excluded')):
-        #
-        #         # delete evidences that don't contain any curation
-        #         if evidence.curation_entries.all().count() == 0:
-        #             if hasattr(evidence, 'annotation1'):
-        #                 evidence.annotation1.delete()
-        #             if hasattr(evidence, 'annotation2'):
-        #                 evidence.annotation2.delete()
-        #             for review in evidence.curation_reviews.all():
-        #                 review.delete()
-        #             for rr in evidence.revised_reviews.all():
-        #                 rr.delete()
-        #             evidence.delete()
-        #             break
-        #
-        #         evidence_obj = {}
-        #         evidence_obj["id"] = evidence.id
-        #         evidence_obj["isOpen"] = False
-        #         evidence_obj["typeOfEvidence"] = evidence.type_of_evidence
-        #         evidence_obj["fullType"] = evidence.full_evidence_type()
-        #         evidence_obj["effectOfVariant"] = evidence.effect_of_variant()
-        #
-        #         if hasattr(evidence, 'annotation1'):
-        #             evidence_obj["curator"] = {
-        #                 "id": evidence.annotation1.id,
-        #                 "annotatedEffect": evidence.annotation1.effect,
-        #                 "annotatedTier": evidence.annotation1.tier,
-        #             }
-        #         if hasattr(evidence, 'annotation2'):
-        #             evidence_obj["finalAnnotation"] = {
-        #                 "id": evidence.annotation2.id,
-        #                 "annotatedEffect": evidence.annotation2.effect,
-        #                 "annotatedTier": evidence.annotation2.tier,
-        #                 "clinical_input": evidence.annotation2.clinical_input
-        #             }
-        #
-        #         curations = []
-        #         for curation in evidence.curation_entries.all():
-        #             # print(f"\n\ncuration id: {curation.id}\n\n")
-        #             if curation.tier_level:
-        #                 tier = f"{curation.tier_level}: {curation.tier_level_criteria}"
-        #             else:
-        #                 tier = curation.tier_level_criteria
-        #
-        #             curation_obj = {
-        #                 "id": curation.id,
-        #                 "pmid": int(curation.references.split(":")[1]),
-        #                 "effect": curation.effect,
-        #                 "support": curation.support,
-        #                 "comment": curation.comment,
-        #                 "tier": tier
-        #             }
-        #             curations.append(curation_obj)
-        #         evidence_obj["curations"] = curations
-        #
-        #         reviews = []
-        #         for review in evidence.curation_reviews.all():
-        #             review_obj = {
-        #                 "id": review.id,
-        #                 "reviewer": f"{review.reviewer.first_name} {review.reviewer.last_name}",
-        #                 "reviewer_mail": review.reviewer.email,
-        #                 "reviewer_id": review.reviewer.id,
-        #                 "annotatedTier": review.annotated_tier,
-        #                 "annotatedEffect": review.annotated_effect,
-        #                 "comment": review.comment,
-        #                 "draft": review.draft
-        #             }
-        #             if (review.annotated_effect == evidence.annotation1.effect) and (
-        #                     review.annotated_tier == evidence.annotation1.tier):
-        #                 review_obj['status'] = True
-        #             else:
-        #                 review_obj['status'] = False
-        #             reviews.append(review_obj)
-        #
-        #         # add supplementary review objects to the array, when necessary, so there are always 3 cases displayed
-        #         while len(reviews) < 3:
-        #             review_obj = {
-        #                 "reviewer": "",
-        #                 "status": None
-        #             }
-        #             reviews.append(review_obj)
-        #         evidence_obj["reviews"] = reviews
-        #
-        #         revised_reviews = []
-        #         for rr in evidence.revised_reviews.all():
-        #             rr_obj = {
-        #                 "id": rr.id,
-        #                 "reviewer": f"{rr.reviewer.first_name} {rr.reviewer.last_name}",
-        #                 "reviewer_mail": rr.reviewer.email,
-        #                 'agree': rr.agree,
-        #                 'comment': rr.comment
-        #             }
-        #             revised_reviews.append(rr_obj)
-        #         evidence_obj['revised_reviews'] = revised_reviews
-        #
-        #         evidences.append(evidence_obj)
-        #
-        #     ordered_evidences = []
-        #
-        #     # optional argument defines whether all evidence types should be passed, or only clinical ones
-        #     all_evidence_types = kwargs.get('all_evidence_types', False)
-        #
-        #     if all_evidence_types:
-        #         for ev in evidences:
-        #             ordered_evidences.append(ev)
-        #     else:
-        #         for evidence_type in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]:
-        #             for matching_evidence in (ev for ev in evidences if ev["typeOfEvidence"] == evidence_type):
-        #                 ordered_evidences.append(matching_evidence)
-        #
-        #     disease["evidences"] = ordered_evidences
-        #
-        #     if len(disease["evidences"]) > 0:
-        #         diseases_dict.append(disease)
-        #
-        return diseases_dict
 
     class Meta:
         verbose_name = "Variant in SVIP"
@@ -362,51 +228,31 @@ class DiseaseInSVIP(SVIPModel):
 # ================================================================================================================
 
 
-# class CurationAssociation(models.Model):
-#     """
-#     Associate variant to diseases for which curation was given
-#     """
-#     variant = models.ForeignKey(
-#         to=Variant, on_delete=DB_CASCADE, related_name="curation_associations")
-#     disease = models.ForeignKey(
-#         to=Disease, on_delete=models.SET_NULL, null=True, blank=True, related_name='curation_associations')
+class SubmissionEntry(models.Model):
+    """
+    The entry that is being annotated and submitted: a unique combination of
+    variant, disease, type of evidence, and drug (if present).
+    This combination is annotated by a curator based on one or more curation entries.
+    The entry is generated from all the curation entries of a variant at the moment of their submission.
+    """
+    related_name = 'submission_entries'
+    variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, related_name=related_name)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              null=True, on_delete=models.SET_NULL)
 
-
-# class CurationEvidence(models.Model):
-#     """
-#     Link an association between a variant and a disease to an effect (and then to curation entries)
-#     """
-#     association = models.ForeignKey(
-#         to=CurationAssociation, on_delete=DB_CASCADE, related_name="curation_evidences")
-#     type_of_evidence = models.TextField(null=True)
-#     drug = models.TextField(null=True)
-#
-#     def full_evidence_type(self):
-#         if self.drug:
-#             return f"{self.type_of_evidence} - {self.drug.capitalize()}"
-#         else:
-#             return self.type_of_evidence
-#
-#     def effect_of_variant(self):
-#         effect_of_variant = []
-#         for curation in self.curation_entries.all():
-#             effect_is_registered = False
-#             for effect_obj in effect_of_variant:
-#                 if effect_obj["label"] == curation.effect:
-#                     effect_is_registered = True
-#                     effect_obj["count"] += 1
-#             if not effect_is_registered:
-#                 effect_obj = {
-#                     "label": curation.effect,
-#                     "count": 1
-#                 }
-#                 effect_of_variant.append(effect_obj)
-#         return effect_of_variant
+    disease = models.ForeignKey(
+        to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
+    type_of_evidence = models.TextField(
+        verbose_name="Type of evidence")
+    drug = models.TextField(null=True)
+    effect = models.TextField(default="Not yet annotated")
+    tier = models.TextField(default="Not yet annotated")
 
 
 class CURATION_STATUS(ModelChoice):
     draft = 'draft'
     saved = 'saved'
+    ready_for_submission = 'ready_for_submission'
     submitted = 'submitted'
     unreviewed = 'unreviewed'
     reviewed = 'reviewed'
@@ -425,7 +271,6 @@ class CurationRequest(SVIPModel):
     These requests are either automatically generated by the system or created by clinicians.
     If the request is created by a clinician, it's considered a higher priority than one that the system generates.
     """
-
     submission = models.ForeignKey(
         'SubmittedVariant', on_delete=models.SET_NULL, null=True)
     variant = models.ForeignKey(
@@ -506,18 +351,13 @@ class CurationEntryManager(models.Manager):
 class CurationEntry(SVIPModel):
     """
     Represents a curation entry generated by a curator.
-
     Generally, these are in response to a request, although (apparently?) a curator can create a curation
     entry whenever they want.
     """
     related_name = 'curation_entries'
+    submission_entry = ForeignKey(to=SubmissionEntry, on_delete=models.SET_NULL, null=True)
     disease = ForeignKey(
         to=Disease, on_delete=models.SET_NULL, null=True, blank=True)
-
-    # link a curation entry to curation evidence (usually one, but more if the curation is associated with several
-    # drugs)
-    # curation_evidences = models.ManyToManyField(
-    #     CurationEvidence, related_name=related_name, default=None)
 
     variant = models.ForeignKey(
         to=Variant, on_delete=DB_CASCADE, related_name=related_name)
@@ -603,6 +443,7 @@ class CurationEntry(SVIPModel):
             return self.escat_score.split(':')[0]
 
     def owner_name(self):
+
         if not self.owner:
             return "N/A"
         fullname = ("%s %s" % (self.owner.first_name,
@@ -663,17 +504,6 @@ class VariantCuration(SVIPModel):
         ordering = ('id',)
 
 
-class REVIEW_STATUS(ModelChoice):
-    pending = 'pending'
-    rejected = 'rejected'
-    accepted = 'accepted'
-
-
-class CurationReviewManager(models.Manager):
-    def by_status(self, status):
-        return self.get_queryset().filter(status=status)
-
-
 class CurationReview(SVIPModel):
     """
     An assignemt of a curation entry to a reviewer. Typically 3 reviewers are selected, each of whom provides a review.
@@ -683,20 +513,14 @@ class CurationReview(SVIPModel):
     - If any reject, the curation entry is returned to the 'saved' status(?) for the curator to fix and resubmit or abandon.
     """
     related_name = 'curation_reviews'
-    curation_entry = ForeignKey(
-        to=CurationEntry, on_delete=DB_CASCADE, null=True, related_name=related_name, )
+    submission_entry = models.ForeignKey(to=SubmissionEntry, on_delete=DB_CASCADE, related_name=related_name, null=True)
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, related_name=related_name, )
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
-    status = models.TextField(verbose_name="Review Status", choices=REVIEW_STATUS.get_choices(), default='pending',
-                              db_index=True)
+    acceptance = models.BooleanField(default=True)
 
-    # curation_evidence = ForeignKey(
-    #     to=CurationEvidence, on_delete=DB_CASCADE, null=True, related_name=related_name)
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, null=True)
     annotated_effect = models.TextField(null=True, blank=True)
     annotated_tier = models.TextField(null=True, blank=True)
     comment = models.TextField(default="", null=True, blank=True)
@@ -704,8 +528,8 @@ class CurationReview(SVIPModel):
     draft = models.BooleanField(default=False)
 
     def match(self):
-        SIBAnnotation = self.curation_evidence.annotation1
-        return (self.annotated_effect == SIBAnnotation.effect) and (self.annotated_tier == SIBAnnotation.tier)
+        submission_entry = self.submission_entry
+        return (self.annotated_effect == submission_entry.effect) and (self.annotated_tier == submission_entry.tier)
 
 
 class RevisedReview(models.Model):

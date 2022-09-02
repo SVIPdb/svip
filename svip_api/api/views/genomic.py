@@ -18,14 +18,13 @@ from api.serializers import (AssociationSerializer,
                              EvidenceSerializer, FullVariantSerializer,
                              GeneSerializer, PhenotypeSerializer,
                              SimpleVariantSerializer, SourceSerializer,
-                             VariantInSourceSerializer, VariantSerializer)
+                             VariantInSourceSerializer, VariantSerializer, VariantInDashboardSerializer)
 # svip data endpoints
 from api.serializers.genomic_svip import OnlySVIPVariantSerializer
 from api.shared import clinical_significance, pathogenic
 import re
 from api.utils import render_to_pdf
 import datetime
-import json
 
 
 def change_from_hgvs(x):
@@ -56,8 +55,8 @@ def VariantSummaryView(request, pk: int):
     gene_summary = gene[0].summary if gene[0].summary else 'unavailable'
     authed_set = CurationEntry.objects.all()
     href = "/".join([referer[:-1], "curation", "gene",
-                    str(gene[0].id), "variant", str(variant.id)])
-    gene_href = '/'.join([referer[:-1],  "gene",
+                     str(gene[0].id), "variant", str(variant.id)])
+    gene_href = '/'.join([referer[:-1], "gene",
                           str(gene[0].id)])
     if request.GET.get('onlyOwned') == 'true':
         authed_set = CurationEntry.objects.filter(
@@ -176,24 +175,24 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         # if they want inline svip data, be sure to prefetch it and all its dependencies
         if self.request.GET.get('inline_svip_data') == 'true' or self.action == 'retrieve':
             q = (q
-                 .select_related('variantinsvip')
-                 .prefetch_related(
-                     Prefetch(
-                         'variantinsvip__diseaseinsvip_set', queryset=(
-                             DiseaseInSVIP.objects
-                             .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                             .prefetch_related(
-                                 'sample_set',
-                                 'disease__curationentry_set',
-                                 'disease__curationentry_set__owner'
-                             )
-                         )
-                     ),
-                     Prefetch(
-                         'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
-                     )
-                 )
-                 )
+                .select_related('variantinsvip')
+                .prefetch_related(
+                Prefetch(
+                    'variantinsvip__diseaseinsvip_set', queryset=(
+                        DiseaseInSVIP.objects
+                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                            .prefetch_related(
+                            'sample_set',
+                            'disease__curationentry_set',
+                            'disease__curationentry_set__owner'
+                        )
+                    )
+                ),
+                Prefetch(
+                    'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
+                )
+            )
+            )
 
         return q.order_by('name')
 
@@ -215,6 +214,12 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
     )
     ordering_fields = ('name', 'hgvs_c', 'hgvs_p',
                        'hgvs_g', 'so_name', 'sources')
+
+    @action(detail=False)
+    def review_process(self, request):
+        variants_for_review = Variant.objects.filter(submission_entries__isnull=False).distinct()
+        serializer = VariantInDashboardSerializer(variants_for_review, many=True, context={'request': request})
+        return JsonResponse({'results': serializer.data})
 
     @action(detail=False)
     def autocomplete(self, request):

@@ -84,6 +84,7 @@ class VARIANT_STAGE(ModelChoice):
     reannotated = 'reannotated'
     on_hold = 'on_hold'
     approved = 'approved'
+    fully_approved = 'fully_approved'
 
 
 class VariantManager(models.Manager):
@@ -92,6 +93,7 @@ class VariantManager(models.Manager):
 
 
 class Variant(models.Model):
+    REVIEW_COUNT = 3
     MIN_ACCEPTED_REVIEW_COUNT = 3
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
@@ -180,89 +182,45 @@ class Variant(models.Model):
         ]
 
     @property
-    def stage_new(self):
-        if self.curation_entries.all():
-            pass
-            # for curation_entry in self.curation_entries.get_by_evidence_type_category(
-            #         'diagnostic'):
-            #     review_count = curation_entry.curation_reviews.count()
-            #     acceped_review_count = curation_entry.curation_reviews.by_status(
-            #         REVIEW_STATUS.accepted).count()
-            #     if review_count > 0 and review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
-            #         return VARIANT_STAGE.ongoing_review
-            #     elif review_count == self.MIN_ACCEPTED_REVIEW_COUNT and acceped_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
-            #         return VARIANT_STAGE.unapproved
-            #     elif acceped_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
-            #         return VARIANT_STAGE.approved
-            #
-            # if any([curation_entry.status == CURATION_STATUS.get('submitted') for curation_entry in
-            #         self.curation_entries.all()]):
-            #     return VARIANT_STAGE.annotated
-            # elif self.curation_entries.all().count() > 0:
-            #     return VARIANT_STAGE.ongoing_curation
-            # elif self.curation_request.all().count() > 0:
-            #     return VARIANT_STAGE.loaded
-            #
-            # return VARIANT_STAGE.none
-
-    @property
     def stage(self):
 
-        if self.curation_associations.count() > 0:
-
-            for association in self.curation_associations.all():
-                if association.curation_evidences.all().filter(
-                        type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                    evidence = association.curation_evidences.first()
-
-                    if evidence.revised_reviews.all().count() == 3:
-                        if evidence.revised_reviews.filter(agree=True).count() == 3:
-                            return 'fully_reviewed'
-                        else:
-                            return 'on_hold'
-
-                    if hasattr(evidence, 'annotation2'):
-                        return 'to_review_again'
-
-                    if evidence.curation_reviews.count() == 3:
-                        if hasattr(evidence, 'annotation1'):
-                            if self.has_only_matching_reviews():
-                                return 'fully_reviewed'
-                            else:
-                                return 'conflicting_reviews'
-
-                    if evidence.curation_reviews.count() == 2:
-                        return '2_reviews'
-
-                    if evidence.curation_reviews.count() == 1:
-                        return '1_review'
-
-        for curation in self.curation_entries.all():
-            if curation.status == 'submitted':
-                return '0_review'
-
-        if self.curation_entries.all().count() > 0:
-            return 'ongoing_curation'
-
-        if self.curation_request.all().count() > 0:
-            return 'loaded'
+        for submission_entry in self.submission_entries.all():
+            review_count = submission_entry.curation_reviews.count()
+            if review_count:
+                positive_review_count = submission_entry.curation_reviews.filter(acceptance=True).count()
+                if 0 < review_count < self.REVIEW_COUNT:
+                    return VARIANT_STAGE.ongoing_review
+                elif review_count == self.REVIEW_COUNT and positive_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
+                    return VARIANT_STAGE.unapproved
+                elif positive_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
+                    return VARIANT_STAGE.approved
+        if any([curation_entry.status == 'resubmitted' for curation_entry in self.curation_entries.all()]):
+            return VARIANT_STAGE.reannotated
+        if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
+            return VARIANT_STAGE.annotated
+        elif self.curation_entries.count() > 0:
+            return VARIANT_STAGE.ongoing_curation
+        elif self.curation_request.count() > 0:
+            return VARIANT_STAGE.loaded
 
         return 'none'
+
+
 
     @property
     def public_stage(self):
         stage = self.stage
-        if stage in ['none']:
+        if stage in VARIANT_STAGE.none:
             return 'None'
-        elif stage in ['loaded']:
+        elif stage in VARIANT_STAGE.loaded:
             return 'Loaded'
-        elif stage in ['ongoing_curation']:
+        elif stage in VARIANT_STAGE.ongoing_curation:
             return 'In progress'
-        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+        elif stage in [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved, VARIANT_STAGE.reannotated]:
             return 'Annotated'
-        elif stage in ['on_hold']:
+        elif stage in VARIANT_STAGE.on_hold:
             return 'On hold'
-        elif stage in ['fully_reviewed']:
+        elif stage in VARIANT_STAGE.approved:
             return 'Approved'
 
     @property

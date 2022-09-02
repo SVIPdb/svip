@@ -11,43 +11,53 @@ from api.models import CurationEntry
 from api.serializers import CurationEntrySerializer
 from api.tests.data import create_curation_entry, create_user
 
-class ViewTests(APITestCase):
-  def setUp(self):
-    gene = Gene.objects.create(
-      entrez_id=673,
-      ensembl_gene_id='ENSG00000157764',
-      symbol='BRAF'
-    )
-    variant = Variant.objects.create(
-      gene=gene,
-      name='V600E',
-      description='BRAF V600E'
-    )
-
-  def test_variant_list(self):
-    """ Test the variant list """
-    url = reverse('variant-list')
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    data = response.json()
-    self.assertEqual(data['count'], 1, "We expect 1 result")
-    self.assertEqual(data['results'][0]['name'], 'V600E', "We expenct the variant name to be 'V600E")
-
-
-
 # CURATION_ENTRIES_URL = reverse('curation_entries')
-URL = 'http://localhost:8085/api/v1/curation_entries'
+URL_CURATION_ENTRIES = 'http://localhost:8085/api/v1/curation_entries'
+URL_SUBMISSION_ENTRIES = reverse('submission_entry-list')
+URL_CURATION_REVIEWS = reverse('reviews-list')
+
+
+class ViewTests(APITestCase):
+    def setUp(self):
+        gene = Gene.objects.create(
+            entrez_id=673,
+            ensembl_gene_id='ENSG00000157764',
+            symbol='BRAF'
+        )
+        variant = Variant.objects.create(
+            gene=gene,
+            name='V600E',
+            description='BRAF V600E'
+        )
+
+    def test_variant_list(self):
+        """ Test the variant list """
+        url = reverse('variant-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertEqual(data['count'], 1, "We expect 1 result")
+        self.assertEqual(data['results'][0]['name'], 'V600E', "We expenct the variant name to be 'V600E")
 
 
 class UnauthorizedRequest(TestCase):
     """
-    Test authentication and being is required to get the curation entries data from API.
+    Test authentication is required to get  data from API.
     """
 
-    def test_auth_required(self):
-        res = self.client.get(URL)
+    def test_auth_required_to_get_curation_entries(self):
+        res = self.client.get(URL_CURATION_ENTRIES)
+        print(res.status_code)
         self.assertEqual(res.data['results'], [])
+
+    def test_auth_required_to_get_submission_entries(self):
+        res = self.client.get(URL_SUBMISSION_ENTRIES)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_auth_required_to_get_curation_reviews(self):
+        res = self.client.get(URL_CURATION_REVIEWS)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class CurationEntryApiForCurators(TestCase):
@@ -73,9 +83,8 @@ class CurationEntryApiForCurators(TestCase):
         create_curation_entry()
         create_curation_entry()
 
-        res = self.client.get(URL)
+        res = self.client.get(URL_CURATION_ENTRIES)
         curation_entries = CurationEntry.objects.all().order_by('-id')
         serializer = CurationEntrySerializer(curation_entries, many=True, context={'request': res.wsgi_request})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer.data, res.data['results'], )
-

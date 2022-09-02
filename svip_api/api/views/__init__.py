@@ -39,8 +39,8 @@ from .svip import (
     SummaryCommentViewSet,
     SummaryDraftViewSet,
     GeneSummaryDraftViewSet,
-    CurationReviewView,
     CurationReviewViewSet,
     RevisedReviewViewSet,
+    SubmissionEntryViewSet
 
 )

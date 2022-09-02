@@ -3,7 +3,7 @@ from random import randint
 from django.contrib.auth import get_user_model
 
 from api.models import CurationEntry, Disease, Variant, Gene
-
+from api.models.svip import SubmissionEntry, CurationReview
 
 
 def create_user(user_data={}):
@@ -44,8 +44,7 @@ def create_gene(**params):
                     "TSC4"
                 ]}
     defaults.update(params)
-    gene = Gene.objects.create(**defaults)
-    return gene
+    return Gene.objects.create(**defaults)
 
 
 def create_variant(**params):
@@ -79,8 +78,7 @@ def create_variant(**params):
     }
 
     defaults.update(params)
-    variant = Variant.objects.create(**defaults)
-    return variant
+    return Variant.objects.create(**defaults)
 
 
 def create_disease(**params):
@@ -89,12 +87,11 @@ def create_disease(**params):
     }
 
     defaults.update(params)
-    disease = Disease.objects.create(**defaults)
-    return disease
+    return Disease.objects.create(**defaults)
 
 
 def create_curation_entry(**params):
-    """Create and return a sample recipe."""
+    """Create and return a sample curation entry."""
     defaults = {
         "disease": create_disease(),
         "variant": create_variant(),
@@ -119,6 +116,31 @@ def create_curation_entry(**params):
     }
     defaults.update(params)
 
-    curation_entry = CurationEntry.objects.create(**defaults)
-    return curation_entry
+    return CurationEntry.objects.create(**defaults)
 
+
+def create_submission_entry(**params):
+    """Create and return a sample submission entry."""
+    defaults = {"owner_id": create_user().id,
+                "variant_id": create_variant().id,
+                "disease_id": create_disease().id,
+                "effect": "Associated with diagnosis",
+                "drug": "Fuflomicin",
+                "type_of_evidence": "Predictive / Therapeutic - Fuflomicin",
+                "tier": "Reported evidence supportive of benign/likely benign effect"
+                }
+
+    defaults.update(params)
+    return SubmissionEntry.objects.create(**defaults)
+
+
+def create_review(**params):
+    defaults = {'submission_entry': create_submission_entry(),
+                'annotated_effect': 'Poor outcome',
+                'annotated_tier': 'IID Tier',
+                'comment': 'Some comment',
+                'draft': True,
+                'reviewer': create_user(),
+                'acceptance': True}
+    defaults.update(params)
+    return CurationReview.objects.create(**defaults)

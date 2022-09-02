@@ -5,6 +5,7 @@
 			class="p-1"
 			:header-bg-variant="cardHeaderBg"
 			:header-text-variant="cardTitleVariant"
+			:class="cardCustomClass ? customClass : ''"
 			:style="customBgColor && `background-color: ${customBgColor} !important`">
 			<div class="d-flex justify-content-between flex-wrap">
 				<div class="d-flex justify-content-between align-items-center">
@@ -12,6 +13,21 @@
 						<span class="font-weight-bold">
 							{{ title }}
 						</span>
+
+						<b-dropdown
+							id="dropdown-1"
+							:text="review_cycle"
+							class="ml-3"
+							variant="secondary"
+							size="sm"
+							v-model="review_cycle">
+							<b-dropdown-item @click="review_cycle = 'First review cycle'">
+								First review cycle
+							</b-dropdown-item>
+							<b-dropdown-item @click="review_cycle = 'Second review cycle'">
+								Second review cycle
+							</b-dropdown-item>
+						</b-dropdown>
 
 						<FilterButtons
 							v-if="cardFilterOption"
@@ -30,7 +46,9 @@
 								},
 
 								{
-									label: 'On-hold',
+									label: `${
+										review_cycle === 'First review cycle' ? 'Conflicting' : 'On-hold'
+									}`,
 									value: 'conflicting',
 									variant: 'danger',
 								},
@@ -50,10 +68,10 @@
 						v-if="isReviewer"
 						class="ml-4"
 						id="checkbox-1"
-						v-model="statusMyReview"
+						v-model="statusMineReviewer"
 						name="checkbox-1"
-						value="my"
-						unchecked-value="all">
+						value="mine"
+						unchecked-value="not_mine">
 						My reviews
 					</b-form-checkbox>
 				</div>
@@ -85,19 +103,19 @@
 				show-empty
 				small
 				hover>
-				<template v-slot:cell(gene)="data">
+				<template v-slot:cell(gene_name)="data">
 					<b>
-						<router-link :to="`/gene/${data.item.gene.id}`" target="_blank">
-							{{ data.item.gene.symbol }}
+						<router-link :to="`/gene/${data.item.gene_id}`" target="_blank">
+							{{ data.value }}
 						</router-link>
 					</b>
 				</template>
 
 				<template v-slot:cell(variant)="data">
 					<router-link
-						:to="`/gene/${data.item.gene.id}/variant/${data.item.variant.id}`"
+						:to="`/gene/${data.item.gene_id}/variant/${data.item.variant_id}`"
 						target="_blank">
-						{{ data.item.variant.name }}
+						{{ data.value }}
 					</router-link>
 				</template>
 
@@ -105,23 +123,28 @@
 					<p class="mb-0">{{ data.value }}</p>
 				</template>
 
-				<template v-slot:cell(diseases)="data">
-					<p class="mb-0" v-for="(disease, idx) in data.item.diseases">
-						{{ disease }}
+				<template v-slot:cell(deadline)="row">
+					<p
+						v-if="row.item.curated !== 'Complete'"
+						:class="setFlagClass(row.item.days_left) + ' m-0 p-0'">
+						<span class="font-weight-bold">
+							{{ setLetter(row.item.days_left) }}
+						</span>
+						({{ row.item.days_left }} days)
 					</p>
 				</template>
 
 				<template v-slot:cell(status)="status_obj">
 					<span
-						v-for="(review, i) in status_obj['item']['reviews_summary']"
-						:key="i + ' review_status'">
+						v-for="(review, i) in status_obj['item']['reviews']"
+						:key="review + i + Math.random()">
 						<span v-if="review">
 							<b-icon
 								style="color: blue"
 								class="h5 m-1"
 								icon="check-square-fill"
 								:class="{
-									notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
+									notOwn: !(user.user_id === status_obj['item']['reviewers_id'][i]),
 								}"></b-icon>
 						</span>
 						<span v-else>
@@ -130,7 +153,7 @@
 								class="h5 m-1"
 								icon="x-square-fill"
 								:class="{
-									notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
+									notOwn: !(user.user_id === status_obj['item']['reviewers_id'][i]),
 								}"></b-icon>
 						</span>
 					</span>
@@ -142,10 +165,20 @@
 					</span>
 				</template>
 
-				<template v-slot:cell(curators)="data">
-					<span v-for="(owner, idx) in data.item.curators" :key="owner + '_' + idx">
+				<template v-slot:cell(reviewed)="data">
+					<div>data!!!</div>
+					<icon
+						v-for="(reviewer, index) in data.value"
+						v-bind:key="index"
+						v-b-popover.hover.top="reviewer.label"
+						:name="reviewer.value ? 'check' : 'times'"
+						:class="reviewer.value ? 'text-success mr-1' : 'text-danger mr-1'"></icon>
+				</template>
+
+				<template v-slot:cell(curator)="data">
+					<span v-for="(owner, idx) in data.value" :key="owner.name + '_' + idx">
 						<span v-if="idx > 0">,</span>
-						<pass :name="abbreviatedName(owner)">
+						<pass :name="abbreviatedName(owner.name)">
 							<b slot-scope="{name}" v-b-tooltip.hover="name.name">
 								{{ name.abbrev }}
 							</b>
@@ -153,23 +186,42 @@
 					</span>
 				</template>
 
-				<template v-slot:cell(action)="data">
+				<template v-slot:cell(action)="row">
+					<!-- Ivo : replace v-access="'curators'" with v-access="'reviewers'" -->
 					<b-button
-						:disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.stage)"
-						class="centered-icons reviewBtn"
+						v-if="!(row.item.review_count === 3 || row.item.reviewers_id.includes(user.user_id))"
+						class="centered-icons"
 						size="sm"
-						style="width: 130px"
+						style="width: 100px"
 						variant="info"
 						:to="{
 							name: 'annotate-review',
 							params: {
-								gene_id: data.item.gene.id,
-								variant_id: data.item.variant.id,
+								gene_id: row.item.gene_id,
+								variant_id: row.item.variant_id,
 							},
 						}"
 						target="_blank">
 						<icon name="pen-alt" />
-						{{ `${data.item.stage === 'reannotated' ? 'Second review' : 'Review'} ` }}
+						Review
+					</b-button>
+
+					<b-button
+						v-if="review_cycle === 'Second Review Cycle'"
+						class="centered-icons"
+						size="sm"
+						style="width: 100px"
+						variant="info"
+						:to="{
+							name: 'annotate-review',
+							params: {
+								gene_id: row.item.gene_id,
+								variant_id: row.item.variant_id,
+							},
+						}"
+						target="_blank">
+						<icon name="pen-alt" />
+						Second Review
 					</b-button>
 				</template>
 
@@ -210,7 +262,7 @@ import FilterButtons from '@/components/widgets/curation/FilterButtons';
 import {BIcon, BIconCheckSquareFill, BIconSquare, BIconXSquareFill} from 'bootstrap-vue';
 
 export default {
-	name: 'ReviewNotificationCardNew',
+	name: 'ReviewNotificationCard',
 	components: {
 		FilterButtons,
 		BIcon,
@@ -219,14 +271,18 @@ export default {
 		BIconXSquareFill,
 	},
 	props: {
+		// The items of the table
 		items: {
 			type: Array,
 			required: true,
+			// The default value is an empty array: `[]`
 			default: () => [],
 		},
+		// The fields of the table
 		fields: {
 			type: Array,
 			required: true,
+			// The default value is an empty array: `[]`
 			default: () => [],
 		},
 		loading: {
@@ -237,15 +293,18 @@ export default {
 			type: String,
 			default: null,
 		},
+		// The title of the card
 		title: {
 			type: String,
 			required: true,
+			// The default value is: `DEFAULT_TITLE`
 			default: 'DEFAULT_TITLE',
 		},
 		// The default column used to sort (Desc) the table
 		defaultSortBy: {
 			type: String,
 			required: false,
+			// The default value is: `id`
 			default: 'id',
 		},
 		// Override the card header background
@@ -271,6 +330,13 @@ export default {
 			required: false,
 			default: false,
 		},
+		// On/Off custom class for header background
+		cardCustomClass: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
+
 		isReviewer: {
 			type: Boolean,
 			required: false,
@@ -280,6 +346,7 @@ export default {
 	data() {
 		return {
 			review_cycle: 'First review cycle',
+			customClass: 'customClass',
 			// Custom settings for the visual
 			settings: {
 				buttonBg: 'primary',
@@ -287,8 +354,10 @@ export default {
 			// Needed parameters for the table
 			sortBy: this.defaultSortBy,
 			filter: null,
+			myFilter: 'all',
+			statusFilter: 'all',
 			statusReviewFilter: 'all',
-			statusMyReview: 'all',
+			statusMineReviewer: 'not_mine',
 			// Days left limits (Should be reviewed!)
 			daysLeft: {
 				min: 2,
@@ -322,18 +391,71 @@ export default {
 				return 'text-success';
 			}
 		},
-
+		/**
+		 * @vuese
+		 * Used to set up the correct priority depending on the days left
+		 * @arg `Number` Days left
+		 */
+		setLetter(days_left) {
+			if (days_left <= this.daysLeft.min) {
+				return 'H';
+			} else if (days_left <= this.daysLeft.max) {
+				return 'M';
+			} else {
+				return 'L';
+			}
+		},
+		/**
+		 * @vuese
+		 * Used to set up the correct badge depending on the status
+		 * @arg `String` Curation status
+		 */
+		setBadgeClass(status) {
+			return this.curationStatus[status];
+		},
+		/**
+		 * @vuese
+		 * Used to use a specific filter
+		 * @arg `String` Filter
+		 */
+		setCustomFilter(filter) {
+			this.myFilter = filter;
+		},
+		/**
+		 * @vuese
+		 * Used to use a status filter
+		 * @arg `String` Status Filter
+		 */
+		setStatusFilter(filter) {
+			this.statusFilter = filter;
+		},
 		setStatusReviewFilter(filter) {
 			this.statusReviewFilter = filter;
 		},
+		selectVariant() {
+			// (checked, element)
+			// console.log(`Checked is ${checked} and ID is ${element.id}`);
+		},
 	},
 	watch: {
+		myFilter(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				this.currentPage = 1;
+			}
+		},
+		statusFilter(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				this.currentPage = 1;
+			}
+		},
+
 		statusReviewFilter(newVal, oldVal) {
 			if (newVal !== oldVal) {
 				this.currentPage = 1;
 			}
 		},
-		statusMyReview(newVal, oldVal) {
+
+		statusMineReviewer(newVal, oldVal) {
 			if (newVal !== oldVal) {
 				this.currentPage = 1;
 			}
@@ -343,42 +465,68 @@ export default {
 		...mapGetters({
 			user: 'currentUser',
 		}),
+		// We are filtering items based on the two filters (custom and status)
+		filteredItems() {
+			let items = this.items;
 
+			if (this.statusFilter !== 'all') {
+				items = items.filter(element => element.review_count === this.statusFilter);
+			}
+
+			if (this.myFilter !== 'all') {
+				return items.filter(x => x.curator.some(y => y.id === this.user.user_id));
+			} else {
+				return items;
+			}
+		},
 		filteredReviewItems() {
-			let items =
-				this.statusMyReview === 'my'
-					? this.items.filter(item => item.reviewers.includes(this.user.user_id))
-					: this.items;
+			let items = this.items;
 
-			switch (this.statusReviewFilter) {
-				case 'process':
-					items = items.filter(item => item.review_count !== 3);
-					break;
-				case 'new':
-					items = items.filter(item => item.review_count === 0);
-					break;
-				case 'finished':
-					items = items.filter(item => {
-						return (
-							item.review_count === 3 && item.reviews_summary.reduce((a, b) => a + b, 0) === 3
-						);
-					});
-					break;
-				case 'conflicting':
-					items = items.filter(item => {
-						return item.stage === 'unapproved';
-					});
+			if (this.myFilter !== 'all') {
+				items = items.filter(x => x.curator.some(y => y.id === this.user.user_id));
+			}
+
+			if (this.statusMineReviewer === 'mine') {
+				items = items.filter(item => item.reviewers_id.includes(this.user.user_id));
+			}
+
+			if (this.statusReviewFilter === 'conflicting') {
+				items = items.filter(item => {
+					return item.stage === 'conflicting_reviews';
+				});
+			}
+			if (this.statusReviewFilter === 'finished') {
+				items = items.filter(item => {
+					return item.review_count === 3 && item.reviews.reduce((a, b) => a + b, 0) >= 2;
+				});
+			}
+			if (this.statusReviewFilter === 'process') {
+				items = items.filter(item => item.review_count !== 3);
+			}
+
+			if (this.statusReviewFilter === 'new') {
+				items = items.filter(item => item.review_count === 0);
+			}
+
+			if (this.review_cycle === 'First review cycle') {
+				return items.filter(item => item.stage !== 'to_review_again');
+			} else {
+				return items.filter(item => item.stage === 'to_review_again');
 			}
 
 			return items;
 		},
 
+		myCurations() {
+			return this.items.filter(element => element.curator.some(x => x.id === this.user.user_id));
+		},
 		totalRows() {
-			return this.items ? this.items.length : 0; // return this.items ? this.filteredItems.length : 0;
+			return this.items ? this.filteredItems.length : 0;
 		},
 		slotsUsed() {
 			return !!this.$slots.extra_commands || this.totalRows > this.perPage;
 		},
+
 		review_cycle_title() {
 			return 'First review cycle';
 		},
@@ -387,11 +535,11 @@ export default {
 </script>
 
 <style>
-.notOwn {
-	opacity: 0.4;
+.customClass {
+	background-color: #c40000 !important;
 }
 
-reviewBtn {
-	width: 100px;
+.notOwn {
+	opacity: 0.4;
 }
 </style>
