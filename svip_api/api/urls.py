@@ -112,7 +112,6 @@ router.register(r'curation_requests',
 router.register(r'curation_entries', views.CurationEntryViewSet,
                 basename='curation_entries')
 
-
 router.register(r'comments', views.VariantCommentViewSet,
                 basename='variant_comments')
 
@@ -126,10 +125,6 @@ router.register(r'submitted_variants',
 router.register(r'submitted_variant_batches',
                 views.SubmittedVariantBatchViewSet, basename='submitted_variant_batches')
 
-
-router.register(r'revised_reviews', views.RevisedReviewViewSet,
-                basename='revised_reviews')
-
 router.register(r'summary_comments', views.SummaryCommentViewSet,
                 basename='summary_comments')
 
@@ -138,7 +133,6 @@ router.register(r'summary_draft', views.SummaryDraftViewSet,
 
 router.register(r'gene_summary_draft', views.GeneSummaryDraftViewSet,
                 basename='gene_summary_draft')
-
 
 urlpatterns = [
 

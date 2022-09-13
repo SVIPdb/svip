@@ -514,8 +514,7 @@ class CurationReview(SVIPModel):
     """
     related_name = 'curation_reviews'
     submission_entry = models.ForeignKey(to=SubmissionEntry, on_delete=DB_CASCADE, related_name=related_name, null=True)
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, related_name=related_name, )
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DB_CASCADE, related_name=related_name, null=True)
 
     created_on = models.DateTimeField(default=now, db_index=True)
     last_modified = models.DateTimeField(auto_now=True, db_index=True)
@@ -530,43 +529,6 @@ class CurationReview(SVIPModel):
     def match(self):
         submission_entry = self.submission_entry
         return (self.annotated_effect == submission_entry.effect) and (self.annotated_tier == submission_entry.tier)
-
-
-class RevisedReview(models.Model):
-    """
-    2nd cycle of reviewing (if a conflict exists among 1st cycle reviews)
-    """
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=DB_CASCADE)
-    curation_entry = ForeignKey(
-        to=CurationEntry, on_delete=DB_CASCADE, null=True, related_name="revised_reviews")
-    agree = models.BooleanField()
-    comment = models.TextField(default="", null=True, blank=True)
-
-    draft = models.BooleanField(default=False)
-
-
-class SIBAnnotation1(models.Model):
-    """
-    First Annotation of the SIB curators for a specific evidence
-    """
-    evidence = models.OneToOneField(
-        to=CurationEntry, related_name="annotation1", on_delete=DB_CASCADE)
-    effect = models.TextField(default="Not yet annotated", null=True)
-    tier = models.TextField(default="Not yet annotated", null=True)
-    draft = models.BooleanField(default=False)
-
-
-class SIBAnnotation2(models.Model):
-    """
-    Second Annotation of the SIB curators for a specific evidence
-    """
-    evidence = models.OneToOneField(
-        to=CurationEntry, related_name="annotation2", on_delete=DB_CASCADE)
-    effect = models.TextField(default="Not yet annotated", null=True)
-    tier = models.TextField(default="Not yet annotated", null=True)
-    clinical_input = models.TextField(null=True)
-    draft = models.BooleanField(default=False)
 
 
 # ================================================================================================================
