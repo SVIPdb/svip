@@ -1,12 +1,12 @@
 {
-
     "printWidth": 110,
     "semi": true,
     "htmlWhitespaceSensitivity": "ignore",
     "singleAttributePerLine": false,
-    "useTabs": true,
+    "useTabs": false,
+    "tabWidth": 4,
     "bracketSpacing": false,
-     "singleQuote": true,
+    "singleQuote": true,
     "arrowParens": "avoid",
     "quoteProps": "consistent",
     "bracketSameLine": true
