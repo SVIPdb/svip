@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
 from rest_framework import status
 from rest_framework.test import APIClient
 import copy
@@ -8,13 +8,17 @@ import copy
 from api.models.svip import SubmissionEntry, CurationReview
 from api.tests.data import create_user, create_variant, create_disease, create_submission_entry, create_review
 from api.serializers.svip import CurationReviewSerializer
+from api.views.svip import SubmissionEntryViewSet
 
-URL_BULK_SUBMISSION_ENTRIES = 'http://localhost:8085/api/v1/submission_entries/bulk_submit'
+# https://www.django-rest-framework.org/api-guide/testing/
+
+
 URL_SUBMISSION_ENTRY = reverse('submission_entry-list')
-
-URL_SUBMIT_CURATION_REVIEW = 'http://localhost:8085/api/v1/reviews/submit_review'
-URL_BULK_CURATION_REVIEWS = 'http://localhost:8085/api/v1/reviews/bulk_submit'
 URL_CURATION_REVIEWS = reverse('reviews-list')
+
+URL_BULK_SUBMISSION_ENTRIES = reverse('submission_entry-bulk-submit')
+URL_SUBMIT_CURATION_REVIEW = reverse('reviews-submit-review')
+URL_BULK_CURATION_REVIEWS = reverse('reviews-bulk-submit')
 
 
 class SubmissionEntryApi(TestCase):
@@ -49,21 +53,32 @@ class SubmissionEntryApi(TestCase):
              "curation_entries": [1214],
              "type_of_evidence": "Predictive / Therapeutic - Fuflomicin",
              "tier": "Reported evidence supportive of benign/likely benign effect"
-             }]
+             },
+            {"owner_id": self.user.id,
+             "variant_id": variant.id,
+             "disease_id": disease.id,
+             "effect": "Not associated with diagnosis",
+             "drug": "Fuflomicin",
+             "curation_entries": [1214],
+             "type_of_evidence": "Predictive / Therapeutic - Fuflomicin",
+             "tier": "Reported evidence supportive of benign/likely benign effect"
+             }
+        ]
 
         res = self.client.post(URL_BULK_SUBMISSION_ENTRIES, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         submission_entries_count = SubmissionEntry.objects.count()
-        self.assertEqual(submission_entries_count, 1)
+        self.assertEqual(submission_entries_count, 2)
 
-        submission_entry = SubmissionEntry.objects.all()[0]
-        self.assertEqual(submission_entry.variant.id, variant.id)
-        self.assertEqual(submission_entry.owner.id, self.user.id)
+        submission_entry_1, submission_entry_2 = SubmissionEntry.objects.all()[0], SubmissionEntry.objects.all()[1]
+        self.assertEqual(submission_entry_1.variant.id, variant.id)
+        self.assertEqual(submission_entry_1.owner.id, self.user.id)
+        self.assertEqual(submission_entry_2.effect, payload[1]['effect'])
 
     def test_retrieving_submission_entries(self):
-        create_submission_entry()
-        create_submission_entry()
+        for i in range(2):
+            create_submission_entry()
         res = self.client.get(URL_SUBMISSION_ENTRY)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEquals(len(res.data['results']), 2)

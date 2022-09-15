@@ -2,6 +2,26 @@ const onlyUnique = (value, index, self) => {
 	return self.indexOf(value) === index;
 };
 
+// none = 'none'
+// loaded = 'loaded'
+// ongoing_curation = 'ongoing_curation'
+// annotated = 'annotated'
+// ongoing_review = 'ongoing_review'
+// unapproved = 'unapproved'
+// reannotated = 'reannotated'
+// on_hold = 'on_hold'
+// approved = 'approved'
+// fully_approved = 'fully_approved'
+
+const getStatus = stage => {
+	switch (stage) {
+		case 'ongoing_review' || 'reannotated':
+			return 'In process';
+		case 'annotated':
+			return 'New';
+	}
+};
+
 export const parseVariantsForReview = items => {
 	return items.map(item => {
 		return {
@@ -20,6 +40,7 @@ export const parseVariantsForReview = items => {
 			reviews_summary: item.reviews_summary,
 			reviewers: item.reviewers,
 			review_count: item.review_count,
+			variant_status: item.stage,
 		};
 	});
 };

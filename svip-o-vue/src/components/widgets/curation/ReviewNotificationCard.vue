@@ -1,5 +1,6 @@
 <template>
 	<b-card class="shadow-sm mb-3" align="left" no-body>
+		{{ items }}
 		<b-card-header
 			v-if="isReviewer"
 			class="p-1"

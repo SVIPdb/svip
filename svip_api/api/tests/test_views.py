@@ -12,7 +12,7 @@ from api.serializers import CurationEntrySerializer
 from api.tests.data import create_curation_entry, create_user
 
 # CURATION_ENTRIES_URL = reverse('curation_entries')
-URL_CURATION_ENTRIES = 'http://localhost:8085/api/v1/curation_entries'
+URL_CURATION_ENTRIES = reverse('curation_entries-list')
 URL_SUBMISSION_ENTRIES = reverse('submission_entry-list')
 URL_CURATION_REVIEWS = reverse('reviews-list')
 
@@ -79,10 +79,8 @@ class CurationEntryApiForCurators(TestCase):
 
     def test_retrieve_curation_entries(self):
         # create several curation entries in the db
-        create_curation_entry()
-        create_curation_entry()
-        create_curation_entry()
-
+        for i in range(3):
+            create_curation_entry()
         res = self.client.get(URL_CURATION_ENTRIES)
         curation_entries = CurationEntry.objects.all().order_by('-id')
         serializer = CurationEntrySerializer(curation_entries, many=True, context={'request': res.wsgi_request})

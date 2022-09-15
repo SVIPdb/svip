@@ -28,6 +28,12 @@ export default [
 	},
 
 	{
+		key: 'variant_status',
+		label: 'variant_status',
+		sortable: true,
+	},
+
+	{
 		key: 'curators',
 		label: 'Curator(s)',
 		sortable: true,
