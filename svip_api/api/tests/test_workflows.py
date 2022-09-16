@@ -5,8 +5,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 import copy
 
-from api.models.svip import SubmissionEntry, CurationReview
-from api.tests.data import create_user, create_variant, create_disease, create_submission_entry, create_review
+from api.models.svip import SubmissionEntry, CurationReview, CurationEntry
+from api.tests.data import create_user, create_variant, create_disease, create_submission_entry, create_review, \
+    create_curation_request, create_curation_entry
 from api.serializers.svip import CurationReviewSerializer
 from api.views.svip import SubmissionEntryViewSet
 
@@ -168,3 +169,66 @@ class CurationReviewApi(TestCase):
         self.assertEqual(res.data['results'][1]['comment'], review_1.comment)
         self.assertEqual(res.data['results'][1]['annotated_effect'], review_2.annotated_effect)
         self.assertEqual(res.data['results'][2]['annotated_tier'], review_3.annotated_tier)
+
+
+class VariantStatusChanging(TestCase):
+    """
+    Tests changing variant status during the workflow.
+    """
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = create_user({
+            "username": "test_user_workflow",
+            "password": "testpass123"
+        })
+        # put this user in the 'clinicians' and 'curators' group
+        curators_group = Group.objects.get(name='curators')
+        clinicians_group = Group.objects.get(name='clinicians')
+        curators_group.user_set.add(self.user)
+        clinicians_group.user_set.add(self.user)
+        self.variant = create_variant()
+
+    def test_stage_is_none(self):
+        """
+        Tests status is 'none' if there are no curation requests.
+        """
+        self.assertEqual(self.variant.stage, 'none')
+
+    def test_stage_is_loaded(self):
+        """
+        Tests status is 'loaded' if there is a curation request.
+        """
+        create_curation_request(variant=self.variant)
+        self.assertEqual(self.variant.stage, 'loaded')
+
+    def test_stage_is_changing_in_workflow(self):
+        """
+        Tests stage is changing correctly during the workflow.
+        """
+
+        create_curation_entry(variant=self.variant)
+        self.assertEqual(self.variant.stage, 'ongoing_curation')
+
+        CurationEntry.objects.all().update(status='submitted')
+        submission_entry = create_submission_entry(variant_id=self.variant.id, owner_id=self.user.id)
+        CurationEntry.objects.all().update(submission_entry=submission_entry)
+        self.assertEqual(self.variant.stage, 'annotated')
+
+        review_1 = create_review(submission_entry=submission_entry)
+        self.assertEqual(self.variant.stage, 'ongoing_review')
+
+        review_2 = create_review(submission_entry=submission_entry, annotated_tier='Some other tier', acceptance=False)
+        review_3 = create_review(submission_entry=submission_entry, annotated_effect='Some other effect',
+                                 acceptance=False)
+        self.assertEqual(self.variant.stage, 'unapproved')
+
+        CurationReview.objects.filter(id=review_3.id).update(acceptance=True)
+        self.assertEqual(self.variant.stage, 'unapproved')
+
+        CurationReview.objects.filter(id=review_2.id).update(acceptance=True)
+        self.assertEqual(self.variant.stage, 'approved')
+
+        CurationEntry.objects.all().update(status='resubmitted')
+        CurationReview.objects.all().delete()
+        self.assertEqual(self.variant.stage, 'reannotated')
