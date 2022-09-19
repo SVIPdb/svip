@@ -29,9 +29,9 @@
                             </td>
                             <td>
                                 <b>
-                                    <router-link :to="'/gene/' + gene_id">{{
-                                        variant.gene.symbol
-                                    }}</router-link>
+                                    <router-link :to="'/gene/' + gene_id">
+                                        {{ variant.gene.symbol }}
+                                    </router-link>
                                 </b>
                             </td>
                             <td>
@@ -39,28 +39,15 @@
                             </td>
 
                             <coordinates :val="hgvs_c_pos" />
-                            <coordinates
-                                class="d-none d-sm-table-cell"
-                                :val="hgvs_p_pos"
-                            />
-                            <coordinates
-                                class="d-none d-sm-table-cell"
-                                :val="hgvs_g_pos"
-                            />
+                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_p_pos" />
+                            <coordinates class="d-none d-sm-table-cell" :val="hgvs_g_pos" />
 
-                            <optional
-                                :class="hiddenCols"
-                                :val="variant.dbsnp_ids"
-                            >
+                            <optional :class="hiddenCols" :val="variant.dbsnp_ids">
                                 <a
                                     v-for="rsid in variant.dbsnp_ids"
                                     :key="rsid"
-                                    :href="
-                                        'https://www.ncbi.nlm.nih.gov/snp/' +
-                                        rsid
-                                    "
-                                    target="_blank"
-                                >
+                                    :href="'https://www.ncbi.nlm.nih.gov/snp/' + rsid"
+                                    target="_blank">
                                     rs{{ rsid }}
                                     <icon name="external-link-alt"></icon>
                                 </a>
@@ -69,19 +56,13 @@
                             <!-- <td>{{ desnakify(variant.so_name) }}</td> -->
 
                             <optional :class="hiddenCols" :val="var_position">
-                                <span class="text-muted transcript-id"
-                                    >{{ variant.reference_name }}:</span
-                                >
+                                <span class="text-muted transcript-id">{{ variant.reference_name }}:</span>
                                 &#x200b;{{ var_position }}
                             </optional>
 
                             <td :class="hiddenCols">
-                                <span v-if="allele_frequency">{{
-                                    allele_frequency
-                                }}</span>
-                                <span v-else class="unavailable"
-                                    >unavailable</span
-                                >
+                                <span v-if="allele_frequency">{{ allele_frequency }}</span>
+                                <span v-else class="unavailable">unavailable</span>
                             </td>
 
                             <td>{{ this.variant.public_stage }}</td>
@@ -89,20 +70,12 @@
                                 <icon
                                     v-for="score in [1, 2, 3]"
                                     :key="score"
-                                    :name="
-                                        variant.confidence < score
-                                            ? 'regular/star'
-                                            : 'star'
-                                    "
-                                    style="margin-right: 5px"
-                                />
+                                    :name="variant.confidence < score ? 'regular/star' : 'star'"
+                                    style="margin-right: 5px" />
                             </td>
 
                             <td>
-                                <div
-                                    class="details-tray"
-                                    style="text-align: right"
-                                >
+                                <div class="details-tray" style="text-align: right">
                                     <!--
                                     <b-button
                                         size="sm"
@@ -114,8 +87,7 @@
                                         class="discuss-btn"
                                         v-access="'curators'"
                                         v-if="commentsEnabled"
-                                        @click="toggleNav"
-                                    >
+                                        @click="toggleNav">
                                         <!--
                                         <div class="icon-composer">
                                             <icon name="comment" scale="1.4" />
@@ -134,10 +106,7 @@
                                 <td></td>
                                 <td colspan="9">
                                     <div class="aliases-list">
-                                        <div
-                                            v-for="x in variant.gene.aliases"
-                                            :key="x"
-                                        >
+                                        <div v-for="x in variant.gene.aliases" :key="x">
                                             {{ x }}
                                         </div>
                                     </div>
@@ -153,27 +122,21 @@
             <VariantSummary :variant="variant" class="variant-summary" />
 
             <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
-            <variant-public-databases
-                :variant="variant"
-            ></variant-public-databases>
+            <variant-public-databases :variant="variant"></variant-public-databases>
 
             <b-row v-access="'curators'">
                 <b-col>
                     <b-card class="shadow-sm mt-3" align="left" no-body>
                         <b-card-body class="p-0 text-center">
                             <b-row no-gutters>
-                                <b-col
-                                    v-for="(item, index) in linkItems"
-                                    :key="index"
-                                >
+                                <b-col v-for="(item, index) in linkItems" :key="index">
                                     <b-button
                                         squared
                                         block
                                         variant="outline-secondary"
-                                        :href="item.link"
-                                        target="_blank"
-                                    >
-                                        {{ item.source }}
+                                        :href="getLink(item)"
+                                        target="_blank">
+                                        {{ item }}
                                         <icon name="external-link-alt"></icon>
                                     </b-button>
                                 </b-col>
@@ -184,46 +147,37 @@
             </b-row>
         </div>
 
-        <VariantExternalInfo
-            :variant="variant"
-            :mvInfo="variant.mv_info"
-            :extras="all_extras"
-        />
+        <VariantExternalInfo :variant="variant" :mvInfo="variant.mv_info" :extras="all_extras" />
 
         <!-- invisible things are down here -->
         <Sidebar v-access="'curators'" v-if="commentsEnabled">
             <h4 style="border-bottom: solid 1px #ccc; padding-bottom: 15px">
                 Comments on {{ variant.description }}
             </h4>
-            <CommentList
-                :variant_id="variant.id"
-                @commented="getCommentCount"
-            />
+            <CommentList :variant_id="variant.id" @commented="getCommentCount" />
         </Sidebar>
     </div>
 </template>
 
 <script>
 // import geneVariants from '@/components/Variants'
-import round from "lodash/round";
-import { mapGetters } from "vuex";
-import variantPublicDatabases from "@/components/genes/variants/PublicDatabases";
-import variantSvip from "@/components/genes/variants/SVIPInfo";
-import store from "@/store";
-import linkItems from "@/data/curation/links/items.json";
+import round from 'lodash/round';
+import {mapGetters} from 'vuex';
+import variantPublicDatabases from '@/components/genes/variants/PublicDatabases';
+import variantSvip from '@/components/genes/variants/SVIPInfo';
+import store from '@/store';
+import GeneSummary from '@/components/widgets/GeneSummary';
+import VariantSummary from '@/components/widgets/VariantSummary';
 
-import GeneSummary from "@/components/widgets/GeneSummary";
-import VariantSummary from "@/components/widgets/VariantSummary";
-
-import { change_from_hgvs, desnakify, var_to_position } from "@/utils";
-import VariantExternalInfo from "@/components/genes/variants/external/VariantExternalInfo";
-import Sidebar from "@/components/structure/sidebar/Sidebar";
-import CommentList from "@/components/widgets/CommentList";
-import { commentsEnabled } from "@/app_config";
-import { HTTP } from "@/router/http";
+import {change_from_hgvs, desnakify, var_to_position} from '@/utils';
+import VariantExternalInfo from '@/components/genes/variants/external/VariantExternalInfo';
+import Sidebar from '@/components/structure/sidebar/Sidebar';
+import CommentList from '@/components/widgets/CommentList';
+import {commentsEnabled} from '@/app_config';
+import {HTTP} from '@/router/http';
 
 export default {
-    name: "ViewVariant",
+    name: 'ViewVariant',
     components: {
         CommentList,
         Sidebar,
@@ -236,10 +190,10 @@ export default {
     data() {
         return {
             showAliases: false,
-            linkItems,
+            linkItems: ['Uniprot', 'MCG Biomarkers', 'Varsome', 'DoCM', 'Mycancergenome'],
             commentCount: null,
             commentsEnabled,
-            hiddenCols: "d-none d-lg-table-cell",
+            hiddenCols: 'd-none d-lg-table-cell',
         };
     },
     created() {
@@ -252,18 +206,18 @@ export default {
     },
     computed: {
         ...mapGetters({
-            variant: "variant",
-            gene: "gene",
-            user: "currentUser",
+            variant: 'variant',
+            gene: 'gene',
+            user: 'currentUser',
         }),
         synonyms() {
-            if (this.gene.geneAliases === undefined) return "";
-            return this.gene.geneAliases.join(", ");
+            if (this.gene.geneAliases === undefined) return '';
+            return this.gene.geneAliases.join(', ');
         },
         gene_id() {
             let test = this.variant.gene.url.match(/genes\/(\d+)/);
             if (test) return test[1];
-            return "";
+            return '';
         },
         hgvs_c_pos() {
             return change_from_hgvs(this.variant.hgvs_c, true);
@@ -282,21 +236,15 @@ export default {
         },
         all_extras() {
             return this.variant.variantinsource_set.reduce((acc, x) => {
-                return Object.assign({}, acc, x["extras"]);
+                return Object.assign({}, acc, x['extras']);
             }, {});
         },
         allele_frequency() {
             if (this.variant.mv_info) {
                 if (this.variant.mv_info.gnomad_genome) {
-                    return `gnomAD: ${round(
-                        this.variant.mv_info.gnomad_genome.af.af * 100.0,
-                        4
-                    )}%`;
+                    return `gnomAD: ${round(this.variant.mv_info.gnomad_genome.af.af * 100.0, 4)}%`;
                 } else if (this.variant.mv_info.exac) {
-                    return `ExAC: ${round(
-                        this.variant.mv_info.exac.af * 100.0,
-                        4
-                    )}%`;
+                    return `ExAC: ${round(this.variant.mv_info.exac.af * 100.0, 4)}%`;
                 }
             }
 
@@ -304,34 +252,46 @@ export default {
         },
     },
     methods: {
+        getLink(source) {
+            switch (source) {
+                case 'Uniprot':
+                    return `https://www.uniprot.org/uniprotkb?query=${this.variant.name}`;
+                case 'Mycancergenome':
+                    return `https://www.mycancergenome.org/content/search/?query=${this.variant.name}`;
+                case 'Varsome':
+                    return `https://varsome.com/search-results/${this.variant.name}`;
+                case 'DoCM':
+                    return `http://www.docm.info`;
+                case 'MCG Biomarkers':
+                    return 'https://www.cancergenomeinterpreter.org/biomarkers';
+            }
+        },
         desnakify,
         toggleNav() {
-            store.commit("TOGGLE_NAV");
+            store.commit('TOGGLE_NAV');
         },
         getCommentCount() {
             this.commentCount = null;
 
-            if (!this.user || !this.user.groups.includes("curators")) {
+            if (!this.user || !this.user.groups.includes('curators')) {
                 return;
             }
 
-            return HTTP.get(
-                `/comments?variant=${this.$route.params.variant_id}&page_size=9999`
-            ).then((response) => {
-                this.commentCount = response.data.count;
-            });
+            return HTTP.get(`/comments?variant=${this.$route.params.variant_id}&page_size=9999`).then(
+                response => {
+                    this.commentCount = response.data.count;
+                }
+            );
         },
     },
     beforeRouteEnter(to, from, next) {
-        const { variant_id } = to.params;
+        const {variant_id} = to.params;
 
         // ask the store to populate detailed information about this variant
-        store
-            .dispatch("getGeneVariant", { variant_id: variant_id })
-            .then(({ gene, variant }) => {
-                to.meta.title = `SVIP-O: ${gene.symbol} ${variant.name}`;
-                next();
-            });
+        store.dispatch('getGeneVariant', {variant_id: variant_id}).then(({gene, variant}) => {
+            to.meta.title = `SVIP-O: ${gene.symbol} ${variant.name}`;
+            next();
+        });
     },
 };
 </script>
@@ -390,6 +350,7 @@ export default {
     position: relative;
     bottom: 1px;
 }
+
 .icon-composer .overlay {
     position: absolute;
     color: #839596;
