@@ -1,5 +1,5 @@
-import { merge } from "./updates.js";
-import * as symbols from "./symbols.js";
+import {merge} from './updates.js';
+import * as symbols from './symbols.js';
 /**
  * Manages keyboard handling for a component.
  *
@@ -42,7 +42,7 @@ export default function KeyboardMixin(Base) {
         constructor() {
             // @ts-ignore
             super();
-            this.addEventListener("keydown", async (event) => {
+            this.addEventListener('keydown', async event => {
                 this[symbols.raiseChangeEvents] = true; // For use with FocusVisibleMixin.
 
                 if (!this.state.focusVisible) {
@@ -67,7 +67,7 @@ export default function KeyboardMixin(Base) {
 
         get defaultState() {
             return Object.assign(super.defaultState, {
-                tabindex: "0",
+                tabindex: '0',
             });
         }
         /**
@@ -83,12 +83,8 @@ export default function KeyboardMixin(Base) {
         }
 
         get updates() {
-            const originalTabIndex =
-                this.state.original && this.state.original.attributes.tabindex;
-            const tabindex =
-                originalTabIndex !== undefined
-                    ? originalTabIndex
-                    : this.state.tabindex;
+            const originalTabIndex = this.state.original && this.state.original.attributes.tabindex;
+            const tabindex = originalTabIndex !== undefined ? originalTabIndex : this.state.tabindex;
             return merge(super.updates, {
                 attributes: {
                     tabindex,

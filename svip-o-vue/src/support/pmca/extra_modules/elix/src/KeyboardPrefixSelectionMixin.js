@@ -1,8 +1,8 @@
-import * as symbols from "./symbols.js";
-import { TYPING_TIMEOUT_DURATION } from "./constants.js"; // Symbols for private data members on an element.
+import * as symbols from './symbols.js';
+import {TYPING_TIMEOUT_DURATION} from './constants.js'; // Symbols for private data members on an element.
 
-const typedPrefixKey = Symbol("typedPrefix");
-const prefixTimeoutKey = Symbol("prefixTimeout");
+const typedPrefixKey = Symbol('typedPrefix');
+const prefixTimeoutKey = Symbol('prefixTimeout');
 /**
  * Lets a user select a list item by typing the first few characters
  *
@@ -54,31 +54,23 @@ export default function KeyboardPrefixSelectionMixin(Base) {
             let handled;
 
             switch (event.key) {
-                case "Backspace":
+                case 'Backspace':
                     handleBackspace(this);
                     handled = true;
                     break;
 
-                case "Escape":
+                case 'Escape':
                     // Pressing Escape lets user quickly start typing a new prefix.
                     resetTypedPrefix(this);
                     break;
 
                 default:
-                    if (
-                        !event.ctrlKey &&
-                        !event.metaKey &&
-                        !event.altKey &&
-                        event.key.length === 1
-                    ) {
+                    if (!event.ctrlKey && !event.metaKey && !event.altKey && event.key.length === 1) {
                         handlePlainCharacter(this, event.key);
                     }
             } // Prefer mixin result if it's defined, otherwise use base result.
 
-            return (
-                handled ||
-                (super[symbols.keydown] && super[symbols.keydown](event))
-            );
+            return handled || (super[symbols.keydown] && super[symbols.keydown](event));
         }
         /**
          * Select the first item whose text content begins with the given prefix.
@@ -98,8 +90,7 @@ export default function KeyboardPrefixSelectionMixin(Base) {
 
             const searchText = prefix.toLowerCase();
             const selectedIndex = this.state.texts.findIndex(
-                (text) =>
-                    text.substr(0, prefix.length).toLowerCase() === searchText
+                text => text.substr(0, prefix.length).toLowerCase() === searchText
             );
 
             if (selectedIndex >= 0) {
@@ -129,7 +120,7 @@ function handleBackspace(element) {
 } // Add a plain character to the prefix.
 
 function handlePlainCharacter(element, char) {
-    const prefix = element[typedPrefixKey] || "";
+    const prefix = element[typedPrefixKey] || '';
     element[typedPrefixKey] = prefix + char;
     element.selectItemWithTextPrefix(element[typedPrefixKey]);
     setPrefixTimeout(element);
@@ -143,7 +134,7 @@ function resetPrefixTimeout(element) {
 } // Clear the prefix under construction.
 
 function resetTypedPrefix(element) {
-    element[typedPrefixKey] = "";
+    element[typedPrefixKey] = '';
     resetPrefixTimeout(element);
 } // Wait for the user to stop typing.
 

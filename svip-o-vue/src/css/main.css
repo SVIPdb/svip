@@ -25,8 +25,6 @@ footer {
     position: absolute;
     left: 0;
     bottom: 0;
-
-    
 }
 
 footer .version-info {
@@ -140,7 +138,7 @@ input.vs__search::placeholder {
 }
 
 .v-select.searchable .dropdown-toggle::after {
-    content: " ";
+    content: ' ';
     margin: 5px;
     border: none;
 }

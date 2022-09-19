@@ -1,7 +1,7 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /** @type {any} */
 
-const slotchangeFiredKey = Symbol("slotchangeFired");
+const slotchangeFiredKey = Symbol('slotchangeFired');
 /**
  * Defines a component's content as the flattened set of nodes assigned to a
  * slot.
@@ -61,7 +61,7 @@ export default function SlotContentMixin(Base) {
             const slot = this[symbols.contentSlot];
 
             if (slot) {
-                slot.addEventListener("slotchange", async () => {
+                slot.addEventListener('slotchange', async () => {
                     // Although slotchange isn't generally a user-driven event, it's
                     // impossible for us to know whether a change in slot content is going
                     // to result in effects that the host of this element can predict.
@@ -114,9 +114,7 @@ export default function SlotContentMixin(Base) {
          */
 
         get [symbols.contentSlot]() {
-            const slot =
-                this.shadowRoot &&
-                this.shadowRoot.querySelector("slot:not([name])");
+            const slot = this.shadowRoot && this.shadowRoot.querySelector('slot:not([name])');
 
             if (!this.shadowRoot || !slot) {
                 /* eslint-disable no-console */

@@ -74,9 +74,6 @@
         "Short description": "Frequency of the mutation in the population",
         "Example": "10%",
         "Complete description": "Allele frequency (in percentage) obtained from GnomAD or Exac",
-        "Reference": [
-            "https://gnomad.broadinstitute.org/",
-            "http://exac.broadinstitute.org"
-        ]
+        "Reference": ["https://gnomad.broadinstitute.org/", "http://exac.broadinstitute.org"]
     }
 ]

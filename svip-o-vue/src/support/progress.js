@@ -1,8 +1,8 @@
-import * as NProgress from "nprogress";
+import * as NProgress from 'nprogress';
 
-import ulog from "ulog";
+import ulog from 'ulog';
 
-const log = ulog("Support:progress");
+const log = ulog('Support:progress');
 
 // the duration between one request ending and another starting which should be considered part of the same session
 const CATCHUP_DURATION = 600;
@@ -17,12 +17,12 @@ const CATCHUP_DURATION = 600;
  * @param options the options object that NProgress takes, see https://github.com/rstacruz/nprogress#configuration
  * @return {{start: start, done: done}}
  */
-export default (options) => {
+export default options => {
     const manager = NProgress.configure(options);
     let inflight = 0;
 
     return {
-        start: (ctx) => {
+        start: ctx => {
             if (inflight > 0) {
                 manager.inc();
             } else {
@@ -31,15 +31,15 @@ export default (options) => {
 
             inflight += 1;
 
-            log.debug(`start(${ctx ? ctx : ""}): Inflight: ${inflight}`);
+            log.debug(`start(${ctx ? ctx : ''}): Inflight: ${inflight}`);
         },
-        done: (ctx) => {
+        done: ctx => {
             inflight -= 1;
 
-            log.debug(`done(${ctx ? ctx : ""}): Inflight: ${inflight}`);
+            log.debug(`done(${ctx ? ctx : ''}): Inflight: ${inflight}`);
 
             if (inflight < 0) {
-                log.info("Inflight became less than 0!: ", inflight);
+                log.info('Inflight became less than 0!: ', inflight);
             }
 
             if (inflight <= 0) {

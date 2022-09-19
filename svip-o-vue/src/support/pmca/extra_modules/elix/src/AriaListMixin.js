@@ -1,6 +1,6 @@
-import { defaultAriaRole } from "./accessibility.js";
-import { merge } from "./updates.js";
-import { ensureId } from "./idGeneration.js";
+import {defaultAriaRole} from './accessibility.js';
+import {merge} from './updates.js';
+import {ensureId} from './idGeneration.js';
 /**
  * Exposes a list's currently-selected item to assistive technologies.
  *
@@ -40,8 +40,8 @@ export default function AriaListMixin(Base) {
         get defaultState() {
             const base = super.defaultState;
             return Object.assign(base, {
-                itemRole: base.itemRole || "option",
-                role: base.role || "listbox",
+                itemRole: base.itemRole || 'option',
+                role: base.role || 'listbox',
             });
         }
 
@@ -56,9 +56,7 @@ export default function AriaListMixin(Base) {
         }
 
         itemUpdates(item, calcs, original) {
-            const base = super.itemUpdates
-                ? super.itemUpdates(item, calcs, original)
-                : {}; // Ensure each item has an ID so we can set aria-activedescendant on the
+            const base = super.itemUpdates ? super.itemUpdates(item, calcs, original) : {}; // Ensure each item has an ID so we can set aria-activedescendant on the
             // overall list whenever the selection changes.
 
             const baseId = base.attributes && base.attributes.id;
@@ -72,7 +70,7 @@ export default function AriaListMixin(Base) {
                 base,
                 {
                     attributes: {
-                        "aria-selected": calcs.selected,
+                        'aria-selected': calcs.selected,
                         id,
                     },
                 },
@@ -91,20 +89,16 @@ export default function AriaListMixin(Base) {
                 (base.attributes && base.attributes.role) ||
                 this.state.role;
             const orientation = this.state.orientation;
-            const selectedIndex =
-                this.selectedIndex || this.state.selectedIndex;
-            const selectedItem =
-                selectedIndex >= 0 && this.items
-                    ? this.items[selectedIndex]
-                    : null; // We need the ID for the selected item. It's possible an ID hasn't been
+            const selectedIndex = this.selectedIndex || this.state.selectedIndex;
+            const selectedItem = selectedIndex >= 0 && this.items ? this.items[selectedIndex] : null; // We need the ID for the selected item. It's possible an ID hasn't been
             // assigned yet, so we spectulatively determine the ID that will be used
             // on the subsequent call to itemUpdates for this item.
 
             const selectedItemId = selectedItem ? ensureId(selectedItem) : null;
             return merge(base, {
                 attributes: {
-                    "aria-activedescendant": selectedItemId,
-                    "aria-orientation": orientation,
+                    'aria-activedescendant': selectedItemId,
+                    'aria-orientation': orientation,
                     role,
                 },
             });

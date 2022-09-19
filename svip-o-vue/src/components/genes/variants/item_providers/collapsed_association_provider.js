@@ -1,5 +1,5 @@
-import { HTTP } from "@/router/http";
-import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
+import {HTTP} from '@/router/http';
+import {normalizeItemList, parsePublicationURL, titleCase} from '@/utils';
 
 export function makeCollapsedAssociationProvider(metaUpdate = null) {
     // produces an item provider function for bootstrap-vue tables.
@@ -18,11 +18,11 @@ export function makeCollapsedAssociationProvider(metaUpdate = null) {
         const params = {
             page_size: ctx.perPage,
             page: ctx.currentPage,
-            ordering: (ctx.sortDesc ? "-" : "") + ctx.sortBy,
+            ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
             ...(filter_params && filter_params),
         };
 
-        return HTTP.get(ctx.apiUrl, { params }).then((res) => {
+        return HTTP.get(ctx.apiUrl, {params}).then(res => {
             // invoke the metadata updated callback, if available
             if (metaUpdate) {
                 metaUpdate({
@@ -32,7 +32,7 @@ export function makeCollapsedAssociationProvider(metaUpdate = null) {
 
             // rewrite some fields into what the front-end's expecting
             // fixme: should these be migrated to the tables themselves?
-            return res.data.results.map((a) => ({
+            return res.data.results.map(a => ({
                 ...a,
                 disease: titleCase(a.disease),
                 drug_labels: normalizeItemList(a.drug_labels),

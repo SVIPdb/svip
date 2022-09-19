@@ -13,9 +13,10 @@
 
                     <dt>Groups</dt>
                     <dd>
-                        <span v-for="(group, idx) in user.groups" :key="group"
-                            ><span v-if="idx !== 0">, </span>{{ group }}</span
-                        >
+                        <span v-for="(group, idx) in user.groups" :key="group">
+                            <span v-if="idx !== 0">,</span>
+                            {{ group }}
+                        </span>
                     </dd>
 
                     <dt>Login Expires In</dt>
@@ -33,15 +34,15 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { millisecondsToStr } from "@/utils";
-import store from "@/store";
-import ulog from "ulog";
+import {mapGetters} from 'vuex';
+import {millisecondsToStr} from '@/utils';
+import store from '@/store';
+import ulog from 'ulog';
 
-const log = ulog("Store:UserInfo");
+const log = ulog('Store:UserInfo');
 
 export default {
-    name: "UserInfo",
+    name: 'UserInfo',
     data() {
         return {
             currentTime: Date.now(),
@@ -49,18 +50,18 @@ export default {
     },
     computed: {
         ...mapGetters({
-            user: "currentUser",
+            user: 'currentUser',
         }),
     },
     methods: {
         remaining(curTime) {
             const diff = store.getters.jwtExp * 1000 - curTime;
-            return diff >= 0 ? millisecondsToStr(diff) : "expired!";
+            return diff >= 0 ? millisecondsToStr(diff) : 'expired!';
         },
     },
     created() {
-        store.dispatch("checkCredentials").then((result) => {
-            log.debug("Logged in?: ", result);
+        store.dispatch('checkCredentials').then(result => {
+            log.debug('Logged in?: ', result);
         });
 
         setInterval(() => {
@@ -94,7 +95,7 @@ dt {
 }
 
 dt::after {
-    content: ": ";
+    content: ': ';
 }
 
 dd {

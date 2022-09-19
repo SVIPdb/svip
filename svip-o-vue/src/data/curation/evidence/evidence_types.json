@@ -49,11 +49,7 @@
                     ]
                 },
                 "Diagnostic": {
-                    "effect": [
-                        "Associated with diagnosis",
-                        "Not associated with diagnosis",
-                        "Other"
-                    ],
+                    "effect": ["Associated with diagnosis", "Not associated with diagnosis", "Other"],
                     "tier_criteria": [
                         "Included in Professional Guidelines (Tier IA)",
                         "Well-powered studies with consensus from experts in the field (Tier IB)",

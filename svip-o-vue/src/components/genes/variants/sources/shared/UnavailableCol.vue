@@ -4,9 +4,9 @@
 
 <script>
 export default {
-    name: "UnavailableCol",
+    name: 'UnavailableCol',
     props: {
-        row: { type: Object, required: true },
+        row: {type: Object, required: true},
     },
 };
 </script>

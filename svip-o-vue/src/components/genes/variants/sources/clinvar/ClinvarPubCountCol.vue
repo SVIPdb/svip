@@ -1,16 +1,12 @@
 <template>
-    <span
-        >{{ totalSubmissions.toLocaleString() }} submission{{
-            totalSubmissions !== 1 ? "s" : ""
-        }}</span
-    >
+    <span>{{ totalSubmissions.toLocaleString() }} submission{{ totalSubmissions !== 1 ? 's' : '' }}</span>
 </template>
 
 <script>
 export default {
-    name: "ClinvarPubCountCol",
+    name: 'ClinvarPubCountCol',
     props: {
-        row: { type: Object, required: true },
+        row: {type: Object, required: true},
     },
     computed: {
         totalSubmissions() {

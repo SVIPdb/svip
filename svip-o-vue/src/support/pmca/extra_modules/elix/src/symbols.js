@@ -39,7 +39,7 @@
  * @module symbols
  */
 // TODO: Document
-export const beforeUpdate = Symbol("beforeUpdate");
+export const beforeUpdate = Symbol('beforeUpdate');
 /**
  * Symbol for the `canGoLeft` property.
  *
@@ -49,7 +49,7 @@ export const beforeUpdate = Symbol("beforeUpdate");
  * @var {boolean} canGoLeft
  */
 
-export const canGoLeft = Symbol("canGoLeft");
+export const canGoLeft = Symbol('canGoLeft');
 /**
  * Symbol for the `canGoRight` property.
  *
@@ -59,7 +59,7 @@ export const canGoLeft = Symbol("canGoLeft");
  * @var {boolean} canGoRight
  */
 
-export const canGoRight = Symbol("canGoRight");
+export const canGoRight = Symbol('canGoRight');
 /**
  * Symbol for the `checkSize` method.
  *
@@ -75,7 +75,7 @@ export const canGoRight = Symbol("canGoRight");
  * This gives the contents a chance to resize in response to being displayed.
  */
 
-export const checkSize = Symbol("checkSize");
+export const checkSize = Symbol('checkSize');
 /**
  * Symbol for the `click` method.
  *
@@ -86,7 +86,7 @@ export const checkSize = Symbol("checkSize");
  * @function click
  */
 
-export const click = Symbol("click");
+export const click = Symbol('click');
 /**
  * Symbol for the `contentSlot` property.
  *
@@ -98,7 +98,7 @@ export const click = Symbol("click");
  * @var {HTMLSlotElement} contentSlot
  */
 
-export const contentSlot = Symbol("contentSlot");
+export const contentSlot = Symbol('contentSlot');
 /**
  * Symbol for the `defaultFocus` property.
  *
@@ -106,7 +106,7 @@ export const contentSlot = Symbol("contentSlot");
  * determine the default focus target for an element.
  */
 
-export const defaultFocus = Symbol("defaultFocus");
+export const defaultFocus = Symbol('defaultFocus');
 /**
  * Symbol for the `elementsWithTransitions` property.
  *
@@ -117,7 +117,7 @@ export const defaultFocus = Symbol("defaultFocus");
  * @returns {Element[]} The elements with CSS transitions
  */
 
-export const elementsWithTransitions = Symbol("elementsWithTransitions");
+export const elementsWithTransitions = Symbol('elementsWithTransitions');
 /**
  * Symbol for the `focusTarget` property.
  *
@@ -129,7 +129,7 @@ export const elementsWithTransitions = Symbol("elementsWithTransitions");
  * @var {Element} focusTarget
  */
 
-export const focusTarget = Symbol("focusTarget");
+export const focusTarget = Symbol('focusTarget');
 /**
  * Symbol for the `getItemText` method.
  *
@@ -145,7 +145,7 @@ export const focusTarget = Symbol("focusTarget");
  * @returns {string} the text of the item
  */
 
-export const getItemText = Symbol("getItemText");
+export const getItemText = Symbol('getItemText');
 /**
  * Symbol for the `goDown` method.
  *
@@ -154,7 +154,7 @@ export const getItemText = Symbol("getItemText");
  * @function goDown
  */
 
-export const goDown = Symbol("goDown");
+export const goDown = Symbol('goDown');
 /**
  * Symbol for the `goEnd` method.
  *
@@ -164,7 +164,7 @@ export const goDown = Symbol("goDown");
  * @function goEnd
  */
 
-export const goEnd = Symbol("goEnd");
+export const goEnd = Symbol('goEnd');
 /**
  * Symbol for the `goLeft` method.
  *
@@ -176,7 +176,7 @@ export const goEnd = Symbol("goEnd");
  * @function goLeft
  */
 
-export const goLeft = Symbol("goLeft");
+export const goLeft = Symbol('goLeft');
 /**
  * Symbol for the `goRight` method.
  *
@@ -188,7 +188,7 @@ export const goLeft = Symbol("goLeft");
  * @function goRight
  */
 
-export const goRight = Symbol("goRight");
+export const goRight = Symbol('goRight');
 /**
  * Symbol for the `goStart` method.
  *
@@ -198,7 +198,7 @@ export const goRight = Symbol("goRight");
  * @function goStart
  */
 
-export const goStart = Symbol("goStart");
+export const goStart = Symbol('goStart');
 /**
  * Symbol for the `goUp` method.
  *
@@ -207,7 +207,7 @@ export const goStart = Symbol("goStart");
  * @function goUp
  */
 
-export const goUp = Symbol("goUp");
+export const goUp = Symbol('goUp');
 /**
  * Symbol for the `hasDynamicTemplate` property.
  *
@@ -216,7 +216,7 @@ export const goUp = Symbol("goUp");
  * This will disable template caching for your component.
  */
 
-export const hasDynamicTemplate = Symbol("hasDynamicTemplate");
+export const hasDynamicTemplate = Symbol('hasDynamicTemplate');
 /**
  * Symbol for the `itemMatchesState` method.
  *
@@ -244,7 +244,7 @@ export const hasDynamicTemplate = Symbol("hasDynamicTemplate");
  * @returns {boolean}
  */
 
-export const itemMatchesState = Symbol("itemMatchesState");
+export const itemMatchesState = Symbol('itemMatchesState');
 /**
  * Symbol for the `itemsDelegate` property.
  *
@@ -255,7 +255,7 @@ export const itemMatchesState = Symbol("itemMatchesState");
  * @var {Element} itemsDelegate
  */
 
-export const itemsDelegate = Symbol("itemsDelegate");
+export const itemsDelegate = Symbol('itemsDelegate');
 /**
  * Symbol for the `keydown` method.
  *
@@ -278,7 +278,7 @@ export const itemsDelegate = Symbol("itemsDelegate");
  * @function keydown
  */
 
-export const keydown = Symbol("keydown");
+export const keydown = Symbol('keydown');
 /**
  * Symbol for the `mouseenter` method.
  *
@@ -292,7 +292,7 @@ export const keydown = Symbol("keydown");
  * @function mouseenter
  */
 
-export const mouseenter = Symbol("mouseenter");
+export const mouseenter = Symbol('mouseenter');
 /**
  * Symbol for the `mouseleave` method.
  *
@@ -306,7 +306,7 @@ export const mouseenter = Symbol("mouseenter");
  * @function mouseleave
  */
 
-export const mouseleave = Symbol("mouseleave");
+export const mouseleave = Symbol('mouseleave');
 /**
  * Symbol for the `raiseChangeEvents` property.
  *
@@ -353,7 +353,7 @@ export const mouseleave = Symbol("mouseleave");
  * @var {boolean} raiseChangeEvents
  */
 
-export const raiseChangeEvents = Symbol("raiseChangeEvents");
+export const raiseChangeEvents = Symbol('raiseChangeEvents');
 /**
  * Symbol for an internal `render` method.
  *
@@ -372,7 +372,7 @@ export const raiseChangeEvents = Symbol("raiseChangeEvents");
  * @function render
  */
 
-export const render = Symbol("render");
+export const render = Symbol('render');
 /**
  * Symbol for the `rendering` property.
  *
@@ -382,7 +382,7 @@ export const render = Symbol("render");
  * @var {boolean} rendering
  */
 
-export const rendering = Symbol("rendering");
+export const rendering = Symbol('rendering');
 /**
  * Symbol for the `rightToLeft` property.
  *
@@ -396,9 +396,9 @@ export const rendering = Symbol("rendering");
  * @var {boolean} rightToLeft
  */
 
-export const rightToLeft = Symbol("rightToLeft"); // TODO: Document
+export const rightToLeft = Symbol('rightToLeft'); // TODO: Document
 
-export const renderedRoles = Symbol("renderedRoles");
+export const renderedRoles = Symbol('renderedRoles');
 /**
  * Symbol for the `roles` property.
  *
@@ -411,7 +411,7 @@ export const renderedRoles = Symbol("renderedRoles");
  * element that should be instantiated to fill that role.
  */
 
-export const roles = Symbol("roles");
+export const roles = Symbol('roles');
 /**
  * Symbol for the `scrollTarget` property.
  *
@@ -423,7 +423,7 @@ export const roles = Symbol("roles");
  * @var {Element} scrollTarget
  */
 
-export const scrollTarget = Symbol("scrollTarget");
+export const scrollTarget = Symbol('scrollTarget');
 /**
  * Symbol for the `startEffect` method.
  *
@@ -437,7 +437,7 @@ export const scrollTarget = Symbol("scrollTarget");
  * @function startEffect
  */
 
-export const startEffect = Symbol("startEffect");
+export const startEffect = Symbol('startEffect');
 /**
  * Symbol for the `swipeDown` method.
  *
@@ -447,7 +447,7 @@ export const startEffect = Symbol("startEffect");
  * @function swipeDown
  */
 
-export const swipeDown = Symbol("swipeDown");
+export const swipeDown = Symbol('swipeDown');
 /**
  * Symbol for the `swipeLeft` method.
  *
@@ -458,7 +458,7 @@ export const swipeDown = Symbol("swipeDown");
  * @function swipeLeft
  */
 
-export const swipeLeft = Symbol("swipeLeft");
+export const swipeLeft = Symbol('swipeLeft');
 /**
  * Symbol for the `swipeLeft` method.
  *
@@ -469,7 +469,7 @@ export const swipeLeft = Symbol("swipeLeft");
  * @function swipeRight
  */
 
-export const swipeRight = Symbol("swipeRight");
+export const swipeRight = Symbol('swipeRight');
 /**
  * Symbol for the `swipeUp` method.
  *
@@ -479,7 +479,7 @@ export const swipeRight = Symbol("swipeRight");
  * @function swipeUp
  */
 
-export const swipeUp = Symbol("swipeUp");
+export const swipeUp = Symbol('swipeUp');
 /**
  * Symbol for the `swipeTarget` property.
  *
@@ -497,7 +497,7 @@ export const swipeUp = Symbol("swipeUp");
  * @var {HTMLElement} swipeTarget
  */
 
-export const swipeTarget = Symbol("swipeTarget");
+export const swipeTarget = Symbol('swipeTarget');
 /**
  * Symbol for the `template` method.
  *
@@ -507,4 +507,4 @@ export const swipeTarget = Symbol("swipeTarget");
  * @var {HTMLTemplateElement} template
  */
 
-export const template = Symbol("template");
+export const template = Symbol('template');

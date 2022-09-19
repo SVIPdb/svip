@@ -5,8 +5,7 @@
             <b-list-group-item
                 v-for="section in sections"
                 :key="section.name"
-                :href="`#sec_${slugifySans(section.name)}`"
-            >
+                :href="`#sec_${slugifySans(section.name)}`">
                 {{ section.name }}
             </b-list-group-item>
         </b-list-group>
@@ -14,12 +13,12 @@
 </template>
 
 <script>
-import { slugifySans } from "@/utils";
+import {slugifySans} from '@/utils';
 
 export default {
-    name: "TableOfContents",
+    name: 'TableOfContents',
     props: {
-        sections: { type: Array, required: true },
+        sections: {type: Array, required: true},
     },
     methods: {
         slugifySans,

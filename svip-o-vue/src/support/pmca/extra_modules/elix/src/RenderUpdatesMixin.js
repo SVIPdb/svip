@@ -1,5 +1,5 @@
-import * as symbols from "./symbols.js";
-import * as updates from "./updates.js";
+import * as symbols from './symbols.js';
+import * as updates from './updates.js';
 /**
  * Renders changes in state as updates to the component and its shadow elements.
  *
@@ -60,7 +60,7 @@ export default function RenderUpdatesMixin(Base) {
 
         set style(style) {
             if (!this[symbols.rendering]) {
-                updateOriginalProp(this, "style", style);
+                updateOriginalProp(this, 'style', style);
             }
 
             super.style = style;
@@ -83,8 +83,8 @@ export default function RenderUpdatesMixin(Base) {
 
 function parseClassProps(text) {
     const result = {};
-    const classes = text.split(" ");
-    classes.forEach((className) => {
+    const classes = text.split(' ');
+    classes.forEach(className => {
         result[className] = true;
     });
     return result;
@@ -94,10 +94,10 @@ function parseClassProps(text) {
 
 function parseStyleProps(text) {
     const result = {};
-    const rules = text.split(";");
-    rules.forEach((rule) => {
+    const rules = text.split(';');
+    rules.forEach(rule => {
         if (rule.length > 0) {
-            const parts = rule.split(":");
+            const parts = rule.split(':');
             const name = parts[0].trim();
             const value = parts[1].trim();
             result[name] = value;
@@ -121,7 +121,7 @@ function updateOriginalProp(element, name, value) {
     let changes;
 
     switch (name) {
-        case "class": {
+        case 'class': {
             const classes = parseClassProps(value);
             changes = {
                 classes,
@@ -129,7 +129,7 @@ function updateOriginalProp(element, name, value) {
             break;
         }
 
-        case "style": {
+        case 'style': {
             const style = parseStyleProps(value);
             changes = {
                 style,

@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Exposes the text content of a list's items as an array of strings.
  *
@@ -13,12 +13,9 @@ export default function ItemsTextMixin(Base) {
                 texts: null,
             }); // Regenerate texts when items change.
 
-            state.onChange("items", (state) => {
-                const { items } = state;
-                const texts = getTextsFromItems(
-                    items,
-                    this[symbols.getItemText]
-                );
+            state.onChange('items', state => {
+                const {items} = state;
+                const texts = getTextsFromItems(items, this[symbols.getItemText]);
 
                 if (texts) {
                     Object.freeze(texts);
@@ -41,8 +38,8 @@ export default function ItemsTextMixin(Base) {
     return ItemsText;
 }
 export function getItemText(item) {
-    return item.getAttribute("alt") || item.textContent;
+    return item.getAttribute('alt') || item.textContent;
 }
 export function getTextsFromItems(items, getText = getItemText) {
-    return items ? Array.from(items, (item) => getText(item)) : null;
+    return items ? Array.from(items, item => getText(item)) : null;
 }

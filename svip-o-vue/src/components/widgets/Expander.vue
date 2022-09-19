@@ -1,23 +1,20 @@
 <template>
     <b-link @click="toggle">
-        <icon
-            name="chevron-right"
-            :class="`link ${this.value ? 'activated' : ''}`"
-        />
+        <icon name="chevron-right" :class="`link ${this.value ? 'activated' : ''}`" />
         <slot></slot>
     </b-link>
 </template>
 
 <script>
 export default {
-    name: "Expander",
+    name: 'Expander',
     props: {
-        value: { type: Boolean },
+        value: {type: Boolean},
     },
     methods: {
         toggle() {
-            console.log("value", this.value);
-            this.$emit("input", !this.value);
+            console.log('value', this.value);
+            this.$emit('input', !this.value);
         },
     },
 };

@@ -1,9 +1,9 @@
-import * as symbols from "./symbols.js"; // A cache of processed templates, indexed by element class.
+import * as symbols from './symbols.js'; // A cache of processed templates, indexed by element class.
 
 const classTemplateMap = new Map();
 /** @type {any} */
 
-const shadowReferencesKey = Symbol("shadowReferences");
+const shadowReferencesKey = Symbol('shadowReferences');
 /**
  * Stamps a template into a component's Shadow DOM when instantiated
  *
@@ -52,7 +52,7 @@ export default function ShadowTemplateMixin(Base) {
 
             if (template) {
                 const root = this.attachShadow({
-                    mode: "open",
+                    mode: 'open',
                 });
                 const clone = document.importNode(template.content, true);
                 root.appendChild(clone);
@@ -114,8 +114,7 @@ export default function ShadowTemplateMixin(Base) {
 
 function getPreparedTemplate(element) {
     const hasDynamicTemplate = element[symbols.hasDynamicTemplate];
-    let template =
-        !hasDynamicTemplate && classTemplateMap.get(element.constructor);
+    let template = !hasDynamicTemplate && classTemplateMap.get(element.constructor);
 
     if (!template) {
         // This is the first time we've created an instance of this type.

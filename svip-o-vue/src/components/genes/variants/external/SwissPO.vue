@@ -7,19 +7,14 @@
                     <div class="float-right align-middle">
                         <a
                             :href="`http://swiss-po.ch/?protein='${protein}'&variant='p.${change}'`"
-                            target="_blank"
-                        >
+                            target="_blank">
                             <icon name="external-link-alt" />
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div
-                v-if="!noResults"
-                class="card-body top-level"
-                style="padding: 0"
-            >
+            <div v-if="!noResults" class="card-body top-level" style="padding: 0">
                 <div class="not-found" v-if="found_in_swisspo === false">
                     <icon name="exclamation-triangle" />
                     residue not found in molecule
@@ -30,7 +25,8 @@
                 </div>
 
                 <div style="border-top: solid 1px #ccc; padding: 10px">
-                    <label for="pdb_select">Selected PDB/Chain:</label>&nbsp;
+                    <label for="pdb_select">Selected PDB/Chain:</label>
+                    &nbsp;
                     <select id="pdb_select" v-if="pdbs" v-model="selected_pdb">
                         <option disabled value="">Choose a PDB</option>
                         <option v-for="(x, idx) in pdbs" :key="idx" :value="x">
@@ -41,8 +37,8 @@
             </div>
             <div v-else class="card-body top-level" style="padding: 0">
                 <div class="not-found">
-                    <icon name="exclamation-triangle" /> protein not found in
-                    SwissPO
+                    <icon name="exclamation-triangle" />
+                    protein not found in SwissPO
                 </div>
             </div>
         </div>
@@ -50,19 +46,19 @@
 </template>
 
 <script>
-import { HTTP } from "@/router/http";
-import { serverURL } from "@/app_config";
-import debounce from "lodash/debounce";
-import * as NGL from "ngl";
-import ulog from "ulog";
+import {HTTP} from '@/router/http';
+import {serverURL} from '@/app_config';
+import debounce from 'lodash/debounce';
+import * as NGL from 'ngl';
+import ulog from 'ulog';
 
-const log = ulog("SwissPO");
+const log = ulog('SwissPO');
 
 export default {
-    name: "SwissPO",
+    name: 'SwissPO',
     props: {
-        protein: { type: String, required: true },
-        change: { type: String, required: false },
+        protein: {type: String, required: true},
+        change: {type: String, required: false},
     },
     data() {
         return {
@@ -82,7 +78,7 @@ export default {
         if (this.stage) {
             delete this.stage;
         }
-        this.stage = new NGL.Stage("viewport", {
+        this.stage = new NGL.Stage('viewport', {
             //fogNear: 10,
             // "percentages, "dist" is distance too camera in Angstrom
             clipNear: 0,
@@ -92,11 +88,11 @@ export default {
             fogNear: 0,
             fogFar: 100,
             // background color
-            backgroundColor: "white",
+            backgroundColor: 'white',
             sampleLevel: 2,
         });
 
-        this.resizeListener = window.addEventListener("resize", () => {
+        this.resizeListener = window.addEventListener('resize', () => {
             this.handleNGLResize();
         });
 
@@ -108,13 +104,13 @@ export default {
             this.stage.removeAllComponents();
         }
         if (this.resizeListener) {
-            window.removeEventListener("resize", this.resizeListener);
+            window.removeEventListener('resize', this.resizeListener);
         }
     },
     computed: {
         change_parts() {
             const result = this.change.match(/^([A-Z])([0-9]+)([A-Z])$/);
-            return result && { ref: result[1], alt: result[3], pos: result[2] };
+            return result && {ref: result[1], alt: result[3], pos: result[2]};
         },
     },
     watch: {
@@ -130,29 +126,23 @@ export default {
             }
 
             HTTP.get(`swiss_po/get_residues/${val.pdb}:${val.chain}`)
-                .then((response) => response.data)
-                .then((data) => {
-                    this.loadPDB(
-                        data.pdb_filename,
-                        val.chain,
-                        data.residue_range
-                    );
+                .then(response => response.data)
+                .then(data => {
+                    this.loadPDB(data.pdb_filename, val.chain, data.residue_range);
                 });
         },
     },
     methods: {
         handleNGLResize() {
             if (this.stage) {
-                log.info("NGL resize executing");
+                log.info('NGL resize executing');
                 this.stage.handleResize();
             } else {
-                log.info("NGL resize requested, but was null");
+                log.info('NGL resize requested, but was null');
             }
         },
         async loadStructure(protein) {
-            this.pdbs = await HTTP.get(`swiss_po/get_pdbs/${protein}`).then(
-                (response) => response.data
-            );
+            this.pdbs = await HTTP.get(`swiss_po/get_pdbs/${protein}`).then(response => response.data);
 
             if (this.pdbs.length <= 0) {
                 this.noResults = true;
@@ -168,23 +158,23 @@ export default {
             // noinspection JSCheckFunctionSignatures
             this.stage
                 .loadFile(`${serverURL}swiss_po/get_pdb_data/${pdb_path}`, {
-                    ext: "pdb",
+                    ext: 'pdb',
                 })
-                .then((o) => {
+                .then(o => {
                     // to have the representation we want, we choose to use the "cartoon" one
-                    o.addRepresentation("cartoon", {
-                        sele: "*",
-                        color: "residueindex",
+                    o.addRepresentation('cartoon', {
+                        sele: '*',
+                        color: 'residueindex',
                     });
                     // Show the ligand in hyperball representation, surrounded by a transparent surface
-                    o.addRepresentation("hyperball", { sele: "[LIG]" });
-                    o.addRepresentation("surface", {
-                        sele: "[LIG]",
+                    o.addRepresentation('hyperball', {sele: '[LIG]'});
+                    o.addRepresentation('surface', {
+                        sele: '[LIG]',
                         smooth: 2,
                         opacity: 0.2,
                         lowResolution: false,
                         useWorker: false,
-                        color: "white",
+                        color: 'white',
                     });
 
                     // produce a nice generic view of the entire molecule
@@ -206,9 +196,7 @@ export default {
                         this.zoomResidue(this.change);
                     } else {
                         this.found_in_swisspo = false;
-                        log.warn(
-                            "Residue not located in molecule, showing anyway"
-                        );
+                        log.warn('Residue not located in molecule, showing anyway');
                     }
                 });
         },
@@ -220,19 +208,15 @@ export default {
             if (this.change && this.change_parts) {
                 myZoom = this.change_parts.pos;
             } else {
-                log.info(
-                    "Unable to find simple position in ",
-                    this.change,
-                    ", aborting zoom"
-                );
+                log.info('Unable to find simple position in ', this.change, ', aborting zoom');
                 return;
             }
 
             // Define ball and stick and licorice representations.
-            const bnsRepr = o.addRepresentation("ball+stick", { sele: "NONE" });
-            const licRepr = o.addRepresentation("licorice", { sele: "NONE" });
-            const conRepr = o.addRepresentation("contact", {
-                sele: "NONE",
+            const bnsRepr = o.addRepresentation('ball+stick', {sele: 'NONE'});
+            const licRepr = o.addRepresentation('licorice', {sele: 'NONE'});
+            const conRepr = o.addRepresentation('contact', {
+                sele: 'NONE',
                 hydrogenBond: true,
                 hydrophobic: false,
                 halogenBond: false,
@@ -253,10 +237,10 @@ export default {
             const zoom = o.getZoom(myZoom);
             this.stage.animationControls.zoomMove(center, zoom, 2000);
             // label selected amino acid
-            o.addRepresentation("label", {
+            o.addRepresentation('label', {
                 sele: `( ${myZoom} ) and .CA`,
-                color: "orange",
-                borderColor: "black",
+                color: 'orange',
+                borderColor: 'black',
                 scale: 2.0,
             });
 
@@ -266,22 +250,17 @@ export default {
             // show residues around the selected one in licorice
             const selection = new NGL.Selection(myZoom);
             const radius = 5;
-            const atomSet = o.structure.getAtomSetWithinSelection(
-                selection,
-                radius
-            );
-            const atomSet2 = o.structure
-                .getAtomSetWithinGroup(atomSet)
-                .toSeleString();
+            const atomSet = o.structure.getAtomSetWithinSelection(selection, radius);
+            const atomSet2 = o.structure.getAtomSetWithinGroup(atomSet).toSeleString();
             licRepr.setSelection(atomSet2);
 
             // show contacts made by residues around the selected one
             const contacts = conRepr.setSelection(atomSet2);
 
             // show various types of hydrogen bonds, too
-            contacts.setParameters({ hydrogenBond: true });
-            contacts.setParameters({ waterHydrogenBond: true });
-            contacts.setParameters({ backboneHydrogenBond: true });
+            contacts.setParameters({hydrogenBond: true});
+            contacts.setParameters({waterHydrogenBond: true});
+            contacts.setParameters({backboneHydrogenBond: true});
         },
     },
 };

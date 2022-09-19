@@ -1,6 +1,6 @@
-import { html, PolymerElement } from "@polymer/polymer/polymer-element.js";
-import "@polymer/polymer/lib/elements/dom-repeat.js";
-import "./shared-style.js";
+import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
+import './shared-style.js';
 /**
  * `pubmed-section-v2`
  * displays a pubmed publication section sith some optional highlighted text
@@ -189,34 +189,34 @@ class PubmedSectionV2 extends PolymerElement {
     }
 
     _getClassForDebug() {
-        return this.debug ? "publi-debug-info" : "publi-debug-info-hidden";
+        return this.debug ? 'publi-debug-info' : 'publi-debug-info-hidden';
     }
 
     _getClassForTitle(x) {
-        return x == "Title" ? "publi-title" : "publi-para";
+        return x == 'Title' ? 'publi-title' : 'publi-para';
     }
 
     _tagIsParagraph(x) {
-        return x == "p";
+        return x == 'p';
     }
 
     _tagIsFigure(x) {
-        return x == "fig";
+        return x == 'fig';
     }
 
     _tagIsTable(x) {
-        return x == "table";
+        return x == 'table';
     }
 
     _tagIsListItem(x) {
-        return x == "list-item";
+        return x == 'list-item';
     }
 
     _tagIsElse(x) {
-        if (x == "p") return false;
-        if (x == "fig") return false;
-        if (x == "table") return false;
-        if (x == "list-item") return false;
+        if (x == 'p') return false;
+        if (x == 'fig') return false;
+        if (x == 'table') return false;
+        if (x == 'list-item') return false;
         return true;
     }
 
@@ -225,7 +225,7 @@ class PubmedSectionV2 extends PolymerElement {
     }
 
     _handleOnMouseUp(e) {
-        var txt = "";
+        var txt = '';
 
         if (window.getSelection) {
             txt = window.getSelection();
@@ -235,11 +235,11 @@ class PubmedSectionV2 extends PolymerElement {
             txt = document.selection.createRange().text;
         } //console.log("Selected text is " + txt);
 
-        if (txt != "") {
+        if (txt != '') {
             // user trying to define new psg
             //console.log("Selected text is " + txt);
             this.dispatchEvent(
-                new CustomEvent("passageselected", {
+                new CustomEvent('passageselected', {
                     composed: true,
                     detail: {
                         content: txt,
@@ -253,14 +253,14 @@ class PubmedSectionV2 extends PolymerElement {
 
             if (el.title) {
                 var titleText = el.title;
-                var titleIds = titleText.split(" ");
+                var titleIds = titleText.split(' ');
 
                 for (var i = 0; i < titleIds.length; i++) {
                     var id = titleIds[i]; //if (id.startsWith("psg")) {
 
-                    if (id.startsWith("ann")) {
+                    if (id.startsWith('ann')) {
                         this.dispatchEvent(
-                            new CustomEvent("passagetouched", {
+                            new CustomEvent('passagetouched', {
                                 composed: true,
                                 detail: {
                                     id: id,
@@ -275,17 +275,17 @@ class PubmedSectionV2 extends PolymerElement {
     }
 
     _getClass(item) {
-        if (this.nohighlight) return "normal-nohighlight";
-        if (item.tags.indexOf("concept") > -1) return "concept";
-        if (item.tags.indexOf("passage") > -1) return "passage";
-        return "normal";
+        if (this.nohighlight) return 'normal-nohighlight';
+        if (item.tags.indexOf('concept') > -1) return 'concept';
+        if (item.tags.indexOf('passage') > -1) return 'passage';
+        return 'normal';
     }
 
     _getInfo(item) {
         var cloned_ids = item.ids.slice(0);
         var ids_and_cpts = cloned_ids.concat(item.cpts); //cloned_ids.sort();
 
-        return ids_and_cpts.join(" ");
+        return ids_and_cpts.join(' ');
     }
 
     _getLinks(item) {
@@ -293,31 +293,27 @@ class PubmedSectionV2 extends PolymerElement {
 
         for (var i = 0; i < item.cpts.length; i++) {
             var cpt = item.cpts[i];
-            var dbac = cpt.split(":");
+            var dbac = cpt.split(':');
 
-            if (dbac[0] == "MeSH") {
+            if (dbac[0] == 'MeSH') {
                 links.push({
                     label: dbac[0],
-                    url: "https://www.ncbi.nlm.nih.gov/mesh/?term=" + dbac[1],
+                    url: 'https://www.ncbi.nlm.nih.gov/mesh/?term=' + dbac[1],
                 });
-            } else if (dbac[0] == "GO") {
+            } else if (dbac[0] == 'GO') {
                 links.push({
                     label: dbac[0],
-                    url:
-                        "http://amigo.geneontology.org/amigo/term/" +
-                        dbac[1] +
-                        ":" +
-                        dbac[2],
+                    url: 'http://amigo.geneontology.org/amigo/term/' + dbac[1] + ':' + dbac[2],
                 });
-            } else if (dbac[0] == "Drugbank") {
+            } else if (dbac[0] == 'Drugbank') {
                 links.push({
                     label: dbac[0],
-                    url: "https://www.drugbank.ca/drugs/" + dbac[1],
+                    url: 'https://www.drugbank.ca/drugs/' + dbac[1],
                 });
-            } else if (dbac[0] == "neXtProt") {
+            } else if (dbac[0] == 'neXtProt') {
                 links.push({
                     label: dbac[0],
-                    url: "https://www.nextprot.org/entry/" + dbac[1],
+                    url: 'https://www.nextprot.org/entry/' + dbac[1],
                 });
             }
         }
@@ -330,27 +326,21 @@ class PubmedSectionV2 extends PolymerElement {
 
         for (var i = 0; i < this.filters.length; i++) {
             var filter = this.filters[i];
-            if (filter.name == annot.concept_source)
-                return filter.checked == false;
+            if (filter.name == annot.concept_source) return filter.checked == false;
         }
 
         return false;
     }
 
     _buildHTML(content, fsccount) {
-        var new_xml = "";
+        var new_xml = '';
 
-        var spans = this._turnContentIntoNodes(content, "Content", fsccount);
+        var spans = this._turnContentIntoNodes(content, 'Content', fsccount);
 
         for (var i = 0; i < spans.length; i++) {
             var span = spans[i];
-            var tag =
-                '<span class="' +
-                this._getClass(span) +
-                '" title="' +
-                this._getInfo(span) +
-                '">';
-            var element = tag + span.content + "</span>";
+            var tag = '<span class="' + this._getClass(span) + '" title="' + this._getInfo(span) + '">';
+            var element = tag + span.content + '</span>';
             new_xml += element;
         }
 
@@ -370,20 +360,20 @@ class PubmedSectionV2 extends PolymerElement {
         //console.log("filters", this.fsccount, this.filters, "running _turnContentIntoNodes()");
         //console.log('content', content);
         var tc_field = tc_field.toLowerCase();
-        var tc = tc_field == "content" ? content["xml"] : content[tc_field];
+        var tc = tc_field == 'content' ? content['xml'] : content[tc_field];
         var passageMap = content.annotations;
         var changes = [];
-        var cnt_id = "cnt:" + content.id;
+        var cnt_id = 'cnt:' + content.id;
         changes.push({
-            tag: "normal",
+            tag: 'normal',
             id: cnt_id,
-            action: "open",
+            action: 'open',
             position: 0,
         });
         changes.push({
-            tag: "normal",
+            tag: 'normal',
             id: cnt_id,
-            action: "close",
+            action: 'close',
             position: tc.length,
         });
 
@@ -395,39 +385,38 @@ class PubmedSectionV2 extends PolymerElement {
                 var annot = psgAnnotations[idx];
                 if (this._filterOut(annot)) continue; //console.log('tc_field', tc_field, 'annot.subfield', annot.subfield, annot.id);
 
-                if (annot.subfield && tc_field != annot.subfield.toLowerCase())
-                    continue;
+                if (annot.subfield && tc_field != annot.subfield.toLowerCase()) continue;
 
                 if (actual_idx == 0) {
                     changes.push({
-                        tag: "passage",
+                        tag: 'passage',
                         id: psg_key,
-                        action: "open",
+                        action: 'open',
                         position: annot.passage_offset,
                     });
                     changes.push({
-                        tag: "passage",
+                        tag: 'passage',
                         id: psg_key,
-                        action: "close",
+                        action: 'close',
                         position: annot.passage_offset + annot.passage_length,
                     });
                 }
 
                 var p1 = annot.passage_offset + annot.concept_offset;
                 var p2 = p1 + annot.concept_length;
-                var cpt = annot.concept_source + ":" + annot.concept_id;
+                var cpt = annot.concept_source + ':' + annot.concept_id;
                 changes.push({
-                    tag: "concept",
+                    tag: 'concept',
                     id: annot.id,
                     cpt: cpt,
-                    action: "open",
+                    action: 'open',
                     position: p1,
                 });
                 changes.push({
-                    tag: "concept",
+                    tag: 'concept',
                     id: annot.id,
                     cpt: cpt,
-                    action: "close",
+                    action: 'close',
                     position: p2,
                 });
                 actual_idx++;
@@ -445,20 +434,17 @@ class PubmedSectionV2 extends PolymerElement {
             position: 0,
             ids: [],
             tags: [],
-            content: "",
+            content: '',
             cpts: [],
-            concept_id: "",
-            concept_type: "",
+            concept_id: '',
+            concept_type: '',
         };
 
         for (var idx = 0; idx < changes.length; idx++) {
             var change = changes[idx]; //console.log(currSpan.position, change.position);
 
             if (change.position != currSpan.position) {
-                var subContent = tc.substring(
-                    currSpan.position,
-                    change.position
-                );
+                var subContent = tc.substring(currSpan.position, change.position);
                 currSpan.content = subContent; //console.log('pushing', currSpan, 'subContent', subContent);
 
                 spans.push(currSpan);
@@ -466,7 +452,7 @@ class PubmedSectionV2 extends PolymerElement {
                 currSpan.position = change.position;
             }
 
-            if (change.action == "open") {
+            if (change.action == 'open') {
                 currSpan.ids.push(change.id);
                 currSpan.tags.push(change.tag);
                 if (change.cpt) currSpan.cpts.push(change.cpt);
@@ -486,20 +472,20 @@ class PubmedSectionV2 extends PolymerElement {
     _printableNode(node) {
         node.ids.sort();
         node.tags.sort();
-        var str = "pos:" + node.position + " ";
-        str += "tags:";
+        var str = 'pos:' + node.position + ' ';
+        str += 'tags:';
 
-        for (var i = 0; i < node.tags.length; i++) str += node.tags[i] + " ";
+        for (var i = 0; i < node.tags.length; i++) str += node.tags[i] + ' ';
 
-        str += "ids:";
+        str += 'ids:';
 
-        for (var i = 0; i < node.ids.length; i++) str += node.ids[i] + " ";
+        for (var i = 0; i < node.ids.length; i++) str += node.ids[i] + ' ';
 
-        str += "cpts:";
+        str += 'cpts:';
 
-        for (var i = 0; i < node.cpts.length; i++) str += node.cpts[i] + " ";
+        for (var i = 0; i < node.cpts.length; i++) str += node.cpts[i] + ' ';
 
-        str += "content:" + node.content;
+        str += 'content:' + node.content;
         return str;
     }
 
@@ -509,44 +495,42 @@ class PubmedSectionV2 extends PolymerElement {
             ids: [],
             tags: [],
             cpts: [],
-            content: "",
+            content: '',
         };
 
         for (var i = 0; i < node.ids.length; i++) newNode.ids.push(node.ids[i]);
 
-        for (var i = 0; i < node.tags.length; i++)
-            newNode.tags.push(node.tags[i]);
+        for (var i = 0; i < node.tags.length; i++) newNode.tags.push(node.tags[i]);
 
-        for (var i = 0; i < node.cpts.length; i++)
-            newNode.cpts.push(node.cpts[i]);
+        for (var i = 0; i < node.cpts.length; i++) newNode.cpts.push(node.cpts[i]);
 
         return newNode;
     }
 
     selectPsg(id, withScroll) {
-        var someId = "" + id;
-        var spanList = this.root.querySelectorAll("span[selected]");
+        var someId = '' + id;
+        var spanList = this.root.querySelectorAll('span[selected]');
 
         for (var i = 0; i < spanList.length; i++) {
-            spanList[i].removeAttribute("selected");
+            spanList[i].removeAttribute('selected');
         }
 
-        var spanList = this.root.querySelectorAll("span");
+        var spanList = this.root.querySelectorAll('span');
 
         for (var i = 0; i < spanList.length; i++) {
             var span = spanList[i];
-            var ids = span.title.split(" ");
+            var ids = span.title.split(' ');
 
             for (var j = 0; j < ids.length; j++) {
                 if (someId == ids[j]) {
-                    span.setAttribute("selected", true);
+                    span.setAttribute('selected', true);
 
                     if (withScroll) {
                         // span.scrollIntoView(true); //span.scrollIntoView({block:"center", behavior: "smooth", inline:"nearest"});
                         span.scrollIntoView({
-                            block: "center",
-                            behavior: "smooth",
-                            inline: "nearest",
+                            block: 'center',
+                            behavior: 'smooth',
+                            inline: 'nearest',
                         });
                     }
 
@@ -557,4 +541,4 @@ class PubmedSectionV2 extends PolymerElement {
     }
 }
 
-window.customElements.define("pubmed-section-v2", PubmedSectionV2);
+window.customElements.define('pubmed-section-v2', PubmedSectionV2);

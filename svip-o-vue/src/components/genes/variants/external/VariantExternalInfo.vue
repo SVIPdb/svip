@@ -12,68 +12,60 @@
             <div :class="`grid-sizer ${sharedClasses}`"></div>
 
             <Pathogenicity
-                v-if="
-                    included('Pathogenicity') &&
-                    mvInfo &&
-                    (mvInfo.cadd || mvInfo.dbnsfp || extras)
-                "
+                v-if="included('Pathogenicity') && mvInfo && (mvInfo.cadd || mvInfo.dbnsfp || extras)"
                 :class="`grid-item ${sharedClasses}`"
                 :cadd="mvInfo.cadd"
                 :dbnsfp="mvInfo.dbnsfp"
-                :extras="extras"
-            />
+                :extras="extras" />
 
             <PopulationStats
                 v-if="included('PopulationStats') && mvInfo"
                 :class="`grid-item ${sharedClasses}`"
-                :mvInfo="mvInfo"
-            />
+                :mvInfo="mvInfo" />
 
             <SwissPO
                 v-if="included('SwissPO')"
                 :class="`grid-item ${sharedClasses}`"
                 :protein="variant.gene.symbol"
                 :uniprot-id="variant.gene.uniprot_ids[0]"
-                :change="variant.name"
-            />
+                :change="variant.name" />
 
             <SOCIBP
                 v-if="included('SOCIBP')"
                 :class="`grid-item ${sharedClasses}`"
                 :protein="variant.gene.symbol"
                 :change="variant.name"
-                @updated="relayout"
-            />
+                @updated="relayout" />
         </div>
     </div>
 </template>
 
 <script>
-import Isotope from "isotope-layout";
-import Pathogenicity from "./Pathogenicity";
-import PopulationStats from "./PopulationStats";
-import SwissPO from "@/components/genes/variants/external/SwissPO";
-import SOCIBP from "@/components/genes/variants/external/SOCIBP";
-import ulog from "ulog";
+import Isotope from 'isotope-layout';
+import Pathogenicity from './Pathogenicity';
+import PopulationStats from './PopulationStats';
+import SwissPO from '@/components/genes/variants/external/SwissPO';
+import SOCIBP from '@/components/genes/variants/external/SOCIBP';
+import ulog from 'ulog';
 
-const log = ulog("VariantExternalInfo");
+const log = ulog('VariantExternalInfo');
 
 export default {
-    name: "VariantExternalInfo",
-    components: { SwissPO, Pathogenicity, PopulationStats, SOCIBP },
-    props: ["variant", "mvInfo", "extras", "exclude"],
+    name: 'VariantExternalInfo',
+    components: {SwissPO, Pathogenicity, PopulationStats, SOCIBP},
+    props: ['variant', 'mvInfo', 'extras', 'exclude'],
     data() {
         return {
             iso: null,
-            sharedClasses: "col-md-12 col-lg-6 col-xl-3",
+            sharedClasses: 'col-md-12 col-lg-6 col-xl-3',
         };
     },
     mounted() {
-        this.iso = new Isotope(".grid", {
-            itemSelector: ".grid-item", // use a separate class for itemSelector, other than .col-
+        this.iso = new Isotope('.grid', {
+            itemSelector: '.grid-item', // use a separate class for itemSelector, other than .col-
             percentPosition: true,
             masonry: {
-                columnWidth: ".grid-sizer",
+                columnWidth: '.grid-sizer',
             },
         });
     },
@@ -88,7 +80,7 @@ export default {
         relayout() {
             if (this.iso) {
                 this.$nextTick(() => {
-                    log.debug("Triggering layout");
+                    log.debug('Triggering layout');
                     this.iso.layout();
                 });
             }

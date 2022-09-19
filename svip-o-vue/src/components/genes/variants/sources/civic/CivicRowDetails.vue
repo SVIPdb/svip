@@ -4,22 +4,20 @@
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
                     Diseases
-                    <i class="float-right" v-if="!currentFilter.disease"
-                        >click on a disease to filter the evidences table</i
-                    >
+                    <i class="float-right" v-if="!currentFilter.disease">
+                        click on a disease to filter the evidences table
+                    </i>
                     <span
                         class="float-right badge badge-primary"
                         v-if="currentFilter.disease"
-                        style="font-size: 13px"
-                    >
+                        style="font-size: 13px">
                         {{ titleCase(currentFilter.disease) }}
                         <button
                             type="button"
                             class="close small ml-3"
                             aria-label="Close"
                             style="font-size: 14px"
-                            @click="currentFilter.disease = ''"
-                        >
+                            @click="currentFilter.disease = ''">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </span>
@@ -36,12 +34,7 @@
                             v-for="d in row.item.diseases_collapsed"
                             :key="d.disease"
                             @click="currentFilter.disease = d.disease"
-                            :class="
-                                currentFilter.disease === d.disease
-                                    ? 'pointer table-active'
-                                    : 'pointer'
-                            "
-                        >
+                            :class="currentFilter.disease === d.disease ? 'pointer table-active' : 'pointer'">
                             <td>{{ titleCase(d.disease) }}</td>
                             <td>{{ d.count.toLocaleString() }}</td>
                         </tr>
@@ -54,11 +47,7 @@
 
         <div class="col-xl-9 col-md-12">
             <b-card>
-                <RowDetailsHeader
-                    name="Evidences"
-                    :total-rows="totalRows"
-                    v-model="currentFilter"
-                />
+                <RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter" />
 
                 <b-table
                     responsive
@@ -68,20 +57,14 @@
                     :items="association_provider"
                     :per-page="perPage"
                     :current-page="currentPage"
-                    :filter="packedFilter"
-                >
+                    :filter="packedFilter">
                     <template v-slot:cell(disease)="c">
-                        <a
-                            v-if="c.item.evidence_url"
-                            :href="c.item.evidence_url"
-                            target="_blank"
-                            >{{ c.value }}</a
-                        >
+                        <a v-if="c.item.evidence_url" :href="c.item.evidence_url" target="_blank">
+                            {{ c.value }}
+                        </a>
                         <span v-else>{{ c.value }}</span>
                     </template>
-                    <template v-slot:cell(drug)="c">{{
-                        normalizeItemList(c.value)
-                    }}</template>
+                    <template v-slot:cell(drug)="c">{{ normalizeItemList(c.value) }}</template>
                     <template v-slot:cell(publications)="c">
                         <template v-for="(p, i) in c.value">
                             <VariomesLitPopover
@@ -89,13 +72,8 @@
                                 :variant="variant.name"
                                 :gene="variant.gene.symbol"
                                 :disease="c.item.disease"
-                                :key="`${i}_link`"
-                            />
-                            <span
-                                :key="`${i}_comma`"
-                                v-if="i < c.item.publications.length - 1"
-                                >,
-                            </span>
+                                :key="`${i}_link`" />
+                            <span :key="`${i}_comma`" v-if="i < c.item.publications.length - 1">,</span>
                         </template>
                     </template>
 
@@ -103,20 +81,13 @@
                         <div
                             v-if="row.item.collapsed_count > 1"
                             class="details-tray"
-                            style="text-align: right"
-                        >
+                            style="text-align: right">
                             <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
                             <b-button
                                 size="sm"
                                 small
-                                @click.stop="
-                                    row.item._animatedDetails =
-                                        !row.item._animatedDetails
-                                "
-                            >
-                                {{
-                                    row.item._animatedDetails ? "Hide" : "Show"
-                                }}
+                                @click.stop="row.item._animatedDetails = !row.item._animatedDetails">
+                                {{ row.item._animatedDetails ? 'Hide' : 'Show' }}
                                 {{ row.item.collapsed_count }} Item(s)
                             </b-button>
                         </div>
@@ -130,37 +101,23 @@
                                         class="sample-subtable-table"
                                         sort-by="url"
                                         :fields="evidenceChildFields"
-                                        :items="row.item.children"
-                                    >
+                                        :items="row.item.children">
                                         <template v-slot:cell(url)="c">
-                                            <a :href="c.value"
-                                                >EID
-                                                {{ c.value.split("/")[11] }}</a
-                                            >
+                                            <a :href="c.value">EID {{ c.value.split('/')[11] }}</a>
                                         </template>
 
                                         <template v-slot:cell(publications)="c">
-                                            <template
-                                                v-for="(p, i) in c.value.map(
-                                                    parsePublicationURL
-                                                )"
-                                            >
+                                            <template v-for="(p, i) in c.value.map(parsePublicationURL)">
                                                 <VariomesLitPopover
                                                     :pubmeta="p"
                                                     :variant="variant.name"
                                                     :gene="variant.gene.symbol"
                                                     :disease="row.item.disease"
-                                                    :key="`${i}_link`"
-                                                />
+                                                    :key="`${i}_link`" />
                                                 <span
                                                     :key="`${i}_comma`"
-                                                    v-if="
-                                                        i <
-                                                        c.item.publications
-                                                            .length -
-                                                            1
-                                                    "
-                                                    >,
+                                                    v-if="i < c.item.publications.length - 1">
+                                                    ,
                                                 </span>
                                             </template>
                                         </template>
@@ -175,36 +132,35 @@
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </b-card>
         </div>
     </div>
 </template>
 
 <script>
-import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
-import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
-import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
-import { makeCollapsedAssociationProvider } from "@/components/genes/variants/item_providers/collapsed_association_provider";
-import TransitionExpand from "@/components/widgets/TransitionExpand";
-import { makeAssociationProvider } from "@/components/genes/variants/item_providers/association_provider";
+import {normalizeItemList, parsePublicationURL, titleCase} from '@/utils';
+import RowDetailsHeader from '@/components/genes/variants/sources/shared/RowDetailsHeader';
+import VariomesLitPopover from '@/components/widgets/VariomesLitPopover';
+import {makeCollapsedAssociationProvider} from '@/components/genes/variants/item_providers/collapsed_association_provider';
+import TransitionExpand from '@/components/widgets/TransitionExpand';
+import {makeAssociationProvider} from '@/components/genes/variants/item_providers/association_provider';
 
 // if true, aggregate evidences with mostly the same values under a single entry
 const isCollapsed = true;
 
 export default {
-    name: "CivicRowDetails",
-    components: { TransitionExpand, RowDetailsHeader, VariomesLitPopover },
+    name: 'CivicRowDetails',
+    components: {TransitionExpand, RowDetailsHeader, VariomesLitPopover},
     props: {
-        row: { type: Object, required: true },
-        variant: { type: Object, required: true },
+        row: {type: Object, required: true},
+        variant: {type: Object, required: true},
     },
     data() {
         return {
             currentFilter: {
-                disease: "",
-                search: "",
+                disease: '',
+                search: '',
             },
             testExpand: false,
             currentPage: 1,
@@ -212,62 +168,62 @@ export default {
             totalRows: this.row.item.association_count,
             fields: [
                 {
-                    key: "disease",
-                    label: "Disease",
+                    key: 'disease',
+                    label: 'Disease',
                     sortable: true,
                 },
                 {
-                    key: "evidence_type",
-                    label: "Evidence Type",
+                    key: 'evidence_type',
+                    label: 'Evidence Type',
                     sortable: true,
                 },
                 {
-                    key: "evidence_direction",
-                    label: "Direction",
+                    key: 'evidence_direction',
+                    label: 'Direction',
                     sortable: true,
                 },
                 {
-                    key: "clinical_significance",
-                    label: "Clinical Significance",
+                    key: 'clinical_significance',
+                    label: 'Clinical Significance',
                     sortable: true,
                 },
                 {
-                    key: isCollapsed ? "evidence_levels" : "evidence_level",
-                    label: "Evidence Level(s)",
+                    key: isCollapsed ? 'evidence_levels' : 'evidence_level',
+                    label: 'Evidence Level(s)',
                     sortable: true,
-                    class: "d-none d-lg-table-cell",
+                    class: 'd-none d-lg-table-cell',
                 },
                 {
-                    key: "drug_labels",
-                    label: "Drug",
+                    key: 'drug_labels',
+                    label: 'Drug',
                     sortable: true,
                 },
                 {
-                    key: "publications",
-                    label: "References",
+                    key: 'publications',
+                    label: 'References',
                     sortable: false,
-                    class: "d-none d-lg-table-cell",
+                    class: 'd-none d-lg-table-cell',
                 },
                 {
-                    key: "actions",
-                    label: "",
+                    key: 'actions',
+                    label: '',
                     sortable: false,
                 },
             ],
             evidenceChildFields: [
                 {
-                    key: "url",
-                    label: "Source",
+                    key: 'url',
+                    label: 'Source',
                     sortable: true,
                 },
                 {
-                    key: "evidence_level",
-                    label: "Evidence Level",
+                    key: 'evidence_level',
+                    label: 'Evidence Level',
                     sortable: true,
                 },
                 {
-                    key: "publications",
-                    label: "Reference(s)",
+                    key: 'publications',
+                    label: 'Reference(s)',
                     sortable: true,
                 },
             ],
@@ -278,9 +234,7 @@ export default {
             return JSON.stringify(this.currentFilter);
         },
         apiUrl() {
-            return isCollapsed
-                ? this.row.item.collapsed_associations_url
-                : this.row.item.associations_url;
+            return isCollapsed ? this.row.item.collapsed_associations_url : this.row.item.associations_url;
         },
         association_provider() {
             if (isCollapsed) {
@@ -290,7 +244,7 @@ export default {
         },
     },
     methods: {
-        metaUpdated({ count }) {
+        metaUpdated({count}) {
             this.totalRows = count;
         },
         normalizeItemList,

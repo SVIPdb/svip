@@ -1,7 +1,7 @@
-import { substantiveElement } from "./content.js";
-import * as symbols from "./symbols.js";
-import * as updates from "./updates.js";
-const originalKey = Symbol("original");
+import {substantiveElement} from './content.js';
+import * as symbols from './symbols.js';
+import * as updates from './updates.js';
+const originalKey = Symbol('original');
 /**
  * Treats an element's content nodes as list items.
  *
@@ -53,7 +53,7 @@ export default function ContentItemsMixin(Base) {
                  *
                  * @event SingleSelectionMixin#items-changed
                  */
-                const event = new CustomEvent("items-changed");
+                const event = new CustomEvent('items-changed');
                 this.dispatchEvent(event);
             }
         }
@@ -64,13 +64,13 @@ export default function ContentItemsMixin(Base) {
             }); // Regenerate items when content changes, or if items has been nullified
             // by another mixin (as a signal that items should be regenerated).
 
-            state.onChange(["content", "items"], (state, changed) => {
+            state.onChange(['content', 'items'], (state, changed) => {
                 const content = state.content;
                 const needsItems = content && !state.items; // Signal from other mixins
 
                 if (changed.content || needsItems) {
                     const items = content
-                        ? Array.prototype.filter.call(content, (item) =>
+                        ? Array.prototype.filter.call(content, item =>
                               this[symbols.itemMatchesState](item, state)
                           )
                         : null;
@@ -174,9 +174,7 @@ export default function ContentItemsMixin(Base) {
          */
 
         itemUpdates(item, calcs, original) {
-            return super.itemUpdates
-                ? super.itemUpdates(item, calcs, original)
-                : {};
+            return super.itemUpdates ? super.itemUpdates(item, calcs, original) : {};
         }
 
         [symbols.render]() {
@@ -186,27 +184,16 @@ export default function ContentItemsMixin(Base) {
 
             if (this.itemUpdates) {
                 const content = this.state.content || [];
-                const elements = Array.prototype.filter.call(
-                    content,
-                    (node) => node instanceof Element
-                );
+                const elements = Array.prototype.filter.call(content, node => node instanceof Element);
                 let itemCount = 0;
-                elements.forEach((item) => {
+                elements.forEach(item => {
                     if (item[originalKey] === undefined) {
                         item[originalKey] = updates.current(item);
                     }
 
-                    const index = this[symbols.itemMatchesState](
-                        item,
-                        this.state
-                    )
-                        ? itemCount++
-                        : -1;
+                    const index = this[symbols.itemMatchesState](item, this.state) ? itemCount++ : -1;
                     const calcs = this.itemCalcs(item, index);
-                    updates.apply(
-                        item,
-                        this.itemUpdates(item, calcs, item[originalKey])
-                    );
+                    updates.apply(item, this.itemUpdates(item, calcs, item[originalKey]));
                 });
             }
         }

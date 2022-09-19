@@ -118,12 +118,9 @@
             </div>
 
             <GeneSummary :gene="gene" class="variant-summary" />
-
             <VariantSummary :variant="variant" class="variant-summary" />
-
             <variant-svip :variant="variant" :gene="gene_id"></variant-svip>
             <variant-public-databases :variant="variant"></variant-public-databases>
-
             <b-row v-access="'curators'">
                 <b-col>
                     <b-card class="shadow-sm mt-3" align="left" no-body>
