@@ -162,19 +162,6 @@ class Variant(models.Model):
     def natural_key(self):
         return self.description, self.hgvs_g
 
-    def has_only_matching_reviews(self):
-        for association in self.curation_associations.all():
-            if association.curation_evidences.all().filter(
-                    type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                evidence = association.curation_evidences.first()
-                if evidence.curation_reviews.filter(
-                        annotated_effect=evidence.annotation1.effect,
-                        annotated_tier=evidence.annotation1.tier
-                ).count() == 3:
-                    return True
-                else:
-                    return False
-
     class Meta:
         indexes = [
             models.Index(fields=['gene', 'name']),
