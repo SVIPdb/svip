@@ -3,7 +3,7 @@
         <div v-for="(submissionEntry, idx) in submissionEntries" :key="submissionEntry[0] + idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    <expander v-model="expander_array[idx].disease" />
+                    <expander v-model="expander_array[idx].disease"/>
                     {{ submissionEntry[0] }}
                 </h6>
 
@@ -16,7 +16,7 @@
                                         <b-col align="left" cols="2">
                                             <div class="ml-1">
                                                 <expander
-                                                    v-model="expander_array[idx].curation_entries[index]" />
+                                                    v-model="expander_array[idx].curation_entries[index]"/>
                                                 {{ type.type_of_evidence }}
                                                 {{ type.drug && ` - ${type.drug}` }}
                                             </div>
@@ -45,10 +45,10 @@
                                         </b-col>
                                         <b-col cols="2">
                                             <b-row class="p-2">
-                                                <b-input v-model="type.effect" readonly />
+                                                <b-input v-model="type.effect" readonly/>
                                             </b-row>
                                             <b-row class="p-2">
-                                                <b-input v-model="type.tier" readonly />
+                                                <b-input v-model="type.tier" readonly/>
                                             </b-row>
                                         </b-col>
                                         <b-col cols="2">
@@ -144,7 +144,11 @@
                                                 <span
                                                     v-for="(review, review_idx) in type.curation_reviews"
                                                     :key="'review' + review_idx">
-                                                    <span v-if="review.acceptance !== null">
+                                                    <span
+                                                        v-if="
+                                                            review.acceptance !== null &&
+                                                            review.reviewer === user.user_id
+                                                        ">
                                                         <b-icon
                                                             class="h4 mb-2 m-1"
                                                             :style="displayColor(review.acceptance)"
@@ -152,8 +156,10 @@
                                                     </span>
                                                 </span>
 
+
+                                                <!--  delete '&& !submitted' here and set showOnlyOwnReviewStatus to false if you want to show the review status of all reviewers-->
                                                 <b-icon
-                                                    v-if="type.curation_reviews.length < 3"
+                                                    v-if="type.curation_reviews.length < 3 && !submitted"
                                                     class="h4 mb-2 m-1"
                                                     :style="
                                                         displayColor(
@@ -169,7 +175,10 @@
                                                     "></b-icon>
 
                                                 <span
-                                                    v-if="type.curation_reviews.length < 3"
+                                                    v-if="
+                                                        type.curation_reviews.length < 3 &&
+                                                        !showOnlyOwnReviewStatus
+                                                    "
                                                     v-for="i in 3 - type.curation_reviews.length - 1"
                                                     :key="i + ' icon'">
                                                     <span>
@@ -253,7 +262,7 @@
                         v-if="
                             idx < submissionEntry[1].length - 1 &&
                             !expander_array[idx].curation_entries[index]
-                        " />
+                        "/>
                 </div>
             </b-card>
         </div>
@@ -323,6 +332,7 @@ export default {
             currentReviews: {
                 data: [],
             },
+            showOnlyOwnReviewStatus: true,
         };
     },
     created() {
@@ -438,15 +448,15 @@ export default {
             return acceptance === true && !ownSubmitted
                 ? 'check-square-fill'
                 : acceptance === false && !ownSubmitted
-                ? 'x-square-fill'
-                : 'square';
+                    ? 'x-square-fill'
+                    : 'square';
         },
         displayColor(acceptance, ownSubmitted = false) {
             return acceptance === true && !ownSubmitted
                 ? 'color:blue;'
                 : acceptance === false && !ownSubmitted
-                ? 'color:red;'
-                : '';
+                    ? 'color:red;'
+                    : '';
         },
         onChange(curatorValues, reviewerValues) {
             reviewerValues.acceptance =
