@@ -205,22 +205,21 @@ class Variant(models.Model):
 
         return 'none'
 
-
-
     @property
     def public_stage(self):
         stage = self.stage
-        if stage in VARIANT_STAGE.none:
+        if stage == VARIANT_STAGE.none:
             return 'None'
-        elif stage in VARIANT_STAGE.loaded:
+        elif stage == VARIANT_STAGE.loaded:
             return 'Loaded'
-        elif stage in VARIANT_STAGE.ongoing_curation:
+        elif stage == VARIANT_STAGE.ongoing_curation:
             return 'In progress'
-        elif stage in [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved, VARIANT_STAGE.reannotated]:
+        elif stage == [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved,
+                       VARIANT_STAGE.reannotated]:
             return 'Annotated'
-        elif stage in VARIANT_STAGE.on_hold:
+        elif stage == VARIANT_STAGE.on_hold:
             return 'On hold'
-        elif stage in VARIANT_STAGE.approved:
+        elif stage == VARIANT_STAGE.approved:
             return 'Approved'
 
     @property
