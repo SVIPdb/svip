@@ -212,8 +212,8 @@ export default {
                     collection: this.reference.includes('PMC')
                         ? 'pmc'
                         : this.reference.includes('NCT')
-                        ? 'ct'
-                        : undefined,
+                            ? 'ct'
+                            : undefined,
                     hl_fields: 'title,abstract',
                 },
             })

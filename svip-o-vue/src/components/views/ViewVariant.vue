@@ -251,16 +251,16 @@ export default {
     methods: {
         getLink(source) {
             switch (source) {
-                case 'Uniprot':
-                    return `https://www.uniprot.org/uniprotkb?query=${this.variant.name}`;
-                case 'Mycancergenome':
-                    return `https://www.mycancergenome.org/content/search/?query=${this.variant.name}`;
-                case 'Varsome':
-                    return `https://varsome.com/search-results/${this.variant.name}`;
-                case 'DoCM':
-                    return `http://www.docm.info`;
-                case 'MCG Biomarkers':
-                    return 'https://www.cancergenomeinterpreter.org/biomarkers';
+            case 'Uniprot':
+                return `https://www.uniprot.org/uniprotkb?query=${this.variant.name}`;
+            case 'Mycancergenome':
+                return `https://www.mycancergenome.org/content/search/?query=${this.variant.name}`;
+            case 'Varsome':
+                return `https://varsome.com/search-results/${this.variant.name}`;
+            case 'DoCM':
+                return `http://www.docm.info`;
+            case 'MCG Biomarkers':
+                return 'https://www.cancergenomeinterpreter.org/biomarkers';
             }
         },
         desnakify,

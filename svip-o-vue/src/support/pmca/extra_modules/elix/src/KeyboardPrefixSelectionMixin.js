@@ -54,20 +54,20 @@ export default function KeyboardPrefixSelectionMixin(Base) {
             let handled;
 
             switch (event.key) {
-                case 'Backspace':
-                    handleBackspace(this);
-                    handled = true;
-                    break;
+            case 'Backspace':
+                handleBackspace(this);
+                handled = true;
+                break;
 
-                case 'Escape':
-                    // Pressing Escape lets user quickly start typing a new prefix.
-                    resetTypedPrefix(this);
-                    break;
+            case 'Escape':
+                // Pressing Escape lets user quickly start typing a new prefix.
+                resetTypedPrefix(this);
+                break;
 
-                default:
-                    if (!event.ctrlKey && !event.metaKey && !event.altKey && event.key.length === 1) {
-                        handlePlainCharacter(this, event.key);
-                    }
+            default:
+                if (!event.ctrlKey && !event.metaKey && !event.altKey && event.key.length === 1) {
+                    handlePlainCharacter(this, event.key);
+                }
             } // Prefer mixin result if it's defined, otherwise use base result.
 
             return handled || (super[symbols.keydown] && super[symbols.keydown](event));

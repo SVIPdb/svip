@@ -92,41 +92,41 @@ export default function KeyboardDirectionMixin(Base) {
             // as the user may be trying to navigate back or forward in the browser.
 
             switch (event.key) {
-                case 'ArrowDown':
-                    if (vertical) {
-                        handled = event.altKey ? this[symbols.goEnd]() : this[symbols.goDown]();
-                    }
+            case 'ArrowDown':
+                if (vertical) {
+                    handled = event.altKey ? this[symbols.goEnd]() : this[symbols.goDown]();
+                }
 
-                    break;
+                break;
 
-                case 'ArrowLeft':
-                    if (horizontal && !event.metaKey && !event.altKey) {
-                        handled = this[symbols.goLeft]();
-                    }
+            case 'ArrowLeft':
+                if (horizontal && !event.metaKey && !event.altKey) {
+                    handled = this[symbols.goLeft]();
+                }
 
-                    break;
+                break;
 
-                case 'ArrowRight':
-                    if (horizontal && !event.metaKey && !event.altKey) {
-                        handled = this[symbols.goRight]();
-                    }
+            case 'ArrowRight':
+                if (horizontal && !event.metaKey && !event.altKey) {
+                    handled = this[symbols.goRight]();
+                }
 
-                    break;
+                break;
 
-                case 'ArrowUp':
-                    if (vertical) {
-                        handled = event.altKey ? this[symbols.goStart]() : this[symbols.goUp]();
-                    }
+            case 'ArrowUp':
+                if (vertical) {
+                    handled = event.altKey ? this[symbols.goStart]() : this[symbols.goUp]();
+                }
 
-                    break;
+                break;
 
-                case 'End':
-                    handled = this[symbols.goEnd]();
-                    break;
+            case 'End':
+                handled = this[symbols.goEnd]();
+                break;
 
-                case 'Home':
-                    handled = this[symbols.goStart]();
-                    break;
+            case 'Home':
+                handled = this[symbols.goStart]();
+                break;
             } // Prefer mixin result if it's defined, otherwise use base result.
 
             return handled || (super[symbols.keydown] && super[symbols.keydown](event)) || false;

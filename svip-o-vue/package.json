@@ -14,7 +14,7 @@
         "lint": "vue-cli-service lint",
         "build-development": "vue-cli-service build --mode development",
         "build-external": "vue-cli-service build --mode external",
-        "format": "prettier --write . && npx eslint --ext .js,.vue --ignore-path .gitignore --fix"
+        "format": "prettier --write . && npx eslint --ext .js,.vue --ignore-path .gitignore --fix ."
     },
     "dependencies": {
         "@polymer/polymer": "^3.4.1",

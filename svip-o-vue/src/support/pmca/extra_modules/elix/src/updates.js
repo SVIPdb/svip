@@ -289,14 +289,14 @@ export function applyStyles(element, styles) {
 export function current(element) {
     return element instanceof HTMLElement
         ? {
-              attributes: currentAttributes(element),
-              classes: currentClasses(element),
-              style: currentStyles(element),
-          }
+            attributes: currentAttributes(element),
+            classes: currentClasses(element),
+            style: currentStyles(element),
+        }
         : {
-              attributes: currentAttributes(element),
-              classes: currentClasses(element),
-          };
+            attributes: currentAttributes(element),
+            classes: currentClasses(element),
+        };
 }
 /**
  * Returns a dictionary of the element's current attributes, using the same

@@ -121,29 +121,29 @@ function updateOriginalProp(element, name, value) {
     let changes;
 
     switch (name) {
-        case 'class': {
-            const classes = parseClassProps(value);
-            changes = {
-                classes,
-            };
-            break;
-        }
+    case 'class': {
+        const classes = parseClassProps(value);
+        changes = {
+            classes,
+        };
+        break;
+    }
 
-        case 'style': {
-            const style = parseStyleProps(value);
-            changes = {
-                style,
-            };
-            break;
-        }
+    case 'style': {
+        const style = parseStyleProps(value);
+        changes = {
+            style,
+        };
+        break;
+    }
 
-        default:
-            changes = {
-                attributes: {
-                    [name]: value,
-                },
-            };
-            break;
+    default:
+        changes = {
+            attributes: {
+                [name]: value,
+            },
+        };
+        break;
     }
 
     const original = updates.merge(element.state.original, changes);

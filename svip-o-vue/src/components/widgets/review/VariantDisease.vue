@@ -172,19 +172,20 @@
                                                             detectOwnReviews()
                                                         )
                                                     "></b-icon>
-
                                                 <span
                                                     v-if="
                                                         type.curation_reviews.length < 3 &&
                                                         !showOnlyOwnReviewStatus
-                                                    "
-                                                    v-for="i in 3 - type.curation_reviews.length - 1"
-                                                    :key="i + ' icon'">
-                                                    <span>
-                                                        <b-icon
-                                                            class="h4 mb-2 m-1"
-                                                            :style="displayColor(null)"
-                                                            :icon="displayIcon(null)"></b-icon>
+                                                    ">
+                                                    <span
+                                                        v-for="i in 3 - type.curation_reviews.length - 1"
+                                                        :key="i + ' icon'">
+                                                        <span>
+                                                            <b-icon
+                                                                class="h4 mb-2 m-1"
+                                                                :style="displayColor(null)"
+                                                                :icon="displayIcon(null)"></b-icon>
+                                                        </span>
                                                     </span>
                                                 </span>
                                             </b-row>

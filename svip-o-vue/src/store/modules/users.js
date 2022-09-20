@@ -40,8 +40,8 @@ const getters = {
         return USING_JWT_COOKIE
             ? state.dataViaCookie
             : state.currentJWT
-            ? JSON.parse(atob(getters.jwt.split('.')[1]))
-            : null;
+                ? JSON.parse(atob(getters.jwt.split('.')[1]))
+                : null;
     },
     jwtExp: (state, getters) => (getters.jwtData ? getters.jwtData.exp : null),
     jwtSubject: (state, getters) => (getters.jwtData ? getters.jwtData.sub : null),

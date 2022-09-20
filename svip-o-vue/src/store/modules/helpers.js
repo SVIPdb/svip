@@ -15,10 +15,10 @@ const onlyUnique = (value, index, self) => {
 
 const getStatus = stage => {
     switch (stage) {
-        case 'ongoing_review' || 'reannotated':
-            return 'In process';
-        case 'annotated':
-            return 'New';
+    case 'ongoing_review' || 'reannotated':
+        return 'In process';
+    case 'annotated':
+        return 'New';
     }
 };
 

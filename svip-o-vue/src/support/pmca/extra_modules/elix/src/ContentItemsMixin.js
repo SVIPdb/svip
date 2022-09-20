@@ -71,8 +71,8 @@ export default function ContentItemsMixin(Base) {
                 if (changed.content || needsItems) {
                     const items = content
                         ? Array.prototype.filter.call(content, item =>
-                              this[symbols.itemMatchesState](item, state)
-                          )
+                            this[symbols.itemMatchesState](item, state)
+                        )
                         : null;
 
                     if (items) {

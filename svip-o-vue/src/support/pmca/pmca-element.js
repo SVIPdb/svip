@@ -6,6 +6,11 @@ import './checkbox-group.js';
 import CandyProxy from '@/support/pmca/proxy-data-access';
 import DataParser from '@/support/pmca/proxy-data-parser';
 
+// what should this function do?
+function getBaseHref() {
+    return '';
+}
+
 /**
  * @customElement
  * @polymer
@@ -43,6 +48,7 @@ class PmcaElement extends PolymerElement {
                     display: flex;
                     flex-direction: column;
                 }
+
                 col2 {
                     min-width: 250px;
                     height: 100%;
@@ -57,6 +63,7 @@ class PmcaElement extends PolymerElement {
                     padding: 2px;
                     __border: 1px solid red;
                 }
+
                 /*------------ col 1 row 2 ------------------*/
                 pubmed-viewer-v2 {
                     box-sizing: border-box;
@@ -65,6 +72,7 @@ class PmcaElement extends PolymerElement {
                     height: 100%;
                     background-color: #f5f5f5;
                 }
+
                 .content12 {
                     flex-grow: 1;
                     overflow: auto;
@@ -74,6 +82,7 @@ class PmcaElement extends PolymerElement {
                     padding-right: 36px;
                     __border: 1px solid blue;
                 }
+
                 /*------------ col 2 row 1 ------------------*/
                 .content21 {
                     __flex-grow: 1;
@@ -86,12 +95,14 @@ class PmcaElement extends PolymerElement {
                     border-bottom: 1px solid lightgray;
                     font-size: 12px;
                 }
+
                 /*------------ col 2 row 2 ------------------*/
                 list-browser {
                     box-sizing: border-box;
                     margin: 0px;
                     width: 100%;
                 }
+
                 .content22 {
                     __height: 300px;
                     flex-grow: 1;
@@ -102,6 +113,7 @@ class PmcaElement extends PolymerElement {
                     __border: 1px solid red;
                     font-size: 12px;
                 }
+
                 /*------------------------------*/
             </style>
 
@@ -452,7 +464,7 @@ class PmcaElement extends PolymerElement {
         this.defaultForAllFilters = true;
         this.withCovoc = false;
 
-        stateForFilters: null;
+        null;
 
         this.root.querySelector('pubmed-viewer-v2').reset();
         this.root.querySelector('list-browser').reset();

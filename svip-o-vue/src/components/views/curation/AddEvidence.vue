@@ -696,8 +696,8 @@ export default {
                         this.reference && this.reference.includes('PMC')
                             ? 'pmc'
                             : this.reference && this.reference.includes('NCT')
-                            ? 'ct'
-                            : undefined,
+                                ? 'ct'
+                                : undefined,
                     hl_fields: 'title,abstract',
                 },
             })
@@ -829,9 +829,9 @@ export default {
             const {tier_level, tier_level_criteria} = matched
                 ? matched.groups
                 : {
-                      tier_level: null,
-                      tier_level_criteria: this.form.tier_criteria,
-                  };
+                    tier_level: null,
+                    tier_level_criteria: this.form.tier_criteria,
+                };
 
             const payload = {
                 // disease: this.form.disease, // this.form.disease.id,
@@ -840,8 +840,8 @@ export default {
                 variant: {id: this.variant.id},
                 extra_variants: this.form.extra_variants
                     ? this.form.extra_variants.map(x =>
-                          x.id.toString().includes('_') ? x.id.split('_')[1] : x.id
-                      )
+                        x.id.toString().includes('_') ? x.id.split('_')[1] : x.id
+                    )
                     : [], // selected plus the other ones
                 type_of_evidence: this.form.type_of_evidence,
                 drugs: Array.isArray(this.form.drugs) ? this.form.drugs : [this.form.drugs],
@@ -1042,38 +1042,38 @@ export default {
             return [
                 gene &&
                     counts.query_gene_count && {
-                        class: 'bg-gene',
-                        url: `?term=${gene}[Title/Abstract]`,
-                        label: gene,
-                        count: counts.query_gene_count.all,
-                    },
+                    class: 'bg-gene',
+                    url: `?term=${gene}[Title/Abstract]`,
+                    label: gene,
+                    count: counts.query_gene_count.all,
+                },
                 variant &&
                     counts.query_variant_count && {
-                        class: 'bg-variant',
-                        url: `?term=${variant}[Title/Abstract]`,
-                        label: variant,
-                        count: counts.query_variant_count.all,
-                    },
+                    class: 'bg-variant',
+                    url: `?term=${variant}[Title/Abstract]`,
+                    label: variant,
+                    count: counts.query_variant_count.all,
+                },
                 disease &&
                     counts.query_disease_count && {
-                        class: 'bg-disease',
-                        url: `?term=${disease}[Title/Abstract]`,
-                        label: disease,
-                        count: counts.query_disease_count.all,
-                    },
+                    class: 'bg-disease',
+                    url: `?term=${disease}[Title/Abstract]`,
+                    label: disease,
+                    count: counts.query_disease_count.all,
+                },
                 gene &&
                     variant &&
                     disease && {
-                        class: 'bg-primary',
-                        url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
-                        label: `${gene} + ${variant} + ${disease}`,
-                    },
+                    class: 'bg-primary',
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
+                    label: `${gene} + ${variant} + ${disease}`,
+                },
                 gene &&
                     variant && {
-                        class: 'bg-info',
-                        url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
-                        label: `${gene} + ${variant}`,
-                    },
+                    class: 'bg-info',
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
+                    label: `${gene} + ${variant}`,
+                },
             ].filter(x => x);
         },
         effects() {

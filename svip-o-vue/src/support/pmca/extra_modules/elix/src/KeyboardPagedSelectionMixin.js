@@ -37,13 +37,13 @@ export default function KeyboardPagedSelectionMixin(Base) {
 
             if (orientation !== 'horizontal') {
                 switch (event.key) {
-                    case 'PageDown':
-                        handled = this.pageDown();
-                        break;
+                case 'PageDown':
+                    handled = this.pageDown();
+                    break;
 
-                    case 'PageUp':
-                        handled = this.pageUp();
-                        break;
+                case 'PageUp':
+                    handled = this.pageUp();
+                    break;
                 }
             } // Prefer mixin result if it's defined, otherwise use base result.
 

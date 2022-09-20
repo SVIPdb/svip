@@ -101,9 +101,9 @@ export default {
                 this.bodyHeight = Math.max(
                     this.$refs.bodytext
                         ? Array.from(this.$refs.bodytext.children).reduce(
-                              (acc, x) => acc + x.offsetHeight,
-                              0
-                          ) + 20
+                            (acc, x) => acc + x.offsetHeight,
+                            0
+                        ) + 20
                         : 500,
                     500
                 );

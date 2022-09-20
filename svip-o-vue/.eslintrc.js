@@ -12,6 +12,8 @@ module.exports = {
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-unused-vars': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-multiple-empty-lines': [2, {max: 2, maxEOF: 10000, maxBOF: 10000}],
+        'no-constant-condition': 'off',
+        'no-redeclare': 'off',
         'indent': ['error', 4],
         'no-tabs': 0,
         'vue/no-parsing-error': [

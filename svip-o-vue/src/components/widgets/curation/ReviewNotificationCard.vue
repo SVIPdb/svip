@@ -106,7 +106,7 @@
                 </template>
 
                 <template v-slot:cell(diseases)="data">
-                    <p class="mb-0" v-for="(disease, idx) in data.item.diseases">
+                    <p class="mb-0" v-for="(disease, idx) in data.item.diseases" :key="`${disease}  ${idx}`">
                         {{ disease }}
                     </p>
                 </template>

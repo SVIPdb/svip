@@ -81,7 +81,7 @@ function findFocusableAncestor(element) {
     const parent = element.assignedSlot
         ? element.assignedSlot // @ts-ignore
         : element.parentNode instanceof ShadowRoot
-        ? element.parentNode.host
-        : element.parentNode;
+            ? element.parentNode.host
+            : element.parentNode;
     return parent ? findFocusableAncestor(parent) : null;
 }

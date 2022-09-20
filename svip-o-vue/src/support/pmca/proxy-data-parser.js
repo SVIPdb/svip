@@ -50,8 +50,8 @@ const DataParser = {
         var cnt_seeds = new Map();
         var annot_values = Array.from(annot_map.values()); // console.log("annot_values", annot_values);
 
-        for (var i = 0; i < annot_values.length; i++) {
-            var seed = annot_values[i]; // console.log(seed);
+        for (var j = 0; j < annot_values.length; j++) {
+            var seed = annot_values[j]; // console.log(seed);
             // remove useless properties of seeds, they are recomputed later
 
             delete seed.passage;
@@ -60,9 +60,9 @@ const DataParser = {
             delete seed.concept_offset;
             delete seed.concept_offset_in_section; // add seed to content_id key
 
-            var key = seed.content_id;
-            if (!cnt_seeds.has(key)) cnt_seeds.set(key, []);
-            cnt_seeds.get(key).push(seed);
+            var key1 = seed.content_id;
+            if (!cnt_seeds.has(key1)) cnt_seeds.set(key1, []);
+            cnt_seeds.get(key1).push(seed);
         } //console.log("seeds by content id", cnt_seeds);
 
         return cnt_seeds;

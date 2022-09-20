@@ -150,15 +150,15 @@ class ListBox extends Base {
         const style =
             this.state.orientation === 'vertical'
                 ? {
-                      'flex-direction': 'column',
-                      'overflow-x': 'hidden',
-                      'overflow-y': 'auto',
-                  }
+                    'flex-direction': 'column',
+                    'overflow-x': 'hidden',
+                    'overflow-y': 'auto',
+                }
                 : {
-                      'flex-direction': 'row',
-                      'overflow-x': 'auto',
-                      'overflow-y': 'hidden',
-                  };
+                    'flex-direction': 'row',
+                    'overflow-x': 'auto',
+                    'overflow-y': 'hidden',
+                };
         return merge(super.updates, {
             $: {
                 content: {

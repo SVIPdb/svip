@@ -167,8 +167,8 @@ export default {
                         this.parsedPMID && this.parsedPMID.includes('PMC')
                             ? 'pmc'
                             : this.parsedPMID && this.parsedPMID.includes('NCT')
-                            ? 'ct'
-                            : undefined,
+                                ? 'ct'
+                                : undefined,
                     hl_fields: 'title,abstract',
                 },
             })

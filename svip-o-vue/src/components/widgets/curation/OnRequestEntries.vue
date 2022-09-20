@@ -112,9 +112,9 @@ export default {
                         curator:
                             x.variant.curation_entries && x.variant.curation_entries.length > 0
                                 ? x.variant.curation_entries.map(i => ({
-                                      name: i.owner_name,
-                                      id: i.owner,
-                                  }))
+                                    name: i.owner_name,
+                                    id: i.owner,
+                                }))
                                 : [],
                         review_count: x.variant.review_count,
                         reviews: x.variant.reviews,

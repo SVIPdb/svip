@@ -141,8 +141,8 @@ function assignedNodesChanged(component) {
     const slot = component[symbols.contentSlot];
     const content = slot
         ? slot.assignedNodes({
-              flatten: true,
-          })
+            flatten: true,
+        })
         : null; // Make immutable.
 
     Object.freeze(content);

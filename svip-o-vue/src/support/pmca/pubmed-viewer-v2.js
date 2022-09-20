@@ -3,6 +3,8 @@ import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import './pubmed-section-v2.js';
 import './shared-style.js';
+import DataParser from './proxy-data-parser';
+
 /**
  * `pubmed-viewer-v2`
  *

@@ -242,11 +242,11 @@ export default {
             // FIXME: (which, incidentally, aren't even being displayed right now...maybe we just remove this?)
             svip_entry_tabs: this.variant.svip_data
                 ? this.variant.svip_data.diseases.reduce((acc, x) => {
-                      // map each entry in the SVIP table by ID to a selected tab for that entry (e.g., evidence or samples)
-                      // by default, it'll be the first tab (evidence)
-                      acc[x.name] = 0;
-                      return acc;
-                  }, {})
+                    // map each entry in the SVIP table by ID to a selected tab for that entry (e.g., evidence or samples)
+                    // by default, it'll be the first tab (evidence)
+                    acc[x.name] = 0;
+                    return acc;
+                }, {})
                 : {},
             sortBy: 'name',
         };
