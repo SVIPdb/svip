@@ -126,6 +126,7 @@
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
                         </span>
+
                         <span v-if="!review && !status_obj['item']['draft_summary'][i]">
                             <b-icon
                                 style="color: red"
@@ -135,6 +136,7 @@
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
                         </span>
+
                         <span v-if="status_obj['item']['draft_summary'][i]">
                             <b-icon
                                 style="color: darkgrey"

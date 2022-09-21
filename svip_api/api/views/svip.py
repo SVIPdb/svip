@@ -13,6 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import copy
 
 from api.models import (
     VariantInSVIP, Sample,
@@ -377,6 +378,9 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
         review.reviewer = User.objects.get(id=obj['reviewer'])
         review.acceptance = obj['acceptance']
         review.save()
+        response = copy.deepcopy(obj)
+        response["id"] = review.id
+        return response
 
     def get_queryset(self):
         queryset = CurationReview.objects.all()
@@ -389,10 +393,14 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
+        response = []
         for item in request.data['data']:
+            response_item = [item[0], []]
             for obj in item[1]:
-                self.__save_review_obj(obj)
-        return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
+                response_item[1].append(self.__save_review_obj(obj))
+            response.append(response_item)
+        return Response(data={"message": 'Submitted reviews are succesfully saved', "newCurrentReviews": response},
+                        status=status.HTTP_201_CREATED)
 
 
 # ================================================================================================================

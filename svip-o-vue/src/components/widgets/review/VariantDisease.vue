@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :key="renderKey">
         <div v-for="(submissionEntry, idx) in submissionEntries" :key="submissionEntry[0] + idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
@@ -320,11 +320,10 @@ export default {
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
     },
-    props: {
-        variant: {type: Object, required: false},
-    },
+    props: ['variant_id', 'gene_id'],
     data() {
         return {
+            renderKey: 0,
             submissionEntries: [],
             selfReviewedEvidences: {},
             summary: null,
@@ -348,6 +347,7 @@ export default {
     created() {
         // Watch if user is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload);
+
         this.submissionEntries = Object.entries(
             groupBy(
                 this.variant.submission_entries.filter(i =>
@@ -384,6 +384,7 @@ export default {
     computed: {
         ...mapGetters({
             user: 'currentUser',
+            variant: 'variant',
         }),
     },
 
@@ -426,7 +427,7 @@ export default {
                             comment: item.curation_reviews.filter(
                                 rev => rev.reviewer === this.user.user_id
                             )[0].comment,
-                            draft: false,
+                            draft: true,
                         };
                     });
                     return [i[0], types];
@@ -443,7 +444,7 @@ export default {
                         reviewer: this.user.user_id,
                         acceptance: true,
                         comment: null,
-                        draft: false,
+                        draft: true,
                     };
                 });
                 return [i[0], types];
@@ -555,23 +556,22 @@ export default {
             }
             let payload = this.currentReviews;
 
-            if (draft) {
-                for (let item of payload.data) {
-                    for (let entry of item[1]) {
-                        entry.draft = true;
-                    }
+            for (let item of payload.data) {
+                for (let entry of item[1]) {
+                    entry.draft = draft;
                 }
             }
+
+            console.log('payload', payload);
 
             HTTP.post(`/reviews/bulk_submit`, payload)
                 .then(response => {
                     if (draft) {
-                        this.draft = true;
+                        this.currentReviews.data = response.data.newCurrentReviews;
                         this.$snotify.success('Your review is saved as a draft.');
+                        this.draft = true;
                     } else {
                         this.$snotify.success('Your reviews for this variant have been submitted.');
-                    }
-                    if (!draft) {
                         this.submitted = true;
                         this.draft = false;
                     }
@@ -583,6 +583,10 @@ export default {
 
             // Reset fields
             //this.isEditMode = false;
+        },
+
+        reRender() {
+            this.renderKey++;
         },
     },
 };

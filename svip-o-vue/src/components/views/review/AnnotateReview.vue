@@ -3,7 +3,7 @@
         <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
         <VariantSummary :variant="variant" />
         <div>
-            <VariantDisease :variant="variant" />
+            <VariantDisease :variant_id="variant.id" :gene_id="gene.id" />
         </div>
     </div>
 </template>
