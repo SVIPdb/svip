@@ -89,6 +89,8 @@
                     <b>
                         <router-link :to="`/gene/${data.item.gene.id}`" target="_blank">
                             {{ data.item.gene.symbol }}
+                            <br />
+                            {{ data.item.stage }}
                         </router-link>
                     </b>
                 </template>
@@ -115,7 +117,7 @@
                     <span
                         v-for="(review, i) in status_obj['item']['reviews_summary']"
                         :key="i + ' review_status'">
-                        <span v-if="review">
+                        <span v-if="review && !status_obj['item']['draft_summary'][i]">
                             <b-icon
                                 style="color: blue"
                                 class="h5 m-1"
@@ -124,11 +126,20 @@
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
                         </span>
-                        <span v-else>
+                        <span v-if="!review && !status_obj['item']['draft_summary'][i]">
                             <b-icon
                                 style="color: red"
                                 class="h5 m-1"
                                 icon="x-square-fill"
+                                :class="{
+                                    notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
+                                }"></b-icon>
+                        </span>
+                        <span v-if="status_obj['item']['draft_summary'][i]">
+                            <b-icon
+                                style="color: darkgrey"
+                                class="h5 m-1"
+                                icon="check-square-fill"
                                 :class="{
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
@@ -352,7 +363,13 @@ export default {
 
             switch (this.statusReviewFilter) {
                 case 'process':
-                    items = items.filter(item => item.review_count !== 3);
+                    items = items.filter(
+                        item =>
+                            (item.review_count < 3 && item.review_count > 0) ||
+                            (item.review_count <= 3 &&
+                                item.draft_summary &&
+                                item.draft_summary.includes(true))
+                    );
                     break;
                 case 'new':
                     items = items.filter(item => item.review_count === 0);

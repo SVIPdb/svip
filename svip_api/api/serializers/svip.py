@@ -728,6 +728,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     reviews_summary = serializers.SerializerMethodField()
     reviewers = serializers.SerializerMethodField()
 
+    draft_summary = serializers.SerializerMethodField()
+
     def to_internal_value(self, data):
         from api.utils import to_dict
 
@@ -762,6 +764,21 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             return 0
 
     @staticmethod
+    def get_draft_summary(obj, draft_status=False):
+        draft_summary = []
+        number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
+        if number_of_reviews:
+            for i in range(number_of_reviews):
+                for entry in obj.submission_entries.filter(
+                        type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                    if entry.curation_reviews.all()[i].draft:
+                        draft_summary.append(True)
+                    else:
+                        draft_summary.append(False)
+                    break
+            return draft_summary
+
+    @staticmethod
     def get_reviews_summary(obj):
         reviews_summary = []
         number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
@@ -771,6 +788,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
                 negative_reviews_count = 0
                 for entry in obj.submission_entries.filter(
                         type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+
                     if entry.curation_reviews.all()[i].acceptance:
                         positive_reviews_count += 1
                     else:
@@ -807,7 +825,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'reviewers',
             'stage',
             'curation_entries',
-            'submission_entries'
+            'submission_entries',
+            'draft_summary'
         )
 
 

@@ -172,10 +172,11 @@ class Variant(models.Model):
     def stage(self):
 
         for submission_entry in self.submission_entries.all():
-            review_count = submission_entry.curation_reviews.count()
+            draft_count = submission_entry.curation_reviews.filter(draft=False).count()
+            review_count = submission_entry.curation_reviews.filter().count()
             if review_count:
                 positive_review_count = submission_entry.curation_reviews.filter(acceptance=True).count()
-                if 0 < review_count < self.REVIEW_COUNT:
+                if (0 < review_count < self.REVIEW_COUNT) or (review_count <= self.REVIEW_COUNT and draft_count):
                     return VARIANT_STAGE.ongoing_review
                 elif review_count == self.REVIEW_COUNT and positive_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
                     return VARIANT_STAGE.unapproved
