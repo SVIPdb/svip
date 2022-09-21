@@ -9,7 +9,6 @@ volumes:
 
 services:
   nginx:
-    container_name: svip_nginx
     build:
       context: ./service_config/nginx
       dockerfile: Dockerfile
@@ -24,14 +23,11 @@ services:
     restart: unless-stopped
 
   db:
-    container_name: svip_db
     image: 'postgres:11.1'
     hostname: db
     shm_size: '2gb'
     restart: always
     command: -c 'max_wal_size=2GB'
-    ports:
-      - '30432:5432' # FIXME: dev access port
     volumes:
       - 'svip_pgdata:/var/lib/postgresql/data'
       - ./svip_db_backups:/backups
@@ -58,8 +54,6 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
 
   api:
-    container_name: svip_api
-    # image: "svip_api:latest"
     build: ./svip_api
     hostname: api
     volumes:
@@ -93,7 +87,6 @@ services:
       - .env
 
   frontend:
-    container_name: svip_frontend
     build:
       context: ./svip-o-vue
       dockerfile: Dockerfile
@@ -113,7 +106,6 @@ services:
     restart: 'no'
 
   redis:
-    container_name: svip_redis
     image: 'redis:alpine'
     env_file:
       - .env
