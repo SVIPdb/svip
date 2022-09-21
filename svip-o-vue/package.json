@@ -3,13 +3,18 @@
     "version": "1.3.0",
     "release_name": "Init Expo",
     "private": true,
+    "eslintIgnore": [
+        "dist/",
+        "node_modules/"
+    ],
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "test:unit": "vue-cli-service test:unit",
         "lint": "vue-cli-service lint",
         "build-development": "vue-cli-service build --mode development",
-        "build-external": "vue-cli-service build --mode external"
+        "build-external": "vue-cli-service build --mode external",
+        "format": "prettier --write . && npx eslint --ext .js,.vue --ignore-path .gitignore --fix ."
     },
     "dependencies": {
         "@polymer/polymer": "^3.4.1",

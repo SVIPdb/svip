@@ -13,9 +13,9 @@
 
 <script>
 export default {
-    name: "MessageWithIcon",
+    name: 'MessageWithIcon',
     props: {
-        variant: { type: String, default: "alert-warning" },
+        variant: {type: String, default: 'alert-warning'},
     },
 };
 </script>

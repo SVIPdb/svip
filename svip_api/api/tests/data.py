@@ -3,7 +3,7 @@ from random import randint
 from django.contrib.auth import get_user_model
 
 from api.models import CurationEntry, Disease, Variant, Gene
-from api.models.svip import SubmissionEntry, CurationReview
+from api.models.svip import SubmissionEntry, CurationReview, CurationRequest, SubmittedVariant
 
 
 def create_user(user_data={}):
@@ -144,3 +144,23 @@ def create_review(**params):
                 'acceptance': True}
     defaults.update(params)
     return CurationReview.objects.create(**defaults)
+
+
+def create_submitted_variant(**params):
+    defaults = {'chromosome': 14,
+                'pos': 1,
+                'ref': 'C',
+                'alt': '[T]',
+                'status': 'pending'
+                }
+    defaults.update(params)
+    return SubmittedVariant.objects.create(**defaults)
+
+
+def create_curation_request(**params):
+    defaults = {'variant': create_variant(),
+                'submission': create_submitted_variant(),
+                'disease': create_disease(),
+                }
+    defaults.update(params)
+    return CurationRequest.objects.create(**defaults)

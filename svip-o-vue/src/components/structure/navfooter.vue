@@ -9,21 +9,19 @@
                         {{ appVersion }} ({{ releaseName }})
                         <div class="feedback">
                             <anchor-router-link
-                                :to="{ name: 'about', hash: '#disclaimer' }"
+                                :to="{name: 'about', hash: '#disclaimer'}"
                                 :scrollOptions="{
                                     container: 'body',
                                     duration: 700,
                                     easing: 'ease',
-                                }"
-                            >
+                                }">
                                 Disclaimer &amp; License
                             </anchor-router-link>
                         </div>
                         <div class="feedback">
-                            Questions or Comments:<br />
-                            <a href="mailto:feedback@svip.ch"
-                                >feedback@svip.ch</a
-                            >
+                            Questions or Comments:
+                            <br />
+                            <a href="mailto:feedback@svip.ch">feedback@svip.ch</a>
                         </div>
                     </div>
                 </div>
@@ -36,32 +34,23 @@
                                     <img
                                         src="../../assets/logos/eth_logo_small.png"
                                         alt="ETH"
-                                        class="footer_logo"
-                                    />
+                                        class="footer_logo" />
                                 </a>
                             </div>
                             <div class="col-lg-4 col-sm-12 text-center">
-                                <a
-                                    href="https://www.sib.swiss/"
-                                    target="_blank"
-                                >
+                                <a href="https://www.sib.swiss/" target="_blank">
                                     <img
                                         src="../../assets/logos/sib_logo_medium_titled.png"
                                         alt="SIB"
-                                        class="footer_logo"
-                                    />
+                                        class="footer_logo" />
                                 </a>
                             </div>
                             <div class="col-lg-4 col-sm-12 text-center">
-                                <a
-                                    href="https://www.hes-so.ch/"
-                                    target="_blank"
-                                >
+                                <a href="https://www.hes-so.ch/" target="_blank">
                                     <img
                                         src="../../assets/logos/logo-hes-so-noir-433.png"
                                         alt="HES-SO"
-                                        class="footer_logo"
-                                    />
+                                        class="footer_logo" />
                                 </a>
                             </div>
                         </div>
@@ -73,11 +62,11 @@
 </template>
 
 <script>
-import { appVersion, releaseName, serverURL } from "../../app_config";
-import AnchorRouterLink from "vue-anchor-router-link";
+import {appVersion, releaseName, serverURL} from '../../app_config';
+import AnchorRouterLink from 'vue-anchor-router-link';
 
 export default {
-    name: "navFooter",
+    name: 'navFooter',
     components: {
         AnchorRouterLink,
     },

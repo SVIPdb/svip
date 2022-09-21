@@ -1,5 +1,5 @@
-import ContentItemsMixin from "./ContentItemsMixin.js";
-import SlotContentMixin from "./SlotContentMixin.js";
+import ContentItemsMixin from './ContentItemsMixin.js';
+import SlotContentMixin from './SlotContentMixin.js';
 /**
  * Treats the elements assigned to the default slot as list items
  *

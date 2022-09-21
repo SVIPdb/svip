@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Lets an element determine whether it resides in right-to-left text.
  *
@@ -36,7 +36,7 @@ export default function LanguageDirectionMixin(Base) {
          */
 
         get [symbols.rightToLeft]() {
-            return this.state.languageDirection === "rtl";
+            return this.state.languageDirection === 'rtl';
         }
     };
 }

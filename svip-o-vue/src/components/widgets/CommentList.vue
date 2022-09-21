@@ -2,18 +2,10 @@
     <div class="comment-harness">
         <div class="comments">
             <div v-if="!isLoading && comments && comments.length > 0">
-                <div
-                    class="comment"
-                    v-for="comment in comments"
-                    :key="comment.id"
-                >
+                <div class="comment" v-for="comment in comments" :key="comment.id">
                     <div class="body">
                         <pass :bits="abbreviatedName(comment.owner_name)">
-                            <b
-                                slot-scope="{ bits }"
-                                v-b-tooltip.hover="bits.name"
-                                >{{ bits.abbrev }}:
-                            </b>
+                            <b slot-scope="{bits}" v-b-tooltip.hover="bits.name">{{ bits.abbrev }}:</b>
                         </pass>
                         {{ comment.text }}
                     </div>
@@ -23,9 +15,9 @@
                                 small
                                 :style="`background-color: ${colorizeTag(c)};`"
                                 v-for="c in comment.tags"
-                                :key="c"
-                                >{{ c }}</b-badge
-                            >
+                                :key="c">
+                                {{ c }}
+                            </b-badge>
                         </div>
                         <div class="datetime">
                             {{ formatCommentDatetime(comment.created_on) }}
@@ -35,8 +27,7 @@
                         v-if="ownsComment(comment.owner_name)"
                         class="delete"
                         @click="removeComment(comment.id)"
-                        aria-label="Remove comment"
-                    >
+                        aria-label="Remove comment">
                         <icon name="times" />
                     </button>
 
@@ -47,16 +38,11 @@
                 <icon
                     name="exclamation-triangle"
                     scale="3"
-                    style="vertical-align: text-bottom; margin-bottom: 5px"
-                />
-                <div>
-                    We couldn't load the comments due to a technical issue
-                </div>
+                    style="vertical-align: text-bottom; margin-bottom: 5px" />
+                <div>We couldn't load the comments due to a technical issue</div>
             </div>
             <div v-else-if="comments.length === 0">
-                <h5 class="text-center font-italic" style="color: #777">
-                    ~ no comments yet ~
-                </h5>
+                <h5 class="text-center font-italic" style="color: #777">~ no comments yet ~</h5>
             </div>
             <div v-else style="margin: 0 auto; text-align: center">
                 <b-spinner />
@@ -71,38 +57,21 @@
                 placeholder="select or enter new tags"
                 multiple
                 taggable
-                push-tags
-            >
+                push-tags>
                 <template v-slot:option="option">
                     <div class="option-w-color">
                         <!--
                         <div class="color-block" :style="`background-color: ${colorizeTag(option.label)};`">&nbsp;</div>
                         <div>{{ option.label }}</div>
                         -->
-                        <b-badge
-                            small
-                            :style="`background-color: ${colorizeTag(
-                                option.label
-                            )};`"
-                            >{{ option.label }}</b-badge
-                        >
+                        <b-badge small :style="`background-color: ${colorizeTag(option.label)};`">
+                            {{ option.label }}
+                        </b-badge>
                     </div>
                 </template>
 
-                <template
-                    v-slot:selected-option-container="{
-                        option,
-                        disabled,
-                        multiple,
-                        deselect,
-                    }"
-                >
-                    <b-badge
-                        :style="`background-color: ${colorizeTag(
-                            option.label
-                        )};`"
-                        :disabled="disabled"
-                    >
+                <template v-slot:selected-option-container="{option, disabled, multiple, deselect}">
+                    <b-badge :style="`background-color: ${colorizeTag(option.label)};`" :disabled="disabled">
                         {{ option.label }}
                         <button
                             v-if="multiple"
@@ -110,57 +79,41 @@
                             @click="deselect(option)"
                             type="button"
                             class="close"
-                            aria-label="Remove option"
-                        >
-                            <span style="margin-left: 3px" aria-hidden="true"
-                                >&times;</span
-                            >
+                            aria-label="Remove option">
+                            <span style="margin-left: 3px" aria-hidden="true">&times;</span>
                         </button>
                     </b-badge>
                 </template>
             </v-select>
 
-            <b-textarea
-                ref="commentbox"
-                v-model="comment_text"
-                style="width: 100%; margin: 0.5em 0"
-            />
+            <b-textarea ref="commentbox" v-model="comment_text" style="width: 100%; margin: 0.5em 0" />
             <div
-                style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top: 0.5em;
-                "
-            >
-                <span class="text-muted"
-                    >commenting as <b>{{ username }}</b></span
-                >
-                <b-button
-                    variant="info"
-                    size="sm"
-                    @click="addComment"
-                    :disabled="!comment_text"
-                    >Add Comment</b-button
-                >
+                style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5em">
+                <span class="text-muted">
+                    commenting as
+                    <b>{{ username }}</b>
+                </span>
+                <b-button variant="info" size="sm" @click="addComment" :disabled="!comment_text">
+                    Add Comment
+                </b-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { HTTP } from "@/router/http";
-import { mapGetters } from "vuex";
-import { abbreviatedName, colorizeTag } from "@/utils";
-import dayjs from "dayjs";
-import ulog from "ulog";
+import {HTTP} from '@/router/http';
+import {mapGetters} from 'vuex';
+import {abbreviatedName, colorizeTag} from '@/utils';
+import dayjs from 'dayjs';
+import ulog from 'ulog';
 
-const log = ulog("CommentList");
+const log = ulog('CommentList');
 
 export default {
-    name: "CommentList",
+    name: 'CommentList',
     props: {
-        variant_id: { type: Number, required: true },
+        variant_id: {type: Number, required: true},
     },
     data() {
         return {
@@ -170,7 +123,7 @@ export default {
             tagtypes: [],
 
             // new comment fields
-            comment_text: "",
+            comment_text: '',
             comment_tags: [],
             console,
         };
@@ -184,12 +137,12 @@ export default {
     },
     computed: {
         ...mapGetters({
-            username: "username",
+            username: 'username',
         }),
     },
     methods: {
         loadTags() {
-            HTTP.get("/comments/tagtypes").then((response) => {
+            HTTP.get('/comments/tagtypes').then(response => {
                 this.tagtypes = response.data;
             });
         },
@@ -198,11 +151,11 @@ export default {
             this.loadTags();
 
             HTTP.get(`/comments?variant=${this.variant_id}&page_size=9999`)
-                .then((response) => {
+                .then(response => {
                     this.isLoading = false;
                     this.comments = response.data.results;
                 })
-                .catch((response) => {
+                .catch(response => {
                     this.isLoading = false;
                     if (response.data && response.data.detail) {
                         this.error = response.data.detail;
@@ -210,7 +163,7 @@ export default {
                 });
         },
         createTag(value) {
-            log.debug("Creating tag: ", value);
+            log.debug('Creating tag: ', value);
         },
         addComment() {
             HTTP.post(`/comments`, {
@@ -218,45 +171,41 @@ export default {
                 text: this.comment_text,
                 tags: this.comment_tags,
             })
-                .then((response) => {
-                    this.comment_text = "";
+                .then(response => {
+                    this.comment_text = '';
                     this.comment_tags = [];
-                    this.$emit("commented", response);
+                    this.$emit('commented', response);
                     this.refresh();
                 })
-                .catch((response) => {
+                .catch(response => {
                     this.isLoading = false;
 
                     if (response.data && response.data.detail) {
                         this.$snotify.error(response.data.detail);
                     } else {
-                        this.$snotify.error(
-                            "An error occurred while posting your comment"
-                        );
+                        this.$snotify.error('An error occurred while posting your comment');
                     }
                 });
         },
         removeComment(id) {
-            if (confirm("Are you sure you wish to delete this comment?")) {
+            if (confirm('Are you sure you wish to delete this comment?')) {
                 HTTP.delete(`/comments/${id}`)
                     .then(() => {
                         this.refresh();
                     })
-                    .catch((response) => {
+                    .catch(response => {
                         this.isLoading = false;
 
                         if (response.data && response.data.detail) {
                             this.$snotify.error(response.data.detail);
                         } else {
-                            this.$snotify.error(
-                                `An error occurred while deleting comment ${id}`
-                            );
+                            this.$snotify.error(`An error occurred while deleting comment ${id}`);
                         }
                     });
             }
         },
         formatCommentDatetime(x) {
-            return dayjs(x).format("h:mm a, DD.MM.YYYY");
+            return dayjs(x).format('h:mm a, DD.MM.YYYY');
         },
         ownsComment(commenter_name) {
             return this.username && commenter_name === this.username;
@@ -283,11 +232,7 @@ export default {
     flex: 1 0;
     padding: 20px;
     overflow-y: auto;
-    background: linear-gradient(
-        to top,
-        rgba(128, 128, 128, 0.25) 0%,
-        rgba(0, 0, 0, 0) 20px
-    );
+    background: linear-gradient(to top, rgba(128, 128, 128, 0.25) 0%, rgba(0, 0, 0, 0) 20px);
 }
 
 .comment {

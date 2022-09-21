@@ -9,9 +9,9 @@
                         Last update:
                         <b class="date">
                             {{
-                                new Intl.DateTimeFormat("en-GB", {
-                                    dateStyle: "long",
-                                    timeStyle: "short",
+                                new Intl.DateTimeFormat('en-GB', {
+                                    dateStyle: 'long',
+                                    timeStyle: 'short',
                                 }).format(date)
                             }}
                         </b>
@@ -27,8 +27,7 @@
                                 v-model="summary"
                                 rows="3"
                                 readonly
-                                v-bind:style="{ height: textboxHeight }"
-                            />
+                                v-bind:style="{height: textboxHeight}" />
                         </b-card-text>
                     </div>
                 </transition>
@@ -39,15 +38,15 @@
 
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
-import BroadcastChannel from "broadcast-channel";
-import { mapGetters } from "vuex";
+import BroadcastChannel from 'broadcast-channel';
+import {mapGetters} from 'vuex';
 
 export default {
-    name: "GeneSummary",
+    name: 'GeneSummary',
     components: {},
     props: {
-        gene: { type: Object, required: false },
-        isOpen: { type: Boolean, required: false, default: false },
+        gene: {type: Object, required: false},
+        isOpen: {type: Boolean, required: false, default: false},
     },
     data() {
         return {
@@ -55,13 +54,13 @@ export default {
             history_entry_id: null,
             loading: false,
             error: null,
-            channel: new BroadcastChannel("curation-update"),
+            channel: new BroadcastChannel('curation-update'),
             showSummary: true,
             isEditMode: false,
-            summaryComment: "",
+            summaryComment: '',
             serverSummaryComment: null,
             date: null,
-            textboxHeight: "2rem",
+            textboxHeight: '2rem',
         };
     },
     created() {
@@ -79,26 +78,22 @@ export default {
         }
     },
     mounted() {
-        const totalHeight =
-            document.getElementById("gene-summary").scrollHeight;
+        const totalHeight = document.getElementById('gene-summary').scrollHeight;
         const maxHeight = this.convertRemToPixels(14);
         if (totalHeight > maxHeight) {
-            this.textboxHeight = maxHeight + "px";
+            this.textboxHeight = maxHeight + 'px';
         } else {
-            this.textboxHeight = totalHeight + "px";
+            this.textboxHeight = totalHeight + 'px';
         }
     },
     computed: {
         ...mapGetters({
-            user: "currentUser",
+            user: 'currentUser',
         }),
     },
     methods: {
         convertRemToPixels(rem) {
-            return (
-                rem *
-                parseFloat(getComputedStyle(document.documentElement).fontSize)
-            );
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         },
     },
 };

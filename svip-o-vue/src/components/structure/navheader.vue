@@ -1,12 +1,6 @@
 <template>
     <!-- Navbar -->
-    <b-navbar
-        toggleable="md"
-        type="dark"
-        variant="primary"
-        fixed="top"
-        class="svip-navbar"
-    >
+    <b-navbar toggleable="md" type="dark" variant="primary" fixed="top" class="svip-navbar">
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-navbar-brand>
@@ -15,8 +9,7 @@
                     src="../../assets/logos/SVIP_Logo_white_narrow.png"
                     width="162"
                     height="52"
-                    alt="SVIP-O"
-                />
+                    alt="SVIP-O" />
             </router-link>
         </b-navbar-brand>
 
@@ -25,16 +18,15 @@
                 <b-nav-item
                     v-if="
                         user &&
-                        (user.groups.indexOf('curators') != -1 ||
-                            user.groups.indexOf('clinicians') != -1)
+                        (user.groups.indexOf('curators') != -1 || user.groups.indexOf('clinicians') != -1)
                     "
-                    :to="{ name: 'curation-dashboard' }"
-                    >Dashboard
+                    :to="{name: 'curation-dashboard'}">
+                    Dashboard
                 </b-nav-item>
                 <b-nav-item
                     v-if="user && user.groups.indexOf('submitters') != -1"
-                    :to="{ name: 'submit-variants' }"
-                    >Submit Variants
+                    :to="{name: 'submit-variants'}">
+                    Submit Variants
                 </b-nav-item>
                 <b-nav-item :to="'/help'">Help</b-nav-item>
                 <b-nav-item :to="'/about'">About</b-nav-item>
@@ -47,9 +39,7 @@
                 <b-navbar-nav v-if="user" right>
                     <b-nav-text class="login-name">
                         logged in as
-                        <router-link to="/user-info">{{
-                            user.username
-                        }}</router-link>
+                        <router-link to="/user-info">{{ user.username }}</router-link>
                         -
                     </b-nav-text>
                     <b-nav-item>
@@ -65,9 +55,8 @@
                             class="pointer"
                             :to="{
                                 name: 'login',
-                                params: { nextRoute: whereFromHere },
-                            }"
-                        >
+                                params: {nextRoute: whereFromHere},
+                            }">
                             <icon name="sign-in-alt" />
                             log in
                         </router-link>
@@ -76,37 +65,34 @@
             </b-navbar-nav>
         </b-collapse>
 
-        <div
-            class="ajax-loader-bar"
-            style="position: relative; z-index: 1035"
-        ></div>
+        <div class="ajax-loader-bar" style="position: relative; z-index: 1035"></div>
     </b-navbar>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import store from "@/store";
-import { loginDisabled } from "@/app_config";
+import {mapGetters} from 'vuex';
+import store from '@/store';
+import {loginDisabled} from '@/app_config';
 
 export default {
-    name: "navHeader",
+    name: 'navHeader',
     computed: {
         loginDisabled() {
             return loginDisabled;
         },
         ...mapGetters({
-            user: "currentUser",
+            user: 'currentUser',
         }),
         whereFromHere() {
             // if we're at the login page, go home after logging in.
             // if we're anywhere else, return to that page after we're done
-            return this.$route.path !== "/login" ? this.$route.path : "/";
+            return this.$route.path !== '/login' ? this.$route.path : '/';
         },
     },
     methods: {
         logout() {
-            store.dispatch("logout").then(() => {
-                this.$snotify.success("Logged out");
+            store.dispatch('logout').then(() => {
+                this.$snotify.success('Logged out');
                 // refresh the current page
                 this.$router.go();
             });

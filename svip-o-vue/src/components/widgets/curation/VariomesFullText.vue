@@ -9,39 +9,35 @@
                     v-if="variomes && pubData && !variomes.error"
                     @mouseup="citable && getSelectionText()"
                     @contextmenu="citable && handleRightClick($event)"
-                    style="height: 600px"
-                >
+                    style="height: 600px">
                     <pmca-element ref="pmcaElem" style="width: 100%" />
                 </b-container>
                 <div
                     v-else-if="variomes && (variomes.error || !pubData)"
-                    class="text-center text-muted font-italic"
-                >
+                    class="text-center text-muted font-italic">
                     <icon
                         name="exclamation-triangle"
                         scale="3"
-                        style="vertical-align: text-bottom; margin-bottom: 5px"
-                    /><br />
+                        style="vertical-align: text-bottom; margin-bottom: 5px" />
+                    <br />
                     We couldn't load the abstract due to a technical issue
                 </div>
                 <div v-else class="text-center">
-                    <b-spinner label="Spinning" variant="primary" /> Loading
+                    <b-spinner label="Spinning" variant="primary" />
+                    Loading
                 </div>
             </b-overlay>
         </div>
 
-        <div
-            v-if="variomes && pubData && !variomes.error"
-            class="ml-3 pt-1 border-top"
-        >
+        <div v-if="variomes && pubData && !variomes.error" class="ml-3 pt-1 border-top">
             <small>
                 Source:
                 <b-link v-bind="pubmedURL(pubData.id)">{{ pubData.id }}</b-link>
 
                 <span v-if="pmcViewerUrl">
                     <span class="d-inline-block ml-1 mr-1">|</span>
-                    <b-link :href="pmcViewerUrl" class="bold" target="_blank"
-                        >view full text on Variomes
+                    <b-link :href="pmcViewerUrl" class="bold" target="_blank">
+                        view full text on Variomes
                         <b-icon-box-arrow-up-right />
                     </b-link>
                 </span>
@@ -51,17 +47,17 @@
 </template>
 
 <script>
-import { pubmedURL } from "@/utils";
-import { BIconBoxArrowUpRight } from "bootstrap-vue";
+import {pubmedURL} from '@/utils';
+import {BIconBoxArrowUpRight} from 'bootstrap-vue';
 
-import "@/support/pmca/pmca-element";
+import '@/support/pmca/pmca-element';
 
 export default {
-    name: "VariomesFullText",
-    components: { BIconBoxArrowUpRight },
+    name: 'VariomesFullText',
+    components: {BIconBoxArrowUpRight},
     props: {
-        variomes: { required: true },
-        citable: { type: Boolean, default: false },
+        variomes: {required: true},
+        citable: {type: Boolean, default: false},
     },
     data() {
         return {
@@ -91,14 +87,11 @@ export default {
                 : null;
         },
         pmcViewerUrl() {
-            if (!this.pubData || this.pubData.collection !== "pmc") {
+            if (!this.pubData || this.pubData.collection !== 'pmc') {
                 return null;
             }
 
-            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace(
-                "PMC",
-                ""
-            )}`;
+            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace('PMC', '')}`;
         },
     },
     methods: {
@@ -107,18 +100,15 @@ export default {
             if (window.getSelection) {
                 this.selection = window.getSelection().toString();
             } else {
-                this.selection = "";
+                this.selection = '';
             }
         },
         loadPMC(pmcid) {
-            if (
-                this.$refs.pmcaElem &&
-                this.$refs.pmcaElem.fillViewerWithIdAndOptions
-            ) {
+            if (this.$refs.pmcaElem && this.$refs.pmcaElem.fillViewerWithIdAndOptions) {
                 this.loading = true;
                 this.$refs.pmcaElem
                     .fillViewerWithIdAndOptions(pmcid, {
-                        service: "httpscandy",
+                        service: 'httpscandy',
                     })
                     .finally(() => {
                         // console.log("done loading!");
@@ -137,7 +127,7 @@ export default {
         handleRightClick(event) {
             event.stopPropagation();
             event.preventDefault();
-            this.$emit("showmenu", { event, selection: this.selection });
+            this.$emit('showmenu', {event, selection: this.selection});
         },
     },
 };

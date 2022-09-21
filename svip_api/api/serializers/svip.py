@@ -775,7 +775,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
                         positive_reviews_count += 1
                     else:
                         negative_reviews_count += 1
-                if negative_reviews_count >= positive_reviews_count:
+                if negative_reviews_count > 0:  # >= positive_reviews_count
                     reviews_summary.append(False)
                 else:
                     reviews_summary.append(True)

@@ -162,19 +162,6 @@ class Variant(models.Model):
     def natural_key(self):
         return self.description, self.hgvs_g
 
-    def has_only_matching_reviews(self):
-        for association in self.curation_associations.all():
-            if association.curation_evidences.all().filter(
-                    type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                evidence = association.curation_evidences.first()
-                if evidence.curation_reviews.filter(
-                        annotated_effect=evidence.annotation1.effect,
-                        annotated_tier=evidence.annotation1.tier
-                ).count() == 3:
-                    return True
-                else:
-                    return False
-
     class Meta:
         indexes = [
             models.Index(fields=['gene', 'name']),
@@ -205,22 +192,21 @@ class Variant(models.Model):
 
         return 'none'
 
-
-
     @property
     def public_stage(self):
         stage = self.stage
-        if stage in VARIANT_STAGE.none:
+        if stage == VARIANT_STAGE.none:
             return 'None'
-        elif stage in VARIANT_STAGE.loaded:
+        elif stage == VARIANT_STAGE.loaded:
             return 'Loaded'
-        elif stage in VARIANT_STAGE.ongoing_curation:
+        elif stage == VARIANT_STAGE.ongoing_curation:
             return 'In progress'
-        elif stage in [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved, VARIANT_STAGE.reannotated]:
+        elif stage == [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved,
+                       VARIANT_STAGE.reannotated]:
             return 'Annotated'
-        elif stage in VARIANT_STAGE.on_hold:
+        elif stage == VARIANT_STAGE.on_hold:
             return 'On hold'
-        elif stage in VARIANT_STAGE.approved:
+        elif stage == VARIANT_STAGE.approved:
             return 'Approved'
 
     @property

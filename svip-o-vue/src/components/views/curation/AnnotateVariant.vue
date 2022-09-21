@@ -1,9 +1,6 @@
 <template>
     <div class="container-fluid">
-        <CuratorVariantInformations
-            :variant="variant"
-            :disease_id="disease_id"
-        />
+        <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
 
         <CurationGeneSummary :gene="gene" />
 
@@ -23,8 +20,7 @@
                     justified
                     nav-wrapper-class="bg-primary"
                     nav-class="text-white"
-                    active-nav-item-class="font-weight-bolder"
-                >
+                    active-nav-item-class="font-weight-bolder">
                     <b-tab title="Enter your reference" active>
                         <b-card-body>
                             <b-container>
@@ -34,67 +30,48 @@
                                             required
                                             class="custom-border-left"
                                             v-model="source"
-                                            :options="['PMID']"
-                                        />
+                                            :options="['PMID']" />
                                     </b-col>
                                     <b-col cols="6">
                                         <b-form-input
                                             v-model="reference"
                                             required
                                             placeholder="Type reference"
-                                            class="rounded-0"
-                                        />
+                                            class="rounded-0" />
                                     </b-col>
                                     <b-col cols="2">
                                         <b-button-group>
                                             <b-button
-                                                :disabled="
-                                                    !source || !reference
-                                                "
+                                                :disabled="!source || !reference"
                                                 class="custom-unrounded centered-icons"
                                                 variant="info"
-                                                @click="viewCitation"
-                                            >
-                                                <icon name="eye" /> View
-                                                Abstract
+                                                @click="viewCitation">
+                                                <icon name="eye" />
+                                                View Abstract
                                             </b-button>
                                             <b-button
-                                                :disabled="
-                                                    !source || !reference
-                                                "
+                                                :disabled="!source || !reference"
                                                 type="submit"
                                                 class="custom-border-right centered-icons"
                                                 variant="success"
                                                 @click="addEvidence"
-                                                target="_blank"
-                                            >
-                                                <icon name="plus" /> Create
-                                                Entry
+                                                target="_blank">
+                                                <icon name="plus" />
+                                                Create Entry
                                             </b-button>
                                         </b-button-group>
                                     </b-col>
                                 </b-row>
 
                                 <transition name="slide-fade" mode="out-in">
-                                    <MessageWithIcon
-                                        v-if="annotationUsed"
-                                        class="mt-4 mr-5 ml-5"
-                                    >
+                                    <MessageWithIcon v-if="annotationUsed" class="mt-4 mr-5 ml-5">
                                         <template v-slot:icon>
-                                            <icon
-                                                name="exclamation-triangle"
-                                                scale="2.5"
-                                            />
+                                            <icon name="exclamation-triangle" scale="2.5" />
                                         </template>
                                         <template>
-                                            This reference has already been used
-                                            in other entries:
+                                            This reference has already been used in other entries:
 
-                                            <EntriesInUse
-                                                :annotation-used="
-                                                    annotationUsed
-                                                "
-                                            />
+                                            <EntriesInUse :annotation-used="annotationUsed" />
                                         </template>
                                     </MessageWithIcon>
                                 </transition>
@@ -104,8 +81,7 @@
                                         <VariomesAbstract
                                             v-if="loadingVariomes"
                                             style="margin-top: 1em"
-                                            :variomes="variomes"
-                                        />
+                                            :variomes="variomes" />
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -117,8 +93,7 @@
                             :gene="gene"
                             :variant="variant"
                             :used_references="used_references"
-                            @add-evidence-from-list="addEvidenceFromList"
-                        />
+                            @add-evidence-from-list="addEvidenceFromList" />
                     </b-tab>
 
                     <!--
@@ -134,25 +109,25 @@
     </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
-import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
-import EvidenceCard from "@/components/widgets/curation/EvidenceCard";
-import store from "@/store";
-import { desnakify } from "@/utils";
-import { HTTP } from "@/router/http";
-import VariomesSearch from "@/components/widgets/curation/VariomesSearch";
-import VariomesAbstract from "@/components/widgets/curation/VariomesAbstract";
-import CurationVariantSummary from "@/components/widgets/curation/CurationVariantSummary";
-import CurationGeneSummary from "@/components/widgets/curation/CurationGeneSummary";
-import ulog from "ulog";
-import BroadcastChannel from "broadcast-channel";
-import MessageWithIcon from "@/components/widgets/MessageWithIcon";
-import EntriesInUse from "@/components/widgets/curation/AnnotationsInUse";
+import {mapGetters} from 'vuex';
+import CuratorVariantInformations from '@/components/widgets/curation/CuratorVariantInformations';
+import EvidenceCard from '@/components/widgets/curation/EvidenceCard';
+import store from '@/store';
+import {desnakify} from '@/utils';
+import {HTTP} from '@/router/http';
+import VariomesSearch from '@/components/widgets/curation/VariomesSearch';
+import VariomesAbstract from '@/components/widgets/curation/VariomesAbstract';
+import CurationVariantSummary from '@/components/widgets/curation/CurationVariantSummary';
+import CurationGeneSummary from '@/components/widgets/curation/CurationGeneSummary';
+import ulog from 'ulog';
+import BroadcastChannel from 'broadcast-channel';
+import MessageWithIcon from '@/components/widgets/MessageWithIcon';
+import EntriesInUse from '@/components/widgets/curation/AnnotationsInUse';
 
-const log = ulog("Curation:AnnotateVariant");
+const log = ulog('Curation:AnnotateVariant');
 
 export default {
-    name: "AnnotateVariant",
+    name: 'AnnotateVariant',
     components: {
         EntriesInUse,
         MessageWithIcon,
@@ -165,9 +140,9 @@ export default {
     },
     data() {
         return {
-            channel: new BroadcastChannel("curation-update"),
-            source: "PMID",
-            reference: "",
+            channel: new BroadcastChannel('curation-update'),
+            source: 'PMID',
+            reference: '',
             loadingVariomes: false,
             variomes: null,
             used_references: {},
@@ -183,8 +158,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            variant: "variant",
-            gene: "gene",
+            variant: 'variant',
+            gene: 'gene',
         }),
         disease_id() {
             return parseInt(this.$route.params.disease_id);
@@ -202,27 +177,24 @@ export default {
         desnakify,
         refreshReferences() {
             // get a list of used references so we can tell the user if they're about to use one that's been used already
-            HTTP.get("/curation_entries/all_references").then((response) => {
+            HTTP.get('/curation_entries/all_references').then(response => {
                 this.used_references = response.data.references;
             });
         },
         addEvidence() {
             let route = this.$router.resolve({
-                name: "add-evidence",
+                name: 'add-evidence',
                 params: {
-                    action: "add",
+                    action: 'add',
                 },
                 query: {
-                    source:
-                        this.reference && this.reference.includes("PMC")
-                            ? "PMC"
-                            : "PMID",
+                    source: this.reference && this.reference.includes('PMC') ? 'PMC' : 'PMID',
                     reference: this.reference,
                     variant_id: this.$route.params.variant_id,
                     disease_id: this.$route.params.disease_id,
                 },
             });
-            window.open(route.href, "_blank");
+            window.open(route.href, '_blank');
         },
         addEvidenceFromList(id) {
             this.reference = id;
@@ -237,19 +209,19 @@ export default {
                 params: {
                     id: this.reference.trim(),
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
-                    collection: this.reference.includes("PMC")
-                        ? "pmc"
-                        : this.reference.includes("NCT")
-                        ? "ct"
-                        : undefined,
-                    hl_fields: "title,abstract",
+                    collection: this.reference.includes('PMC')
+                        ? 'pmc'
+                        : this.reference.includes('NCT')
+                            ? 'ct'
+                            : undefined,
+                    hl_fields: 'title,abstract',
                 },
             })
-                .then((response) => {
+                .then(response => {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.variomes = {
                         error: "Couldn't retrieve publication info, try again later.",
@@ -262,15 +234,13 @@ export default {
         },
     },
     beforeRouteEnter(to, from, next) {
-        const { variant_id } = to.params;
+        const {variant_id} = to.params;
 
         // ask the store to populate detailed information about this variant
-        store
-            .dispatch("getGeneVariant", { variant_id: variant_id })
-            .then(({ gene, variant }) => {
-                to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
-                next();
-            });
+        store.dispatch('getGeneVariant', {variant_id: variant_id}).then(({gene, variant}) => {
+            to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
+            next();
+        });
     },
 };
 </script>

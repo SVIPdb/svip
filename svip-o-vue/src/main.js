@@ -35,10 +35,10 @@ Vue.use(VueConfirmDialog);
 Vue.config.productionTip = false;
 
 Vue.use(Snotify, {
-	toast: {
-		position: SnotifyPosition.centerTop,
-		showProgressBar: false,
-	},
+    toast: {
+        position: SnotifyPosition.centerTop,
+        showProgressBar: false,
+    },
 });
 Vue.use(VueClipboard);
 
@@ -54,9 +54,9 @@ Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 // a utility component that binds variables to its slots
 Vue.component('pass', {
-	render() {
-		return this.$scopedSlots.default(this.$attrs);
-	},
+    render() {
+        return this.$scopedSlots.default(this.$attrs);
+    },
 });
 
 // the little arrow to the left of rows that allows them to be expanded, used everywhere
@@ -69,18 +69,18 @@ Vue.component('expander', Expander);
 Vue.config.ignoredElements = ['pmca-element'];
 
 export default new Vue({
-	el: '#app',
-	router,
-	store,
-	components: {
-		App,
-	},
-	template: '<App/>',
+    el: '#app',
+    router,
+    store,
+    components: {
+        App,
+    },
+    template: '<App/>',
 });
 
 window.addEventListener('message', e => {
-	if (process.env.NODE_ENV !== 'production' && e.data && e.data.type === 'webpackInvalid') {
-		console.clear();
-		console.log('*** cleared due to hot-module reload ***');
-	}
+    if (process.env.NODE_ENV !== 'production' && e.data && e.data.type === 'webpackInvalid') {
+        console.clear();
+        console.log('*** cleared due to hot-module reload ***');
+    }
 });

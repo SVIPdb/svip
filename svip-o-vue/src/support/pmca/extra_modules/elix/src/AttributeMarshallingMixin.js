@@ -45,11 +45,7 @@ export default function AttributeMarshallingMixin(Base) {
         // Handle a change to the attribute with the given name.
         attributeChangedCallback(attributeName, oldValue, newValue) {
             if (super.attributeChangedCallback) {
-                super.attributeChangedCallback(
-                    attributeName,
-                    oldValue,
-                    newValue
-                );
+                super.attributeChangedCallback(attributeName, oldValue, newValue);
             }
 
             const propertyName = attributeToPropertyName(attributeName); // If the attribute name corresponds to a property name, set the property.
@@ -86,23 +82,16 @@ function attributesForClass(classFn) {
     } // Get attributes for this class.
 
     const propertyNames = Object.getOwnPropertyNames(classFn.prototype);
-    const setterNames = propertyNames.filter((propertyName) => {
-        const descriptor = Object.getOwnPropertyDescriptor(
-            classFn.prototype,
-            propertyName
-        );
-        return descriptor && typeof descriptor.set === "function";
+    const setterNames = propertyNames.filter(propertyName => {
+        const descriptor = Object.getOwnPropertyDescriptor(classFn.prototype, propertyName);
+        return descriptor && typeof descriptor.set === 'function';
     });
-    const attributes = setterNames.map((setterName) =>
-        propertyNameToAttribute(setterName)
-    ); // Merge.
+    const attributes = setterNames.map(setterName => propertyNameToAttribute(setterName)); // Merge.
 
-    const diff = attributes.filter(
-        (attribute) => baseAttributes.indexOf(attribute) < 0
-    );
+    const diff = attributes.filter(attribute => baseAttributes.indexOf(attribute) < 0);
     const result = baseAttributes.concat(diff); // Remove standard `style` property.
 
-    const styleIndex = result.indexOf("style");
+    const styleIndex = result.indexOf('style');
 
     if (styleIndex >= 0) {
         result.splice(styleIndex, 1);
@@ -117,9 +106,7 @@ function attributeToPropertyName(attributeName) {
     if (!propertyName) {
         // Convert and memoize.
         const hyphenRegEx = /-([a-z])/g;
-        propertyName = attributeName.replace(hyphenRegEx, (match) =>
-            match[1].toUpperCase()
-        );
+        propertyName = attributeName.replace(hyphenRegEx, match => match[1].toUpperCase());
         attributeToPropertyNames[attributeName] = propertyName;
     }
 
@@ -132,7 +119,7 @@ function propertyNameToAttribute(propertyName) {
     if (!attribute) {
         // Convert and memoize.
         const uppercaseRegEx = /([A-Z])/g;
-        attribute = propertyName.replace(uppercaseRegEx, "-$1").toLowerCase();
+        attribute = propertyName.replace(uppercaseRegEx, '-$1').toLowerCase();
     }
 
     return attribute;

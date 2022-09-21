@@ -12,10 +12,9 @@
                 :items="svip_entries"
                 :sort-by.sync="sortBy"
                 :sort-desc="false"
-                style="margin-bottom: 0; overflow-x: scroll;"
+                style="margin-bottom: 0; overflow-x: scroll"
                 show-empty
-                ref="table"
-            >
+                ref="table">
                 <template v-slot:cell(display)="row">
                     <row-expander :row="row" />
                 </template>
@@ -25,9 +24,7 @@
                 </template>
 
                 <template v-slot:cell(age)="data">
-                    <age-distribution
-                        :data="data.item.age_distribution"
-                    ></age-distribution>
+                    <age-distribution :data="data.item.age_distribution"></age-distribution>
                 </template>
 
                 <template v-slot:cell(gender)="data">
@@ -41,54 +38,48 @@
                     </div>
                 </template>
 
-                 <template v-slot:cell(clinical_significance)="data">
-                    <evidenceTypesBarPlotVue :data="parseClinEvidencesForPlot(splitCurationEntries(data).pending)"></evidenceTypesBarPlotVue>
+                <template v-slot:cell(clinical_significance)="data">
+                    <evidenceTypesBarPlotVue
+                        :data="
+                            parseClinEvidencesForPlot(splitCurationEntries(data).pending)
+                        "></evidenceTypesBarPlotVue>
                 </template>
 
                 <template v-slot:cell(evidence_levels)="data">
-                        <score-plot
-                        :scores="parseClinEvidencesForPlot(splitCurationEntries(data).pending, filed='tier_level')"
-                        :source-name="'svip'"
-                    ></score-plot>
-                    
+                    <score-plot
+                        :scores="
+                            parseClinEvidencesForPlot(
+                                splitCurationEntries(data).pending,
+                                (filed = 'tier_level')
+                            )
+                        "
+                        :source-name="'svip'"></score-plot>
                 </template>
 
                 <template v-slot:cell(last_modified)="data">
                     <pass :summary="curationSummary(data.item)">
-                        <div slot-scope="{ summary }">
+                        <div slot-scope="{summary}">
                             <span v-if="summary && summary.last_modified">
-                                <b
-                                    v-b-tooltip.hover="summary.modified_by.name"
-                                    >{{ summary.modified_by.abbrev }}</b
-                                >
+                                <b v-b-tooltip.hover="summary.modified_by.name">
+                                    {{ summary.modified_by.abbrev }}
+                                </b>
                                 on
-                                <b
-                                    v-b-tooltip.hover="
-                                        summary.last_modified.time
-                                    "
-                                    >{{ summary.last_modified.date }}</b
-                                >
+                                <b v-b-tooltip.hover="summary.last_modified.time">
+                                    {{ summary.last_modified.date }}
+                                </b>
                             </span>
                         </div>
                     </pass>
                 </template>
 
                 <template v-slot:cell(HEAD_actions)="row">
-                    <div
-                        style="
-                            text-align: right;
-                            padding-right: 5px;
-                            display: none;
-                        "
-                    >
+                    <div style="text-align: right; padding-right: 5px; display: none">
                         <b-button
                             size="sm"
                             variant="success"
-                            :class="`expander-button ${
-                                isAllExpanded ? 'is-expanded' : ''
-                            }`"
-                            @click.stop="() => setAllExpanded(!isAllExpanded)"
-                            >{{ isAllExpanded ? "Collapse All" : "Expand All" }}
+                            :class="`expander-button ${isAllExpanded ? 'is-expanded' : ''}`"
+                            @click.stop="() => setAllExpanded(!isAllExpanded)">
+                            {{ isAllExpanded ? 'Collapse All' : 'Expand All' }}
                         </b-button>
                     </div>
                 </template>
@@ -107,72 +98,46 @@
 
                 <template v-slot:row-details="row">
                     <div class="row-details">
-                        
                         <pass :entries="splitCurationEntries(row)">
-                            <b-card
-                                no-body
-                                slot-scope="{ entries }"
-                                class="shadow mb-2"
-                            >
+                            <b-card no-body slot-scope="{entries}" class="shadow mb-2">
                                 <b-tabs
                                     v-model="svip_entry_tabs[row.item.name]"
                                     card
                                     :class="`svip-details-tabs selected-tab-${
                                         svip_entry_tabs[row.item.name]
-                                    }`"
-                                >
+                                    }`">
                                     <b-tab active>
-                                        <template v-slot:title
-                                            >Evidence
-                                            <b-badge class="text-center">{{
-                                                row.item.evidencesNum
-                                            }}</b-badge></template
-                                        >
+                                        <template v-slot:title>
+                                            Evidence
+                                            <b-badge class="text-center">{{ row.item.evidencesNum }}</b-badge>
+                                        </template>
                                         <EvidenceTable
                                             :variant="variant"
                                             :row="row"
                                             :diseaseName="row.item.name"
-                                            @evidencesNum="displayEvidencesNum"
-                                        />
+                                            @evidencesNum="displayEvidencesNum" />
                                         <!--<EvidenceTable :variant="variant" :row="row" :entries="entries.finalized" />-->
                                     </b-tab>
 
-                                    <b-tab
-                                        v-if="
-                                            groups &&
-                                            groups.includes('clinicians')
-                                        "
-                                    >
-                                        <template v-slot:title
-                                            >Samples
-                                            <b-badge class="text-center">{{
-                                                row.item.nb_patients
-                                            }}</b-badge></template
-                                        >
-                                        <SampleTable
-                                            :variant="variant"
-                                            :row="row"
-                                            :groups="groups"
-                                        />
+                                    <b-tab v-if="groups && groups.includes('clinicians')">
+                                        <template v-slot:title>
+                                            Samples
+                                            <b-badge class="text-center">{{ row.item.nb_patients }}</b-badge>
+                                        </template>
+                                        <SampleTable :variant="variant" :row="row" :groups="groups" />
                                     </b-tab>
 
-                                    <b-tab
-                                        v-if="
-                                            groups &&
-                                            groups.includes('curators')
-                                        "
-                                    >
-                                        <template v-slot:title
-                                            >Curation
-                                            <b-badge class="text-center">{{
-                                                entries.pending.length
-                                            }}</b-badge></template
-                                        >
+                                    <b-tab v-if="groups && groups.includes('curators')">
+                                        <template v-slot:title>
+                                            Curation
+                                            <b-badge class="text-center">
+                                                {{ entries.pending.length }}
+                                            </b-badge>
+                                        </template>
                                         <CurationTable
                                             :variant="variant"
                                             :row="row"
-                                            :entries="entries.pending"
-                                        />
+                                            :entries="entries.pending" />
                                     </b-tab>
                                 </b-tabs>
                             </b-card>
@@ -186,10 +151,7 @@
             </b-table>
             <NoSVIPInfo v-else />
 
-            <div
-                v-access="'curators'"
-                class="paginator-holster mini-inset-tray"
-            >
+            <div v-access="'curators'" class="paginator-holster mini-inset-tray">
                 <b-button
                     v-access="'curators'"
                     class="centered-icons mr-2"
@@ -198,9 +160,8 @@
                     variant="info"
                     :to="{
                         name: 'svipinfo',
-                        params: { gene_id: gene.id, variant_id: variant.id },
-                    }"
-                >
+                        params: {gene_id: gene.id, variant_id: variant.id},
+                    }">
                     Svip Information Summary
                 </b-button>
 
@@ -212,10 +173,10 @@
                     variant="info"
                     :to="{
                         name: 'annotate-variant',
-                        params: { gene_id: gene, variant_id: variant.id },
-                    }"
-                >
-                    <icon name="pen-alt" /> Curate
+                        params: {gene_id: gene, variant_id: variant.id},
+                    }">
+                    <icon name="pen-alt" />
+                    Curate
                 </b-button>
             </div>
         </div>
@@ -229,37 +190,30 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import store from "@/store";
-import { abbreviatedName, titleCase } from "@/utils";
-import { checkInRole } from "@/directives/access";
+import {mapGetters} from 'vuex';
+import store from '@/store';
+import {abbreviatedName, titleCase} from '@/utils';
+import {checkInRole} from '@/directives/access';
 
-import ageDistribution from "@/components/plots/ageDistribution";
-import genderPlot from "@/components/plots/genderPlot";
-import EvidenceTable from "@/components/genes/variants/svip/EvidenceTable";
-import CurationTable from "@/components/genes/variants/svip/CurationTable";
-import SampleTable from "@/components/genes/variants/svip/SampleTable";
-import dayjs from "dayjs";
-import evidenceTypesBarPlotVue from "../../plots/evidenceTypesBarPlot.vue";
-import scorePlot from "../../plots/scorePlot.vue";
-
-
+import ageDistribution from '@/components/plots/ageDistribution';
+import genderPlot from '@/components/plots/genderPlot';
+import EvidenceTable from '@/components/genes/variants/svip/EvidenceTable';
+import CurationTable from '@/components/genes/variants/svip/CurationTable';
+import SampleTable from '@/components/genes/variants/svip/SampleTable';
+import dayjs from 'dayjs';
+import evidenceTypesBarPlotVue from '../../plots/evidenceTypesBarPlot.vue';
+import scorePlot from '../../plots/scorePlot.vue';
 
 const NoSVIPInfo = {
-    name: "NoSVIPInfo",
+    name: 'NoSVIPInfo',
     render: function (h) {
         h();
 
         return (
             <div
                 class="text-muted font-italic text-center p-2 d-flex align-items-center justify-content-center"
-                style="font-size: 150%;"
-            >
-                <icon
-                    name="question-circle"
-                    scale="1.5"
-                    style="margin-right: 10px;"
-                />
+                style="font-size: 150%;">
+                <icon name="question-circle" scale="1.5" style="margin-right: 10px;" />
                 <div>No SVIP sample information found</div>
             </div>
         );
@@ -267,21 +221,20 @@ const NoSVIPInfo = {
 };
 
 export default {
-    name: "SVIPInfo",
+    name: 'SVIPInfo',
     components: {
-    SampleTable,
-    EvidenceTable,
-    CurationTable,
-    ageDistribution,
-    genderPlot,
-    NoSVIPInfo,
-    evidenceTypesBarPlotVue,
-    scorePlot
-
-}, // TissueDistribution
+        SampleTable,
+        EvidenceTable,
+        CurationTable,
+        ageDistribution,
+        genderPlot,
+        NoSVIPInfo,
+        evidenceTypesBarPlotVue,
+        scorePlot,
+    }, // TissueDistribution
     props: {
-        variant: { type: Object, required: true },
-        gene: { type: String, required: true },
+        variant: {type: Object, required: true},
+        gene: {type: String, required: true},
     },
     data() {
         return {
@@ -295,55 +248,48 @@ export default {
                     return acc;
                 }, {})
                 : {},
-            sortBy: "name",
+            sortBy: 'name',
         };
     },
     methods: {
-        parseClinEvidencesForPlot(entries, field='type_of_evidence') {
+        parseClinEvidencesForPlot(entries, field = 'type_of_evidence') {
             let dataMap = new Map();
             for (const entry of entries) {
                 if (entry[field]) {
                     if (!dataMap.has(entry[field])) {
-                    dataMap.set(entry[field], 1)
-                }   else {
-                    dataMap.set(entry[field], dataMap.get(entry[field]) + 1)
+                        dataMap.set(entry[field], 1);
+                    } else {
+                        dataMap.set(entry[field], dataMap.get(entry[field]) + 1);
+                    }
                 }
-                } 
             }
             if (field === 'type_of_evidence') {
                 return Array.from(dataMap, function (entry) {
-                return { name: entry[0], count: entry[1] }
-                    });
+                    return {name: entry[0], count: entry[1]};
+                });
             } else {
-                return Object.fromEntries(dataMap)
+                return Object.fromEntries(dataMap);
             }
-            
-
         },
         displayEvidencesNum(evidencesNum) {
             // update the number of evidences calculated inside the child component
             this.svip_entries
-                .filter((entry) => entry.id === evidencesNum.evidence_id)
-                .map((row) => (row.evidencesNum = evidencesNum.value));
+                .filter(entry => entry.id === evidencesNum.evidence_id)
+                .map(row => (row.evidencesNum = evidencesNum.value));
         },
         packedFilter(filters) {
             return JSON.stringify(filters);
         },
         setAllExpanded(isExpanded) {
-            this.variant.svip_data.diseases.forEach((x) => {
+            this.variant.svip_data.diseases.forEach(x => {
                 x._showDetails = isExpanded;
             });
         },
         curationCounts(item) {
             return {
-                drafts: item.curation_entries.filter(
-                    (x) => x.status === "draft"
-                ).length,
-                saved: item.curation_entries.filter((x) => x.status === "saved")
-                    .length,
-                submitted: item.curation_entries.filter(
-                    (x) => x.status === "submitted"
-                ).length,
+                drafts: item.curation_entries.filter(x => x.status === 'draft').length,
+                saved: item.curation_entries.filter(x => x.status === 'saved').length,
+                submitted: item.curation_entries.filter(x => x.status === 'submitted').length,
             };
         },
         curationSummary(item) {
@@ -363,126 +309,114 @@ export default {
 
             return {
                 last_modified: {
-                    date: modify_date.format("DD.MM.YYYY"),
-                    time: modify_date.format("h:mm a"),
+                    date: modify_date.format('DD.MM.YYYY'),
+                    time: modify_date.format('h:mm a'),
                 },
                 modified_by: abbreviatedName(most_recent.owner_name),
             };
         },
         splitCurationEntries(row) {
-            const annotated_entries = row.item.curation_entries.map((x) => ({
+            const annotated_entries = row.item.curation_entries.map(x => ({
                 ...x,
                 _showDetails: false,
             }));
             return {
                 finalized: annotated_entries.filter(
-                    (x) => x.status === "reviewed" || x.status === "unreviewed"
+                    x => x.status === 'reviewed' || x.status === 'unreviewed'
                 ),
-                pending: annotated_entries.filter(
-                    (x) => x.status !== "reviewed"
-                ),
+                pending: annotated_entries.filter(x => x.status !== 'reviewed'),
             };
         },
         titleCase,
     },
     computed: {
         ...mapGetters({
-            user: "currentUser",
+            user: 'currentUser',
         }),
-        
+
         svip_entries() {
-            if (
-                !this.variant ||
-                !this.variant.svip_data ||
-                !this.variant.svip_data.diseases
-            ) {
+            if (!this.variant || !this.variant.svip_data || !this.variant.svip_data.diseases) {
                 return null;
             }
 
             const entries = [];
-            this.variant.svip_data.diseases.map((disease) => {
+            this.variant.svip_data.diseases.map(disease => {
                 //if (entries.filter(entry => {return entry.name === disease.name}).length === 0) {}
 
                 let diseaseItem = disease;
                 diseaseItem.evidencesNum = 0;
-                if (disease.name !== "Unspecified") {
+                if (disease.name !== 'Unspecified') {
                     entries.push(diseaseItem);
                 } else if (disease.curation_entries.length > 0) {
                     entries.push(diseaseItem);
                 }
             });
-            return entries.map((x) => ({
+            return entries.map(x => ({
                 _showDetails: false,
                 ...x,
             }));
         },
         hrefToSUmmary() {
-            return (
-                "http://localhost:8085/api/v1/variant_summary/?owner=all" +
-                this.variant.id
-            );
+            return 'http://localhost:8085/api/v1/variant_summary/?owner=all' + this.variant.id;
         },
 
         totalPatients() {
-            return this.variant.svip_data.diseases.reduce(
-                (acc, x) => acc + x.nb_patients,
-                0
-            );
+            return this.variant.svip_data.diseases.reduce((acc, x) => acc + x.nb_patients, 0);
         },
         groups() {
             return store.getters.groups;
         },
         isAllExpanded() {
-            return this.variant.svip_data.diseases.every((x) => x._showDetails);
+            return this.variant.svip_data.diseases.every(x => x._showDetails);
         },
         fields() {
             return [
                 {
-                    key: "display",
-                    label: "",
+                    key: 'display',
+                    label: '',
                     sortable: false,
                 },
                 {
-                    key: "name",
-                    label: "Disease",
+                    key: 'name',
+                    label: 'Disease',
                     sortable: true,
                 },
                 {
-                    key: "nb_patients",
-                    label: "# of Samples",
-                    formatter: (x) => `${x}/${this.totalPatients}`,
+                    key: 'nb_patients',
+                    label: '# of Samples',
+                    formatter: x => `${x}/${this.totalPatients}`,
                     sortable: true,
-                    class: "text-center",
+                    class: 'text-center',
                 },
                 {
-                    key: "age",
-                    label: "Age Distribution",
+                    key: 'age',
+                    label: 'Age Distribution',
                     sortable: false,
-                    class: "text-center d-none d-lg-table-cell",
+                    class: 'text-center d-none d-lg-table-cell',
                 },
                 {
-                    key: "gender",
-                    label: "Gender Balance",
+                    key: 'gender',
+                    label: 'Gender Balance',
                     sortable: false,
-                    class: "text-center d-none d-lg-table-cell",
+                    class: 'text-center d-none d-lg-table-cell',
                 },
                 {
-                    key: "pathogenic",
-                    label: "Pathogenicity",
+                    key: 'pathogenic',
+                    label: 'Pathogenicity',
                     sortable: false,
                 },
                 {
-                    key: "clinical_significance",
-                    label: "Clinical Significance",
+                    key: 'clinical_significance',
+                    label: 'Clinical Significance',
                     sortable: false,
-                    class: "d-none d-lg-table-cell",
+                    class: 'd-none d-lg-table-cell',
                 },
 
-                                {
-                    key: "evidence_levels",
-                    label: "Evidence Levels",
+                {
+                    key: 'evidence_levels',
+                    label: 'Evidence Levels',
                     sortable: false,
-                    class: "d-none d-md-table-cell",
+                    class: 'd-none d-md-table-cell',
                 },
                 //{
                 //    key: "status",
@@ -496,10 +430,10 @@ export default {
                 //    class: "text-center"
                 //},
                 {
-                    key: "last_modified",
-                    label: "Last Curated",
+                    key: 'last_modified',
+                    label: 'Last Curated',
                     sortable: false,
-                    class: [checkInRole("curators") ? "" : "d-none"],
+                    class: [checkInRole('curators') ? '' : 'd-none'],
                 },
                 /*
                 {

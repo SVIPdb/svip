@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Miscellaneous utility functions for web components
  *
@@ -23,8 +23,7 @@ export function deepContains(container, target) {
     let current = target;
 
     while (current) {
-        const parent =
-            current.assignedSlot || current.parentNode || current.host;
+        const parent = current.assignedSlot || current.parentNode || current.host;
 
         if (parent === container) {
             return true;
@@ -54,11 +53,7 @@ export function defaultFocus(element) {
     let result; // Keep asking if the indicated element specifies a default focus and,
     // if so, proceed there.
 
-    for (
-        result = element;
-        result[symbols.defaultFocus];
-        result = result[symbols.defaultFocus]
-    ) {
+    for (result = element; result[symbols.defaultFocus]; result = result[symbols.defaultFocus]) {
         /* eslint-disable no-empty */
     }
 
@@ -106,10 +101,7 @@ export function elementsFromPoint(element, x, y) {
  */
 
 export function indexOfItemContainingTarget(items, target) {
-    return Array.prototype.findIndex.call(
-        items,
-        (item) => item === target || deepContains(item, target)
-    );
+    return Array.prototype.findIndex.call(items, item => item === target || deepContains(item, target));
 }
 /**
  * Return true if the event came from within the node (or from the node itself);

@@ -8,23 +8,22 @@
         :multiple="multiple"
         :taggable="allowCreate"
         :push-tags="allowCreate"
-        :disabled="disabled"
-    />
+        :disabled="disabled" />
 </template>
 
 <script>
-import { HTTP } from "@/router/http";
-import { titleCase } from "@/utils";
+import {HTTP} from '@/router/http';
+import {titleCase} from '@/utils';
 
 export default {
-    name: "GeneSearchBar",
+    name: 'GeneSearchBar',
     props: {
-        label: { type: String, default: "symbol" },
+        label: {type: String, default: 'symbol'},
         value: {},
-        state: { type: Boolean },
-        multiple: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
-        allowCreate: { type: Boolean, default: false },
+        state: {type: Boolean},
+        multiple: {type: Boolean, default: false},
+        disabled: {type: Boolean, default: false},
+        allowCreate: {type: Boolean, default: false},
     },
     data() {
         return {
@@ -32,15 +31,13 @@ export default {
         };
     },
     created() {
-        HTTP.get("/genes").then((response) => {
-            this.drugs = response.data.results.map((x) =>
-                titleCase(x[this.label])
-            );
+        HTTP.get('/genes').then(response => {
+            this.drugs = response.data.results.map(x => titleCase(x[this.label]));
         });
     },
     methods: {
         update(newValue) {
-            this.$emit("input", newValue);
+            this.$emit('input', newValue);
         },
     },
 };

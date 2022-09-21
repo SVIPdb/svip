@@ -1,17 +1,14 @@
-import { HTTP } from "@/router/http";
-import { normalizeItemList, parsePublicationURL, titleCase } from "@/utils";
+import {HTTP} from '@/router/http';
+import {normalizeItemList, parsePublicationURL, titleCase} from '@/utils';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 const sortRemappings = {
-    disease: "phenotype__term",
-    contexts: "environmentalcontext__description",
+    disease: 'phenotype__term',
+    contexts: 'environmentalcontext__description',
 };
 
-export function makeAssociationProvider(
-    metaUpdate = null,
-    remappings = sortRemappings
-) {
+export function makeAssociationProvider(metaUpdate = null, remappings = sortRemappings) {
     // produces an item provider function for bootstrap-vue tables.
 
     // includes an optional callback when a response is received that sets metadata about the item provider update,
@@ -33,11 +30,11 @@ export function makeAssociationProvider(
         const params = {
             page_size: ctx.perPage,
             page: ctx.currentPage,
-            ordering: (ctx.sortDesc ? "-" : "") + ctx.sortBy,
+            ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
             ...(filter_params && filter_params),
         };
 
-        return HTTP.get(ctx.apiUrl, { params }).then((res) => {
+        return HTTP.get(ctx.apiUrl, {params}).then(res => {
             // invoke the metadata updated callback, if available
             if (metaUpdate) {
                 metaUpdate({
@@ -56,21 +53,15 @@ export function makeAssociationProvider(
             */
 
             // rewrite associations into the structure that -RowDetails expects
-            return res.data.results.map((a) => ({
+            return res.data.results.map(a => ({
                 ...a,
-                disease: a.phenotype_set
-                    .map((x) => titleCase(x.term))
-                    .join("; "),
-                contexts: a.environmentalcontext_set
-                    .map((x) => x.description)
-                    .join("; "),
+                disease: a.phenotype_set.map(x => titleCase(x.term)).join('; '),
+                contexts: a.environmentalcontext_set.map(x => x.description).join('; '),
                 drug_labels: normalizeItemList(a.drug_labels),
                 clinical_significance: a.clinical_significance,
                 evidence_url: a.source_link,
                 publications: _.flatten(
-                    a.evidence_set.map((ev_set) =>
-                        ev_set.publications.map(parsePublicationURL)
-                    )
+                    a.evidence_set.map(ev_set => ev_set.publications.map(parsePublicationURL))
                 ),
                 extras: a.extras,
             }));

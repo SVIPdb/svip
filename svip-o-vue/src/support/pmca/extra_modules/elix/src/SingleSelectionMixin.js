@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Adds single-selection semantics to a list-like element.
  *
@@ -30,9 +30,7 @@ export default function SingleSelectionMixin(Base) {
             const selectedIndex = this.state.selectedIndex;
             return count === 0
                 ? false
-                : this.state.selectionWraps ||
-                      selectedIndex < 0 ||
-                      selectedIndex < count - 1;
+                : this.state.selectionWraps || selectedIndex < 0 || selectedIndex < count - 1;
         }
         /**
          * True if the selection can be moved to the previous item, false if not
@@ -44,11 +42,7 @@ export default function SingleSelectionMixin(Base) {
         get canSelectPrevious() {
             const count = this.items ? this.items.length : 0;
             const selectedIndex = this.state.selectedIndex;
-            return count === 0
-                ? false
-                : this.state.selectionWraps ||
-                      selectedIndex < 0 ||
-                      selectedIndex > 0;
+            return count === 0 ? false : this.state.selectionWraps || selectedIndex < 0 || selectedIndex > 0;
         }
 
         componentDidUpdate(previousState) {
@@ -58,16 +52,13 @@ export default function SingleSelectionMixin(Base) {
 
             const selectedIndex = this.state.selectedIndex;
 
-            if (
-                selectedIndex !== previousState.selectedIndex &&
-                this[symbols.raiseChangeEvents]
-            ) {
+            if (selectedIndex !== previousState.selectedIndex && this[symbols.raiseChangeEvents]) {
                 /**
                  * Raised when the `selectedIndex` property changes.
                  *
                  * @event SingleSelectionMixin#selected-index-changed
                  */
-                const event = new CustomEvent("selected-index-changed", {
+                const event = new CustomEvent('selected-index-changed', {
                     detail: {
                         selectedIndex,
                     },
@@ -84,55 +75,42 @@ export default function SingleSelectionMixin(Base) {
                 trackSelectedItem: true,
             }); // Ensure selectedIndex is valid.
 
-            state.onChange(
-                ["items", "selectedIndex", "selectionRequired"],
-                (state, changed) => {
-                    const {
-                        items,
-                        selectedIndex,
-                        selectionRequired,
-                        selectionWraps,
-                    } = state;
-                    let adjustedIndex = selectedIndex;
+            state.onChange(['items', 'selectedIndex', 'selectionRequired'], (state, changed) => {
+                const {items, selectedIndex, selectionRequired, selectionWraps} = state;
+                let adjustedIndex = selectedIndex;
 
-                    if (
-                        changed.items &&
-                        items &&
-                        !changed.selectedIndex &&
-                        state.trackSelectedItem
-                    ) {
-                        // The index stayed the same, but the item may have moved.
-                        const selectedItem = this.selectedItem;
+                if (changed.items && items && !changed.selectedIndex && state.trackSelectedItem) {
+                    // The index stayed the same, but the item may have moved.
+                    const selectedItem = this.selectedItem;
 
-                        if (items[selectedIndex] !== selectedItem) {
-                            // The item moved or was removed. See if we can find the item
-                            // again in the list of items.
-                            const currentIndex = items.indexOf(selectedItem);
+                    if (items[selectedIndex] !== selectedItem) {
+                        // The item moved or was removed. See if we can find the item
+                        // again in the list of items.
+                        const currentIndex = items.indexOf(selectedItem);
 
-                            if (currentIndex >= 0) {
-                                // Found the item again. Update the index to match.
-                                adjustedIndex = currentIndex;
-                            }
+                        if (currentIndex >= 0) {
+                            // Found the item again. Update the index to match.
+                            adjustedIndex = currentIndex;
                         }
-                    } // If items are null, we haven't received items yet. Don't validate the
-                    // selected index, as it may be set through markup; we'll want to validate
-                    // it only after we have items.
-
-                    if (items) {
-                        const validatedIndex = validateIndex(
-                            adjustedIndex,
-                            items.length,
-                            selectionRequired,
-                            selectionWraps
-                        );
-                        return {
-                            selectedIndex: validatedIndex,
-                        };
                     }
+                } // If items are null, we haven't received items yet. Don't validate the
+                // selected index, as it may be set through markup; we'll want to validate
+                // it only after we have items.
 
-                    return null;
+                if (items) {
+                    const validatedIndex = validateIndex(
+                        adjustedIndex,
+                        items.length,
+                        selectionRequired,
+                        selectionWraps
+                    );
+                    return {
+                        selectedIndex: validatedIndex,
+                    };
                 }
-            );
+
+                return null;
+            });
             return state;
         }
 
@@ -163,16 +141,11 @@ export default function SingleSelectionMixin(Base) {
          */
 
         get selectedIndex() {
-            return this.items && this.items.length > 0
-                ? this.state.selectedIndex
-                : -1;
+            return this.items && this.items.length > 0 ? this.state.selectedIndex : -1;
         }
 
         set selectedIndex(selectedIndex) {
-            const parsedIndex =
-                typeof selectedIndex === "string"
-                    ? parseInt(selectedIndex)
-                    : selectedIndex;
+            const parsedIndex = typeof selectedIndex === 'string' ? parseInt(selectedIndex) : selectedIndex;
             this.setState({
                 selectedIndex: parsedIndex,
             });
@@ -213,7 +186,7 @@ export default function SingleSelectionMixin(Base) {
 
         set selectionRequired(selectionRequired) {
             this.setState({
-                selectionRequired: String(selectionRequired) === "true",
+                selectionRequired: String(selectionRequired) === 'true',
             });
         }
         /**
@@ -229,7 +202,7 @@ export default function SingleSelectionMixin(Base) {
 
         set selectionWraps(selectionWraps) {
             this.setState({
-                selectionWraps: String(selectionWraps) === "true",
+                selectionWraps: String(selectionWraps) === 'true',
             });
         }
         /**

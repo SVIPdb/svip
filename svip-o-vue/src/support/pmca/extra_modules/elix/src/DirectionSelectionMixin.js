@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Maps direction semantics to selection semantics.
  *
@@ -22,9 +22,7 @@ export default function DirectionSelectionMixin(Base) {
          * @type {boolean}
          */
         get [symbols.canGoLeft]() {
-            const canSelect = this[symbols.rightToLeft]
-                ? this.canSelectNext
-                : this.canSelectPrevious; // Assume we can go left unless component tells us otherwise.
+            const canSelect = this[symbols.rightToLeft] ? this.canSelectNext : this.canSelectPrevious; // Assume we can go left unless component tells us otherwise.
 
             return typeof canSelect === undefined ? true : canSelect;
         }
@@ -35,9 +33,7 @@ export default function DirectionSelectionMixin(Base) {
          */
 
         get [symbols.canGoRight]() {
-            const canSelect = this[symbols.rightToLeft]
-                ? this.canSelectPrevious
-                : this.canSelectNext; // Assume we can go right unless component tells us otherwise.
+            const canSelect = this[symbols.rightToLeft] ? this.canSelectPrevious : this.canSelectNext; // Assume we can go right unless component tells us otherwise.
 
             return typeof canSelect === undefined ? true : canSelect;
         }
@@ -98,9 +94,7 @@ export default function DirectionSelectionMixin(Base) {
                 );
                 return false;
             } else {
-                return this[symbols.rightToLeft]
-                    ? this.selectNext()
-                    : this.selectPrevious();
+                return this[symbols.rightToLeft] ? this.selectNext() : this.selectPrevious();
             }
         }
         /**
@@ -122,9 +116,7 @@ export default function DirectionSelectionMixin(Base) {
                 );
                 return false;
             } else {
-                return this[symbols.rightToLeft]
-                    ? this.selectPrevious()
-                    : this.selectNext();
+                return this[symbols.rightToLeft] ? this.selectPrevious() : this.selectNext();
             }
         }
         /**

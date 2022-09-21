@@ -1,5 +1,5 @@
-import * as symbols from "./symbols.js";
-import { defaultScrollTarget } from "./scrolling.js";
+import * as symbols from './symbols.js';
+import {defaultScrollTarget} from './scrolling.js';
 /**
  * Maps the Page Up and Page Down keys to selection operations.
  *
@@ -35,31 +35,24 @@ export default function KeyboardPagedSelectionMixin(Base) {
             let handled = false;
             const orientation = this.orientation;
 
-            if (orientation !== "horizontal") {
+            if (orientation !== 'horizontal') {
                 switch (event.key) {
-                    case "PageDown":
-                        handled = this.pageDown();
-                        break;
+                case 'PageDown':
+                    handled = this.pageDown();
+                    break;
 
-                    case "PageUp":
-                        handled = this.pageUp();
-                        break;
+                case 'PageUp':
+                    handled = this.pageUp();
+                    break;
                 }
             } // Prefer mixin result if it's defined, otherwise use base result.
 
-            return (
-                handled ||
-                (super[symbols.keydown] && super[symbols.keydown](event))
-            );
+            return handled || (super[symbols.keydown] && super[symbols.keydown](event));
         } // Default orientation implementation defers to super,
         // but if not found, looks in state.
 
         get orientation() {
-            return (
-                super.orientation ||
-                (this.state && this.state.orientation) ||
-                "both"
-            );
+            return super.orientation || (this.state && this.state.orientation) || 'both';
         }
         /**
          * Scroll down one page.
@@ -143,15 +136,10 @@ function getIndexOfItemAtY(items, scrollTarget, y, downward) {
     // considering a hit.
 
     const itemStyle = getComputedStyle(item);
-    const itemPaddingTop = itemStyle.paddingTop
-        ? parseFloat(itemStyle.paddingTop)
-        : 0;
-    const itemPaddingBottom = itemStyle.paddingBottom
-        ? parseFloat(itemStyle.paddingBottom)
-        : 0;
+    const itemPaddingTop = itemStyle.paddingTop ? parseFloat(itemStyle.paddingTop) : 0;
+    const itemPaddingBottom = itemStyle.paddingBottom ? parseFloat(itemStyle.paddingBottom) : 0;
     const contentTop = itemTop + item.clientTop + itemPaddingTop;
-    const contentBottom =
-        contentTop + item.clientHeight - itemPaddingTop - itemPaddingBottom;
+    const contentBottom = contentTop + item.clientHeight - itemPaddingTop - itemPaddingBottom;
 
     if ((downward && contentTop <= y) || (!downward && contentBottom >= y)) {
         // The indicated coordinate hits the actual item content.
@@ -173,26 +161,15 @@ function scrollOnePage(element, downward) {
     const selectedIndex = element.state.selectedIndex; // Determine the item visible just at the edge of direction we're heading.
     // We'll select that item if it's not already selected.
 
-    const edge =
-        scrollTarget.scrollTop + (downward ? scrollTarget.clientHeight : 0);
-    const indexOfItemAtEdge = getIndexOfItemAtY(
-        items,
-        scrollTarget,
-        edge,
-        downward
-    );
+    const edge = scrollTarget.scrollTop + (downward ? scrollTarget.clientHeight : 0);
+    const indexOfItemAtEdge = getIndexOfItemAtY(items, scrollTarget, edge, downward);
     let newIndex;
 
     if (indexOfItemAtEdge && selectedIndex === indexOfItemAtEdge) {
         // The item at the edge was already selected, so scroll in the indicated
         // direction by one page. Leave the new item at that edge selected.
         const delta = (downward ? 1 : -1) * scrollTarget.clientHeight;
-        newIndex = getIndexOfItemAtY(
-            items,
-            scrollTarget,
-            edge + delta,
-            downward
-        );
+        newIndex = getIndexOfItemAtY(items, scrollTarget, edge + delta, downward);
     } else {
         // The item at the edge wasn't selected yet. Instead of scrolling, we'll
         // just select that item. That is, the first attempt to page up/down

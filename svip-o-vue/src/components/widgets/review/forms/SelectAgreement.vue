@@ -7,15 +7,15 @@
 
 <script>
 export default {
-    name: "SelectAgreement",
-    props: ["value"],
+    name: 'SelectAgreement',
+    props: ['value'],
     computed: {
         selection: {
             get() {
                 return this.value;
             },
             set(value) {
-                this.$emit("input", value);
+                this.$emit('input', value);
             },
         },
     },

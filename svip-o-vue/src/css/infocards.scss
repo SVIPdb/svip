@@ -252,18 +252,10 @@
     .card-group > .card:not(:first-child):not(:last-child):not(:only-child) {
         border-radius: 0;
     }
-    .card-group
-        > .card:not(:first-child):not(:last-child):not(:only-child)
-        .card-img-top,
-    .card-group
-        > .card:not(:first-child):not(:last-child):not(:only-child)
-        .card-img-bottom,
-    .card-group
-        > .card:not(:first-child):not(:last-child):not(:only-child)
-        .card-header,
-    .card-group
-        > .card:not(:first-child):not(:last-child):not(:only-child)
-        .card-footer {
+    .card-group > .card:not(:first-child):not(:last-child):not(:only-child) .card-img-top,
+    .card-group > .card:not(:first-child):not(:last-child):not(:only-child) .card-img-bottom,
+    .card-group > .card:not(:first-child):not(:last-child):not(:only-child) .card-header,
+    .card-group > .card:not(:first-child):not(:last-child):not(:only-child) .card-footer {
         border-radius: 0;
     }
 }

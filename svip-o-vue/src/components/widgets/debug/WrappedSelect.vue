@@ -1,20 +1,15 @@
 <template>
-    <v-select
-        v-model="selected"
-        push-tags
-        @input="onInput"
-        :options="options"
-    ></v-select>
+    <v-select v-model="selected" push-tags @input="onInput" :options="options"></v-select>
 </template>
 
 <script>
 export default {
-    name: "WrappedSelect",
-    props: ["value"],
+    name: 'WrappedSelect',
+    props: ['value'],
     data() {
         return {
             selected: this.value,
-            options: ["A", "B", "C"],
+            options: ['A', 'B', 'C'],
         };
     },
     watch: {
@@ -24,7 +19,7 @@ export default {
     },
     methods: {
         onInput() {
-            this.$emit("input", this.selected);
+            this.$emit('input', this.selected);
         },
     },
 };

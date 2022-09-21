@@ -1,4 +1,4 @@
-import { HTTP } from "@/router/http";
+import {HTTP} from '@/router/http';
 
 export function makeVariantProvider(metaUpdate = null) {
     // produces an item provider function for bootstrap-vue tables.
@@ -17,11 +17,11 @@ export function makeVariantProvider(metaUpdate = null) {
         const params = {
             page_size: ctx.perPage,
             page: ctx.currentPage,
-            ordering: (ctx.sortDesc ? "-" : "") + ctx.sortBy,
+            ordering: (ctx.sortDesc ? '-' : '') + ctx.sortBy,
             ...(filter_params && filter_params),
         };
 
-        return HTTP.get(ctx.apiUrl, { params }).then((res) => {
+        return HTTP.get(ctx.apiUrl, {params}).then(res => {
             // invoke the metadata updated callback, if available
             if (metaUpdate) {
                 metaUpdate({

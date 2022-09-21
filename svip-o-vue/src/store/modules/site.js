@@ -1,11 +1,11 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 export const state = Vue.observable({
     isNavOpen: false,
 });
 
 export const mutations = {
-    SET_NAV(state, { navState }) {
+    SET_NAV(state, {navState}) {
         state.isNavOpen = navState;
     },
     TOGGLE_NAV(state) {

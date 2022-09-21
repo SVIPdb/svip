@@ -20,11 +20,9 @@
  */
 export function defaultScrollTarget(element) {
     const root = element.shadowRoot;
-    const slot = root && root.querySelector("slot:not([name])");
+    const slot = root && root.querySelector('slot:not([name])');
     const scrollingParent =
-        slot &&
-        slot.parentNode instanceof Element &&
-        getScrollableElement(slot.parentNode);
+        slot && slot.parentNode instanceof Element && getScrollableElement(slot.parentNode);
     return scrollingParent || element;
 }
 /**
@@ -49,17 +47,10 @@ export function getScrollableElement(element) {
     const overflowX = style.overflowX;
     const overflowY = style.overflowY;
 
-    if (
-        overflowX === "scroll" ||
-        overflowX === "auto" ||
-        overflowY === "scroll" ||
-        overflowY === "auto"
-    ) {
+    if (overflowX === 'scroll' || overflowX === 'auto' || overflowY === 'scroll' || overflowY === 'auto') {
         // Found an element that can scroll.
         return element;
     } // Keep looking higher in the hierarchy for a scrollable ancestor.
 
-    return element.parentNode instanceof Element
-        ? getScrollableElement(element.parentNode)
-        : null;
+    return element.parentNode instanceof Element ? getScrollableElement(element.parentNode) : null;
 }

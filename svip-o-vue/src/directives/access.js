@@ -1,5 +1,5 @@
-import { Bus } from "@/bus";
-import store from "@/store";
+import {Bus} from '@/bus';
+import store from '@/store';
 
 /**
  * Checks if the logged-in user belongs to the given role.
@@ -7,7 +7,7 @@ import store from "@/store";
  * @returns {boolean} true if they have the given role, false otherwise
  */
 export function checkInRole(role) {
-    if (role === "active") {
+    if (role === 'active') {
         // just check if they have valid login data at all
         return !!store.getters.jwtData;
     } else {
@@ -18,11 +18,11 @@ export function checkInRole(role) {
 export default {
     bind: function (el, binding) {
         const refreshPermissions = () => {
-            el.style.display = checkInRole(binding.value) ? "" : "none";
+            el.style.display = checkInRole(binding.value) ? '' : 'none';
         };
 
         // bind to update this control whenever the user's permissions change (e.g. when logging in or out)
-        Bus.$on("user.updated", () => {
+        Bus.$on('user.updated', () => {
             refreshPermissions(el, binding);
         });
 

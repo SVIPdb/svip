@@ -2,57 +2,47 @@
     <div>
         <svg ref="thechart" class="sig-bar-chart">
             <g v-for="d in layout" :key="d.k">
-                <rect
-                    class="bar"
-                    :x="d.x"
-                    :y="d.y"
-                    :width="d.width"
-                    :height="d.height"
-                    :fill="d.c"
-                ></rect>
+                <rect class="bar" :x="d.x" :y="d.y" :width="d.width" :height="d.height" :fill="d.c"></rect>
             </g>
         </svg>
 
         <b-tooltip :target="() => $refs.thechart" placement="top">
-            <div
-                v-for="d in this.formattedData"
-                :key="d.name"
-                style="text-align: left"
-            >
+            <div v-for="d in this.formattedData" :key="d.name" style="text-align: left">
                 <svg width="10" height="10" class="legend-swatch">
                     <rect width="10" height="10" :fill="d.color"></rect>
                 </svg>
-                <span
-                    ><b>{{ d.name }}:</b> {{ d.count.toLocaleString() }}</span
-                >
+                <span>
+                    <b>{{ d.name }}:</b>
+                    {{ d.count.toLocaleString() }}
+                </span>
             </div>
         </b-tooltip>
     </div>
 </template>
 
 <script>
-import * as d3 from "d3";
-import { titleCase } from "@/utils";
-import * as _ from "lodash";
+import * as d3 from 'd3';
+import {titleCase} from '@/utils';
+import * as _ from 'lodash';
 
 const colorMap = d3
     .scaleOrdinal(d3.schemePastel1)
     .domain(
         [
-            "(unknown)",
-            "Pathogenic",
-            "Likely Pathogenic",
-            "Uncertain Significance",
-            "Likely Benign",
-            "Better Outcome",
-            "N/A",
-            "Negative",
-            "Positive",
-            "Reduced Sensitivity",
-            "Sensitivity/Response",
-            "resistant",
-            "sensitive",
-        ].map((x) => x.toLowerCase())
+            '(unknown)',
+            'Pathogenic',
+            'Likely Pathogenic',
+            'Uncertain Significance',
+            'Likely Benign',
+            'Better Outcome',
+            'N/A',
+            'Negative',
+            'Positive',
+            'Reduced Sensitivity',
+            'Sensitivity/Response',
+            'resistant',
+            'sensitive',
+        ].map(x => x.toLowerCase())
     );
 
 export default {
@@ -60,21 +50,18 @@ export default {
         return {
             width: 300,
             height: 25,
-            color: "#C00",
+            color: '#C00',
             padding: 1,
         };
     },
-    props: ["row"],
+    props: ['row'],
     created: function () {
         this.x = d3.scaleLinear();
     },
     methods: {},
     computed: {
         formattedData: function () {
-            return _.sortBy(
-                this.row.item.clinical_significances,
-                (x) => -x.count
-            ).map((d) => {
+            return _.sortBy(this.row.item.clinical_significances, x => -x.count).map(d => {
                 const name = titleCase(d.name);
 
                 return {
@@ -85,17 +72,12 @@ export default {
             });
         },
         layout: function () {
-            const total = d3.sum(this.formattedData, (d) => d.count);
+            const total = d3.sum(this.formattedData, d => d.count);
             this.x.domain([0, 1.0]).range([0, this.width]);
 
             return this.formattedData.map((d, i) => {
-                const prop = (x) => x / total;
-                const xpos =
-                    i > 0
-                        ? d3.sum(this.formattedData.slice(0, i), (p) =>
-                              this.x(prop(p.count))
-                          )
-                        : 0;
+                const prop = x => x / total;
+                const xpos = i > 0 ? d3.sum(this.formattedData.slice(0, i), p => this.x(prop(p.count))) : 0;
 
                 return {
                     v: d.count,
