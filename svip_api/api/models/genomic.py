@@ -169,20 +169,40 @@ class Variant(models.Model):
         ]
 
     @property
-    def stage(self):
+    def reviews_summary(self):
+        if self.submission_entries.all():
+            submission_entry = self.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            reviews_number = submission_entry.curation_reviews.count()
+            reviews_summary = []
+            if reviews_number:
+                for i in range(reviews_number):
+                    positive_reviews_count = 0
+                    negative_reviews_count = 0
+                    for entry in self.submission_entries.filter(
+                            type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                        if entry.curation_reviews.filter(draft=False)[i].acceptance:
+                            positive_reviews_count += 1
+                        else:
+                            negative_reviews_count += 1
+                    if negative_reviews_count > 0:  # >= positive_reviews_count
+                        reviews_summary.append(False)
+                    else:
+                        reviews_summary.append(True)
+            return reviews_summary
+        return None
 
-        for submission_entry in self.submission_entries.all():
-            draft_count = submission_entry.curation_reviews.filter(draft=True).count()
-            review_count = submission_entry.curation_reviews.filter().count()
-            if review_count:
-                positive_review_count = submission_entry.curation_reviews.filter(acceptance=True).count()
-                if (0 < review_count < self.REVIEW_COUNT) or (
-                        review_count <= self.REVIEW_COUNT and draft_count > 0):
-                    return VARIANT_STAGE.ongoing_review
-                elif review_count == self.REVIEW_COUNT and positive_review_count < self.MIN_ACCEPTED_REVIEW_COUNT:
-                    return VARIANT_STAGE.unapproved
-                elif positive_review_count >= self.MIN_ACCEPTED_REVIEW_COUNT:
+    @property
+    def stage(self):
+        if self.reviews_summary:
+            if len(self.reviews_summary) < self.REVIEW_COUNT:
+                return VARIANT_STAGE.ongoing_review
+            elif len(self.reviews_summary) == self.REVIEW_COUNT:
+                if all(self.reviews_summary):
                     return VARIANT_STAGE.approved
+                else:
+                    return VARIANT_STAGE.unapproved
+
         if any([curation_entry.status == 'resubmitted' for curation_entry in self.curation_entries.all()]):
             return VARIANT_STAGE.reannotated
         if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):

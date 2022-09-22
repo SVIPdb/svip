@@ -725,7 +725,6 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     submission_entries = SubmissionEntrySerializer(many=True, required=False)
 
     review_count = serializers.SerializerMethodField()
-    reviews_summary = serializers.SerializerMethodField()
     reviewers = serializers.SerializerMethodField()
 
     draft_summary = serializers.SerializerMethodField()
@@ -777,28 +776,6 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
                         draft_summary.append(False)
                     break
             return draft_summary
-
-    @staticmethod
-    def get_reviews_summary(obj):
-        reviews_summary = []
-        number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
-        if number_of_reviews:
-            for i in range(number_of_reviews):
-                positive_reviews_count = 0
-                negative_reviews_count = 0
-                for entry in obj.submission_entries.filter(
-                        type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
-
-                    if entry.curation_reviews.all().order_by('created_on')[i].acceptance:
-                        positive_reviews_count += 1
-                    else:
-                        negative_reviews_count += 1
-                if negative_reviews_count > 0:  # >= positive_reviews_count
-                    reviews_summary.append(False)
-                else:
-                    reviews_summary.append(True)
-
-        return reviews_summary
 
     @staticmethod
     def get_reviewers(obj):

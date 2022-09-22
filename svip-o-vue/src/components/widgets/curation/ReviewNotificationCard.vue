@@ -89,8 +89,6 @@
                     <b>
                         <router-link :to="`/gene/${data.item.gene.id}`" target="_blank">
                             {{ data.item.gene.symbol }}
-                            <br />
-                            {{ data.item.stage }}
                         </router-link>
                     </b>
                 </template>
