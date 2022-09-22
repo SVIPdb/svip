@@ -198,6 +198,7 @@
                                         </b-col>
                                         <b-col cols="3">
                                             <b-textarea
+                                                @blur="handleBlur"
                                                 :disabled="
                                                     currentReviews.data[idx][1][index].acceptance ||
                                                     not_annotated ||
@@ -510,6 +511,7 @@ export default {
             reviewerValues.acceptance =
                 curatorValues.annotatedEffect === reviewerValues.effect &&
                 curatorValues.annotatedTier === reviewerValues.tier;
+            this.handleBlur(true);
         },
 
         detectOwnReviews() {
@@ -544,7 +546,7 @@ export default {
             }
             return false;
         },
-        submitReviews(draft) {
+        submitReviews(draft, auto = false) {
             // draft is a boolean that indicates whether the data is to be saved as a draft
             if (!draft && this.missingComment()) {
                 this.$snotify.error(
@@ -568,7 +570,9 @@ export default {
                 .then(response => {
                     if (draft) {
                         this.currentReviews.data = response.data.newCurrentReviews;
-                        this.$snotify.success('Your review is saved as a draft.');
+                        if (!auto) {
+                            this.$snotify.success('Your review is saved as a draft.');
+                        }
                         this.draft = true;
                     } else {
                         this.$snotify.success('Your reviews for this variant have been submitted.');
@@ -580,9 +584,10 @@ export default {
                     log.warn(err);
                     this.$snotify.error('Failed to submit review');
                 });
+        },
 
-            // Reset fields
-            //this.isEditMode = false;
+        handleBlur() {
+            this.submitReviews(true);
         },
 
         reRender() {
