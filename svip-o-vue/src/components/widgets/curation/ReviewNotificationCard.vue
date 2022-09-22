@@ -117,31 +117,13 @@
                     <span
                         v-for="(review, i) in status_obj['item']['reviews_summary']"
                         :key="i + ' review_status'">
-                        <span v-if="review && !status_obj['item']['draft_summary'][i]">
+                        <span>
                             <b-icon
-                                style="color: blue"
+                                :style="{
+                                    color: `${displayColor(review, status_obj['item']['draft_summary'][i])}`,
+                                }"
                                 class="h5 m-1"
-                                icon="check-square-fill"
-                                :class="{
-                                    notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
-                                }"></b-icon>
-                        </span>
-
-                        <span v-if="!review && !status_obj['item']['draft_summary'][i]">
-                            <b-icon
-                                style="color: red"
-                                class="h5 m-1"
-                                icon="x-square-fill"
-                                :class="{
-                                    notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
-                                }"></b-icon>
-                        </span>
-
-                        <span v-if="status_obj['item']['draft_summary'][i]">
-                            <b-icon
-                                style="color: darkgrey"
-                                class="h5 m-1"
-                                icon="check-square-fill"
+                                :icon="displayIcon(review)"
                                 :class="{
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
@@ -320,6 +302,16 @@ export default {
         };
     },
     methods: {
+        displayColor(review, draft_status) {
+            if (draft_status) {
+                return 'gray';
+            } else {
+                return review ? 'blue' : 'red';
+            }
+        },
+        displayIcon(review) {
+            return review ? 'check-square-fill' : 'x-square-fill';
+        },
         abbreviatedName,
         /**
          * @vuese

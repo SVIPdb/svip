@@ -771,7 +771,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             for i in range(number_of_reviews):
                 for entry in obj.submission_entries.filter(
                         type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
-                    if entry.curation_reviews.all()[i].draft:
+                    if entry.curation_reviews.all().order_by('created_on')[i].draft:
                         draft_summary.append(True)
                     else:
                         draft_summary.append(False)
@@ -789,7 +789,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
                 for entry in obj.submission_entries.filter(
                         type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
 
-                    if entry.curation_reviews.all()[i].acceptance:
+                    if entry.curation_reviews.all().order_by('created_on')[i].acceptance:
                         positive_reviews_count += 1
                     else:
                         negative_reviews_count += 1
@@ -807,7 +807,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             submission_entry = obj.submission_entries.filter(
                 type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             if submission_entry.curation_reviews.count() > 0:
-                for review in submission_entry.curation_reviews.all():
+                for review in submission_entry.curation_reviews.all().order_by('created_on'):
                     reviewers.append(review.reviewer.id)
         return reviewers
 
