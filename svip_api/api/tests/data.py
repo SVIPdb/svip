@@ -121,12 +121,12 @@ def create_curation_entry(**params):
 
 def create_submission_entry(**params):
     """Create and return a sample submission entry."""
-    defaults = {"owner_id": create_user().id,
-                "variant_id": create_variant().id,
-                "disease_id": create_disease().id,
+    defaults = {"owner": create_user(),
+                "variant": create_variant(),
+                "disease": create_disease(),
                 "effect": "Associated with diagnosis",
                 "drug": "Fuflomicin",
-                "type_of_evidence": "Predictive / Therapeutic - Fuflomicin",
+                "type_of_evidence": "Predictive / Therapeutic",
                 "tier": "Reported evidence supportive of benign/likely benign effect"
                 }
 
@@ -139,7 +139,7 @@ def create_review(**params):
                 'annotated_effect': 'Poor outcome',
                 'annotated_tier': 'IID Tier',
                 'comment': 'Some comment',
-                'draft': True,
+                'draft': False,
                 'reviewer': create_user(),
                 'acceptance': True}
     defaults.update(params)

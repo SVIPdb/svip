@@ -170,25 +170,26 @@ class Variant(models.Model):
 
     @property
     def reviews_summary(self):
-        if self.submission_entries.all():
+        reviews_summary = []
+        if self.submission_entries.all().count():
             submission_entry = self.submission_entries.filter(
                 type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
-            reviews_number = submission_entry.curation_reviews.count()
-            reviews_summary = []
-            if reviews_number:
-                for i in range(reviews_number):
-                    positive_reviews_count = 0
-                    negative_reviews_count = 0
-                    for entry in self.submission_entries.filter(
-                            type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
-                        if entry.curation_reviews.filter(draft=False)[i].acceptance:
-                            positive_reviews_count += 1
+            if submission_entry.curation_reviews.all():
+                reviews_number = submission_entry.curation_reviews.count()
+                if reviews_number:
+                    for i in range(reviews_number):
+                        positive_reviews_count = 0
+                        negative_reviews_count = 0
+                        for entry in self.submission_entries.filter(
+                                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                            if entry.curation_reviews.filter(draft=False)[i].acceptance:
+                                positive_reviews_count += 1
+                            else:
+                                negative_reviews_count += 1
+                        if negative_reviews_count > 0:  # >= positive_reviews_count
+                            reviews_summary.append(False)
                         else:
-                            negative_reviews_count += 1
-                    if negative_reviews_count > 0:  # >= positive_reviews_count
-                        reviews_summary.append(False)
-                    else:
-                        reviews_summary.append(True)
+                            reviews_summary.append(True)
             return reviews_summary
         return None
 

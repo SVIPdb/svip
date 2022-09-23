@@ -332,7 +332,7 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
                 for id in entry['curation_reviews']:
                     CurationReview.objects.get(pk=id).delete()
             return JsonResponse({
-                "message": "Your second annotation  was successfully saved!",
+                "message": "Your annotation  was successfully saved!",
 
             })
 
