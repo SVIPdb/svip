@@ -136,12 +136,12 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         return reviewers
 
     def get_summary(self, obj):
-        if obj.variantinsvip:
+        if hasattr(obj, 'variantinsvip') and obj.variantinsvip is not None:
             return obj.variantinsvip.summary
         return None
 
     def get_summary_date(self, obj):
-        if obj.variantinsvip:
+        if hasattr(obj, 'variantinsvip') and obj.variantinsvip is not None:
             return obj.variantinsvip.summary_date
         return None
 
