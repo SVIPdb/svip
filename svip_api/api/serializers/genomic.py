@@ -122,6 +122,8 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     curation_requests = CurationRequestSerializer(many=True, required=False)
     submission_entries = SubmissionEntrySerializer(many=True, required=False)
     reviewers = serializers.SerializerMethodField()
+    summary = serializers.SerializerMethodField()
+    summary_date = serializers.SerializerMethodField()
 
     @staticmethod
     def get_reviewers(obj):
@@ -133,6 +135,15 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
                     reviewers.append(review.reviewer.id)
         return reviewers
 
+    def get_summary(self, obj):
+        if obj.variantinsvip:
+            return obj.variantinsvip.summary
+        return None
+
+    def get_summary_date(self, obj):
+        if obj.variantinsvip:
+            return obj.variantinsvip.summary_date
+        return None
 
     def get_sources(self, obj):
         return sorted(obj.sources) if obj.sources else None
@@ -141,6 +152,8 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         model = Variant
         fields = [field.name for field in model._meta.fields]
         fields.append('url')
+        fields.append('summary')
+        fields.append('summary_date')
         fields.append('gene')
         fields.append('gene_symbol')
         fields.append('in_svip')
