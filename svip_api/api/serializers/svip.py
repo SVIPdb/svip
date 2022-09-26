@@ -725,8 +725,9 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     submission_entries = SubmissionEntrySerializer(many=True, required=False)
 
     review_count = serializers.SerializerMethodField()
-    reviews_summary = serializers.SerializerMethodField()
     reviewers = serializers.SerializerMethodField()
+
+    draft_summary = serializers.SerializerMethodField()
 
     def to_internal_value(self, data):
         from api.utils import to_dict
@@ -762,25 +763,19 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             return 0
 
     @staticmethod
-    def get_reviews_summary(obj):
-        reviews_summary = []
+    def get_draft_summary(obj, draft_status=False):
+        draft_summary = []
         number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
         if number_of_reviews:
             for i in range(number_of_reviews):
-                positive_reviews_count = 0
-                negative_reviews_count = 0
                 for entry in obj.submission_entries.filter(
                         type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
-                    if entry.curation_reviews.all()[i].acceptance:
-                        positive_reviews_count += 1
+                    if entry.curation_reviews.all().order_by('created_on')[i].draft:
+                        draft_summary.append(True)
                     else:
-                        negative_reviews_count += 1
-                if negative_reviews_count > 0:  # >= positive_reviews_count
-                    reviews_summary.append(False)
-                else:
-                    reviews_summary.append(True)
-
-        return reviews_summary
+                        draft_summary.append(False)
+                    break
+            return draft_summary
 
     @staticmethod
     def get_reviewers(obj):
@@ -789,7 +784,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             submission_entry = obj.submission_entries.filter(
                 type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
             if submission_entry.curation_reviews.count() > 0:
-                for review in submission_entry.curation_reviews.all():
+                for review in submission_entry.curation_reviews.all().order_by('created_on'):
                     reviewers.append(review.reviewer.id)
         return reviewers
 
@@ -807,7 +802,8 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'reviewers',
             'stage',
             'curation_entries',
-            'submission_entries'
+            'submission_entries',
+            'draft_summary'
         )
 
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :key="renderKey">
         <div v-for="(submissionEntry, idx) in submissionEntries" :key="submissionEntry[0] + idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
@@ -144,10 +144,13 @@
                                                 <span
                                                     v-for="(review, review_idx) in type.curation_reviews"
                                                     :key="'review' + review_idx">
+                                                    <br />
+
                                                     <span
                                                         v-if="
                                                             review.acceptance !== null &&
-                                                            review.reviewer === user.user_id
+                                                            review.reviewer === user.user_id &&
+                                                            submitted
                                                         ">
                                                         <b-icon
                                                             class="h4 mb-2 m-1"
@@ -158,7 +161,10 @@
 
                                                 <!--  delete '&& !submitted' here and set showOnlyOwnReviewStatus to false if you want to show the review status of all reviewers-->
                                                 <b-icon
-                                                    v-if="type.curation_reviews.length < 3 && !submitted"
+                                                    v-if="
+                                                        (type.curation_reviews.length < 3 && !submitted) ||
+                                                        (type.curation_reviews.length <= 3 && draft)
+                                                    "
                                                     class="h4 mb-2 m-1"
                                                     :style="
                                                         displayColor(
@@ -192,6 +198,7 @@
                                         </b-col>
                                         <b-col cols="3">
                                             <b-textarea
+                                                @blur="handleBlur"
                                                 :disabled="
                                                     currentReviews.data[idx][1][index].acceptance ||
                                                     not_annotated ||
@@ -267,9 +274,9 @@
             </b-card>
         </div>
         <div class="float-right">
-            <!--			<b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">-->
-            <!--				Finish later-->
-            <!--			</b-button>-->
+            <b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
+                Finish later
+            </b-button>
 
             <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">
                 Submit review
@@ -278,7 +285,7 @@
         <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
             THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
         </b-navbar-text>
-        <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted">
+        <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted && !draft">
             YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
         </b-navbar-text>
     </div>
@@ -314,11 +321,10 @@ export default {
         SelectDiagnosticOutcome,
         SelectPredictiveTherapeuticOutcome,
     },
-    props: {
-        variant: {type: Object, required: false},
-    },
+    props: ['variant_id', 'gene_id'],
     data() {
         return {
+            renderKey: 0,
             submissionEntries: [],
             selfReviewedEvidences: {},
             summary: null,
@@ -332,12 +338,17 @@ export default {
             currentReviews: {
                 data: [],
             },
+            draftReviews: {
+                data: [],
+            },
+            draft: false,
             showOnlyOwnReviewStatus: true,
         };
     },
     created() {
         // Watch if user is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload);
+
         this.submissionEntries = Object.entries(
             groupBy(
                 this.variant.submission_entries.filter(i =>
@@ -362,13 +373,19 @@ export default {
                 this.$refs.paged_table.refresh();
             }
         };
-        this.detectOwnReviews();
         this.createCurrentReviews();
+        this.getDraftReviews();
+        this.detectOwnReviews();
+        if (this.draftReviews.data.length > 0) {
+            this.currentReviews = this.draftReviews;
+            this.draft = true;
+        }
     },
 
     computed: {
         ...mapGetters({
             user: 'currentUser',
+            variant: 'variant',
         }),
     },
 
@@ -383,6 +400,39 @@ export default {
                     return 0;
                 case 3:
                     return 0;
+            }
+        },
+        getDraftReviews() {
+            if (
+                this.submissionEntries[0][1][0].curation_reviews.length > 0 &&
+                this.submissionEntries[0][1][0].curation_reviews.filter(
+                    rev => rev.reviewer === this.user.user_id
+                ).length > 0 &&
+                this.submissionEntries[0][1][0].curation_reviews.filter(
+                    rev => rev.reviewer === this.user.user_id
+                )[0].draft
+            ) {
+                this.draftReviews.data = this.submissionEntries.map(i => {
+                    let types = i[1].map(item => {
+                        return {
+                            submission_entry: parseInt(item.id),
+                            id: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0].id,
+                            effect: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0]
+                                .annotated_effect,
+                            tier: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0]
+                                .annotated_tier,
+                            reviewer: this.user.user_id,
+                            acceptance: item.curation_reviews.filter(
+                                rev => rev.reviewer === this.user.user_id
+                            )[0].acceptance,
+                            comment: item.curation_reviews.filter(
+                                rev => rev.reviewer === this.user.user_id
+                            )[0].comment,
+                            draft: true,
+                        };
+                    });
+                    return [i[0], types];
+                });
             }
         },
         createCurrentReviews() {
@@ -418,7 +468,6 @@ export default {
             });
         },
         beforeWindowUnload(e) {
-            console.log('beforeWindowUnload is run');
             // Cancel the event
             e.preventDefault();
             // Chrome requires returnValue to be set
@@ -462,18 +511,18 @@ export default {
             reviewerValues.acceptance =
                 curatorValues.annotatedEffect === reviewerValues.effect &&
                 curatorValues.annotatedTier === reviewerValues.tier;
+            this.handleBlur(true);
         },
-        changeReviewStatusCheckboxes() {
-            this.diseases.map(disease => {
-                disease.evidences.map(evidence => {
-                    this.onChange(evidence.curator, evidence.currentReview);
-                });
-            });
-        },
+
         detectOwnReviews() {
             // Check if the current clinician has already submitted their review
+
             if (this.variant.reviewers) {
-                if (this.variant.reviewers.includes(this.user.user_id)) {
+                console.log('Draft', this.draftReviews.data);
+                if (
+                    this.variant.reviewers.includes(this.user.user_id) &&
+                    this.draftReviews.data.length === 0
+                ) {
                     this.submitted = true;
                     return true;
                 }
@@ -481,8 +530,6 @@ export default {
             return false;
         },
         missingComment() {
-            // console.log(JSON.stringify(this.submissionEntries));
-
             const regExp = /[a-zA-Z]/g;
             // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
             for (const [index, entry] of this.submissionEntries.entries()) {
@@ -499,7 +546,7 @@ export default {
             }
             return false;
         },
-        submitReviews(draft) {
+        submitReviews(draft, auto = false) {
             // draft is a boolean that indicates whether the data is to be saved as a draft
             if (!draft && this.missingComment()) {
                 this.$snotify.error(
@@ -509,24 +556,42 @@ export default {
                 );
                 return false;
             }
+            let payload = this.currentReviews;
 
-            HTTP.post(`/reviews/bulk_submit`, this.currentReviews)
+            for (let item of payload.data) {
+                for (let entry of item[1]) {
+                    entry.draft = draft;
+                }
+            }
+
+            console.log('payload', payload);
+
+            HTTP.post(`/reviews/bulk_submit`, payload)
                 .then(response => {
-                    console.log(`response: ${response.data}`);
                     if (draft) {
-                        this.$snotify.success('Your review is saved as a draft.');
+                        this.currentReviews.data = response.data.newCurrentReviews;
+                        if (!auto) {
+                            this.$snotify.success('Your review is saved as a draft.');
+                        }
+                        this.draft = true;
                     } else {
                         this.$snotify.success('Your reviews for this variant have been submitted.');
+                        this.submitted = true;
+                        this.draft = false;
                     }
-                    this.submitted = true;
                 })
                 .catch(err => {
                     log.warn(err);
                     this.$snotify.error('Failed to submit review');
                 });
+        },
 
-            // Reset fields
-            //this.isEditMode = false;
+        handleBlur() {
+            this.submitReviews(true);
+        },
+
+        reRender() {
+            this.renderKey++;
         },
     },
 };

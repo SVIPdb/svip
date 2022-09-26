@@ -86,7 +86,7 @@ class SubmissionEntryApi(TestCase):
 
     def test_retrieving_submission_entries_for_specific_variant(self):
         variant = create_variant()
-        create_submission_entry(variant_id=variant.id)
+        create_submission_entry(variant=variant)
         create_submission_entry()
         res = self.client.get(URL_SUBMISSION_ENTRY, {'variant_id': variant.id})
 
@@ -211,8 +211,9 @@ class VariantStatusChanging(TestCase):
         self.assertEqual(self.variant.stage, 'ongoing_curation')
 
         CurationEntry.objects.all().update(status='submitted')
-        submission_entry = create_submission_entry(variant_id=self.variant.id, owner_id=self.user.id)
+        submission_entry = create_submission_entry(variant=self.variant, owner=self.user)
         CurationEntry.objects.all().update(submission_entry=submission_entry)
+
         self.assertEqual(self.variant.stage, 'annotated')
 
         review_1 = create_review(submission_entry=submission_entry)

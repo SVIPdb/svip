@@ -115,20 +115,13 @@
                     <span
                         v-for="(review, i) in status_obj['item']['reviews_summary']"
                         :key="i + ' review_status'">
-                        <span v-if="review">
+                        <span>
                             <b-icon
-                                style="color: blue"
+                                :style="{
+                                    color: `${displayColor(review, status_obj['item']['draft_summary'][i])}`,
+                                }"
                                 class="h5 m-1"
-                                icon="check-square-fill"
-                                :class="{
-                                    notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
-                                }"></b-icon>
-                        </span>
-                        <span v-else>
-                            <b-icon
-                                style="color: red"
-                                class="h5 m-1"
-                                icon="x-square-fill"
+                                :icon="displayIcon(review)"
                                 :class="{
                                     notOwn: !(user.user_id === status_obj['item']['reviewers'][i]),
                                 }"></b-icon>
@@ -307,6 +300,16 @@ export default {
         };
     },
     methods: {
+        displayColor(review, draft_status) {
+            if (draft_status) {
+                return 'gray';
+            } else {
+                return review ? 'blue' : 'red';
+            }
+        },
+        displayIcon(review) {
+            return review ? 'check-square-fill' : 'x-square-fill';
+        },
         abbreviatedName,
         /**
          * @vuese
@@ -352,7 +355,13 @@ export default {
 
             switch (this.statusReviewFilter) {
                 case 'process':
-                    items = items.filter(item => item.review_count !== 3);
+                    items = items.filter(
+                        item =>
+                            (item.review_count < 3 && item.review_count > 0) ||
+                            (item.review_count <= 3 &&
+                                item.draft_summary &&
+                                item.draft_summary.includes(true))
+                    );
                     break;
                 case 'new':
                     items = items.filter(item => item.review_count === 0);

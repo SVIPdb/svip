@@ -13,15 +13,6 @@ const onlyUnique = (value, index, self) => {
 // approved = 'approved'
 // fully_approved = 'fully_approved'
 
-const getStatus = stage => {
-    switch (stage) {
-    case 'ongoing_review' || 'reannotated':
-        return 'In process';
-    case 'annotated':
-        return 'New';
-    }
-};
-
 export const parseVariantsForReview = items => {
     return items.map(item => {
         return {
@@ -41,14 +32,20 @@ export const parseVariantsForReview = items => {
             reviewers: item.reviewers,
             review_count: item.review_count,
             variant_status: getVariantStatus(item),
+            draft_summary: item.draft_summary,
         };
     });
 };
 
+const ifReviewIsDraft = () => {};
+
 const getVariantStatus = variant => {
     if (variant.review_count === 0) {
         return 'New';
-    } else if (variant.review_count !== 3) {
+    } else if (
+        variant.review_count !== 3 ||
+        (variant.review_count <= 3 && variant.draft_summary && variant.draft_summary.includes(true))
+    ) {
         return 'In process';
     } else if (variant.review_count === 3 && variant.reviews_summary.reduce((a, b) => a + b, 0) === 3) {
         return 'Approved';
