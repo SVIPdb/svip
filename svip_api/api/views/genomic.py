@@ -1,3 +1,4 @@
+from random import choices
 from django.shortcuts import render
 import django_filters
 from django.db.models import Prefetch, Q
@@ -130,6 +131,11 @@ class GeneViewSet(viewsets.ModelViewSet):
 
 
 class VariantFilter(df_filters.FilterSet):
+    chromosome = df_filters.CharFilter(field_name='chromosome')
+    start_pos = df_filters.NumberFilter(field_name='start_pos')
+    end_pos = df_filters.NumberFilter(field_name='end_pos')
+    ref = df_filters.CharFilter(field_name='ref')
+    alt = df_filters.CharFilter(field_name='alt')
     gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
     gene_symbol = df_filters.CharFilter(
         field_name='gene__symbol', label='Gene Symbol')
@@ -175,24 +181,24 @@ class VariantViewSet(viewsets.ReadOnlyModelViewSet):
         # if they want inline svip data, be sure to prefetch it and all its dependencies
         if self.request.GET.get('inline_svip_data') == 'true' or self.action == 'retrieve':
             q = (q
-                .select_related('variantinsvip')
-                .prefetch_related(
-                Prefetch(
-                    'variantinsvip__diseaseinsvip_set', queryset=(
-                        DiseaseInSVIP.objects
-                            .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                            .prefetch_related(
-                            'sample_set',
-                            'disease__curationentry_set',
-                            'disease__curationentry_set__owner'
-                        )
-                    )
-                ),
-                Prefetch(
-                    'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
-                )
-            )
-            )
+                 .select_related('variantinsvip')
+                 .prefetch_related(
+                     Prefetch(
+                         'variantinsvip__diseaseinsvip_set', queryset=(
+                             DiseaseInSVIP.objects
+                             .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                             .prefetch_related(
+                                 'sample_set',
+                                 'disease__curationentry_set',
+                                 'disease__curationentry_set__owner'
+                             )
+                         )
+                     ),
+                     Prefetch(
+                         'variantinsource_set', queryset=VariantInSource.objects.filter(source__no_associations=False)
+                     )
+                 )
+                 )
 
         return q.order_by('name')
 
