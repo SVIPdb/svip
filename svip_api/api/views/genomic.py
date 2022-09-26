@@ -136,6 +136,7 @@ class VariantFilter(df_filters.FilterSet):
     end_pos = df_filters.NumberFilter(field_name='end_pos')
     ref = df_filters.CharFilter(field_name='ref')
     alt = df_filters.CharFilter(field_name='alt')
+    reference_name = df_filters.CharFilter(field_name='reference_name')
     gene = df_filters.ModelChoiceFilter(queryset=Gene.objects.all())
     gene_symbol = df_filters.CharFilter(
         field_name='gene__symbol', label='Gene Symbol')
