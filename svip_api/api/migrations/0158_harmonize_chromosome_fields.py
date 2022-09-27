@@ -16,7 +16,7 @@ def reverse(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('api', '0157_drop_api_disease_contraint'),
+        ('api', '0156_auto_20211103_1642'),
     ]
 
     operations = [
