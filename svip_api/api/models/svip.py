@@ -247,6 +247,7 @@ class SubmissionEntry(models.Model):
     drug = models.TextField(null=True)
     effect = models.TextField(default="Not yet annotated")
     tier = models.TextField(default="Not yet annotated")
+    review_cycle = models.IntegerField(default=1)
 
 
 class CURATION_STATUS(ModelChoice):
