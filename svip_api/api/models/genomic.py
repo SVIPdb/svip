@@ -194,14 +194,6 @@ class Variant(models.Model):
         return None
 
     @property
-    def review_cycle(self):
-        if self.submission_entries.all().count():
-            return self.submission_entries.filter(
-                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first().review_cycle
-
-        return None
-
-    @property
     def stage(self):
         if self.reviews_summary:
             if len(self.reviews_summary) < self.REVIEW_COUNT:

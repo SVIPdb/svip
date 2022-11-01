@@ -326,11 +326,11 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
         if isinstance(request.data, dict) and request.data['update']:
             for entry in request.data['data']:
                 submission_entry = SubmissionEntry.objects.filter(pk=entry['id'])
-                submission_entry.update(effect=entry['effect'], tier=entry['tier'],
-                                        review_cycle=submission_entry[0].review_cycle + 1)
+                submission_entry.update(effect=entry['effect'], tier=entry['tier'])
                 for id in entry['curation_entries']:
                     CurationEntry.objects.filter(pk=id).update(status='resubmitted')
-                
+                for id in entry['curation_reviews']:
+                    CurationReview.objects.get(pk=id).delete()
             return JsonResponse({
                 "message": "Your annotation  was successfully saved!",
 

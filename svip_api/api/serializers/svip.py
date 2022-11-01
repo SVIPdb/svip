@@ -803,8 +803,7 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'stage',
             'curation_entries',
             'submission_entries',
-            'draft_summary',
-            'review_cycle'
+            'draft_summary'
         )
 
 

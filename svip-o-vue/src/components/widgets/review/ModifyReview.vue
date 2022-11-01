@@ -90,9 +90,16 @@
                                     :key="index">
                                     <h5 class="mb-3">
                                         <b-icon
-                                            v-if="review.acceptance"
+                                            v-if="
+                                                review.annotated_effect === data.item.effect &&
+                                                review.annotated_tier === data.item.tier
+                                            "
                                             style="color: blue"
                                             icon="check-square-fill"></b-icon>
+                                        <!--                                              <b-icon-->
+                                        <!--                                            v-if="review.acceptance"-->
+                                        <!--                                            style="color: blue"-->
+                                        <!--                                            icon="check-square-fill"></b-icon>-->
                                         <b-icon v-else style="color: red" icon="x-square-fill"></b-icon>
 
                                         {{ review.reviewer_name }}
@@ -260,7 +267,7 @@ export default {
                 'Sensitive (in vitro)',
                 'Responsive',
                 'Resistant (in vitro)',
-                'Reduced sensivity',
+                'Reduced sensitivity',
                 'Not responsive',
                 'Adverse response',
                 'Other',
