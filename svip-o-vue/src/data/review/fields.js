@@ -32,6 +32,11 @@ export default [
         label: 'Status',
         sortable: true,
     },
+    {
+        key: 'review_cycle',
+        label: 'Cycle',
+        sortable: true,
+    },
 
     {
         key: 'curators',

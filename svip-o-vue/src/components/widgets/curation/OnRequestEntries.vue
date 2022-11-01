@@ -57,6 +57,7 @@ const fields_on_request = [
         sortable: true,
         filterByFormatted: x => x.map(z => abbreviatedName(z.name).abbrev).join(', '),
     },
+
     {
         key: 'action',
         label: 'Action',

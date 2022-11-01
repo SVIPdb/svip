@@ -236,6 +236,7 @@ class SubmissionEntry(models.Model):
     The entry is generated from all the curation entries of a variant at the moment of their submission.
     """
     related_name = 'submission_entries'
+    review_cycle = models.IntegerField(default=1)
     variant = models.ForeignKey(Variant, on_delete=DB_CASCADE, related_name=related_name)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               null=True, on_delete=models.SET_NULL)

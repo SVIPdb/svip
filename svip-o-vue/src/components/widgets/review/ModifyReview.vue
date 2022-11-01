@@ -267,7 +267,7 @@ export default {
                 'Conflicting Evidences',
             ],
             trustOptions: [
-                'Included in Professional Guidelines',
+                'Therapy included in Professional Guidelines such as NCCN or CAP',
                 'Well-powered studies with consensus from experts in the field',
                 'Multiples small published studies with some consensus',
                 'Clinical trial',

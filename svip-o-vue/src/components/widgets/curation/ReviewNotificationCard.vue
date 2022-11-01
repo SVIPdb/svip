@@ -89,6 +89,8 @@
                     <b>
                         <router-link :to="`/gene/${data.item.gene.id}`" target="_blank">
                             {{ data.item.gene.symbol }}
+                            <br />
+                            {{ data.item.stage }}
                         </router-link>
                     </b>
                 </template>
@@ -166,8 +168,8 @@
                     </b-button>
                 </template>
 
-                <template v-slot:cell(single_action)>
-                    <icon class="mr-1" name="eye" />
+                <template v-slot:cell(review_cycle)="data">
+                    {{ data.item.review_cycle }}
                 </template>
 
                 <template v-slot:table-busy>

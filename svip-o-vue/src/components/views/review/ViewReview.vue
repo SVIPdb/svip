@@ -11,7 +11,6 @@
                 <modify-review
                     :raw_disease="entry[1]"
                     :label="entry[0]"
-                    @annotated="updateAnnotations"
                     :annotated="annotated"
                     :not_reviewed="not_reviewed" />
             </div>
@@ -20,9 +19,9 @@
                 Submit annotation
             </b-button>
         </div>
-        <b-navbar-text v-if="not_reviewed" class="fixed-bottom submitted-bar" align="center">
-            THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.
-        </b-navbar-text>
+        <!--        <b-navbar-text v-if="not_reviewed" class="fixed-bottom submitted-bar" align="center">-->
+        <!--            THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.-->
+        <!--        </b-navbar-text>-->
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="annotated">
             THIS VARIANT HAS ALREADY BEEN SUBMITTED TO A SECOND ROUND OF REVIEWS.
         </b-navbar-text>
@@ -63,7 +62,7 @@ export default {
                 content: '',
                 comments: [],
             },
-            annotations: {},
+
             not_reviewed: false,
             annotated: false,
         };
@@ -120,9 +119,7 @@ export default {
                 )
             );
         },
-        updateAnnotations(annotation) {
-            this.annotations[annotation['evidence']] = annotation;
-        },
+
         prepareForSubmission(entries) {
             let submission = [];
             for (const entry of entries) {
@@ -140,7 +137,6 @@ export default {
             return {update: true, data: submission};
         },
         submitAnnotations(notify = true) {
-            console.log(this.prepareForSubmission(this.submissionEntries));
             let submissionData = this.prepareForSubmission(this.submissionEntries);
 
             HTTP.post(`/submission_entries/bulk_submit`, submissionData)
