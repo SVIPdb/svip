@@ -34,7 +34,7 @@
                             {label: 'Saved', value: 'saved'},
                             {label: 'Submitted', value: 'submitted'},
                             {label: 'All', value: 'all'},
-                        ]" />
+                        ]"/>
                 </div>
                 <div>
                     <b-input-group size="sm" class="p-1">
@@ -93,8 +93,8 @@
                 </template>
 
                 <template v-slot:cell(extra_variants)="data">
-                    <div>{{ apiUrl }}</div>
-                    <span v-if="data.value">
+
+                    <span v-if="data.value.length > 0">
                         <span v-for="(variant, idx) in data.value" :key="variant.id">
                             <span v-if="idx > 0">,</span>
                             <router-link
@@ -104,6 +104,7 @@
                             </router-link>
                         </span>
                     </span>
+                    <span v-else>No other variants</span>
                 </template>
 
                 <template v-slot:cell(created_on)="data">
@@ -116,7 +117,7 @@
                             :class="setClass(data.value)"
                             :name="setIcon(data.value)"
                             v-b-tooltip.hover
-                            :title="data.value" />
+                            :title="data.value"/>
                         {{
                             data.value === 'ready_for_submission'
                                 ? 'Ready for submission'
@@ -130,15 +131,15 @@
                         :pubmeta="{pmid: data.value}"
                         :variant="data.item.variant && data.item.variant.name"
                         :gene="data.item.variant && data.item.variant.gene.symbol"
-                        :disease="data.item.disease && data.item.disease.name" />
+                        :disease="data.item.disease && data.item.disease.name"/>
                 </template>
 
                 <template v-slot:cell(created_on)="data">
-                    <DateTimeField :datetime="data.value" />
+                    <DateTimeField :datetime="data.value"/>
                 </template>
 
                 <template v-slot:cell(last_modified)="data">
-                    <DateTimeField :datetime="data.value" />
+                    <DateTimeField :datetime="data.value"/>
                 </template>
 
                 <template v-slot:cell(owner_name)="data">
@@ -158,7 +159,7 @@
                             size="sm"
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px">
-                            <icon name="pen-alt" />
+                            <icon name="pen-alt"/>
                             Edit
                         </b-button>
                         <b-button
@@ -168,7 +169,7 @@
                             size="sm"
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px">
-                            <icon name="eye" />
+                            <icon name="eye"/>
                             View
                         </b-button>
 
@@ -178,14 +179,14 @@
                             v-b-tooltip="'Delete'"
                             size="sm"
                             @click="deleteEntry(data.item.id)">
-                            <icon name="trash" label="Delete" />
+                            <icon name="trash" label="Delete"/>
                         </b-button>
                         <b-button
                             class="btn-info"
                             v-b-tooltip="'History'"
                             size="sm"
                             @click="showHistory(data.item.id)">
-                            <icon name="history" label="History" />
+                            <icon name="history" label="History"/>
                         </b-button>
                     </span>
                     <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="already_submitted">
@@ -207,7 +208,7 @@
                 size="lg"
                 :title="`Entry #${history_entry_id} History`">
                 <div>
-                    <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id" />
+                    <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id"/>
                     <div v-else>Error: no curation entry selected</div>
                 </div>
             </b-modal>

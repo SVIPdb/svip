@@ -151,7 +151,7 @@
                         :disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.stage)"
                         class="centered-icons reviewBtn"
                         size="sm"
-                        style="width: 130px"
+                        style="width: 140px"
                         variant="info"
                         :to="{
                             name: 'annotate-review',
