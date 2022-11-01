@@ -43,16 +43,6 @@ class Migration(migrations.Migration):
             name='curation_entry',
             field=django_db_cascade.fields.ForeignKey(null=True, on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='curation_reviews', to='api.CurationEntry'),
         ),
-        migrations.AlterField(
-            model_name='sibannotation1',
-            name='evidence',
-            field=models.OneToOneField(on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='annotation1', to='api.CurationEntry'),
-        ),
-        migrations.AlterField(
-            model_name='sibannotation2',
-            name='evidence',
-            field=models.OneToOneField(on_delete=django_db_cascade.deletions.DB_CASCADE, related_name='annotation2', to='api.CurationEntry'),
-        ),
         migrations.DeleteModel(
             name='CurationAssociation',
         ),
