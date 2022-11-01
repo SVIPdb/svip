@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Normalizes focus treatment for custom elements with Shadow DOM
  *
@@ -41,8 +41,8 @@ export default function ComposedFocusMixin(Base) {
             // @ts-ignore
             super();
 
-            if ("HTMLSlotElement" in window) {
-                this.addEventListener("mousedown", (event) => {
+            if ('HTMLSlotElement' in window) {
+                this.addEventListener('mousedown', event => {
                     // Only process events for the main (usually left) button.
                     if (event.button !== 0) {
                         return;
@@ -81,7 +81,7 @@ function findFocusableAncestor(element) {
     const parent = element.assignedSlot
         ? element.assignedSlot // @ts-ignore
         : element.parentNode instanceof ShadowRoot
-        ? element.parentNode.host
-        : element.parentNode;
+            ? element.parentNode.host
+            : element.parentNode;
     return parent ? findFocusableAncestor(parent) : null;
 }

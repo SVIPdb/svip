@@ -1,5 +1,8 @@
 # flake8: noqa
 
+from .comments import (
+    VariantCommentViewSet
+)
 from .genomic import (
     SourceViewSet,
     GeneViewSet,
@@ -12,7 +15,19 @@ from .genomic import (
     EvidenceViewSet,
     EnvironmentalContextViewSet
 )
-
+from .icdo import (
+    IcdOTopoViewSet,
+    IcdOMorphoViewSet
+)
+from .query import (
+    QueryView
+)
+from .reference import (
+    DrugViewSet, DiseaseViewSet
+)
+from .statistics import (
+    Statistics
+)
 from .svip import (
     VariantInSVIPViewSet,
     DiseaseInSVIPViewSet,
@@ -24,31 +39,7 @@ from .svip import (
     SummaryCommentViewSet,
     SummaryDraftViewSet,
     GeneSummaryDraftViewSet,
-    DashboardReviews,
-    CurationReviewView,
     CurationReviewViewSet,
-    RevisedReviewViewSet,
-    SIBAnnotation1View,
-    SIBAnnotation2ViewSet
-)
+    SubmissionEntryViewSet
 
-from .reference import (
-    DrugViewSet, DiseaseViewSet
-)
-
-from .query import (
-    QueryView
-)
-
-from .comments import (
-    VariantCommentViewSet
-)
-
-from .statistics import (
-    Statistics
-)
-
-from .icdo import (
-    IcdOTopoViewSet,
-    IcdOMorphoViewSet
 )

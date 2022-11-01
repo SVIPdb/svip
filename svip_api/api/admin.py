@@ -1,40 +1,23 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant, 
+from api.models import (VariantInSVIP, DiseaseInSVIP, Variant, CurationEntry, SubmittedVariant,
                         SubmittedVariantBatch)
-
-from api.models.svip import (SummaryComment, CurationAssociation, CurationEvidence, CurationReview,
-                             SIBAnnotation1, SIBAnnotation2, SummaryDraft, CurationRequest, RevisedReview
-                            )
+from api.models.svip import (SummaryComment, CurationReview,
+                             SummaryDraft, CurationRequest,
+                             SubmissionEntry
+                             )
 
 admin.site.register(SummaryComment)
 admin.site.register(SummaryDraft)
 admin.site.register(CurationReview)
-admin.site.register(RevisedReview)
-admin.site.register(SIBAnnotation1)
-admin.site.register(SIBAnnotation2)
 admin.site.register(CurationRequest)
-
-
-@admin.register(CurationAssociation)
-class CurationAssociationAdmin(admin.ModelAdmin):
-    list_display = ('variant', 'variant_id', 'disease')
-
-    def variant_id(self, obj):
-        return obj.variant.id
 
 
 class CurationsInlineAdmin(admin.TabularInline):
     model = CurationEntry
     # no extra empty rows for in curation entry field of CurationEvidence
     extra = 0
-
-
-@admin.register(CurationEvidence)
-class CurationEvidenceAdmin(admin.ModelAdmin):
-    fields = ['association', 'type_of_evidence', 'drug']
-    #inlines = [CurationsInlineAdmin]
 
 
 @admin.register(Variant)
@@ -85,6 +68,23 @@ class CurationEntryAdmin(SimpleHistoryAdmin):
     )
     list_select_related = ('variant', 'owner',)
     list_filter = ('status', 'owner', 'type_of_evidence')
+    autocomplete_fields = ['variant']
+
+
+@admin.register(SubmissionEntry)
+class SubmissionEntryAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'variant',
+        'disease',
+        'drug',
+        'tier',
+        'effect',
+
+        'owner'
+    )
+    list_select_related = ('variant', 'owner', 'disease',)
+
     autocomplete_fields = ['variant']
 
 

@@ -27,10 +27,7 @@ export default function SelectedItemTextValueMixin(Base) {
             const items = this.items;
 
             if (this.state.pendingValue && items) {
-                const index = indexOfItemWithText(
-                    items,
-                    this.state.pendingValue
-                );
+                const index = indexOfItemWithText(items, this.state.pendingValue);
                 this.setState({
                     selectedIndex: index,
                     pendingValue: null,
@@ -48,9 +45,8 @@ export default function SelectedItemTextValueMixin(Base) {
          */
 
         get value() {
-            return this.selectedItem == null ||
-                this.selectedItem.textContent == null
-                ? ""
+            return this.selectedItem == null || this.selectedItem.textContent == null
+                ? ''
                 : this.selectedItem.textContent;
         }
 
@@ -76,5 +72,5 @@ export default function SelectedItemTextValueMixin(Base) {
 }
 
 function indexOfItemWithText(items, text) {
-    return items.findIndex((item) => item.textContent === text);
+    return items.findIndex(item => item.textContent === text);
 }

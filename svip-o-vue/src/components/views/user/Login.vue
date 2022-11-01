@@ -3,7 +3,8 @@
         <h1>Log In to SVIP</h1>
         <p>Enter your credentials below to log in to your SVIP account.</p>
         <div class="text-muted font-italic" style="text-align: center">
-            If you don't have credentials, or the appropriate credentials<br />
+            If you don't have credentials, or the appropriate credentials
+            <br />
             for the resource you're trying to access, you can always go home:
             <div style="margin-top: 0.5em">
                 <router-link to="/">SVIP homepage</router-link>
@@ -12,24 +13,12 @@
 
         <transition name="fade">
             <div v-if="error_msg && error_msg.non_field_errors" class="errors">
-                <h3>
-                    Error{{
-                        error_msg.non_field_errors.length !== 1 ? "s" : ""
-                    }}:
-                </h3>
-                <div
-                    v-if="
-                        error_msg.non_field_errors &&
-                        error_msg.non_field_errors.length === 1
-                    "
-                >
+                <h3>Error{{ error_msg.non_field_errors.length !== 1 ? 's' : '' }}:</h3>
+                <div v-if="error_msg.non_field_errors && error_msg.non_field_errors.length === 1">
                     {{ error_msg.non_field_errors[0] }}
                 </div>
                 <ul v-else>
-                    <li
-                        v-for="(err, idx) in error_msg.non_field_errors"
-                        :key="idx"
-                    >
+                    <li v-for="(err, idx) in error_msg.non_field_errors" :key="idx">
                         {{ err }}
                     </li>
                 </ul>
@@ -50,31 +39,29 @@
             </b-form-group>
 
             <b-form-group>
-                <b-button type="submit" variant="primary" class="float-right"
-                    >Log In</b-button
-                >
+                <b-button type="submit" variant="primary" class="float-right">Log In</b-button>
             </b-form-group>
         </b-form>
     </div>
 </template>
 
 <script>
-import store from "@/store";
+import store from '@/store';
 
 export default {
-    name: "Login",
+    name: 'Login',
     data() {
         return {
-            username: "",
-            password: "",
+            username: '',
+            password: '',
             error_msg: this.default_error_msg && {
                 non_field_errors: [this.default_error_msg],
             },
         };
     },
     props: {
-        default_error_msg: { type: String },
-        nextRoute: { type: String },
+        default_error_msg: {type: String},
+        nextRoute: {type: String},
     },
     methods: {
         onSubmit(evt) {
@@ -82,7 +69,7 @@ export default {
             this.error_msg = null;
 
             store
-                .dispatch("login", {
+                .dispatch('login', {
                     username: this.username,
                     password: this.password,
                 })
@@ -93,11 +80,11 @@ export default {
                     if (this.nextRoute) {
                         this.$router.push(this.nextRoute);
                     } else {
-                        this.$router.push("/");
+                        this.$router.push('/');
                     }
                 })
-                .catch((err) => {
-                    if (!err.response || !err.response.hasOwnProperty("data")) {
+                .catch(err => {
+                    if (!err.response || !err.response.hasOwnProperty('data')) {
                         // if it's a low-level error, e.g. the server's gone, there won't be any payload
                         this.error_msg = err.message;
                     } else {

@@ -5,5 +5,5 @@
  */
 export function MultiGeneError(message) {
     this.message = message;
-    this.name = "MultiGeneError";
+    this.name = 'MultiGeneError';
 }

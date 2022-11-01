@@ -1,4 +1,4 @@
-import * as symbols from "./symbols.js";
+import * as symbols from './symbols.js';
 /**
  * Maps direction keys to direction semantics.
  *
@@ -87,68 +87,54 @@ export default function KeyboardDirectionMixin(Base) {
         [symbols.keydown](event) {
             let handled = false;
             const orientation = this.orientation;
-            const horizontal =
-                orientation === "horizontal" || orientation === "both";
-            const vertical =
-                orientation === "vertical" || orientation === "both"; // Ignore Left/Right keys when metaKey or altKey modifier is also pressed,
+            const horizontal = orientation === 'horizontal' || orientation === 'both';
+            const vertical = orientation === 'vertical' || orientation === 'both'; // Ignore Left/Right keys when metaKey or altKey modifier is also pressed,
             // as the user may be trying to navigate back or forward in the browser.
 
             switch (event.key) {
-                case "ArrowDown":
-                    if (vertical) {
-                        handled = event.altKey
-                            ? this[symbols.goEnd]()
-                            : this[symbols.goDown]();
-                    }
+            case 'ArrowDown':
+                if (vertical) {
+                    handled = event.altKey ? this[symbols.goEnd]() : this[symbols.goDown]();
+                }
 
-                    break;
+                break;
 
-                case "ArrowLeft":
-                    if (horizontal && !event.metaKey && !event.altKey) {
-                        handled = this[symbols.goLeft]();
-                    }
+            case 'ArrowLeft':
+                if (horizontal && !event.metaKey && !event.altKey) {
+                    handled = this[symbols.goLeft]();
+                }
 
-                    break;
+                break;
 
-                case "ArrowRight":
-                    if (horizontal && !event.metaKey && !event.altKey) {
-                        handled = this[symbols.goRight]();
-                    }
+            case 'ArrowRight':
+                if (horizontal && !event.metaKey && !event.altKey) {
+                    handled = this[symbols.goRight]();
+                }
 
-                    break;
+                break;
 
-                case "ArrowUp":
-                    if (vertical) {
-                        handled = event.altKey
-                            ? this[symbols.goStart]()
-                            : this[symbols.goUp]();
-                    }
+            case 'ArrowUp':
+                if (vertical) {
+                    handled = event.altKey ? this[symbols.goStart]() : this[symbols.goUp]();
+                }
 
-                    break;
+                break;
 
-                case "End":
-                    handled = this[symbols.goEnd]();
-                    break;
+            case 'End':
+                handled = this[symbols.goEnd]();
+                break;
 
-                case "Home":
-                    handled = this[symbols.goStart]();
-                    break;
+            case 'Home':
+                handled = this[symbols.goStart]();
+                break;
             } // Prefer mixin result if it's defined, otherwise use base result.
 
-            return (
-                handled ||
-                (super[symbols.keydown] && super[symbols.keydown](event)) ||
-                false
-            );
+            return handled || (super[symbols.keydown] && super[symbols.keydown](event)) || false;
         } // Default orientation implementation defers to super,
         // but if not found, looks in state.
 
         get orientation() {
-            return (
-                super.orientation ||
-                (this.state && this.state.orientation) ||
-                "both"
-            );
+            return super.orientation || (this.state && this.state.orientation) || 'both';
         }
     }
 

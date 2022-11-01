@@ -3,19 +3,25 @@
         <span class="text-muted evidence-count">{{ name }}: {{ totalRows.toLocaleString() }}</span>
 
         <div class="badges">
-			<span :class="`badge badge-primary filter-${k}`" :key="k"
-                v-for="[k,v] in Object.entries(value).filter(x => x[1] && x[0] !== 'search')">
-				{{ desnakify(v) }}
-				<button type="button" class="close small ml-3" aria-label="Close" style="font-size: 14px"
+            <span
+                :class="`badge badge-primary filter-${k}`"
+                :key="k"
+                v-for="[k, v] in Object.entries(value).filter(x => x[1] && x[0] !== 'search')">
+                {{ desnakify(v) }}
+                <button
+                    type="button"
+                    class="close small ml-3"
+                    aria-label="Close"
+                    style="font-size: 14px"
                     @click="value[k] = ''">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</span>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </span>
         </div>
 
-        <div class="search-box" style="margin-left: 10px;">
+        <div class="search-box" style="margin-left: 10px">
             <b-input-group size="sm">
-                <b-form-input v-model="value.search" placeholder="Type to Search"/>
+                <b-form-input v-model="value.search" placeholder="Type to Search" />
                 <b-input-group-append>
                     <b-btn :disabled="!value.search" @click="value.search = ''">Clear</b-btn>
                 </b-input-group-append>
@@ -25,19 +31,19 @@
 </template>
 
 <script>
-import { desnakify, titleCase } from "@/utils";
+import {desnakify, titleCase} from '@/utils';
 
 export default {
-    name: "RowDetailsHeader",
+    name: 'RowDetailsHeader',
     props: ['name', 'totalRows', 'value'],
     methods: {
         titleCase,
         desnakify,
         updateValue: function (value) {
             this.$emit('input', value);
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style scoped>

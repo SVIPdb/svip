@@ -1,13 +1,10 @@
+from io import BytesIO
 from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
 from django.db.models import Func, Value, F
-
-
-from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
-
 from xhtml2pdf import pisa
 
 
@@ -41,6 +38,7 @@ def field_is_empty(data, field, is_array=False):
     """
     if is_array:
         return field not in data or data[field] is None or len(data[field]) == 0
+
     return field not in data or data[field] in (None, '') or data[field].strip() == ''
 
 
@@ -109,3 +107,22 @@ def json_build_fields(**args):
     return JsonBuildObject(
         *[item for sublist in pairs for item in sublist]
     )
+
+
+class ModelChoice():
+    @classmethod
+    def __items(cls):
+        """ 
+        Filter the class properties and created a dict like { property: property_value}
+        Ex.
+        class MyModelChoice(ModelChoice):
+            prop1='Prop1'
+            prop2='Prop2'
+        
+        """
+        return {k: v for k, v in cls.__dict__.items() if not k.startswith('__')}.items()
+
+    @classmethod
+    def get_choices(cls):
+        """ Retrns the choices to be used for a model choices field definition"""
+        return [(k, v) for k, v in cls.__items()]

@@ -15,7 +15,7 @@
  *
  * @module template
  */
-import { apply, current, merge } from "./updates.js";
+import {apply, current, merge} from './updates.js';
 /**
  * Returns a new template whose content is the concatenated content of the
  * supplied templates.
@@ -68,8 +68,8 @@ import { apply, current, merge } from "./updates.js";
  */
 
 export function concat(...templates) {
-    const result = document.createElement("template");
-    templates.forEach((template) => {
+    const result = document.createElement('template');
+    templates.forEach(template => {
         const clone = document.importNode(template.content, true);
         result.content.appendChild(clone);
     });
@@ -89,7 +89,7 @@ export function concat(...templates) {
  */
 
 export function createElement(descriptor) {
-    if (typeof descriptor === "function") {
+    if (typeof descriptor === 'function') {
         // Component class constructor
 
         /** @type {any} */
@@ -113,7 +113,7 @@ export function createElement(descriptor) {
  */
 
 export function defaultSlot(tree) {
-    return tree.querySelector("slot:not([name])");
+    return tree.querySelector('slot:not([name])');
 }
 /**
  * A JavaScript template string literal that returns an HTML template.
@@ -138,12 +138,11 @@ export function html(strings, ...substitutions) {
     // Concatenate the strings and substitutions.
     const complete = strings
         .map((string, index) => {
-            const substitution =
-                index < substitutions.length ? substitutions[index] : "";
+            const substitution = index < substitutions.length ? substitutions[index] : '';
             return `${string}${substitution}`;
         })
-        .join("");
-    const template = document.createElement("template");
+        .join('');
+    const template = document.createElement('template');
     template.innerHTML = complete;
     return template;
 }
@@ -159,13 +158,13 @@ export function html(strings, ...substitutions) {
 
 export function replace(original, replacement) {
     if (!original) {
-        throw "The original element could not be found.";
+        throw 'The original element could not be found.';
     }
 
     const parent = original.parentNode;
 
     if (!parent) {
-        throw "An element must have a parent before it can be substituted.";
+        throw 'An element must have a parent before it can be substituted.';
     }
 
     if (original instanceof Element && replacement instanceof Element) {
@@ -188,7 +187,7 @@ export function replace(original, replacement) {
     // The safest thing that seems to work is to create an array of the
     // children, then loop over that array.
 
-    [...original.childNodes].forEach((child) => replacement.appendChild(child));
+    [...original.childNodes].forEach(child => replacement.appendChild(child));
     parent.replaceChild(replacement, original);
     return replacement;
 }
@@ -210,22 +209,15 @@ export function replace(original, replacement) {
 export function transmute(original, descriptor) {
     if (original instanceof Array) {
         // Transmute an array.
-        const replacements = original.map((node) =>
-            transmute(node, descriptor)
-        );
+        const replacements = original.map(node => transmute(node, descriptor));
         return replacements;
     } else if (original instanceof NodeList) {
         // Transmute a list of nodes.
-        const replacements = [...original].map((node) =>
-            transmute(node, descriptor)
-        );
+        const replacements = [...original].map(node => transmute(node, descriptor));
         return replacements;
     } else if (
-        (typeof descriptor === "function" &&
-            original.constructor === descriptor) ||
-        (typeof descriptor === "string" &&
-            original instanceof Element &&
-            original.localName === descriptor)
+        (typeof descriptor === 'function' && original.constructor === descriptor) ||
+        (typeof descriptor === 'string' && original instanceof Element && original.localName === descriptor)
     ) {
         // Already correct type of element, no transmutation necessary.
         return original;

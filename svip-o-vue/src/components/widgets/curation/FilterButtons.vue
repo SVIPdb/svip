@@ -5,26 +5,19 @@
             v-for="item in items"
             :variant="
                 item.variant ||
-                (value ===
-                    (item.value === undefined ? item.label : item.value) &&
-                    selectedVariant) ||
+                (value === (item.value === undefined ? item.label : item.value) && selectedVariant) ||
                 defaultVariant ||
                 'primary'
             "
             @click="update(item.value === undefined ? item.label : item.value)"
-            :key="item.label"
-        >
+            :key="item.label">
             {{ item.label }}
             <transition name="fade">
                 <icon
                     class="caret"
                     scale="1.5"
-                    v-if="
-                        value ===
-                        (item.value === undefined ? item.label : item.value)
-                    "
-                    name="caret-up"
-                />
+                    v-if="value === (item.value === undefined ? item.label : item.value)"
+                    name="caret-up" />
             </transition>
         </b-button>
     </b-button-group>
@@ -32,17 +25,17 @@
 
 <script>
 export default {
-    name: "FilterButtons",
+    name: 'FilterButtons',
     props: {
-        size: { type: String, default: "sm" },
-        items: { required: true, type: Array },
-        value: { required: true },
-        defaultVariant: { type: String, required: false },
-        selectedVariant: { type: String, required: false },
+        size: {type: String, default: 'sm'},
+        items: {required: true, type: Array},
+        value: {required: true},
+        defaultVariant: {type: String, required: false},
+        selectedVariant: {type: String, required: false},
     },
     methods: {
         update(v) {
-            this.$emit("input", v);
+            this.$emit('input', v);
         },
     },
 };

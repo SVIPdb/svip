@@ -1,6 +1,6 @@
-import { defaultScrollTarget } from "./scrolling.js";
-import { getSuperProperty } from "./workarounds.js";
-import * as symbols from "./symbols.js";
+import {defaultScrollTarget} from './scrolling.js';
+import {getSuperProperty} from './workarounds.js';
+import * as symbols from './symbols.js';
 /**
  * Scrolls to ensure the selected item is visible
  *
@@ -52,8 +52,7 @@ export default function SelectionInViewMixin(Base) {
             }
 
             const scrollTarget = this[symbols.scrollTarget];
-            const selectedIndex =
-                this.selectedIndex || this.state.selectedIndex;
+            const selectedIndex = this.selectedIndex || this.state.selectedIndex;
 
             if (selectedIndex < 0) {
                 return;
@@ -99,11 +98,7 @@ export default function SelectionInViewMixin(Base) {
 
         get [symbols.scrollTarget]() {
             // Next line is same as: const base = super[symbols.scrollTarget]
-            const base = getSuperProperty(
-                this,
-                SelectionInView,
-                symbols.scrollTarget
-            );
+            const base = getSuperProperty(this, SelectionInView, symbols.scrollTarget);
             /** @type {any} */
 
             const element = this;

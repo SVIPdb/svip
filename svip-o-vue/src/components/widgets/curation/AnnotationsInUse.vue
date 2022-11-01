@@ -10,8 +10,7 @@
             :class="[x.etype === 'Excluded' && 'ref-excluded']"
             v-b-tooltip="`${x.etype}`"
             :to="`/curation/entry/${x.id}`"
-            target="_blank"
-        >
+            target="_blank">
             Entry #{{ x.id }}
         </b-button>
     </div>
@@ -19,8 +18,8 @@
 
 <script>
 export default {
-    name: "EntriesInUse",
-    props: { annotationUsed: { required: true } },
+    name: 'EntriesInUse',
+    props: {annotationUsed: {required: true}},
 };
 </script>
 

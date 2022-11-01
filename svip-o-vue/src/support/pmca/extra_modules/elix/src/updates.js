@@ -27,7 +27,7 @@ export const booleanAttributes = {
     readonly: true,
     selected: true,
 };
-const previousChildNodesKey = Symbol("previousChildNodes");
+const previousChildNodesKey = Symbol('previousChildNodes');
 /**
  * Apply bulk updates to an element's attributes, child nodes, classes, styles,
  * and shadow elements.
@@ -118,7 +118,7 @@ export function applyAttribute(element, name, value) {
     if (booleanAttributes[name]) {
         // Boolean attribute
         if (value) {
-            element.setAttribute(name, "");
+            element.setAttribute(name, '');
         } else {
             element.removeAttribute(name);
         }
@@ -165,10 +165,7 @@ export function applyAttributes(element, attributes) {
 
 export function applyChildNodes(element, childNodes) {
     // Quick dirty check if last array applied was frozen.
-    if (
-        element[previousChildNodesKey] &&
-        childNodes === element[previousChildNodesKey]
-    ) {
+    if (element[previousChildNodesKey] && childNodes === element[previousChildNodesKey]) {
         return;
     } // If the childNodes parameter is the actual childNodes of an element, then as
     // we append those nodes to the indicated target element, they'll get removed
@@ -202,9 +199,7 @@ export function applyChildNodes(element, childNodes) {
         }
     }
 
-    element[previousChildNodesKey] = Object.isFrozen(childNodes)
-        ? childNodes
-        : null;
+    element[previousChildNodesKey] = Object.isFrozen(childNodes) ? childNodes : null;
 }
 /**
  * Applies multiple classes at once. This takes a dictionary in which each
@@ -255,9 +250,7 @@ export function applyProperty(element, name, value) {
 function applyReferencedElementUpdates(element, updates) {
     for (const key in updates) {
         const props = updates[key];
-        const referencedElement = element.$
-            ? element.$[key]
-            : element.getElementById(key);
+        const referencedElement = element.$ ? element.$[key] : element.getElementById(key);
 
         if (referencedElement) {
             apply(referencedElement, props);
@@ -279,7 +272,7 @@ function applyReferencedElementUpdates(element, updates) {
 export function applyStyles(element, styles) {
     for (const styleName in styles) {
         const value = styles[styleName];
-        element.style[styleName] = value === undefined ? "" : value;
+        element.style[styleName] = value === undefined ? '' : value;
     }
 }
 /**
@@ -296,14 +289,14 @@ export function applyStyles(element, styles) {
 export function current(element) {
     return element instanceof HTMLElement
         ? {
-              attributes: currentAttributes(element),
-              classes: currentClasses(element),
-              style: currentStyles(element),
-          }
+            attributes: currentAttributes(element),
+            classes: currentClasses(element),
+            style: currentStyles(element),
+        }
         : {
-              attributes: currentAttributes(element),
-              classes: currentClasses(element),
-          };
+            attributes: currentAttributes(element),
+            classes: currentClasses(element),
+        };
 }
 /**
  * Returns a dictionary of the element's current attributes, using the same
@@ -315,9 +308,9 @@ export function current(element) {
 
 export function currentAttributes(element) {
     const attributes = {};
-    Array.prototype.forEach.call(element.attributes, (attribute) => {
+    Array.prototype.forEach.call(element.attributes, attribute => {
         // TODO: Convert custom attributes to properties
-        if (attribute.name !== "class" && attribute.name !== "style") {
+        if (attribute.name !== 'class' && attribute.name !== 'style') {
             attributes[attribute.name] = attribute.value;
         }
     });
@@ -333,10 +326,7 @@ export function currentAttributes(element) {
 
 export function currentClasses(element) {
     const result = {};
-    Array.prototype.forEach.call(
-        element.classList,
-        (className) => (result[className] = true)
-    );
+    Array.prototype.forEach.call(element.classList, className => (result[className] = true));
     return result;
 }
 /**
@@ -349,7 +339,7 @@ export function currentClasses(element) {
 
 export function currentStyles(element) {
     const styleProps = {};
-    Array.prototype.forEach.call(element.style, (key) => {
+    Array.prototype.forEach.call(element.style, key => {
         styleProps[key] = element.style[key];
     });
     return styleProps;
@@ -391,7 +381,7 @@ function isPlainObject(o) {
 
 export function merge(...sources) {
     const result = {};
-    sources.forEach((source) => {
+    sources.forEach(source => {
         if (source) {
             for (const key in source) {
                 result[key] =

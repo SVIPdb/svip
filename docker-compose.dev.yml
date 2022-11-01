@@ -2,8 +2,8 @@ version: '3.5'
 
 services:
   nginx:
-    command: 'sh -c exit' # no-op, since we don't run nginx in dev
-    restart: 'no'
+    profiles: 
+    - do-no-start
 
   db:
     ports:

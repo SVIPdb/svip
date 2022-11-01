@@ -1,46 +1,47 @@
-import { abbreviatedName } from "@/utils";
+import {abbreviatedName} from '@/utils';
 
 export default [
     {
-        key: "gene_name",
-        label: "Gene",
+        key: 'gene',
+        label: 'Gene',
         sortable: true,
     },
     {
-        key: "variant",
-        label: "Variant",
+        key: 'variant',
+        label: 'Variant',
         sortable: true,
     },
     {
-        key: "hgvs",
-        label: "HGVS.c",
+        key: 'hgvs',
+        label: 'HGVS.c',
         sortable: false,
     },
     {
-        key: "disease",
-        label: "Disease(s)",
+        key: 'diseases',
+        label: 'Disease(s)',
         sortable: true,
     },
     {
-        key: "status",
-        label: "Status",
+        key: 'status',
+        label: 'Reviews',
         sortable: true,
     },
+
     {
-        key: "deadline",
-        label: "Deadline (days left)",
+        key: 'variant_status',
+        label: 'Status',
         sortable: true,
     },
+
     {
-        key: "curator",
-        label: "Curator(s)",
+        key: 'curators',
+        label: 'Curator(s)',
         sortable: true,
-        filterByFormatted: (x) =>
-            x.map((z) => abbreviatedName(z.name).abbrev).join(", "),
+        filterByFormatted: x => x.map(z => abbreviatedName(z.name).abbrev).join(', '),
     },
     {
-        key: "action",
-        label: "Action",
+        key: 'action',
+        label: 'Action',
         sortable: false,
     },
 ];

@@ -1,66 +1,38 @@
 <template>
     <span>
-        <a
-            ref="anchor"
-            :id="`link-${auto_id}`"
-            :href="url"
-            target="_blank"
-            @click="openReference"
-            >{{ title }}</a
-        >
+        <a ref="anchor" :id="`link-${auto_id}`" :href="url" target="_blank" @click="openReference">
+            {{ title }}
+        </a>
 
         <b-popover
             :target="() => $refs.anchor"
             triggers="hover focus"
             data-container="body"
-            @show="updateCitation"
-        >
+            @show="updateCitation">
             <template>
                 <div
                     v-if="variomes && variomesIsValid"
-                    :class="[
-                        'variomes-popover',
-                        isShortAbstract ? 'short-abstract' : null,
-                    ]"
-                >
-                    <h6
-                        class="title"
-                        v-html="single_publication.title_highlight"
-                    ></h6>
+                    :class="['variomes-popover', isShortAbstract ? 'short-abstract' : null]">
+                    <h6 class="title" v-html="single_publication.title_highlight"></h6>
                     <div class="authors">
-                        {{ formatAuthors(single_publication.authors) }}.
-                        {{ single_publication.journal }} ({{
+                        {{ formatAuthors(single_publication.authors) }}. {{ single_publication.journal }} ({{
                             single_publication.date
                         }})
                     </div>
-                    <div
-                        class="abstract"
-                        v-html="single_publication.abstract_highlight"
-                    ></div>
+                    <div class="abstract" v-html="single_publication.abstract_highlight"></div>
 
                     <div class="abstract-fader"></div>
                 </div>
-                <div
-                    v-else-if="variomes && error"
-                    class="d-flex align-items-center"
-                >
-                    <icon
-                        name="exclamation-triangle"
-                        scale="2"
-                        style="color: #c6af89"
-                    />
-                    <div class="ml-2">
-                        Couldn't retrieve publication info, try again later.
-                    </div>
+                <div v-else-if="variomes && error" class="d-flex align-items-center">
+                    <icon name="exclamation-triangle" scale="2" style="color: #c6af89" />
+                    <div class="ml-2">Couldn't retrieve publication info, try again later.</div>
                 </div>
                 <span v-else-if="!parsedPMID">
-                    <b>external link to:</b> {{ pubmeta.url }}
+                    <b>external link to:</b>
+                    {{ pubmeta.url }}
                 </span>
                 <span v-else class="variomes-loading">
-                    <b-spinner
-                        variant="secondary"
-                        style="width: 1rem; height: 1rem; margin-right: 5px"
-                    />
+                    <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px" />
                     loading...
                 </span>
             </template>
@@ -69,25 +41,25 @@
 </template>
 
 <script>
-import { HTTP } from "@/router/http";
-import ulog from "ulog";
+import {HTTP} from '@/router/http';
+import ulog from 'ulog';
 
-const log = ulog("VariomesLitPopover");
+const log = ulog('VariomesLitPopover');
 
 // FIXME: eventually link to http://variomes.hesge.ch/Variomes/literature.jsp?id=27145535&gene=NRAS&variant=Q61R
 
 let ids = 0;
 
 export default {
-    name: "VariomesLitPopover",
+    name: 'VariomesLitPopover',
     props: {
-        pubmeta: { type: Object, required: false },
-        pmid: { type: String, required: false },
-        gene: { type: String },
-        variant: { type: String },
-        disease: { type: String },
-        deferred: { type: Boolean, default: false },
-        content: { required: false },
+        pubmeta: {type: Object, required: false},
+        pmid: {type: String, required: false},
+        gene: {type: String},
+        variant: {type: String},
+        disease: {type: String},
+        deferred: {type: Boolean, default: false},
+        content: {required: false},
     },
     data() {
         return {
@@ -109,20 +81,18 @@ export default {
     computed: {
         parsedPMID() {
             const target = this.pmid ? this.pmid : this.pubmeta.pmid;
-            return (
-                target && target.replace("PMID:", "").replace("PMC:", "").trim()
-            );
+            return target && target.replace('PMID:', '').replace('PMC:', '').trim();
         },
         url() {
             if (!this.parsedPMID) {
                 return this.pubmeta && this.pubmeta.url;
             }
 
-            if (this.parsedPMID.includes("PMC")) {
+            if (this.parsedPMID.includes('PMC')) {
                 return `http://www.ncbi.nlm.nih.gov/pmc/articles/${this.parsedPMID}`;
             }
 
-            if (this.parsedPMID.includes("NCT")) {
+            if (this.parsedPMID.includes('NCT')) {
                 return `https://clinicaltrials.gov/ct2/show/${this.parsedPMID}`;
             }
 
@@ -147,11 +117,7 @@ export default {
             );
         },
         single_publication() {
-            return (
-                this.variomes &&
-                this.variomes.publications &&
-                this.variomes.publications[0]
-            );
+            return this.variomes && this.variomes.publications && this.variomes.publications[0];
         },
         isShortAbstract() {
             return (
@@ -169,14 +135,14 @@ export default {
             }
 
             if (authors.length > 5) {
-                return authors.slice(0, 3).concat("et al").join(", ");
+                return authors.slice(0, 3).concat('et al').join(', ');
             }
 
-            return authors.join(", ");
+            return authors.join(', ');
         },
         updateCitation() {
             // close all other popovers before showing this one
-            this.$root.$emit("bv::hide::popover");
+            this.$root.$emit('bv::hide::popover');
 
             this.error = null;
 
@@ -198,22 +164,22 @@ export default {
                     genvars: `${this.gene} (${this.variant})`,
                     disease: this.disease,
                     collection:
-                        this.parsedPMID && this.parsedPMID.includes("PMC")
-                            ? "pmc"
-                            : this.parsedPMID && this.parsedPMID.includes("NCT")
-                            ? "ct"
-                            : undefined,
-                    hl_fields: "title,abstract",
+                        this.parsedPMID && this.parsedPMID.includes('PMC')
+                            ? 'pmc'
+                            : this.parsedPMID && this.parsedPMID.includes('NCT')
+                                ? 'ct'
+                                : undefined,
+                    hl_fields: 'title,abstract',
                 },
             })
-                .then((response) => {
+                .then(response => {
                     this.variomes = response.data;
 
                     if (
                         response.data &&
                         response.data.errors &&
                         Object.keys(response.data.errors).length > 0 &&
-                        response.data.errors.level === "error"
+                        response.data.errors.level === 'error'
                     ) {
                         // log.warn("Errors: ", JSON.stringify(response.data.errors));
                         this.error = {
@@ -221,7 +187,7 @@ export default {
                         };
                     }
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.variomes = true;
                     this.error = {
@@ -231,7 +197,7 @@ export default {
         },
         openReference() {
             // hide all popovers before we continue, so that they don't remain open if middle-clicked
-            this.$root.$emit("bv::hide::popover");
+            this.$root.$emit('bv::hide::popover');
         },
     },
 };

@@ -11,8 +11,7 @@
                     class="sig-bar-chart"
                     :viewBox="`0 0 300 ${barHeight}`"
                     preserveAspectRatio="none"
-                    :style="`height: ${barHeight}`"
-                >
+                    :style="`height: ${barHeight}`">
                     <g v-for="d in bar.sections" :key="d.k">
                         <rect
                             class="bar"
@@ -20,36 +19,24 @@
                             :y="0"
                             :width="d.width"
                             :height="d.height"
-                            :fill="d.c"
-                        ></rect>
+                            :fill="d.c"></rect>
                     </g>
                 </svg>
 
                 <b-tooltip
-                    :target="
-                        () =>
-                            getDocument().getElementById(
-                                `disease-chart_${bar.name}`
-                            )
-                    "
-                    placement="bottom"
-                >
+                    :target="() => getDocument().getElementById(`disease-chart_${bar.name}`)"
+                    placement="bottom">
                     <div
                         v-for="disease in getDiseasesForTissue(bar.name)"
                         :key="disease.name"
-                        style="text-align: left"
-                    >
+                        style="text-align: left">
                         <svg width="10" height="10" class="legend-swatch">
-                            <rect
-                                width="10"
-                                height="10"
-                                :fill="diseaseColors(disease.name)"
-                            ></rect>
+                            <rect width="10" height="10" :fill="diseaseColors(disease.name)"></rect>
                         </svg>
-                        <span
-                            ><b>{{ disease.name }}:</b>
-                            {{ disease.count.toLocaleString() }}</span
-                        >
+                        <span>
+                            <b>{{ disease.name }}:</b>
+                            {{ disease.count.toLocaleString() }}
+                        </span>
                     </div>
                 </b-tooltip>
             </div>
@@ -58,11 +45,11 @@
 </template>
 
 <script>
-import * as d3 from "d3";
-import * as _ from "lodash";
+import * as d3 from 'd3';
+import * as _ from 'lodash';
 
 export default {
-    name: "TissueDistribution",
+    name: 'TissueDistribution',
     data() {
         return {
             width: 300,
@@ -70,28 +57,27 @@ export default {
             padding: 1,
         };
     },
-    props: ["tissue_counts"],
+    props: ['tissue_counts'],
     methods: {
         getDocument() {
             return document;
         },
         getDiseasesForTissue(tissue_name) {
-            return this.tissue_counts.find((x) => x.name === tissue_name)
-                .diseases;
+            return this.tissue_counts.find(x => x.name === tissue_name).diseases;
         },
     },
     computed: {
         diseases() {
-            return _.flatten(this.tissue_counts.map((x) => x.diseases));
+            return _.flatten(this.tissue_counts.map(x => x.diseases));
         },
         diseaseColors() {
-            const disease_names = this.diseases.map((x) => x.name);
+            const disease_names = this.diseases.map(x => x.name);
             return d3.scaleOrdinal(d3.schemeSet3).domain(disease_names);
         },
         bars() {
-            const maxWidth = _.max(this.tissue_counts.map((x) => x.count));
+            const maxWidth = _.max(this.tissue_counts.map(x => x.count));
 
-            return this.tissue_counts.map((curTissue) => {
+            return this.tissue_counts.map(curTissue => {
                 const total = curTissue.count;
                 const x = d3
                     .scaleLinear()
@@ -101,13 +87,9 @@ export default {
                 return {
                     name: curTissue.name,
                     sections: curTissue.diseases.map((d, i) => {
-                        const prop = (x) => x / total;
+                        const prop = x => x / total;
                         const xpos =
-                            i > 0
-                                ? d3.sum(this.tissue_counts.slice(0, i), (p) =>
-                                      x(prop(p.count))
-                                  )
-                                : 0;
+                            i > 0 ? d3.sum(this.tissue_counts.slice(0, i), p => x(prop(p.count))) : 0;
 
                         return {
                             v: d.count,

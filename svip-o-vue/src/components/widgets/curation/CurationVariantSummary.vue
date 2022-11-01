@@ -4,18 +4,14 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     Variant Summary
-                    <b
-                        class="draft-header"
-                        v-bind:style="{ display: this.draftDisplay }"
-                        >[ DRAFT ]</b
-                    >
+                    <b class="draft-header" v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
                     <div v-if="date !== null" class="update">
                         Last update:
                         <b class="date">
                             {{
-                                new Intl.DateTimeFormat("en-GB", {
-                                    dateStyle: "long",
-                                    timeStyle: "short",
+                                new Intl.DateTimeFormat('en-GB', {
+                                    dateStyle: 'long',
+                                    timeStyle: 'short',
                                 }).format(date)
                             }}
                         </b>
@@ -33,8 +29,7 @@
                             backgroundColor: this.summaryTextBackground,
                             height: textboxHeight,
                         }"
-                        @input="summaryDraftBoolean"
-                    />
+                        @input="summaryDraftBoolean" />
                 </b-card-text>
 
                 <b-card-footer class="d-flex justify-content-end p-2">
@@ -42,51 +37,34 @@
                         class="mr-2 centered-icons"
                         variant="info"
                         v-b-tooltip="'History'"
-                        @click="showHistory"
-                    >
-                        <icon name="history" label="History" /> History
+                        @click="showHistory">
+                        <icon name="history" label="History" />
+                        History
                     </b-button>
                     <b-button
                         variant="warning"
                         class="mr-2 centered-icons"
                         :disabled="!showSummaryDraft"
-                        @click="saveSummaryDraft"
-                    >
+                        @click="saveSummaryDraft">
                         Finish later
                     </b-button>
                     <b-button
                         variant="danger"
                         class="mr-2 centered-icons"
                         :disabled="!showSummaryDraft"
-                        @click="deleteSummaryDraft"
-                    >
+                        @click="deleteSummaryDraft">
                         Delete this draft
                     </b-button>
-                    <b-button
-                        variant="success"
-                        class="centered-icons"
-                        @click="saveSummary"
-                    >
+                    <b-button variant="success" class="centered-icons" @click="saveSummary">
                         Save Summary
                     </b-button>
                 </b-card-footer>
             </b-card-body>
         </b-card>
 
-        <b-modal
-            ref="history-modal"
-            hide-footer
-            static
-            lazy
-            scrollable
-            size="lg"
-            :title="`Summary History`"
-        >
+        <b-modal ref="history-modal" hide-footer static lazy scrollable size="lg" :title="`Summary History`">
             <div>
-                <VariantInSVIPHistory
-                    v-if="history_entry_id"
-                    :entry_id="history_entry_id"
-                />
+                <VariantInSVIPHistory v-if="history_entry_id" :entry_id="history_entry_id" />
                 <div v-else>Error: no summary history available</div>
             </div>
         </b-modal>
@@ -95,19 +73,19 @@
 
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
-import { HTTP } from "@/router/http";
-import BroadcastChannel from "broadcast-channel";
-import VariantInSVIPHistory from "@/components/widgets/curation/VariantInSVIPHistory";
-import ulog from "ulog";
-import { mapGetters } from "vuex";
+import {HTTP} from '@/router/http';
+import BroadcastChannel from 'broadcast-channel';
+import VariantInSVIPHistory from '@/components/widgets/curation/VariantInSVIPHistory';
+import ulog from 'ulog';
+import {mapGetters} from 'vuex';
 
-const log = ulog("CurationVariantSummary");
+const log = ulog('CurationVariantSummary');
 
 export default {
-    name: "CurationVariantSummary",
-    components: { VariantInSVIPHistory },
+    name: 'CurationVariantSummary',
+    components: {VariantInSVIPHistory},
     props: {
-        variant: { type: Object, required: false },
+        variant: {type: Object, required: false},
     },
     data() {
         return {
@@ -119,11 +97,11 @@ export default {
             date: null,
             changeDate: false,
 
-            textboxHeight: "2rem",
+            textboxHeight: '2rem',
             history_entry_id: null,
             loading: false,
             error: null,
-            channel: new BroadcastChannel("curation-update"),
+            channel: new BroadcastChannel('curation-update'),
         };
     },
     mounted() {
@@ -145,29 +123,23 @@ export default {
             return this.showSummaryDraft ? this.summaryDraft : this.summary;
         },
         ...mapGetters({
-            user: "currentUser",
+            user: 'currentUser',
         }),
         draftDisplay() {
-            return this.showSummaryDraft ? "inline-block" : "none";
+            return this.showSummaryDraft ? 'inline-block' : 'none';
         },
         summaryTextBackground() {
-            return this.showSummaryDraft ? "rgb(248, 236, 210)" : "white";
+            return this.showSummaryDraft ? 'rgb(248, 236, 210)' : 'white';
         },
     },
     methods: {
         convertRemToPixels(rem) {
-            return (
-                rem *
-                parseFloat(getComputedStyle(document.documentElement).fontSize)
-            );
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         },
         summaryDraftBoolean() {
             //const regExp = /[a-zA-Z]/g;
             //if (regExp.test(this.summaryDraft) && this.summaryDraft !== this.summary) {
-            if (
-                this.summaryDraft != null &&
-                this.summaryDraft !== this.summary
-            ) {
+            if (this.summaryDraft != null && this.summaryDraft !== this.summary) {
                 this.showSummaryDraft = true;
             } else {
                 this.showSummaryDraft = false;
@@ -175,25 +147,24 @@ export default {
         },
         getSummaryDraft() {
             // get already existing summary draft for this variant and user (if exists)
-            HTTP.get(
-                `/summary_draft/?variant=${this.variant.id}&owner=${this.user.user_id}`
-            ).then((response) => {
-                const results = response.data.results;
-                if (results.length > 0) {
-                    this.serverSummaryDraft = results[0];
-                    this.summaryDraft = results[0].content;
-                }
-                this.summaryDraftBoolean();
+            HTTP.get(`/summary_draft/?variant=${this.variant.id}&owner=${this.user.user_id}`).then(
+                response => {
+                    const results = response.data.results;
+                    if (results.length > 0) {
+                        this.serverSummaryDraft = results[0];
+                        this.summaryDraft = results[0].content;
+                    }
+                    this.summaryDraftBoolean();
 
-                const totalHeight =
-                    document.getElementById("variant-summary").scrollHeight;
-                const maxHeight = this.convertRemToPixels(14);
-                if (totalHeight > maxHeight) {
-                    this.textboxHeight = maxHeight + "px";
-                } else {
-                    this.textboxHeight = totalHeight + "px";
+                    const totalHeight = document.getElementById('variant-summary').scrollHeight;
+                    const maxHeight = this.convertRemToPixels(14);
+                    if (totalHeight > maxHeight) {
+                        this.textboxHeight = maxHeight + 'px';
+                    } else {
+                        this.textboxHeight = totalHeight + 'px';
+                    }
                 }
-            });
+            );
         },
         changeSummary(event) {
             this.summaryDraft = event;
@@ -211,11 +182,11 @@ export default {
                 HTTP.post(`/summary_draft/`, summaryDraftJSON)
                     .then(() => {
                         this.getSummaryDraft();
-                        this.$snotify.success("Your draft has been posted");
+                        this.$snotify.success('Your draft has been posted');
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         log.warn(err);
-                        this.$snotify.error("Failed to post new summary draft");
+                        this.$snotify.error('Failed to post new summary draft');
                     });
             } else {
                 // summaryDraft already exists: modify it
@@ -224,11 +195,11 @@ export default {
                 })
                     .then(() => {
                         this.getSummaryDraft();
-                        this.$snotify.success("Your draft has been updated");
+                        this.$snotify.success('Your draft has been updated');
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         log.warn(err);
-                        this.$snotify.error("Failed to update summary draft");
+                        this.$snotify.error('Failed to update summary draft');
                     });
             }
         },
@@ -240,20 +211,20 @@ export default {
                         this.serverSummaryDraft = null;
                         this.summaryDraft = null;
                         this.showSummaryDraft = false;
-                        this.$snotify.success("Your draft has been deleted");
+                        this.$snotify.success('Your draft has been deleted');
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         log.warn(err);
-                        this.$snotify.error("Failed to delete your draft");
+                        this.$snotify.error('Failed to delete your draft');
                     });
             } else {
                 this.summaryDraft = null;
                 this.showSummaryDraft = false;
-                this.$snotify.success("Your draft has been deleted");
+                this.$snotify.success('Your draft has been deleted');
             }
         },
         saveSummary() {
-            let params = { summary: this.summaryModel };
+            let params = {summary: this.summaryModel};
 
             if (this.date) {
                 // following code block relies on VueConfirmDialog (imported in main.js and App.vue)
@@ -261,17 +232,14 @@ export default {
                     message: `Change the modification date of this summary ?\n\n
                         If so, the current date will be replace the existing one.`,
                     button: {
-                        no: "Ignore",
-                        yes: "Update",
+                        no: 'Ignore',
+                        yes: 'Update',
                     },
-                    /**
-                     * Callback Function
-                     * @param {Boolean} confirm
-                     */
-                    callback: (confirm) => {
+
+                    callback: confirm => {
                         if (confirm) {
                             this.changeDate = true;
-                            params["summary_date"] = new Date().toJSON();
+                            params['summary_date'] = new Date().toJSON();
                         } else {
                             this.changeDate = false;
                         }
@@ -281,7 +249,7 @@ export default {
             } else {
                 // no date for summary yet, so don't offer to ignore the date change
                 this.changeDate = true;
-                params["summary_date"] = new Date().toJSON();
+                params['summary_date'] = new Date().toJSON();
                 this.sendSummaryRequest(params);
             }
         },
@@ -290,53 +258,48 @@ export default {
             if (!this.serverSummaryDraft) {
                 // No summary draft in the DB
                 if (!this.variant.svip_data) {
-                    params["variant"] = this.variant.url;
-                    return HTTP.post("/variants_in_svip", params)
-                        .then((response) => {
+                    params['variant'] = this.variant.url;
+                    return HTTP.post('/variants_in_svip', params)
+                        .then(response => {
                             this.variant.svip_data = response.data;
-                            this.$snotify.success(
-                                "Summary updated! (SVIP variant created, too.)"
-                            );
+                            this.$snotify.success('Summary updated! (SVIP variant created, too.)');
                             this.summary = response.data.summary;
                             this.summaryUpdateCallback();
                         })
-                        .catch((err) => {
+                        .catch(err => {
                             log.warn(err);
-                            this.$snotify.error("Failed to update summary");
+                            this.$snotify.error('Failed to update summary');
                         });
                 } else {
-                    HTTP.patch(
-                        `/variants_in_svip/${this.variant.svip_data.id}/`,
-                        params
-                    )
-                        .then((response) => {
-                            this.$snotify.success("Summary updated!");
+                    HTTP.patch(`/variants_in_svip/${this.variant.svip_data.id}/`, params)
+                        .then(response => {
+                            this.$snotify.success('Summary updated!');
                             this.summary = response.data.summary;
                             this.summaryUpdateCallback();
                         })
-                        .catch((err) => {
+                        .catch(err => {
                             log.warn(err);
-                            this.$snotify.error("Failed to update summary");
+                            this.$snotify.error('Failed to update summary');
                         });
                 }
             } else {
                 // Update summary and delete draft in the same request
                 // Provide var_id only if VariantInSVIP already existing (if not provided, the viewset will simply create it)
                 if (this.variant.svip_data) {
-                    params["var_id"] = this.variant.svip_data.id;
+                    params['var_id'] = this.variant.svip_data.id;
                 }
-                params["summary_draft_id"] = this.serverSummaryDraft.id;
+                params['summary_draft_id'] = this.serverSummaryDraft.id;
 
                 HTTP.post(`/update_variant_summary`, params)
                     .then(() => {
                         this.serverSummaryDraft = null;
-                        this.$snotify.success("Summary updated!");
+                        this.$snotify.success('Summary updated!');
                         this.summary = this.summaryModel;
                         this.summaryUpdateCallback();
                     })
-                    .catch((err) => {
+                    .catch(err => {
                         log.warn(err);
-                        this.$snotify.error("Failed to update summary");
+                        this.$snotify.error('Failed to update summary');
                     });
             }
         },
@@ -348,7 +311,7 @@ export default {
             }
         },
         showHistory() {
-            this.$refs["history-modal"].show();
+            this.$refs['history-modal'].show();
             this.history_entry_id = this.variant.svip_data.id;
         },
     },
@@ -361,6 +324,7 @@ export default {
     display: flex;
     align-items: center;
 }
+
 .pub-status > .fa-icon {
     margin-right: 0.4rem;
 }
@@ -369,6 +333,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 }
+
 .action-tray .btn {
     margin-left: 5px;
     margin-bottom: 5px;

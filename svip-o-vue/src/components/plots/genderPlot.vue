@@ -10,27 +10,20 @@
                     :y="d.y"
                     :width="d.width"
                     :height="d.height"
-                    :fill="d.c"
-                ></rect>
+                    :fill="d.c"></rect>
 
                 <line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
             </svg>
 
             <b-tooltip :target="() => $refs.thechart" placement="top">
-                <div
-                    v-for="d in this.formattedData"
-                    :key="d.k"
-                    style="text-align: left"
-                >
+                <div v-for="d in this.formattedData" :key="d.k" style="text-align: left">
                     <svg width="10" height="10" class="legend-swatch">
                         <rect width="10" height="10" :fill="d.c"></rect>
                     </svg>
                     <span>
                         <b class="gender-label">{{ d.k }}:</b>
                         {{ d.v.toLocaleString() }}
-                        <span v-if="totalPatients > 0"
-                            >({{ round((d.v / totalPatients) * 100.0) }}%)</span
-                        >
+                        <span v-if="totalPatients > 0">({{ round((d.v / totalPatients) * 100.0) }}%)</span>
                     </span>
                 </div>
             </b-tooltip>
@@ -40,12 +33,12 @@
 </template>
 
 <script>
-import * as d3 from "d3";
-import round from "lodash/round";
+import * as d3 from 'd3';
+import round from 'lodash/round';
 
 const genderColors = {
-    male: "#0F7FFE",
-    female: "#CC66FE",
+    male: '#0F7FFE',
+    female: '#CC66FE',
 };
 
 export default {
@@ -56,7 +49,7 @@ export default {
             padding: 1,
         };
     },
-    props: ["data"],
+    props: ['data'],
     created: function () {
         this.x = d3.scaleLinear();
         this.y = d3.scaleLinear();
@@ -76,13 +69,9 @@ export default {
             return this.data.male + this.data.female;
         },
         layout: function () {
-            this.x
-                .domain([0, this.formattedData.length])
-                .range([0, this.width]);
+            this.x.domain([0, this.formattedData.length]).range([0, this.width]);
 
-            this.y
-                .domain([0, d3.max(this.formattedData, (d) => d.v)])
-                .range([0, this.height]);
+            this.y.domain([0, d3.max(this.formattedData, d => d.v)]).range([0, this.height]);
 
             return this.formattedData.map(
                 (function (_this) {
@@ -93,10 +82,7 @@ export default {
                             x: _this.x(i),
                             y: _this.y.range()[1] - _this.y(d.v),
                             c: d.c,
-                            width: Math.max(
-                                1,
-                                _this.x(1) - _this.x(0) - _this.padding
-                            ),
+                            width: Math.max(1, _this.x(1) - _this.x(0) - _this.padding),
                             height: _this.y(d.v),
                         };
                     };

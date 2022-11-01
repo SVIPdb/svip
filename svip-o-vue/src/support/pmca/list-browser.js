@@ -1,6 +1,6 @@
-import { html, PolymerElement } from "@polymer/polymer/polymer-element.js";
-import "./extra_modules/elix/src/FilterListBox.js";
-import "./shared-style.js";
+import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import './extra_modules/elix/src/FilterListBox.js';
+import './shared-style.js';
 /**
  * `list-browser`
  *
@@ -71,32 +71,28 @@ class ListBrowser extends PolymerElement {
 
     ready() {
         super.ready();
-        var listbox = this.root.querySelector("elix-filter-list-box");
-        listbox.addEventListener(
-            "selected-index-changed",
-            this._handleSelectedIndexChanged
-        );
+        var listbox = this.root.querySelector('elix-filter-list-box');
+        listbox.addEventListener('selected-index-changed', this._handleSelectedIndexChanged);
     }
 
     clearList() {
-        var listbox = this.root.querySelector("elix-filter-list-box");
-        var children = listbox.querySelectorAll("list-item-div");
+        var listbox = this.root.querySelector('elix-filter-list-box');
+        var children = listbox.querySelectorAll('list-item-div');
 
-        for (var i = 0; i < children.length; i++)
-            listbox.removeChild(children[i]);
+        for (var i = 0; i < children.length; i++) listbox.removeChild(children[i]);
     }
 
     fillList(filters) {
         this.clearList();
         if (this.data == null) return;
-        var listbox = this.root.querySelector("elix-filter-list-box");
+        var listbox = this.root.querySelector('elix-filter-list-box');
 
         for (var i = 0; i < this.data.length; i++) {
             var item = this.data[i];
             if (this._filterOut(item, filters)) continue;
-            var div = document.createElement("list-item-div");
+            var div = document.createElement('list-item-div');
             div.appendChild(document.createTextNode(item.label));
-            div.setAttribute("customid", item.id);
+            div.setAttribute('customid', item.id);
             listbox.appendChild(div);
         }
     }
@@ -106,23 +102,22 @@ class ListBrowser extends PolymerElement {
 
         for (var i = 0; i < filters.length; i++) {
             var filter = filters[i];
-            if (filter.name == annot.concept_source)
-                return filter.checked == false;
+            if (filter.name == annot.concept_source) return filter.checked == false;
         }
 
         return false;
     }
 
     setSelectedItem(id) {
-        var listbox = this.root.querySelector("elix-filter-list-box");
-        var children = listbox.querySelectorAll("list-item-div");
+        var listbox = this.root.querySelector('elix-filter-list-box');
+        var children = listbox.querySelectorAll('list-item-div');
 
         for (var i = 0; i < children.length; i++) {
             var child = children[i];
-            var childId = child.getAttribute("customid"); //console.log("childId",childId, id);
+            var childId = child.getAttribute('customid'); //console.log("childId",childId, id);
 
             if (childId == id) {
-                if (child.style.display == "none") this._handleClearFilter();
+                if (child.style.display == 'none') this._handleClearFilter();
                 listbox.selectedItem = child;
                 listbox.scrollSelectionIntoView();
                 return;
@@ -133,10 +128,10 @@ class ListBrowser extends PolymerElement {
     }
 
     getSelectedItemId() {
-        var listbox = this.root.querySelector("elix-filter-list-box");
+        var listbox = this.root.querySelector('elix-filter-list-box');
         var slct = listbox.selectedItem;
         if (slct == undefined || slct == null) return null;
-        return slct.getAttribute("customid");
+        return slct.getAttribute('customid');
     }
 
     _handleSelectedIndexChanged(e) {
@@ -148,11 +143,11 @@ class ListBrowser extends PolymerElement {
         };
         if (idx > -1)
             detail.selectedItem = {
-                id: item.getAttribute("customid"),
+                id: item.getAttribute('customid'),
                 label: item.textContent,
             };
         this.dispatchEvent(
-            new CustomEvent("list-browser-selected-index-changed", {
+            new CustomEvent('list-browser-selected-index-changed', {
                 composed: true,
                 detail: detail,
             })
@@ -160,17 +155,17 @@ class ListBrowser extends PolymerElement {
     }
 
     _handleFilterChange() {
-        var filter = this.root.querySelector(".filter-input");
-        var listbox = this.root.querySelector("elix-filter-list-box"); //console.log(filter.value);
+        var filter = this.root.querySelector('.filter-input');
+        var listbox = this.root.querySelector('elix-filter-list-box'); //console.log(filter.value);
 
         listbox.filter = filter.value;
     }
 
     _handleClearFilter() {
-        var filter = this.root.querySelector(".filter-input");
+        var filter = this.root.querySelector('.filter-input');
 
         if (filter.value) {
-            filter.value = "";
+            filter.value = '';
 
             this._handleFilterChange();
         }
@@ -182,4 +177,4 @@ class ListBrowser extends PolymerElement {
     }
 }
 
-window.customElements.define("list-browser", ListBrowser);
+window.customElements.define('list-browser', ListBrowser);

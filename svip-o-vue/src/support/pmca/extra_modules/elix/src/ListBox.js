@@ -1,22 +1,22 @@
-import { merge } from "./updates.js";
-import * as symbols from "./symbols.js";
-import * as template from "./template.js";
-import AriaListMixin from "./AriaListMixin.js";
-import ComposedFocusMixin from "./ComposedFocusMixin.js";
-import DirectionSelectionMixin from "./DirectionSelectionMixin.js";
-import FocusVisibleMixin from "./FocusVisibleMixin.js";
-import ItemsTextMixin from "./ItemsTextMixin.js";
-import KeyboardDirectionMixin from "./KeyboardDirectionMixin.js";
-import KeyboardMixin from "./KeyboardMixin.js";
-import KeyboardPagedSelectionMixin from "./KeyboardPagedSelectionMixin.js";
-import KeyboardPrefixSelectionMixin from "./KeyboardPrefixSelectionMixin.js";
-import LanguageDirectionMixin from "./LanguageDirectionMixin.js";
-import ReactiveElement from "./ReactiveElement.js";
-import SelectedItemTextValueMixin from "./SelectedItemTextValueMixin.js";
-import SelectionInViewMixin from "./SelectionInViewMixin.js";
-import SingleSelectionMixin from "./SingleSelectionMixin.js";
-import SlotItemsMixin from "./SlotItemsMixin.js";
-import TapSelectionMixin from "./TapSelectionMixin.js";
+import {merge} from './updates.js';
+import * as symbols from './symbols.js';
+import * as template from './template.js';
+import AriaListMixin from './AriaListMixin.js';
+import ComposedFocusMixin from './ComposedFocusMixin.js';
+import DirectionSelectionMixin from './DirectionSelectionMixin.js';
+import FocusVisibleMixin from './FocusVisibleMixin.js';
+import ItemsTextMixin from './ItemsTextMixin.js';
+import KeyboardDirectionMixin from './KeyboardDirectionMixin.js';
+import KeyboardMixin from './KeyboardMixin.js';
+import KeyboardPagedSelectionMixin from './KeyboardPagedSelectionMixin.js';
+import KeyboardPrefixSelectionMixin from './KeyboardPrefixSelectionMixin.js';
+import LanguageDirectionMixin from './LanguageDirectionMixin.js';
+import ReactiveElement from './ReactiveElement.js';
+import SelectedItemTextValueMixin from './SelectedItemTextValueMixin.js';
+import SelectionInViewMixin from './SelectionInViewMixin.js';
+import SingleSelectionMixin from './SingleSelectionMixin.js';
+import SlotItemsMixin from './SlotItemsMixin.js';
+import TapSelectionMixin from './TapSelectionMixin.js';
 const Base = AriaListMixin(
     ComposedFocusMixin(
         DirectionSelectionMixin(
@@ -30,11 +30,7 @@ const Base = AriaListMixin(
                                         SelectedItemTextValueMixin(
                                             SelectionInViewMixin(
                                                 SingleSelectionMixin(
-                                                    SlotItemsMixin(
-                                                        TapSelectionMixin(
-                                                            ReactiveElement
-                                                        )
-                                                    )
+                                                    SlotItemsMixin(TapSelectionMixin(ReactiveElement))
                                                 )
                                             )
                                         )
@@ -78,25 +74,21 @@ const Base = AriaListMixin(
 class ListBox extends Base {
     get defaultState() {
         return Object.assign(super.defaultState, {
-            orientation: "vertical",
+            orientation: 'vertical',
         });
     }
 
     itemUpdates(item, calcs, original) {
-        const base = super.itemUpdates
-            ? super.itemUpdates(item, calcs, original)
-            : {};
+        const base = super.itemUpdates ? super.itemUpdates(item, calcs, original) : {};
         const selected = calcs.selected;
-        const color = selected ? "highlighttext" : original.style.color;
-        const backgroundColor = selected
-            ? "highlight"
-            : original.style["background-color"];
+        const color = selected ? 'highlighttext' : original.style.color;
+        const backgroundColor = selected ? 'highlight' : original.style['background-color'];
         return merge(base, {
             classes: {
                 selected,
             },
             style: {
-                "background-color": backgroundColor,
+                'background-color': backgroundColor,
                 color,
             },
         });
@@ -156,17 +148,17 @@ class ListBox extends Base {
 
     get updates() {
         const style =
-            this.state.orientation === "vertical"
+            this.state.orientation === 'vertical'
                 ? {
-                      "flex-direction": "column",
-                      "overflow-x": "hidden",
-                      "overflow-y": "auto",
-                  }
+                    'flex-direction': 'column',
+                    'overflow-x': 'hidden',
+                    'overflow-y': 'auto',
+                }
                 : {
-                      "flex-direction": "row",
-                      "overflow-x": "auto",
-                      "overflow-y": "hidden",
-                  };
+                    'flex-direction': 'row',
+                    'overflow-x': 'auto',
+                    'overflow-y': 'hidden',
+                };
         return merge(super.updates, {
             $: {
                 content: {
@@ -177,5 +169,5 @@ class ListBox extends Base {
     }
 }
 
-customElements.define("elix-list-box", ListBox);
+customElements.define('elix-list-box', ListBox);
 export default ListBox;

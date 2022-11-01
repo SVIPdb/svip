@@ -1,6 +1,6 @@
-import { merge } from "./updates.js";
-import * as symbols from "./symbols.js";
-import ListBox from "./ListBox.js";
+import {merge} from './updates.js';
+import * as symbols from './symbols.js';
+import ListBox from './ListBox.js';
 /**
  * List that only shows items containing a given text string
  *
@@ -13,7 +13,7 @@ class FilterListBox extends ListBox {
             filter: null,
         }); // When filter changes, let other mixins know items should be recalculated.
 
-        state.onChange("filter", () => ({
+        state.onChange('filter', () => ({
             items: null,
         }));
         return state;
@@ -56,7 +56,7 @@ class FilterListBox extends ListBox {
             const part3 = text.substr(end);
             const fragment = document.createDocumentFragment();
             fragment.appendChild(new Text(part1));
-            const strong = document.createElement("strong");
+            const strong = document.createElement('strong');
             strong.textContent = part2;
             fragment.appendChild(strong);
             fragment.appendChild(new Text(part3));
@@ -67,9 +67,7 @@ class FilterListBox extends ListBox {
     } // An item only matches state if it passes the filter.
 
     [symbols.itemMatchesState](item, state) {
-        const base = super[symbols.itemMatchesState]
-            ? super[symbols.itemMatchesState](item, state)
-            : true;
+        const base = super[symbols.itemMatchesState] ? super[symbols.itemMatchesState](item, state) : true;
 
         if (!base) {
             return false;
@@ -81,21 +79,13 @@ class FilterListBox extends ListBox {
     }
 
     itemUpdates(item, calcs, original) {
-        const base = super.itemUpdates
-            ? super.itemUpdates(item, calcs, original)
-            : {};
-        const { matches } = calcs;
-        const display = matches ? original.style.display : "none";
-        const singleTextNode =
-            item.childNodes.length === 1 && item.childNodes[0] instanceof Text;
-        const textToHighlight =
-            matches && this.state.filter
-                ? this.state.filter.toLowerCase()
-                : null;
+        const base = super.itemUpdates ? super.itemUpdates(item, calcs, original) : {};
+        const {matches} = calcs;
+        const display = matches ? original.style.display : 'none';
+        const singleTextNode = item.childNodes.length === 1 && item.childNodes[0] instanceof Text;
+        const textToHighlight = matches && this.state.filter ? this.state.filter.toLowerCase() : null;
         const childNodes =
-            singleTextNode && !matches
-                ? null
-                : this.highlightTextInItem(textToHighlight, item);
+            singleTextNode && !matches ? null : this.highlightTextInItem(textToHighlight, item);
         return merge(
             base,
             Object.assign(
@@ -112,5 +102,5 @@ class FilterListBox extends ListBox {
     }
 }
 
-customElements.define("elix-filter-list-box", FilterListBox);
+customElements.define('elix-filter-list-box', FilterListBox);
 export default FilterListBox;

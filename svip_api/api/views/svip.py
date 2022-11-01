@@ -13,6 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import copy
 
 from api.models import (
     VariantInSVIP, Sample,
@@ -22,18 +23,18 @@ from api.models import (
     Gene
 )
 from api.models.svip import (
-    SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview, CurationAssociation,
-    CurationEvidence, SIBAnnotation1,
-    SIBAnnotation2, SummaryDraft, GeneSummaryDraft, RevisedReview
+    SubmittedVariant, SubmittedVariantBatch, CurationRequest, SummaryComment, CurationReview,
+    SummaryDraft, GeneSummaryDraft, SubmissionEntry
 )
 from api.permissions import IsCurationPermitted, IsSampleViewer, IsSubmitter
 from api.serializers import (
     VariantInSVIPSerializer, SampleSerializer
 )
 from api.serializers.svip import (
-    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SIBAnnotation2Serializer,
-    SubmittedVariantSerializer, CurationRequestSerializer, SummaryCommentSerializer,
-    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer, RevisedReviewSerializer
+    CurationEntrySerializer, DiseaseInSVIPSerializer, SubmittedVariantBatchSerializer, SubmittedVariantSerializer,
+    CurationRequestSerializer, SummaryCommentSerializer,
+    CurationReviewSerializer, SummaryDraftSerializer, GeneSummaryDraftSerializer,
+    SubmissionEntrySerializer
 )
 from api.support.history import make_history_response
 from api.utils import json_build_fields
@@ -144,7 +145,7 @@ class CurationEntryFilter(django_filters.FilterSet):
     from api.models.svip import CURATION_STATUS
 
     status_ne = django_filters.ChoiceFilter(
-        field_name='status', choices=tuple(CURATION_STATUS.items()),
+        field_name='status', choices=CURATION_STATUS.get_choices(),
         lookup_expr='iexact', exclude=True
     )
     variant_ref = django_filters.NumberFilter(method='any_variant_ref')
@@ -255,7 +256,7 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # for every ID in items, if it's saved upgrade it to a draft
         entryIDs = [int(x) for x in request.GET['items'].split(",")]
         result = CurationEntry.objects.filter(
-            id__in=entryIDs, status='saved').update(status='submitted')
+            id__in=entryIDs, status='saved').update(status='ready_for_submission')
         return JsonResponse({
             "input": entryIDs,
             "changed": result
@@ -295,47 +296,112 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         )
 
 
-class CurationReviewView(APIView):
-    def post(self, request, *args, **kwargs):
-        for obj in request.data:
-            if 'id' in obj:
-                review = CurationReview.objects.get(id=obj['id'])
-            else:
-                review = CurationReview()
-            review.curation_evidence = CurationEvidence.objects.get(
-                id=obj['curation_evidence'])
-            review.annotated_effect = obj['annotated_effect']
-            review.annotated_tier = obj['annotated_tier']
-            review.comment = obj['comment']
-            review.draft = obj['draft']
-            review.reviewer = User.objects.get(id=obj['reviewer'])
-            review.save()
-        return Response(data='Submitted reviews are succesfully saved')
+class SubmissionEntryViewSet(viewsets.ModelViewSet):
+    """
+    View for manage submission entries
+    """
+    serializer_class = SubmissionEntrySerializer
+    permission_classes = (permissions.IsAuthenticated, IsCurationPermitted)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter,)
+    filter_fields = (
+        'disease', 'variant', 'effect', 'drug', 'tier', 'type_of_evidence'
+    )
+    ordering_fields = filter_fields
+    search_fields = filter_fields
+    queryset = SubmissionEntry.objects.all()
+
+    def get_queryset(self):
+        if self.request.GET.get('variant_id'):
+            return self.queryset.filter(variant=self.request.GET.get('variant_id'))
+        return self.queryset
+
+    def perform_create(self, serializer):
+        """Create a new recipe."""
+        serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['POST'])
+    def bulk_submit(self, request):
+
+        if isinstance(request.data, dict) and request.data['update']:
+            for entry in request.data['data']:
+                submission_entry = SubmissionEntry.objects.filter(pk=entry['id'])
+                submission_entry.update(effect=entry['effect'], tier=entry['tier'],
+                                        review_cycle=submission_entry[0].review_cycle + 1)
+                for id in entry['curation_entries']:
+                    CurationEntry.objects.filter(pk=id).update(status='resubmitted')
+                for id in entry['curation_reviews']:
+                    CurationReview.objects.get(pk=id).delete()
+            return JsonResponse({
+                "message": "Your annotation  was successfully saved!",
+
+            })
+
+        for item in request.data:
+            disease = None
+            if item['disease_id']:
+                disease = Disease.objects.get(id=item['disease_id'])
+            submission_entry = SubmissionEntry(variant=Variant.objects.get(pk=item['variant_id']),
+                                               owner=User.objects.get(id=item['owner_id']),
+                                               drug=item['drug'],
+                                               type_of_evidence=item['type_of_evidence'],
+                                               effect=item['effect'],
+                                               tier=item['tier'],
+                                               disease=disease)
+            submission_entry.save()
+
+            for entry_id in item['curation_entries']:
+                CurationEntry.objects.filter(pk=entry_id).update(status='submitted',
+                                                                 submission_entry=submission_entry)
+
+        return JsonResponse({
+            "message": "Curations were successfully saved!",
+
+        })
 
 
 class CurationReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CurationReviewSerializer
     model = CurationReview
+
+    def __save_review_obj(self, obj):
+
+        if 'id' in obj:
+            review = CurationReview.objects.get(id=obj['id'])
+        else:
+            review = CurationReview()
+        review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
+        review.annotated_effect = obj['effect']
+        review.annotated_tier = obj['tier']
+        review.comment = obj['comment']
+        review.draft = obj['draft']
+        review.reviewer = User.objects.get(id=obj['reviewer'])
+        review.acceptance = obj['acceptance']
+        review.save()
+        response = copy.deepcopy(obj)
+        response["id"] = review.id
+        return response
 
     def get_queryset(self):
         queryset = CurationReview.objects.all()
         return queryset
 
-    def get_serializer(self, *args, **kwargs):
-        return super(CurationReviewViewSet, self).get_serializer(*args, **kwargs)
+    @action(detail=False, methods=['POST'])
+    def submit_review(self, request):
+        self.__save_review_obj(request.data)
+        return Response(data='Submitted reviews are succesfully saved', status=status.HTTP_201_CREATED)
 
-
-class RevisedReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = RevisedReviewSerializer
-    model = RevisedReview
-
-    def get_queryset(self):
-        queryset = RevisedReview.objects.all()
-        return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        # kwargs["many"] = True
-        return super(RevisedReviewViewSet, self).get_serializer(*args, **kwargs)
+    @action(detail=False, methods=['POST'])
+    def bulk_submit(self, request):
+        response = []
+        for item in request.data['data']:
+            response_item = [item[0], []]
+            for obj in item[1]:
+                response_item[1].append(self.__save_review_obj(obj))
+            response.append(response_item)
+        return Response(data={"message": 'Submitted reviews are succesfully saved', "newCurrentReviews": response},
+                        status=status.HTTP_201_CREATED)
 
 
 # ================================================================================================================
@@ -463,33 +529,6 @@ class SampleViewSet(viewsets.ReadOnlyModelViewSet):
         return q.order_by('id')
 
 
-class SIBAnnotation1View(APIView):
-    def post(self, request, *args, **kwargs):
-        for obj in request.data:
-            evidence = CurationEvidence.objects.get(id=obj['evidence'])
-            if 'id' in obj:
-                annotation = SIBAnnotation1.objects.get(id=obj['id'])
-            elif len(SIBAnnotation1.objects.filter(evidence=evidence)) > 0:
-                annotation = SIBAnnotation1.objects.get(evidence=evidence)
-            else:
-                annotation = SIBAnnotation1()
-            annotation.evidence = evidence
-            annotation.effect = obj['effect']
-            annotation.tier = obj['tier']
-            annotation.draft = False
-            annotation.save()
-        return Response(data='Submitted annotations are succesfully saved')
-
-
-class SIBAnnotation2ViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SIBAnnotation2Serializer
-
-    def get_queryset(self):
-        queryset = SIBAnnotation2.objects.all()
-        return queryset
-
-
 # ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
@@ -549,159 +588,6 @@ class GeneSummaryDraftViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=owner)
 
         return queryset
-
-
-# ================================================================================================================
-# === Review data
-# ================================================================================================================
-
-
-def review_count(var):
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        return evidence.reviews.count()
-    else:
-        return 0
-
-
-def reviews(var):
-    reviews = []
-    reviewers = []
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.reviews.count() > 0:
-
-            for review in evidence.reviews.all():
-                reviewers.append(review.reviewer_id)
-                reviews.append(review.match())
-
-    return reviews
-
-
-def reviewers(var):
-    reviewers = []
-    reviewers_id = []
-    if not str(var.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-        evidence = var.curation_associations.first().curation_evidences.first()
-        if evidence.reviews.count() > 0:
-            for review in evidence.reviews.all():
-                reviewers.append(review.reviewer)
-                reviewers_id.append(review.reviewer_id)
-
-    return reviewers_id
-
-
-class DashboardReviews(APIView):
-    def get(self, request):
-        results = []
-        var_ids = []
-        for association in CurationAssociation.objects.all():
-            var = association.variant
-
-            if (not str(var.stage) in ['none', 'loaded', 'ongoing_curation']) and (var.id not in var_ids):
-                variant_obj = {
-                    'gene_id': var.gene.id,
-                    'variant_id': var.id,
-                    'gene_name': var.gene.symbol,
-                    'variant': var.name,
-                    'hgvs': var.hgvs_c,
-                    'disease': association.disease.name if association.disease else None,
-                    'status': 'Ongoing',
-                    'deadline': 'n/a',
-                    'requester': '',
-                    'curator': [{'name': f"{curation.owner.first_name} {curation.owner.last_name}"} for curation in
-                                var.curation_entries.distinct('owner')],
-                    'review_count': review_count(var),
-                    'reviews': reviews(var),
-                    'stage': var.stage,
-                    'reviewers_id': reviewers(var),
-                    'stage': var.stage
-                }
-                results.append(variant_obj)
-                var_ids.append(var.id)
-        return Response(
-            data={
-                "reviews": results
-            }
-        )
-
-
-class ReviewDataView(APIView):
-
-    # when user accesses the review page, return the json data
-    def post(self, request, *args, **kwargs):
-
-        # create VariantInSVIP instance if doesn't exist
-        var_id = request.data.get('var_id')
-
-        if request.data.get('only_clinical') == False:
-            only_clinical = False
-        else:
-            only_clinical = True
-
-        variant = Variant.objects.get(id=var_id)
-        matching_svip_var = VariantInSVIP.objects.filter(variant=variant)
-        svip_var_exists = bool(len(matching_svip_var))
-        if not svip_var_exists:
-            svip_var = VariantInSVIP(variant=variant)
-            svip_var.save()
-        else:
-            svip_var = matching_svip_var[0]
-
-        for curation in variant.curation_entries.filter(status="submitted"):
-
-            # if curation.disease and (curation.type_of_evidence in ["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-            # check that a disease is indicated for the curation entry being saved
-            # if curation.disease:
-
-            associations = CurationAssociation.objects.filter(
-                variant=variant).filter(disease=curation.disease)
-
-            # check that no association already exists for these parameters
-            if len(associations) == 0:
-                new_association = CurationAssociation(
-                    variant=variant, disease=curation.disease)
-                new_association.save()
-
-            association = CurationAssociation.objects.filter(
-                variant=variant).filter(disease=curation.disease).first()
-
-            if len(curation.drugs) > 0 and curation.type_of_evidence == "Predictive / Therapeutic":
-                drugs = curation.drugs
-            else:
-                # add null object to empty list so at least one iteration to create an evidence related to no drug
-                drugs = [None]
-
-            for drug in drugs:
-                evidences = association.curation_evidences.filter(
-                    type_of_evidence=curation.type_of_evidence).filter(drug=drug)
-
-                if len(evidences) == 0:
-                    new_evidence = CurationEvidence(
-                        association=association,
-                        type_of_evidence=curation.type_of_evidence,
-                        drug=drug
-                    )
-                    new_evidence.save()
-
-                evidence = association.curation_evidences.filter(
-                    type_of_evidence=curation.type_of_evidence).filter(drug=drug).first()
-                curation.curation_evidences.add(evidence)
-
-            curation.save()
-
-        if only_clinical:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(),
-                }
-            )
-        else:
-            return Response(
-                data={
-                    "review_data": svip_var.review_data(all_evidence_types=True),
-                }
-            )
 
 
 class CurationIds(APIView):

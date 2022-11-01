@@ -10,26 +10,16 @@
                 <transition name="slide-fade">
                     <div v-if="showSummary">
                         <b-card-text class="p-2 m-0">
-                            <b-textarea
-                                class="summary-box"
-                                v-model="summary"
-                                rows="3"
-                            />
+                            <b-textarea class="summary-box" v-model="summary" rows="3" />
                         </b-card-text>
 
                         <b-card-footer class="p-2 m-0">
                             <b-row align-v="center">
                                 <b-col cols="10">
-                                    <div
-                                        v-for="(comment, index) in comments"
-                                        :key="index"
-                                    >
-                                        <b-alert
-                                            :show="comment.content !== null"
-                                            variant="light"
-                                        >
-                                            <b>{{ comment.reviewer }}</b
-                                            >:
+                                    <div v-for="(comment, index) in comments" :key="index">
+                                        <b-alert :show="comment.content !== null" variant="light">
+                                            <b>{{ comment.reviewer }}</b>
+                                            :
                                             <p>{{ comment.content }}</p>
                                         </b-alert>
                                     </div>
@@ -39,7 +29,7 @@
                                         variant="success"
                                         block
                                         class="centered-icons"
-                                    >
+                                        @click="saveSummary">
                                         Save modifications
                                     </b-button>
                                 </b-col>
@@ -55,29 +45,28 @@
 <script>
 // import fields from "@/data/curation/evidence/fields.js";
 // import { HTTP } from "@/router/http";
-import BroadcastChannel from "broadcast-channel";
+import BroadcastChannel from 'broadcast-channel';
 // import ulog from 'ulog';
 
 // const log = ulog('VariantSummary');
 
 export default {
-    name: "ModifyVariantSummary",
+    name: 'ModifyVariantSummary',
     components: {},
     props: {
-        variant: { type: Object, required: false },
-        comments: { type: Array, required: true },
+        variant: {type: Object, required: false},
+        comments: {type: Array, required: true},
     },
     data() {
         return {
             summary: this.variant.svip_data && this.variant.svip_data.summary,
             history_entry_id: null,
-
             loading: false,
             error: null,
-            channel: new BroadcastChannel("curation-update"),
+            channel: new BroadcastChannel('curation-update'),
             showSummary: true,
             isEditMode: false,
-            summaryComment: "",
+            summaryComment: '',
         };
     },
     created() {
@@ -92,14 +81,15 @@ export default {
     },
     computed: {},
     methods: {
+        saveSummary() {},
         saveSummaryComment() {
             this.isEditMode = false;
-            this.$snotify.success("Your comment has been saved");
+            this.$snotify.success('Your comment has been saved');
         },
         deleteSummaryComment() {
-            this.summaryComment = "";
+            this.summaryComment = '';
             this.isEditMode = false;
-            this.$snotify.success("Your comment has been deleted");
+            this.$snotify.success('Your comment has been deleted');
         },
     },
 };

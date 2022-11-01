@@ -1,6 +1,6 @@
-import { html, PolymerElement } from "@polymer/polymer/polymer-element.js";
-import "@polymer/polymer/lib/elements/dom-repeat.js";
-import "./shared-style.js";
+import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
+import './shared-style.js';
 /**
  * `checkbox-group`
  * displays a checkbox group *
@@ -46,35 +46,25 @@ class CheckboxGroup extends PolymerElement {
             </style>
 
             <div style="margin-bottom:0px;">
-                <button on-click="handle_display_all_clicked">
-                    Display all
-                </button>
+                <button on-click="handle_display_all_clicked">Display all</button>
                 <button on-click="handle_hide_all_clicked">Hide all</button>
             </div>
             <div class$="{{_get_class_for_license_restrictions(changecnt)}}">
-                In accordance with license, annotated entities listed below
-                cannot be highlighted in text
+                In accordance with license, annotated entities listed below cannot be highlighted in text
             </div>
             <dom-repeat items="{{_get_category_list(changecnt)}}" as="cat">
                 <template>
-                    <div class="category-div">
-                        {{_get_pretty_category(cat,this.items)}}
-                    </div>
+                    <div class="category-div">{{_get_pretty_category(cat,this.items)}}</div>
 
-                    <dom-repeat
-                        items="{{_get_category_item_list(cat,changecnt)}}"
-                    >
+                    <dom-repeat items="{{_get_category_item_list(cat,changecnt)}}">
                         <template>
                             <div>
                                 <input
                                     on-change="handle_checkbox_change"
                                     type="checkbox"
                                     name="[[item.name]]"
-                                    checked="[[item.checked]]"
-                                />
-                                <label for="[[item.name]]"
-                                    >[[item.label]]</label
-                                >
+                                    checked="[[item.checked]]" />
+                                <label for="[[item.name]]">[[item.label]]</label>
                             </div>
                         </template>
                     </dom-repeat>
@@ -89,17 +79,17 @@ class CheckboxGroup extends PolymerElement {
                 type: Array,
                 value: [
                     {
-                        name: "Name 1",
+                        name: 'Name 1',
                         count: 100,
                         checked: true,
                     },
                     {
-                        name: "Name 2",
+                        name: 'Name 2',
                         count: 200,
                         checked: false,
                     },
                     {
-                        name: "Name 3",
+                        name: 'Name 3',
                         count: 300,
                         checked: true,
                     },
@@ -108,50 +98,50 @@ class CheckboxGroup extends PolymerElement {
             item_details: {
                 type: Object,
                 value: {
-                    BMV: {
-                        label: "BMV - BioMedical Vocabulary",
-                        category: "COVoc Ontology",
+                    'BMV': {
+                        label: 'BMV - BioMedical Vocabulary',
+                        category: 'COVoc Ontology',
                     },
-                    CE: {
-                        label: "CE - Conceptual Entities",
-                        category: "COVoc Ontology",
+                    'CE': {
+                        label: 'CE - Conceptual Entities',
+                        category: 'COVoc Ontology',
                     },
-                    CL: {
-                        label: "CL - Cell Lines",
-                        category: "COVoc Ontology",
+                    'CL': {
+                        label: 'CL - Cell Lines',
+                        category: 'COVoc Ontology',
                     },
-                    CT: {
-                        label: "CT - Clinical Trials",
-                        category: "COVoc Ontology",
+                    'CT': {
+                        label: 'CT - Clinical Trials',
+                        category: 'COVoc Ontology',
                     },
-                    DG: {
-                        label: "DG - Drugs",
-                        category: "COVoc Ontology",
+                    'DG': {
+                        label: 'DG - Drugs',
+                        category: 'COVoc Ontology',
                     },
-                    DIS: {
-                        label: "DIS - Diseases&Syndromes",
-                        category: "COVoc Ontology",
+                    'DIS': {
+                        label: 'DIS - Diseases&Syndromes',
+                        category: 'COVoc Ontology',
                     },
-                    LOC: {
-                        label: "LOC - Geographic Locations",
-                        category: "COVoc Ontology",
+                    'LOC': {
+                        label: 'LOC - Geographic Locations',
+                        category: 'COVoc Ontology',
                     },
-                    SP: {
-                        label: "SP - Organisms",
-                        category: "COVoc Ontology",
+                    'SP': {
+                        label: 'SP - Organisms',
+                        category: 'COVoc Ontology',
                     },
-                    PG: {
-                        label: "PG - Proteins&Genomes",
-                        category: "COVoc Ontology",
+                    'PG': {
+                        label: 'PG - Proteins&Genomes',
+                        category: 'COVoc Ontology',
                     },
-                    ATC: {
-                        label: "A.T.C.",
+                    'ATC': {
+                        label: 'A.T.C.',
                     },
-                    MESH: {
-                        label: "MeSH",
+                    'MESH': {
+                        label: 'MeSH',
                     },
-                    "UniProt small": {
-                        label: "UniProt (truncated)",
+                    'UniProt small': {
+                        label: 'UniProt (truncated)',
                     },
                 },
             },
@@ -167,15 +157,14 @@ class CheckboxGroup extends PolymerElement {
     }
 
     _get_class_for_license_restrictions() {
-        return this.nohighlight ? "license-msg" : "license-msg hidden";
+        return this.nohighlight ? 'license-msg' : 'license-msg hidden';
     }
 
     _get_pretty_category(cat) {
-        if (cat == "zzz_default") {
+        if (cat == 'zzz_default') {
             var somevalue = 23335;
-            if (this._get_category_list(somevalue).length <= 1)
-                return "Default terminologies";
-            return "Other terminologies";
+            if (this._get_category_list(somevalue).length <= 1) return 'Default terminologies';
+            return 'Other terminologies';
         }
 
         return cat;
@@ -208,9 +197,7 @@ class CheckboxGroup extends PolymerElement {
             if (cat == det.category) list.push(det);
         }
 
-        list.sort((a, b) =>
-            a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1
-        );
+        list.sort((a, b) => (a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1));
         return list;
     }
 
@@ -218,7 +205,7 @@ class CheckboxGroup extends PolymerElement {
         var name = data_obj.name; // define default returned object
 
         var details = {
-            category: "zzz_default",
+            category: 'zzz_default',
             label: name,
             name: name,
             checked: data_obj.checked,
@@ -231,7 +218,7 @@ class CheckboxGroup extends PolymerElement {
             if (found_det.label) details.label = found_det.label;
         }
 
-        details.label = details.label + " (" + data_obj.count + ")";
+        details.label = details.label + ' (' + data_obj.count + ')';
         return details;
     }
 
@@ -260,7 +247,7 @@ class CheckboxGroup extends PolymerElement {
     }
 
     set_checkboxes_checked(state) {
-        var boxes = this.root.querySelectorAll("input");
+        var boxes = this.root.querySelectorAll('input');
 
         for (var i = 0; i < boxes.length; i++) {
             this.data[i].checked = state;
@@ -294,7 +281,7 @@ class CheckboxGroup extends PolymerElement {
             filters: this.data,
         };
         this.dispatchEvent(
-            new CustomEvent("filter-state-change", {
+            new CustomEvent('filter-state-change', {
                 composed: true,
                 detail: detail,
             })
@@ -306,4 +293,4 @@ class CheckboxGroup extends PolymerElement {
     }
 }
 
-window.customElements.define("checkbox-group", CheckboxGroup);
+window.customElements.define('checkbox-group', CheckboxGroup);

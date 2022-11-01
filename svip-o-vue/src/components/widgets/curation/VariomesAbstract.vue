@@ -3,71 +3,51 @@
         <b-card-body>
             <div
                 ref="bodytext"
-                :style="`height: 20rem; overflow-y:scroll; resize: vertical; max-height: ${bodyHeight}px;`"
-            >
+                :style="`height: 20rem; overflow-y:scroll; resize: vertical; max-height: ${bodyHeight}px;`">
                 <b-container
                     fluid
                     class="evidence"
                     v-if="variomes && pubData && !variomes.error"
                     @mouseup="citable && getSelectionText()"
-                    @contextmenu="citable && handleRightClick($event)"
-                >
-                    <h5
-                        class="font-weight-bolder"
-                        v-html="pubData.title_highlight"
-                    />
+                    @contextmenu="citable && handleRightClick($event)">
+                    <h5 class="font-weight-bolder" v-html="pubData.title_highlight" />
                     <div>{{ pubData.date }}</div>
                     <p>
                         <b-link
                             v-bind="pubmedURL(`?term=${author}[Author]`)"
                             v-for="(author, index) in pubData.authors"
-                            :key="index"
-                        >
-                            {{
-                                author +
-                                (index < pubData.authors.length - 1 ? ", " : "")
-                            }}
+                            :key="index">
+                            {{ author + (index < pubData.authors.length - 1 ? ', ' : '') }}
                         </b-link>
                     </p>
                     <b>Abstract</b>
-                    <p
-                        class="text-justify"
-                        v-html="pubData.abstract_highlight"
-                    />
+                    <p class="text-justify" v-html="pubData.abstract_highlight" />
                 </b-container>
                 <div
                     v-else-if="variomes && (variomes.error || !pubData)"
-                    class="text-center text-muted font-italic"
-                >
+                    class="text-center text-muted font-italic">
                     <icon
                         name="exclamation-triangle"
                         scale="3"
-                        style="vertical-align: text-bottom; margin-bottom: 5px"
-                    /><br />
+                        style="vertical-align: text-bottom; margin-bottom: 5px" />
+                    <br />
                     We couldn't load the abstract due to a technical issue
                 </div>
                 <div v-else class="text-center">
-                    <b-spinner label="Spinning" variant="primary" /> Loading
+                    <b-spinner label="Spinning" variant="primary" />
+                    Loading
                 </div>
             </div>
 
-            <div
-                v-if="variomes && pubData && !variomes.error"
-                class="ml-3 pt-1 border-top"
-            >
+            <div v-if="variomes && pubData && !variomes.error" class="ml-3 pt-1 border-top">
                 <small>
                     Source:
-                    <b-link v-bind="pubmedURL(pubData.id)">{{
-                        pubData.id
-                    }}</b-link>
+                    <b-link v-bind="pubmedURL(pubData.id)">{{ pubData.id }}</b-link>
 
                     <span v-if="pmcViewerUrl">
                         <span class="d-inline-block ml-1 mr-1">|</span>
-                        <b-link
-                            :href="pmcViewerUrl"
-                            class="bold"
-                            target="_blank"
-                            >view full text on Variomes
+                        <b-link :href="pmcViewerUrl" class="bold" target="_blank">
+                            view full text on Variomes
                             <b-icon-box-arrow-up-right />
                         </b-link>
                     </span>
@@ -78,15 +58,15 @@
 </template>
 
 <script>
-import { pubmedURL } from "@/utils";
-import { BIconBoxArrowUpRight } from "bootstrap-vue";
+import {pubmedURL} from '@/utils';
+import {BIconBoxArrowUpRight} from 'bootstrap-vue';
 
 export default {
-    name: "VariomesAbstract",
-    components: { BIconBoxArrowUpRight },
+    name: 'VariomesAbstract',
+    components: {BIconBoxArrowUpRight},
     props: {
-        variomes: { required: true },
-        citable: { type: Boolean, default: false },
+        variomes: {required: true},
+        citable: {type: Boolean, default: false},
     },
     data() {
         return {
@@ -104,14 +84,11 @@ export default {
                 : null;
         },
         pmcViewerUrl() {
-            if (!this.pubData || this.pubData.collection !== "pmc") {
+            if (!this.pubData || this.pubData.collection !== 'pmc') {
                 return null;
             }
 
-            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace(
-                "PMC",
-                ""
-            )}`;
+            return `https://candy.hesge.ch/pmca/index.html?pmcid=${this.pubData.id.replace('PMC', '')}`;
         },
     },
     watch: {
@@ -124,9 +101,9 @@ export default {
                 this.bodyHeight = Math.max(
                     this.$refs.bodytext
                         ? Array.from(this.$refs.bodytext.children).reduce(
-                              (acc, x) => acc + x.offsetHeight,
-                              0
-                          ) + 20
+                            (acc, x) => acc + x.offsetHeight,
+                            0
+                        ) + 20
                         : 500,
                     500
                 );
@@ -139,13 +116,13 @@ export default {
             if (window.getSelection) {
                 this.selection = window.getSelection().toString();
             } else {
-                this.selection = "";
+                this.selection = '';
             }
         },
         handleRightClick(event) {
             event.stopPropagation();
             event.preventDefault();
-            this.$emit("showmenu", { event, selection: this.selection });
+            this.$emit('showmenu', {event, selection: this.selection});
         },
     },
 };

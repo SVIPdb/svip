@@ -12,6 +12,7 @@ from api.models.genomic import CollapsedAssociation
 # --- site management serializers
 # -----------------------------------------------------------------------------
 
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -116,24 +117,28 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
     sources = serializers.SerializerMethodField()
     gene = GeneSerializer(read_only=True)
 
+    from api.serializers.svip import CurationEntrySerializer, CurationRequestSerializer, SubmissionEntrySerializer
+    curation_entries = CurationEntrySerializer(many=True, required=False)
+    curation_requests = CurationRequestSerializer(many=True, required=False)
+    submission_entries = SubmissionEntrySerializer(many=True, required=False)
+    reviewers = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_reviewers(obj):
+        reviewers = []
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            submission_entry = obj.submission_entries.first()
+            if submission_entry.curation_reviews.count() > 0:
+                for review in submission_entry.curation_reviews.all():
+                    reviewers.append(review.reviewer.id)
+        return reviewers
+
+
     def get_sources(self, obj):
         return sorted(obj.sources) if obj.sources else None
 
     class Meta:
         model = Variant
-        # fields = (
-        #     'url',
-        #     'gene',
-        #     'name',
-        #     'description',
-        #     'biomarker_type',
-        #     'so_hierarchy',
-        #     'soid',
-        #     'so_name',
-        #     'sources',
-        #     'association_set'
-        # )
-
         fields = [field.name for field in model._meta.fields]
         fields.append('url')
         fields.append('gene')
@@ -142,9 +147,11 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields.append('stage')
         fields.append('public_stage')
         fields.append('confidence')
+        fields.append('curation_entries')
+        fields.append('curation_requests')
+        fields.append('submission_entries')
+        fields.append('reviewers')
         fields.remove('mv_info')  # redacted in the list view because it's too verbose
-
-        # FIXME: add sources collection here, from VariantInSource
 
 
 class VariantInSourceSerializer(serializers.HyperlinkedModelSerializer):

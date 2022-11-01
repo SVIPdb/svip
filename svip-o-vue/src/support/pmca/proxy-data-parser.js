@@ -1,8 +1,7 @@
 const DataParser = {
     parsePublicationData: function (publi) {
         var xml_annots = DataParser.extractTableContentAnnotations(publi);
-        var seeds_by_cnt =
-            DataParser.buildTableContentAnnotationSeeds(xml_annots);
+        var seeds_by_cnt = DataParser.buildTableContentAnnotationSeeds(xml_annots);
         DataParser.rebuiltContentAnnotationsForTableList(publi, seeds_by_cnt); //console.log("parse step 1", publi);
 
         DataParser.setupAnnotationIds(publi); //console.log("sorted annotations with id", publi.annotations);
@@ -25,7 +24,7 @@ const DataParser = {
         for (var i = 0; i < publi.annotations.length; i++) {
             var annot = publi.annotations[i];
 
-            if (annot.field == "Table" && annot.subfield == "Content") {
+            if (annot.field == 'Table' && annot.subfield == 'Content') {
                 xml_annotations.push(annot);
             } else {
                 txt_annotations.push(annot);
@@ -43,12 +42,7 @@ const DataParser = {
 
         for (var i = 0; i < annots.length; i++) {
             var annot = annots[i];
-            var key =
-                annot.content_id +
-                "|" +
-                annot.concept_id +
-                "|" +
-                annot.concept_form;
+            var key = annot.content_id + '|' + annot.concept_id + '|' + annot.concept_form;
             if (!annot_map.has(key)) annot_map.set(key, annot);
         } // console.log("annot_map", annot_map);
         // build a map of seeds: a list of seeds for each content_id
@@ -56,8 +50,8 @@ const DataParser = {
         var cnt_seeds = new Map();
         var annot_values = Array.from(annot_map.values()); // console.log("annot_values", annot_values);
 
-        for (var i = 0; i < annot_values.length; i++) {
-            var seed = annot_values[i]; // console.log(seed);
+        for (var j = 0; j < annot_values.length; j++) {
+            var seed = annot_values[j]; // console.log(seed);
             // remove useless properties of seeds, they are recomputed later
 
             delete seed.passage;
@@ -66,16 +60,16 @@ const DataParser = {
             delete seed.concept_offset;
             delete seed.concept_offset_in_section; // add seed to content_id key
 
-            var key = seed.content_id;
-            if (!cnt_seeds.has(key)) cnt_seeds.set(key, []);
-            cnt_seeds.get(key).push(seed);
+            var key1 = seed.content_id;
+            if (!cnt_seeds.has(key1)) cnt_seeds.set(key1, []);
+            cnt_seeds.get(key1).push(seed);
         } //console.log("seeds by content id", cnt_seeds);
 
         return cnt_seeds;
     },
     rebuiltContentAnnotationsForTableList: function (publi, seeds_by_cnt) {
         var rebuilt_annotations = [];
-        var section_lists = ["body_sections", "float_sections"];
+        var section_lists = ['body_sections', 'float_sections'];
 
         for (var sl = 0; sl < section_lists.length; sl++) {
             var section_list = section_lists[sl];
@@ -88,13 +82,8 @@ const DataParser = {
 
                     if (seeds_by_cnt.has(cnt.id)) {
                         var seeds = seeds_by_cnt.get(cnt.id);
-                        var cnt_annotations =
-                            DataParser.getRebuiltContentAnnotationsForTable(
-                                seeds,
-                                cnt.xml
-                            );
-                        rebuilt_annotations =
-                            rebuilt_annotations.concat(cnt_annotations);
+                        var cnt_annotations = DataParser.getRebuiltContentAnnotationsForTable(seeds, cnt.xml);
+                        rebuilt_annotations = rebuilt_annotations.concat(cnt_annotations);
                     }
                 }
             }
@@ -131,13 +120,13 @@ const DataParser = {
         return new_annotations;
     },
     getOrderForSubfield: function (sf) {
-        if (typeof sf == "undefined") return 20; // usual case for paragraph text
+        if (typeof sf == 'undefined') return 20; // usual case for paragraph text
 
-        if (sf && sf == "Caption") return 10; // for figures and tables
+        if (sf && sf == 'Caption') return 10; // for figures and tables
 
-        if (sf && sf == "Footer") return 50; // for figures and tables
+        if (sf && sf == 'Footer') return 50; // for figures and tables
 
-        if (sf && sf == "Content") return 30; // for tables (xml content)
+        if (sf && sf == 'Content') return 30; // for tables (xml content)
 
         return 20;
     },
@@ -147,42 +136,31 @@ const DataParser = {
             if (a.content_id > b.content_id) return 1;
             if (a.content_id < b.content_id) return -1; // 2nd criterion: content subfield
 
-            if (
-                DataParser.getOrderForSubfield(a.subfield) >
-                DataParser.getOrderForSubfield(b.subfield)
-            )
+            if (DataParser.getOrderForSubfield(a.subfield) > DataParser.getOrderForSubfield(b.subfield))
                 return 1;
-            if (
-                DataParser.getOrderForSubfield(a.subfield) <
-                DataParser.getOrderForSubfield(b.subfield)
-            )
+            if (DataParser.getOrderForSubfield(a.subfield) < DataParser.getOrderForSubfield(b.subfield))
                 return -1; // 3rd criterion: position in textual content
 
-            return (
-                a.passage_offset +
-                a.concept_offset -
-                b.passage_offset -
-                b.concept_offset
-            );
+            return a.passage_offset + a.concept_offset - b.passage_offset - b.concept_offset;
         });
 
         for (var i = 0; i < publi.annotations.length; i++) {
             var annot = publi.annotations[i];
-            var annot_id = "ann:" + i;
+            var annot_id = 'ann:' + i;
             annot.id = annot_id;
             var psg_id =
-                "psg:" +
+                'psg:' +
                 annot.content_id +
-                ":" +
+                ':' +
                 String(annot.passage_offset) +
-                ":" +
+                ':' +
                 String(annot.passage_length);
             annot.psg_id = psg_id;
         }
     },
     buildSectionIdTitleDictionary: function (publi) {
         var id_title = {};
-        var section_lists = ["body_sections", "float_sections"];
+        var section_lists = ['body_sections', 'float_sections'];
 
         for (var sl = 0; sl < section_lists.length; sl++) {
             var section_list = section_lists[sl];
@@ -210,7 +188,7 @@ const DataParser = {
         publi.annotation_tree = cnt2psg;
     },
     attachAnnotationsToContents: function (publi) {
-        var section_lists = ["body_sections", "float_sections"];
+        var section_lists = ['body_sections', 'float_sections'];
 
         for (var sl = 0; sl < section_lists.length; sl++) {
             var section_list = section_lists[sl];
@@ -229,10 +207,10 @@ const DataParser = {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
     getParentId: function (id) {
         if (id == null) return null;
-        var elems = id.split(".");
+        var elems = id.split('.');
         if (elems.length < 2) return null;
         elems.pop();
-        return elems.join(".");
+        return elems.join('.');
     },
     getParentTitle: function (content_id, publi) {
         var sec_id = this.getParentId(content_id);
@@ -253,23 +231,15 @@ const DataParser = {
             var psg = annot.passage;
             var psg_max = 100;
             if (psg.length > psg_max)
-                psg =
-                    psg.substr(0, psg_max / 2 - 2) +
-                    " ... " +
-                    psg.substr(-psg_max / 2 + 3); //var ann = annot.id + " " + annot.type;
+                psg = psg.substr(0, psg_max / 2 - 2) + ' ... ' + psg.substr(-psg_max / 2 + 3); //var ann = annot.id + " " + annot.type;
 
-            var cpt =
-                annot.concept_form +
-                " " +
-                annot.concept_source +
-                ":" +
-                annot.concept_id;
+            var cpt = annot.concept_form + ' ' + annot.concept_source + ':' + annot.concept_id;
             var parent_title = this.getParentTitle(annot.content_id, publi); //var label = ann + " - " + cpt + " - " + psg;
             //if (parent_title && parent_title.length>0) label = parent_title + ' - ' + label;
 
             result.push({
                 id: annot.id,
-                label: annot.type + " - " + cpt,
+                label: annot.type + ' - ' + cpt,
                 concept_source: annot.concept_source,
             });
         }
@@ -295,9 +265,7 @@ const DataParser = {
                 checked: true,
             });
 
-        result.sort((a, b) =>
-            a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-        );
+        result.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
         return result;
     },
 };

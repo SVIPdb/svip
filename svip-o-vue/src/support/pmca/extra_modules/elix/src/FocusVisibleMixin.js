@@ -1,11 +1,11 @@
-import { deepContains } from "./utilities.js";
-import { merge } from "./updates.js"; // We consider the keyboard to be active if the window has received a keydown
+import {deepContains} from './utilities.js';
+import {merge} from './updates.js'; // We consider the keyboard to be active if the window has received a keydown
 // event since the last mousedown event.
 
 let keyboardActive = false;
 /** @type {any} */
 
-const focusVisibleChangedListenerKey = Symbol("focusVisibleChangedListener");
+const focusVisibleChangedListenerKey = Symbol('focusVisibleChangedListener');
 /**
  * Shows a focus indication if and only if the keyboard is active.
  *
@@ -36,11 +36,10 @@ export default function FocusVisibleMixin(Base) {
             // To avoid this problem, we use promise timing to defer the setting of
             // state.
 
-            this.addEventListener("focusout", (event) => {
+            this.addEventListener('focusout', event => {
                 Promise.resolve().then(() => {
                     // What has the focus now?
-                    const newFocusedElement =
-                        event.relatedTarget || document.activeElement;
+                    const newFocusedElement = event.relatedTarget || document.activeElement;
                     const isFocusedElement = this === newFocusedElement;
                     /** @type {any} */
 
@@ -54,14 +53,14 @@ export default function FocusVisibleMixin(Base) {
                         }); // No longer need to listen for changes in focus visibility.
 
                         document.removeEventListener(
-                            "focus-visible-changed",
+                            'focus-visible-changed',
                             this[focusVisibleChangedListenerKey]
                         );
                         this[focusVisibleChangedListenerKey] = null;
                     }
                 });
             });
-            this.addEventListener("focusin", () => {
+            this.addEventListener('focusin', () => {
                 Promise.resolve().then(() => {
                     if (this.state.focusVisible !== keyboardActive) {
                         // Show the element as focused if the keyboard has been used.
@@ -72,11 +71,10 @@ export default function FocusVisibleMixin(Base) {
 
                     if (!this[focusVisibleChangedListenerKey]) {
                         // Listen to subsequent changes in focus visibility.
-                        this[focusVisibleChangedListenerKey] = () =>
-                            refreshFocus(this);
+                        this[focusVisibleChangedListenerKey] = () => refreshFocus(this);
 
                         document.addEventListener(
-                            "focus-visible-changed",
+                            'focus-visible-changed',
                             this[focusVisibleChangedListenerKey]
                         );
                     }
@@ -113,9 +111,7 @@ export default function FocusVisibleMixin(Base) {
             // it.
 
             const outline =
-                (base.style && base.style.outline) ||
-                (!this.state.focusVisible && "none") ||
-                null;
+                (base.style && base.style.outline) || (!this.state.focusVisible && 'none') || null;
             return merge(base, {
                 style: {
                     outline,
@@ -134,7 +130,7 @@ function refreshFocus(element) {
 function updateKeyboardActive(newKeyboardActive) {
     if (keyboardActive !== newKeyboardActive) {
         keyboardActive = newKeyboardActive;
-        const event = new CustomEvent("focus-visible-changed", {
+        const event = new CustomEvent('focus-visible-changed', {
             detail: {
                 focusVisible: keyboardActive,
             },
@@ -145,7 +141,7 @@ function updateKeyboardActive(newKeyboardActive) {
 // Use capture phase so we detect events even if they're handled.
 
 window.addEventListener(
-    "keydown",
+    'keydown',
     () => {
         updateKeyboardActive(true);
     },
@@ -154,7 +150,7 @@ window.addEventListener(
     }
 );
 window.addEventListener(
-    "mousedown",
+    'mousedown',
     () => {
         updateKeyboardActive(false);
     },

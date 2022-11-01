@@ -1,58 +1,54 @@
 <template>
     <div class="container-fluid">
-        <CuratorVariantInformations
-            :variant="variant"
-            :disease_id="disease_id"
-        />
-        <ModifyVariantSummary :variant="variant" :comments="summary.comments" />
-        <SelectEffect :variant="variant" :entryIDs="entryIDs" />
+        <CuratorVariantInformations :variant="variant" :disease_id="disease_id" />
+        <CurationVariantSummary :variant="variant" />
+        <SelectEffect :variant="variant" />
     </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import CuratorVariantInformations from "@/components/widgets/curation/CuratorVariantInformations";
-import store from "@/store";
-import { desnakify } from "@/utils";
-import { HTTP } from "@/router/http";
-import ModifyVariantSummary from "@/components/widgets/review/ModifyVariantSummary";
-import SelectEffect from "@/components/widgets/review/SelectEffect";
-import ulog from "ulog";
-import BroadcastChannel from "broadcast-channel";
+import {mapGetters} from 'vuex';
+import CurationVariantSummary from '../../widgets/curation/CurationVariantSummary';
+import CuratorVariantInformations from '@/components/widgets/curation/CuratorVariantInformations';
+import store from '@/store';
+import {desnakify} from '@/utils';
+import {HTTP} from '@/router/http';
 
-const log = ulog("SubmitCurations");
+import SelectEffect from '@/components/widgets/review/SelectEffect';
+import ulog from 'ulog';
+import BroadcastChannel from 'broadcast-channel';
+
+const log = ulog('SubmitCurations');
 
 export default {
-    name: "SubmitCurations",
+    name: 'SubmitCurations',
     components: {
-        ModifyVariantSummary,
+        CurationVariantSummary,
         SelectEffect,
         CuratorVariantInformations,
     },
     props: {
-        entryIDs: { type: String },
+        entryIDs: {type: String},
     },
     data() {
         return {
-            channel: new BroadcastChannel("curation-update"),
-            source: "PMID",
-            reference: "",
+            channel: new BroadcastChannel('curation-update'),
+            source: 'PMID',
+            reference: '',
             loadingVariomes: false,
             variomes: null,
             used_references: {},
             summary: {
-                content: "",
+                content: '',
                 comments: [],
             },
         };
     },
     mounted() {
-        HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then(
-            (response) => {
-                const results = response.data.results;
-                this.summary.comments = results;
-            }
-        );
+        HTTP.get(`/summary_comments/?variant=${this.variant.id}`).then(response => {
+            const results = response.data.results;
+            this.summary.comments = results;
+        });
     },
     created() {
         this.refreshReferences();
@@ -64,8 +60,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            variant: "variant",
-            gene: "gene",
+            variant: 'variant',
+            gene: 'gene',
         }),
         disease_id() {
             return parseInt(this.$route.params.disease_id);
@@ -83,22 +79,22 @@ export default {
         desnakify,
         refreshReferences() {
             // get a list of used references so we can tell the user if they're about to use one that's been used already
-            HTTP.get("/curation_entries/all_references").then((response) => {
+            HTTP.get('/curation_entries/all_references').then(response => {
                 this.used_references = response.data.references;
             });
         },
         addEvidence() {
             let route = this.$router.resolve({
-                name: "add-evidence",
+                name: 'add-evidence',
                 params: {
                     gene_id: this.$route.params.gene_id,
                     variant_id: this.$route.params.variant_id,
                     disease_id: this.$route.params.disease_id,
-                    action: "add",
+                    action: 'add',
                 },
-                query: { source: this.source, reference: this.reference },
+                query: {source: this.source, reference: this.reference},
             });
-            window.open(route.href, "_blank");
+            window.open(route.href, '_blank');
         },
         addEvidenceFromList(id) {
             this.reference = id;
@@ -115,11 +111,11 @@ export default {
                     genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
                 },
             })
-                .then((response) => {
+                .then(response => {
                     this.variomes = response.data;
                     // this.loadingVariomes = false;
                 })
-                .catch((err) => {
+                .catch(err => {
                     log.warn(err);
                     this.variomes = {
                         error: "Couldn't retrieve publication info, try again later.",
@@ -129,15 +125,13 @@ export default {
         },
     },
     beforeRouteEnter(to, from, next) {
-        const { variant_id } = to.params;
+        const {variant_id} = to.params;
 
         // ask the store to populate detailed information about this variant
-        store
-            .dispatch("getGeneVariant", { variant_id: variant_id })
-            .then(({ gene, variant }) => {
-                to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
-                next();
-            });
+        store.dispatch('getGeneVariant', {variant_id: variant_id}).then(({gene, variant}) => {
+            to.meta.title = `SVIP-O: Annotate ${gene.symbol} ${variant.name}`;
+            next();
+        });
     },
 };
 </script>
@@ -146,6 +140,7 @@ export default {
 .variant-card .card-body {
     padding: 0;
 }
+
 .variant-header {
     margin-bottom: 0;
 }
@@ -155,6 +150,7 @@ export default {
     vertical-align: text-bottom;
     padding: 1rem;
 }
+
 .aliases-list {
     font-style: italic;
 }
@@ -169,13 +165,16 @@ export default {
 .slide-fade-enter-active {
     transition: all 0.5s ease;
 }
+
 .slide-fade-leave-active {
     transition: all 0.3s ease;
 }
+
 .slide-fade-enter-to,
 .slide-fade-leave {
     max-height: 120px;
 }
+
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active below version 2.1.8 */ {
     opacity: 0;

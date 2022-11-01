@@ -1,26 +1,18 @@
 <template>
-
     <div class="mycontainer">
         <b-container v-if="!loaded" fluid class="container">
             <b-spinner type="grow" />
             <b-spinner type="grow" />
             <b-spinner type="grow" />
         </b-container>
-        <object
-            type="text/html"
-            :data="documentation_url"
-            @load="loaded = true"
-            @progress="loaded = false"
-        />
-       
-     
+        <object type="text/html" :data="documentation_url" @load="loaded = true" @progress="loaded = false" />
+
         <nav-footer class="foot"></nav-footer>
     </div>
-
 </template>
 
 <script>
-import navFooter from "@/components/structure/navfooter";
+import navFooter from '@/components/structure/navfooter';
 
 // import TableOfContents from "@/components/help/TableOfContents";
 // import { slugifySans } from "@/utils";
@@ -49,8 +41,8 @@ import navFooter from "@/components/structure/navfooter";
 // ];
 
 export default {
-    name: "Help",
-    components: { navFooter },
+    name: 'Help',
+    components: {navFooter},
     // components: {TableOfContents},
     data() {
         return {
@@ -118,25 +110,20 @@ export default {
 }
 
 .mycontainer {
-
     position: absolute;
     top: -12px;
     /* margin: 90px 0px 0px 0px; */
     padding: 0px;
     width: 100%;
     height: calc(100%);
-
 }
 .mycontainer object {
     width: 100%;
     min-height: calc(100%);
-    
 }
-
 
 .foot {
     display: block;
-    position:static;
-} 
+    position: static;
+}
 </style>
-

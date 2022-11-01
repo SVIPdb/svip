@@ -4,6 +4,7 @@ Serializers for SVIP-specific models.
 import datetime
 import io
 
+import vcf
 from django.contrib.admin.utils import NestedObjects
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -14,16 +15,15 @@ from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-import vcf
 from api.models import (CurationEntry, Drug, IcdOMorpho, IcdOTopo,
                         IcdOTopoApiDisease, Sample, Variant, VariantInSVIP)
 from api.models.svip import (
     Disease, DiseaseInSVIP, CURATION_STATUS, SubmittedVariantBatch, SubmittedVariant,
-    CurationRequest, SummaryComment, CurationReview, SIBAnnotation1, SIBAnnotation2,
-    SummaryDraft, GeneSummaryDraft, RevisedReview
+    CurationRequest, SummaryComment, CurationReview,
+    SummaryDraft, GeneSummaryDraft, SubmissionEntry
 )
-from api.serializers import SimpleVariantSerializer, SimpleGeneSerializer
-from api.serializers.icdo import IcdOMorphoSerializer, IcdOTopoSerializer
+from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
+from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
 from api.utils import field_is_empty, format_variant, model_field_null
@@ -124,7 +124,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def _authed_curation_set(self):
         return (
             CurationEntry.objects
-            .authed_curation_set(self.context['request'].user)
+                .authed_curation_set(self.context['request'].user)
         )
 
     def _curation_entries(self, obj):
@@ -135,13 +135,12 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             obj, 'disease') else None
 
         ##get topo_codes
-        #obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
+        # obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
         #    obj, 'disease') else None
 
         # get disease name:
         obj_disease_name = obj.disease.name if not model_field_null(
             obj, 'disease') else None
-
 
         # in addition to getting curation entries we can view, filter them down to the current disease
         if str(obj) not in self._curation_cache:
@@ -165,12 +164,11 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         entries = []
         for entry in self._curation_cache[str(obj)]:
             if entry.disease != None:
-                if entry.disease.name == obj_disease_name: # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
+                if entry.disease.name == obj_disease_name:  # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
                     entries.append(entry)
             else:
                 if model_field_null(obj, 'disease'):
                     entries.append(entry)
-
 
         if model_field_null(obj, 'disease'):
             self._curation_cache[str(obj)] = list(self._authed_curation_set.filter(
@@ -184,8 +182,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             ).select_related('disease', 'variant', 'variant__gene').prefetch_related('extra_variants').all())
             return self._curation_cache[str(obj)]
 
-
-        #return self._curation_cache[str(obj)]
+        # return self._curation_cache[str(obj)]
         return entries
 
     @staticmethod
@@ -201,9 +198,9 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def get_sample_diseases_count(obj):
         return (
             obj.sample_set
-            .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
-            .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
-            .distinct().order_by('-count')
+                .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
+                .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
+                .distinct().order_by('-count')
         )
 
     def get_pathogenic(self, obj):
@@ -211,12 +208,12 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     def get_clinical_significance(self, obj):
         return clinical_significance(self._curation_entries(obj))
-        
-        #var = obj.svip_variant.variant
-        #association = obj.disease.curation_associations.get(variant=var)
-        #evidence = 
 
-        #if var.curation_associations.count() > 0:
+        # var = obj.svip_variant.variant
+        # association = obj.disease.curation_associations.get(variant=var)
+        # evidence =
+
+        # if var.curation_associations.count() > 0:
         #    if var.curation_associations.first().curation_evidences.count() > 0:
         #        evidence = 
         #        if hasattr(var, 'annotation2'):
@@ -266,13 +263,13 @@ class VariantInSVIPSerializer(serializers.HyperlinkedModelSerializer):
             'calculate_summary_date',
             'tissue_counts',
             'diseases',
-            'review_data',
         )
 
 
 # ================================================================================================================
 # === Curation
 # ================================================================================================================
+
 
 def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, disease_field='disease'):
     """
@@ -309,7 +306,7 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
             collector.collect([instance_disease])
 
             if collector.can_fast_delete():
-                #print("Fast-deleting old disease")
+                # print("Fast-deleting old disease")
                 instance_disease.delete()
             else:
                 print("Can't fast-delete old disease: %s" % collector.nested())
@@ -324,14 +321,14 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
                 topo_diseases = Disease.objects.filter(q_objects)
                 candidates = candidates.intersection(candidates, topo_diseases)
 
-        #else:
+        # else:
         #    # we need to search for a morpho that has no associated topo codes
         #    q_objects &= Q(icdotopoapidisease=None)
 
-        #print (f"\nDisease.objects.filter(q_objects):\n{Disease.objects.filter(q_objects)}\n")
+        # print (f"\nDisease.objects.filter(q_objects):\n{Disease.objects.filter(q_objects)}\n")
 
         ## either retrieve an existing disease that matches the description, or create it
-        #candidate = Disease.objects.filter(q_objects).first()
+        # candidate = Disease.objects.filter(q_objects).first()
 
         candidate = candidates.first()
 
@@ -340,7 +337,7 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
                 icd_o_morpho=IcdOMorpho.objects.get(id=icdo_morpho['id']))
             IcdOTopoApiDisease.objects.bulk_create([
                 IcdOTopoApiDisease(api_disease=candidate,
-                                    icd_o_topo=IcdOTopo.objects.get(id=x['id']))
+                                   icd_o_topo=IcdOTopo.objects.get(id=x['id']))
                 for x in (icdo_topo_list if icdo_topo_list else [])
             ])
             candidate.save()
@@ -352,16 +349,12 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
 class CurationEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
 
-    # extra_variants = serializers.PrimaryKeyRelatedField(
-    #     allow_empty=False, many=True, queryset=Variant.objects.all(),
-    #     style={'base_template': 'input.html'}
-    # )
     extra_variants = SimpleVariantSerializer(
         many=True, style={'base_template': 'input.html'}, required=False)
 
     owner = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(), queryset=User.objects.all())
-    status = serializers.ChoiceField(choices=tuple(CURATION_STATUS.items()))
+    status = serializers.ChoiceField(choices=CURATION_STATUS.get_choices())
     created_on = serializers.DateTimeField(read_only=True, default=now)
 
     # disease is effectively a passthrough to icd_o_morpho + icd_o_topo, but it's still nice to see it
@@ -433,15 +426,7 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
             # TODO: perform more stringent validation
             # FIXME: for now we'll do validation here, but ideally it should be factored out
-            non_empty_fields = (
-                # 'disease',
-                'variant',
-                'type_of_evidence',
-                # 'effect',
-                # 'tier_level_criteria', # only required if type_of_evidence != 'Excluded'
-                # 'mutation_origin', # no longer requireds
-                # 'support',
-            )
+            non_empty_fields = ('variant', 'type_of_evidence')
 
             empty_fields = [
                 k for k in non_empty_fields if k not in data or data[k] in ('', None)]
@@ -499,7 +484,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'icdo_topo',
             'variant',
             'extra_variants',
-
             'type_of_evidence',
             'drugs',
             'interactions',
@@ -515,7 +499,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'comment',
             'references',
             'annotations',
-
             'created_on',
             'last_modified',
             'owner',
@@ -523,7 +506,6 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'formatted_variants',
             'status',
 
-            'curation_evidences',
         )
 
         extra_kwargs = {
@@ -532,6 +514,40 @@ class CurationEntrySerializer(serializers.ModelSerializer):
             'summary': {'required': False, 'allow_blank': True},
             'escat_score': {'required': False, 'allow_blank': True}
         }
+
+
+class CurationReviewSerializer(serializers.ModelSerializer):
+    reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    reviewer_name = serializers.SerializerMethodField()
+    reviewer_email = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_reviewer_name(obj):
+        return obj.reviewer.first_name + " " + obj.reviewer.last_name
+
+    @staticmethod
+    def get_reviewer_email(obj):
+        return obj.reviewer.email
+
+    class Meta:
+        model = CurationReview
+        fields = '__all__'
+        read_only_fields = ['id']
+
+
+class SubmissionEntrySerializer(serializers.ModelSerializer):
+    variant = SimpleVariantSerializer()
+    curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
+    curation_reviews = CurationReviewSerializer(many=True, required=False)
+    owner = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    disease = DiseaseSerializer(
+        required=False, allow_null=True, read_only=True)
+
+    class Meta:
+        model = SubmissionEntry
+        fields = '__all__'
+        read_only_fields = ['id']
 
 
 # ================================================================================================================
@@ -573,7 +589,8 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
         required=False, allow_null=True, write_only=True)
 
     def validate(self, data):
-        if data['for_curation_request'] and ('requestor' not in data or data['requestor'] is None or data['requestor'] == ''):
+        if data['for_curation_request'] and (
+                'requestor' not in data or data['requestor'] is None or data['requestor'] == ''):
             raise serializers.ValidationError(
                 {'requestor': 'is required if for_curation_request is true'})
         return data
@@ -602,20 +619,25 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
                 if not row:
                     continue
 
-                submitted_var_serializer = SubmittedVariantSerializer(context={'request': self.context['request']}, data={
-                    'icdo_morpho': self.validated_data['icdo_morpho'] if 'icdo_morpho' in self.validated_data else None,
-                    'icdo_topo': self.validated_data['icdo_topo'] if 'icdo_topo' in self.validated_data else None,
-                    'canonical_only': self.validated_data['canonical_only'] if 'canonical_only' in self.validated_data else False,
-                    'for_curation_request': self.validated_data[
-                        'for_curation_request'] if 'for_curation_request' in self.validated_data else False,
-                    'requestor': self.validated_data['requestor'] if 'requestor' in self.validated_data else None,
-                    'chromosome': row.CHROM.replace('chr', ''),
-                    'pos': row.POS,
-                    'ref': row.REF,
-                    'alt': str(row.ALT),
-                    'owner': cur_user.pk,
-                    'batch': batch.pk
-                })
+                submitted_var_serializer = SubmittedVariantSerializer(context={'request': self.context['request']},
+                                                                      data={
+                                                                          'icdo_morpho': self.validated_data[
+                                                                              'icdo_morpho'] if 'icdo_morpho' in self.validated_data else None,
+                                                                          'icdo_topo': self.validated_data[
+                                                                              'icdo_topo'] if 'icdo_topo' in self.validated_data else None,
+                                                                          'canonical_only': self.validated_data[
+                                                                              'canonical_only'] if 'canonical_only' in self.validated_data else False,
+                                                                          'for_curation_request': self.validated_data[
+                                                                              'for_curation_request'] if 'for_curation_request' in self.validated_data else False,
+                                                                          'requestor': self.validated_data[
+                                                                              'requestor'] if 'requestor' in self.validated_data else None,
+                                                                          'chromosome': row.CHROM.replace('chr', ''),
+                                                                          'pos': row.POS,
+                                                                          'ref': row.REF,
+                                                                          'alt': str(row.ALT),
+                                                                          'owner': cur_user.pk,
+                                                                          'batch': batch.pk
+                                                                      })
 
                 try:
                     if submitted_var_serializer.is_valid(raise_exception=True):
@@ -685,7 +707,8 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
         if not obj.resulting_variants:
             return None
 
-        return SimpleVariantSerializer(Variant.objects.filter(id__in=obj.resulting_variants), many=True, context={'request': self.context['request']}).data
+        return SimpleVariantSerializer(Variant.objects.filter(id__in=obj.resulting_variants), many=True,
+                                       context={'request': self.context['request']}).data
 
     @staticmethod
     def get_description(obj):
@@ -696,14 +719,15 @@ class SubmittedVariantSerializer(OwnedModelSerializer):
         fields = '__all__'
 
 
-
-
 class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
     gene = SimpleGeneSerializer()
+    curation_entries = CurationEntrySerializer(many=True, required=False)
+    submission_entries = SubmissionEntrySerializer(many=True, required=False)
 
     review_count = serializers.SerializerMethodField()
-    reviews = serializers.SerializerMethodField()
+    reviewers = serializers.SerializerMethodField()
 
+    draft_summary = serializers.SerializerMethodField()
 
     def to_internal_value(self, data):
         from api.utils import to_dict
@@ -731,21 +755,38 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
 
     @staticmethod
     def get_review_count(obj):
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-            evidence = obj.curation_associations.first().curation_evidences.first()
-            return evidence.reviews.count()
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            submission_entry = obj.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            return submission_entry.curation_reviews.count()
         else:
             return 0
-        
+
     @staticmethod
-    def get_reviews(obj):
-        reviews = []
-        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', '0_review']:
-            evidence = obj.curation_associations.first().curation_evidences.first()
-            if evidence.reviews.count() > 0:
-                for review in evidence.reviews.all():
-                    reviews.append(review.match())
-        return reviews
+    def get_draft_summary(obj, draft_status=False):
+        draft_summary = []
+        number_of_reviews = VariantInDashboardSerializer.get_review_count(obj)
+        if number_of_reviews:
+            for i in range(number_of_reviews):
+                for entry in obj.submission_entries.filter(
+                        type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                    if entry.curation_reviews.all().order_by('created_on')[i].draft:
+                        draft_summary.append(True)
+                    else:
+                        draft_summary.append(False)
+                    break
+            return draft_summary
+
+    @staticmethod
+    def get_reviewers(obj):
+        reviewers = []
+        if not str(obj.stage) in ['none', 'loaded', 'ongoing_curation', 'annotated']:
+            submission_entry = obj.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            if submission_entry.curation_reviews.count() > 0:
+                for review in submission_entry.curation_reviews.all().order_by('created_on'):
+                    reviewers.append(review.reviewer.id)
+        return reviewers
 
     class Meta:
         model = Variant
@@ -757,17 +798,19 @@ class VariantInDashboardSerializer(serializers.HyperlinkedModelSerializer):
             'description',
             'hgvs_c',
             'review_count',
-            'reviews',
-            'stage'
+            'reviews_summary',
+            'reviewers',
+            'stage',
+            'curation_entries',
+            'submission_entries',
+            'draft_summary',
+            'review_cycle'
         )
-
-
-
 
 
 # this would usually be in the curation section, but it needs to come after SubmittedVariantSerializer
 class CurationRequestSerializer(serializers.ModelSerializer):
-    #variant = SimpleVariantSerializer()
+    # variant = SimpleVariantSerializer()
     variant = VariantInDashboardSerializer()
     submission = SubmittedVariantSerializer()
     disease_name = serializers.SerializerMethodField()
@@ -804,41 +847,6 @@ class SampleSerializer(serializers.ModelSerializer):
 
 
 # ================================================================================================================
-# === SIBAnnotation
-# ================================================================================================================
-
-class SIBAnnotation1Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation1
-        fields = ('id', 'evidence', 'effect', 'tier')
-        #extra_kwargs = {
-        #    "content": {
-        #        "required": False,
-        #        "allow_null": True,
-        #    },
-        #    "reviewer": {
-        #        "required": False,
-        #        "allow_null": False,
-        #    }
-        #}
-
-
-class SIBAnnotation2Serializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = SIBAnnotation2
-        fields = ('id', 'evidence', 'effect', 'tier', 'clinical_input')
-
-
-
-# ================================================================================================================
 # === SummaryComment
 # ================================================================================================================
 
@@ -867,49 +875,12 @@ class SummaryCommentSerializer(serializers.ModelSerializer):
 
 
 class SummaryDraftSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = SummaryDraft
         fields = '__all__'
 
 
 class GeneSummaryDraftSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = GeneSummaryDraft
-        fields = '__all__'
-
-
-# class CurationReviewListSerializer(serializers.ListSerializer):
-#    def update(self, instance, validated_data):
-
-
-# class CurationReviewSerializer(serializers.ModelSerializer):
-
-#    def __init__(self, *args, **kwargs):
-#        many = kwargs.pop('many', True)
-#        super(CurationReviewSerializer, self).__init__(
-#            many=many, *args, **kwargs)
-
-#    class Meta:
-#        model = CurationReview
-#        fields = '__all__'
-
-class CurationReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(CurationReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = CurationReview
-        fields = '__all__'
-
-
-class RevisedReviewSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super(RevisedReviewSerializer, self).__init__(
-            *args, **kwargs)
-
-    class Meta:
-        model = RevisedReview
         fields = '__all__'

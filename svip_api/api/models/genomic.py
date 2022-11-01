@@ -1,6 +1,5 @@
 import itertools
 
-from collections import OrderedDict
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db import models, connection
@@ -10,11 +9,11 @@ from django_db_cascade.deletions import DB_CASCADE
 # makes deletes of related objects cascade on the sql server
 from django_db_cascade.fields import ForeignKey
 
-from api.utils import dictfetchall
-
 # types of evidence, which influence the contents of the evidence structure
 # see https://civicdb.org/help/evidence/evidence-types for details
 # the format below is (actual value, human readable name) tupes
+from api.utils import dictfetchall, ModelChoice
+
 EVIDENCE_TYPES = [
     ('predictive', 'Predictive'),
     ('prognostic', 'Prognostic'),
@@ -75,12 +74,27 @@ class Gene(models.Model):
         return "%s (entrez id: %d)" % (self.symbol, self.entrez_id)
 
 
+class VARIANT_STAGE(ModelChoice):
+    none = 'none'
+    loaded = 'loaded'
+    ongoing_curation = 'ongoing_curation'
+    annotated = 'annotated'
+    ongoing_review = 'ongoing_review'
+    unapproved = 'unapproved'
+    reannotated = 'reannotated'
+    on_hold = 'on_hold'
+    approved = 'approved'
+    fully_approved = 'fully_approved'
+
+
 class VariantManager(models.Manager):
     def get_by_natural_key(self, description, hgvs_g):
         return self.get(description=description, hgvs_g=hgvs_g)
 
 
 class Variant(models.Model):
+    REVIEW_COUNT = 3
+    MIN_ACCEPTED_REVIEW_COUNT = 3
     gene = ForeignKey(to=Gene, on_delete=DB_CASCADE)
 
     name = models.TextField(null=False, db_index=True,
@@ -148,18 +162,6 @@ class Variant(models.Model):
     def natural_key(self):
         return self.description, self.hgvs_g
 
-    def has_only_matching_reviews(self):
-        for association in self.curation_associations.all():
-            if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                evidence = association.curation_evidences.first()
-                if evidence.reviews.filter(
-                    annotated_effect=evidence.annotation1.effect,
-                    annotated_tier=evidence.annotation1.tier
-                ).count() == 3:
-                    return True
-                else:
-                    return False
-
     class Meta:
         indexes = [
             models.Index(fields=['gene', 'name']),
@@ -167,69 +169,75 @@ class Variant(models.Model):
         ]
 
     @property
-    def stage(self):
-
-        if self.curation_associations.count() > 0:
-
-            for association in self.curation_associations.all():
-                if association.curation_evidences.all().filter(type_of_evidence__in=["Prognostic", "Diagnostic", "Predictive / Therapeutic"]):
-                    evidence = association.curation_evidences.first()
-
-                    if evidence.revised_reviews.all().count() == 3:
-                        if evidence.revised_reviews.filter(agree=True).count() == 3:
-                            return 'fully_reviewed'
-                        else:
-                            return 'on_hold'
-
-                    if hasattr(evidence, 'annotation2'):
-                        return 'to_review_again'
-
-                    if evidence.reviews.count() == 3:
-                        if hasattr(evidence, 'annotation1'):
-                            if self.has_only_matching_reviews():
-                                return 'fully_reviewed'
+    def reviews_summary(self):
+        reviews_summary = []
+        if self.submission_entries.all().count():
+            submission_entry = self.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
+            if submission_entry.curation_reviews.all():
+                reviews_number = submission_entry.curation_reviews.count()
+                if reviews_number:
+                    for i in range(reviews_number):
+                        positive_reviews_count = 0
+                        negative_reviews_count = 0
+                        for entry in self.submission_entries.filter(
+                                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
+                            if entry.curation_reviews.filter(draft=False)[i].acceptance:
+                                positive_reviews_count += 1
                             else:
-                                return 'conflicting_reviews'
+                                negative_reviews_count += 1
+                        if negative_reviews_count > 0:  # >= positive_reviews_count
+                            reviews_summary.append(False)
+                        else:
+                            reviews_summary.append(True)
+            return reviews_summary
+        return None
 
-                    if evidence.reviews.count() == 2:
-                        return '2_reviews'
+    @property
+    def review_cycle(self):
+        if self.submission_entries.all().count():
+            return self.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first().review_cycle
 
-                    if evidence.reviews.count() == 1:
-                        return '1_review'
+        return None
 
-        for curation in self.curation_entries.all():
-            if curation.status == 'submitted':
-                return '0_review'
+    @property
+    def stage(self):
+        if self.reviews_summary:
+            if len(self.reviews_summary) < self.REVIEW_COUNT:
+                return VARIANT_STAGE.ongoing_review
+            elif len(self.reviews_summary) == self.REVIEW_COUNT:
+                if all(self.reviews_summary):
+                    return VARIANT_STAGE.approved
+                else:
+                    return VARIANT_STAGE.unapproved
 
-        if self.curation_entries.all().count() > 0:
-            return 'ongoing_curation'
-
-        if self.curation_request.all().count() > 0:
-            return 'loaded'
+        if any([curation_entry.status == 'resubmitted' for curation_entry in self.curation_entries.all()]):
+            return VARIANT_STAGE.reannotated
+        if any([curation_entry.status == 'submitted' for curation_entry in self.curation_entries.all()]):
+            return VARIANT_STAGE.annotated
+        elif self.curation_entries.count() > 0:
+            return VARIANT_STAGE.ongoing_curation
+        elif self.curation_request.count() > 0:
+            return VARIANT_STAGE.loaded
 
         return 'none'
 
     @property
-    def priority(self):
-        if self.stage() == 'conflicting_reviews':
-            return 1
-        else:
-            return 2
-
-    @property
     def public_stage(self):
         stage = self.stage
-        if stage in ['none']:
+        if stage == VARIANT_STAGE.none:
             return 'None'
-        elif stage in ['loaded']:
+        elif stage == VARIANT_STAGE.loaded:
             return 'Loaded'
-        elif stage in ['ongoing_curation']:
+        elif stage == VARIANT_STAGE.ongoing_curation:
             return 'In progress'
-        elif stage in ['0_review', '1_review', '2_reviews', 'conflicting_reviews', 'to_review_again']:
+        elif stage == [VARIANT_STAGE.annotated, VARIANT_STAGE.ongoing_review, VARIANT_STAGE.unapproved,
+                       VARIANT_STAGE.reannotated]:
             return 'Annotated'
-        elif stage in ['on_hold']:
+        elif stage == VARIANT_STAGE.on_hold:
             return 'On hold'
-        elif stage in ['fully_reviewed']:
+        elif stage == VARIANT_STAGE.approved:
             return 'Approved'
 
     @property
@@ -326,10 +334,10 @@ class VariantInSource(models.Model):
         # this is used to render the 'diseases/tissues' visualization on the variant details page
         pairs = (
             self.association_set
-            .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
-            .exclude(disease__isnull=True, context__isnull=True)
-            .annotate(count=Count('environmentalcontext__description'))
-            .distinct().order_by('disease')
+                .values(disease=F('phenotype__term'), context=F('environmentalcontext__description'))
+                .exclude(disease__isnull=True, context__isnull=True)
+                .annotate(count=Count('environmentalcontext__description'))
+                .distinct().order_by('disease')
         )
         return (
             {x[0]: {y['context']: y['count'] for y in x[1]}}

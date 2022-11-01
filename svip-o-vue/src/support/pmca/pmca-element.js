@@ -1,10 +1,15 @@
-import { html, PolymerElement } from "@polymer/polymer/polymer-element.js";
-import "./list-browser.js";
-import "./pubmed-viewer-v2.js";
-import "./checkbox-group.js";
+import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import './list-browser.js';
+import './pubmed-viewer-v2.js';
+import './checkbox-group.js';
 
-import CandyProxy from "@/support/pmca/proxy-data-access";
-import DataParser from "@/support/pmca/proxy-data-parser";
+import CandyProxy from '@/support/pmca/proxy-data-access';
+import DataParser from '@/support/pmca/proxy-data-parser';
+
+// what should this function do?
+function getBaseHref() {
+    return '';
+}
 
 /**
  * @customElement
@@ -43,6 +48,7 @@ class PmcaElement extends PolymerElement {
                     display: flex;
                     flex-direction: column;
                 }
+
                 col2 {
                     min-width: 250px;
                     height: 100%;
@@ -57,6 +63,7 @@ class PmcaElement extends PolymerElement {
                     padding: 2px;
                     __border: 1px solid red;
                 }
+
                 /*------------ col 1 row 2 ------------------*/
                 pubmed-viewer-v2 {
                     box-sizing: border-box;
@@ -65,6 +72,7 @@ class PmcaElement extends PolymerElement {
                     height: 100%;
                     background-color: #f5f5f5;
                 }
+
                 .content12 {
                     flex-grow: 1;
                     overflow: auto;
@@ -74,6 +82,7 @@ class PmcaElement extends PolymerElement {
                     padding-right: 36px;
                     __border: 1px solid blue;
                 }
+
                 /*------------ col 2 row 1 ------------------*/
                 .content21 {
                     __flex-grow: 1;
@@ -86,12 +95,14 @@ class PmcaElement extends PolymerElement {
                     border-bottom: 1px solid lightgray;
                     font-size: 12px;
                 }
+
                 /*------------ col 2 row 2 ------------------*/
                 list-browser {
                     box-sizing: border-box;
                     margin: 0px;
                     width: 100%;
                 }
+
                 .content22 {
                     __height: 300px;
                     flex-grow: 1;
@@ -102,15 +113,12 @@ class PmcaElement extends PolymerElement {
                     __border: 1px solid red;
                     font-size: 12px;
                 }
+
                 /*------------------------------*/
             </style>
 
             <col1>
-                <div
-                    class="content11"
-                    id="pmcid-selection-div"
-                    style="display:none;"
-                >
+                <div class="content11" id="pmcid-selection-div" style="display:none;">
                     <label for="pmcid_in">Choose or type a PMCID</label>
                     <input
                         id="pmcid_in"
@@ -119,8 +127,7 @@ class PmcaElement extends PolymerElement {
                         list="pmcid-list"
                         autocomplete="off"
                         on-change="handleSelectPmcid"
-                        on-click="handleClickPS"
-                    />
+                        on-click="handleClickPS" />
                     <datalist id="pmcid-list">
                         <option value="6622523"></option>
                         <option value="4235888"></option>
@@ -170,7 +177,7 @@ class PmcaElement extends PolymerElement {
             },
             pmcid: {
                 type: String,
-                value: "0",
+                value: '0',
             },
         };
     } // polymer says: required cos listening to event thrown by native element
@@ -182,84 +189,76 @@ class PmcaElement extends PolymerElement {
 
     connectedCallback() {
         super.connectedCallback();
-        window.addEventListener("popstate", this._boundListener);
-        window.addEventListener("load", this._boundListener);
-        console.log("window event listeners added");
+        window.addEventListener('popstate', this._boundListener);
+        window.addEventListener('load', this._boundListener);
+        console.log('window event listeners added');
     } // polymer says: required cos listening to event thrown by native element
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        window.removeEventListener("popstate", this._boundListener);
-        window.removeEventListener("load", this._boundListener);
-        console.log("window event listeners removed");
+        window.removeEventListener('popstate', this._boundListener);
+        window.removeEventListener('load', this._boundListener);
+        console.log('window event listeners removed');
     }
 
     ready() {
         super.ready();
-        this.addEventListener(
-            "filter-state-change",
-            this.handleFilterStateChange
-        );
-        this.addEventListener(
-            "list-browser-selected-index-changed",
-            this.handleListSelection
-        );
-        this.addEventListener("passagetouched", this.handleAnnotationTouched);
+        this.addEventListener('filter-state-change', this.handleFilterStateChange);
+        this.addEventListener('list-browser-selected-index-changed', this.handleListSelection);
+        this.addEventListener('passagetouched', this.handleAnnotationTouched);
     }
 
     getPmcidFromUrl_old() {
         // if pathElements looks like /stuff/.../pmcid/6622523/...
         var loc = location || window.location;
-        var pathElements = loc.pathname.split("/"); //console.log("getPmcidFromUrl - loc.pathname: ", loc.pathname);
+        var pathElements = loc.pathname.split('/'); //console.log("getPmcidFromUrl - loc.pathname: ", loc.pathname);
 
         var pmcidValueIsExpected = false;
 
         for (var i = 0; i < pathElements.length; i++) {
             var el = pathElements[i];
 
-            if (pmcidValueIsExpected && el != "") {
+            if (pmcidValueIsExpected && el != '') {
                 //console.log("getPmcidFromUrl - pmcid found, returning: ", el);
                 return el;
             }
 
-            if (el == "pmcid") pmcidValueIsExpected = true;
+            if (el == 'pmcid') pmcidValueIsExpected = true;
         }
 
-        return "0";
+        return '0';
     }
 
     getPmcidFromUrl() {
         var loc = location || window.location;
-        if (loc.search == null || loc.search == "") return "0";
-        var params = loc.search.substr(1).split("&");
+        if (loc.search == null || loc.search == '') return '0';
+        var params = loc.search.substr(1).split('&');
 
         for (var i = 0; i < params.length; i++) {
-            var nv = params[i].split("=");
-            if (nv[0].toLowerCase() == "pmcid" && nv.length == 2) return nv[1];
+            var nv = params[i].split('=');
+            if (nv[0].toLowerCase() == 'pmcid' && nv.length == 2) return nv[1];
         }
 
-        return "0";
+        return '0';
     }
 
     getOptionsFromUrl() {
         var options = {
             selector: false,
             debug: false,
-            service: "candy",
+            service: 'candy',
             showbacksections: false,
         };
         var loc = location || window.location;
-        if (loc.search == null || loc.search == "") return options;
-        var params = loc.search.substr(1).split("&");
+        if (loc.search == null || loc.search == '') return options;
+        var params = loc.search.substr(1).split('&');
 
         for (var i = 0; i < params.length; i++) {
-            var nv = params[i].split("=");
-            if (nv[0].toLowerCase() == "selector") options.selector = true;
-            if (nv[0].toLowerCase() == "showbacksections")
-                options.showbacksections = true;
-            if (nv[0].toLowerCase() == "debug") options.debug = true;
-            if (nv[0].toLowerCase() == "service" && nv.length == 2)
-                options.service = nv[1].toLowerCase();
+            var nv = params[i].split('=');
+            if (nv[0].toLowerCase() == 'selector') options.selector = true;
+            if (nv[0].toLowerCase() == 'showbacksections') options.showbacksections = true;
+            if (nv[0].toLowerCase() == 'debug') options.debug = true;
+            if (nv[0].toLowerCase() == 'service' && nv.length == 2) options.service = nv[1].toLowerCase();
         }
 
         return options;
@@ -270,46 +269,38 @@ class PmcaElement extends PolymerElement {
             options = {
                 selector: false,
                 debug: false,
-                service: "candy",
+                service: 'candy',
                 showbacksections: false,
             };
         if (options.selector == undefined) options.selector = false;
         if (options.debug == undefined) options.debug = false;
-        if (options.showbacksections == undefined)
-            options.showbacksections = false;
-        if (options.service == undefined) options.service = "candy";
+        if (options.showbacksections == undefined) options.showbacksections = false;
+        if (options.service == undefined) options.service = 'candy';
         this.displaySelector(options.selector); // In order to make life easier on re-calling this method after changing some other property
         // we save the pmcid in the corresponding property
 
         this.pmcid = pmcid;
-        if (pmcid == "0") return;
-        var promise = CandyProxy.getPromisedAnnotatedPublication(
-            pmcid,
-            options.service,
-            this.withCovoc
-        );
-        var pv = this.root.querySelector("pubmed-viewer-v2");
-        var lb = this.root.querySelector("list-browser");
-        var af = this.root.querySelector("checkbox-group");
+        if (pmcid == '0') return;
+        var promise = CandyProxy.getPromisedAnnotatedPublication(pmcid, options.service, this.withCovoc);
+        var pv = this.root.querySelector('pubmed-viewer-v2');
+        var lb = this.root.querySelector('list-browser');
+        var af = this.root.querySelector('checkbox-group');
         var me = this;
 
         return promise
             .then(function (annotatedPubli) {
-                var nohighlight =
-                    annotatedPubli.PMC_set &&
-                    annotatedPubli.PMC_set == "author_manuscripts";
+                var nohighlight = annotatedPubli.PMC_set && annotatedPubli.PMC_set == 'author_manuscripts';
                 pv.nohighlight = nohighlight;
                 pv.publi = annotatedPubli;
                 pv.addAnnotations(me.extraAnnotations);
                 pv.debug = options.debug;
                 pv.showbacksections = options.showbacksections;
-                var annotations =
-                    DataParser.getIdLabelListFromAnnotations(annotatedPubli);
+                var annotations = DataParser.getIdLabelListFromAnnotations(annotatedPubli);
                 lb.data = annotations;
                 lb.fillList();
                 var filters = DataParser.getPropertyValuesFromAnnotations(
                     annotatedPubli.annotations,
-                    "concept_source"
+                    'concept_source'
                 );
                 me.setFiltersStates(filters);
                 af.nohighlight = nohighlight;
@@ -318,8 +309,8 @@ class PmcaElement extends PolymerElement {
                 af._dispatchEventStateChanged(); //console.log("publi", annotatedPubli, "filters", filters);
             })
             .catch(function (reason) {
-                console.log("error reason", reason);
-                alert("Sorry, an error occured. See console for details");
+                console.log('error reason', reason);
+                alert('Sorry, an error occured. See console for details');
             });
     }
 
@@ -331,9 +322,9 @@ class PmcaElement extends PolymerElement {
 
     handleFilterStateChange(e) {
         var filters = e.detail.filters;
-        var viewer = this.root.querySelector("pubmed-viewer-v2");
+        var viewer = this.root.querySelector('pubmed-viewer-v2');
         viewer.applyFilterState(filters);
-        var lb = this.root.querySelector("list-browser");
+        var lb = this.root.querySelector('list-browser');
         var selectedId = lb.getSelectedItemId();
         lb.fillList(filters);
         setTimeout(function () {
@@ -344,7 +335,7 @@ class PmcaElement extends PolymerElement {
 
     handleListSelection(e) {
         var item = e.detail.selectedItem;
-        var viewer = this.root.querySelector("pubmed-viewer-v2");
+        var viewer = this.root.querySelector('pubmed-viewer-v2');
         var id = item == undefined || item == null ? null : item.id; //console.log("selection changed",id, viewer);
 
         viewer.selectPsg(id, true);
@@ -355,9 +346,9 @@ class PmcaElement extends PolymerElement {
         var someid = e.detail.id; //var id = someid.substr(3);
 
         var id = someid;
-        var lb = this.root.querySelector("list-browser");
+        var lb = this.root.querySelector('list-browser');
         lb.setSelectedItem(id);
-        var viewer = this.root.querySelector("pubmed-viewer-v2");
+        var viewer = this.root.querySelector('pubmed-viewer-v2');
         viewer.selectPsg(id, false);
     }
 
@@ -369,7 +360,7 @@ class PmcaElement extends PolymerElement {
 
     handleClickPS(event) {
         var el = event.target || event.srcElement;
-        el.value = "";
+        el.value = '';
     } // // unused
     // handleClickAA() {
     //   var a1 = {concept_form:"mixture",concept_id:"PseudoCpt1",concept_source:"Pseudo", preferred_term: "MIX",
@@ -386,25 +377,25 @@ class PmcaElement extends PolymerElement {
     // }
 
     handleClickCC() {
-        var highlighted_src_1 = "OnTheFlyAnnot";
-        var highlighted_src_2 = "DynamicAnnot";
+        var highlighted_src_1 = 'OnTheFlyAnnot';
+        var highlighted_src_2 = 'DynamicAnnot';
         var a1 = {
-            concept_form: "mixture",
-            concept_id: "PseudoCpt1",
+            concept_form: 'mixture',
+            concept_id: 'PseudoCpt1',
             concept_source: highlighted_src_1,
-            preferred_term: "MIX1",
-            special_id: "SpecialId1",
-            type: "Artificial1",
-            version: "2020-01-06",
+            preferred_term: 'MIX1',
+            special_id: 'SpecialId1',
+            type: 'Artificial1',
+            version: '2020-01-06',
         };
         var a2 = {
-            concept_form: "agricultural",
-            concept_id: "PseudoCpt2",
+            concept_form: 'agricultural',
+            concept_id: 'PseudoCpt2',
             concept_source: highlighted_src_2,
-            preferred_term: "MIX2",
-            special_id: "SpecialId2",
-            type: "Artificial2",
-            version: "2020-01-06",
+            preferred_term: 'MIX2',
+            special_id: 'SpecialId2',
+            type: 'Artificial2',
+            version: '2020-01-06',
         };
         this.extraAnnotations = [a1, a2];
         this.defaultForAllFilters = false;
@@ -412,51 +403,47 @@ class PmcaElement extends PolymerElement {
             names: [highlighted_src_1, highlighted_src_2],
             state: true,
         };
-        this.displayPmcid("4909023");
+        this.displayPmcid('4909023');
     }
 
     displaySelector(state) {
-        var el = this.root.querySelector("#pmcid-selection-div");
-        el.style.display = state ? "block" : "none";
+        var el = this.root.querySelector('#pmcid-selection-div');
+        el.style.display = state ? 'block' : 'none';
     }
 
     displayPmcid_old(id) {
         var loc = location || window.location;
         var params = loc.search;
-        var url = getBaseHref() + "pmcid/" + id + params; //event.preventDefault();
+        var url = getBaseHref() + 'pmcid/' + id + params; //event.preventDefault();
 
-        history.pushState(null, "", url);
-        window.dispatchEvent(new Event("popstate"));
+        history.pushState(null, '', url);
+        window.dispatchEvent(new Event('popstate'));
     }
 
     displayPmcid(id) {
         var loc = location || window.location;
-        var new_params = "?pmcid=" + id;
-        var params = loc.search.substr(1).split("&");
-        console.log("old params:", loc.search);
+        var new_params = '?pmcid=' + id;
+        var params = loc.search.substr(1).split('&');
+        console.log('old params:', loc.search);
 
         for (var i = 0; i < params.length; i++) {
-            var nv = params[i].split("=");
-            if (nv[0].toLowerCase() == "selector") new_params += "&selector";
-            if (nv[0].toLowerCase() == "debug") new_params += "&debug";
-            if (nv[0].toLowerCase() == "showbacksections")
-                new_params += "&showbacksections";
-            if (nv[0].toLowerCase() == "service" && nv.length == 2)
-                new_params += "&service=" + nv[1].toLowerCase();
+            var nv = params[i].split('=');
+            if (nv[0].toLowerCase() == 'selector') new_params += '&selector';
+            if (nv[0].toLowerCase() == 'debug') new_params += '&debug';
+            if (nv[0].toLowerCase() == 'showbacksections') new_params += '&showbacksections';
+            if (nv[0].toLowerCase() == 'service' && nv.length == 2)
+                new_params += '&service=' + nv[1].toLowerCase();
         }
 
-        var url = getBaseHref() + "index.html" + new_params;
-        console.log("new params:", new_params, url);
-        history.pushState(null, "", url);
-        window.dispatchEvent(new Event("popstate"));
+        var url = getBaseHref() + 'index.html' + new_params;
+        console.log('new params:', new_params, url);
+        history.pushState(null, '', url);
+        window.dispatchEvent(new Event('popstate'));
     }
 
     setFiltersStates(filters) {
         // set default checked value if exists
-        if (
-            this.defaultForAllFilters == true ||
-            this.defaultForAllFilters == false
-        ) {
+        if (this.defaultForAllFilters == true || this.defaultForAllFilters == false) {
             for (var i = 0; i < filters.length; i++) {
                 filters[i].checked = this.defaultForAllFilters;
             }
@@ -464,12 +451,10 @@ class PmcaElement extends PolymerElement {
 
         if (this.stateForFilters != undefined && this.stateForFilters != null) {
             var names = [this.stateForFilters.names];
-            if (this.stateForFilters.names instanceof Array)
-                names = this.stateForFilters.names;
+            if (this.stateForFilters.names instanceof Array) names = this.stateForFilters.names;
 
             for (var i = 0; i < filters.length; i++) {
-                if (names.includes(filters[i].name))
-                    filters[i].checked = this.stateForFilters.state;
+                if (names.includes(filters[i].name)) filters[i].checked = this.stateForFilters.state;
             }
         }
     }
@@ -479,11 +464,11 @@ class PmcaElement extends PolymerElement {
         this.defaultForAllFilters = true;
         this.withCovoc = false;
 
-        stateForFilters: null;
+        null;
 
-        this.root.querySelector("pubmed-viewer-v2").reset();
-        this.root.querySelector("list-browser").reset();
-        this.root.querySelector("checkbox-group").reset();
+        this.root.querySelector('pubmed-viewer-v2').reset();
+        this.root.querySelector('list-browser').reset();
+        this.root.querySelector('checkbox-group').reset();
     } // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // functions below can be used to change the state of the viewer programmatically
     // after the pmcid is already displayed (experimental)
@@ -524,4 +509,4 @@ class PmcaElement extends PolymerElement {
     // }
 }
 
-window.customElements.define("pmca-element", PmcaElement);
+window.customElements.define('pmca-element', PmcaElement);

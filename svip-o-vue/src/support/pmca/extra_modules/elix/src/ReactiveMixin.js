@@ -1,16 +1,14 @@
-import * as symbols from "./symbols.js";
-import State from "./State.js";
+import * as symbols from './symbols.js';
+import State from './State.js';
 /** @type {any} */
 
-const renderedStateKey = Symbol("renderedState");
+const renderedStateKey = Symbol('renderedState');
 /** @type {any} */
 
-const stateKey = Symbol("state");
+const stateKey = Symbol('state');
 /** @type {any} */
 
-const raiseChangeEventsInNextRenderKey = Symbol(
-    "raiseChangeEventsInNextRender"
-);
+const raiseChangeEventsInNextRenderKey = Symbol('raiseChangeEventsInNextRender');
 /**
  * Manages component state and renders changes in state
  *
@@ -103,8 +101,7 @@ export default function ReactiveMixin(Base) {
                 // know whether to raise property change events.
 
                 const saveRaiseChangeEvents = this[symbols.raiseChangeEvents];
-                this[symbols.raiseChangeEvents] =
-                    this[raiseChangeEventsInNextRenderKey]; // We set a flag to indicate that rendering is happening. The component
+                this[symbols.raiseChangeEvents] = this[raiseChangeEventsInNextRenderKey]; // We set a flag to indicate that rendering is happening. The component
                 // may use this to avoid triggering other updates during the render.
 
                 this[symbols.rendering] = true; // Invoke any internal render method implementations.
@@ -196,9 +193,7 @@ export default function ReactiveMixin(Base) {
          */
 
         shouldComponentUpdate(nextState) {
-            return super.shouldComponentUpdate
-                ? super.shouldComponentUpdate(nextState)
-                : false;
+            return super.shouldComponentUpdate ? super.shouldComponentUpdate(nextState) : false;
         }
         /**
          * The component's current state.

@@ -1,9 +1,5 @@
 <template>
-    <div
-        id="burger"
-        :class="{ active: isBurgerActive }"
-        @click.prevent="toggle"
-    >
+    <div id="burger" :class="{active: isBurgerActive}" @click.prevent="toggle">
         <slot>
             <button type="button" class="burger-button" title="Menu">
                 <span class="hidden">Toggle menu</span>
@@ -15,10 +11,10 @@
     </div>
 </template>
 <script>
-import { mutations, state } from "@/store/modules/site";
+import {mutations, state} from '@/store/modules/site';
 
 export default {
-    name: "BurgerMenu",
+    name: 'BurgerMenu',
     computed: {
         isBurgerActive() {
             return state.isNavOpen;

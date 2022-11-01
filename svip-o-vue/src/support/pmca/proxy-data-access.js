@@ -1,4 +1,4 @@
-import DataParser from "@/support/pmca/proxy-data-parser";
+import DataParser from '@/support/pmca/proxy-data-parser';
 
 const CandyProxy = {
     //baseUrl : 'http://localhost:8088',
@@ -19,37 +19,31 @@ const CandyProxy = {
     },
     getPromisedPublication: function (pmcid, service, with_covoc) {
         var me = this;
-        var mypath = "http://undefined.service.sorry"; // direct calls to candy service
+        var mypath = 'http://undefined.service.sorry'; // direct calls to candy service
 
-        if (service == "httpcandy")
-            mypath = "http://candy.hesge.ch/SIBiLS/PMC/fetch_PAM.jsp?ids=";
-        if (service == "httpscandy")
-            mypath = "https://candy.hesge.ch/SIBiLS/PMC/fetch_PAM.jsp?ids=";
-        if (service == "candy") mypath = "/SIBiLS/PMC/fetch_PAM.jsp?ids="; // proxied call to candy service (not used any more since tomcat on candy sends header Access-Control-Allow-Origin="*")
+        if (service == 'httpcandy') mypath = 'http://candy.hesge.ch/SIBiLS/PMC/fetch_PAM.jsp?ids=';
+        if (service == 'httpscandy') mypath = 'https://candy.hesge.ch/SIBiLS/PMC/fetch_PAM.jsp?ids=';
+        if (service == 'candy') mypath = '/SIBiLS/PMC/fetch_PAM.jsp?ids='; // proxied call to candy service (not used any more since tomcat on candy sends header Access-Control-Allow-Origin="*")
 
-        if (service == "proxy") mypath = "http://localhost:8088/sibils/pmc/"; // proxied call to ncbi, xml file cache, xml parsing
+        if (service == 'proxy') mypath = 'http://localhost:8088/sibils/pmc/'; // proxied call to ncbi, xml file cache, xml parsing
 
-        if (service == "ncbi") mypath = "http://localhost:8088/parse/pmc/";
+        if (service == 'ncbi') mypath = 'http://localhost:8088/parse/pmc/';
         var id = pmcid;
-        if (service.indexOf("candy") >= 0 && !id.startsWith("PMC"))
-            id = "PMC" + id;
+        if (service.indexOf('candy') >= 0 && !id.startsWith('PMC')) id = 'PMC' + id;
         var url = mypath + id;
 
         if (with_covoc) {
-            var sep = "?";
-            if (url.indexOf("?") >= 0) sep = "&";
-            url += sep + "covoc";
+            var sep = '?';
+            if (url.indexOf('?') >= 0) sep = '&';
+            url += sep + 'covoc';
         }
 
-        console.log("id", id);
-        console.log("service", service);
-        console.log("covoc", with_covoc);
-        console.log("url", url);
+        console.log('id', id);
+        console.log('service', service);
+        console.log('covoc', with_covoc);
+        console.log('url', url);
         return this._getPromisedJson(url).then(function (json) {
-            return me._getPromisedParsedData(
-                json.data,
-                DataParser.parsePublicationData
-            );
+            return me._getPromisedParsedData(json.data, DataParser.parsePublicationData);
         });
     },
 
@@ -104,13 +98,7 @@ const CandyProxy = {
                 resolve(parseFunction(json));
             } catch (err) {
                 console.log(err.stack);
-                reject(
-                    me._getRejectObject(
-                        json.query.uri,
-                        200,
-                        "Data parsing error: " + err.message
-                    )
-                );
+                reject(me._getRejectObject(json.query.uri, 200, 'Data parsing error: ' + err.message));
             }
         });
         return promise;
@@ -119,7 +107,7 @@ const CandyProxy = {
         var me = this;
         var promise = new Promise(function (resolve, reject) {
             var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", url, true);
+            xhttp.open('GET', url, true);
 
             xhttp.onreadystatechange = function () {
                 if (this.readyState != 4) return; // if could get a valid response from server
@@ -127,26 +115,16 @@ const CandyProxy = {
                 if (this.status == 200) {
                     var json = JSON.parse(this.responseText); // perform some special formatting in this case
 
-                    if (json.success == undefined)
-                        json = me._getSuccessObjectForCandy(url, json);
+                    if (json.success == undefined) json = me._getSuccessObjectForCandy(url, json);
 
                     if (json.success) {
                         resolve(json);
                     } else {
-                        var msg =
-                            json.error && json.error.message
-                                ? ": " + json.error.message
-                                : "";
-                        reject(
-                            me._getRejectObject(
-                                url,
-                                this.status,
-                                "Server error" + msg
-                            )
-                        );
+                        var msg = json.error && json.error.message ? ': ' + json.error.message : '';
+                        reject(me._getRejectObject(url, this.status, 'Server error' + msg));
                     }
                 } else {
-                    reject(me._getRejectObject(url, this.status, "HTTP error"));
+                    reject(me._getRejectObject(url, this.status, 'HTTP error'));
                 }
             };
 
@@ -171,7 +149,7 @@ const CandyProxy = {
         return {
             success: true,
             query: {
-                method: "GET",
+                method: 'GET',
                 params: {},
                 uri: uri,
             },
@@ -182,7 +160,7 @@ const CandyProxy = {
         return {
             success: true,
             query: {
-                method: "GET",
+                method: 'GET',
                 params: {},
                 uri: uri,
             },
@@ -193,7 +171,7 @@ const CandyProxy = {
         return {
             success: false,
             query: {
-                method: "GET",
+                method: 'GET',
                 params: {},
                 uri: uri,
             },

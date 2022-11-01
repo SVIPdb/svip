@@ -1,31 +1,25 @@
 <template>
     <div>
         <span v-for="(x, idx) in listifyCounts" :key="idx">
-            <span v-if="idx !== 0">{{ ", " }}</span>
+            <span v-if="idx !== 0">{{ ', ' }}</span>
             <span class="type-count">{{ x.count }} {{ x.name }}</span>
-            <span
-                v-if="x.subsigs"
-                class="subsigs"
-                v-html="joinSubSigs(x.subsigs)"
-            ></span>
+            <span v-if="x.subsigs" class="subsigs" v-html="joinSubSigs(x.subsigs)"></span>
             <span class="percent">({{ x.percent }}%)</span>
         </span>
     </div>
 </template>
 
 <script>
-import round from "lodash/round";
+import round from 'lodash/round';
 
 export default {
-    name: "significanceTextDisplay",
-    props: ["data"],
+    name: 'significanceTextDisplay',
+    props: ['data'],
     computed: {
         listifyCounts() {
-            const total = this.data
-                .map((x) => x.count)
-                .reduce((x, acc) => x + acc, 0);
+            const total = this.data.map(x => x.count).reduce((x, acc) => x + acc, 0);
 
-            return this.data.map((x) => ({
+            return this.data.map(x => ({
                 ...x,
                 percent: round((x.count / total) * 100.0, 1),
             }));
@@ -34,14 +28,9 @@ export default {
     methods: {
         joinSubSigs(subsigs) {
             return (
-                " (" +
-                subsigs
-                    .map(
-                        (z) =>
-                            `<span class="type-count">${z.count} ${z.name}</span>`
-                    )
-                    .join(", ") +
-                ")"
+                ' (' +
+                subsigs.map(z => `<span class="type-count">${z.count} ${z.name}</span>`).join(', ') +
+                ')'
             );
         },
     },

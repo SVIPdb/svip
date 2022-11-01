@@ -1,5 +1,5 @@
 let generatedIdCount = 0;
-const generatedIdKey = Symbol("generatedId");
+const generatedIdKey = Symbol('generatedId');
 export function ensureId(element) {
     let id = element.id || element[generatedIdKey];
 

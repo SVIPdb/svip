@@ -4,22 +4,20 @@
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
                     Diseases
-                    <i class="float-right" v-if="!currentFilter.phenotype__term"
-                        >click on a disease to filter the evidences table</i
-                    >
+                    <i class="float-right" v-if="!currentFilter.phenotype__term">
+                        click on a disease to filter the evidences table
+                    </i>
                     <span
                         class="float-right badge badge-primary filter-phenotype__term"
                         v-if="currentFilter.phenotype__term"
-                        style="font-size: 13px"
-                    >
+                        style="font-size: 13px">
                         {{ titleCase(currentFilter.phenotype__term) }}
                         <button
                             type="button"
                             class="close small ml-3"
                             aria-label="Close"
                             style="font-size: 14px"
-                            @click="currentFilter.phenotype__term = ''"
-                        >
+                            @click="currentFilter.phenotype__term = ''">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </span>
@@ -40,8 +38,7 @@
                                 currentFilter.phenotype__term === d.disease
                                     ? 'pointer table-active'
                                     : 'pointer'
-                            "
-                        >
+                            ">
                             <td>{{ titleCase(d.disease) }}</td>
                             <td>{{ d.count.toLocaleString() }}</td>
                         </tr>
@@ -54,11 +51,7 @@
 
         <div class="col-xl-9 col-12">
             <b-card>
-                <RowDetailsHeader
-                    name="Evidences"
-                    :total-rows="totalRows"
-                    v-model="currentFilter"
-                />
+                <RowDetailsHeader name="Evidences" :total-rows="totalRows" v-model="currentFilter" />
 
                 <b-table
                     :fields="fields"
@@ -67,20 +60,14 @@
                     :items="makeAssociationProvider(this.metaUpdated)"
                     :per-page="perPage"
                     :current-page="currentPage"
-                    :filter="packedFilter"
-                >
+                    :filter="packedFilter">
                     <template v-slot:cell(disease)="c">
-                        <a
-                            v-if="c.item.evidence_url"
-                            :href="c.item.evidence_url"
-                            target="_blank"
-                            >{{ c.value }}</a
-                        >
+                        <a v-if="c.item.evidence_url" :href="c.item.evidence_url" target="_blank">
+                            {{ c.value }}
+                        </a>
                         <span v-else>{{ c.value }}</span>
                     </template>
-                    <template v-slot:cell(drug)="c">{{
-                        normalizeItemList(c.value)
-                    }}</template>
+                    <template v-slot:cell(drug)="c">{{ normalizeItemList(c.value) }}</template>
                     <template v-slot:cell(publications)="c">
                         <template v-for="(p, i) in c.value">
                             <VariomesLitPopover
@@ -88,13 +75,8 @@
                                 :variant="variant.name"
                                 :gene="variant.gene.symbol"
                                 :disease="c.item.disease"
-                                :key="`${i}_link`"
-                            />
-                            <span
-                                :key="`${i}_comma`"
-                                v-if="i < c.item.publications.length - 1"
-                                >,
-                            </span>
+                                :key="`${i}_link`" />
+                            <span :key="`${i}_comma`" v-if="i < c.item.publications.length - 1">,</span>
                         </template>
                     </template>
                 </b-table>
@@ -103,64 +85,63 @@
                     v-if="totalRows > perPage"
                     v-model="currentPage"
                     :total-rows="totalRows"
-                    :per-page="perPage"
-                />
+                    :per-page="perPage" />
             </b-card>
         </div>
     </div>
 </template>
 
 <script>
-import { normalizeItemList, titleCase } from "@/utils";
-import { makeAssociationProvider } from "@/components/genes/variants/item_providers/association_provider";
-import RowDetailsHeader from "@/components/genes/variants/sources/shared/RowDetailsHeader";
-import VariomesLitPopover from "@/components/widgets/VariomesLitPopover";
+import {normalizeItemList, titleCase} from '@/utils';
+import {makeAssociationProvider} from '@/components/genes/variants/item_providers/association_provider';
+import RowDetailsHeader from '@/components/genes/variants/sources/shared/RowDetailsHeader';
+import VariomesLitPopover from '@/components/widgets/VariomesLitPopover';
 
 export default {
-    name: "OncoKBRowDetails",
-    components: { RowDetailsHeader, VariomesLitPopover },
+    name: 'OncoKBRowDetails',
+    components: {RowDetailsHeader, VariomesLitPopover},
     props: {
-        row: { type: Object, required: true },
-        variant: { type: Object, required: true },
+        row: {type: Object, required: true},
+        variant: {type: Object, required: true},
     },
     data() {
         return {
             currentFilter: {
-                phenotype__term: "",
-                search: "",
+                phenotype__term: '',
+                search: '',
             },
             currentPage: 1,
             perPage: 20,
             totalRows: this.row.item.association_count,
             fields: [
                 {
-                    key: "disease",
-                    label: "Disease",
+                    key: 'disease',
+                    label: 'Disease',
                     sortable: true,
                 },
                 {
-                    key: "evidence_type",
-                    label: "Evidence Type",
+                    key: 'evidence_type',
+                    label: 'Evidence Type',
                     sortable: true,
                 },
                 {
-                    key: "clinical_significance",
-                    label: "Clinical Significance",
+                    key: 'clinical_significance',
+                    label: 'Clinical Significance',
                     sortable: true,
                 },
                 {
-                    key: "evidence_level",
-                    label: "Tier",
+                    key: 'evidence_level',
+                    label: 'Tier',
                     sortable: true,
                 },
                 {
-                    key: "drug_labels",
-                    label: "Drug",
+                    key: 'drug_labels',
+                    label: 'Drug',
                     sortable: true,
                 },
                 {
-                    key: "publications",
-                    label: "References",
+                    key: 'publications',
+                    label: 'References',
                     sortable: false,
                 },
             ],
@@ -172,7 +153,7 @@ export default {
         },
     },
     methods: {
-        metaUpdated({ count }) {
+        metaUpdated({count}) {
             this.totalRows = count;
         },
         makeAssociationProvider,

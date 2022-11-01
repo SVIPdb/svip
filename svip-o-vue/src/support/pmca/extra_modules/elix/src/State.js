@@ -1,4 +1,4 @@
-const changeHandlersKey = Symbol("changeHandlers");
+const changeHandlersKey = Symbol('changeHandlers');
 /**
  * A state object that can reconcile changes from multiple sources.
  */
@@ -65,8 +65,7 @@ class State {
      */
 
     onChange(dependencies, callback) {
-        const array =
-            dependencies instanceof Array ? dependencies : [dependencies];
+        const array = dependencies instanceof Array ? dependencies : [dependencies];
         const changeHandler = {
             dependencies: array,
             callback,
@@ -128,11 +127,7 @@ function applyStateChanges(state, changes) {
     // might produce new changes, and so on. Loop until we complete a pass that
     // produces no changes.
 
-    for (
-        let changed;
-        (changed = fieldsChanged(state, changes)), !isEmpty(changed);
-
-    ) {
+    for (let changed; (changed = fieldsChanged(state, changes)), !isEmpty(changed); ) {
         // We do have some real changes to report.
         result = true; // Apply the changes to the state.
 
@@ -141,12 +136,10 @@ function applyStateChanges(state, changes) {
         const nextChanges = {};
 
         if (state[changeHandlersKey]) {
-            state[changeHandlersKey].forEach((handler) => {
-                const { dependencies, callback } = handler; // Does this handler trigger on any of the changes we have?
+            state[changeHandlersKey].forEach(handler => {
+                const {dependencies, callback} = handler; // Does this handler trigger on any of the changes we have?
 
-                const run = dependencies.some(
-                    (dependency) => changed[dependency]
-                );
+                const run = dependencies.some(dependency => changed[dependency]);
 
                 if (run) {
                     // Yes, run the change handler and collect its changes.

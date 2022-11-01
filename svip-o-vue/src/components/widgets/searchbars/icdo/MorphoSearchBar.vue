@@ -11,8 +11,7 @@
         :disabled="disabled"
         label="term"
         :filter-by="filterBy"
-        @option:created="refreshTerms"
-    >
+        @option:created="refreshTerms">
         <template v-slot:option="option">
             <span :class="[option.user_created && 'user_created']">
                 {{ option.term && titleCase(option.term.toLowerCase()) }}
@@ -26,18 +25,18 @@
 </template>
 
 <script>
-import { HTTP } from "@/router/http";
-import { titleCase } from "@/utils";
+import {HTTP} from '@/router/http';
+import {titleCase} from '@/utils';
 // import sortBy from 'lodash/sortBy';
 
 export default {
-    name: "MorphoSearchBar",
+    name: 'MorphoSearchBar',
     props: {
         value: {},
-        state: { type: Boolean },
-        multiple: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
-        allowCreate: { type: Boolean, default: false },
+        state: {type: Boolean},
+        multiple: {type: Boolean, default: false},
+        disabled: {type: Boolean, default: false},
+        allowCreate: {type: Boolean, default: false},
     },
     data() {
         return {
@@ -52,8 +51,8 @@ export default {
         titleCase,
         refreshTerms() {
             this.loadingTerms = true;
-            HTTP.get("/icdo_morpho?page_size=9999")
-                .then((response) => {
+            HTTP.get('/icdo_morpho?page_size=9999')
+                .then(response => {
                     this.terms = response.data.results;
                 })
                 .finally(() => {
@@ -61,14 +60,13 @@ export default {
                 });
         },
         update(newValue) {
-            this.$emit("input", newValue);
+            this.$emit('input', newValue);
         },
         filterBy(option, label, search) {
             const isearch = search.toLowerCase();
             return (
                 (option.term && option.term.toLowerCase().includes(isearch)) ||
-                (option.cell_type_code &&
-                    option.cell_type_code.toLowerCase().includes(isearch))
+                (option.cell_type_code && option.cell_type_code.toLowerCase().includes(isearch))
             );
         },
     },

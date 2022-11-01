@@ -6,16 +6,8 @@
             </b-checkbox>
         </b-form-group>
 
-        <b-form-group
-            label="Email address of the requestor"
-            v-if="for_curation_request"
-        >
-            <b-input
-                type="text"
-                name="requestor"
-                v-model="requestor"
-                @input="modelChanged"
-            />
+        <b-form-group label="Email address of the requestor" v-if="for_curation_request">
+            <b-input type="text" name="requestor" v-model="requestor" @input="modelChanged" />
         </b-form-group>
 
         <ValidatedFormField
@@ -24,14 +16,8 @@
             v-slot="props"
             :modeled="icdo_morpho"
             label="ICD-O Morpho Code"
-            inner-id="icdo_morpho"
-        >
-            <MorphoSearchBar
-                id="icdo_morpho"
-                v-model="icdo_morpho"
-                @input="modelChanged"
-                :state="true"
-            />
+            inner-id="icdo_morpho">
+            <MorphoSearchBar id="icdo_morpho" v-model="icdo_morpho" @input="modelChanged" :state="true" />
         </ValidatedFormField>
 
         <ValidatedFormField
@@ -41,29 +27,27 @@
             :enabled="!!icdo_morpho"
             :inline="false"
             label="ICD-O Topo Codes"
-            inner-id="icdo_topo"
-        >
+            inner-id="icdo_topo">
             <TopoSearchBar
                 id="icdo_topo"
                 v-model="icdo_topo"
                 @input="modelChanged"
                 :state="true"
-                :multiple="true"
-            />
+                :multiple="true" />
         </ValidatedFormField>
     </div>
 </template>
 
 <script>
-import MorphoSearchBar from "@/components/widgets/searchbars/icdo/MorphoSearchBar";
-import TopoSearchBar from "@/components/widgets/searchbars/icdo/TopoSearchBar";
-import ValidatedFormField from "@/components/widgets/curation/ValidatedFormField";
+import MorphoSearchBar from '@/components/widgets/searchbars/icdo/MorphoSearchBar';
+import TopoSearchBar from '@/components/widgets/searchbars/icdo/TopoSearchBar';
+import ValidatedFormField from '@/components/widgets/curation/ValidatedFormField';
 
 export default {
-    name: "CreateCurationRequest",
-    components: { ValidatedFormField, TopoSearchBar, MorphoSearchBar },
+    name: 'CreateCurationRequest',
+    components: {ValidatedFormField, TopoSearchBar, MorphoSearchBar},
     props: {
-        value: { required: true },
+        value: {required: true},
     },
     created() {
         // copy in contents of value prop when we're created
@@ -83,13 +67,11 @@ export default {
     },
     methods: {
         checkValidity(props, withoutChange) {
-            return props.invalid && (withoutChange || !props.changed)
-                ? false
-                : null;
+            return props.invalid && (withoutChange || !props.changed) ? false : null;
         },
         modelChanged() {
             this.$nextTick(() => {
-                this.$emit("input", { ...this.$data });
+                this.$emit('input', {...this.$data});
             });
         },
     },

@@ -8,8 +8,7 @@
                         class="img-fluid"
                         width="483"
                         height="137"
-                        alt="SVIP Logo"
-                    />
+                        alt="SVIP Logo" />
                 </div>
 
                 <div class="section row justify-content-md-center">
@@ -18,55 +17,40 @@
                     </div>
                 </div>
 
-                <div
-                    v-if="loadingStats === 'error'"
-                    class="section stats row justify-content-md-center"
-                >
+                <div v-if="loadingStats === 'error'" class="section stats row justify-content-md-center">
                     <div class="text-center text-muted font-italic">
                         <icon
                             name="exclamation-triangle"
                             scale="3"
                             class="blinking"
-                            style="
-                                vertical-align: text-bottom;
-                                margin-bottom: 5px;
-                                color: #e7c28b;
-                            "
-                        /><br />
-                        The SVIP API is not available.<br />
+                            style="vertical-align: text-bottom; margin-bottom: 5px; color: #e7c28b" />
+                        <br />
+                        The SVIP API is not available.
+                        <br />
                         Please check your connection and then
-                        <a href="mailto:feedback@svip.ch">contact us</a>.
+                        <a href="mailto:feedback@svip.ch">contact us</a>
+                        .
                     </div>
                 </div>
                 <div v-else class="section stats row justify-content-md-center">
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else
-                                >{{ nbGenes.toLocaleString() }} Gene{{
-                                    nbGenes !== 1 ? "s" : ""
-                                }}</span
-                            >
+                            <span v-else>
+                                {{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : '' }}
+                            </span>
                         </h3>
-                        <span class="text-muted"
-                            >{{ nbGenesSVIP }} with SVIP data</span
-                        >
+                        <span class="text-muted">{{ nbGenesSVIP }} with SVIP data</span>
                     </div>
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else
-                                >{{ nbVariants.toLocaleString() }} Variant{{
-                                    nbVariants !== 1 ? "s" : ""
-                                }}</span
-                            >
+                            <span v-else>
+                                {{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : '' }}
+                            </span>
                         </h3>
-                        <div class="text-muted">
-                            {{ nbVariantsSVIP }} with SVIP data
-                        </div>
-                        <div class="text-muted">
-                            {{ nbSvipCurations }} curation entries
-                        </div>
+                        <div class="text-muted">{{ nbVariantsSVIP }} with SVIP data</div>
+                        <div class="text-muted">{{ nbSvipCurations }} curation entries</div>
                     </div>
                 </div>
             </div>
@@ -74,26 +58,16 @@
             <div class="row">
                 <div
                     class="col-12 justify-content-center"
-                    style="
-                        text-align: center;
-                        font-style: italic;
-                        color: #999;
-                        margin-top: 60px;
-                    "
-                >
+                    style="text-align: center; font-style: italic; color: #999; margin-top: 60px">
                     <a
                         href="https://www.sphn.ch/en/projects/infrastructure-development-projects.html"
-                        target="_blank"
-                    >
+                        target="_blank">
                         <img
                             src="../../assets/logos/sphn_logo_middle.png"
                             width="170"
-                            alt="SPHN: Swiss Personalized Health Network"
-                        />
+                            alt="SPHN: Swiss Personalized Health Network" />
                     </a>
-                    <div style="padding-top: 2em">
-                        an SPHN Infrastructure Development project
-                    </div>
+                    <div style="padding-top: 2em">an SPHN Infrastructure Development project</div>
                 </div>
             </div>
         </div>
@@ -101,13 +75,13 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import store from "@/store";
-import SearchBar from "../widgets/searchbars/SearchBar";
+import {mapGetters} from 'vuex';
+import store from '@/store';
+import SearchBar from '../widgets/searchbars/SearchBar';
 
 export default {
-    name: "home",
-    components: { SearchBar },
+    name: 'home',
+    components: {SearchBar},
     data() {
         return {
             gene: {},
@@ -115,17 +89,17 @@ export default {
     },
     computed: {
         ...mapGetters({
-            loadingStats: "loadingStats",
-            genes: "genes",
-            nbGenes: "nbGenes",
-            nbGenesSVIP: "nbGenesSVIP",
-            nbVariants: "nbVariants",
-            nbVariantsSVIP: "nbVariantsSVIP",
-            nbSvipCurations: "nbSvipCurations",
+            loadingStats: 'loadingStats',
+            genes: 'genes',
+            nbGenes: 'nbGenes',
+            nbGenesSVIP: 'nbGenesSVIP',
+            nbVariants: 'nbVariants',
+            nbVariantsSVIP: 'nbVariantsSVIP',
+            nbSvipCurations: 'nbSvipCurations',
         }),
     },
     created() {
-        store.dispatch("getSiteStats");
+        store.dispatch('getSiteStats');
     },
 };
 </script>

@@ -1,11 +1,6 @@
 <template>
     <span class="source-icon">
-        <img
-            ref="the_icon"
-            :src="source.icon"
-            :alt="source.name"
-            :style="style"
-        />
+        <img ref="the_icon" :src="source.icon" :alt="source.name" :style="style" />
         <b-tooltip v-if="!noTip" :target="() => $refs.the_icon" placement="top">
             {{ source.name }}
         </b-tooltip>
@@ -14,29 +9,29 @@
 
 <script>
 const sources = {
-    svip: { name: "SVIP", icon: require("@/assets/icons/svip_small_icon.png") },
-    civic: { name: "CIViC", icon: require("@/assets/icons/civic_icon.png") },
+    svip: {name: 'SVIP', icon: require('@/assets/icons/svip_small_icon.png')},
+    civic: {name: 'CIViC', icon: require('@/assets/icons/civic_icon.png')},
     oncokb: {
-        name: "OncoKB",
-        icon: require("@/assets/icons/oncokb-194x194-bw.png"),
+        name: 'OncoKB',
+        icon: require('@/assets/icons/oncokb-194x194-bw.png'),
     },
     cosmic: {
-        name: "COSMIC",
-        icon: require("@/assets/icons/cosmic-196x196-bw.png"),
+        name: 'COSMIC',
+        icon: require('@/assets/icons/cosmic-196x196-bw.png'),
     },
     clinvar: {
-        name: "ClinVar",
-        icon: require("@/assets/icons/ncbi_logo_mono.png"),
+        name: 'ClinVar',
+        icon: require('@/assets/icons/ncbi_logo_mono.png'),
     },
 };
 
 export default {
-    name: "SourceIcon",
+    name: 'SourceIcon',
     props: {
-        name: { type: String, required: true },
-        noTip: { type: Boolean, default: false },
-        size: { type: Number, default: 16 },
-        marginRight: { type: Number, default: 5 },
+        name: {type: String, required: true},
+        noTip: {type: Boolean, default: false},
+        size: {type: Number, default: 16},
+        marginRight: {type: Number, default: 5},
     },
     computed: {
         source() {
