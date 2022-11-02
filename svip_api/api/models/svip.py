@@ -341,8 +341,8 @@ class CurationEntryManager(models.Manager):
 
         result = (
             result
-                .select_related('disease', 'variant', 'variant__gene')
-                .prefetch_related('extra_variants')
+            .select_related('disease', 'variant', 'variant__gene')
+            .prefetch_related('extra_variants')
         )
 
         return result

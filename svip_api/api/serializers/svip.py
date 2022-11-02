@@ -22,7 +22,8 @@ from api.models.svip import (
     CurationRequest, SummaryComment, CurationReview,
     SummaryDraft, GeneSummaryDraft, SubmissionEntry
 )
-from api.serializers.genomic import (SimpleVariantSerializer, SimpleGeneSerializer)
+from api.serializers.genomic import (
+    SimpleVariantSerializer, SimpleGeneSerializer)
 from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
@@ -55,6 +56,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     sample_diseases_count = serializers.SerializerMethodField()
     pathogenic = serializers.SerializerMethodField()
     clinical_significance = serializers.SerializerMethodField()
+    icd_o_morpho = serializers.SerializerMethodField()
+    icd_o_topo = serializers.SerializerMethodField()
 
     # samples_url = serializers.SerializerMethodField()
     # samples_url = NestedHyperlinkedRelatedField(
@@ -63,6 +66,14 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     #     view_name='disease-samples-detail',
     #     parent_lookup_kwargs={'disease_pk': 'disease__pk'}
     # )
+
+    def get_icd_o_morpho(self, obj):
+        if obj.disease:
+            return obj.disease.icd_o_morpho.id
+
+    def get_icd_o_topo(self, obj):
+        if obj.disease:
+            return [topo.icd_o_topo.id for topo in obj.disease.icdotopoapidisease_set.all()]
 
     class SamplesHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         def get_url(self, obj, view_name, request, format):
@@ -124,7 +135,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def _authed_curation_set(self):
         return (
             CurationEntry.objects
-                .authed_curation_set(self.context['request'].user)
+            .authed_curation_set(self.context['request'].user)
         )
 
     def _curation_entries(self, obj):
@@ -134,7 +145,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         obj_disease_morpho = obj.disease.icd_o_morpho if not model_field_null(
             obj, 'disease') else None
 
-        ##get topo_codes
+        # get topo_codes
         # obj_disease_topocodes = obj.disease.topo_codes if not model_field_null(
         #    obj, 'disease') else None
 
@@ -164,7 +175,8 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
         entries = []
         for entry in self._curation_cache[str(obj)]:
             if entry.disease != None:
-                if entry.disease.name == obj_disease_name:  # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
+                # use name instead of topo_codes because sometimes 2 diseases have same topo codes while different disease
+                if entry.disease.name == obj_disease_name:
                     entries.append(entry)
             else:
                 if model_field_null(obj, 'disease'):
@@ -198,9 +210,9 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
     def get_sample_diseases_count(obj):
         return (
             obj.sample_set
-                .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
-                .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
-                .distinct().order_by('-count')
+            .values(name=F('disease_in_svip__disease__icd_o_morpho__term'))
+            .annotate(count=Count('disease_in_svip__disease__icd_o_morpho__term'))
+            .distinct().order_by('-count')
         )
 
     def get_pathogenic(self, obj):
@@ -215,7 +227,7 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
         # if var.curation_associations.count() > 0:
         #    if var.curation_associations.first().curation_evidences.count() > 0:
-        #        evidence = 
+        #        evidence =
         #        if hasattr(var, 'annotation2'):
         #            return f"{var.annotation2.effect} ({var.annotation2.tier})"
         #        elif hasattr(var, 'annotation1'):
@@ -228,6 +240,9 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
             'disease_id',
             'samples_url',
             'name',
+            'icd_o_morpho',
+            'icd_o_topo',
+
             'sample_diseases_count',
 
             'status',
@@ -327,7 +342,7 @@ def _assign_disease_by_morpho_topo(instance, icdo_morpho, icdo_topo_list, diseas
 
         # print (f"\nDisease.objects.filter(q_objects):\n{Disease.objects.filter(q_objects)}\n")
 
-        ## either retrieve an existing disease that matches the description, or create it
+        # either retrieve an existing disease that matches the description, or create it
         # candidate = Disease.objects.filter(q_objects).first()
 
         candidate = candidates.first()
@@ -517,7 +532,8 @@ class CurationEntrySerializer(serializers.ModelSerializer):
 
 
 class CurationReviewSerializer(serializers.ModelSerializer):
-    reviewer = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), queryset=User.objects.all())
+    reviewer = serializers.PrimaryKeyRelatedField(
+        default=serializers.CurrentUserDefault(), queryset=User.objects.all())
     reviewer_name = serializers.SerializerMethodField()
     reviewer_email = serializers.SerializerMethodField()
 
@@ -537,7 +553,8 @@ class CurationReviewSerializer(serializers.ModelSerializer):
 
 class SubmissionEntrySerializer(serializers.ModelSerializer):
     variant = SimpleVariantSerializer()
-    curation_entries = CurationEntrySerializer(many=True, required=False, source='curationentry_set')
+    curation_entries = CurationEntrySerializer(
+        many=True, required=False, source='curationentry_set')
     curation_reviews = CurationReviewSerializer(many=True, required=False)
     owner = serializers.PrimaryKeyRelatedField(
         default=serializers.CurrentUserDefault(), queryset=User.objects.all())
@@ -637,7 +654,7 @@ class SubmittedVariantBatchSerializer(OwnedModelSerializer):
                                                                           'alt': str(row.ALT),
                                                                           'owner': cur_user.pk,
                                                                           'batch': batch.pk
-                                                                      })
+                })
 
                 try:
                     if submitted_var_serializer.is_valid(raise_exception=True):
