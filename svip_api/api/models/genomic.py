@@ -171,18 +171,22 @@ class Variant(models.Model):
     @property
     def reviews_summary(self):
         reviews_summary = []
-        if self.submission_entries.all().count():
-            submission_entry = self.submission_entries.filter(
-                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']).first()
-            if submission_entry.curation_reviews.all():
-                reviews_number = submission_entry.curation_reviews.count()
-                if reviews_number:
-                    for i in range(reviews_number):
+        submission_entries = self.submission_entries.all()
+        if submission_entries.count():
+            candidate_submission_entries = self.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'])
+            # if there are curation reviews (all submission entries have the same amount of curation_reviews)
+            first_submisstion_entry = candidate_submission_entries.first()
+            if first_submisstion_entry.curation_reviews.all():
+                num_reviewers = first_submisstion_entry.curation_reviews.count()
+
+                if num_reviewers > 0:
+                    for reviewer_idx in range(num_reviewers):
                         positive_reviews_count = 0
                         negative_reviews_count = 0
-                        for entry in self.submission_entries.filter(
-                                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic']):
-                            if entry.curation_reviews.filter(draft=False)[i].acceptance:
+                        for candidate_submission_entry in candidate_submission_entries:
+                            curation_review = candidate_submission_entry.curation_reviews.all()[reviewer_idx]
+                            if curation_review.acceptance and not curation_review.draft:
                                 positive_reviews_count += 1
                             else:
                                 negative_reviews_count += 1
