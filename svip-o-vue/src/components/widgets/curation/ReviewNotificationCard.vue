@@ -166,6 +166,7 @@
                     </b-button>
                 </template>
 
+
                 <template v-slot:cell(single_action)>
                     <icon class="mr-1" name="eye" />
                 </template>

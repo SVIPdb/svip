@@ -1,5 +1,6 @@
 <template>
     <div class="container-fluid">
+
         <div>
             <ReviewNotificationCard
                 :items="variantsForReview"
@@ -80,8 +81,11 @@ export default {
             },
         };
     },
-    mounted() {
-        this.getVariantsForReview();
+    async mounted() {
+        this.review.loading = true
+        await this.getVariantsForReview();
+        this.review.loading = false
+
     },
     methods: {
         ...mapActions({getVariantsForReview: 'getVariantsForReview'}),
