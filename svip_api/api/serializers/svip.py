@@ -27,7 +27,7 @@ from api.serializers.genomic import (
 from api.serializers.icdo import (IcdOMorphoSerializer, IcdOTopoSerializer)
 from api.serializers.reference import DiseaseSerializer
 from api.shared import clinical_significance, pathogenic
-from api.utils import field_is_empty, format_variant, model_field_null
+from api.utils import field_is_empty, format_variant, model_field_null, to_dict
 
 User = get_user_model()
 
@@ -69,11 +69,11 @@ class DiseaseInSVIPSerializer(NestedHyperlinkedModelSerializer):
 
     def get_icd_o_morpho(self, obj):
         if obj.disease:
-            return obj.disease.icd_o_morpho.id
+            return to_dict(obj.disease.icd_o_morpho)
 
     def get_icd_o_topo(self, obj):
         if obj.disease:
-            return [topo.icd_o_topo.id for topo in obj.disease.icdotopoapidisease_set.all()]
+            return [to_dict(topo.icd_o_topo) for topo in obj.disease.icdotopoapidisease_set.all()]
 
     class SamplesHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         def get_url(self, obj, view_name, request, format):
