@@ -147,6 +147,7 @@
                 </template>
 
                 <template v-slot:cell(action)="data">
+       
                     <b-button
                         :disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.stage)"
                         class="centered-icons reviewBtn"

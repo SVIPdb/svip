@@ -206,9 +206,24 @@ class Variant(models.Model):
         return None
 
     @property
+    # checks if some current reviews is a draft
+    def draft_status(self):
+        submission_entries = self.submission_entries.all()
+        if submission_entries.count():
+            candidate_submission_entries = self.submission_entries.filter(
+                type_of_evidence__in=['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'])
+            # if there are curation reviews (all submission entries have the same amount of curation_reviews)
+            first_submisstion_entry = candidate_submission_entries.first()
+            if first_submisstion_entry.curation_reviews.all():
+                if any([review.draft  for review in first_submisstion_entry.curation_reviews.all()]):
+                    return True
+
+        return False
+
+    @property
     def stage(self):
         if self.reviews_summary:
-            if len(self.reviews_summary) < self.REVIEW_COUNT:
+            if len(self.reviews_summary) < self.REVIEW_COUNT or self.draft_status:
                 return VARIANT_STAGE.ongoing_review
             elif len(self.reviews_summary) == self.REVIEW_COUNT:
                 if all(self.reviews_summary):
