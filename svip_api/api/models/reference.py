@@ -8,6 +8,7 @@ class DrugManager(models.Manager):
     def get_by_natural_key(self, common_name, user_created):
         return self.get(common_name=common_name, user_created=user_created)
 
+
 class Drug(models.Model):
     common_name = models.TextField()
     medicine_name = models.TextField(null=True)
@@ -26,6 +27,7 @@ class Drug(models.Model):
     class Meta:
         unique_together = ('common_name', 'user_created')
 
+
 class DiseaseManager(models.Manager):
     def get_by_natural_key(self, name, user_created, localization):
         return self.get(name=name, user_created=user_created, localization=localization)
@@ -33,12 +35,12 @@ class DiseaseManager(models.Manager):
     def get_queryset(self):
         # we'll always need at least icd_o_morpho, so select it ahead of time
         return super(DiseaseManager, self).get_queryset().select_related('icd_o_morpho')
-    
-        use_in_migrations = True
+
 
 class Disease(models.Model):
     created_on = models.DateTimeField(blank=True, null=True)
-    icd_o_morpho = models.ForeignKey('IcdOMorpho', models.DO_NOTHING, blank=True, null=True)
+    icd_o_morpho = models.ForeignKey(
+        'IcdOMorpho', models.DO_NOTHING, blank=True, null=True)
 
     objects = DiseaseManager()
 
