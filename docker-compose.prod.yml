@@ -1,0 +1,20 @@
+version: "3.5"
+services:
+  ws:
+    image: ethnexus/smnrp
+    volumes:
+      - 'web_root:/web_root:ro'
+      - './svip_api/api/static:/vol/web/static:z'
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+      - ui
+      - db
+    restart: unless-stopped
+    env_file:
+      - .env
+  ui:
+    environment:
+      - VUE_APP_API_URL=/api/v1

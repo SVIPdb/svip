@@ -4,109 +4,65 @@ volumes:
   svip_pgdata:
   svip_esdata:
   seqrepo:
-  web_built:
-  api_static:
-
+  web_root:
 services:
-  nginx:
-    build:
-      context: ./service_config/nginx
-      dockerfile: Dockerfile
+  ui:
+    build: ./svip-o-vue
+    hostname: ui
     volumes:
-      - '${PWD}/service_config/nginx/shared.conf:/etc/nginx/shared.conf:ro'
-      - '${PWD}/service_config/nginx/sites/local.nginx:/etc/nginx/conf.d/svip.nginx:ro'
-      - 'web_built:/usr/share/nginx/html:ro'
-      - 'api_static:/usr/share/api_static:ro'
-    depends_on:
-      - api
-      - frontend
-    restart: unless-stopped
-
-  db:
-    image: 'postgres:11.1'
-    hostname: db
-    shm_size: '2gb'
-    restart: always
-    command: -c 'max_wal_size=2GB'
-    volumes:
-      - 'svip_pgdata:/var/lib/postgresql/data'
-      - ./svip_db_backups:/backups
-      - ./service_config/postgres:/docker-entrypoint-initdb.d
-    # environment:
-    #   - POSTGRES_USER
-    #   - POSTGRES_PASSWORD
-    #   - POSTGRES_DB
-    #   - PGUSER=${POSTGRES_USER}
-    #   - PGPASSWORD=${POSTGRES_PASSWORD}
-    #   - PGDB=${POSTGRES_DB}
+      - ./svip-o-vue:/app:delegated
+      - web_root:/web_root
+      # allows the root git repo to be accessed in the container, which
+      # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
+      - .git:/app/.git:delegated,ro
+    command: bash -c "npx browserslist@latest --update-db && npm ci && npm run build && rm -rf /web_root/* && cp -R /app/dist/* /web_root/"
     env_file:
       - .env
-
-  local_uta:
-    # image: biocommons/uta:uta_20190928
-    image: biocommons/uta:uta_20171026
-    restart: always
-    volumes:
-      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
-    ports:
-      - '15032:5432'
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-
+    depends_on:
+      - api
+    restart: 'no'
   api:
     build: ./svip_api
     hostname: api
     volumes:
       - ./svip_api:/app
-      - api_static:/var/staticfiles
+      - ./svip_api/api/static:/vol/web/static:z
       - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
-    ports:
-      - '8085:8085'
     depends_on:
       - db
       - redis
       - local_uta
-    # environment:
-    #   - POSTGRES_HOST=db
-    #   - POSTGRES_PORT=5432
-    #   - POSTGRES_USER
-    #   - POSTGRES_PASSWORD
-    #   - POSTGRES_DB
-    #   - DJANGO_SU_NAME
-    #   - DJANGO_SU_EMAIL
-    #   - DJANGO_SU_PASSWORD
-    #   - SOCIBP_BASE_URL
-    #   - USE_DEV_SERVER=true
-    #   - REDIS_HOST=${REDIS_HOST}
-    #   - REDIS_PORT=${REDIS_PORT}
     environment:
       - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
       - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
       - PYTHONUNBUFFERED=1
     env_file:
       - .env
-
-  frontend:
-    build:
-      context: ./svip-o-vue
-      dockerfile: Dockerfile
+  db:
+    image: 'postgres:11.1'
+    hostname: db
+    shm_size: '2gb'
+    restart: unless-stopped
+    command: -c 'max_wal_size=2GB'
     volumes:
-      - web_built:/web
-      - ./svip-o-vue:/app:delegated
-      # allows the root git repo to be accessed in the container, which
-      # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
-      - .git:/app/.git:delegated,ro
-    command: bash -c "npm ci && npm run build && rm -rf /web/* && cp -R /app/dist/* /web/"
-    ports:
-      - '3000:8080'
+      - 'svip_pgdata:/var/lib/postgresql/data'
+      - ./svip_db_backups:/backups
+      - ./service_config/postgres:/docker-entrypoint-initdb.d
     env_file:
       - .env
-    depends_on:
-      - api
-    restart: 'no'
-
+  local_uta:
+    # image: biocommons/uta:uta_20190928
+    image: biocommons/uta:uta_20171026
+    hostname: local_uta
+    restart: unless-stopped
+    volumes:
+      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
   redis:
     image: 'redis:alpine'
+    hostname: redis
+    restart: unless-stopped
     env_file:
       - .env
-    restart: unless-stopped
+    

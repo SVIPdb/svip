@@ -42,7 +42,7 @@ python manage.py collectstatic --no-input
 if [[ -n "${USE_DEV_SERVER}" ]]; then
     # this dev server is less efficient than gunicorn, but it auto-reloads on source changes
     # We should not do this since gunicorn has a reload option because its fu***ing slow.
-    python manage.py runserver 0.0.0.0:8085
+    python manage.py runserver 0.0.0.0:5000
 else
     #gunicorn = WSGIApplication()
     #gunicorn.load_wsgiapp = lambda: app
@@ -57,5 +57,5 @@ else
     #gunicorn.cfg.set('reload', True)
     #gunicorn.chdir()
     #gunicorn.run()
-    gunicorn svip_server.wsgi -b 0.0.0.0:8085 --reload -k gevent -w 16 --timeout 300
+    gunicorn svip_server.wsgi -b 0.0.0.0:5000 --reload -k gevent -w 16 --timeout 300
 fi

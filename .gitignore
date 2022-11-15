@@ -25,5 +25,6 @@ svip_api/api/views/beacon_v2.py
 svip-o-vue/src/components/help/json/convert.py
 
 svip_api/docs/site
+svip_api/api/static
 
 /node_modules

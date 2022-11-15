@@ -179,8 +179,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/api/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, '../static')
+STATIC_URL = '/static/'
+STATIC_ROOT = '/vol/web/static'
 
 # colorizes test output
 TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
@@ -237,11 +237,13 @@ DOCUMENTATION_ROOT = STATIC_ROOT + '/docs'
 # Allow some urls to be integrated in iframes
 CSP_DEFAULT_SRC = ["'self'"]
 CSP_SCRIPT_SRC = ["https://cdnjs.cloudflare.com",
+                  "localhost",
                   "'unsafe-inline'"]
 CSP_STYLE_SRC = ["https://cdnjs.cloudflare.com",
                  "https://fonts.googleapis.com",
                  "'self' 'unsafe-inline'"]
-CSP_FONT_SRC = ["data: fonts.gstatic.com"]
+CSP_FONT_SRC = ["data: fonts.gstatic.com",
+                "localhost"]
 CSP_INCLUDE_NONCE_IN = ["script-src"]
 DOCUMENTATION_URL = os.environ.get('VUE_APP_DOCUMENTATION_URL', None)
 if DOCUMENTATION_URL:
