@@ -2,7 +2,6 @@ version: '3.5'
 
 volumes:
   svip_pgdata:
-  svip_esdata:
   seqrepo:
   web_root:
 services:
