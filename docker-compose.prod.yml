@@ -18,3 +18,7 @@ services:
   ui:
     environment:
       - VUE_APP_API_URL=/api/v1
+  api:
+    environment:
+      - USE_DEV_SERVER=
+      - DJANGO_SETTINGS_MODULE=svip_server.settings.production

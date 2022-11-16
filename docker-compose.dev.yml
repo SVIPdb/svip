@@ -10,6 +10,9 @@ services:
   api:
     ports:
       - '5033:5000'
+    environment:
+      - USE_DEV_SERVER=True
+      - DJANGO_SETTINGS_MODULE=svip_server.settings.development
   db:
     ports:
       - '30432:5432' # dev access port
