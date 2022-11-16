@@ -1,7 +1,7 @@
 {
     "name": "svip-o-frontend",
-    "version": "1.3.0",
-    "release_name": "Init Expo",
+    "version": "1.4.0",
+    "release_name": "Clin Integ",
     "private": true,
     "eslintIgnore": [
         "dist/",
