@@ -28,3 +28,4 @@ svip_api/docs/site
 svip_api/api/static
 
 /node_modules
+*.orig
