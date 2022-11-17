@@ -1,5 +1,5 @@
 # install-deps: just installs node module dependencies
-FROM node:12.18.2-stretch-slim as install-deps
+FROM node:18 as install-deps
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y git
@@ -11,4 +11,4 @@ RUN npx browserslist@latest --update-db
 # mask out the host's node_modules from being included in the container, even when bind-mounting
 VOLUME /app/node_modules/
 
-COPY . ./
+# COPY . ./
