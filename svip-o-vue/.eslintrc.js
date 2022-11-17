@@ -22,10 +22,20 @@ module.exports = {
                 'invalid-first-character-of-tag-name': false,
             },
         ], // fixes erroneous detection of a start-of-tag sequence from < occurring inside of js expressions
+        // The following rules are temporary switched off
+        // TODO: reenable it and cleanup the code base
+        'vue/multi-word-component-names': 'off',
+        'vue/no-mutating-props': 'off',
+        'vue/no-unused-vars': 'off',
+        'no-prototype-builtins': 'off',
+        'vue/no-arrow-functions-in-watch': 'off',
+        'vue/valid-v-slot': 'off'
     },
 
     parserOptions: {
-        parser: 'babel-eslint',
+        parser: '@babel/eslint-parser',
+        ecmaVersion: 8,
+        requireConfigFile: false
     },
 
     globals: {
