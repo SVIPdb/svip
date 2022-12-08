@@ -2,3 +2,4 @@ setuptools<58.0
 -r requirements.txt
 pytest==7.1.2
 pytest-django==4.5.2
+pip-audit
