@@ -29,3 +29,5 @@ svip_api/api/static
 
 /node_modules
 *.orig
+
+Pipfile*

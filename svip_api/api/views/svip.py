@@ -1,13 +1,9 @@
 import django_filters
-import hgvs.assemblymapper
-import hgvs.dataproviders.uta
-import hgvs.normalizer
 import hgvs.parser
 from django.contrib.auth.models import User
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
-from hgvs.exceptions import HGVSParseError
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -63,19 +59,19 @@ class VariantInSVIPViewSet(viewsets.ModelViewSet):
             q = VariantInSVIP.objects.all()
 
         q = (q
-            .select_related('variant')
-            .prefetch_related(
-            Prefetch('diseaseinsvip_set', queryset=(
-                DiseaseInSVIP.objects
-                    .select_related('disease', 'svip_variant', 'svip_variant__variant')
-                    .prefetch_related(
-                    'sample_set'
-                )
-            )),
-            # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
-            # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
-        )
-        )
+             .select_related('variant')
+             .prefetch_related(
+                 Prefetch('diseaseinsvip_set', queryset=(
+                     DiseaseInSVIP.objects
+                     .select_related('disease', 'svip_variant', 'svip_variant__variant')
+                     .prefetch_related(
+                         'sample_set'
+                     )
+                 )),
+                 # Prefetch('diseaseinsvip_set', queryset=DiseaseInSVIP.objects.prefetch_related('sample_set')),
+                 # 'diseaseinsvip_set', 'diseaseinsvip_set__sample_set'
+             )
+             )
 
         return q
 
@@ -136,8 +132,8 @@ class CurationRequestViewSet(viewsets.ModelViewSet):
     serializer_class = CurationRequestSerializer
     queryset = (
         CurationRequest.objects
-            .prefetch_related('variant', 'variant__gene', 'submission')
-            .order_by('-created_on')
+        .prefetch_related('variant', 'variant__gene', 'submission')
+        .order_by('-created_on')
     )
 
 
@@ -273,9 +269,9 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
             'references': {
                 x['references']: x['recs'] for x in (
                     CurationEntry.objects
-                        .select_related('variant', 'variant__gene')
-                        .values('references')
-                        .annotate(recs=ArrayAgg(json_build_fields(
+                    .select_related('variant', 'variant__gene')
+                    .values('references')
+                    .annotate(recs=ArrayAgg(json_build_fields(
                         id='id', variant_id='variant__id', gene_id='variant__gene__id', etype='type_of_evidence'
                     )))
                 )
@@ -286,13 +282,13 @@ class CurationEntryViewSet(viewsets.ModelViewSet):
         # pre-select variant and gene data to prevent thousands of queries
         return (
             CurationEntry.objects.authed_curation_set(self.request.user)
-                .select_related('owner', 'variant', 'variant__gene', 'disease')
-                .prefetch_related(
+            .select_related('owner', 'variant', 'variant__gene', 'disease')
+            .prefetch_related(
                 'extra_variants',
                 'extra_variants__gene',
                 'disease'
             )
-                .order_by('created_on')
+            .order_by('created_on')
         )
 
 
@@ -410,11 +406,7 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
 # hgvs stuff
 
 # these shared assembly mappers will allow us to convert HGVS g. variants to c. and p. later on
-hdp = hgvs.dataproviders.uta.connect()
-hgnorm = hgvs.normalizer.Normalizer(hdp)
 hgvsparser = hgvs.parser.Parser()
-am = hgvs.assemblymapper.AssemblyMapper(
-    hdp, assembly_name='GRCh37', normalize=True)
 
 AC_MAP = {
     '1': 'NC_000001',
@@ -458,8 +450,8 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
         'chromosome', 'pos', 'ref', 'alt', 'status'
     )
     ordering_fields = filter_fields + \
-                      ('created_on', 'processed_on', 'batch', 'owner',
-                       'canonical_only', 'for_curation_request')
+        ('created_on', 'processed_on', 'batch', 'owner',
+         'canonical_only', 'for_curation_request')
     search_fields = ('chromosome', 'pos', 'ref', 'alt',)
 
     permission_classes = (IsSubmitter,)
@@ -469,6 +461,7 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=False)
     def map_hgvs(self, request):
         try:
+            raise NotImplementedError('Please implement map_hgvs correctly')
             # removes all sorts of weird unicode characters that, e.g., SVIP, adds for formatting purposes
             sanitized_hgvs = request.GET['hgvs_str'].strip().encode(
                 "ascii", errors='ignore').decode("utf8")
@@ -479,7 +472,7 @@ class SubmittedVariantViewSet(viewsets.ModelViewSet):
             if result.type == 'c':
                 lifted = True
                 result = am.c_to_g(result)
-        except HGVSParseError as ex:
+        except Exception as ex:
             return JsonResponse({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({

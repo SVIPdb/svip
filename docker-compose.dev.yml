@@ -14,9 +14,6 @@ services:
   db:
     ports:
       - '30432:5432' # dev access port
-  local_uta:
-    ports:
-      - '15032:5432'
   redis:
     ports:
       - '${REDIS_PORT}:${REDIS_PORT}'

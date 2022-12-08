@@ -30,9 +30,7 @@ services:
     depends_on:
       - db
       - redis
-      - local_uta
     environment:
-      - UTA_DB_URL=postgresql://anonymous@local_uta/uta/uta_20171026
       - HGVS_SEQREPO_DIR=/usr/local/share/seqrepo/latest
       - PYTHONUNBUFFERED=1
     env_file:
@@ -49,15 +47,6 @@ services:
       - ./service_config/postgres:/docker-entrypoint-initdb.d
     env_file:
       - .env
-  local_uta:
-    # image: biocommons/uta:uta_20190928
-    image: biocommons/uta:uta_20171026
-    hostname: local_uta
-    restart: unless-stopped
-    volumes:
-      - '/usr/local/share/seqrepo:/usr/local/share/seqrepo'
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
   redis:
     image: 'redis:alpine'
     hostname: redis
