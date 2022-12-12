@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-9 col-sm-12">
+                <div class="col-lg-9 col-sm-12" v-if="windowWidth > 1000">
                     <div class="container-fluid attributions">
                         <div class="row align-items-center">
                             <div class="col-lg-4 col-sm-12 text-center">
@@ -75,12 +75,28 @@ export default {
             serverURL,
             appVersion,
             releaseName,
+            windowWidth: window.innerWidth,
         };
     },
+
     computed: {
         year() {
             return new Date().getFullYear();
         },
+    },
+    mounted() {
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+        });
+    },
+
+    methods: {
+        onResize() {
+            this.windowWidth = window.innerWidth;
+        },
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.onResize);
     },
 };
 </script>

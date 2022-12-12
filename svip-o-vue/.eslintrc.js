@@ -14,7 +14,7 @@ module.exports = {
         'no-multiple-empty-lines': [2, {max: 2, maxEOF: 10000, maxBOF: 10000}],
         'no-constant-condition': 'off',
         'no-redeclare': 'off',
-        'indent': ['error', 4],
+        'indent': 'off',
         'no-tabs': 0,
         'vue/no-parsing-error': [
             2,
@@ -29,13 +29,13 @@ module.exports = {
         'vue/no-unused-vars': 'off',
         'no-prototype-builtins': 'off',
         'vue/no-arrow-functions-in-watch': 'off',
-        'vue/valid-v-slot': 'off'
+        'vue/valid-v-slot': 'off',
     },
 
     parserOptions: {
         parser: '@babel/eslint-parser',
         ecmaVersion: 8,
-        requireConfigFile: false
+        requireConfigFile: false,
     },
 
     globals: {

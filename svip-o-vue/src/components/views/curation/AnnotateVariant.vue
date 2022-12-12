@@ -39,28 +39,28 @@
                                             placeholder="Type reference"
                                             class="rounded-0" />
                                     </b-col>
-                                    <b-col cols="2">
-                                        <b-button-group>
-                                            <b-button
-                                                :disabled="!source || !reference"
-                                                class="custom-unrounded centered-icons"
-                                                variant="info"
-                                                @click="viewCitation">
-                                                <icon name="eye" />
-                                                View Abstract
-                                            </b-button>
-                                            <b-button
-                                                :disabled="!source || !reference"
-                                                type="submit"
-                                                class="custom-border-right centered-icons"
-                                                variant="success"
-                                                @click="addEvidence"
-                                                target="_blank">
-                                                <icon name="plus" />
-                                                Create Entry
-                                            </b-button>
-                                        </b-button-group>
-                                    </b-col>
+                                </b-row>
+                                <b-row no-gutters>
+
+                                        <b-button
+                                            :disabled="!source || !reference"
+                                            class="custom-unrounded centered-icons btn"
+                                            variant="info"
+                                            @click="viewCitation">
+                                            <icon name="eye" />
+                                            View Abstract
+                                        </b-button>
+                                        <b-button
+                                            :disabled="!source || !reference"
+                                            type="submit"
+                                            class="custom-border-right centered-icons"
+                                            variant="success"
+                                            @click="addEvidence"
+                                            target="_blank">
+                                            <icon name="plus" />
+                                            Create Entry
+                                        </b-button>
+
                                 </b-row>
 
                                 <transition name="slide-fade" mode="out-in">
@@ -323,4 +323,9 @@ export default {
     margin-bottom: 2px;
     display: block;
 }
+
+.btn {
+    margin: 15px 4px;
+}
+
 </style>
