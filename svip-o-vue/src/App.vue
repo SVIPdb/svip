@@ -2,6 +2,8 @@
     <div id="app">
         <vue-snotify></vue-snotify>
         <nav-header></nav-header>
+
+        <br>
         <vue-confirm-dialog></vue-confirm-dialog>
 
         <!-- content -->

@@ -63,7 +63,9 @@
                     </b-nav-item>
                 </b-navbar-nav>
             </b-navbar-nav>
+
         </b-collapse>
+
 
         <div class="ajax-loader-bar" style="position: relative; z-index: 1035"></div>
     </b-navbar>
