@@ -6,7 +6,7 @@ site_dir: site
 
 # Some extra stuff
 theme:
-  name: readthedocs
+  name: material
 extra_css:
   - css/default.css
 nav:
@@ -16,6 +16,11 @@ nav:
   - Curation page: curation_page.md
 plugins:
   - include-markdown
+  - search
+  - pdf-export:
+      verbose: true
+      media_type: print
+      combined: true
 markdown_extensions:
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
