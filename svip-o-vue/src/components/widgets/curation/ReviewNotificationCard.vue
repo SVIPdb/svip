@@ -73,6 +73,7 @@
 
         <b-card-body v-if="isReviewer" class="p-0">
             <b-table
+                 :responsive="true"
                 class="mb-0"
                 :items="filteredReviewItems"
                 :fields="fields"
@@ -147,7 +148,7 @@
                 </template>
 
                 <template v-slot:cell(action)="data">
-       
+
                     <b-button
                         :disabled="['approved', 'unapproved', 'on-hold'].includes(data.item.stage)"
                         class="centered-icons reviewBtn"

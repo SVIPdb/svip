@@ -2,6 +2,7 @@
     <b-card class="shadow-sm mb-3" align="left" no-body>
         <b-card-body class="p-0">
             <b-table
+                 :responsive="true"
                 v-if="variant"
                 class="mb-0"
                 :items="allVariants"
