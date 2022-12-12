@@ -20,7 +20,7 @@ plugins:
   - pdf-export:
       verbose: true
       media_type: print
-      combined: true
+
 markdown_extensions:
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
