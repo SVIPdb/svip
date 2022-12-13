@@ -10,6 +10,6 @@ RUN npm install
 RUN npx browserslist@latest --update-db
 
 # mask out the host's node_modules from being included in the container, even when bind-mounting
-VOLUME /app/node_modules/
+# VOLUME /app/node_modules/
 
 # COPY . ./
