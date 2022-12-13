@@ -1,10 +1,11 @@
 # install-deps: just installs node module dependencies
-FROM node:18 as install-deps
+FROM node:18
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y git
 
 COPY package.json package-lock.json ./
+RUN npm install -g npm@latest
 RUN npm install
 RUN npx browserslist@latest --update-db
 

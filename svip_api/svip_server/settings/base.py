@@ -237,7 +237,7 @@ DOCUMENTATION_ROOT = STATIC_ROOT + '/docs'
 # Allow some urls to be integrated in iframes
 CSP_DEFAULT_SRC = ["'self'"]
 CSP_SCRIPT_SRC = ["https://cdnjs.cloudflare.com",
-                  "'unsafe-inline'"]
+                  "'self' 'unsafe-inline' 'unsafe-eval'"]
 CSP_STYLE_SRC = ["https://cdnjs.cloudflare.com",
                  "https://fonts.googleapis.com",
                  "'self' 'unsafe-inline'"]
