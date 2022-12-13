@@ -317,6 +317,30 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['POST'])
+    def bulk_submit_test(self, request):
+        if isinstance(request.data, dict) and request.data['update']:
+            for entry in request.data['data']:
+                submission_entry = SubmissionEntry.objects.filter(pk=entry['id'])
+                for id in entry['curation_reviews']:
+                    curation_review = CurationReview.objects.get(pk=id)
+                    print(entry['effect'], curation_review.annotated_effect, entry['tier'], curation_review.annotated_tier)
+                    print(entry['effect'] == curation_review.annotated_effect and entry['tier'] == curation_review.annotated_tier)
+                    print('\n' * 5)
+                submission_entry = submission_entry[0]
+                print([review.acceptance for review in submission_entry.curation_reviews.all()])
+                print(all(review.acceptance for review in submission_entry.curation_reviews.all()))
+                return JsonResponse({
+                    "message": "pi pa po",
+                })
+
+        return JsonResponse({
+            "message": "pi pa po",
+        })
+
+
+
+
+    @action(detail=False, methods=['POST'])
     def bulk_submit(self, request):
 
         if isinstance(request.data, dict) and request.data['update']:
@@ -326,8 +350,25 @@ class SubmissionEntryViewSet(viewsets.ModelViewSet):
                                         review_cycle=submission_entry[0].review_cycle + 1)
                 for id in entry['curation_entries']:
                     CurationEntry.objects.filter(pk=id).update(status='resubmitted')
+
+                for id in entry['curation_reviews']:
+                    curation_review = CurationReview.objects.get(pk=id)
+                    if entry['effect'] == curation_review.annotated_effect and entry['tier'] == curation_review.annotated_tier:
+                        curation_review.acceptance = True
+                    else:
+                        curation_review.acceptance = False
+                    curation_review.save()
+
+                submission_entry = submission_entry[0]
+                if not all(review.acceptance for review in submission_entry.curation_reviews.all()):
+                    submission_entry.if_conflicting_reviews = True
+                else:
+                    submission_entry.if_conflicting_reviews = False
+                submission_entry.save()
+
                 for id in entry['curation_reviews']:
                     CurationReview.objects.get(pk=id).delete()
+
             return JsonResponse({
                 "message": "Your annotation  was successfully saved!",
 
@@ -367,7 +408,8 @@ class CurationReviewViewSet(viewsets.ModelViewSet):
             review = CurationReview.objects.get(id=obj['id'])
         else:
             review = CurationReview()
-        review.submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
+        submission_entry = SubmissionEntry.objects.get(id=obj['submission_entry'])
+        review.submission_entry = submission_entry
         review.annotated_effect = obj['effect']
         review.annotated_tier = obj['tier']
         review.comment = obj['comment']

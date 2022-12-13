@@ -248,6 +248,7 @@ class SubmissionEntry(models.Model):
     effect = models.TextField(default="Not yet annotated")
     tier = models.TextField(default="Not yet annotated")
     review_cycle = models.IntegerField(default=1)
+    if_conflicting_reviews = models.BooleanField(default=False)
 
 
 class CURATION_STATUS(ModelChoice):

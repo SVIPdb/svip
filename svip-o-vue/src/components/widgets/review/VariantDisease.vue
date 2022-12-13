@@ -1,5 +1,20 @@
 <template>
     <div :key="renderKey">
+        <div v-if="review_cycle > 1">
+            <br />
+            <b-form-checkbox
+                id="checkbox-1"
+                v-model="only_conflicting"
+                name="checkbox-1"
+                value="yes"
+                unchecked-value="no">
+                Show only conflicting entries
+            </b-form-checkbox>
+
+            <br />
+
+        </div>
+
         <div v-for="(submissionEntry, idx) in submissionEntries" :key="submissionEntry[0] + idx">
             <b-card class="shadow-sm mb-3" align="left" no-body>
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
@@ -11,7 +26,13 @@
                     <b-card-body class="p-0">
                         <transition name="slide-fade">
                             <div v-if="expander_array[idx].disease">
-                                <b-card-text class="p-2 m-0">
+                                <b-card-text
+                                    class="p-2 m-0"
+                                    :class="
+                                        only_conflicting === 'yes' && !type.if_conflicting_reviews
+                                            ? 'hidden'
+                                            : ''
+                                    ">
                                     <b-row align-v="center">
                                         <b-col align="left" cols="2">
                                             <div class="ml-1">
@@ -19,6 +40,11 @@
                                                     v-model="expander_array[idx].curation_entries[index]" />
                                                 {{ type.type_of_evidence }}
                                                 {{ type.drug && ` - ${type.drug}` }}
+                                                <br />
+
+                                                <p style="color: red" v-if="type.if_conflicting_reviews">
+                                                    Conflicting entry!
+                                                </p>
                                             </div>
                                         </b-col>
                                         <b-col cols="2">
@@ -324,6 +350,7 @@ export default {
     props: ['variant_id', 'gene_id'],
     data() {
         return {
+            only_conflicting: 'no',
             renderKey: 0,
             submissionEntries: [],
             selfReviewedEvidences: {},
@@ -343,22 +370,29 @@ export default {
             },
             draft: false,
             showOnlyOwnReviewStatus: true,
+            review_cycle: 0,
         };
     },
     created() {
         // Watch if user is going to leave the page
         window.addEventListener('beforeunload', this.beforeWindowUnload);
 
+        if (this.variant.submission_entries.length > 0) {
+            this.review_cycle = this.variant.submission_entries[0].review_cycle;
+        }
+
         this.submissionEntries = Object.entries(
             groupBy(
-                this.variant.submission_entries.filter(i =>
-                    ['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
-                ),
+                this.variant.submission_entries //
+                    .filter(i =>
+                        ['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
+                    ),
                 item => {
                     return item.disease && item.disease.name ? item.disease.name : 'Unspecified';
                 }
             )
         );
+
         this.getExpanderArray();
 
         // Check that this page is appropriate regarding current review stage of variant
@@ -390,6 +424,19 @@ export default {
     },
 
     methods: {
+        // groupSubmissionsEntries(submissionEntriesUngrouped) {
+        //     return Object.entries(
+        //         groupBy(
+        //             submissionEntriesUngrouped.filter(i =>
+        //                 ['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
+        //             ),
+        //             item => {
+        //                 return item.disease && item.disease.name ? item.disease.name : 'Unspecified';
+        //             }
+        //         )
+        //     );
+        // },
+
         numberOfEmptySquares(length) {
             switch (length) {
                 case 0:
@@ -643,5 +690,9 @@ export default {
 
 .alert-border {
     border-color: red;
+}
+
+.hidden {
+    visibility: hidden;
 }
 </style>

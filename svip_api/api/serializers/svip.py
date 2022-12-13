@@ -552,6 +552,8 @@ class CurationReviewSerializer(serializers.ModelSerializer):
 
 
 class SubmissionEntrySerializer(serializers.ModelSerializer):
+
+
     variant = SimpleVariantSerializer()
     curation_entries = CurationEntrySerializer(
         many=True, required=False, source='curationentry_set')
@@ -565,6 +567,8 @@ class SubmissionEntrySerializer(serializers.ModelSerializer):
         model = SubmissionEntry
         fields = '__all__'
         read_only_fields = ['id']
+
+
 
 
 # ================================================================================================================
