@@ -3,9 +3,9 @@
         <div class="col-xl-3 col-4 d-none d-xl-block">
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Diseases
+                    {{ $t("Diseases")}}
                     <i class="float-right" v-if="!currentFilter.phenotype__term">
-                        click on a disease to filter the table
+                        {{ $t("click on a disease to filter the table")}}
                     </i>
                     <span
                         class="float-right badge badge-primary filter-phenotype__term"
@@ -25,8 +25,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Disease</th>
-                            <th># of Submissions</th>
+                            <th>{{ $t("Disease")}}</th>
+                            <th>{{ $t("# of Submissions")}}</th>
                         </tr>
                     </thead>
                     <tbody>

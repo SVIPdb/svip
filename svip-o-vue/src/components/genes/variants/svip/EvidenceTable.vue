@@ -36,12 +36,12 @@
                     class="border-0 p-3 bg-light"
                     style="border-radius: 0; margin-bottom: 0">
                     <div style="margin-bottom: 1em">
-                        <b>Complementary information</b>
+                        <b>{{ $t("Complementary information")}}</b>
                         <br />
                         {{ row.item.summary || '-' }}
                     </div>
                     <div>
-                        <b>Personal comment (Only for curators)</b>
+                        <b>{{ $t("Personal comment (Only for curators)")}}</b>
                         <br />
                         {{ row.item.comment || '-' }}
                     </div>
@@ -53,7 +53,7 @@
             </template>
 
             <template v-slot:empty="scope">
-                <div class="empty-table-msg">no evidence items</div>
+                <div class="empty-table-msg">{{ $t("no evidence items")}}</div>
             </template>
         </b-table>
     </b-card-text>

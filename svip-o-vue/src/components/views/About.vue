@@ -1,15 +1,16 @@
 <template>
     <div class="container">
+
         <div class="position-fixed fixed-bottom about-nav" v-b-scrollspy.offset="140">
             <b-nav pills fill justified>
-                <b-nav-item @click="scrollIntoView" href="#home">Home</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#project">Project</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#partners">Partners</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#team">Team</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#contact">Contact</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#events">Events</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#disclaimer">Disclaimer &amp; License</b-nav-item>
-                <b-nav-item @click="scrollIntoView" href="#references">References</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#home">{{ $t("Home")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#project">{{ $t("Project")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#partners">{{ $t("Partners")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#team">{{ $t("Team")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#contact">{{ $t("Contact")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#events">{{ $t("Events")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#disclaimer">{{ $t("Disclaimer &amp; License")}}</b-nav-item>
+                <b-nav-item @click="scrollIntoView" href="#references">{{ $t("References")}}</b-nav-item>
             </b-nav>
         </div>
 
@@ -25,15 +26,15 @@
                                 </div>
                                 <br />
                                 <br />
-                                <h1>Swiss Variant Interpretation Platform</h1>
+                                <h1>{{ $t("Swiss Variant Interpretation Platform")}}</h1>
                                 <p class="lead">
-                                    A one-stop shop for clinical interpretation of variants in oncology
+                                    {{ $t("A one-stop shop for clinical interpretation of variants in oncology")}}
                                 </p>
                                 <p>
-                                    The Swiss Variant Interpretation Platform for Oncology (SVIP-O) aims at
-                                    providing a centralized, joint, and curated database for clinical somatic
-                                    variants coming from Swiss hospitals and related institutions (e.g.
-                                    pathology institutes).
+                                    {{ $t("The Swiss Variant Interpretation Platform for Oncology (SVIP-O) aims at")}}
+                                    {{ $t("providing a centralized, joint, and curated database for clinical somatic")}}
+                                    {{ $t("variants coming from Swiss hospitals and related institutions (e.g.")}}
+                                    {{ $t("pathology institutes).")}}
                                 </p>
                             </div>
                         </div>
@@ -44,47 +45,47 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>The Project</h1>
-                                <p class="lead">An infrastructure development project of SPHN and BioMedIT</p>
+                                <h1>{{ $t("The Project")}}</h1>
+                                <p class="lead">{{ $t("An infrastructure development project of SPHN and BioMedIT")}}</p>
 
-                                <h3>Why SVIP?</h3>
+                                <h3>{{ $t("Why SVIP?")}}</h3>
                                 <div class="text-justify">
                                     <p>
-                                        Clinicians in oncology and hemato-oncology are daily confronted with
-                                        the challenge of interpreting genetic variants using an increasing
-                                        number of public knowledge sources, which provide information of
-                                        heterogeneous quality.
+                                        {{ $t("Clinicians in oncology and hemato-oncology are daily confronted with")}}
+                                        {{ $t("the challenge of interpreting genetic variants using an increasing")}}
+                                        {{ $t("number of public knowledge sources, which provide information of")}}
+                                        {{ $t("heterogeneous quality.")}}
                                         <br />
-                                        Swiss hospitals and SIB have decided to join forces to develop a
-                                        common infrastructure allowing hospitals to share and unify the
-                                        clinical interpretation of the genetic variants identified in their
-                                        patients all over Switzerland.
+                                        {{ $t("Swiss hospitals and SIB have decided to join forces to develop a")}}
+                                        {{ $t("common infrastructure allowing hospitals to share and unify the")}}
+                                        {{ $t("clinical interpretation of the genetic variants identified in their")}}
+                                        {{ $t("patients all over Switzerland.")}}
                                         <br />
-                                        This consensus annotation of variants will also be accessible to
-                                        researchers, as having access to variants detected in patients with
-                                        well-characterized and clinically-validated phenotypic information is
-                                        critical to better understand disease aetiology and reliably identify
-                                        new drug targets.
+                                        {{ $t("This consensus annotation of variants will also be accessible to")}}
+                                        {{ $t("researchers, as having access to variants detected in patients with")}}
+                                        {{ $t("well-characterized and clinically-validated phenotypic information is")}}
+                                        {{ $t("critical to better understand disease aetiology and reliably identify")}}
+                                        {{ $t("new drug targets.")}}
                                         <br />
-                                        The SVIP project was launched in 2017, with the support of the Swiss
-                                        Personalized Health Network (SPHN,
-                                        <a href="http://www.sphn.ch">www.sphn.ch</a>
-                                        ) and BioMedIT initiatives.
+                                        {{ $t("The SVIP project was launched in 2017, with the support of the Swiss")}}
+                                        {{ $t("Personalized Health Network (SPHN,")}}
+                                        <a href="http://www.sphn.ch">{{ $t("www.sphn.ch")}}</a>
+                                        {{ $t(") and BioMedIT initiatives.")}}
                                     </p>
                                 </div>
 
-                                <h3>SVIP workflow</h3>
+                                <h3>{{ $t("SVIP workflow")}}</h3>
                                 <div class="text-justify">
                                     <p>
-                                        The principle of the project is that hospitals feed the system with
-                                        all variants they identify in their patients when using NGS for
-                                        diagnosis. For variants already annotated in the database, annotations
-                                        will be merged, and discrepancies will be solved by a clinical panel
-                                        composed of experts from the partnering hospitals. For variants
-                                        without previous annotation, manual curation supported by
-                                        bioinformatics tools will provide a draft annotation and likely
-                                        clinical interpretation, which will also be validated by the clinical
-                                        expert panel.
+                                        {{ $t("The principle of the project is that hospitals feed the system with")}}
+                                        {{ $t("all variants they identify in their patients when using NGS for")}}
+                                        {{ $t("diagnosis. For variants already annotated in the database, annotations")}}
+                                        {{ $t("will be merged, and discrepancies will be solved by a clinical panel")}}
+                                        {{ $t("composed of experts from the partnering hospitals. For variants")}}
+                                        {{ $t("without previous annotation, manual curation supported by")}}
+                                        {{ $t("bioinformatics tools will provide a draft annotation and likely")}}
+                                        {{ $t("clinical interpretation, which will also be validated by the clinical")}}
+                                        {{ $t("expert panel.")}}
                                     </p>
                                 </div>
                                 <div class="container-fluid-compact">
@@ -93,12 +94,12 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-1">
-                                                    Joint repository
+                                                    {{ $t("Joint repository")}}
                                                 </div>
                                                 <div class="card-body">
                                                     <p>
-                                                        Shared between all partner hospitals with single point
-                                                        of entry
+                                                        {{ $t("Shared between all partner hospitals with single point")}}
+                                                        {{ $t("of entry")}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -107,12 +108,12 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-2">
-                                                    Posting of variants
+                                                    {{ $t("Posting of variants")}}
                                                 </div>
                                                 <div class="card-body">
                                                     <p>
-                                                        To avoid unnecessary manual labor and increase
-                                                        efficiency
+                                                        {{ $t("To avoid unnecessary manual labor and increase")}}
+                                                        {{ $t("efficiency")}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -121,12 +122,12 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-3">
-                                                    Validation of clinical variants
+                                                    {{ $t("Validation of clinical variants")}}
                                                 </div>
                                                 <div class="card-body">
                                                     <p>
-                                                        By manual curation (SIB) and clinical experts
-                                                        consensus (hospitals)
+                                                        {{ $t("By manual curation (SIB) and clinical experts")}}
+                                                        {{ $t("consensus (hospitals)")}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -135,12 +136,12 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-4">
-                                                    Common annotation
+                                                    {{ $t("Common annotation")}}
                                                 </div>
                                                 <div class="card-body">
                                                     <p>
-                                                        Approved by all partners, ensuring consistent
-                                                        assessment of pathogenicity
+                                                        {{ $t("Approved by all partners, ensuring consistent")}}
+                                                        {{ $t("assessment of pathogenicity")}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -149,12 +150,12 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-5">
-                                                    Discrepancy management
+                                                    {{ $t("Discrepancy management")}}
                                                 </div>
                                                 <div class="card-body">
                                                     <p>
-                                                        To solve conflicting annotations between labs when new
-                                                        variants are identified
+                                                        {{ $t("To solve conflicting annotations between labs when new")}}
+                                                        {{ $t("variants are identified")}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -163,30 +164,30 @@
                                         <div class="col-lg-2 mb-2">
                                             <div class="card h-100 small">
                                                 <div class="card-title-gradient gradient-6">
-                                                    Feedback mechanism
+                                                    {{ $t("Feedback mechanism")}}
                                                 </div>
                                                 <div class="card-body">
-                                                    <p>In case pathogenicity changes over time</p>
+                                                    <p>{{ $t("In case pathogenicity changes over time")}}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <h3>SVIP to support also translational research</h3>
+                                <h3>{{ $t("SVIP to support also translational research")}}</h3>
                                 <div class="text-justify">
                                     <p>
-                                        SVIP will incorporate variant information from other similar projects
-                                        such as ClinVar, ClinGen, CIViC, OncoKB, and PMKB, to facilitate the
-                                        prioritization of variants by molecular pathologists, to become the
-                                        Swiss one-stop shop for the interpretation of somatic variants,
-                                        enabling faster and more robust prioritisation.
+                                        {{ $t("SVIP will incorporate variant information from other similar projects")}}
+                                        {{ $t("such as ClinVar, ClinGen, CIViC, OncoKB, and PMKB, to facilitate the")}}
+                                        {{ $t("prioritization of variants by molecular pathologists, to become the")}}
+                                        {{ $t("Swiss one-stop shop for the interpretation of somatic variants,")}}
+                                        {{ $t("enabling faster and more robust prioritisation.")}}
                                         <br />
-                                        The consensus annotation of variants will also be accessible to
-                                        researchers, as having access to variants detected in patients with
-                                        well-characterized and clinically-validated phenotypic information is
-                                        critical to better understand disease aetiology and reliably identify
-                                        new drug targets.
+                                        {{ $t("The consensus annotation of variants will also be accessible to")}}
+                                        {{ $t("researchers, as having access to variants detected in patients with")}}
+                                        {{ $t("well-characterized and clinically-validated phenotypic information is")}}
+                                        {{ $t("critical to better understand disease aetiology and reliably identify")}}
+                                        {{ $t("new drug targets.")}}
                                     </p>
                                 </div>
                             </div>
@@ -198,15 +199,15 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>Our Partners</h1>
+                                <h1>{{ $t("Our Partners")}}</h1>
                                 <p class="lead">
-                                    A national network of medical institutions committed to a joint goal
+                                    {{ $t("A national network of medical institutions committed to a joint goal")}}
                                 </p>
                                 <p class="mb-5">
-                                    This program has been made possible thanks to the commitment and strong
-                                    support of Swiss hospitals, institutes and medical societies who have
-                                    agreed to share their know-how and expertise for the benefit of the
-                                    patients.
+                                    {{ $t("This program has been made possible thanks to the commitment and strong")}}
+                                    {{ $t("support of Swiss hospitals, institutes and medical societies who have")}}
+                                    {{ $t("agreed to share their know-how and expertise for the benefit of the")}}
+                                    {{ $t("patients.")}}
                                 </p>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -214,14 +215,14 @@
                                     <li>
                                         <i>
                                             <a href="http://www.sgmp.uzh.ch/home.html">
-                                                Swiss Society of Molecular Pathology
+                                                {{ $t("Swiss Society of Molecular Pathology")}}
                                             </a>
                                         </i>
                                     </li>
                                 </ul>
                                 <ul>
                                     <li>
-                                        <i><a href="http://sgpath.ch">Swiss Society of Pathology</a></i>
+                                        <i><a href="http://sgpath.ch">{{ $t("Swiss Society of Pathology")}}</a></i>
                                     </li>
                                 </ul>
                                 <ul>
@@ -229,32 +230,32 @@
                                         <i>
                                             <a
                                                 href="https://www.unibas.ch/en/Focal-areas/Personalized-Health-Basel.html">
-                                                Personalized Health Basel
+                                                {{ $t("Personalized Health Basel")}}
                                             </a>
                                         </i>
                                     </li>
                                 </ul>
                                 <ul>
                                     <li>
-                                        <i><a href="https://www.ksbl.ch/home">Kantonsspital Baselland</a></i>
+                                        <i><a href="https://www.ksbl.ch/home">{{ $t("Kantonsspital Baselland")}}</a></i>
                                     </li>
                                 </ul>
                                 <ul>
                                     <li>
-                                        <i><a href="https://www.insel.ch">Bern University Hospital</a></i>
+                                        <i><a href="https://www.insel.ch">{{ $t("Bern University Hospital")}}</a></i>
                                     </li>
                                 </ul>
                                 <ul>
                                     <li>
                                         <i>
                                             <a href="http://www.dbmr.unibe.ch">
-                                                Department for BioMedical Research
+                                                {{ $t("Department for BioMedical Research")}}
                                             </a>
-                                            and
+                                            {{ $t("and")}}
                                             <a href="http://www.pathology.unibe.ch/index_eng.html">
-                                                Institute of Pathology
+                                                {{ $t("Institute of Pathology")}}
                                             </a>
-                                            , Bern University
+                                            {{ $t(", Bern University")}}
                                         </i>
                                     </li>
                                 </ul>
@@ -263,7 +264,7 @@
                                         <i>
                                             <a
                                                 href="https://www.hug-ge.ch/pathologie-clinique/laboratoires-de-pathologie-moleculaire">
-                                                Geneva University Hospital
+                                                {{ $t("Geneva University Hospital")}}
                                             </a>
                                         </i>
                                     </li>
@@ -272,7 +273,7 @@
                                     <li>
                                         <i>
                                             <a href="https://www.chuv.ch/fr/pathologie/ipa-home/">
-                                                Lausanne University Hospital
+                                                {{ $t("Lausanne University Hospital")}}
                                             </a>
                                         </i>
                                     </li>
@@ -281,7 +282,7 @@
                                     <li>
                                         <i>
                                             <a href="https://www4.ti.ch/dss/dsp/icp/istituto/">
-                                                Locarno Institute of Pathology
+                                                {{ $t("Locarno Institute of Pathology")}}
                                             </a>
                                         </i>
                                     </li>
@@ -290,7 +291,7 @@
                                     <li>
                                         <i>
                                             <a href="https://www.kssg.ch/pathologie">
-                                                St Gallen Cantonal Hospital
+                                                {{ $t("St Gallen Cantonal Hospital")}}
                                             </a>
                                         </i>
                                     </li>
@@ -299,7 +300,7 @@
                                     <li>
                                         <i>
                                             <a href="http://www.en.pathology.usz.ch">
-                                                Zürich University Hospital
+                                                {{ $t("Zürich University Hospital")}}
                                             </a>
                                         </i>
                                     </li>
@@ -322,7 +323,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>About the Team</h1>
+                                <h1>{{ $t("About the Team")}}</h1>
                                 <!--<p class="lead">Team introduction</p>-->
                             </div>
                             <!-- /.col-md-4 -->
@@ -334,22 +335,22 @@
                                             src=/project-info/media/barbie.jpg alt="Valérie Barbié">
                                         </div>
                                         <p class="card-text">
-                                            Val&eacute;rie Barbi&eacute; is head of Clinical Bioinformatics at
-                                            SIB, which objectives are to harmonize bioinformatics diagnosis
-                                            practices for omics data across Swiss hospitals. The group also
-                                            collaborates with Swiss hospitals or institutions to jointly
-                                            develop tailored diagnosis pipelines in NGS. She is co-leading the
-                                            SIB Somatic Mutation Calling WG.
+                                            {{ $t("Valérie Barbié  is head of Clinical Bioinformatics at")}}
+                                            {{ $t("SIB, which objectives are to harmonize bioinformatics diagnosis")}}
+                                            {{ $t("practices for omics data across Swiss hospitals. The group also")}}
+                                            {{ $t("collaborates with Swiss hospitals or institutions to jointly")}}
+                                            {{ $t("develop tailored diagnosis pipelines in NGS. She is co-leading the")}}
+                                            {{ $t("SIB Somatic Mutation Calling WG.")}}
                                         </p>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="https://www.sib.swiss/" class="btn btn-primary">Website</a>
+                                        <a href="https://www.sib.swiss/" class="btn btn-primary">{{ $t("Website")}}</a>
 
                                         <b-btn
                                             to="mailto:Valerie.Barbie@sib.swiss"
                                             variant="secondary"
                                             class="ml-2">
-                                            Email
+                                            {{ $t("Email")}}
                                         </b-btn>
                                     </div>
                                 </div>
@@ -363,24 +364,24 @@
                                             src=/project-info/media/stekhoven.jpg alt="Daniel Stekhoven">
                                         </div>
                                         <p class="card-text mt-3">
-                                            Daniel Stekhoven is head of the Clinical Bioinformatics Unit at
-                                            NEXUS – a biomedical core facility of ETH Zurich aiming at
-                                            translating computational methods and tools to clinical
-                                            application. CBU is among the first to use comprehensive NGS in
-                                            cancer diagnostics. He is group leader of SIB and co-leader of the
-                                            Somatic Mutation Calling WG.
+                                            {{ $t("Daniel Stekhoven is head of the Clinical Bioinformatics Unit at")}}
+                                            {{ $t("NEXUS – a biomedical core facility of ETH Zurich aiming at")}}
+                                            {{ $t("translating computational methods and tools to clinical")}}
+                                            {{ $t("application. CBU is among the first to use comprehensive NGS in")}}
+                                            {{ $t("cancer diagnostics. He is group leader of SIB and co-leader of the")}}
+                                            {{ $t("Somatic Mutation Calling WG.")}}
                                         </p>
                                     </div>
                                     <div class="card-footer">
                                         <a href="http://www.nexus.ethz.ch/" class="btn btn-primary">
-                                            Website
+                                            {{ $t("Website")}}
                                         </a>
 
                                         <b-btn
                                             to="mailto:stekhoven@nexus.ethz.ch"
                                             variant="secondary"
                                             class="ml-2">
-                                            Email
+                                            {{ $t("Email")}}
                                         </b-btn>
                                     </div>
                                 </div>
@@ -394,16 +395,16 @@
                                             src=/project-info/media/ruch.png alt="Patrick Ruch">
                                         </div>
                                         <p class="card-text">
-                                            Patrick Ruch is professor and chairman of the Information Sciences
-                                            department of the University of Applied Sciences Western
-                                            Switzerland (HES-SO) in Geneva. He is also leader of the SIB Text
-                                            Mining group, which maintains text analytics services to support
-                                            the curation of SIB databases such as Swiss-Prot and neXtprot.
+                                            {{ $t("Patrick Ruch is professor and chairman of the Information Sciences")}}
+                                            {{ $t("department of the University of Applied Sciences Western")}}
+                                            {{ $t("Switzerland (HES-SO) in Geneva. He is also leader of the SIB Text")}}
+                                            {{ $t("Mining group, which maintains text analytics services to support")}}
+                                            {{ $t("the curation of SIB databases such as Swiss-Prot and neXtprot.")}}
                                         </p>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="https://www.hes-so.ch/" class="btn btn-primary">Website</a>
-                                        <!--<a href="#" class="btn btn-secondary float-right">Email</a> -->
+                                        <a href="https://www.hes-so.ch/" class="btn btn-primary">{{ $t("Website")}}</a>
+                                        <!--<a href="#" class="btn btn-secondary float-right">{{ $t("Email")}}</a> -->
                                         <b-btn
                                             to="mailto:patrick.ruch@hesge.ch"
                                             variant="secondary"
@@ -421,12 +422,12 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>Stay tuned</h1>
+                                <h1>{{ $t("Stay tuned")}}</h1>
                                 <p class="lead">
-                                    Sign up to our newsletter or become an institutional member
+                                    {{ $t("Sign up to our newsletter or become an institutional member")}}
                                 </p>
                                 <b-btn to="mailto:Valerie.Barbie@sib.swiss" variant="secondary">
-                                    Sign up
+                                    {{ $t("Sign up")}}
                                 </b-btn>
                             </div>
                         </div>
@@ -437,7 +438,8 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>Events</h1>
+                                <h1>{{ $t("Events")}}</h1>
+
                                 <!-- Event card -->
                                 <div class="container-fluid-compact">
                                     <div class="card-group">
@@ -445,7 +447,7 @@
                                             <div class="card-body text-center">
                                                 <p class="text-center">
                                                     <img src="/project-info/media/calendar.png" alt="When?" />
-                                                    25 February 2019
+                                                    {{ $t("25 February 2019")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -455,13 +457,13 @@
                                                     <a
                                                         href="https://www.youtube.com/watch?v=6KatLlUW-uo"
                                                         target="_blank">
-                                                        DCC Seminar and Training Series
+                                                        {{ $t("DCC Seminar and Training Series")}}
                                                     </a>
                                                     <br />
                                                     <img
                                                         src="/project-info/media/location.png"
                                                         alt="Where?" />
-                                                    Online presentation
+                                                    {{ $t("Online presentation")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -475,7 +477,7 @@
                                             <div class="card-body text-center">
                                                 <p class="text-center">
                                                     <img src="/project-info/media/calendar.png" alt="When?" />
-                                                    11-12 September 2018
+                                                    {{ $t("11-12 September 2018")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -485,13 +487,13 @@
                                                     <a
                                                         href="http://www.ehealthsummit.ch/ehome/304633/ehealth-summit-2018"
                                                         target="_blank">
-                                                        Swiss eHealth Summit 2018
+                                                        {{ $t("Swiss eHealth Summit 2018")}}
                                                     </a>
                                                     <br />
                                                     <img
                                                         src="/project-info/media/location.png"
                                                         alt="Where?" />
-                                                    Bern, Switzerland
+                                                    {{ $t("Bern, Switzerland")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -505,7 +507,7 @@
                                             <div class="card-body text-center">
                                                 <p class="text-center">
                                                     <img src="/project-info/media/calendar.png" alt="When?" />
-                                                    18-21 June 2018
+                                                    {{ $t("18-21 June 2018")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -515,14 +517,14 @@
                                                     <a
                                                         href="http://www.personalizedhealth.nexus.ethz.ch/"
                                                         target="_blank">
-                                                        Personalized Health Technologies and Translational
-                                                        Research Conference
+                                                        {{ $t("Personalized Health Technologies and Translational")}}
+                                                        {{ $t("Research Conference")}}
                                                     </a>
                                                     <br />
                                                     <img
                                                         src="/project-info/media/location.png"
                                                         alt="Where?" />
-                                                    ETH Zürich, Switzerland
+                                                    {{ $t("ETH Zürich, Switzerland")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -536,7 +538,7 @@
                                             <div class="card-body text-center">
                                                 <p class="text-center">
                                                     <img src="/project-info/media/calendar.png" alt="When?" />
-                                                    23-25 May 2018
+                                                    {{ $t("23-25 May 2018")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -546,13 +548,13 @@
                                                     <a
                                                         href="https://coursesandconferences.wellcomegenomecampus.org/events/item.aspx?e=712"
                                                         target="_blank">
-                                                        Curating the Clinical Genome
+                                                        {{ $t("Curating the Clinical Genome")}}
                                                     </a>
                                                     <br />
                                                     <img
                                                         src="/project-info/media/location.png"
                                                         alt="Where?" />
-                                                    Wellcome Genome Campus, Hinxton, Cambridge, UK
+                                                    {{ $t("Wellcome Genome Campus, Hinxton, Cambridge, UK")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -566,7 +568,7 @@
                                             <div class="card-body text-center">
                                                 <p class="text-center">
                                                     <img src="/project-info/media/calendar.png" alt="When?" />
-                                                    17 May 2018
+                                                    {{ $t("17 May 2018")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -576,13 +578,13 @@
                                                     <a
                                                         href="http://lausanne.inno-forum.org/personalized-healthcare-conference/"
                                                         target="_blank">
-                                                        Innovation Forum Personalised Healthcare Conference
+                                                        {{ $t("Innovation Forum Personalised Healthcare Conference")}}
                                                     </a>
                                                     <br />
                                                     <img
                                                         src="/project-info/media/location.png"
                                                         alt="Where?" />
-                                                    Lausanne, Switzerland
+                                                    {{ $t("Lausanne, Switzerland")}}
                                                 </p>
                                             </div>
                                         </div>
@@ -598,16 +600,17 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
-                                <h1>Disclaimer &amp; License</h1>
+                                <h1>Disclaimer and License
+                                 {{ $t("Disclaimer and License")}}
+                                </h1>
                                 <p class="lead">
-                                    The Swiss Variant Interpretation Platform for Oncology (SVIP-O) accessible
+                                    {{ $t("The Swiss Variant Interpretation Platform for Oncology (SVIP-O) accessible")}}
                                     at
-                                    <a href="https://www.svip.ch">www.svip.ch</a>
-                                    has been developed as part of the national Swiss Personalized Health
-                                    Network (SPHN) initiative by the Clinical Bioinformatics Group of the SIB
-                                    Swiss Institute of Bioinformatics ("SIB"), the ETH of Zurich ("ETHZ") and
-                                    the University of Applied Sciences Western Switzerland ("HES-SO")
-                                    (together "We").
+                                    <a href="https://www.svip.ch">{{ $t("www.svip.ch")}}</a>
+                                    {{ $t("has been developed as part of the national Swiss Personalized Health")}}
+                                    {{ $t("Network (SPHN) initiative by the Clinical Bioinformatics Group of the SIB")}}
+                                    {{ $t("Swiss Institute of Bioinformatics ('SIB'), the ETH of Zurich ('ETHZ') and the University of Applied Sciences Western Switzerland ('HES-SO' (together 'We')")}}
+
                                 </p>
                                 <h3>Disclaimer</h3>
                                 <div class="text-justify">
@@ -648,6 +651,7 @@
                                         <a href="https://github.com/SVIPdb">GitHub</a>
                                         .
                                         <br />
+
                                         For more information or any inquiries about this section, please reach
                                         out to
                                         <a href="mailto:legal@sib.swiss">legal@sib.swiss</a>
@@ -672,8 +676,8 @@
                                         and Patrick Ruch.
                                         <em>
                                             <a href="/project-info/media/MIE2020_SVIP_TM.pdf" target="_blank">
-                                                Text-mining Services of the Swiss Variant Interpretation
-                                                Platform for Oncology
+                                                {{ $t("Text-mining Services of the Swiss Variant Interpretation Platform for Oncology")}}
+
                                             </a>
                                         </em>
                                         .

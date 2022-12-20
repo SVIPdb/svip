@@ -14,26 +14,22 @@
                     v-if="variomes && variomesIsValid"
                     :class="['variomes-popover', isShortAbstract ? 'short-abstract' : null]">
                     <h6 class="title" v-html="single_publication.title_highlight"></h6>
-                    <div class="authors">
-                        {{ formatAuthors(single_publication.authors) }}. {{ single_publication.journal }} ({{
-                            single_publication.date
-                        }})
-                    </div>
+			<div class="authors">{{ formatAuthors(single_publication.authors) }}. {{ single_publication.journal }} ({{ single_publication.date }})</div>
                     <div class="abstract" v-html="single_publication.abstract_highlight"></div>
 
                     <div class="abstract-fader"></div>
                 </div>
                 <div v-else-if="variomes && error" class="d-flex align-items-center">
                     <icon name="exclamation-triangle" scale="2" style="color: #c6af89" />
-                    <div class="ml-2">Couldn't retrieve publication info, try again later.</div>
+                    <div class="ml-2">{{ $t("Couldn't retrieve publication info, try again later.")}}</div>
                 </div>
                 <span v-else-if="!parsedPMID">
-                    <b>external link to:</b>
+                    <b>{{ $t("external link to:")}}</b>
                     {{ pubmeta.url }}
                 </span>
                 <span v-else class="variomes-loading">
                     <b-spinner variant="secondary" style="width: 1rem; height: 1rem; margin-right: 5px" />
-                    loading...
+                    {{ $t("loading...")}}
                 </span>
             </template>
         </b-popover>

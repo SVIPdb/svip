@@ -2,7 +2,7 @@
     <div>
         <div class="card mt-3 top-level">
             <div class="card-header">
-                <div class="card-title">Algorithmic Impact Prediction</div>
+                <div class="card-title">{{ $t("Algorithmic Impact Prediction")}}</div>
             </div>
 
             <div class="card-body top-level">
@@ -10,7 +10,7 @@
                     <template v-slot:cell(actions)="row">
                         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
                         <b-button size="sm" @click.stop="row.toggleDetails">
-                            {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+                            {{ row.detailsShowing ? 'Hide' : 'Show' }} {{ $t("Details")}}
                         </b-button>
                     </template>
                     <template v-slot:cell(name)="row">

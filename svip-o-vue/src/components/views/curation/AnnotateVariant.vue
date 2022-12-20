@@ -48,7 +48,7 @@
                                             variant="info"
                                             @click="viewCitation">
                                             <icon name="eye" />
-                                            View Abstract
+                                            {{ $t("View Abstract")}}
                                         </b-button>
                                         <b-button
                                             :disabled="!source || !reference"
@@ -58,7 +58,7 @@
                                             @click="addEvidence"
                                             target="_blank">
                                             <icon name="plus" />
-                                            Create Entry
+                                            {{ $t("Create Entry")}}
                                         </b-button>
 
                                 </b-row>
@@ -69,7 +69,7 @@
                                             <icon name="exclamation-triangle" scale="2.5" />
                                         </template>
                                         <template>
-                                            This reference has already been used in other entries:
+                                            {{ $t("This reference has already been used in other entries:")}}
 
                                             <EntriesInUse :annotation-used="annotationUsed" />
                                         </template>

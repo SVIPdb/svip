@@ -1,0 +1,1504 @@
+<template>
+    <div>
+        <div v-if="totalPatients > 0">
+            <svg ref="thechart" class="sig-bar-chart">
+                <rect
+                    class="bar"
+                    v-for="(d, i) in layout"
+                    :key="i"
+                    :x="d.x"
+                    :y="d.y"
+                    :width="d.width"
+                    :height="d.height"
+                    :fill="d.c"></rect>
+
+                <line class="basis" x1="0" x2="100%" y1="27" y2="27"></line>
+            </svg>
+
+            <b-tooltip :target="() => $refs.thechart" placement="top">
+                <div v-for="d in this.formattedData" :key="d.k" style="text-align: left">
+                    <svg width="10" height="10" class="legend-swatch">
+                        <rect width="10" height="10" :fill="d.c"></rect>
+                    </svg>
+                    <span>
+                        <b class="gender-label">{{ d.k }}:</b>
+                        {{ d.v.toLocaleString() }}
+                        <span v-if="totalPatients > 0">({{ round((d.v / totalPatients) * 100.0) }}%)</span>
+                    </span>
+                </div>
+            </b-tooltip>
+        </div>
+        <span v-else class="unavailable">{{ $t("unavailable")}}</span>
+    </div>
+</template>
+
+<script>
+import * as d3 from 'd3';
+import round from 'lodash/round';
+
+const genderColors = {
+    male: '#0F7FFE',
+    female: '#CC66FE',
+};
+
+export default {
+    data() {
+        return {
+            width: 45,
+            height: 25,
+            padding: 1,
+        };
+    },
+    props: ['data'],
+    created: function () {
+        this.x = d3.scaleLinear();
+        this.y = d3.scaleLinear();
+    },
+    methods: {
+        round,
+    },
+    computed: {
+        formattedData() {
+            return Object.entries(this.data).map(([k, v]) => ({
+                k,
+                v,
+                c: genderColors[k],
+            }));
+        },
+        totalPatients() {
+            return this.data.male + this.data.female;
+        },
+        layout: function () {
+            this.x.domain([0, this.formattedData.length]).range([0, this.width]);
+
+            this.y.domain([0, d3.max(this.formattedData, d => d.v)]).range([0, this.height]);
+
+            return this.formattedData.map(
+                (function (_this) {
+                    return function (d, i) {
+                        return {
+                            v: d.v,
+                            k: d.k,
+                            x: _this.x(i),
+                            y: _this.y.range()[1] - _this.y(d.v),
+                            c: d.c,
+                            width: Math.max(1, _this.x(1) - _this.x(0) - _this.padding),
+                            height: _this.y(d.v),
+                        };
+                    };
+                })(this)
+            );
+        },
+    },
+};
+</script>
+
+<style scoped>
+.sig-bar-chart {
+    width: 45px;
+    height: 28px;
+}
+
+.sig-bar-chart line {
+    shape-rendering: crispEdges;
+    stroke: #aaa;
+}
+
+.gender-label {
+    display: inline-block;
+    text-align: right;
+    min-width: 7ex;
+}
+</style>
+        };
+                    };
+                })(this)
+            );
+        },
+    },
+};
+</script>
+
+<style scoped>
+.age-bar-chart {
+    width: 100%;
+    max-width: 100px;
+    height: 28px;
+}
+
+.age-bar-chart line {
+    shape-rendering: crispEdges;
+    stroke: #aaa;
+}
+
+.age-label {
+    display: inline-block;
+    text-align: right;
+    min-width: 7ex;
+}
+</style>
+               <b-icon-circle v-else variant="secondary" />
+                </template>
+
+                <template v-slot:cell(for_curation_request)="data">
+                    <b-icon-check-circle-fill v-if="data.value" variant="success" />
+                    <b-icon-circle v-else variant="secondary" />
+                </template>
+
+                <template v-slot:row-details="entry">
+                    <div v-if="entry.item.status !== 'error'" class="sample-subtable tumor-subtable">
+                        <h6>{{ $t("Resulting Variant(s):")}}</h6>
+                        <b-table
+                            class="shadow-sm m-0"
+                            :items="entry.item.resulting_variants"
+                            :fields="resulting_variant_fields">
+                            <template v-slot:cell(description)="data">
+                                <router-link
+                                    :to="`/gene/${data.item.gene.id}/variant/${data.item.id}`"
+                                    target="_blank">
+                                    {{ data.value }}
+                                </router-link>
+                            </template>
+                        </b-table>
+                    </div>
+                    <div v-else class="failure-output">
+                        <b>{{ $t("Error:")}}</b>
+                        <div>{{ entry.item.error_msg }}</div>
+                    </div>
+                </template>
+            </PagedTable>
+        </b-card-body>
+    </b-card>
+</template>
+
+<script>
+import {BIconCheckCircleFill, BIconCircle} from 'bootstrap-vue';
+import PagedTable from '@/components/widgets/PagedTable';
+import FilterButtons from '@/components/widgets/curation/FilterButtons';
+import {mapGetters} from 'vuex';
+import BroadcastChannel from 'broadcast-channel';
+import {combinedDateTime} from '@/utils';
+
+export default {
+    name: 'SubmissionQueue',
+    components: {
+        FilterButtons,
+        PagedTable,
+        BIconCheckCircleFill,
+        BIconCircle,
+    },
+    props: {
+        variant: {type: Object, required: false},
+        disease_id: {type: Number, required: false},
+        isDashboard: {type: Boolean, required: false, default: false},
+        includeGeneVar: {type: Boolean, required: false, default: false},
+        small: {type: Boolean, required: false, default: false},
+        isSubmittable: {type: Boolean, required: false, default: false},
+        onlySubmitted: {type: Boolean, required: false, default: false},
+        notSubmitted: {type: Boolean, required: false, default: false},
+        hasHeader: {type: Boolean, default: false},
+        headerTitle: {
+            type: String,
+            required: false,
+            default: 'Submitted Variants',
+        },
+        cardHeaderBg: {type: String, required: false, default: 'light'},
+        cardTitleVariant: {type: String, required: false, default: 'primary'},
+        cardFilterOption: {type: Boolean, default: true},
+    },
+    data() {
+        return {
+            statusFilter: 'all',
+            filter: null,
+            filterOwner: false,
+
+            // listens for submission updates
+            channel: new BroadcastChannel('submission-update'),
+        };
+    },
+    created() {
+        this.channel.onmessage = () => {
+            if (this.$refs.paged_table) {
+                this.$refs.paged_table.refresh();
+            }
+        };
+    },
+    computed: {
+        ...mapGetters(['userID']),
+        apiUrl() {
+            const params = [
+                // this.disease_id && `disease=${this.disease_id}`,
+                this.filterOwner && `owner=${this.userID}`,
+                // FIXME: these two are mutually exclusive
+                this.onlySubmitted && `status=submitted`,
+                this.notSubmitted && `status_ne=submitted`,
+            ].filter(x => x);
+
+            return `/submitted_variants${params ? '?' + params.join('&') : ''}`;
+        },
+        statusItems() {
+            return [
+                {label: 'Pending', value: 'pending', variant: 'warning'},
+                {label: 'Completed', value: 'completed', variant: 'success'},
+                {label: 'Error', value: 'error', variant: 'danger'},
+                {label: 'All', value: 'all'},
+            ];
+        },
+        fields() {
+            return [
+                {key: 'action', label: ''},
+                {key: 'id', label: 'ID'},
+                {
+                    key: 'created_on',
+                    label: 'Created On',
+                    sortable: true,
+                    formatter: v => combinedDateTime(v),
+                },
+                {key: 'owner_name', label: 'Owner', sortable: true},
+                {key: 'description', label: 'Description', sortable: true},
+                {key: 'status', label: 'Status', sortable: true},
+                {key: 'canonical_only', label: 'Canonical', sortable: true},
+                {
+                    key: 'for_curation_request',
+                    label: 'For Curation',
+                    sortable: true,
+                },
+                {
+                    key: 'batch',
+                    label: 'Batch ID',
+                    sortable: true,
+                    formatter: v => v || '---',
+                },
+                {
+                    key: 'resulting_variants',
+                    label: 'Variants',
+                    sortable: true,
+                    formatter: v => (v !== null ? v.length : '---'),
+                },
+            ];
+        },
+        resulting_variant_fields() {
+            return [
+                {key: 'id', label: 'ID'},
+                {key: 'description', label: 'Variant'},
+                {key: 'hgvs_c', label: 'HGVS.c'},
+            ];
+        },
+    },
+    methods: {
+        combinedDateTime,
+        rowClass(item) {
+            if (!item) return;
+            if (item.stats === 'completed') return 'table-light';
+        },
+        variantForStatus(status) {
+            const found = this.statusItems.find(x => x.value === status);
+            return found ? found.variant : 'secondary';
+        },
+    },
+};
+</script>
+
+<style scoped>
+.failure-output {
+    padding: 10px;
+    box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+    background-color: #efefef;
+
+    overflow-x: scroll;
+    white-space: pre;
+    font-family: monospace;
+}
+</style>
+            if (status === false) {
+                return 'color:red;';
+            }
+            return '';
+        },
+        detectOwnReviews() {
+            // iterate over every review to prefill inputs with current user's past reviews
+            this.diseases.map((disease, i) => {
+                let evidences_expanders = [];
+
+                disease.evidences.map(evidence => {
+                    evidence.reviews.map(review => {
+                        if (review.reviewer_id === this.user.user_id) {
+                            const myReview = {
+                                annotatedEffect: review.annotatedEffect,
+                                annotatedTier: review.annotatedTier,
+                                comment: review.comment,
+                            };
+                            evidence['myReview'] = myReview;
+                        }
+                    });
+
+                    evidence.revised_reviews.map(rr => {
+                        if (rr.reviewer_id === this.user.user_id) {
+                            const newReview = {
+                                reviewer_id: this.user.user_id,
+                                agreement: rr.agreement,
+                                comment: rr.comment,
+                            };
+                            evidence['newReview'] = newReview;
+                        }
+                        // store the evidence ID so when the user submit it, the request is a patch
+                        this.selfReviewedEvidences[evidence.id] = rr.id;
+                    });
+
+                    if (typeof evidence['newReview'] === 'undefined') {
+                        const newReview = {
+                            reviewer_id: this.user.user_id,
+                            agreement: 'I agree.',
+                            agree: true,
+                            comment: '',
+                        };
+                        evidence['newReview'] = newReview;
+                    }
+
+                    evidences_expanders.push(false);
+                });
+
+                this.expander_array.push({
+                    disease: true,
+                    evidences: evidences_expanders,
+                });
+            });
+        },
+        missingComment() {
+            // return true if a same evidence doesn't match the curators annotation and has not been given a comment
+            for (var i = 0; i < this.diseases.length; i++) {
+                const disease = this.diseases[i];
+                for (var j = 0; j < disease['evidences'].length; j++) {
+                    const evidence = disease['evidences'][j];
+                    if (evidence.newReview.agreement === "I don't agree.") {
+                        // review doesn't match curator's annotation
+                        const regExp = /[a-zA-Z]/g;
+                        if (evidence.newReview.comment === null || !regExp.test(evidence.newReview.comment)) {
+                            // no letter was found in the comment
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        },
+        submitReviews() {
+            //if (this.missingComment()) {
+            //    this.$snotify.error(
+            //        "Please enter a comment for every review conflicting with that of curators",
+            //        "",
+            //        { timeout: 5000 }
+            //    );
+            //    return false
+            //}
+
+            // iterate over every review
+            this.diseases.map(disease => {
+                disease.evidences.map(evidence => {
+                    if (evidence.id in this.selfReviewedEvidences) {
+                        console.log('REREVIEWED');
+                        let reviewID = this.selfReviewedEvidences[evidence.id];
+                        HTTP.put(`/revised_reviews/${reviewID}/`, this.reviewParams(evidence))
+                            .then(response => {
+                                this.getReviewData();
+                            })
+                            .catch(err => {
+                                log.warn(err);
+                                this.$snotify.error('Failed to submit review');
+                            });
+                    } else {
+                        console.log('FIRST REVIEW');
+                        HTTP.post(`/revised_reviews/`, this.reviewParams(evidence))
+                            .then(response => {
+                                this.getReviewData();
+                            })
+                            .catch(err => {
+                                log.warn(err);
+                                this.$snotify.error('Failed to submit review');
+                            });
+                    }
+                });
+            });
+
+            this.$snotify.success('Your review has been saved');
+            // Reset fields
+            this.isEditMode = false;
+        },
+        reviewParams(evidence) {
+            // prepare a JSON containing parameters for CurationReview model
+            const singleReviewJSON = {
+                curation_evidence: evidence.id,
+                reviewer: this.user.user_id,
+                comment: evidence.newReview.comment,
+                agree: evidence.newReview.agreement === 'I agree.' ? true : false,
+            };
+            return singleReviewJSON;
+        },
+    },
+};
+</script>
+
+<style scoped>
+.pub-status {
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+}
+
+.pub-status > .fa-icon {
+    margin-right: 0.4rem;
+}
+
+.action-tray {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action-tray .btn {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#evidence_table >>> .table {
+    margin-bottom: 0;
+}
+
+.summary-box {
+    color: black !important;
+}
+</style>
+         :class="` ${
+                                                    currentReviews.data[idx][1][index].acceptance ||
+                                                    (currentReviews.data[idx][1][index].comment !== null &&
+                                                        currentReviews.data[idx][1][index].comment !== '')
+                                                        ? 'summary-box'
+                                                        : 'summary-box alert-border'
+                                                }`"
+                                                rows="3"
+                                                placeholder="{{ $t("Comment")}}..."
+                                                v-model="
+                                                    currentReviews.data[idx][1][index].comment
+                                                "></b-textarea>
+                                        </b-col>
+                                    </b-row>
+                                </b-card-text>
+
+                                <transition name="slide-fade">
+                                    <div v-if="expander_array[idx].curation_entries[index]">
+                                        <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
+                                            <table class="table table-responsive-lg">
+                                                <th class="bg-light">{{ $t("PMID")}}</th>
+                                                <th class="bg-light">Effect</th>
+                                                <th class="bg-light">{{ $t("Tier level")}}</th>
+                                                <th class="bg-light">{{ $t("Support")}}</th>
+                                                <th class="bg-light">{{ $t("ID")}}</th>
+                                                <th class="bg-light">Comment</th>
+
+                                                <tr v-for="(curation, i) in type.curation_entries" :key="i">
+                                                    <td>
+                                                        <b-link
+                                                            target="_blank"
+                                                            active
+                                                            :href="`https://pubmed.ncbi.nlm.nih.gov/${
+                                                                curation.references.split(':')[1]
+                                                            }`">
+                                                            {{ curation.references }}
+                                                        </b-link>
+                                                    </td>
+                                                    <td>{{ curation.effect }}</td>
+                                                    <td>{{ curation.tier_level_criteria }}</td>
+                                                    <td>{{ curation.support }}</td>
+                                                    <td>
+                                                        <b-link
+                                                            :to="{
+                                                                name: 'view-evidence',
+                                                                params: {action: curation.id},
+                                                            }"
+                                                            target="_blank"
+                                                            alt="Link to evidence">
+                                                            {{ $t("Curation entry #")}}{{ curation.id }}
+                                                        </b-link>
+                                                    </td>
+                                                    <td>{{ curation.comment }}</td>
+                                                </tr>
+                                            </table>
+                                        </b-card-footer>
+                                    </div>
+                                </transition>
+                            </div>
+                        </transition>
+                    </b-card-body>
+                    <hr
+                        v-if="
+                            idx < submissionEntry[1].length - 1 &&
+                            !expander_array[idx].curation_entries[index]
+                        " />
+                </div>
+            </b-card>
+        </div>
+        <div class="float-right">
+            <b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
+                {{ $t("Finish later")}}
+            </b-button>
+
+            <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">
+                {{ $t("Submit review")}}
+            </b-button>
+        </div>
+        <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
+            {{ $t("THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.")}}
+        </b-navbar-text>
+        <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted && !draft">
+            {{ $t("YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.")}}
+        </b-navbar-text>
+    </div>
+</template>
+
+<script>
+/* eslint-disable */
+// import fields from "@/data/curation/evidence/fields.js";
+import {HTTP} from '@/router/http';
+import BroadcastChannel from 'broadcast-channel';
+import {BIcon, BIconCheckSquareFill, BIconSquare, BIconXSquareFill} from 'bootstrap-vue';
+import ulog from 'ulog';
+import SelectPrognosticOutcome from '@/components/widgets/review/forms/SelectPrognosticOutcome';
+import SelectDiagnosticOutcome from '@/components/widgets/review/forms/SelectDiagnosticOutcome';
+import SelectPredictiveTherapeuticOutcome from '@/components/widgets/review/forms/SelectPredictiveTherapeuticOutcome';
+import SelectTier from '@/components/widgets/review/forms/SelectTier';
+import SelectTherapeuticTier from '@/components/widgets/review/forms/SelectTherapeuticTier';
+import {mapGetters} from 'vuex';
+import {groupBy} from 'lodash';
+
+const log = ulog('VariantDisease');
+
+export default {
+    name: 'VariantDisease',
+    components: {
+        SelectTier,
+        SelectTherapeuticTier,
+        BIcon,
+        BIconSquare,
+        BIconCheckSquareFill,
+        BIconXSquareFill,
+        SelectPrognosticOutcome,
+        SelectDiagnosticOutcome,
+        SelectPredictiveTherapeuticOutcome,
+    },
+    props: ['variant_id', 'gene_id'],
+    data() {
+        return {
+            only_conflicting: 'no',
+            renderKey: 0,
+            submissionEntries: [],
+            selfReviewedEvidences: {},
+            summary: null,
+            history_entry_id: null,
+            loading: false,
+            error: null,
+            channel: new BroadcastChannel('curation-update'),
+            expander_array: [],
+            not_annotated: false,
+            submitted: false,
+            currentReviews: {
+                data: [],
+            },
+            draftReviews: {
+                data: [],
+            },
+            draft: false,
+            showOnlyOwnReviewStatus: true,
+            review_cycle: 0,
+        };
+    },
+    created() {
+        // Watch if user is going to leave the page
+        window.addEventListener('beforeunload', this.beforeWindowUnload);
+
+        if (this.variant.submission_entries.length > 0) {
+            this.review_cycle = this.variant.submission_entries[0].review_cycle;
+        }
+
+        this.submissionEntries = Object.entries(
+            groupBy(
+                this.variant.submission_entries //
+                    .filter(i =>
+                        ['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
+                    ),
+                item => {
+                    return item.disease && item.disease.name ? item.disease.name : 'Unspecified';
+                }
+            )
+        );
+
+        this.getExpanderArray();
+
+        // Check that this page is appropriate regarding current review stage of variant
+        if (['none', 'loaded', 'ongoing_curation'].includes(this.variant.stage)) {
+            this.not_annotated = true;
+        } else if (['approved', 'unapproved', 'on_hold', 'fully_approved'].includes(this.variant.stage)) {
+            this.submitted = true;
+        }
+
+        this.channel.onmessage = () => {
+            if (this.$refs.paged_table) {
+                this.$refs.paged_table.refresh();
+            }
+        };
+        this.createCurrentReviews();
+        this.getDraftReviews();
+        this.detectOwnReviews();
+        if (this.draftReviews.data.length > 0) {
+            this.currentReviews = this.draftReviews;
+            this.draft = true;
+        }
+    },
+
+    computed: {
+        ...mapGetters({
+            user: 'currentUser',
+            variant: 'variant',
+        }),
+    },
+
+    methods: {
+        // groupSubmissionsEntries(submissionEntriesUngrouped) {
+        //     return Object.entries(
+        //         groupBy(
+        //             submissionEntriesUngrouped.filter(i =>
+        //                 ['Prognostic', 'Diagnostic', 'Predictive / Therapeutic'].includes(i.type_of_evidence)
+        //             ),
+        //             item => {
+        //                 return item.disease && item.disease.name ? item.disease.name : 'Unspecified';
+        //             }
+        //         )
+        //     );
+        // },
+
+        numberOfEmptySquares(length) {
+            switch (length) {
+                case 0:
+                    return 2;
+                case 1:
+                    return 1;
+                case 2:
+                    return 0;
+                case 3:
+                    return 0;
+            }
+        },
+        getDraftReviews() {
+            if (
+                this.submissionEntries[0][1][0].curation_reviews.length > 0 &&
+                this.submissionEntries[0][1][0].curation_reviews.filter(
+                    rev => rev.reviewer === this.user.user_id
+                ).length > 0 &&
+                this.submissionEntries[0][1][0].curation_reviews.filter(
+                    rev => rev.reviewer === this.user.user_id
+                )[0].draft
+            ) {
+                this.draftReviews.data = this.submissionEntries.map(i => {
+                    let types = i[1].map(item => {
+                        return {
+                            submission_entry: parseInt(item.id),
+                            id: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0].id,
+                            effect: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0]
+                                .annotated_effect,
+                            tier: item.curation_reviews.filter(rev => rev.reviewer === this.user.user_id)[0]
+                                .annotated_tier,
+                            reviewer: this.user.user_id,
+                            acceptance: item.curation_reviews.filter(
+                                rev => rev.reviewer === this.user.user_id
+                            )[0].acceptance,
+                            comment: item.curation_reviews.filter(
+                                rev => rev.reviewer === this.user.user_id
+                            )[0].comment,
+                            draft: true,
+                        };
+                    });
+                    return [i[0], types];
+                });
+            }
+        },
+        createCurrentReviews() {
+            this.currentReviews.data = this.submissionEntries.map(i => {
+                let types = i[1].map(item => {
+                    return {
+                        submission_entry: parseInt(item.id),
+                        effect: item.effect,
+                        tier: item.tier,
+                        reviewer: this.user.user_id,
+                        acceptance: true,
+                        comment: null,
+                        draft: true,
+                    };
+                });
+                return [i[0], types];
+            });
+        },
+
+        getCurationEntriesProperties(curation_entries, property) {
+            let grouped_curation_entries = groupBy(curation_entries, entry => entry[property]);
+            return Object.entries(grouped_curation_entries).map(i => {
+                return {value: i[0], number: i[1].length};
+            });
+        },
+        getExpanderArray() {
+            this.submissionEntries.map(entry => {
+                let curation_entries = [];
+                for (const i of entry[1]) {
+                    curation_entries.push(false);
+                }
+                this.expander_array.push({disease: true, curation_entries: curation_entries});
+            });
+        },
+        beforeWindowUnload(e) {
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        },
+
+        submitOptions() {
+            this.$confirm({
+                message: `You are about to submit permanently the reviews for the evidences of this variant. Are you sure?`,
+                button: {
+                    yes: 'Submit permanently',
+                    no: 'Cancel',
+                },
+                /**
+                 * Callback Function
+                 * @param {Boolean} confirm
+                 */
+                callback: confirm => {
+                    if (confirm) {
+                        // save as a draft
+                        this.submitReviews(false);
+                    }
+                },
+            });
+        },
+        displayIcon(acceptance, ownSubmitted = false) {
+            return acceptance === true && !ownSubmitted
+                ? 'check-square-fill'
+                : acceptance === false && !ownSubmitted
+                ? 'x-square-fill'
+                : 'square';
+        },
+        displayColor(acceptance, ownSubmitted = false) {
+            return acceptance === true && !ownSubmitted
+                ? 'color:blue;'
+                : acceptance === false && !ownSubmitted
+                ? 'color:red;'
+                : '';
+        },
+        onChange(curatorValues, reviewerValues) {
+            reviewerValues.acceptance =
+                curatorValues.annotatedEffect === reviewerValues.effect &&
+                curatorValues.annotatedTier === reviewerValues.tier;
+            this.handleBlur(true);
+        },
+
+        detectOwnReviews() {
+            // Check if the current clinician has already submitted their review
+
+            if (this.variant.reviewers) {
+                console.log('Draft', this.draftReviews.data);
+                if (
+                    this.variant.reviewers.includes(this.user.user_id) &&
+                    this.draftReviews.data.length === 0
+                ) {
+                    this.submitted = true;
+                    return true;
+                }
+            }
+            return false;
+        },
+        missingComment() {
+            const regExp = /[a-zA-Z]/g;
+            // return true if at least one reviewed evidence doesn't match the curator's annotation while no comment has been written by the current reviewer
+            for (const [index, entry] of this.submissionEntries.entries()) {
+                for (const [i, type] of entry[1].entries()) {
+                    if (
+                        (type.effect !== this.currentReviews.data[index][1][i].effect ||
+                            type.tier !== this.currentReviews.data[index][1][i].tier) &&
+                        (this.currentReviews.data[index][1][i].comment === null ||
+                            !regExp.test(this.currentReviews.data[index][1][i].comment))
+                    ) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+        submitReviews(draft, auto = false) {
+            // draft is a boolean that indicates whether the data is to be saved as a draft
+            if (!draft && this.missingComment()) {
+                this.$snotify.error(
+                    'Please enter a comment for every review conflicting with that of curators',
+                    '',
+                    {timeout: 5000}
+                );
+                return false;
+            }
+            let payload = this.currentReviews;
+
+            for (let item of payload.data) {
+                for (let entry of item[1]) {
+                    entry.draft = draft;
+                }
+            }
+
+            console.log('payload', payload);
+
+            HTTP.post(`/reviews/bulk_submit`, payload)
+                .then(response => {
+                    if (draft) {
+                        this.currentReviews.data = response.data.newCurrentReviews;
+                        if (!auto) {
+                            this.$snotify.success('Your review is saved as a draft.');
+                        }
+                        this.draft = true;
+                    } else {
+                        this.$snotify.success('Your reviews for this variant have been submitted.');
+                        this.submitted = true;
+                        this.draft = false;
+                    }
+                })
+                .catch(err => {
+                    log.warn(err);
+                    this.$snotify.error('Failed to submit review');
+                });
+        },
+
+        handleBlur() {
+            this.submitReviews(true);
+        },
+
+        reRender() {
+            this.renderKey++;
+        },
+    },
+};
+</script>
+
+<style scoped>
+.pub-status {
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+}
+
+.pub-status > .fa-icon {
+    margin-right: 0.4rem;
+}
+
+.action-tray {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action-tray .btn {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#evidence_table >>> .table {
+    margin-bottom: 0;
+}
+
+.summary-box {
+    color: black !important;
+}
+
+.footer-btn {
+    margin-left: 1.2rem;
+}
+
+.submitted-bar {
+    background-color: rgb(194, 45, 0);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.4rem;
+}
+
+.alert-border {
+    border-color: red;
+}
+
+.hidden {
+    visibility: hidden;
+}
+</style>
+ype_of_evidence: null,
+                drugs: '',
+                interactions: [],
+                effect: null,
+                tier_criteria: null,
+                escat_score: null,
+                mutation_origin: null,
+                associated_mendelian_diseases: null,
+                support: null,
+                summary: null,
+                comment: null,
+                annotations: [],
+            },
+        };
+    },
+    methods: {
+        checkInRole,
+        pubmedURL,
+
+        handleRightClick({event, selection}) {
+            this.selection = selection;
+            if (this.selection.length > 0) {
+                this.$refs.vueSimpleContextMenu.showMenu(event);
+            }
+        },
+        optionClicked(event) {
+            if (event.option.slug === 'copy') {
+                this.$copyText(this.selection).then(
+                    () => {
+                        this.$snotify.info('Copied text');
+                    },
+                    () => {
+                        this.$snotify.warn("Couldn't copy it");
+                    }
+                );
+            } else if (event.option.slug === 'annotate') {
+                if (this.isViewOnly) {
+                    this.$snotify.warning("Can't alter a submitted entry");
+                    return;
+                }
+
+                this.$snotify.info('Added selection to annotations', {
+                    position: 'centerBottom',
+                });
+                this.form.annotations.push(this.selection);
+            }
+        },
+
+        evidenceTypeChanged() {
+            // when the type of evidence changes, we clear its dependent fields
+            // (otherwise, they might still hold values despite not appearing to due their options changing)
+            this.form.drugs = [];
+            this.form.effect = null;
+            this.form.tier_criteria = null;
+            this.form.escat_score = null;
+        },
+        loadVariomeData() {
+            // FIXME: we should ensure that we have a variant before we fire this off somehow...
+            HTTP.get(`variomes_single_ref`, {
+                params: {
+                    id: this.reference.trim(),
+                    genvars: `${this.variant.gene.symbol} (${this.variant.name})`,
+                    disease: this.computedDisease && this.computedDisease.name,
+                    collection:
+                        this.reference && this.reference.includes('PMC')
+                            ? 'pmc'
+                            : this.reference && this.reference.includes('NCT')
+                                ? 'ct'
+                                : undefined,
+                    hl_fields: 'title,abstract',
+                },
+            })
+                .then(response => {
+                    this.variomes = response.data;
+                })
+                .catch(err => {
+                    log.error(err);
+                    this.variomes = {
+                        error: "Couldn't retrieve publication info, try again later.",
+                    };
+                });
+        },
+        removeAnnotation(index) {
+            if (this.isViewOnly) {
+                this.$snotify.warning("Can't alter a submitted entry");
+                return;
+            }
+
+            this.form.annotations.splice(index, 1);
+        },
+        load() {
+            // optionally loads curation entry data from the server; always kicks off loading variome data
+            // 1. for new entries, the citation source and reference will come from the querystring
+            // 2. for existing entries, the source and reference come from the entry data
+
+            const {action} = this.$route.params;
+
+            if (action === 'add' || action === 'duplicate') {
+                const {source, reference, variant_id, payload} = this.$route.query;
+
+                if (!source || !reference) {
+                    this.pageError = {
+                        message: "Required querystring params 'source' and/or 'reference' are missing.",
+                    };
+                    return;
+                }
+
+                this.source = source.trim();
+                this.reference = reference.trim();
+
+                // FIXME: we should also load the variant when adding a new entry
+                HTTP.get(`/variants/${variant_id}?simple=true`)
+                    .then(response => {
+                        const variant = response.data;
+                        this.variant = {
+                            ...variant,
+                            label: `${variant.description} (${variant.hgvs_c})`,
+                        };
+
+                        // depends on this.variant being set, so we'll load it once we succeed
+                        this.loadVariomeData();
+
+                        // and finally load the form data
+                        if (action === 'duplicate' && payload) {
+                            const parsedPayload = JSON.parse(payload);
+                            parsedPayload.variant = variant;
+                            this.rehydrate(parsedPayload);
+
+                            // clear the params from the header after a bit
+                            this.$router.replace({
+                                name: 'add-evidence',
+                                params: {
+                                    ...this.$route.params,
+                                },
+                            });
+                            this.duplicated = true;
+                        }
+                    })
+                    .catch(err => {
+                        this.pageError = {
+                            message: err.toString(),
+                        };
+                    });
+            } else {
+                HTTP.get(`/curation_entries/${action}`)
+                    .then(response => {
+                        this.rehydrate(response.data); // populates source, reference from the response
+                        this.loadVariomeData(); // and finally load the data
+                    })
+                    .catch(err => {
+                        if (err.response && err.response.status === 404) {
+                            // the curation entry doesn't exist, so we redirect to the 404 page
+                            this.$router.push({name: 'not-found'});
+                        } else {
+                            // pass the error on unchanged
+                            throw err;
+                        }
+                    });
+            }
+        },
+        rehydrate(data) {
+            // given some fetched data, populates all our local fields with the server's data for this entry
+            // populate form + hidden fields with results
+
+            // some of the fields have to be specially handled, so we remove them from the server's payload
+            const {
+                variant,
+                formatted_variants,
+                last_modified,
+                tier_level,
+                tier_level_criteria,
+                annotations,
+                references,
+                ...rest
+            } = data;
+
+            const extra_variants = formatted_variants;
+            this.variant = {
+                ...variant,
+                label: `${variant.description} (${variant.hgvs_c})`,
+            };
+
+            // repopulate the form, which will bind the elements in the page
+            this.form = {
+                ...rest,
+                extra_variants: extra_variants,
+                tier_criteria: tier_level ? `${tier_level_criteria} (${tier_level})` : tier_level_criteria,
+                annotations: annotations || [],
+                last_modified: dayjs(last_modified).format('DD.MM.YYYY, h:mm a'),
+            };
+
+            // also populate source and ID, which we need to populate the publication info
+            [this.source, this.reference] = references.trim().split(':');
+        },
+        getPayload(duplicating = false) {
+            // we need to unpack the form field 'tier_criteria' into 'tier_level' and 'tier_level_criteria'
+            const matched = tier_criteria_parser.exec(this.form.tier_criteria);
+            const {tier_level, tier_level_criteria} = matched
+                ? matched.groups
+                : {
+                    tier_level: null,
+                    tier_level_criteria: this.form.tier_criteria,
+                };
+
+            const payload = {
+                // disease: this.form.disease, // this.form.disease.id,
+                icdo_morpho: this.form.icdo_morpho,
+                icdo_topo: this.form.icdo_topo,
+                variant: {id: this.variant.id},
+                extra_variants: this.form.extra_variants
+                    ? this.form.extra_variants.map(x =>
+                        x.id.toString().includes('_') ? x.id.split('_')[1] : x.id
+                    )
+                    : [], // selected plus the other ones
+                type_of_evidence: this.form.type_of_evidence,
+                drugs: Array.isArray(this.form.drugs) ? this.form.drugs : [this.form.drugs],
+                interactions: this.form.interactions || [],
+                effect: this.form.effect,
+                tier_level_criteria: tier_level_criteria,
+                tier_level: tier_level,
+                escat_score: this.form.escat_score,
+                mutation_origin: this.form.mutation_origin,
+                associated_mendelian_diseases: this.form.associated_mendelian_diseases,
+                summary: this.form.summary,
+                support: this.form.support,
+                comment: this.form.comment,
+                annotations: this.form.annotations,
+
+                references: `${this.source}:${this.reference}`,
+            };
+
+            if (duplicating) {
+                payload.formatted_variants = this.form.extra_variants;
+            }
+
+            return payload;
+        },
+        async submit(isDraft) {
+            // always validate 'variant', even if it's a draft, since it's critical
+            if (!this.variant) {
+                this.$snotify.error('Variant must be specified to save');
+                return;
+            }
+            // manually validate all the fields before we go any further
+            if (!isDraft) {
+                // use the validation observer to validate every provider at once
+                // this will update the UI with 'this is required' as well
+                const isValid = await this.$refs.observer.validate();
+
+                if (!isValid) {
+                    return;
+                }
+            }
+
+            const payload = this.getPayload();
+            console.log(payload);
+            payload.status = isDraft ? 'draft' : 'saved';
+
+            // if they've previously submitted, make it an update
+            // if this is a new submission, make it a post
+            (this.is_saved
+                ? HTTP.put(`/curation_entries/${this.form.id}`, payload)
+                : HTTP.post(`/curation_entries/`, payload)
+            )
+                .then(result => {
+                    this.duplicated = false;
+                    this.$snotify.success(
+                        `${isDraft ? 'Draft' : 'Entry'} ${this.is_saved ? 'updated' : 'saved'}!`
+                    );
+
+                    // refresh curation lists on other pages
+                    this.channel.postMessage(`Refreshed ID ${result.data.id}`);
+
+                    // it takes a while for a navigation change (below) to update the UI, so we'll prematurely
+                    // update it here with the server's response (and then overwrite it when the nav change comes
+                    // through, but that's fine)
+                    this.rehydrate(result.data);
+
+                    // if we were adding a new entry, redirect to the page for this new entry
+                    // otherwise, we're presumbaly already on the right page
+                    if (this.$route.params.action === 'add') {
+                        this.$router.replace({
+                            name: 'add-evidence',
+                            params: {
+                                ...this.$route.params,
+                                action: result.data.id,
+                            },
+                        });
+                    }
+                })
+                .catch(err => {
+                    if (err.response) {
+                        if (err.response.status === 403) {
+                            this.$snotify.error("Submitted entries can't be changed!");
+                            return;
+                        }
+                        if (err.response.status === 400) {
+                            console.log(err.response);
+                            const failedKeys = Object.keys(err.response.data).join(', ');
+                            this.$snotify.error(`Validation failed for these fields: ${failedKeys}`);
+                            return;
+                        }
+                        if (err.response.status >= 500) {
+                            this.$snotify.error('Server error occurred while saving');
+                        }
+                    }
+
+                    // TODO: deal with the server's error response in err.response.data
+                    //  to bind error messages to form elements.
+                    log.warn('Error when saving: ', err);
+                });
+        },
+        duplicateEntry() {
+            const [source, reference] = this.form.references
+                ? this.form.references.split(':')
+                : [this.source, this.reference];
+
+            const targetUrl = this.$router.resolve({
+                name: 'add-evidence',
+                params: {
+                    ...this.$route.params,
+                    action: 'duplicate',
+                },
+                query: {
+                    source,
+                    reference,
+                    variant_id: this.variant.id,
+                    payload: JSON.stringify(this.getPayload(true)),
+                },
+            }).href;
+
+            window.open(targetUrl, '_blank');
+        },
+        onSubmitDraft() {
+            this.submit(true); // true for 'isDraft'
+        },
+        onSubmit() {
+            this.submit(false); // false for 'isDraft'
+        },
+        onDelete() {
+            if (confirm('Are you sure that you want to delete this entry?')) {
+                HTTP.delete(`/curation_entries/${this.form.id}`).then(result => {
+                    // refresh curation lists on other pages
+                    this.channel.postMessage(`Deleted ID ${result.data.id}`);
+
+                    this.$snotify.info('Entry deleted');
+                    this.form.id = null;
+                    this.pageError = {
+                        title: 'Entry Deleted',
+                        message: 'You may now close this window/tab.',
+                    };
+                });
+            }
+        },
+        checkValidity(props, withoutChange) {
+            return props.invalid && (withoutChange || !props.changed) ? false : null;
+        },
+        showHistory() {
+            this.$refs['history-modal'].show();
+        },
+    },
+    asyncComputed: {
+        fullVariant() {
+            if (!this.variant) {
+                return null;
+            }
+
+            if (this.variant.description) {
+                return this.variant;
+            }
+
+            const variant_id = this.variant.id.toString().includes('_')
+                ? this.variant.id.split('_')[1]
+                : this.variant.id;
+
+            return HTTP.get(`/variants/${variant_id}?simple=true`)
+                .then(response => {
+                    const variant = response.data;
+                    return {
+                        ...variant,
+                        label: `${variant.description} (${variant.hgvs_c})`,
+                    };
+                })
+                .catch(err => {
+                    this.$snotify.error(err.toString());
+                });
+        },
+    },
+    computed: {
+        computedDisease() {
+            // a curation entry is now a combination of morpho/topo terms
+
+            return {
+                name: this.form.icdo_morpho && this.form.icdo_morpho.term,
+            };
+        },
+        keywordSet() {
+            if (!this.variomes || !this.variomes.publications[0] || !this.variomes.publications[0].details) {
+                return [];
+            }
+
+            const {gene, variant, disease} = {
+                gene: this.variomes.normalized_query.genes[0].preferred_term,
+                variant: this.variomes.normalized_query.variants[0].preferred_term,
+                disease:
+                    this.variomes.normalized_query.diseases &&
+                    this.variomes.normalized_query.diseases[0].preferred_term,
+            };
+            const counts = this.variomes.publications[0].details.query_details;
+
+            return [
+                gene &&
+                    counts.query_gene_count && {
+                    class: 'bg-gene',
+                    url: `?term=${gene}[Title/Abstract]`,
+                    label: gene,
+                    count: counts.query_gene_count.all,
+                },
+                variant &&
+                    counts.query_variant_count && {
+                    class: 'bg-variant',
+                    url: `?term=${variant}[Title/Abstract]`,
+                    label: variant,
+                    count: counts.query_variant_count.all,
+                },
+                disease &&
+                    counts.query_disease_count && {
+                    class: 'bg-disease',
+                    url: `?term=${disease}[Title/Abstract]`,
+                    label: disease,
+                    count: counts.query_disease_count.all,
+                },
+                gene &&
+                    variant &&
+                    disease && {
+                    class: 'bg-primary',
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract] AND ${disease}[Title/Abstract]`,
+                    label: `${gene} + ${variant} + ${disease}`,
+                },
+                gene &&
+                    variant && {
+                    class: 'bg-info',
+                    url: `?term=${gene}[Title/Abstract] AND ${variant}[Title/Abstract]`,
+                    label: `${gene} + ${variant}`,
+                },
+            ].filter(x => x);
+        },
+        effects() {
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].effect
+                : [];
+        },
+        tier_criteria() {
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].tier_criteria
+                : [];
+        },
+        escat_score() {
+            return this.form.type_of_evidence && evidence_attrs[this.form.type_of_evidence]
+                ? evidence_attrs[this.form.type_of_evidence].escat_score
+                : [];
+        },
+        is_saved() {
+            return this.form.id != null;
+        },
+        isViewOnly() {
+            return (this.form.id && this.form.status === 'submitted') || this.forceViewOnly;
+        },
+        isVariomesPMC() {
+            return (
+                this.variomes &&
+                this.variomes.publications &&
+                this.variomes.publications[0].collection === 'pmc'
+            );
+        },
+    },
+    mounted() {
+        this.load();
+    },
+    watch: {
+        // $route: "load"
+    },
+};
+</script>
+
+<style>
+.page-error {
+    text-align: center;
+    margin-top: 3em;
+}
+
+.gene {
+    color: #e3639f;
+    font-weight: bold;
+}
+
+.variant {
+    color: #4b7bef;
+    font-weight: bold;
+}
+
+.disease {
+    color: #3d811e;
+    font-weight: bold;
+}
+
+.bg-gene {
+    background-color: #e3639f !important;
+}
+
+.bg-variant {
+    background-color: #4b7bef !important;
+}
+
+.bg-disease {
+    background-color: #3d811e !important;
+}
+
+.evidence ::-moz-selection {
+    /* Code for Firefox */
+    color: white;
+    background: #2c3e50;
+}
+
+.evidence ::selection {
+    color: white;
+    background: #2c3e50;
+}
+
+#delete-btn.disabled {
+    color: gray !important; /* and thus begin the importance wars... */
+}
+
+.submission_properties {
+    margin-bottom: 1em;
+    list-style-type: none;
+    padding: 0;
+}
+
+.submission_properties li {
+    margin-bottom: 0.3em;
+}
+
+.submission_properties .value {
+    font-weight: bold;
+}
+
+.unduplicated {
+    display: none;
+}
+
+.duplicated {
+    background-color: rgb(247, 237, 217);
+}
+
+.v-select {
+    background-color: white !important;
+}
+
+.form-control,
+.form-control:focus,
+.custom-select,
+.custom-select:focus {
+    color: black;
+}
+</style>

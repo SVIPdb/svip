@@ -25,14 +25,14 @@
             <div class="card-body">
                 <h5 class="card-title">
                     <b>{{ gene.symbol }}:</b>
-                    {{ totalRows }} variants
+                    {{ totalRows }} {{ $t("variants")}}
                 </h5>
 
-                <h6 v-if="gene.oncogene">Oncogene</h6>
+                <h6 v-if="gene.oncogene">{{ $t("Oncogene")}}</h6>
 
                 <table class="gene-info-items">
                     <tr>
-                        <td class="text-right row-label">Entrez ID</td>
+                        <td class="text-right row-label">{{ $t("Entrez ID")}}</td>
                         <td>
                             <a
                                 :href="`https://www.ncbi.nlm.nih.gov/gene/?term=${gene.entrez_id}%5Buid%5D`"
@@ -42,7 +42,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="text-right row-label">Ensembl Gene ID</td>
+                        <td class="text-right row-label">{{ $t("Ensembl Gene ID")}}</td>
                         <td>
                             <a
                                 :href="`http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=${gene.ensembl_gene_id}`"
@@ -52,7 +52,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="text-right row-label">UniProtKB ID</td>
+                        <td class="text-right row-label">{{ $t("UniProtKB ID")}}</td>
                         <td>
                             <a
                                 v-if="gene.uniprot_ids"
@@ -76,7 +76,7 @@
                         <b-form-input v-model="currentFilter.search" placeholder="Type to Search" />
                         <b-input-group-append>
                             <b-btn :disabled="!currentFilter.search" @click="currentFilter.search = ''">
-                                Clear
+                                {{ $t("Clear")}}
                             </b-btn>
                         </b-input-group-append>
                     </b-input-group>
@@ -85,10 +85,10 @@
 
             <div class="col text-right">
                 <b-checkbox v-model="showOnlySVIP">
-                    <span id="show-svip-vars">show only SVIP variants</span>
+                    <span id="show-svip-vars">{{ $t("show only SVIP variants")}}</span>
                 </b-checkbox>
                 <b-tooltip target="show-svip-vars" placement="top">
-                    show only variants for which SVIP-specific data exists
+                    {{ $t("show only variants for which SVIP-specific data exists")}}
                 </b-tooltip>
             </div>
         </div>
@@ -134,7 +134,7 @@
                                 variant_id: data.item.id,
                             },
                         }">
-                        Show Details
+                        {{ $t("Show Details")}}
                     </b-button>
                 </template>
             </b-table>

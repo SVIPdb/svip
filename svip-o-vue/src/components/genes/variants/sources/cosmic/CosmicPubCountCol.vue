@@ -1,5 +1,5 @@
 <template functional>
-    <span>{{ props.row.value.toLocaleString() }} sample{{ props.row.value !== 1 ? 's' : '' }}</span>
+    <span>{{ props.row.value.toLocaleString() }} {{ $t("sample")}}{{ props.row.value !== 1 ? 's' : '' }}</span>
 </template>
 
 <script>

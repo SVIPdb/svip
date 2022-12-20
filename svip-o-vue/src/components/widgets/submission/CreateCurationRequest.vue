@@ -2,7 +2,7 @@
     <div>
         <b-form-group>
             <b-checkbox v-model="for_curation_request" @input="modelChanged">
-                Create a curation request associated with this submission.
+                {{ $t("Create a curation request associated with this submission.")}}
             </b-checkbox>
         </b-form-group>
 

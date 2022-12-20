@@ -2,7 +2,7 @@
     <div class="card mt-3">
         <!-- <div>{{items}}</div> -->
         <div class="card-header">
-            <div class="card-title">Publicly Available Information</div>
+            <div class="card-title">{{ $t("Publicly Available Information")}}</div>
         </div>
 
         <div class="card-body top-level">
@@ -37,8 +37,8 @@
                         :is="data.item.colum_parts.diseases"
                         :row="data" />
                     <span v-else>
-                        {{ Object.keys(data.item.diseases).length }} disease{{
-                            Object.keys(data.item.diseases).length !== 1 ? 's' : ''
+                        {{ Object.keys(data.item.diseases).length }} {{ $t("disease{{")}}
+                            {{ $t("Object.keys(data.item.diseases).length !== 1 ? 's' : ''")}}
                         }}
                     </span>
                 </template>
@@ -49,7 +49,7 @@
                         :is="data.item.colum_parts.publication_count"
                         :row="data" />
                     <span v-else>
-                        {{ data.value.toLocaleString() }} evidence{{ data.value !== 1 ? 's' : '' }}
+                        {{ data.value.toLocaleString() }} {{ $t("evidence")}}{{ data.value !== 1 ? 's' : '' }}
                     </span>
                 </template>
 
@@ -81,13 +81,13 @@
                             :is="row.item.details_part"
                             :row="row"
                             :variant="variant" />
-                        <div v-else>No row details control provided!</div>
+                        <div v-else>{{ $t("No row details control provided!")}}</div>
                     </div>
                 </template>
             </b-table>
 
             <div v-if="sourcesNotFound.length > 0" class="var-not-found">
-                No data available for this variant in
+                {{ $t("No data available for this variant in")}}
                 {{ sourcesNotFound.map(x => x.display_name).join(', ') }}
             </div>
         </div>

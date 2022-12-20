@@ -3,17 +3,12 @@
         <b-card class="shadow-sm mb-3" align="left" no-body>
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
-                    Variant Summary
-                    <b class="draft-header" v-bind:style="{display: this.draftDisplay}">[ DRAFT ]</b>
+                    {{ $t("Variant Summary")}}
+                    <b class="draft-header" v-bind:style="{display: this.draftDisplay}">{{ $t("[ DRAFT ]")}}</b>
                     <div v-if="date !== null" class="update">
-                        Last update:
+                        {{ $t("Last update:")}}
                         <b class="date">
-                            {{
-                                new Intl.DateTimeFormat('en-GB', {
-                                    dateStyle: 'long',
-                                    timeStyle: 'short',
-                                }).format(date)
-                            }}
+                            {{new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short' }).format(date)}}
                         </b>
                     </div>
                 </h6>
@@ -46,17 +41,17 @@
                         class="mr-2 centered-icons"
                         :disabled="!showSummaryDraft"
                         @click="saveSummaryDraft">
-                        Finish later
+                        {{ $t("Finish later")}}
                     </b-button>
                     <b-button
                         variant="danger"
                         class="mr-2 centered-icons"
                         :disabled="!showSummaryDraft"
                         @click="deleteSummaryDraft">
-                        Delete this draft
+                        {{ $t("Delete this draft")}}
                     </b-button>
                     <b-button variant="success" class="centered-icons" @click="saveSummary">
-                        Save Summary
+                        {{ $t("Save Summary")}}
                     </b-button>
                 </b-card-footer>
             </b-card-body>
@@ -65,7 +60,7 @@
         <b-modal ref="history-modal" hide-footer static lazy scrollable size="lg" :title="`Summary History`">
             <div>
                 <VariantInSVIPHistory v-if="history_entry_id" :entry_id="history_entry_id" />
-                <div v-else>Error: no summary history available</div>
+                <div v-else>{{ $t("Error: no summary history available")}}</div>
             </div>
         </b-modal>
     </div>

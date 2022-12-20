@@ -30,7 +30,7 @@
                                                     :key="i">
                                                     {{ effect }}:
                                                     {{ count ? count : 'no' }}
-                                                    evidence(s)
+                                                    {{ $t("evidence(s)")}}
                                                 </p>
                                             </b-col>
                                             <b-col cols="6" align="center">
@@ -96,12 +96,12 @@
                                         <div v-if="expander_array[index].curation_entries[idx]">
                                             <b-card-footer class="fluid">
                                                 <table class="table table-responsive-lg">
-                                                    <th class="bg-light">PMID</th>
+                                                    <th class="bg-light">{{ $t("PMID")}}</th>
                                                     <th class="bg-light">Effect</th>
-                                                    <th class="bg-light">Tier level</th>
-                                                    <th class="bg-light">Support</th>
-                                                    <th class="bg-light">ID</th>
-                                                    <th class="bg-light">Comment</th>
+                                                    <th class="bg-light">{{ $t("Tier level")}}</th>
+                                                    <th class="bg-light">{{ $t("Support")}}</th>
+                                                    <th class="bg-light">{{ $t("ID")}}</th>
+                                                    <th class="bg-light">{{ $t("Comment")}}</th>
 
                                                     <tr
                                                         v-for="(curation, i) in typeInfo.curationEntries"
@@ -118,7 +118,7 @@
                                                                 }"
                                                                 target="_blank"
                                                                 alt="Link to evidence">
-                                                                Curation entry #{{ curation.id }}
+                                                                {{ $t("Curation entry #")}}{{ curation.id }}
                                                             </b-link>
                                                         </td>
                                                         <td>{{ curation.comment }}</td>
@@ -140,13 +140,13 @@
             </div>
 
             <b-button class="float-right" @click="submitCurations(true)" :disabled="already_in_review">
-                Confirm annotation
+                {{ $t("Confirm annotation")}}
             </b-button>
         </div>
 
         <b-navbar-text v-if="already_in_review" class="fixed-bottom submitted-bar" align="center">
-            THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE VARIANT HAS ALREADY RECEIVED
-            REVIEW(S).
+            {{ $t("THE FIRST ROUND OF ANNOTATION HAS ALREADY BEEN CONFIRMED AND THE VARIANT HAS ALREADY RECEIVED")}}
+            {{ $t("REVIEW(S).")}}
         </b-navbar-text>
     </div>
 </template>

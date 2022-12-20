@@ -34,10 +34,10 @@
 
         <div v-if="!hideSvipToggle" style="padding: 10px">
             <b-checkbox v-model="showOnlySVIP">
-                <span id="show-svip-vars">show only SVIP variants</span>
+                <span id="show-svip-vars">{{ $t("show only SVIP variants")}}</span>
             </b-checkbox>
             <b-tooltip target="show-svip-vars" placement="bottom">
-                show only variants for which SVIP-specific data exists
+                {{ $t("show only variants for which SVIP-specific data exists")}}
             </b-tooltip>
         </div>
     </div>

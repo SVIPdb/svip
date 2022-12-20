@@ -3,9 +3,9 @@
     <div class="not-found">
         <h1>404</h1>
 
-        <p>The page you requested wasn't found.</p>
+        <p>{{ $t("The page you requested wasn't found.")}}</p>
 
-        <router-link to="/">Return to SVIP-O homepage</router-link>
+        <router-link to="/">{{ $t("Return to SVIP-O homepage")}}</router-link>
     </div>
 </template>
 

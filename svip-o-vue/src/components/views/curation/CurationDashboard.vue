@@ -40,7 +40,7 @@
         </div>
 
         <div v-else style="text-align: center; margin-top: 3em">
-            <router-link to="/" class="text-uppercase">Return to homepage</router-link>
+            <router-link to="/" class="text-uppercase">{{ $t("Return to homepage")}}</router-link>
         </div>
     </div>
 </template>

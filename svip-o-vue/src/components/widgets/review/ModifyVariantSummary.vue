@@ -4,7 +4,7 @@
             <b-card-body class="p-0">
                 <h6 class="bg-primary text-light unwrappable-header p-2 m-0">
                     <expander v-model="showSummary" />
-                    Variant Summary
+                    {{ $t("Variant Summary")}}
                 </h6>
 
                 <transition name="slide-fade">
@@ -30,7 +30,7 @@
                                         block
                                         class="centered-icons"
                                         @click="saveSummary">
-                                        Save modifications
+                                        {{ $t("Save modifications")}}
                                     </b-button>
                                 </b-col>
                             </b-row>

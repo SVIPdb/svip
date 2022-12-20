@@ -1,14 +1,14 @@
 <template functional>
     <span>
-        FATHMM Prediction:
+        {{ $t("FATHMM Prediction:")}}
         {{
-            props.row.item.extras.fathmm_prediction
-                ? props.row.item.extras.fathmm_prediction.toLowerCase()
-                : 'n/a'
+            {{ $t("props.row.item.extras.fathmm_prediction")}}
+                {{ $t("? props.row.item.extras.fathmm_prediction.toLowerCase()")}}
+                {{ $t(": 'n/a'")}}
         }}
         {{
-            props.row.item.extras.fathmm_score &&
-            ` (score: ${parseFloat(props.row.item.extras.fathmm_score).toLocaleString()})`
+            {{ $t("props.row.item.extras.fathmm_score &&")}}
+            {{ $t("` (score: ${parseFloat(props.row.item.extras.fathmm_score).toLocaleString()})`")}}
         }}
     </span>
 </template>

@@ -23,7 +23,7 @@
                                                 :key="'effect' + effect_idx">
                                                 {{ effect.label }}:
                                                 {{ effect.count ? effect.count : 'no' }}
-                                                evidence(s)
+                                                {{ $t("evidence(s)")}}
                                             </p>
                                         </b-col>
                                         <b-col cols="2">
@@ -55,7 +55,7 @@
                                                 v-for="(curation, i) in evidence.curations"
                                                 :key="i">
                                                 <b-col class="border p-2">
-                                                    PMID:
+                                                    {{ $t("PMID:")}}
                                                     <b-link
                                                         target="_blank"
                                                         active
@@ -70,7 +70,7 @@
                                                     {{ curation.tier }}
                                                 </b-col>
                                                 <b-col class="border p-2">
-                                                    Support:
+                                                    {{ $t("Support:")}}
                                                     {{ curation.support }}
                                                 </b-col>
                                                 <b-col class="border p-2">
@@ -83,7 +83,7 @@
                                                         }"
                                                         target="_blank"
                                                         alt="Link to evidence">
-                                                        Curation entry #{{ curation.id }}
+                                                        {{ $t("Curation entry #")}}{{ curation.id }}
                                                     </b-link>
                                                 </b-col>
 
@@ -101,7 +101,7 @@
                 </div>
             </b-card>
         </div>
-        <b-button class="float-right" @click="submitReviews()">Submit review</b-button>
+        <b-button class="float-right" @click="submitReviews()">{{ $t("Submit review")}}</b-button>
     </div>
 </template>
 

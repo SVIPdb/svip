@@ -13,13 +13,13 @@
                             size="sm"
                             :variant="filterOwner ? 'primary' : 'light'"
                             @click="filterOwner = true">
-                            My Submissions
+                            {{ $t("My Submissions")}}
                         </b-button>
                         <b-button
                             size="sm"
                             :variant="!filterOwner ? 'primary' : 'light'"
                             @click="filterOwner = false">
-                            All Submissions
+                            {{ $t("All Submissions")}}
                         </b-button>
                     </b-button-group>
 
@@ -38,7 +38,7 @@
                             debounce="300"
                             placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
-                            <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
+                            <b-button variant="primary" size="sm" @click="filter = ''">{{ $t("Clear")}}</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -91,7 +91,7 @@
 
                 <template v-slot:row-details="entry">
                     <div v-if="entry.item.status !== 'error'" class="sample-subtable tumor-subtable">
-                        <h6>Resulting Variant(s):</h6>
+                        <h6>{{ $t("Resulting Variant(s):")}}</h6>
                         <b-table
                             class="shadow-sm m-0"
                             :items="entry.item.resulting_variants"
@@ -106,7 +106,7 @@
                         </b-table>
                     </div>
                     <div v-else class="failure-output">
-                        <b>Error:</b>
+                        <b>{{ $t("Error:")}}</b>
                         <div>{{ entry.item.error_msg }}</div>
                     </div>
                 </template>

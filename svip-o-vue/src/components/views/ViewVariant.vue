@@ -6,19 +6,19 @@
                     <table class="table variant-header">
                         <tr>
                             <th></th>
-                            <th>Gene Name</th>
-                            <th>Variant</th>
+                            <th>{{ $t("Gene Name")}}</th>
+                            <th>{{ $t("Variant")}}</th>
 
-                            <th>HGVS.c</th>
-                            <th class="d-none d-sm-table-cell">HGVS.p</th>
-                            <th class="d-none d-sm-table-cell">HGVS.g</th>
+                            <th>{{ $t("HGVS.c")}}</th>
+                            <th class="d-none d-sm-table-cell">{{ $t("HGVS.p")}}</th>
+                            <th class="d-none d-sm-table-cell">{{ $t("HGVS.g")}}</th>
 
-                            <th :class="hiddenCols">dbSNP</th>
+                            <th :class="hiddenCols">{{ $t("dbSNP")}}</th>
                             <!-- <th>Molecular consequence</th> -->
-                            <th :class="hiddenCols">Position</th>
-                            <th :class="hiddenCols">Allele Frequency</th>
-                            <th>Status</th>
-                            <th>SVIP Confidence</th>
+                            <th :class="hiddenCols">{{ $t("Position")}}</th>
+                            <th :class="hiddenCols">{{ $t("Allele Frequency")}}</th>
+                            <th>{{ $t("Status")}}</th>
+                            <th>{{ $t("SVIP Confidence")}}</th>
                             <th></th>
                             <!--- for actions -->
                         </tr>
@@ -62,7 +62,7 @@
 
                             <td :class="hiddenCols">
                                 <span v-if="allele_frequency">{{ allele_frequency }}</span>
-                                <span v-else class="unavailable">unavailable</span>
+                                <span v-else class="unavailable">{{ $t("unavailable")}}</span>
                             </td>
 
                             <td>{{ this.variant.public_stage }}</td>
@@ -92,7 +92,7 @@
                                         <div class="icon-composer">
                                             <icon name="comment" scale="1.4" />
                                             <span class="overlay">{{ commentCount }}</span>
-                                        </div> Discuss
+                                        </div> {{ $t("Discuss")}}
                                         -->
                                         <icon name="comment" scale="1.4" />
                                         Discuss
@@ -149,7 +149,7 @@
         <!-- invisible things are down here -->
         <Sidebar v-access="'curators'" v-if="commentsEnabled">
             <h4 style="border-bottom: solid 1px #ccc; padding-bottom: 15px">
-                Comments on {{ variant.description }}
+                {{ $t("Comments on")}} {{ variant.description }}
             </h4>
             <CommentList :variant_id="variant.id" @commented="getCommentCount" />
         </Sidebar>
