@@ -440,6 +440,67 @@
                             <div class="col-lg-12">
                                 <h1>{{ $t("Events")}}</h1>
 
+                                 <!-- Event card -->
+                                <div class="container-fluid-compact">
+                                    <div class="card-group">
+                                        <div class="card col-lg-3 my-1 bg-light">
+                                            <div class="card-body text-center">
+                                                <p class="text-center">
+                                                    <img src="/project-info/media/calendar.png" alt="When?" />
+                                                    {{ $t("08-10 November 2022")}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="card col-lg-9 my-1">
+                                            <div class="card-body">
+                                                <p>
+                                                    <a
+                                                        href="https://www.bbmri-eric.eu/events/biotechx-congress-2022-8-10-november-2022-congress-center-basel-basel-switzerland/"
+                                                        target="_blank">
+                                                        {{ $t("BioTechX congress")}}
+                                                    </a>
+                                                    <br />
+                                                    <img
+                                                        src="/project-info/media/location.png"
+                                                        alt="Where?" />
+                                                    {{ $t("Basel, Switzerland")}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                 <!-- Event card -->
+                                <div class="container-fluid-compact">
+                                    <div class="card-group">
+                                        <div class="card col-lg-3 my-1 bg-light">
+                                            <div class="card-body text-center">
+                                                <p class="text-center">
+                                                    <img src="/project-info/media/calendar.png" alt="When?" />
+                                                    {{ $t("01-03 August 2022")}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="card col-lg-9 my-1">
+                                            <div class="card-body">
+                                                <p>
+                                                    <a
+                                                        href="https://www.cancergenomics.org/"
+                                                        target="_blank">
+                                                        {{ $t("Cancer Genomics Consortium annual meeting")}}
+                                                    </a>
+                                                    <br />
+                                                    <img
+                                                        src="/project-info/media/location.png"
+                                                        alt="Where?" />
+                                                    {{ $t("St Louis, MI, USA")}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Event card -->
                                 <div class="container-fluid-compact">
                                     <div class="card-group">
