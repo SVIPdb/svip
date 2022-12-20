@@ -25,10 +25,10 @@
                             class="blinking"
                             style="vertical-align: text-bottom; margin-bottom: 5px; color: #e7c28b" />
                         <br />
-                        The SVIP API is not available.
+                        {{ $t("The SVIP API is not available.")}}
                         <br />
-                        Please check your connection and then
-                        <a href="mailto:feedback@svip.ch">contact us</a>
+                        {{ $t("Please check your connection and then")}}
+                        <a href="mailto:feedback@svip.ch">{{ $t("contact us")}}</a>
                         .
                     </div>
                 </div>
@@ -36,21 +36,17 @@
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else>
-                                {{ nbGenes.toLocaleString() }} Gene{{ nbGenes !== 1 ? 's' : '' }}
-                            </span>
+      <span v-else>{{ nbGenes.toLocaleString() }} {{ $t("Gene") }}{{ nbGenes !== 1 ? 's' : ''}}</span>
                         </h3>
-                        <span class="text-muted">{{ nbGenesSVIP }} with SVIP data</span>
+                        <span class="text-muted">{{ nbGenesSVIP }} {{ $t("with SVIP data")}}</span>
                     </div>
                     <div class="col">
                         <h3>
                             <b-spinner v-if="loadingStats === true" />
-                            <span v-else>
-                                {{ nbVariants.toLocaleString() }} Variant{{ nbVariants !== 1 ? 's' : '' }}
-                            </span>
+   <span v-else>{{ nbVariants.toLocaleString() }} {{ $t("Variant") }}{{ nbVariants !== 1 ? 's' : ''}}</span>
                         </h3>
-                        <div class="text-muted">{{ nbVariantsSVIP }} with SVIP data</div>
-                        <div class="text-muted">{{ nbSvipCurations }} curation entries</div>
+                        <div class="text-muted">{{ nbVariantsSVIP }} {{ $t("with SVIP data")}}</div>
+                        <div class="text-muted">{{ nbSvipCurations }} {{ $t("curation entries")}}</div>
                     </div>
                 </div>
             </div>
@@ -67,7 +63,7 @@
                             width="170"
                             alt="SPHN: Swiss Personalized Health Network" />
                     </a>
-                    <div style="padding-top: 2em">an SPHN Infrastructure Development project</div>
+                    <div style="padding-top: 2em">{{ $t("an SPHN Infrastructure Development project")}}</div>
                 </div>
             </div>
         </div>

@@ -16,7 +16,7 @@
                         size="sm"
                         :variant="myFilter !== 'all' ? 'primary' : 'light'"
                         @click="setCustomFilter(user.user_id)">
-                        My curations
+                        {{ $t("My curations")}}
                         <b-badge pill :class="myFilter !== 'all' && 'bg-white text-dark'">
                             {{ myCurations.length }}
                         </b-badge>
@@ -26,7 +26,7 @@
                         size="sm"
                         :variant="myFilter === 'all' ? 'primary' : 'light'"
                         @click="setCustomFilter('all')">
-                        All curations
+                        {{ $t("All curations")}}
                         <b-badge pill :class="myFilter === 'all' && 'bg-white text-dark'">
                             {{ items.length }}
                         </b-badge>
@@ -49,7 +49,7 @@
                         <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button :variant="settings.buttonBg" size="sm" @click="filter = ''">
-                                Clear
+                                {{ $t("Clear")}}
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -100,7 +100,7 @@
                         <span class="font-weight-bold">
                             {{ setLetter(row.item.days_left) }}
                         </span>
-                        ({{ row.item.days_left }} days)
+                        ({{ row.item.days_left }} {{ $t("days)")}}
                     </p>
                 </template>
 
@@ -177,7 +177,7 @@
                 <template v-slot:table-busy>
                     <div class="text-center my-2">
                         <b-spinner class="align-middle" small></b-spinner>
-                        <strong class="ml-1">Loading...</strong>
+                        <strong class="ml-1">{{ $t("Loading...")}}</strong>
                     </div>
                 </template>
             </b-table>
@@ -187,7 +187,7 @@
                     scale="3"
                     style="vertical-align: text-bottom; margin-bottom: 5px" />
                 <br />
-                Loading this list failed, please try again later
+                {{ $t("Loading this list failed, please try again later")}}
             </div>
 
             <div v-if="slotsUsed" :class="`paginator-holster ${slotsUsed ? 'occupied' : ''}`">

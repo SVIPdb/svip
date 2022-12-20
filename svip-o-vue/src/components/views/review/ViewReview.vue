@@ -17,14 +17,14 @@
             </div>
 
             <b-button class="float-right" @click="submitAnnotations" :disabled="not_reviewed || annotated">
-                Submit annotation
+                {{ $t("Submit annotation")}}
             </b-button>
         </div>
         <b-navbar-text v-if="not_reviewed" class="fixed-bottom submitted-bar" align="center">
-            THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.
+            {{ $t("THIS VARIANT HASN'T RECEIVED 3 REVIEWS YET.")}}
         </b-navbar-text>
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="annotated">
-            THIS VARIANT HAS ALREADY BEEN SUBMITTED TO A SECOND ROUND OF REVIEWS.
+            {{ $t("THIS VARIANT HAS ALREADY BEEN SUBMITTED TO A SECOND ROUND OF REVIEWS.")}}
         </b-navbar-text>
     </div>
 </template>

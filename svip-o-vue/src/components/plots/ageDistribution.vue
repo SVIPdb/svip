@@ -28,7 +28,7 @@
                 </div>
             </b-tooltip>
         </div>
-        <span v-else class="unavailable">unavailable</span>
+        <span v-else class="unavailable">{{ $t("unavailable")}}</span>
     </div>
 </template>
 

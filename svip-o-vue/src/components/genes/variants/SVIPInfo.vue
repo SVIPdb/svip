@@ -2,7 +2,7 @@
     <div class="card mt-3">
         <!-- <div>{{svip_entries}}</div> -->
         <div class="card-header">
-            <div class="card-title">SVIP Information</div>
+            <div class="card-title">{{ $t("SVIP Information")}}</div>
         </div>
 
         <div class="card-body top-level">
@@ -34,7 +34,7 @@
                 <template v-slot:cell(pathogenic)="data">
                     <div>
                         <span v-if="data.value">{{ data.value }}</span>
-                        <span v-else class="unavailable">unavailable</span>
+                        <span v-else class="unavailable">{{ $t("unavailable")}}</span>
                     </div>
                 </template>
 
@@ -90,7 +90,7 @@
                         <b-button v-access="'curators'" class="centered-icons" size="sm"
                             :to="{ name: 'annotate-variant', params: { gene_id: gene, variant_id: variant.id }}"
                         >
-                            <icon name="tools" /> Curate
+                            <icon name="tools" /> {{ $t("Curate")}}
                         </b-button>
                     </div>
                 </template>
@@ -121,7 +121,7 @@
 
                                     <b-tab v-if="groups && groups.includes('clinicians')">
                                         <template v-slot:title>
-                                            Samples
+                                            {{ $t("Samples")}}
                                             <b-badge class="text-center">{{ row.item.nb_patients }}</b-badge>
                                         </template>
                                         <SampleTable :variant="variant" :row="row" :groups="groups" />
@@ -162,7 +162,7 @@
                         name: 'svipinfo',
                         params: {gene_id: gene.id, variant_id: variant.id},
                     }">
-                    Svip Information Summary
+                    {{ $t("Svip Information Summary")}}
                 </b-button>
 
                 <b-button

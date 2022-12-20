@@ -1,5 +1,5 @@
 <template functional>
-    <span class="unavailable">unavailable</span>
+    <span class="unavailable">{{ $t("unavailable")}}</span>
 </template>
 
 <script>

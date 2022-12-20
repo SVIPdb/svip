@@ -10,10 +10,10 @@
                     <b-table-simple bordered class="change-table">
                         <b-thead head-variant="light">
                             <b-tr>
-                                <b-th style="width: 20%">Field Name</b-th>
-                                <b-th style="width: 20%">Old</b-th>
+                                <b-th style="width: 20%">{{ $t("Field Name")}}</b-th>
+                                <b-th style="width: 20%">{{ $t("Old")}}</b-th>
                                 <b-th></b-th>
-                                <b-th style="width: 60%">New</b-th>
+                                <b-th style="width: 60%">{{ $t("New")}}</b-th>
                             </b-tr>
                         </b-thead>
 

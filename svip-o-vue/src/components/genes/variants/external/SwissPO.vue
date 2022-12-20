@@ -3,7 +3,7 @@
         <div class="card mt-3 top-level">
             <div class="card-header">
                 <div class="card-title">
-                    Swiss Personalized Oncology
+                    {{ $t("Swiss Personalized Oncology")}}
                     <div class="float-right align-middle">
                         <a
                             :href="`http://swiss-po.ch/?protein='${protein}'&variant='p.${change}'`"
@@ -17,7 +17,7 @@
             <div v-if="!noResults" class="card-body top-level" style="padding: 0">
                 <div class="not-found" v-if="found_in_swisspo === false">
                     <icon name="exclamation-triangle" />
-                    residue not found in molecule
+                    {{ $t("residue not found in molecule")}}
                 </div>
                 <!-- tbc: ngl visualizer -->
                 <div style="background-color: white">
@@ -25,10 +25,10 @@
                 </div>
 
                 <div style="border-top: solid 1px #ccc; padding: 10px">
-                    <label for="pdb_select">Selected PDB/Chain:</label>
+                    <label for="pdb_select">{{ $t("Selected PDB/Chain:")}}</label>
                     &nbsp;
                     <select id="pdb_select" v-if="pdbs" v-model="selected_pdb">
-                        <option disabled value="">Choose a PDB</option>
+                        <option disabled value="">{{ $t("Choose a PDB")}}</option>
                         <option v-for="(x, idx) in pdbs" :key="idx" :value="x">
                             {{ x.pdb }} {{ x.chain }}
                         </option>
@@ -38,7 +38,7 @@
             <div v-else class="card-body top-level" style="padding: 0">
                 <div class="not-found">
                     <icon name="exclamation-triangle" />
-                    protein not found in SwissPO
+                    {{ $t("protein not found in SwissPO")}}
                 </div>
             </div>
         </div>

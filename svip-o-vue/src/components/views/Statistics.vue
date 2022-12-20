@@ -2,18 +2,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-10 offset-1">
-                <h1 class="section-header">SVIP Statistics</h1>
+                <h1 class="section-header">{{ $t("SVIP Statistics")}}</h1>
                 <p>
-                    SVIP incorporates data both from public databases and expert curation. This page gives an
-                    overview of how many genes and variants we're tracking, and from where the data
-                    originates.
+                    {{ $t("SVIP incorporates data both from public databases and expert curation. This page gives an")}}
+                    {{ $t("overview of how many genes and variants we're tracking, and from where the data")}}
+                    {{ $t("originates.")}}
                 </p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-10 offset-1">
-                <h2 class="section-header">Variants per Gene</h2>
+                <h2 class="section-header">{{ $t("Variants per Gene")}}</h2>
 
                 <div v-if="genes.data === null">
                     <b-spinner />
@@ -21,18 +21,18 @@
                 <div v-else>
                     <div style="display: flex; justify-content: space-between; align-items: baseline">
                         <div>
-                            Showing
+                            {{ $t("Showing")}}
                             <b>{{ genes.perPage }}</b>
-                            out of
+                            {{ $t("out of")}}
                             <b>{{ genes.data.total_genes }}</b>
-                            genes
+                            {{ $t("genes")}}
                         </div>
                         <b-form-group>
                             <b-input-group>
                                 <b-form-input v-model="genes.currentFilter" placeholder="Type to Search" />
                                 <b-input-group-append>
                                     <b-btn :disabled="!genes.currentFilter" @click="genes.currentFilter = ''">
-                                        Clear
+                                        {{ $t("Clear")}}
                                     </b-btn>
                                 </b-input-group-append>
                             </b-input-group>
@@ -75,18 +75,18 @@
 
         <div class="row" v-if="showHarvestRuns">
             <div class="col-md-10 offset-1">
-                <h2 class="section-header">Harvest Runs</h2>
+                <h2 class="section-header">{{ $t("Harvest Runs")}}</h2>
 
                 <div v-if="harvests.data === null">
                     <b-spinner />
                 </div>
                 <div v-else>
                     <div>
-                        Showing
+                        {{ $t("Showing")}}
                         <b>{{ harvests.perPage }}</b>
-                        out of
+                        {{ $t("out of")}}
                         <b>{{ harvests.data.length }}</b>
-                        entries
+                        {{ $t("entries")}}
                     </div>
 
                     <b-table

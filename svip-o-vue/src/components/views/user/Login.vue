@@ -1,19 +1,19 @@
 <template>
     <div class="trunk">
-        <h1>Log In to SVIP</h1>
-        <p>Enter your credentials below to log in to your SVIP account.</p>
+        <h1>{{ $t("Log In to SVIP")}}</h1>
+        <p>{{ $t("Enter your credentials below to log in to your SVIP account.")}}</p>
         <div class="text-muted font-italic" style="text-align: center">
-            If you don't have credentials, or the appropriate credentials
+            {{ $t("If you don't have credentials, or the appropriate credentials")}}
             <br />
-            for the resource you're trying to access, you can always go home:
+            {{ $t("for the resource you're trying to access, you can always go home:")}}
             <div style="margin-top: 0.5em">
-                <router-link to="/">SVIP homepage</router-link>
+                <router-link to="/">{{ $t("SVIP homepage")}}</router-link>
             </div>
         </div>
 
         <transition name="fade">
             <div v-if="error_msg && error_msg.non_field_errors" class="errors">
-                <h3>Error{{ error_msg.non_field_errors.length !== 1 ? 's' : '' }}:</h3>
+                <h3>{{ $t("Error")}}{{ error_msg.non_field_errors.length !== 1 ? 's' : '' }}:</h3>
                 <div v-if="error_msg.non_field_errors && error_msg.non_field_errors.length === 1">
                     {{ error_msg.non_field_errors[0] }}
                 </div>
@@ -24,7 +24,7 @@
                 </ul>
             </div>
             <div v-else-if="error_msg" class="errors">
-                <h3>Server Error:</h3>
+                <h3>{{ $t("Server Error:")}}</h3>
                 <div>{{ error_msg }}</div>
             </div>
         </transition>
@@ -39,7 +39,7 @@
             </b-form-group>
 
             <b-form-group>
-                <b-button type="submit" variant="primary" class="float-right">Log In</b-button>
+                <b-button type="submit" variant="primary" class="float-right">{{ $t("Log In")}}</b-button>
             </b-form-group>
         </b-form>
     </div>

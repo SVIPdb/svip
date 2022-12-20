@@ -2,16 +2,16 @@
     <b-container fluid class="pt-3">
         <b-row>
             <b-col md="12">
-                <h1>Submit Variants</h1>
+                <h1>{{ $t("Submit Variants")}}</h1>
 
                 <p>
-                    You can submit variants for us to add to the SVIP database here. Submitted variants are
-                    entered into a queue, which will be processed when the variant harvesting pipeline is run.
+                    {{ $t("You can submit variants for us to add to the SVIP database here. Submitted variants are")}}
+                    {{ $t("entered into a queue, which will be processed when the variant harvesting pipeline is run.")}}
                 </p>
 
                 <p>
-                    You can check the status of all submitted variants, including your own, on the "Submission
-                    Queue" tab below.
+                     {{ $t("You can check the status of all submitted variants, including your own, on the 'Submission Queue' tab below.")}}
+
                 </p>
             </b-col>
         </b-row>

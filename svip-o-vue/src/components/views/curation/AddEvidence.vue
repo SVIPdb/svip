@@ -8,9 +8,9 @@
         </b-row>
         <b-row v-else-if="!checkInRole('curators') && !checkInRole('clinicians')">
             <b-col class="page-error">
-                <h1>Not Authorized</h1>
-                <p>You may only access this page if you're a curator or reviewer.</p>
-                <router-link to="/">return to homepage</router-link>
+                <h1>{{ $t("Not Authorized")}}</h1>
+                <p>{{ $t("You may only access this page if you're a curator or reviewer.")}}</p>
+                <router-link to="/">{{ $t("return to homepage")}}</router-link>
             </b-col>
         </b-row>
         <div v-else>
@@ -49,7 +49,7 @@
                     <div
                         v-bind:class="{unduplicated: !duplicated}"
                         style="margin-bottom: 0.5em; color: red; text-align: center">
-                        DUPLICATED
+                        {{ $t("DUPLICATED")}}
                     </div>
 
                     <b-card
@@ -331,8 +331,8 @@
                                         </span>
                                         <b-input-group v-else>
                                             <i class="text-muted">
-                                                (Select text in the citation summary and right-click to add a
-                                                textual evidence.)
+                                                {{ $t("(Select text in the citation summary and right-click to add a")}}
+                                                {{ $t("textual evidence.)")}}
                                             </i>
                                         </b-input-group>
                                     </b-form-group>
@@ -357,12 +357,12 @@
                         target="_blank"
                         v-if="!isViewOnly"
                         v-bind:class="{duplicated: duplicated}">
-                        Duplicate
+                        {{ $t("Duplicate")}}
                     </b-button>
 
                     <b-card class="shadow-sm mb-3" header-bg-variant="white" no-body>
                         <h5 slot="header" class="d-flex align-items-center">
-                            Actions
+                            {{ $t("Actions")}}
                             <b-link
                                 class="ml-auto"
                                 :aria-expanded="showAction ? 'true' : 'false'"
@@ -386,31 +386,31 @@
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="key" />
-                                        Status:
+                                        {{ $t("Status:")}}
                                         <span class="value">
                                             {{ this.form.status || '-' }}
                                         </span>
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="user" />
-                                        Creator:
+                                        {{ $t("Creator:")}}
                                         <span class="value">
                                             {{ this.form.owner_name || '-' }}
                                         </span>
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="calendar" />
-                                        Last modification:
+                                        {{ $t("Last modification:")}}
                                         <span class="value">
                                             {{ this.form.last_modified || '-' }}
                                         </span>
                                     </li>
                                     <li>
                                         <icon class="mr-1" name="history" />
-                                        History:
+                                        {{ $t("History:")}}
                                         <span class="value">
                                             <b-link v-if="form.id" @click="showHistory()">
-                                                show revisions
+                                                {{ $t("show revisions")}}
                                             </b-link>
                                         </span>
                                     </li>
@@ -422,7 +422,7 @@
                                             id="delete-btn"
                                             class="text-danger"
                                             :disabled="!form.id || form.status === 'submitted'"
-                                            @click="onDelete()">
+                                             @click="onDelete()">
                                             <icon class="mr-1" name="trash" />
                                             Delete
                                         </b-link>
@@ -442,7 +442,7 @@
                                         variant="success"
                                         :disabled="form.status === 'submitted'"
                                         @click="onSubmit">
-                                        Save Evidence
+                                        {{ $t("Save Evidence")}}
                                     </b-button>
                                 </div>
                             </b-collapse>
@@ -451,7 +451,7 @@
 
                     <b-card class="shadow-sm" header-bg-variant="white" no-body>
                         <h5 slot="header" class="d-flex align-items-center">
-                            Keywords
+                            {{ $t("Keywords")}}
                             <b-link
                                 class="ml-auto"
                                 :aria-expanded="showStat ? 'true' : 'false'"
@@ -472,7 +472,7 @@
                                         :key="idx"
                                         v-bind="pubmedURL(entry.url)">
                                         <b-badge :class="entry.class">
-                                            {{ entry.label
+                                            {{ $t("{{ entry.label")}}
                                             }}{{ entry.count !== undefined ? ` (${entry.count})` : '' }}
                                         </b-badge>
                                     </b-link>
@@ -482,11 +482,11 @@
                                         name="exclamation-triangle"
                                         scale="1.5"
                                         style="vertical-align: text-bottom; margin-right: 5px" />
-                                    An error occurred while retrieving this reference
+                                    {{ $t("An error occurred while retrieving this reference")}}
                                 </div>
                                 <div v-else class="text-center">
                                     <b-spinner label="Spinning" variant="primary" />
-                                    loading...
+                                    {{ $t("loading...")}}
                                 </div>
                             </b-collapse>
                         </b-card-body>
@@ -509,7 +509,7 @@
                 :title="`Entry #${form.id || '???'} History`">
                 <div style="padding-bottom: 6em">
                     <EvidenceHistory v-if="form.id" :entry_id="form.id" />
-                    <div v-else>Error: no curation entry selected</div>
+                    <div v-else>{{ $t("Error: no curation entry selected")}}</div>
                 </div>
             </b-modal>
         </div>

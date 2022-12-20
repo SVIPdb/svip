@@ -21,31 +21,31 @@
                         (user.groups.indexOf('curators') != -1 || user.groups.indexOf('clinicians') != -1)
                     "
                     :to="{name: 'curation-dashboard'}">
-                    Dashboard
+                    {{ $t("Dashboard")}}
                 </b-nav-item>
                 <b-nav-item
                     v-if="user && user.groups.indexOf('submitters') != -1"
                     :to="{name: 'submit-variants'}">
-                    Submit Variants
+                    {{ $t("Submit Variants")}}
                 </b-nav-item>
-                <b-nav-item :to="'/help'">Help</b-nav-item>
-                <b-nav-item :to="'/about'">About</b-nav-item>
-                <b-nav-item :to="'/statistics'">Statistics</b-nav-item>
-                <b-nav-item :to="'/releases'">Releases</b-nav-item>
+                <b-nav-item :to="'/help'">{{ $t("Help")}}</b-nav-item>
+                <b-nav-item :to="'/about'">{{ $t("About")}}</b-nav-item>
+                <b-nav-item :to="'/statistics'">{{ $t("Statistics")}}</b-nav-item>
+                <b-nav-item :to="'/releases'">{{ $t("Releases")}}</b-nav-item>
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->
             <b-navbar-nav v-if="!loginDisabled" class="ml-auto">
                 <b-navbar-nav v-if="user" right>
                     <b-nav-text class="login-name">
-                        logged in as
+                        {{ $t("logged in as")}}
                         <router-link to="/user-info">{{ user.username }}</router-link>
                         -
                     </b-nav-text>
                     <b-nav-item>
                         <a class="pointer" @click="logout()">
                             <icon name="sign-out-alt" />
-                            log out
+                            {{ $t("log out")}}
                         </a>
                     </b-nav-item>
                 </b-navbar-nav>
@@ -58,7 +58,7 @@
                                 params: {nextRoute: whereFromHere},
                             }">
                             <icon name="sign-in-alt" />
-                            log in
+                            {{ $t("log in")}}
                         </router-link>
                     </b-nav-item>
                 </b-navbar-nav>

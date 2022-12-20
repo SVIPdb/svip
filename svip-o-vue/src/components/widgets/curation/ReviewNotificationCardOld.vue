@@ -1,7 +1,7 @@
 <template>
     <b-card class="shadow-sm mb-3" align="left" no-body>
         <b-card-header
-            v-if="isReviewer"
+            v-if="is{{ $t("Review")}}er"
             class="p-1"
             :header-bg-variant="cardHeaderBg"
             :header-text-variant="cardTitleVariant"
@@ -22,10 +22,10 @@
                             size="sm"
                             v-model="review_cycle">
                             <b-dropdown-item @click="review_cycle = 'First review cycle'">
-                                First review cycle
+                                {{ $t("First review cycle")}}
                             </b-dropdown-item>
                             <b-dropdown-item @click="review_cycle = 'Second review cycle'">
-                                Second review cycle
+                                {{ $t("Second review cycle")}}
                             </b-dropdown-item>
                         </b-dropdown>
 
@@ -72,7 +72,7 @@
                         name="checkbox-1"
                         value="mine"
                         unchecked-value="not_mine">
-                        My reviews
+                        {{ $t("My reviews")}}
                     </b-form-checkbox>
                 </div>
 
@@ -81,7 +81,7 @@
                         <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button :variant="settings.buttonBg" size="sm" @click="filter = ''">
-                                Clear
+                                {{ $t("Clear")}}
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -130,7 +130,7 @@
                         <span class="font-weight-bold">
                             {{ setLetter(row.item.days_left) }}
                         </span>
-                        ({{ row.item.days_left }} days)
+                        ({{ row.item.days_left }} {{ $t("days)")}}
                     </p>
                 </template>
 
@@ -166,7 +166,7 @@
                 </template>
 
                 <template v-slot:cell(reviewed)="data">
-                    <div>data!!!</div>
+                    <div>{{ $t("data!!!")}}</div>
                     <icon
                         v-for="(reviewer, index) in data.value"
                         v-bind:key="index"
@@ -207,7 +207,7 @@
                     </b-button>
 
                     <b-button
-                        v-if="review_cycle === 'Second Review Cycle'"
+                        v-if="review_cycle === '{{ $t("Second Review")}} Cycle'"
                         class="centered-icons"
                         size="sm"
                         style="width: 100px"
@@ -232,7 +232,7 @@
                 <template v-slot:table-busy>
                     <div class="text-center my-2">
                         <b-spinner class="align-middle" small></b-spinner>
-                        <strong class="ml-1">Loading...</strong>
+                        <strong class="ml-1">{{ $t("Loading...")}}</strong>
                     </div>
                 </template>
             </b-table>

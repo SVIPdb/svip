@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="form-container">
-            <b-button variant="info" target="_blank" @click="downloadSummaryAsPdf">Download as PDF</b-button>
+            <b-button variant="info" target="_blank" @click="downloadSummaryAsPdf">{{ $t("Download as PDF")}}</b-button>
             <b-form-checkbox size="lg" class="ml-4" v-model="show_only_my_entries" @change="updateSummary">
-                Show only my entries
+                {{ $t("Show only my entries")}}
             </b-form-checkbox>
         </div>
 

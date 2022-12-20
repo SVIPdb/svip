@@ -27,10 +27,23 @@ import Expander from '@/components/widgets/Expander';
 import VueConfirmDialog from 'vue-confirm-dialog';
 
 import store from './store';
+import VueI18n from 'vue-i18n'
+
+
+Vue.use(VueI18n)
+
+const i18n = new VueI18n({
+  locale: 'en', // set default locale
+  messages: {
+    en: require('./locales/en.json'),
+
+  }
+})
 
 // enables the asyncComputed key, allowing computed properties to return promises
 Vue.use(AsyncComputed);
 Vue.use(VueConfirmDialog);
+
 
 Vue.config.productionTip = false;
 
@@ -72,6 +85,8 @@ export default new Vue({
     el: '#app',
     router,
     store,
+    i18n,
+
     components: {
         App,
     },

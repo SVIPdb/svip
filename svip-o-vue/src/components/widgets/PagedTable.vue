@@ -28,7 +28,7 @@
                 <b-input-group size="sm">
                     <b-form-input v-model="search" debounce="300" placeholder="Type to Search" />
                     <b-input-group-append>
-                        <b-btn :disabled="!search" @click="search = ''">Clear</b-btn>
+                        <b-btn :disabled="!search" @click="search = ''">{{ $t("Clear")}}</b-btn>
                     </b-input-group-append>
                 </b-input-group>
             </div>
@@ -62,7 +62,7 @@
                 :total-rows="totalRows"
                 :per-page="perPage"
                 aria-controls="my-table" />
-            <span class="ml-2">Items per page:</span>
+            <span class="ml-2">{{ $t("Items per page:")}}</span>
             <b-form-select
                 class="numPerPage ml-2 mb-4"
                 v-model="perPage"

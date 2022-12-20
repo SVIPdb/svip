@@ -8,7 +8,7 @@
                 name="checkbox-1"
                 value="yes"
                 unchecked-value="no">
-                Show only conflicting entries
+                {{ $t("Show only conflicting entries")}}
             </b-form-checkbox>
 
             <br />
@@ -43,7 +43,7 @@
                                                 <br />
 
                                                 <p style="color: red" v-if="type.if_conflicting_reviews">
-                                                    Conflicting entry!
+                                                    {{ $t("Conflicting entry!")}}
                                                 </p>
                                             </div>
                                         </b-col>
@@ -56,7 +56,7 @@
                                                 )"
                                                 :key="'effect' + effect_idx">
                                                 {{ effect.value }} :
-                                                {{ effect.number ? effect.number : 'no' }} evidence(s)
+                                                {{ effect.number ? effect.number : 'no' }} {{ $t("evidence(s)")}}
                                             </p>
                                             <p
                                                 class="mb-2"
@@ -66,7 +66,7 @@
                                                 )"
                                                 :key="'tier' + effect_idx">
                                                 {{ effect.value }} :
-                                                {{ effect.number ? effect.number : 'no' }} evidence(s)
+                                                {{ effect.number ? effect.number : 'no' }} {{ $t("evidence(s)")}}
                                             </p>
                                         </b-col>
                                         <b-col cols="2">
@@ -165,7 +165,7 @@
                                             </b-row>
                                         </b-col>
                                         <b-col cols="1" align="center">
-                                            <b-row class="justify-content-center">Review status</b-row>
+                                            <b-row class="justify-content-center">{{ $t("Review status")}}</b-row>
                                             <b-row class="justify-content-center">
                                                 <span
                                                     v-for="(review, review_idx) in type.curation_reviews"
@@ -238,7 +238,7 @@
                                                         : 'summary-box alert-border'
                                                 }`"
                                                 rows="3"
-                                                placeholder="Comment..."
+                                                placeholder="Comment"
                                                 v-model="
                                                     currentReviews.data[idx][1][index].comment
                                                 "></b-textarea>
@@ -250,11 +250,11 @@
                                     <div v-if="expander_array[idx].curation_entries[index]">
                                         <b-card-footer class="pt-0 pb-0 pl-3 pr-3 fluid">
                                             <table class="table table-responsive-lg">
-                                                <th class="bg-light">PMID</th>
+                                                <th class="bg-light">{{ $t("PMID")}}</th>
                                                 <th class="bg-light">Effect</th>
-                                                <th class="bg-light">Tier level</th>
-                                                <th class="bg-light">Support</th>
-                                                <th class="bg-light">ID</th>
+                                                <th class="bg-light">{{ $t("Tier level")}}</th>
+                                                <th class="bg-light">{{ $t("Support")}}</th>
+                                                <th class="bg-light">{{ $t("ID")}}</th>
                                                 <th class="bg-light">Comment</th>
 
                                                 <tr v-for="(curation, i) in type.curation_entries" :key="i">
@@ -279,7 +279,7 @@
                                                             }"
                                                             target="_blank"
                                                             alt="Link to evidence">
-                                                            Curation entry #{{ curation.id }}
+                                                            {{ $t("Curation entry #")}}{{ curation.id }}
                                                         </b-link>
                                                     </td>
                                                     <td>{{ curation.comment }}</td>
@@ -301,18 +301,18 @@
         </div>
         <div class="float-right">
             <b-button variant="warning" @click="submitReviews(true)" :disabled="not_annotated || submitted">
-                Finish later
+                {{ $t("Finish later")}}
             </b-button>
 
             <b-button class="footer-btn" @click="submitOptions()" :disabled="not_annotated || submitted">
-                Submit review
+                {{ $t("Submit review")}}
             </b-button>
         </div>
         <b-navbar-text v-if="not_annotated" class="fixed-bottom submitted-bar" align="center">
-            THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.
+            {{ $t("THIS VARIANT HASN'T YET BEEN SUBMITTED FOR REVIEW.")}}
         </b-navbar-text>
         <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="submitted && !draft">
-            YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.
+            {{ $t("YOU HAVE SUBMITTED A REVIEW FOR THIS VARIANT.")}}
         </b-navbar-text>
     </div>
 </template>

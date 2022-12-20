@@ -54,7 +54,7 @@
                         name="checkbox-1"
                         value="my"
                         unchecked-value="all">
-                        My reviews
+                        {{ $t("My reviews")}}
                     </b-form-checkbox>
                 </div>
 
@@ -63,7 +63,7 @@
                         <b-form-input v-model="filter" placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
                             <b-button :variant="settings.buttonBg" size="sm" @click="filter = ''">
-                                Clear
+                                {{ $t("Clear")}}
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -176,7 +176,7 @@
                 <template v-slot:table-busy>
                     <div class="text-center my-2">
                         <b-spinner class="align-middle" small></b-spinner>
-                        <strong class="ml-1">Loading...</strong>
+                        <strong class="ml-1">{{ $t("Loading...")}}</strong>
                     </div>
                 </template>
             </b-table>

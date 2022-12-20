@@ -8,9 +8,9 @@
             -->
             <b-card>
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Diseases
+                    {{ $t("Diseases")}}
                     <i class="float-right" v-if="!currentFilter.phenotype__term">
-                        click on a disease to filter the table
+                        {{ $t("click on a disease to filter the table")}}
                     </i>
                     <span class="float-right badge badge-primary filter-phenotype__term" v-else>
                         {{ desnakify(currentFilter.phenotype__term) }}
@@ -28,8 +28,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Disease</th>
-                            <th># of Samples</th>
+                            <th>{{ $t("Disease")}}</th>
+                            <th>{{ $t("# of Samples")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,9 +56,9 @@
             -->
             <b-card style="margin-top: 1em">
                 <h6 class="card-subtitle mb-2 text-muted">
-                    Tissue Types
+                    {{ $t("Tissue Types")}}
                     <i class="float-right" v-if="!currentFilter.environmentalcontext__description">
-                        click on a tissue type to filter the table
+                        {{ $t("click on a tissue type to filter the table")}}
                     </i>
                     <span
                         class="float-right badge badge-primary filter-environmentalcontext__description"
@@ -77,8 +77,8 @@
                 <table class="table table-sm table-hover filtering-table">
                     <thead>
                         <tr>
-                            <th>Tissue Type</th>
-                            <th># of Samples</th>
+                            <th>{{ $t("Tissue Type")}}</th>
+                            <th>{{ $t("# of Samples")}}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -13,13 +13,13 @@
                             size="sm"
                             :variant="filterCurator ? 'primary' : 'light'"
                             @click="filterCurator = true">
-                            My Curations
+                            {{ $t("My Curations")}}
                         </b-button>
                         <b-button
                             size="sm"
                             :variant="!filterCurator ? 'primary' : 'light'"
                             @click="filterCurator = false">
-                            All Curations
+                            {{ $t("All Curations")}}
                         </b-button>
                     </b-button-group>
 
@@ -43,7 +43,7 @@
                             debounce="300"
                             placeholder="Type to Search"></b-form-input>
                         <b-input-group-append>
-                            <b-button variant="primary" size="sm" @click="filter = ''">Clear</b-button>
+                            <b-button variant="primary" size="sm" @click="filter = ''">{{ $t("Clear")}}</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </div>
@@ -56,7 +56,7 @@
                 @click="submitAll"
                 style="height: 34px"
                 :disabled="already_submitted || variant.svip_data === null">
-                Submit to review
+                {{ $t("Submit to review")}}
             </b-button>
         </div>
 
@@ -104,7 +104,7 @@
                             </router-link>
                         </span>
                     </span>
-                    <span v-else>No other variants</span>
+                    <span v-else>{{ $t("No other variants")}}</span>
                 </template>
 
                 <template v-slot:cell(created_on)="data">
@@ -112,18 +112,10 @@
                 </template>
 
                 <template v-slot:cell(status)="data">
-                    <span class="pub-status">
-                        <icon
-                            :class="setClass(data.value)"
-                            :name="setIcon(data.value)"
-                            v-b-tooltip.hover
-                            :title="data.value"/>
-                        {{
-                            data.value === 'ready_for_submission'
-                                ? 'Ready for submission'
-                                : titleCase(data.value)
-                        }}
-                    </span>
+                  <span class="pub-status">
+                    <icon :class="setClass(data.value)" :name="setIcon(data.value)" v-b-tooltip.hover :title="data.value"/>
+                    {{ titleCase(data.value) }}
+                  </span>
                 </template>
 
                 <template v-slot:cell(references)="data">
@@ -160,7 +152,7 @@
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px">
                             <icon name="pen-alt"/>
-                            Edit
+                            {{ $t("Edit")}}
                         </b-button>
                         <b-button
                             v-else
@@ -170,7 +162,7 @@
                             :href="editEntryURL(data.item)"
                             style="min-width: 75px">
                             <icon name="eye"/>
-                            View
+                            {{ $t("View")}}
                         </b-button>
 
                         <b-button
@@ -190,7 +182,7 @@
                         </b-button>
                     </span>
                     <b-navbar-text class="fixed-bottom submitted-bar" align="center" v-if="already_submitted">
-                        THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.
+                        {{ $t("THE CURATIONS FOR THIS VARIANT HAVE ALREADY BEEN SUBMITTED.")}}
                     </b-navbar-text>
                 </template>
 
@@ -209,7 +201,7 @@
                 :title="`Entry #${history_entry_id} History`">
                 <div>
                     <EvidenceHistory v-if="history_entry_id" :entry_id="history_entry_id"/>
-                    <div v-else>Error: no curation entry selected</div>
+                    <div v-else>{{ $t("Error: no curation entry selected")}}</div>
                 </div>
             </b-modal>
         </b-card-body>

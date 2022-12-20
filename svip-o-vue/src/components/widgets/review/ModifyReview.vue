@@ -24,7 +24,7 @@
                                     'effect'
                                 )"
                                 :key="effect_idx">
-                                {{ effect.value }} : {{ effect.number ? effect.number : 'no' }} evidence(s)
+                                {{ effect.value }} : {{ effect.number ? effect.number : 'no' }} {{ $t("evidence(s)")}}
                                 <br />
                             </p>
 
@@ -34,7 +34,7 @@
                                     'tier_level_criteria'
                                 )"
                                 :key="tier_idx + 'tier'">
-                                {{ tier.value }} : {{ tier.number ? tier.number : 'no' }} evidence(s)
+                                {{ tier.value }} : {{ tier.number ? tier.number : 'no' }} {{ $t("evidence(s)")}}
                                 <br />
                             </p>
                         </template>
@@ -136,12 +136,12 @@
                                 <div>
                                     <b-card-footer class="fluid">
                                         <table class="table table-responsive-lg">
-                                            <th class="bg-light">PMID</th>
-                                            <th class="bg-light">Effect</th>
-                                            <th class="bg-light">Tier level</th>
-                                            <th class="bg-light">Support</th>
-                                            <th class="bg-light">ID</th>
-                                            <th class="bg-light">Comment</th>
+                                            <th class="bg-light">{{ $t("PMID")}}</th>
+                                            <th class="bg-light">{{ $t("Effect")}}</th>
+                                            <th class="bg-light">{{ $t("Tier level")}}</th>
+                                            <th class="bg-light">{{ $t("Support")}}</th>
+                                            <th class="bg-light">{{ $t("ID")}}</th>
+                                            <th class="bg-light">{{ $t("Comment")}}</th>
 
                                             <tr v-for="(curation, i) in row.item.curation_entries" :key="i">
                                                 <td>{{ curation.references }}</td>
@@ -156,7 +156,7 @@
                                                         }"
                                                         target="_blank"
                                                         alt="Link to evidence">
-                                                        Curation entry #{{ curation.id }}
+                                                        {{ $t("Curation entry #")}}{{ curation.id }}
                                                     </b-link>
                                                 </td>
                                                 <td>{{ curation.comment }}</td>
