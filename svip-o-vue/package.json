@@ -68,7 +68,7 @@
         "prettier": "2.6.2",
         "raw-loader": "^4.0.2",
         "sass": "^1.26.8",
-        "sass-loader": "^8.0.2",
+        "sass-loader": "^13.2.0",
         "vue-cli-plugin-bootstrap-vue": "~0.6.0",
         "vue-template-compiler": "^2.6.11",
         "webpack": "^5.75.0"
