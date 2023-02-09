@@ -14,7 +14,8 @@ services:
       # allows the root git repo to be accessed in the container, which
       # lets GitRevisionPlugin tag each build with its commit hash, branch, etc.
       - .git:/app/.git:delegated,ro
-    command: bash -c "npx browserslist@latest --update-db && npm ci && npm run build && rm -rf /web_root/* && cp -R /app/dist/* /web_root/"
+    # TODO: DM: remove this git config --global --add safe.directory /app it should not be there!!
+    command: bash -c "git config --global --add safe.directory /app && npx browserslist@latest --update-db && npm ci && npm run build && rm -rf /web_root/* && cp -R /app/dist/* /web_root/"
     env_file:
       - .env
     depends_on:
