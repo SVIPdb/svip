@@ -36,7 +36,7 @@ gunicorn==19.9.0
 hgvs==1.5.1
 idna==2.7
 inflection==0.3.1
-ipython==7.16.3
+ipython==8.10.0
 ipython-genutils==0.2.0
 itypes==1.1.0
 jedi==0.13.2
