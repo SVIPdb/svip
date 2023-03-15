@@ -71,6 +71,6 @@
         "sass-loader": "^8.0.2",
         "vue-cli-plugin-bootstrap-vue": "~0.6.0",
         "vue-template-compiler": "^2.6.11",
-        "webpack": "^5.75.0"
+        "webpack": "^5.76.0"
     }
 }
